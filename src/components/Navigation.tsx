@@ -1,7 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { Home, Calendar, User, MessageCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
-import loverballLogo from "@/assets/loverball-logo.jpg";
+import loverballLogo from "@/assets/loverball-logo.png";
 
 const Navigation = () => {
   const location = useLocation();
