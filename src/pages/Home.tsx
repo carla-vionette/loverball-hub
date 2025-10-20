@@ -1,38 +1,52 @@
 import Navigation from "@/components/Navigation";
 import ContentCarousel from "@/components/ContentCarousel";
 import heroBanner from "@/assets/hero-banner.jpg";
-import basketballImg from "@/assets/content-basketball.jpg";
+import beyondCourt from "@/assets/beyond-court.jpg";
+import gameChangers from "@/assets/game-changers.jpg";
+import trainingDay from "@/assets/training-day.jpg";
+import risingStars from "@/assets/rising-stars.jpg";
+import coachCorner from "@/assets/coach-corner.jpg";
+import finalSeason from "@/assets/final-season.jpg";
+import powerplay from "@/assets/powerplay.jpg";
+import overtime from "@/assets/overtime.jpg";
+import fullCourtPress from "@/assets/full-court-press.jpg";
+import teamSpirit from "@/assets/team-spirit.jpg";
+import marathon from "@/assets/marathon.jpg";
+import pickupGame from "@/assets/pickup-game.jpg";
+import soccerMom from "@/assets/soccer-mom.jpg";
+import weekendWarriors from "@/assets/weekend-warriors.jpg";
+import gymTalk from "@/assets/gym-talk.jpg";
 
 const Home = () => {
   const unscriptedContent = [
     {
       id: 1,
       title: "Beyond the Court",
-      image: basketballImg,
+      image: beyondCourt,
       description: "Follow three WNBA players as they navigate life on and off the court",
     },
     {
       id: 2,
       title: "Game Changers",
-      image: basketballImg,
+      image: gameChangers,
       description: "Documentary series celebrating women breaking barriers in sports",
     },
     {
       id: 3,
       title: "Training Day",
-      image: basketballImg,
+      image: trainingDay,
       description: "Behind-the-scenes look at elite female athletes' training routines",
     },
     {
       id: 4,
       title: "Rising Stars",
-      image: basketballImg,
+      image: risingStars,
       description: "Young female athletes pursuing their dreams in competitive sports",
     },
     {
       id: 5,
       title: "Coach's Corner",
-      image: basketballImg,
+      image: coachCorner,
       description: "Conversations with pioneering women coaches changing the game",
     },
   ];
@@ -41,31 +55,31 @@ const Home = () => {
     {
       id: 1,
       title: "The Final Season",
-      image: basketballImg,
+      image: finalSeason,
       description: "A soccer team's journey to championship glory and personal growth",
     },
     {
       id: 2,
       title: "Powerplay",
-      image: basketballImg,
+      image: powerplay,
       description: "Drama series following a women's hockey team's fight for respect",
     },
     {
       id: 3,
       title: "Overtime",
-      image: basketballImg,
+      image: overtime,
       description: "Life, love, and basketball in a professional women's league",
     },
     {
       id: 4,
       title: "Full Court Press",
-      image: basketballImg,
+      image: fullCourtPress,
       description: "A rookie journalist covers the women's basketball beat",
     },
     {
       id: 5,
       title: "Team Spirit",
-      image: basketballImg,
+      image: teamSpirit,
       description: "College athletes balancing sports, academics, and relationships",
     },
   ];
@@ -74,31 +88,31 @@ const Home = () => {
     {
       id: 1,
       title: "My First Marathon",
-      image: basketballImg,
+      image: marathon,
       description: "Sarah's inspiring journey from couch to marathon finish line",
     },
     {
       id: 2,
       title: "Pickup Game Chronicles",
-      image: basketballImg,
+      image: pickupGame,
       description: "Weekly adventures at the local basketball court",
     },
     {
       id: 3,
       title: "Soccer Mom Diaries",
-      image: basketballImg,
+      image: soccerMom,
       description: "Balancing work, family, and a love for the beautiful game",
     },
     {
       id: 4,
       title: "Weekend Warriors",
-      image: basketballImg,
+      image: weekendWarriors,
       description: "Our recreational softball team's quest for glory",
     },
     {
       id: 5,
       title: "Gym Talk",
-      image: basketballImg,
+      image: gymTalk,
       description: "Real conversations about fitness, sports, and empowerment",
     },
   ];

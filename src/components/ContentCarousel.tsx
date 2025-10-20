@@ -51,7 +51,7 @@ const ContentCarousel = ({ title, items }: ContentCarouselProps) => {
               key={item.id}
               className="flex-shrink-0 w-72 snap-start group/item cursor-pointer"
             >
-              <div className="relative overflow-hidden rounded-lg aspect-video mb-2 bg-secondary">
+              <div className="relative overflow-hidden rounded-lg aspect-[3/4] mb-2 bg-secondary">
                 <img
                   src={item.image}
                   alt={item.title}
