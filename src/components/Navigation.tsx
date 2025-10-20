@@ -18,7 +18,7 @@ const Navigation = () => {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           <Link to="/" className="flex items-center">
-            <img src={loverballLogo} alt="Loverball" className="h-20" />
+            <img src={loverballLogo} alt="Loverball" className="h-16 object-contain" />
           </Link>
           
           <div className="flex gap-6">
