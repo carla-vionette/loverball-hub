@@ -1,6 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { Home, Calendar, User, MessageCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
+import loverballLogo from "@/assets/loverball-logo.jpg";
 
 const Navigation = () => {
   const location = useLocation();
@@ -16,8 +17,8 @@ const Navigation = () => {
     <nav className="bg-card border-b border-border sticky top-0 z-50">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
-          <Link to="/" className="text-2xl font-bold text-primary">
-            Loverball
+          <Link to="/" className="flex items-center">
+            <img src={loverballLogo} alt="Loverball" className="h-10" />
           </Link>
           
           <div className="flex gap-6">
