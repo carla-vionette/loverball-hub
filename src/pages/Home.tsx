@@ -1,6 +1,7 @@
 import Navigation from "@/components/Navigation";
 import ContentCarousel from "@/components/ContentCarousel";
 import heroBanner from "@/assets/hero-banner.jpg";
+import heroVideo from "@/assets/hero-video.mov";
 import beyondCourt from "@/assets/beyond-court.jpg";
 import gameChangers from "@/assets/game-changers.jpg";
 import trainingDay from "@/assets/training-day.jpg";
@@ -124,9 +125,12 @@ const Home = () => {
       <main>
         {/* Hero Section */}
         <div className="relative h-[60vh] min-h-[400px] overflow-hidden">
-          <img
-            src={heroBanner}
-            alt="Women celebrating at sports event"
+          <video
+            src={heroVideo}
+            autoPlay
+            loop
+            muted
+            playsInline
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
