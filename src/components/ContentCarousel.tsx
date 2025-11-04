@@ -46,24 +46,37 @@ const ContentCarousel = ({ title, items }: ContentCarouselProps) => {
           className="flex gap-4 overflow-x-auto scrollbar-hide px-4 snap-x snap-mandatory"
           style={{ scrollbarWidth: "none" }}
         >
-          {items.map((item) => (
-            <div
-              key={item.id}
-              className="flex-shrink-0 w-72 snap-start group/item cursor-pointer"
-            >
-              <div className="relative overflow-hidden rounded-lg aspect-[3/4] mb-2 bg-secondary">
-                <img
-                  src={item.image}
-                  alt={item.title}
-                  className="w-full h-full object-cover transition-transform duration-300 group-hover/item:scale-105"
-                />
+          {items.map((item) => {
+            const isVideo = item.image.match(/\.(mp4|mov|webm)$/i);
+            
+            return (
+              <div
+                key={item.id}
+                className="flex-shrink-0 w-72 snap-start group/item cursor-pointer"
+              >
+                <div className="relative overflow-hidden rounded-lg aspect-[3/4] mb-2 bg-secondary">
+                  {isVideo ? (
+                    <video
+                      src={item.image}
+                      className="w-full h-full object-cover"
+                      controls
+                      playsInline
+                    />
+                  ) : (
+                    <img
+                      src={item.image}
+                      alt={item.title}
+                      className="w-full h-full object-cover transition-transform duration-300 group-hover/item:scale-105"
+                    />
+                  )}
+                </div>
+                <h3 className="font-semibold text-foreground mb-1">{item.title}</h3>
+                <p className="text-sm text-muted-foreground line-clamp-2">
+                  {item.description}
+                </p>
               </div>
-              <h3 className="font-semibold text-foreground mb-1">{item.title}</h3>
-              <p className="text-sm text-muted-foreground line-clamp-2">
-                {item.description}
-              </p>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         <Button
