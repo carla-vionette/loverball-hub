@@ -5,11 +5,22 @@ import FloatingUploadButton from "@/components/FloatingUploadButton";
 import christineVideo from "@/assets/christine-video.mov";
 import colorCoverageVideo from "@/assets/color-coverage-video.mp4";
 import playMeVideo from "@/assets/play-me-video.mp4";
+import risingStarsVideo from "@/assets/rising-stars-video.mp4";
 
 const Following = () => {
   const followingVideos = [
     {
       id: 1,
+      videoUrl: risingStarsVideo,
+      username: "YouthSports",
+      userAvatar: "",
+      caption: "Rising Stars - Watch the next generation shine on the court! 🌟🏀 #RisingStars #YouthBasketball #FutureChampions",
+      likes: 5234,
+      comments: 312,
+      shares: 189,
+    },
+    {
+      id: 2,
       videoUrl: colorCoverageVideo,
       username: "Larissa_Bball",
       userAvatar: "",
@@ -19,7 +30,7 @@ const Following = () => {
       shares: 89,
     },
     {
-      id: 2,
+      id: 3,
       videoUrl: playMeVideo,
       username: "TeamDynamics",
       userAvatar: "",
@@ -29,7 +40,7 @@ const Following = () => {
       shares: 423,
     },
     {
-      id: 3,
+      id: 4,
       videoUrl: christineVideo,
       username: "thechristinewang",
       userAvatar: "",
