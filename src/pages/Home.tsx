@@ -149,7 +149,7 @@ const Home = () => {
 
         {/* Content Carousels */}
         <div className="container mx-auto py-12">
-          <ContentCarousel title="Unscripted" items={unscriptedContent} />
+          <ContentCarousel title="Color & Coverage" items={unscriptedContent} />
           <ContentCarousel title="Drama" items={dramaContent} />
           <ContentCarousel title="User Stories" items={userContent} />
         </div>
