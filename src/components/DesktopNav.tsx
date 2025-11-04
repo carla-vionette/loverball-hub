@@ -41,20 +41,13 @@ const DesktopNav = () => {
         })}
       </nav>
 
-      <div className="p-4 border-t border-border space-y-2">
+      <div className="p-4 border-t border-border">
         <Link
           to="/search"
           className="flex items-center gap-4 px-6 py-3 text-foreground hover:bg-muted rounded-lg transition-colors"
         >
           <Search className="w-6 h-6" />
           <span>Search</span>
-        </Link>
-        <Link
-          to="/upload"
-          className="flex items-center gap-4 px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
-        >
-          <Plus className="w-6 h-6" />
-          <span>Upload</span>
         </Link>
       </div>
     </aside>
