@@ -8,10 +8,10 @@ import colorCoverageVideo from "@/assets/color-coverage-video.mp4";
 import colorCoverageVideo2 from "@/assets/color-coverage-video-2.mp4";
 import christineVideo from "@/assets/christine-video.mov";
 import playMeVideo from "@/assets/play-me-video.mp4";
+import risingStarsVideo from "@/assets/rising-stars-video.mp4";
 import beyondCourt from "@/assets/beyond-court.jpg";
 import gameChangers from "@/assets/game-changers.jpg";
 import trainingDay from "@/assets/training-day.jpg";
-import risingStars from "@/assets/rising-stars.jpg";
 import coachCorner from "@/assets/coach-corner.jpg";
 
 const Search = () => {
@@ -72,8 +72,8 @@ const Search = () => {
     {
       id: 2,
       title: "Rising Stars",
-      image: risingStars,
-      type: "image",
+      image: risingStarsVideo,
+      type: "video",
       creator: "YouthSports",
       views: "2.1M",
     },
