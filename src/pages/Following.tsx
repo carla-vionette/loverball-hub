@@ -30,13 +30,13 @@ const Following = () => {
     },
     {
       id: 3,
-      videoUrl: colorCoverageVideo2,
-      username: "FavoriteCreator",
+      videoUrl: christineVideo,
+      username: "thechristinewang",
       userAvatar: "",
-      caption: "Check out what your favorite creators are posting! Follow more accounts to see their content here. #Following",
-      likes: 1234,
-      comments: 89,
-      shares: 45,
+      caption: "Christine sharing her sports journey and inspiring others to stay active! 🏀⚽️ #SportsLife #Inspiration #WomenInSports",
+      likes: 3547,
+      comments: 234,
+      shares: 156,
     },
   ];
 
