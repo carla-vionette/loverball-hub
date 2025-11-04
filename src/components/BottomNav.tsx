@@ -1,4 +1,4 @@
-import { Home, Compass, MapPin, MessageCircle, User, Calendar } from "lucide-react";
+import { Home, Compass, MapPin, MessageCircle, User, Calendar, ShoppingBag } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 
 const BottomNav = () => {
@@ -8,7 +8,7 @@ const BottomNav = () => {
     { icon: Home, label: "Following", path: "/following" },
     { icon: Compass, label: "For You", path: "/" },
     { icon: Calendar, label: "Gather", path: "/gather" },
-    { icon: MessageCircle, label: "Inbox", path: "/messages" },
+    { icon: ShoppingBag, label: "Shop", path: "/shop" },
     { icon: User, label: "Profile", path: "/profile" },
   ];
 
