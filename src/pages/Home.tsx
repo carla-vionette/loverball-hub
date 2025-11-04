@@ -4,6 +4,7 @@ import heroBanner from "@/assets/hero-banner.jpg";
 import heroVideo from "@/assets/hero-video.mov";
 import colorCoverageVideo from "@/assets/color-coverage-video.mp4";
 import colorCoverageVideo2 from "@/assets/color-coverage-video-2.mp4";
+import playMeVideo from "@/assets/play-me-video.mp4";
 import beyondCourt from "@/assets/beyond-court.jpg";
 import gameChangers from "@/assets/game-changers.jpg";
 import trainingDay from "@/assets/training-day.jpg";
@@ -69,8 +70,8 @@ const Home = () => {
   const dramaContent = [
     {
       id: 1,
-      title: "The Final Season",
-      image: finalSeason,
+      title: "Play Me",
+      image: playMeVideo,
       description: "A soccer team's journey to championship glory and personal growth",
     },
     {
