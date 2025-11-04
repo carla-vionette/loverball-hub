@@ -15,8 +15,8 @@ const DesktopNav = () => {
 
   return (
     <aside className="hidden md:flex fixed left-0 top-0 h-screen w-64 bg-background border-r border-border flex-col z-50">
-      <div className="p-6 border-b border-border">
-        <img src={loverbballLogo} alt="Loverball" className="h-12 object-contain" />
+      <div className="p-6 border-b border-border flex items-center justify-center">
+        <img src={loverbballLogo} alt="Loverball" className="h-20 w-auto object-contain mix-blend-multiply dark:mix-blend-normal" />
       </div>
       
       <nav className="flex-1 py-4">
