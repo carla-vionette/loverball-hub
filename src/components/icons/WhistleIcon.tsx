@@ -9,34 +9,27 @@ const WhistleIcon = ({ className = "", filled = false }: WhistleIconProps) => {
       viewBox="0 0 24 24"
       fill={filled ? "currentColor" : "none"}
       stroke="currentColor"
-      strokeWidth="1.5"
+      strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
       className={className}
     >
-      {/* Main rectangular body - top face */}
-      <path d="M4 6 L12 3 L16 5 L8 8 Z" />
+      {/* Main whistle body */}
+      <rect x="3" y="8" width="10" height="6" rx="1" />
       
-      {/* Left side face */}
-      <path d="M4 6 L4 10 L8 12 L8 8 Z" />
+      {/* Mouthpiece hole */}
+      <rect x="5" y="10" width="2" height="2" rx="0.5" />
       
-      {/* Right side face (visible) */}
-      <path d="M8 8 L16 5 L16 9 L8 12 Z" />
+      {/* Curved connector */}
+      <path d="M13 11 Q15 11 16 12" />
       
-      {/* Bottom edge */}
-      <path d="M4 10 L8 12 L16 9" />
+      {/* Ring */}
+      <circle cx="18" cy="14" r="3" />
+      <circle cx="18" cy="14" r="1.5" />
       
-      {/* Air slot window on top */}
-      <rect x="9" y="5" width="2" height="3" rx="0.3" transform="rotate(-20 10 6.5)" />
-      
-      {/* Triangular mouthpiece connector */}
-      <path d="M8 10 L10 12 L14 10" fill={filled ? "currentColor" : "none"} />
-      
-      {/* Large circular ring */}
-      <circle cx="17" cy="14" r="5" strokeWidth="1.8" />
-      
-      {/* Inner circle of ring */}
-      <circle cx="17" cy="14" r="3" />
+      {/* Lanyard loop */}
+      <circle cx="5" cy="7" r="1" />
+      <line x1="5" y1="7" x2="5" y2="8" />
     </svg>
   );
 };
