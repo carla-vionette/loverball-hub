@@ -14,26 +14,26 @@ const WhistleIcon = ({ className = "", filled = false }: WhistleIconProps) => {
       strokeLinejoin="round"
       className={className}
     >
-      {/* Main rectangular body - 3D isometric */}
-      <path d="M4 8 L10 4 L16 8 L16 12 L10 16 L4 12 Z" />
+      {/* Palm */}
+      <path d="M8 14 L8 18 C8 19.5 9 20 10 20 L14 20 C15 20 16 19.5 16 18 L16 14" />
       
-      {/* Front face detail */}
-      <path d="M4 8 L10 4 L10 16 L4 12 Z" fill={filled ? "currentColor" : "none"} />
+      {/* Thumb */}
+      <path d="M8 14 L7 12 L6 10 C5.5 9 6 8 7 8 C8 8 8.5 9 9 10 L9 12" />
       
-      {/* Air slot window */}
-      <rect x="6" y="9" width="2" height="4" rx="0.5" fill="currentColor" />
+      {/* Index finger */}
+      <path d="M9 12 L9 6 C9 5 9.5 4 10.5 4 C11.5 4 12 5 12 6 L12 12" />
       
-      {/* Curved connecting tube */}
-      <path d="M16 10 Q18 10 19 11 Q20 12 20 14" strokeWidth="2.5" />
+      {/* Middle finger */}
+      <path d="M12 12 L12 5 C12 4 12.5 3 13.5 3 C14.5 3 15 4 15 5 L15 12" />
       
-      {/* Circular ring (mouthpiece) */}
-      <circle cx="20" cy="16" r="3" strokeWidth="2" />
+      {/* Ring finger */}
+      <path d="M15 12 L15 6 C15 5 15.5 4 16.5 4 C17.5 4 18 5 18 6 L18 12" />
       
-      {/* Inner circle of ring */}
-      <circle cx="20" cy="16" r="1.5" fill="none" />
+      {/* Pinky finger */}
+      <path d="M18 12 L18 10 C18 9 18.5 8 19.5 8 C20.5 8 21 9 21 10 L21 14 C21 15 20 16 19 16 L16 16" />
       
-      {/* Small lanyard ring at top */}
-      <circle cx="14" cy="6" r="1.5" strokeWidth="1.5" />
+      {/* Wrist */}
+      <path d="M8 18 L8 20 C8 21 9 22 10 22 L14 22 C15 22 16 21 16 20 L16 18" />
     </svg>
   );
 };
