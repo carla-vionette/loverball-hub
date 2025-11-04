@@ -6,19 +6,19 @@ const MobileHeader = () => {
   const navigate = useNavigate();
 
   return (
-    <header className="md:hidden fixed top-0 left-0 right-0 bg-background border-b border-border z-40 px-4 py-2">
-      <div className="flex items-center gap-3">
+    <header className="md:hidden fixed top-0 left-0 right-0 bg-background border-b border-border z-40 px-3 py-1.5">
+      <div className="flex items-center gap-2">
         <Link to="/" className="flex items-center flex-shrink-0">
           <img 
             src={loverballLogo} 
             alt="Loverball" 
-            className="h-12 w-auto object-contain mix-blend-multiply dark:mix-blend-normal" 
+            className="h-10 w-auto object-contain mix-blend-multiply dark:mix-blend-normal" 
           />
         </Link>
         
         <button
           onClick={() => navigate('/search')}
-          className="flex-1 flex items-center gap-2 px-4 py-2 bg-muted rounded-full text-muted-foreground text-sm"
+          className="flex-1 flex items-center gap-2 px-3 py-1.5 bg-muted rounded-full text-muted-foreground text-sm"
         >
           <Search className="w-4 h-4" />
           <span>Search...</span>

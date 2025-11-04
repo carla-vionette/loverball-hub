@@ -69,7 +69,7 @@ const VideoPost = ({
       <video
         ref={videoRef}
         src={videoUrl}
-        className="h-full w-auto max-w-full md:max-h-screen object-contain mt-16 md:mt-0"
+        className="h-full w-auto max-w-full md:max-h-screen object-contain mt-14 md:mt-0"
         loop
         playsInline
         muted={muted}
@@ -78,7 +78,7 @@ const VideoPost = ({
       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
       
       {/* Video Info */}
-      <div className="absolute bottom-20 md:bottom-6 left-4 right-20 text-white z-10">
+      <div className="absolute bottom-32 md:bottom-6 left-4 right-20 text-white z-10">
         <div className="flex items-center gap-3 mb-3">
           <Avatar className="h-10 w-10 border-2 border-white">
             <AvatarImage src={userAvatar} />
