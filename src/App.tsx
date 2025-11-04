@@ -10,7 +10,6 @@ import Gather from "./pages/Gather";
 import Community from "./pages/Community";
 import Profile from "./pages/Profile";
 import Messages from "./pages/Messages";
-import Upload from "./pages/Upload";
 import Search from "./pages/Search";
 import Shop from "./pages/Shop";
 import ProductDetail from "./pages/ProductDetail";
@@ -32,7 +31,6 @@ const App = () => (
           <Route path="/community" element={<Community />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/messages" element={<Messages />} />
-          <Route path="/upload" element={<Upload />} />
           <Route path="/search" element={<Search />} />
           <Route path="/shop" element={<Shop />} />
           <Route path="/product/:handle" element={<ProductDetail />} />

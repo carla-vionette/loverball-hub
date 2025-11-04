@@ -2,7 +2,6 @@ import BottomNav from "@/components/BottomNav";
 import DesktopNav from "@/components/DesktopNav";
 import MobileHeader from "@/components/MobileHeader";
 import VideoPost from "@/components/VideoPost";
-import FloatingUploadButton from "@/components/FloatingUploadButton";
 
 const Local = () => {
   const localVideos = [
@@ -23,7 +22,6 @@ const Local = () => {
       <MobileHeader />
       <DesktopNav />
       <BottomNav />
-      <FloatingUploadButton />
       
       <main className="md:ml-64 snap-y snap-mandatory h-screen overflow-y-scroll">
         {localVideos.map((video) => (
