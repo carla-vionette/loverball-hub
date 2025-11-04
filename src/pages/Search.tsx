@@ -10,6 +10,7 @@ import colorCoverageVideo2 from "@/assets/color-coverage-video-2.mp4";
 import christineVideo from "@/assets/christine-video.mov";
 import playMeVideo from "@/assets/play-me-video.mp4";
 import risingStarsVideo from "@/assets/rising-stars-video.mp4";
+import matchPointVideo from "@/assets/match-point-video.mp4";
 import beyondCourt from "@/assets/beyond-court.jpg";
 import gameChangers from "@/assets/game-changers.jpg";
 import trainingDay from "@/assets/training-day.jpg";
@@ -82,6 +83,15 @@ const Search = () => {
     },
     {
       id: 3,
+      title: "Match Point",
+      image: matchPointVideo,
+      type: "video",
+      creator: "CourtSide",
+      views: "3.8M",
+      description: "Charlie and Katarina, two professional tennis players, find romance on and off the court as they compete in the biggest tournament of their careers.",
+    },
+    {
+      id: 4,
       title: "Coach's Corner",
       image: coachCorner,
       type: "image",
