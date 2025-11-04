@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Heart, MessageCircle, Share2, Volume2, VolumeX } from "lucide-react";
+import { Music, MessageCircle, Share2, Volume2, VolumeX } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 
@@ -69,8 +69,8 @@ const VideoPost = ({
           onClick={handleLike}
           className="flex flex-col items-center gap-1 transition-transform active:scale-90"
         >
-          <Heart
-            className={`w-8 h-8 ${liked ? "fill-red-500 text-red-500" : "text-white"}`}
+          <Music
+            className={`w-8 h-8 ${liked ? "fill-primary text-primary" : "text-white"}`}
           />
           <span className="text-white text-xs font-semibold">{likeCount}</span>
         </button>
