@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { MessageCircle, Share2, Volume2, VolumeX } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -28,6 +28,31 @@ const VideoPost = ({
   const [liked, setLiked] = useState(isLiked);
   const [likeCount, setLikeCount] = useState(likes);
   const [muted, setMuted] = useState(true);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            video.play();
+          } else {
+            video.pause();
+          }
+        });
+      },
+      { threshold: 0.5 }
+    );
+
+    observer.observe(video);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
 
   const handleLike = () => {
     if (liked) {
@@ -42,10 +67,10 @@ const VideoPost = ({
   return (
     <div className="relative h-screen w-full snap-start snap-always bg-black">
       <video
+        ref={videoRef}
         src={videoUrl}
         className="absolute top-16 md:top-0 bottom-0 left-0 right-0 w-full h-auto object-contain"
         loop
-        autoPlay
         playsInline
         muted={muted}
       />
