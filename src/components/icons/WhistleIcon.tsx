@@ -9,13 +9,34 @@ const WhistleIcon = ({ className = "", filled = false }: WhistleIconProps) => {
       viewBox="0 0 24 24"
       fill={filled ? "currentColor" : "none"}
       stroke="currentColor"
-      strokeWidth="2"
+      strokeWidth="1.5"
       strokeLinecap="round"
       strokeLinejoin="round"
       className={className}
     >
-      {/* Hand outline */}
-      <path d="M18 11 L18 8 C18 7 17.5 6 16.5 6 C15.5 6 15 7 15 8 L15 11 M15 11 L15 7 C15 6 14.5 5 13.5 5 C12.5 5 12 6 12 7 L12 11 M12 11 L12 6 C12 5 11.5 4 10.5 4 C9.5 4 9 5 9 6 L9 11 M9 11 L9 14 L9 16 C9 18 10 19 12 19 L14 19 C16 19 17 18 17 16 L17 14 L17 11 M9 11 L9 9 L8 8 C7.5 7.5 7 7.5 6.5 8 C6 8.5 6 9 6.5 9.5 L8 11 L9 12" />
+      {/* Main rectangular body - top face */}
+      <path d="M4 6 L12 3 L16 5 L8 8 Z" />
+      
+      {/* Left side face */}
+      <path d="M4 6 L4 10 L8 12 L8 8 Z" />
+      
+      {/* Right side face (visible) */}
+      <path d="M8 8 L16 5 L16 9 L8 12 Z" />
+      
+      {/* Bottom edge */}
+      <path d="M4 10 L8 12 L16 9" />
+      
+      {/* Air slot window on top */}
+      <rect x="9" y="5" width="2" height="3" rx="0.3" transform="rotate(-20 10 6.5)" />
+      
+      {/* Triangular mouthpiece connector */}
+      <path d="M8 10 L10 12 L14 10" fill={filled ? "currentColor" : "none"} />
+      
+      {/* Large circular ring */}
+      <circle cx="17" cy="14" r="5" strokeWidth="1.8" />
+      
+      {/* Inner circle of ring */}
+      <circle cx="17" cy="14" r="3" />
     </svg>
   );
 };
