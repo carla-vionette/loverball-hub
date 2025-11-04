@@ -7,38 +7,33 @@ const WhistleIcon = ({ className = "", filled = false }: WhistleIconProps) => {
   return (
     <svg
       viewBox="0 0 24 24"
-      fill="none"
+      fill={filled ? "currentColor" : "none"}
       stroke="currentColor"
-      strokeWidth="1.5"
+      strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
       className={className}
     >
-      {/* Main curved body outline */}
-      <path 
-        d="M4 18 C4 15 5 12 7 10 C8 9 10 8 12 8 L18 8 C19 8 20 7 20 6 L20 4 C20 3 19 2 18 2 L10 2 C9 2 8 3 8 4 L8 6 C8 7 7 8 6 8 C4 9 3 11 3 14 C3 17 4 19 6 20 L8 22"
-        fill={filled ? "currentColor" : "none"}
-      />
+      {/* Main rectangular body - 3D isometric */}
+      <path d="M4 8 L10 4 L16 8 L16 12 L10 16 L4 12 Z" />
       
-      {/* Inner circular chamber */}
-      <circle 
-        cx="11" 
-        cy="13" 
-        r="4" 
-        fill={filled ? "currentColor" : "none"}
-        strokeWidth="2"
-      />
+      {/* Front face detail */}
+      <path d="M4 8 L10 4 L10 16 L4 12 Z" fill={filled ? "currentColor" : "none"} />
       
-      {/* Small ball at bottom (lanyard attachment) */}
-      <circle 
-        cx="5" 
-        cy="20" 
-        r="1.5"
-        fill="currentColor"
-      />
+      {/* Air slot window */}
+      <rect x="6" y="9" width="2" height="4" rx="0.5" fill="currentColor" />
       
-      {/* Mouthpiece top rectangle */}
-      <path d="M10 2 L18 2 C19.5 2 20 3 20 4 L20 6 C20 7 19 8 18 8 L12 8" />
+      {/* Curved connecting tube */}
+      <path d="M16 10 Q18 10 19 11 Q20 12 20 14" strokeWidth="2.5" />
+      
+      {/* Circular ring (mouthpiece) */}
+      <circle cx="20" cy="16" r="3" strokeWidth="2" />
+      
+      {/* Inner circle of ring */}
+      <circle cx="20" cy="16" r="1.5" fill="none" />
+      
+      {/* Small lanyard ring at top */}
+      <circle cx="14" cy="6" r="1.5" strokeWidth="1.5" />
     </svg>
   );
 };
