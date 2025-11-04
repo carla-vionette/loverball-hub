@@ -14,14 +14,19 @@ const WhistleIcon = ({ className = "", filled = false }: WhistleIconProps) => {
       strokeLinejoin="round"
       className={className}
     >
-      {/* Whistle body */}
-      <circle cx="12" cy="12" r="6" />
-      {/* Whistle hole */}
-      <circle cx="12" cy="12" r="2" fill={filled ? "none" : "currentColor"} />
-      {/* Whistle mouthpiece */}
-      <path d="M18 12 L22 12" />
-      {/* Lanyard ring */}
-      <circle cx="7" cy="9" r="1.5" />
+      {/* Main whistle body - rounded rectangle */}
+      <path d="M4 10 L4 14 Q4 16 6 16 L14 16 Q16 16 16 14 L16 10 Q16 8 14 8 L6 8 Q4 8 4 10 Z" />
+      
+      {/* Mouthpiece */}
+      <path d="M16 10 L16 14 L19 14 L19 10 Z" />
+      
+      {/* Sound chamber holes */}
+      <circle cx="8" cy="12" r="1" fill="currentColor" />
+      <circle cx="12" cy="12" r="1" fill="currentColor" />
+      
+      {/* Lanyard attachment loop */}
+      <circle cx="6" cy="6" r="1.5" strokeWidth="1.5" />
+      <path d="M6 7.5 L6 8" strokeWidth="1.5" />
     </svg>
   );
 };
