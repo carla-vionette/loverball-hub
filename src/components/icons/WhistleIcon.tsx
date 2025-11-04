@@ -14,26 +14,8 @@ const WhistleIcon = ({ className = "", filled = false }: WhistleIconProps) => {
       strokeLinejoin="round"
       className={className}
     >
-      {/* Palm */}
-      <path d="M8 14 L8 18 C8 19.5 9 20 10 20 L14 20 C15 20 16 19.5 16 18 L16 14" />
-      
-      {/* Thumb */}
-      <path d="M8 14 L7 12 L6 10 C5.5 9 6 8 7 8 C8 8 8.5 9 9 10 L9 12" />
-      
-      {/* Index finger */}
-      <path d="M9 12 L9 6 C9 5 9.5 4 10.5 4 C11.5 4 12 5 12 6 L12 12" />
-      
-      {/* Middle finger */}
-      <path d="M12 12 L12 5 C12 4 12.5 3 13.5 3 C14.5 3 15 4 15 5 L15 12" />
-      
-      {/* Ring finger */}
-      <path d="M15 12 L15 6 C15 5 15.5 4 16.5 4 C17.5 4 18 5 18 6 L18 12" />
-      
-      {/* Pinky finger */}
-      <path d="M18 12 L18 10 C18 9 18.5 8 19.5 8 C20.5 8 21 9 21 10 L21 14 C21 15 20 16 19 16 L16 16" />
-      
-      {/* Wrist */}
-      <path d="M8 18 L8 20 C8 21 9 22 10 22 L14 22 C15 22 16 21 16 20 L16 18" />
+      {/* Hand outline */}
+      <path d="M18 11 L18 8 C18 7 17.5 6 16.5 6 C15.5 6 15 7 15 8 L15 11 M15 11 L15 7 C15 6 14.5 5 13.5 5 C12.5 5 12 6 12 7 L12 11 M12 11 L12 6 C12 5 11.5 4 10.5 4 C9.5 4 9 5 9 6 L9 11 M9 11 L9 14 L9 16 C9 18 10 19 12 19 L14 19 C16 19 17 18 17 16 L17 14 L17 11 M9 11 L9 9 L8 8 C7.5 7.5 7 7.5 6.5 8 C6 8.5 6 9 6.5 9.5 L8 11 L9 12" />
     </svg>
   );
 };
