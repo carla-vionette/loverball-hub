@@ -151,7 +151,7 @@ const Home = () => {
         <div className="container mx-auto py-12">
           <ContentCarousel title="Color & Coverage" items={unscriptedContent} />
           <ContentCarousel title="Drama" items={dramaContent} />
-          <ContentCarousel title="User Stories" items={userContent} />
+          <ContentCarousel title="Your Stories" items={userContent} />
         </div>
       </main>
     </div>
