@@ -3,6 +3,7 @@ import ContentCarousel from "@/components/ContentCarousel";
 import heroBanner from "@/assets/hero-banner.jpg";
 import heroVideo from "@/assets/hero-video.mov";
 import colorCoverageVideo from "@/assets/color-coverage-video.mp4";
+import colorCoverageVideo2 from "@/assets/color-coverage-video-2.mp4";
 import beyondCourt from "@/assets/beyond-court.jpg";
 import gameChangers from "@/assets/game-changers.jpg";
 import trainingDay from "@/assets/training-day.jpg";
@@ -29,30 +30,36 @@ const Home = () => {
     },
     {
       id: 2,
+      title: "Color & Coverage Video 2",
+      image: colorCoverageVideo2,
+      description: "Featured sports content",
+    },
+    {
+      id: 3,
       title: "Beyond the Court",
       image: beyondCourt,
       description: "Follow three WNBA players as they navigate life on and off the court",
     },
     {
-      id: 3,
+      id: 4,
       title: "Game Changers",
       image: gameChangers,
       description: "Documentary series celebrating women breaking barriers in sports",
     },
     {
-      id: 4,
+      id: 5,
       title: "Training Day",
       image: trainingDay,
       description: "Behind-the-scenes look at elite female athletes' training routines",
     },
     {
-      id: 5,
+      id: 6,
       title: "Rising Stars",
       image: risingStars,
       description: "Young female athletes pursuing their dreams in competitive sports",
     },
     {
-      id: 6,
+      id: 7,
       title: "Coach's Corner",
       image: coachCorner,
       description: "Conversations with pioneering women coaches changing the game",
