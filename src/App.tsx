@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Following from "./pages/Following";
 import Local from "./pages/Local";
+import Gather from "./pages/Gather";
 import Community from "./pages/Community";
 import Profile from "./pages/Profile";
 import Messages from "./pages/Messages";
@@ -24,6 +25,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/following" element={<Following />} />
+          <Route path="/gather" element={<Gather />} />
           <Route path="/local" element={<Local />} />
           <Route path="/community" element={<Community />} />
           <Route path="/profile" element={<Profile />} />
