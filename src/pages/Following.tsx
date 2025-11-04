@@ -4,7 +4,7 @@ import VideoPost from "@/components/VideoPost";
 import FloatingUploadButton from "@/components/FloatingUploadButton";
 import christineVideo from "@/assets/christine-video.mov";
 import colorCoverageVideo from "@/assets/color-coverage-video.mp4";
-import colorCoverageVideo2 from "@/assets/color-coverage-video-2.mp4";
+import playMeVideo from "@/assets/play-me-video.mp4";
 
 const Following = () => {
   const followingVideos = [
@@ -20,13 +20,13 @@ const Following = () => {
     },
     {
       id: 2,
-      videoUrl: christineVideo,
-      username: "thechristinewang",
+      videoUrl: playMeVideo,
+      username: "TeamDynamics",
       userAvatar: "",
-      caption: "Christine sharing her sports journey and inspiring others to stay active! 🏀⚽️ #SportsLife #Inspiration #WomenInSports",
-      likes: 3547,
-      comments: 234,
-      shares: 156,
+      caption: "Play Me - An inspiring story about teamwork and determination on the court! 🏀 #TeamSpirit #BasketballLife",
+      likes: 8924,
+      comments: 567,
+      shares: 423,
     },
     {
       id: 3,
