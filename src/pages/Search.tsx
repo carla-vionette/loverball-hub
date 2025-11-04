@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import colorCoverageVideo from "@/assets/color-coverage-video.mp4";
 import colorCoverageVideo2 from "@/assets/color-coverage-video-2.mp4";
+import christineVideo from "@/assets/christine-video.mov";
 import playMeVideo from "@/assets/play-me-video.mp4";
 import beyondCourt from "@/assets/beyond-court.jpg";
 import gameChangers from "@/assets/game-changers.jpg";
@@ -20,7 +21,7 @@ const Search = () => {
     {
       id: 1,
       title: "Christine's Sports Journey",
-      image: colorCoverageVideo2,
+      image: christineVideo,
       type: "video",
       creator: "thechristinewang",
       views: "3.5M",

@@ -2,13 +2,14 @@ import BottomNav from "@/components/BottomNav";
 import DesktopNav from "@/components/DesktopNav";
 import VideoPost from "@/components/VideoPost";
 import FloatingUploadButton from "@/components/FloatingUploadButton";
+import christineVideo from "@/assets/christine-video.mov";
 import colorCoverageVideo2 from "@/assets/color-coverage-video-2.mp4";
 
 const Following = () => {
   const followingVideos = [
     {
       id: 1,
-      videoUrl: colorCoverageVideo2,
+      videoUrl: christineVideo,
       username: "thechristinewang",
       userAvatar: "",
       caption: "Christine sharing her sports journey and inspiring others to stay active! 🏀⚽️ #SportsLife #Inspiration #WomenInSports",
