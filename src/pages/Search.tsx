@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Search as SearchIcon, X } from "lucide-react";
 import BottomNav from "@/components/BottomNav";
 import DesktopNav from "@/components/DesktopNav";
+import MobileHeader from "@/components/MobileHeader";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import colorCoverageVideo from "@/assets/color-coverage-video.mp4";
@@ -128,11 +129,12 @@ const Search = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <MobileHeader />
       <DesktopNav />
       <BottomNav />
       
       <main className="md:ml-64 pb-20 md:pb-8">
-        <div className="container mx-auto px-4 py-6">
+        <div className="container mx-auto px-4 pt-20 md:pt-6 py-6">
           {/* Search Bar */}
           <div className="mb-6">
             <div className="relative max-w-2xl mx-auto">

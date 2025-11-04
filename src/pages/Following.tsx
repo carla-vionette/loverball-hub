@@ -1,5 +1,6 @@
 import BottomNav from "@/components/BottomNav";
 import DesktopNav from "@/components/DesktopNav";
+import MobileHeader from "@/components/MobileHeader";
 import VideoPost from "@/components/VideoPost";
 import FloatingUploadButton from "@/components/FloatingUploadButton";
 import christineVideo from "@/assets/christine-video.mov";
@@ -53,6 +54,7 @@ const Following = () => {
 
   return (
     <div className="min-h-screen bg-black">
+      <MobileHeader />
       <DesktopNav />
       <BottomNav />
       <FloatingUploadButton />

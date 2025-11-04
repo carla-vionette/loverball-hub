@@ -1,5 +1,6 @@
 import BottomNav from "@/components/BottomNav";
 import DesktopNav from "@/components/DesktopNav";
+import MobileHeader from "@/components/MobileHeader";
 import VideoPost from "@/components/VideoPost";
 import FloatingUploadButton from "@/components/FloatingUploadButton";
 
@@ -19,6 +20,7 @@ const Local = () => {
 
   return (
     <div className="min-h-screen bg-black">
+      <MobileHeader />
       <DesktopNav />
       <BottomNav />
       <FloatingUploadButton />

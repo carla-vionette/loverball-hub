@@ -1,5 +1,6 @@
 import BottomNav from "@/components/BottomNav";
 import DesktopNav from "@/components/DesktopNav";
+import MobileHeader from "@/components/MobileHeader";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, MapPin, Users } from "lucide-react";
@@ -74,10 +75,11 @@ const Community = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <MobileHeader />
       <DesktopNav />
       <BottomNav />
       
-      <main className="md:ml-64 container mx-auto px-4 py-8 pb-20 md:pb-8">
+      <main className="md:ml-64 container mx-auto px-4 pt-20 md:pt-8 py-8 pb-20 md:pb-8">
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-foreground mb-2">Community Events</h1>
           <p className="text-lg text-muted-foreground">

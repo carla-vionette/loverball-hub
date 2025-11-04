@@ -1,5 +1,6 @@
 import BottomNav from "@/components/BottomNav";
 import DesktopNav from "@/components/DesktopNav";
+import MobileHeader from "@/components/MobileHeader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -47,10 +48,11 @@ const Profile = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <MobileHeader />
       <DesktopNav />
       <BottomNav />
       
-      <main className="md:ml-64 container mx-auto px-4 py-8 pb-20 md:pb-8">
+      <main className="md:ml-64 container mx-auto px-4 pt-20 md:pt-8 pb-20 md:pb-8">
         <div className="max-w-4xl mx-auto space-y-6">
           {/* Messages Button - Mobile Only */}
           <Button 

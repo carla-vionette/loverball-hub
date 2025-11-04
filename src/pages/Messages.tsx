@@ -1,5 +1,6 @@
 import BottomNav from "@/components/BottomNav";
 import DesktopNav from "@/components/DesktopNav";
+import MobileHeader from "@/components/MobileHeader";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -81,10 +82,11 @@ const Messages = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <MobileHeader />
       <DesktopNav />
       <BottomNav />
       
-      <main className="md:ml-64 container mx-auto px-4 py-8 pb-20 md:pb-8">
+      <main className="md:ml-64 container mx-auto px-4 pt-20 md:pt-8 pb-20 md:pb-8">
         <div className="max-w-6xl mx-auto">
           <h1 className="text-4xl font-bold text-foreground mb-6">Messages</h1>
           

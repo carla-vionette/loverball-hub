@@ -1,5 +1,6 @@
 import BottomNav from "@/components/BottomNav";
 import DesktopNav from "@/components/DesktopNav";
+import MobileHeader from "@/components/MobileHeader";
 import VideoPost from "@/components/VideoPost";
 import FloatingUploadButton from "@/components/FloatingUploadButton";
 import colorCoverageVideo from "@/assets/color-coverage-video.mp4";
@@ -41,6 +42,7 @@ const Home = () => {
   ];
   return (
     <div className="min-h-screen bg-black">
+      <MobileHeader />
       <DesktopNav />
       <BottomNav />
       <FloatingUploadButton />

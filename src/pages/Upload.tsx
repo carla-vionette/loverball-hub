@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Upload as UploadIcon, X } from "lucide-react";
 import BottomNav from "@/components/BottomNav";
 import DesktopNav from "@/components/DesktopNav";
+import MobileHeader from "@/components/MobileHeader";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
@@ -19,11 +20,12 @@ const Upload = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <MobileHeader />
       <DesktopNav />
       <BottomNav />
       
       <main className="md:ml-64 min-h-screen pb-20 md:pb-0">
-        <div className="container max-w-2xl mx-auto p-6">
+        <div className="container max-w-2xl mx-auto pt-20 md:pt-6 p-6">
           <h1 className="text-3xl font-bold mb-6">Upload Video</h1>
           
           <div className="space-y-6">
