@@ -19,6 +19,14 @@ const Search = () => {
   const unscriptedContent = [
     {
       id: 1,
+      title: "Christine's Sports Journey",
+      image: colorCoverageVideo2,
+      type: "video",
+      creator: "thechristinewang",
+      views: "3.5M",
+    },
+    {
+      id: 2,
       title: "Larissa on the Court",
       image: colorCoverageVideo,
       type: "video",
@@ -26,7 +34,7 @@ const Search = () => {
       views: "2.8M",
     },
     {
-      id: 2,
+      id: 3,
       title: "Beyond the Court",
       image: beyondCourt,
       type: "image",
@@ -34,7 +42,7 @@ const Search = () => {
       views: "1.2M",
     },
     {
-      id: 3,
+      id: 4,
       title: "Game Changers",
       image: gameChangers,
       type: "image",
@@ -42,7 +50,7 @@ const Search = () => {
       views: "890K",
     },
     {
-      id: 4,
+      id: 5,
       title: "Training Day",
       image: trainingDay,
       type: "image",
