@@ -9,29 +9,35 @@ const WhistleIcon = ({ className = "", filled = false }: WhistleIconProps) => {
       viewBox="0 0 24 24"
       fill={filled ? "currentColor" : "none"}
       stroke="currentColor"
-      strokeWidth="1.8"
+      strokeWidth="1.5"
       strokeLinecap="round"
       strokeLinejoin="round"
       className={className}
     >
-      {/* Main spherical chamber */}
-      <circle cx="9" cy="14" r="6" />
+      {/* Large circular chamber */}
+      <circle cx="10" cy="15" r="7" />
       
-      {/* Rectangular mouthpiece - angled perspective */}
-      <path d="M14 10 L21 7 L22 9 L15 12 Z" />
-      <path d="M14 10 L15 12 L22 9 L21 7 Z" />
+      {/* Diamond air vent on top left of chamber */}
+      <path d="M7 10 L9 8 L11 10 L9 12 Z" />
       
-      {/* Mouthpiece opening */}
-      <line x1="21" y1="7" x2="22" y2="9" />
+      {/* Rectangular mouthpiece - 3D perspective */}
+      {/* Top face */}
+      <path d="M13 8 L20 5 L22 6 L15 9 Z" />
+      {/* Side face */}
+      <path d="M15 9 L22 6 L22 8 L15 11 Z" />
+      {/* Bottom face */}
+      <path d="M13 10 L15 11 L15 9 L13 8 Z" />
       
-      {/* Air vent/grip diamond on top */}
-      <path d="M8 10 L10 8 L12 10 L10 12 Z" strokeWidth="1.5" />
+      {/* Mouthpiece opening end */}
+      <line x1="20" y1="5" x2="22" y2="6" />
+      <line x1="22" y1="6" x2="22" y2="8" />
       
-      {/* Connection between chamber and mouthpiece */}
-      <path d="M14 10 L14 12" />
+      {/* Connection strut from mouthpiece to chamber */}
+      <path d="M15 9 L13 11" />
+      <path d="M15 11 L13 13" />
       
-      {/* Lanyard hole */}
-      <circle cx="5" cy="11" r="1.5" />
+      {/* Small lanyard hole */}
+      <circle cx="4" cy="12" r="1.2" />
     </svg>
   );
 };
