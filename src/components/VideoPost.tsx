@@ -42,7 +42,7 @@ const VideoPost = ({
     <div className="relative h-screen w-full snap-start snap-always bg-black">
       <video
         src={videoUrl}
-        className="absolute inset-0 w-full h-full object-cover"
+        className="absolute top-16 md:top-0 bottom-0 left-0 right-0 w-full h-auto object-cover"
         loop
         autoPlay
         playsInline
