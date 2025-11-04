@@ -65,11 +65,11 @@ const VideoPost = ({
   };
 
   return (
-    <div className="relative h-screen w-full snap-start snap-always bg-black">
+    <div className="relative h-screen w-full snap-start snap-always bg-black flex items-center justify-center">
       <video
         ref={videoRef}
         src={videoUrl}
-        className="absolute top-16 md:top-0 bottom-0 left-0 right-0 w-full h-auto object-contain"
+        className="h-full w-auto max-w-full md:max-h-screen object-contain mt-16 md:mt-0"
         loop
         playsInline
         muted={muted}
