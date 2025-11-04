@@ -9,7 +9,7 @@ All colors MUST be HSL.
 @layer base {
   :root {
     /* Loverball Brand Colors */
-    --background: 215 33% 85%; /* #cbd4e2 - light blue-gray */
+    --background: 336 100% 70%; /* #FF66A1 - vibrant pink */
     --foreground: 12 46% 18%; /* #441a16 - dark chocolate brown */
 
     --card: 0 0% 100%;
