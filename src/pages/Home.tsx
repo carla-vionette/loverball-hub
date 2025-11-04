@@ -23,9 +23,9 @@ const Home = () => {
   const unscriptedContent = [
     {
       id: 1,
-      title: "Color & Coverage",
+      title: "Larissa on the Court",
       image: colorCoverageVideo,
-      description: "Featured video content showcasing women in sports",
+      description: "Larissa on the court with the Warriors.",
     },
     {
       id: 2,
