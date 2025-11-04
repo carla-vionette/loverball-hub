@@ -8,78 +8,78 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Loverball Brand Colors */
-    --background: 336 100% 70%; /* #FF66A1 - vibrant pink */
-    --foreground: 12 46% 18%; /* #441a16 - dark chocolate brown */
+    /* Loverball Red Color Palette */
+    --background: 8 100% 84%; /* #FFB3AB - soft pink tint */
+    --foreground: 6 100% 32%; /* #A30F00 - dark red */
 
     --card: 0 0% 100%;
-    --card-foreground: 12 46% 18%;
+    --card-foreground: 6 100% 32%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 12 46% 18%;
+    --popover-foreground: 6 100% 32%;
 
-    --primary: 357 75% 43%; /* #bc1c23 - vivid red */
+    --primary: 6 100% 42%; /* #D61500 - primary red */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 38 21% 31%; /* #6a5b3f - brown */
+    --secondary: 9 81% 50%; /* #E03A1C - medium red */
     --secondary-foreground: 0 0% 100%;
 
-    --muted: 215 33% 85%;
-    --muted-foreground: 12 46% 18%;
+    --muted: 8 100% 90%;
+    --muted-foreground: 6 100% 32%;
 
-    --accent: 65 84% 37%; /* #9fb50f - lime green */
-    --accent-foreground: 12 46% 18%;
+    --accent: 8 100% 69%; /* #FF7461 - light red */
+    --accent-foreground: 6 100% 32%;
 
-    --coral: 4 56% 60%; /* #d26059 - coral red */
+    --coral: 4 56% 60%;
     --coral-foreground: 0 0% 100%;
 
-    --pale-pink: 335 39% 72%; /* #cc93ab - pale pink-mauve */
-    --pale-pink-foreground: 12 46% 18%;
+    --pale-pink: 8 100% 84%;
+    --pale-pink-foreground: 6 100% 32%;
 
-    --medium-blue: 197 39% 48%; /* #4e8faa - medium blue */
+    --medium-blue: 197 39% 48%;
     --medium-blue-foreground: 0 0% 100%;
 
-    --olive: 75 13% 52%; /* #8a9373 - olive green */
+    --olive: 75 13% 52%;
     --olive-foreground: 0 0% 100%;
 
-    --light-lime: 64 70% 60%; /* #dbe554 - light yellow-green */
-    --light-lime-foreground: 12 46% 18%;
+    --light-lime: 64 70% 60%;
+    --light-lime-foreground: 6 100% 32%;
 
-    --destructive: 357 75% 43%;
+    --destructive: 6 100% 42%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 215 33% 75%;
-    --input: 215 33% 75%;
-    --ring: 357 75% 43%;
+    --border: 8 100% 75%;
+    --input: 8 100% 75%;
+    --ring: 6 100% 42%;
 
     --radius: 0.75rem;
   }
 
   .dark {
-    --background: 12 46% 18%;
-    --foreground: 215 33% 85%;
+    --background: 6 100% 32%; /* #A30F00 - dark red */
+    --foreground: 8 100% 84%; /* #FFB3AB - soft pink tint */
 
-    --card: 12 46% 20%;
-    --card-foreground: 215 33% 85%;
+    --card: 6 100% 35%;
+    --card-foreground: 8 100% 84%;
 
-    --popover: 12 46% 20%;
-    --popover-foreground: 215 33% 85%;
+    --popover: 6 100% 35%;
+    --popover-foreground: 8 100% 84%;
 
-    --primary: 357 75% 50%;
+    --primary: 9 81% 50%; /* #E03A1C - medium red */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 38 21% 35%;
-    --secondary-foreground: 215 33% 85%;
+    --secondary: 6 100% 42%;
+    --secondary-foreground: 0 0% 100%;
 
-    --muted: 12 46% 25%;
-    --muted-foreground: 215 33% 75%;
+    --muted: 6 100% 25%;
+    --muted-foreground: 8 100% 75%;
 
-    --accent: 65 84% 40%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 8 100% 69%; /* #FF7461 - light red */
+    --accent-foreground: 6 100% 32%;
 
-    --border: 12 46% 30%;
-    --input: 12 46% 30%;
-    --ring: 357 75% 50%;
+    --border: 6 100% 40%;
+    --input: 6 100% 40%;
+    --ring: 9 81% 50%;
   }
 }
 
