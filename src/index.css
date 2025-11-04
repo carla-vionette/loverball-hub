@@ -9,7 +9,7 @@ All colors MUST be HSL.
 @layer base {
   :root {
     /* Loverball Red Color Palette */
-    --background: 8 100% 84%; /* #FFB3AB - soft pink tint */
+    --background: 352 100% 92%; /* #FFD6DC - light pink */
     --foreground: 6 100% 32%; /* #A30F00 - dark red */
 
     --card: 0 0% 100%;
