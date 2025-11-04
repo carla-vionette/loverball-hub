@@ -26,7 +26,7 @@ const Home = () => {
       id: 1,
       title: "Larissa on the Court",
       image: colorCoverageVideo,
-      description: "Larissa on the court with the Warriors.",
+      description: "Larissa on the court with the Falcons.",
     },
     {
       id: 2,
