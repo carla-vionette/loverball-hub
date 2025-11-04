@@ -14,22 +14,8 @@ const WhistleIcon = ({ className = "", filled = false }: WhistleIconProps) => {
       strokeLinejoin="round"
       className={className}
     >
-      {/* Main whistle body */}
-      <rect x="3" y="8" width="10" height="6" rx="1" />
-      
-      {/* Mouthpiece hole */}
-      <rect x="5" y="10" width="2" height="2" rx="0.5" />
-      
-      {/* Curved connector */}
-      <path d="M13 11 Q15 11 16 12" />
-      
-      {/* Ring */}
-      <circle cx="18" cy="14" r="3" />
-      <circle cx="18" cy="14" r="1.5" />
-      
-      {/* Lanyard loop */}
-      <circle cx="5" cy="7" r="1" />
-      <line x1="5" y1="7" x2="5" y2="8" />
+      {/* Hand palm and fingers */}
+      <path d="M18 11V8c0-1-0.5-2-1.5-2S15 7 15 8v3m0 0V7c0-1-0.5-2-1.5-2S12 6 12 7v4m0 0V6c0-1-0.5-2-1.5-2S9 5 9 6v5m0 0v3c0 2 1 3 3 3h2c2 0 3-1 3-3v-3m-8 0V9l-1-1c-0.5-0.5-1-0.5-1.5 0s-0.5 1 0 1.5l1 1.5" />
     </svg>
   );
 };
