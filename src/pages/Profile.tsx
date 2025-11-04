@@ -3,9 +3,12 @@ import DesktopNav from "@/components/DesktopNav";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { MapPin, Calendar, Heart, Edit } from "lucide-react";
+import { MapPin, Calendar, Heart, Edit, MessageCircle } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const Profile = () => {
+  const navigate = useNavigate();
+  
   const favoriteTeams = [
     "Seattle Storm",
     "USWNT",
@@ -49,6 +52,16 @@ const Profile = () => {
       
       <main className="md:ml-64 container mx-auto px-4 py-8 pb-20 md:pb-8">
         <div className="max-w-4xl mx-auto space-y-6">
+          {/* Messages Button - Mobile Only */}
+          <Button 
+            onClick={() => navigate('/messages')}
+            className="w-full md:hidden flex items-center justify-center gap-2"
+            size="lg"
+          >
+            <MessageCircle className="w-5 h-5" />
+            Messages
+          </Button>
+
           {/* Profile Header */}
           <Card>
             <CardContent className="pt-6">
