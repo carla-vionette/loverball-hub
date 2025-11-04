@@ -69,6 +69,7 @@ const Search = () => {
       type: "video",
       creator: "TeamDynamics",
       views: "8.9M",
+      description: "A soccer team's journey to championship glory, exploring themes of teamwork, determination, and personal growth on and off the field.",
     },
     {
       id: 2,
@@ -77,6 +78,7 @@ const Search = () => {
       type: "video",
       creator: "YouthSports",
       views: "2.1M",
+      description: "Follow the next generation of basketball talent as young athletes train, compete, and chase their dreams of becoming professional players.",
     },
     {
       id: 3,
@@ -85,6 +87,7 @@ const Search = () => {
       type: "image",
       creator: "CoachLife",
       views: "1.5M",
+      description: "Behind-the-scenes insights from legendary coaches sharing their strategies, philosophies, and life lessons from decades in sports.",
     },
   ];
 
@@ -212,10 +215,10 @@ const Search = () => {
             </TabsContent>
 
             <TabsContent value="scripted" className="mt-0">
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {scriptedContent.map((item) => (
                   <div key={item.id} className="group cursor-pointer">
-                    <div className="relative aspect-[3/4] rounded-lg overflow-hidden bg-secondary mb-2">
+                    <div className="relative aspect-video rounded-lg overflow-hidden bg-secondary mb-3">
                       {item.type === "video" ? (
                         <video
                           src={item.image}
@@ -235,8 +238,9 @@ const Search = () => {
                         <p className="text-white text-xs font-semibold">{item.views} views</p>
                       </div>
                     </div>
-                    <h3 className="font-semibold text-sm line-clamp-2 mb-1">{item.title}</h3>
-                    <p className="text-xs text-muted-foreground">@{item.creator}</p>
+                    <h3 className="font-semibold text-lg mb-2">{item.title}</h3>
+                    <p className="text-sm text-muted-foreground mb-2 line-clamp-2">{item.description}</p>
+                    <p className="text-xs text-muted-foreground">by @{item.creator}</p>
                   </div>
                 ))}
               </div>
