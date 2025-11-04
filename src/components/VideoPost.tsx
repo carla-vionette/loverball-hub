@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { Music, MessageCircle, Share2, Volume2, VolumeX } from "lucide-react";
+import { MessageCircle, Share2, Volume2, VolumeX } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import WhistleIcon from "@/components/icons/WhistleIcon";
 
 interface VideoPostProps {
   videoUrl: string;
@@ -69,8 +70,9 @@ const VideoPost = ({
           onClick={handleLike}
           className="flex flex-col items-center gap-1 transition-transform active:scale-90"
         >
-          <Music
-            className={`w-8 h-8 ${liked ? "fill-primary text-primary" : "text-white"}`}
+          <WhistleIcon
+            className="w-8 h-8 text-white"
+            filled={liked}
           />
           <span className="text-white text-xs font-semibold">{likeCount}</span>
         </button>
