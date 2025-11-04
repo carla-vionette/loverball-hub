@@ -6,6 +6,7 @@ import christineVideo from "@/assets/christine-video.mov";
 import colorCoverageVideo from "@/assets/color-coverage-video.mp4";
 import playMeVideo from "@/assets/play-me-video.mp4";
 import risingStarsVideo from "@/assets/rising-stars-video.mp4";
+import matchPointVideo from "@/assets/match-point-video.mp4";
 
 const Following = () => {
   const followingVideos = [
@@ -31,6 +32,16 @@ const Following = () => {
     },
     {
       id: 3,
+      videoUrl: matchPointVideo,
+      username: "CourtSide",
+      userAvatar: "",
+      caption: "Match Point - Charlie and Katarina compete for love and glory on the tennis court 🎾❤️ #MatchPoint #Tennis #SportsRomance",
+      likes: 3842,
+      comments: 298,
+      shares: 176,
+    },
+    {
+      id: 4,
       videoUrl: playMeVideo,
       username: "TeamDynamics",
       userAvatar: "",
@@ -40,7 +51,7 @@ const Following = () => {
       shares: 423,
     },
     {
-      id: 4,
+      id: 5,
       videoUrl: christineVideo,
       username: "thechristinewang",
       userAvatar: "",

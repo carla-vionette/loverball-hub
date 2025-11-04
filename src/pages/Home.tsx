@@ -5,6 +5,7 @@ import VideoPost from "@/components/VideoPost";
 import colorCoverageVideo from "@/assets/color-coverage-video.mp4";
 import colorCoverageVideo2 from "@/assets/color-coverage-video-2.mp4";
 import playMeVideo from "@/assets/play-me-video.mp4";
+import matchPointVideo from "@/assets/match-point-video.mp4";
 
 const Home = () => {
   const videoFeed = [
@@ -30,6 +31,16 @@ const Home = () => {
     },
     {
       id: 3,
+      videoUrl: matchPointVideo,
+      username: "CourtSide",
+      userAvatar: "",
+      caption: "Match Point - Charlie and Katarina's epic tennis romance! 🎾❤️ #Tennis #Romance #MatchPoint",
+      likes: 3842,
+      comments: 298,
+      shares: 176,
+    },
+    {
+      id: 4,
       videoUrl: playMeVideo,
       username: "TeamDynamics",
       userAvatar: "",
