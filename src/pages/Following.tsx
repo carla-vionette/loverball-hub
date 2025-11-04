@@ -3,12 +3,23 @@ import DesktopNav from "@/components/DesktopNav";
 import VideoPost from "@/components/VideoPost";
 import FloatingUploadButton from "@/components/FloatingUploadButton";
 import christineVideo from "@/assets/christine-video.mov";
+import colorCoverageVideo from "@/assets/color-coverage-video.mp4";
 import colorCoverageVideo2 from "@/assets/color-coverage-video-2.mp4";
 
 const Following = () => {
   const followingVideos = [
     {
       id: 1,
+      videoUrl: colorCoverageVideo,
+      username: "Larissa_Bball",
+      userAvatar: "",
+      caption: "Larissa on the court with the Falcons. 🏀 #Basketball #Falcons #WomenInSports",
+      likes: 2847,
+      comments: 156,
+      shares: 89,
+    },
+    {
+      id: 2,
       videoUrl: christineVideo,
       username: "thechristinewang",
       userAvatar: "",
@@ -18,7 +29,7 @@ const Following = () => {
       shares: 156,
     },
     {
-      id: 2,
+      id: 3,
       videoUrl: colorCoverageVideo2,
       username: "FavoriteCreator",
       userAvatar: "",
