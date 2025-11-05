@@ -12,6 +12,16 @@ const Following = () => {
   const followingVideos = [
     {
       id: 1,
+      videoUrl: playMeVideo,
+      username: "TeamDynamics",
+      userAvatar: "",
+      caption: "Play Me - An inspiring story about teamwork and determination on the court! 🏀 #TeamSpirit #BasketballLife",
+      likes: 8924,
+      comments: 567,
+      shares: 423,
+    },
+    {
+      id: 2,
       videoUrl: risingStarsVideo,
       username: "YouthSports",
       userAvatar: "",
@@ -21,7 +31,7 @@ const Following = () => {
       shares: 189,
     },
     {
-      id: 2,
+      id: 3,
       videoUrl: colorCoverageVideo,
       username: "Larissa_Bball",
       userAvatar: "",
@@ -31,7 +41,7 @@ const Following = () => {
       shares: 89,
     },
     {
-      id: 3,
+      id: 4,
       videoUrl: matchPointVideo,
       username: "CourtSide",
       userAvatar: "",
@@ -39,16 +49,6 @@ const Following = () => {
       likes: 3842,
       comments: 298,
       shares: 176,
-    },
-    {
-      id: 4,
-      videoUrl: playMeVideo,
-      username: "TeamDynamics",
-      userAvatar: "",
-      caption: "Play Me - An inspiring story about teamwork and determination on the court! 🏀 #TeamSpirit #BasketballLife",
-      likes: 8924,
-      comments: 567,
-      shares: 423,
     },
     {
       id: 5,
