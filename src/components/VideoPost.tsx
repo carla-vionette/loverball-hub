@@ -27,7 +27,8 @@ const VideoPost = ({
 }: VideoPostProps) => {
   const [liked, setLiked] = useState(isLiked);
   const [likeCount, setLikeCount] = useState(likes);
-  const [muted, setMuted] = useState(false);
+  const [muted, setMuted] = useState(true);
+  const [isVisible, setIsVisible] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
@@ -38,9 +39,13 @@ const VideoPost = ({
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
+            setIsVisible(true);
             video.play();
+            setMuted(false);
           } else {
+            setIsVisible(false);
             video.pause();
+            setMuted(true);
           }
         });
       },
