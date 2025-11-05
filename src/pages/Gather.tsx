@@ -5,7 +5,12 @@ import MobileHeader from "@/components/MobileHeader";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import communityImg from "@/assets/community-event.jpg";
+import wnbaWatchParty from "@/assets/wnba-watch-party.jpg";
+import brunchBasketball from "@/assets/brunch-basketball.jpg";
+import sunsetVolleyball from "@/assets/sunset-volleyball.jpg";
+import fieldDay from "@/assets/field-day.jpg";
+import marchMadnessParty from "@/assets/march-madness-party.jpg";
+import brunchRunClub from "@/assets/brunch-run-club.jpg";
 
 const Gather = () => {
   const events = [
@@ -19,7 +24,7 @@ const Gather = () => {
       city: "Brooklyn, NY",
       attendees: 24,
       maxAttendees: 30,
-      image: communityImg,
+      image: wnbaWatchParty,
       hostAvatar: "",
       hostName: "Sarah M.",
     },
@@ -33,7 +38,7 @@ const Gather = () => {
       city: "Austin, TX",
       attendees: 12,
       maxAttendees: 15,
-      image: communityImg,
+      image: brunchBasketball,
       hostAvatar: "",
       hostName: "Emma J.",
     },
@@ -47,7 +52,7 @@ const Gather = () => {
       city: "Chicago, IL",
       attendees: 18,
       maxAttendees: 25,
-      image: communityImg,
+      image: sunsetVolleyball,
       hostAvatar: "",
       hostName: "Lisa C.",
     },
@@ -61,7 +66,7 @@ const Gather = () => {
       city: "Seattle, WA",
       attendees: 32,
       maxAttendees: 40,
-      image: communityImg,
+      image: fieldDay,
       hostAvatar: "",
       hostName: "Maya P.",
     },
@@ -75,7 +80,7 @@ const Gather = () => {
       city: "Denver, CO",
       attendees: 28,
       maxAttendees: 35,
-      image: communityImg,
+      image: marchMadnessParty,
       hostAvatar: "",
       hostName: "Rachel K.",
     },
@@ -89,7 +94,7 @@ const Gather = () => {
       city: "Portland, OR",
       attendees: 15,
       maxAttendees: 20,
-      image: communityImg,
+      image: brunchRunClub,
       hostAvatar: "",
       hostName: "Jenna T.",
     },
