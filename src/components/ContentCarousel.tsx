@@ -61,6 +61,7 @@ const ContentCarousel = ({ title, items }: ContentCarouselProps) => {
                       className="w-full h-full object-cover"
                       controls
                       playsInline
+                      muted
                     />
                   ) : (
                     <img

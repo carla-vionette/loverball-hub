@@ -28,6 +28,7 @@ const VideoPost = ({
   const [liked, setLiked] = useState(isLiked);
   const [likeCount, setLikeCount] = useState(likes);
   const [muted, setMuted] = useState(true);
+  const [hasInteracted, setHasInteracted] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
@@ -39,8 +40,17 @@ const VideoPost = ({
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             // Autoplay muted (required by mobile browsers)
-            video.play().catch(() => {
-              // If autoplay fails, retry muted
+            video.muted = true;
+            video.play().then(() => {
+              // After autoplay starts, try to unmute after a brief delay if user has interacted
+              if (hasInteracted) {
+                setTimeout(() => {
+                  video.muted = false;
+                  setMuted(false);
+                }, 100);
+              }
+            }).catch(() => {
+              // If autoplay fails, ensure it's muted and retry
               video.muted = true;
               video.play();
             });
@@ -57,7 +67,28 @@ const VideoPost = ({
     return () => {
       observer.disconnect();
     };
-  }, []);
+  }, [hasInteracted]);
+
+  // Handle first user interaction to enable unmuting
+  useEffect(() => {
+    const handleInteraction = () => {
+      setHasInteracted(true);
+      const video = videoRef.current;
+      if (video && !video.paused && muted) {
+        video.muted = false;
+        setMuted(false);
+      }
+    };
+
+    // Listen for any user interaction
+    window.addEventListener('touchstart', handleInteraction, { once: true });
+    window.addEventListener('click', handleInteraction, { once: true });
+
+    return () => {
+      window.removeEventListener('touchstart', handleInteraction);
+      window.removeEventListener('click', handleInteraction);
+    };
+  }, [muted]);
 
   const handleLike = () => {
     if (liked) {
