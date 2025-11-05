@@ -12,7 +12,7 @@ const MobileHeader = () => {
           <img 
             src={loverballLogo} 
             alt="Loverball" 
-            className="h-10 w-auto object-contain mix-blend-multiply dark:mix-blend-normal" 
+            className="h-14 w-auto object-contain mix-blend-multiply dark:mix-blend-normal" 
           />
         </Link>
         
