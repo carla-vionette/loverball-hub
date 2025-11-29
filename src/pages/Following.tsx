@@ -2,6 +2,7 @@ import BottomNav from "@/components/BottomNav";
 import DesktopNav from "@/components/DesktopNav";
 import MobileHeader from "@/components/MobileHeader";
 import VideoPost from "@/components/VideoPost";
+import StatsTicker from "@/components/StatsTicker";
 import christineVideo from "@/assets/christine-video.mov";
 import colorCoverageVideo from "@/assets/color-coverage-video.mp4";
 import playMeVideo from "@/assets/play-me-video.mp4";
@@ -67,6 +68,7 @@ const Following = () => {
       <MobileHeader />
       <DesktopNav />
       <BottomNav />
+      <StatsTicker />
       
       <main className="md:ml-64 snap-y snap-mandatory h-screen overflow-y-scroll">
         {followingVideos.length > 0 ? (
