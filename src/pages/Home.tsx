@@ -2,6 +2,7 @@ import BottomNav from "@/components/BottomNav";
 import DesktopNav from "@/components/DesktopNav";
 import MobileHeader from "@/components/MobileHeader";
 import VideoPost from "@/components/VideoPost";
+import StatsTicker from "@/components/StatsTicker";
 import colorCoverageVideo from "@/assets/color-coverage-video.mp4";
 import colorCoverageVideo2 from "@/assets/color-coverage-video-2.mp4";
 import playMeVideo from "@/assets/play-me-video.mp4";
@@ -55,6 +56,7 @@ const Home = () => {
       <MobileHeader />
       <DesktopNav />
       <BottomNav />
+      <StatsTicker />
       
       <main className="md:ml-64 snap-y snap-mandatory h-screen overflow-y-scroll">
         {videoFeed.map((video) => (
