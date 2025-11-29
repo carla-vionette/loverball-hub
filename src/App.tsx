@@ -24,7 +24,7 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Ticker />} />
+          <Route path="/" element={<Navigate to="/following" replace />} />
           <Route path="/following" element={<Following />} />
           <Route path="/gather" element={<Gather />} />
           <Route path="/local" element={<Local />} />
