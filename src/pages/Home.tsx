@@ -56,9 +56,11 @@ const Home = () => {
       <MobileHeader />
       <DesktopNav />
       <BottomNav />
-      <StatsTicker />
       
-      <main className="md:ml-64 snap-y snap-mandatory h-screen overflow-y-scroll">
+      <main className="md:ml-64 snap-y snap-mandatory h-screen overflow-y-scroll pt-20 md:pt-0">
+        <div className="snap-start">
+          <StatsTicker />
+        </div>
         {videoFeed.map((video) => (
           <VideoPost key={video.id} {...video} />
         ))}
