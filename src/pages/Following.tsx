@@ -69,10 +69,11 @@ const Following = () => {
       <DesktopNav />
       <BottomNav />
       
-      <main className="md:ml-64 snap-y snap-mandatory h-screen overflow-y-scroll pt-20 md:pt-0">
-        <div className="snap-start">
-          <StatsTicker />
-        </div>
+      <div className="fixed top-16 md:top-0 left-0 right-0 md:left-64 z-30">
+        <StatsTicker />
+      </div>
+      
+      <main className="md:ml-64 snap-y snap-mandatory h-screen overflow-y-scroll pt-[92px] md:pt-[48px]">
         {followingVideos.length > 0 ? (
           followingVideos.map((video) => (
             <VideoPost key={video.id} {...video} />
