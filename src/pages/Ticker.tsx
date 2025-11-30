@@ -9,10 +9,11 @@ const Ticker = () => {
       <MobileHeader />
       <DesktopNav />
       <BottomNav />
-      <StatsTicker />
       
-      <main className="md:ml-64 pb-20 pt-8 px-4">
-        <div className="max-w-4xl mx-auto">
+      <main className="md:ml-64 pb-20 pt-20 md:pt-8 px-4">
+        <StatsTicker />
+        
+        <div className="max-w-4xl mx-auto mt-8">
           <h1 className="text-4xl font-bold mb-4 text-foreground">Live Sports Stats</h1>
           <p className="text-muted-foreground mb-8">
             Real-time sports news, statistics, and game updates powered by AI
