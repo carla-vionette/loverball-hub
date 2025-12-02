@@ -13,7 +13,7 @@ const ComingSoon = () => {
         <img 
           src={loverballLogo} 
           alt="Loverball" 
-          className="w-80 md:w-96 mx-auto mb-4 object-contain"
+          className="w-80 md:w-96 mx-auto mb-2 object-contain"
         />
         
         <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4 tracking-tight">
