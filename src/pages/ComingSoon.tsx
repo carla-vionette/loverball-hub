@@ -25,20 +25,9 @@ const ComingSoon = () => {
           Watch parties, events, and exclusive content — all in one place.
         </p>
 
-        <div className="flex flex-col gap-4">
-          <a 
-            href="https://www.instagram.com/loverballclub/" 
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground px-6 py-3 rounded-full font-medium hover:bg-primary/90 transition-colors"
-          >
-            Follow us on Instagram
-          </a>
-          
-          <p className="text-sm text-muted-foreground">
-            Stay tuned for updates
-          </p>
-        </div>
+        <p className="text-sm text-muted-foreground">
+          Stay tuned for updates
+        </p>
       </div>
     </div>
   );
