@@ -25,9 +25,14 @@ const ComingSoon = () => {
           Watch parties, events, and exclusive content — all in one place.
         </p>
 
-        <p className="text-sm text-muted-foreground">
-          Stay tuned for updates
-        </p>
+        <a 
+          href="https://docs.google.com/forms/d/e/1FAIpQLSeAPig3Z27BLQHXHVKwMAFaLuBsV3OtTOnblPaDF27JWOR6XQ/viewform?usp=dialog" 
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground px-6 py-3 rounded-full font-medium hover:bg-primary/90 transition-colors"
+        >
+          Join the waitlist
+        </a>
       </div>
     </div>
   );
