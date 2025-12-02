@@ -14,7 +14,60 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      profiles: {
+        Row: {
+          age_range: string | null
+          bio: string | null
+          city: string | null
+          created_at: string
+          event_comfort_level: string | null
+          favorite_sports: string[] | null
+          favorite_teams_players: string[] | null
+          id: string
+          name: string
+          neighborhood: string | null
+          other_interests: string[] | null
+          participation_preferences: string[] | null
+          pronouns: string | null
+          sports_experience_types: string[] | null
+          updated_at: string
+        }
+        Insert: {
+          age_range?: string | null
+          bio?: string | null
+          city?: string | null
+          created_at?: string
+          event_comfort_level?: string | null
+          favorite_sports?: string[] | null
+          favorite_teams_players?: string[] | null
+          id: string
+          name: string
+          neighborhood?: string | null
+          other_interests?: string[] | null
+          participation_preferences?: string[] | null
+          pronouns?: string | null
+          sports_experience_types?: string[] | null
+          updated_at?: string
+        }
+        Update: {
+          age_range?: string | null
+          bio?: string | null
+          city?: string | null
+          created_at?: string
+          event_comfort_level?: string | null
+          favorite_sports?: string[] | null
+          favorite_teams_players?: string[] | null
+          id?: string
+          name?: string
+          neighborhood?: string | null
+          other_interests?: string[] | null
+          participation_preferences?: string[] | null
+          pronouns?: string | null
+          sports_experience_types?: string[] | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
