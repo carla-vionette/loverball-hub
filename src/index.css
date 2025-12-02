@@ -10,13 +10,13 @@ All colors MUST be HSL.
   :root {
     /* Loverball Red Color Palette */
     --background: 33 100% 98%; /* #FFFBF6 - warm off-white */
-    --foreground: 6 100% 32%; /* #A30F00 - dark red */
+    --foreground: 220 15% 20%; /* Dark charcoal - complementary neutral */
 
     --card: 0 0% 100%;
-    --card-foreground: 6 100% 32%;
+    --card-foreground: 220 15% 20%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 6 100% 32%;
+    --popover-foreground: 220 15% 20%;
 
     --primary: 6 100% 42%; /* #D61500 - primary red */
     --primary-foreground: 0 0% 100%;
@@ -25,16 +25,16 @@ All colors MUST be HSL.
     --secondary-foreground: 0 0% 100%;
 
     --muted: 8 100% 90%;
-    --muted-foreground: 6 100% 32%;
+    --muted-foreground: 220 10% 40%; /* Muted charcoal */
 
     --accent: 8 100% 69%; /* #FF7461 - light red */
-    --accent-foreground: 6 100% 32%;
+    --accent-foreground: 220 15% 20%;
 
     --coral: 4 56% 60%;
     --coral-foreground: 0 0% 100%;
 
     --pale-pink: 8 100% 84%;
-    --pale-pink-foreground: 6 100% 32%;
+    --pale-pink-foreground: 220 15% 20%;
 
     --medium-blue: 197 39% 48%;
     --medium-blue-foreground: 0 0% 100%;
@@ -43,7 +43,7 @@ All colors MUST be HSL.
     --olive-foreground: 0 0% 100%;
 
     --light-lime: 64 70% 60%;
-    --light-lime-foreground: 6 100% 32%;
+    --light-lime-foreground: 220 15% 20%;
 
     --destructive: 6 100% 42%;
     --destructive-foreground: 0 0% 100%;
