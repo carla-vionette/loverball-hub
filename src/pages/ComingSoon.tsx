@@ -20,9 +20,11 @@ const ComingSoon = () => {
           Coming Soon
         </h1>
         
-        <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
-          The premier community for women who love sports. 
-          Watch parties, events, and exclusive content — all in one place.
+        <p className="text-lg text-muted-foreground mb-4 leading-relaxed">
+          We are building a content + community platform for women who love sports.
+        </p>
+        <p className="text-base text-muted-foreground mb-8 leading-relaxed">
+          Hyperlocal at its core, Loverball's ethos is about building real-world circles of women who love sports—rooted in specific cities, neighborhoods, and teams, and tapped into local art, music, and culture—so fandom feels personal, place-based, and deeply connected to the communities women actually live in and shape.
         </p>
 
         <a 
