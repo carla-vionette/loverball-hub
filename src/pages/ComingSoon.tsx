@@ -1,4 +1,4 @@
-import loverballLogo from "@/assets/loverball-logo.png";
+import loverballLogo from "@/assets/loverball-logo-new.png";
 
 const ComingSoon = () => {
   return (
