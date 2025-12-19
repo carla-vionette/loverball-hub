@@ -1,1 +1,4 @@
 project_id = "nfjavjfxgxrpvieinpdp"
+
+[functions.la-sports-ticker]
+verify_jwt = false
