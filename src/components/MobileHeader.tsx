@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { Search } from "lucide-react";
-import loverballLogo from "@/assets/loverball-logo.png";
+import loverballLogo from "@/assets/loverball-logo-new.png";
 
 const MobileHeader = () => {
   const navigate = useNavigate();

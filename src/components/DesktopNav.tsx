@@ -1,6 +1,6 @@
 import { Home, Compass, MapPin, MessageCircle, User, Search, Calendar, ShoppingBag } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
-import loverbballLogo from "@/assets/loverball-logo.png";
+import loverbballLogo from "@/assets/loverball-logo-new.png";
 
 const DesktopNav = () => {
   const location = useLocation();
