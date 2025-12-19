@@ -16,6 +16,71 @@ interface LASportsTickerProps {
   refreshInterval?: number; // in seconds
 }
 
+// Team logo mapping using ESPN's public logo CDN
+const TEAM_LOGOS: Record<string, string> = {
+  // NBA
+  'lakers': 'https://a.espncdn.com/i/teamlogos/nba/500/lal.png',
+  'clippers': 'https://a.espncdn.com/i/teamlogos/nba/500/lac.png',
+  // WNBA
+  'sparks': 'https://a.espncdn.com/i/teamlogos/wnba/500/la.png',
+  // NFL
+  'rams': 'https://a.espncdn.com/i/teamlogos/nfl/500/lar.png',
+  'chargers': 'https://a.espncdn.com/i/teamlogos/nfl/500/lac.png',
+  // MLB
+  'dodgers': 'https://a.espncdn.com/i/teamlogos/mlb/500/lad.png',
+  'angels': 'https://a.espncdn.com/i/teamlogos/mlb/500/laa.png',
+  // NHL
+  'kings': 'https://a.espncdn.com/i/teamlogos/nhl/500/la.png',
+  'ducks': 'https://a.espncdn.com/i/teamlogos/nhl/500/ana.png',
+  // MLS
+  'galaxy': 'https://a.espncdn.com/i/teamlogos/soccer/500/179.png',
+  'lafc': 'https://a.espncdn.com/i/teamlogos/soccer/500/5765.png',
+  // NWSL
+  'angel city': 'https://a.espncdn.com/i/teamlogos/soccer/500/6926.png',
+  'wave': 'https://a.espncdn.com/i/teamlogos/soccer/500/6927.png',
+  // College - UCLA
+  'ucla': 'https://a.espncdn.com/i/teamlogos/ncaa/500/26.png',
+  'bruins': 'https://a.espncdn.com/i/teamlogos/ncaa/500/26.png',
+  // College - USC
+  'usc': 'https://a.espncdn.com/i/teamlogos/ncaa/500/30.png',
+  'trojans': 'https://a.espncdn.com/i/teamlogos/ncaa/500/30.png',
+  // College - Pepperdine
+  'pepperdine': 'https://a.espncdn.com/i/teamlogos/ncaa/500/2492.png',
+  'waves': 'https://a.espncdn.com/i/teamlogos/ncaa/500/2492.png',
+  // College - LMU
+  'lmu': 'https://a.espncdn.com/i/teamlogos/ncaa/500/2350.png',
+  'lions': 'https://a.espncdn.com/i/teamlogos/ncaa/500/2350.png',
+  // College - Cal State Fullerton
+  'fullerton': 'https://a.espncdn.com/i/teamlogos/ncaa/500/2239.png',
+  'titans': 'https://a.espncdn.com/i/teamlogos/ncaa/500/2239.png',
+  // College - CSUN
+  'csun': 'https://a.espncdn.com/i/teamlogos/ncaa/500/2463.png',
+  'matadors': 'https://a.espncdn.com/i/teamlogos/ncaa/500/2463.png',
+  // College - Long Beach State
+  'long beach': 'https://a.espncdn.com/i/teamlogos/ncaa/500/299.png',
+  'beach': 'https://a.espncdn.com/i/teamlogos/ncaa/500/299.png',
+  // College - UC Irvine
+  'uc irvine': 'https://a.espncdn.com/i/teamlogos/ncaa/500/300.png',
+  'anteaters': 'https://a.espncdn.com/i/teamlogos/ncaa/500/300.png',
+};
+
+function getTeamLogosFromText(text: string): string[] {
+  const textLower = text.toLowerCase();
+  const logos: string[] = [];
+  
+  // Check for team mentions in the text
+  for (const [teamKey, logoUrl] of Object.entries(TEAM_LOGOS)) {
+    if (textLower.includes(teamKey)) {
+      if (!logos.includes(logoUrl)) {
+        logos.push(logoUrl);
+      }
+    }
+  }
+  
+  // Return max 2 logos (home and away team)
+  return logos.slice(0, 2);
+}
+
 const LASportsTicker = ({ 
   position = "top",
   refreshInterval = 30 
@@ -113,21 +178,48 @@ const LASportsTicker = ({
       />
       
       {/* Ticker Bar */}
-      <div className="bg-primary py-3 overflow-hidden">
+      <div className="bg-primary py-2 overflow-hidden">
         <div className="ticker-wrapper">
           <div 
             className="ticker-content"
             style={{ animationPlayState: isPaused ? 'paused' : 'running' }}
           >
-            {displayItems.map((item, index) => (
-              <span 
-                key={index} 
-                className="ticker-item text-primary-foreground font-medium px-8 whitespace-nowrap"
-              >
-                {item}
-                <span className="mx-4 text-primary-foreground/50">•</span>
-              </span>
-            ))}
+            {displayItems.map((item, index) => {
+              const logos = getTeamLogosFromText(item);
+              const isHeadline = item.startsWith('HEADLINE:');
+              
+              return (
+                <span 
+                  key={index} 
+                  className="ticker-item text-primary-foreground font-medium px-6 whitespace-nowrap inline-flex items-center gap-2"
+                >
+                  {/* Team logos */}
+                  {logos.length > 0 && !isHeadline && (
+                    <span className="flex items-center gap-1">
+                      {logos.map((logo, logoIndex) => (
+                        <img
+                          key={logoIndex}
+                          src={logo}
+                          alt=""
+                          className="w-6 h-6 object-contain rounded-sm bg-white/10 p-0.5"
+                          onError={(e) => {
+                            // Hide broken images
+                            (e.target as HTMLImageElement).style.display = 'none';
+                          }}
+                        />
+                      ))}
+                    </span>
+                  )}
+                  
+                  {/* Ticker text */}
+                  <span className={isHeadline ? 'italic' : ''}>
+                    {item}
+                  </span>
+                  
+                  <span className="mx-4 text-primary-foreground/50">•</span>
+                </span>
+              );
+            })}
           </div>
         </div>
       </div>
@@ -153,10 +245,12 @@ const LASportsTicker = ({
           display: inline-flex;
           animation: ticker-scroll 45s linear infinite;
           white-space: nowrap;
+          align-items: center;
         }
         
         .ticker-item {
-          display: inline-block;
+          display: inline-flex;
+          align-items: center;
         }
         
         @keyframes ticker-scroll {
