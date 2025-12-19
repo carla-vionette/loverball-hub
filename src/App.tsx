@@ -26,7 +26,8 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Navigate to="/following" replace />} />
+          <Route path="/" element={<Navigate to="/ticker" replace />} />
+          <Route path="/ticker" element={<Ticker />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/onboarding" element={<Onboarding />} />
           <Route path="/following" element={<Following />} />
