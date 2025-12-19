@@ -2,7 +2,7 @@ import BottomNav from "@/components/BottomNav";
 import DesktopNav from "@/components/DesktopNav";
 import MobileHeader from "@/components/MobileHeader";
 import VideoPost from "@/components/VideoPost";
-import StatsTicker from "@/components/StatsTicker";
+import LASportsTicker from "@/components/LASportsTicker";
 import christineVideo from "@/assets/christine-video.mov";
 import colorCoverageVideo from "@/assets/color-coverage-video.mp4";
 import playMeVideo from "@/assets/play-me-video.mp4";
@@ -70,7 +70,7 @@ const Following = () => {
       <BottomNav />
       
       <div className="fixed top-16 md:top-0 left-0 right-0 md:left-64 z-30">
-        <StatsTicker />
+        <LASportsTicker />
       </div>
       
       <main className="md:ml-64 snap-y snap-mandatory h-screen overflow-y-scroll pt-[92px] md:pt-[48px]">
