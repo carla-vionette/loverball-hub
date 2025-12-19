@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import loverballLogo from "@/assets/loverball-logo.png";
+import loverballLogo from "@/assets/loverball-logo-new.png";
 
 const Auth = () => {
   const [isSignUp, setIsSignUp] = useState(false);

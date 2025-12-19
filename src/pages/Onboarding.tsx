@@ -27,7 +27,7 @@ import {
   PARTICIPATION_OPTIONS,
 } from "@/lib/onboardingOptions";
 import { X } from "lucide-react";
-import loverballLogo from "@/assets/loverball-logo.png";
+import loverballLogo from "@/assets/loverball-logo-new.png";
 
 const Onboarding = () => {
   const [step, setStep] = useState(1);
