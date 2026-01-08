@@ -1,17 +1,26 @@
-import { Home, Compass, MapPin, MessageCircle, User, Search, Calendar } from "lucide-react";
+import { Home, Compass, MapPin, MessageCircle, User, Search, Calendar, Users, CalendarDays, Settings } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import loverbballLogo from "@/assets/loverball-logo-new.png";
+import { useAuth } from "@/hooks/useAuth";
 
 const DesktopNav = () => {
   const location = useLocation();
+  const { isMember, isAdmin } = useAuth();
   
   const navItems = [
     { icon: Home, label: "Following", path: "/following" },
     { icon: Compass, label: "For You", path: "/" },
+    { icon: CalendarDays, label: "Events", path: "/events" },
     { icon: Calendar, label: "Gather", path: "/gather" },
     { icon: MapPin, label: "Local", path: "/local" },
-    { icon: MessageCircle, label: "Inbox", path: "/messages" },
+    ...(isMember ? [
+      { icon: Users, label: "Members", path: "/members" },
+      { icon: MessageCircle, label: "Messages", path: "/messages" },
+    ] : []),
     { icon: User, label: "Profile", path: "/profile" },
+    ...(isAdmin ? [
+      { icon: Settings, label: "Admin", path: "/admin" },
+    ] : []),
   ];
 
   return (
@@ -20,7 +29,7 @@ const DesktopNav = () => {
         <img src={loverbballLogo} alt="Loverball" className="h-28 w-auto object-contain mix-blend-multiply dark:mix-blend-normal" />
       </div>
       
-      <nav className="flex-1 py-4">
+      <nav className="flex-1 py-4 overflow-y-auto">
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive = location.pathname === item.path;
