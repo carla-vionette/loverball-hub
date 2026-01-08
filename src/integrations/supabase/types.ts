@@ -14,6 +14,249 @@ export type Database = {
   }
   public: {
     Tables: {
+      chats: {
+        Row: {
+          created_at: string
+          id: string
+          match_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          match_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          match_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chats_match_id_fkey"
+            columns: ["match_id"]
+            isOneToOne: true
+            referencedRelation: "matches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      event_rsvps: {
+        Row: {
+          created_at: string
+          event_id: string
+          id: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          event_id: string
+          id?: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          event_id?: string
+          id?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_rsvps_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      events: {
+        Row: {
+          capacity: number | null
+          city: string | null
+          created_at: string
+          description: string | null
+          event_date: string
+          event_time: string | null
+          event_type: string | null
+          host_user_id: string | null
+          id: string
+          image_url: string | null
+          sport_tags: string[] | null
+          title: string
+          updated_at: string
+          venue_name: string | null
+          visibility: string
+        }
+        Insert: {
+          capacity?: number | null
+          city?: string | null
+          created_at?: string
+          description?: string | null
+          event_date: string
+          event_time?: string | null
+          event_type?: string | null
+          host_user_id?: string | null
+          id?: string
+          image_url?: string | null
+          sport_tags?: string[] | null
+          title: string
+          updated_at?: string
+          venue_name?: string | null
+          visibility?: string
+        }
+        Update: {
+          capacity?: number | null
+          city?: string | null
+          created_at?: string
+          description?: string | null
+          event_date?: string
+          event_time?: string | null
+          event_type?: string | null
+          host_user_id?: string | null
+          id?: string
+          image_url?: string | null
+          sport_tags?: string[] | null
+          title?: string
+          updated_at?: string
+          venue_name?: string | null
+          visibility?: string
+        }
+        Relationships: []
+      }
+      invites: {
+        Row: {
+          code: string
+          created_at: string
+          created_by_user_id: string | null
+          expires_at: string | null
+          id: string
+          max_uses: number | null
+          used_count: number | null
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          created_by_user_id?: string | null
+          expires_at?: string | null
+          id?: string
+          max_uses?: number | null
+          used_count?: number | null
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          created_by_user_id?: string | null
+          expires_at?: string | null
+          id?: string
+          max_uses?: number | null
+          used_count?: number | null
+        }
+        Relationships: []
+      }
+      matches: {
+        Row: {
+          created_at: string
+          id: string
+          status: string
+          user_a_id: string
+          user_b_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          status?: string
+          user_a_id: string
+          user_b_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          status?: string
+          user_a_id?: string
+          user_b_id?: string
+        }
+        Relationships: []
+      }
+      member_applications: {
+        Row: {
+          created_at: string
+          email: string | null
+          id: string
+          instagram_or_linkedin_url: string | null
+          name: string
+          reviewed_by_user_id: string | null
+          role_title: string | null
+          status: string
+          updated_at: string
+          user_id: string | null
+          why_join: string | null
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          instagram_or_linkedin_url?: string | null
+          name: string
+          reviewed_by_user_id?: string | null
+          role_title?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string | null
+          why_join?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          instagram_or_linkedin_url?: string | null
+          name?: string
+          reviewed_by_user_id?: string | null
+          role_title?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string | null
+          why_join?: string | null
+        }
+        Relationships: []
+      }
+      messages: {
+        Row: {
+          chat_id: string
+          content: string
+          created_at: string
+          id: string
+          read_at: string | null
+          sender_id: string
+        }
+        Insert: {
+          chat_id: string
+          content: string
+          created_at?: string
+          id?: string
+          read_at?: string | null
+          sender_id: string
+        }
+        Update: {
+          chat_id?: string
+          content?: string
+          created_at?: string
+          id?: string
+          read_at?: string | null
+          sender_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messages_chat_id_fkey"
+            columns: ["chat_id"]
+            isOneToOne: false
+            referencedRelation: "chats"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           age_range: string | null
@@ -21,16 +264,27 @@ export type Database = {
           city: string | null
           created_at: string
           event_comfort_level: string | null
+          favorite_la_teams: string[] | null
           favorite_sports: string[] | null
           favorite_teams_players: string[] | null
           id: string
+          industries: string[] | null
+          instagram_url: string | null
+          interested_in_la28: boolean | null
+          interested_in_world_cup_la: boolean | null
+          linkedin_url: string | null
+          looking_for_tags: string[] | null
           name: string
           neighborhood: string | null
           other_interests: string[] | null
           participation_preferences: string[] | null
+          primary_role: string | null
+          profile_photo_url: string | null
           pronouns: string | null
           sports_experience_types: string[] | null
+          tiktok_url: string | null
           updated_at: string
+          website_url: string | null
         }
         Insert: {
           age_range?: string | null
@@ -38,16 +292,27 @@ export type Database = {
           city?: string | null
           created_at?: string
           event_comfort_level?: string | null
+          favorite_la_teams?: string[] | null
           favorite_sports?: string[] | null
           favorite_teams_players?: string[] | null
           id: string
+          industries?: string[] | null
+          instagram_url?: string | null
+          interested_in_la28?: boolean | null
+          interested_in_world_cup_la?: boolean | null
+          linkedin_url?: string | null
+          looking_for_tags?: string[] | null
           name: string
           neighborhood?: string | null
           other_interests?: string[] | null
           participation_preferences?: string[] | null
+          primary_role?: string | null
+          profile_photo_url?: string | null
           pronouns?: string | null
           sports_experience_types?: string[] | null
+          tiktok_url?: string | null
           updated_at?: string
+          website_url?: string | null
         }
         Update: {
           age_range?: string | null
@@ -55,16 +320,108 @@ export type Database = {
           city?: string | null
           created_at?: string
           event_comfort_level?: string | null
+          favorite_la_teams?: string[] | null
           favorite_sports?: string[] | null
           favorite_teams_players?: string[] | null
           id?: string
+          industries?: string[] | null
+          instagram_url?: string | null
+          interested_in_la28?: boolean | null
+          interested_in_world_cup_la?: boolean | null
+          linkedin_url?: string | null
+          looking_for_tags?: string[] | null
           name?: string
           neighborhood?: string | null
           other_interests?: string[] | null
           participation_preferences?: string[] | null
+          primary_role?: string | null
+          profile_photo_url?: string | null
           pronouns?: string | null
           sports_experience_types?: string[] | null
+          tiktok_url?: string | null
           updated_at?: string
+          website_url?: string | null
+        }
+        Relationships: []
+      }
+      sports_ticker_items: {
+        Row: {
+          created_at: string
+          id: string
+          is_active: boolean | null
+          item_type: string
+          link_url: string | null
+          published_at: string | null
+          starts_at: string | null
+          tag: string | null
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          item_type: string
+          link_url?: string | null
+          published_at?: string | null
+          starts_at?: string | null
+          tag?: string | null
+          title: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          item_type?: string
+          link_url?: string | null
+          published_at?: string | null
+          starts_at?: string | null
+          tag?: string | null
+          title?: string
+        }
+        Relationships: []
+      }
+      swipes: {
+        Row: {
+          created_at: string
+          direction: string
+          id: string
+          swiper_id: string
+          target_user_id: string
+        }
+        Insert: {
+          created_at?: string
+          direction: string
+          id?: string
+          swiper_id: string
+          target_user_id: string
+        }
+        Update: {
+          created_at?: string
+          direction?: string
+          id?: string
+          swiper_id?: string
+          target_user_id?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
         }
         Relationships: []
       }
@@ -73,10 +430,16 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "pending" | "member" | "admin"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -203,6 +566,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["pending", "member", "admin"],
+    },
   },
 } as const
