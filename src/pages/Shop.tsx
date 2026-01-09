@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import Navigation from "@/components/Navigation";
+import DesktopNav from "@/components/DesktopNav";
+import BottomNav from "@/components/BottomNav";
+import MobileHeader from "@/components/MobileHeader";
 import { CartDrawer } from "@/components/CartDrawer";
 import { getProducts, ShopifyProduct } from "@/lib/shopify";
 import { Button } from "@/components/ui/button";
@@ -49,10 +51,11 @@ const Shop = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background pb-20 md:pb-0">
-      <Navigation />
+    <div className="min-h-screen bg-background pb-20 md:pb-0 md:pl-64">
+      <DesktopNav />
+      <MobileHeader />
       
-      <main className="container mx-auto px-4 pt-24 md:pt-28">
+      <main className="container mx-auto px-4 py-6">
         <div className="flex justify-between items-center mb-8">
           <div>
             <h1 className="text-4xl font-bold mb-2">Boutique</h1>
@@ -123,6 +126,8 @@ const Shop = () => {
           </div>
         )}
       </main>
+      
+      <BottomNav />
     </div>
   );
 };
