@@ -1,4 +1,4 @@
-import { Home, Compass, MapPin, MessageCircle, User, Search, Calendar, Users, CalendarDays, Settings } from "lucide-react";
+import { Home, Compass, MapPin, MessageCircle, User, Search, Calendar, Users, CalendarDays, Settings, ShoppingBag } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import loverbballLogo from "@/assets/loverball-logo-new.png";
 import { useAuth } from "@/hooks/useAuth";
@@ -13,6 +13,7 @@ const DesktopNav = () => {
     { icon: CalendarDays, label: "Events", path: "/events" },
     { icon: Calendar, label: "Gather", path: "/gather" },
     { icon: MapPin, label: "Local", path: "/local" },
+    { icon: ShoppingBag, label: "Shop", path: "/shop" },
     ...(isMember ? [
       { icon: Users, label: "Members", path: "/members" },
       { icon: MessageCircle, label: "Messages", path: "/messages" },
