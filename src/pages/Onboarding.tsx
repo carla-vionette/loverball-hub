@@ -40,7 +40,6 @@ const Onboarding = () => {
   const [name, setName] = useState("");
   const [pronouns, setPronouns] = useState("");
   const [city, setCity] = useState("");
-  const [neighborhood, setNeighborhood] = useState("");
   const [ageRange, setAgeRange] = useState("");
   const [favoriteSports, setFavoriteSports] = useState<string[]>([]);
   const [teamsInput, setTeamsInput] = useState("");
@@ -88,7 +87,7 @@ const Onboarding = () => {
     const sportsList = favoriteSports.slice(0, 2).join(" & ");
     const interestsList = interests.slice(0, 2).join(", ");
     const teamText = favTeams[0] ? `${favTeams[0]} fan` : `${sportsList} enthusiast`;
-    const locationText = neighborhood ? `in ${neighborhood}` : city ? `in ${city}` : "";
+    const locationText = city ? `in ${city}` : "";
     
     return `${teamText} ${locationText} who loves ${sportsList}${interestsList ? `, ${interestsList},` : ''} and connecting with fellow sports fans.`;
   };
@@ -105,7 +104,6 @@ const Onboarding = () => {
         name,
         pronouns,
         city,
-        neighborhood,
         age_range: ageRange,
         favorite_sports: favoriteSports,
         favorite_teams_players: favTeams,
@@ -138,7 +136,7 @@ const Onboarding = () => {
   const canProceed = () => {
     switch (step) {
       case 1:
-        return name.trim() && city && neighborhood.trim();
+        return name.trim() && city;
       case 2:
         return ageRange && favoriteSports.length > 0;
       case 3:
@@ -212,16 +210,6 @@ const Onboarding = () => {
                     ))}
                   </SelectContent>
                 </Select>
-              </div>
-
-              <div>
-                <Label htmlFor="neighborhood">Neighborhood *</Label>
-                <Input
-                  id="neighborhood"
-                  value={neighborhood}
-                  onChange={(e) => setNeighborhood(e.target.value)}
-                  placeholder="e.g., Echo Park, Brooklyn, Mission District"
-                />
               </div>
             </div>
           )}
