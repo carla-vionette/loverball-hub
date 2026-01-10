@@ -1,7 +1,5 @@
-const SHOPIFY_API_VERSION = '2025-07';
-const SHOPIFY_STORE_PERMANENT_DOMAIN = 'loverball-hub-xfpsa.myshopify.com';
-const SHOPIFY_STOREFRONT_URL = `https://${SHOPIFY_STORE_PERMANENT_DOMAIN}/api/${SHOPIFY_API_VERSION}/graphql.json`;
-const SHOPIFY_STOREFRONT_TOKEN = '8909ac75d255d9dfaa490e72aa5be19d';
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 export interface ShopifyProduct {
   node: {
@@ -188,29 +186,27 @@ const CART_CREATE_MUTATION = `
 `;
 
 export async function storefrontApiRequest(query: string, variables: any = {}) {
-  const response = await fetch(SHOPIFY_STOREFRONT_URL, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-Shopify-Storefront-Access-Token': SHOPIFY_STOREFRONT_TOKEN
-    },
-    body: JSON.stringify({
-      query,
-      variables,
-    }),
+  const { data, error } = await supabase.functions.invoke('shopify-proxy', {
+    body: { query, variables },
   });
 
-  if (response.status === 402) {
+  if (error) {
+    console.error('Shopify proxy error:', error);
+    throw new Error(error.message || 'Failed to connect to Shopify');
+  }
+
+  if (data?.paymentRequired) {
+    toast.error("Shopify: Payment required", {
+      description: "Shopify API access requires an active Shopify billing plan. Visit https://admin.shopify.com to upgrade.",
+    });
     throw new Error("Shopify API access requires an active Shopify billing plan.");
   }
 
-  if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
+  if (data?.error) {
+    throw new Error(data.error);
   }
 
-  const data = await response.json();
-  
-  if (data.errors) {
+  if (data?.errors) {
     throw new Error(`Error calling Shopify: ${data.errors.map((e: any) => e.message).join(', ')}`);
   }
 
