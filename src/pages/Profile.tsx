@@ -5,7 +5,7 @@ import { MapPin, Edit, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useToast } from "@/hooks/use-toast";
 import MobileHeader from "@/components/MobileHeader";
 import DesktopNav from "@/components/DesktopNav";
@@ -24,6 +24,7 @@ type Profile = {
   event_comfort_level: string | null;
   participation_preferences: string[] | null;
   bio: string | null;
+  profile_photo_url: string | null;
 };
 
 const Profile = () => {
@@ -102,6 +103,9 @@ const Profile = () => {
             <CardContent className="pt-6">
               <div className="flex items-start gap-4">
                 <Avatar className="w-20 h-20">
+                  {profile.profile_photo_url ? (
+                    <AvatarImage src={profile.profile_photo_url} alt={profile.name} className="object-cover" />
+                  ) : null}
                   <AvatarFallback className="bg-primary text-primary-foreground text-2xl">
                     {initials}
                   </AvatarFallback>
