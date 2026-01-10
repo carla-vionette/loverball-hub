@@ -26,60 +26,31 @@ const Invite = () => {
     setLoading(true);
 
     try {
-      // Check if invite code is valid
-      const { data: invite, error: fetchError } = await supabase
-        .from('invites')
-        .select('*')
-        .eq('code', inviteCode.toUpperCase().trim())
-        .maybeSingle();
+      // Use the secure database function to validate and consume the invite
+      const { data, error } = await supabase.rpc('validate_and_use_invite', {
+        invite_code: inviteCode.trim()
+      });
 
-      if (fetchError) throw fetchError;
+      if (error) throw error;
 
-      if (!invite) {
+      const result = data as { success: boolean; error?: string };
+
+      if (!result.success) {
+        const errorMessages: Record<string, string> = {
+          'Not authenticated': 'Please sign in first.',
+          'Already a member': 'You are already a member!',
+          'Invalid code': 'This invite code does not exist.',
+          'Code expired': 'This invite code has expired.',
+          'Code exhausted': 'This invite code has reached its maximum uses.',
+        };
+        
         toast({
-          title: 'Invalid code',
-          description: 'This invite code does not exist.',
+          title: 'Unable to use code',
+          description: errorMessages[result.error || ''] || result.error,
           variant: 'destructive',
         });
         setLoading(false);
         return;
-      }
-
-      // Check if code is expired
-      if (invite.expires_at && new Date(invite.expires_at) < new Date()) {
-        toast({
-          title: 'Code expired',
-          description: 'This invite code has expired.',
-          variant: 'destructive',
-        });
-        setLoading(false);
-        return;
-      }
-
-      // Check if code has uses remaining
-      if (invite.max_uses && invite.used_count >= invite.max_uses) {
-        toast({
-          title: 'Code exhausted',
-          description: 'This invite code has reached its maximum uses.',
-          variant: 'destructive',
-        });
-        setLoading(false);
-        return;
-      }
-
-      // Update invite used count
-      await supabase
-        .from('invites')
-        .update({ used_count: invite.used_count + 1 })
-        .eq('id', invite.id);
-
-      // Add member role to user
-      const { error: roleError } = await supabase
-        .from('user_roles')
-        .insert({ user_id: user.id, role: 'member' });
-
-      if (roleError && !roleError.message.includes('duplicate')) {
-        throw roleError;
       }
 
       toast({
