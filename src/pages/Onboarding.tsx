@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -8,6 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Select,
   SelectContent,
@@ -26,7 +27,7 @@ import {
   COMFORT_LEVEL_OPTIONS,
   PARTICIPATION_OPTIONS,
 } from "@/lib/onboardingOptions";
-import { X } from "lucide-react";
+import { X, Camera, Loader2 } from "lucide-react";
 import loverballLogo from "@/assets/loverball-logo-new.png";
 
 const Onboarding = () => {
@@ -48,6 +49,10 @@ const Onboarding = () => {
   const [interests, setInterests] = useState<string[]>([]);
   const [comfortLevel, setComfortLevel] = useState("");
   const [participation, setParticipation] = useState<string[]>([]);
+  const [profilePhoto, setProfilePhoto] = useState<File | null>(null);
+  const [profilePhotoPreview, setProfilePhotoPreview] = useState<string | null>(null);
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -83,6 +88,53 @@ const Onboarding = () => {
     setFavTeams(favTeams.filter((t) => t !== team));
   };
 
+  const handlePhotoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        toast({
+          title: "File too large",
+          description: "Please select an image under 5MB",
+          variant: "destructive",
+        });
+        return;
+      }
+      setProfilePhoto(file);
+      setProfilePhotoPreview(URL.createObjectURL(file));
+    }
+  };
+
+  const uploadProfilePhoto = async (): Promise<string | null> => {
+    if (!profilePhoto || !userId) return null;
+    
+    setUploadingPhoto(true);
+    try {
+      const fileExt = profilePhoto.name.split('.').pop();
+      const filePath = `${userId}/profile.${fileExt}`;
+      
+      const { error: uploadError } = await supabase.storage
+        .from('profile-photos')
+        .upload(filePath, profilePhoto, { upsert: true });
+      
+      if (uploadError) throw uploadError;
+      
+      const { data } = supabase.storage
+        .from('profile-photos')
+        .getPublicUrl(filePath);
+      
+      return data.publicUrl;
+    } catch (error: any) {
+      toast({
+        title: "Photo upload failed",
+        description: error.message,
+        variant: "destructive",
+      });
+      return null;
+    } finally {
+      setUploadingPhoto(false);
+    }
+  };
+
   const generateBio = () => {
     const sportsList = favoriteSports.slice(0, 2).join(" & ");
     const interestsList = interests.slice(0, 2).join(", ");
@@ -99,6 +151,12 @@ const Onboarding = () => {
     try {
       const bio = generateBio();
       
+      // Upload photo if selected
+      let photoUrl: string | null = null;
+      if (profilePhoto) {
+        photoUrl = await uploadProfilePhoto();
+      }
+      
       const { error } = await supabase.from("profiles").insert({
         id: userId,
         name,
@@ -112,6 +170,7 @@ const Onboarding = () => {
         event_comfort_level: comfortLevel,
         participation_preferences: participation,
         bio,
+        profile_photo_url: photoUrl,
       });
 
       if (error) throw error;
@@ -170,6 +229,36 @@ const Onboarding = () => {
           {/* Step 1: Basic Info */}
           {step === 1 && (
             <div className="space-y-4">
+              {/* Profile Photo Upload */}
+              <div className="flex flex-col items-center gap-3">
+                <Label>Profile Photo</Label>
+                <div 
+                  onClick={() => fileInputRef.current?.click()}
+                  className="relative cursor-pointer group"
+                >
+                  <Avatar className="w-24 h-24 border-2 border-dashed border-muted-foreground/50 group-hover:border-primary transition-colors">
+                    {profilePhotoPreview ? (
+                      <AvatarImage src={profilePhotoPreview} alt="Preview" className="object-cover" />
+                    ) : (
+                      <AvatarFallback className="bg-muted">
+                        <Camera className="w-8 h-8 text-muted-foreground" />
+                      </AvatarFallback>
+                    )}
+                  </Avatar>
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+                    <Camera className="w-6 h-6 text-white" />
+                  </div>
+                </div>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handlePhotoSelect}
+                  className="hidden"
+                />
+                <p className="text-xs text-muted-foreground">Click to upload (max 5MB)</p>
+              </div>
+
               <div>
                 <Label htmlFor="name">Name *</Label>
                 <Input
