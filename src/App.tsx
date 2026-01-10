@@ -8,7 +8,7 @@ import Auth from "./pages/Auth";
 import Onboarding from "./pages/Onboarding";
 import Ticker from "./pages/Ticker";
 import Following from "./pages/Following";
-import Local from "./pages/Local";
+
 import Community from "./pages/Community";
 import Profile from "./pages/Profile";
 import Search from "./pages/Search";
@@ -39,7 +39,7 @@ const App = () => (
             <Route path="/following" element={<Following />} />
             <Route path="/gather" element={<Navigate to="/events" replace />} />
             <Route path="/events" element={<Events />} />
-            <Route path="/local" element={<Local />} />
+            
             <Route path="/community" element={<Community />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/search" element={<Search />} />
