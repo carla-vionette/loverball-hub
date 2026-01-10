@@ -16,7 +16,6 @@ type Profile = {
   name: string;
   pronouns: string | null;
   city: string | null;
-  neighborhood: string | null;
   age_range: string | null;
   favorite_sports: string[] | null;
   favorite_teams_players: string[] | null;
@@ -88,9 +87,7 @@ const Profile = () => {
     .join("")
     .toUpperCase();
 
-  const locationText = profile.neighborhood 
-    ? `${profile.neighborhood}, ${profile.city}` 
-    : profile.city || "Location not set";
+  const locationText = profile.city || "Location not set";
 
   return (
     <div className="min-h-screen bg-background">
