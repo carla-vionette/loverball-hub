@@ -23,10 +23,10 @@ export const CITY_OPTIONS = [
 ];
 
 export const AGE_RANGE_OPTIONS = [
-  "Gen Z (18-27)",
-  "Millennial (28-43)",
-  "Gen X (44-59)",
-  "Boomer+ (60+)"
+  "18-27",
+  "28-43",
+  "44-59",
+  "60+"
 ];
 
 export const SPORTS_OPTIONS = [
