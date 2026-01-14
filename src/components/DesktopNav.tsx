@@ -8,8 +8,7 @@ const DesktopNav = () => {
   const { isMember, isAdmin } = useAuth();
   
   const navItems = [
-    { icon: Home, label: "Following", path: "/following" },
-    { icon: Compass, label: "For You", path: "/" },
+    { icon: Home, label: "For You", path: "/following" },
     { icon: CalendarDays, label: "Events", path: "/events" },
     { icon: ShoppingBag, label: "Shop", path: "/shop" },
     ...(isMember ? [
