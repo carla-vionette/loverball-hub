@@ -2,7 +2,9 @@ import { motion } from "framer-motion";
 import { ArrowRight, Users, Sparkles, Heart, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import heroImage from "@/assets/landing-hero.jpg";
+import heroImage from "@/assets/landing-fans.jpg";
+import athletesImage from "@/assets/landing-athletes.jpg";
+import communityImage from "@/assets/landing-community.jpg";
 import loverballLogo from "@/assets/loverball-logo-new.png";
 
 const LandingPage = () => {
@@ -14,7 +16,7 @@ const LandingPage = () => {
       <nav className="fixed top-0 left-0 right-0 z-50 bg-background/90 backdrop-blur-sm border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            <img src={loverballLogo} alt="Loverball" className="h-10 w-auto" />
+            <img src={loverballLogo} alt="Loverball" className="h-12 w-auto" />
             <div className="hidden md:flex items-center gap-8">
               <a href="#about" className="text-sm font-medium text-foreground/70 hover:text-primary transition-colors">About</a>
               <a href="#features" className="text-sm font-medium text-foreground/70 hover:text-primary transition-colors">Features</a>
@@ -55,9 +57,7 @@ const LandingPage = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.3 }}
               >
-                <h1 className="text-6xl sm:text-7xl lg:text-8xl font-black text-primary tracking-tight leading-none mb-6">
-                  Loverball.
-                </h1>
+                <img src={loverballLogo} alt="Loverball" className="h-20 sm:h-24 lg:h-28 w-auto mb-6" />
               </motion.div>
 
               <motion.p
