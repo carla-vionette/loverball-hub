@@ -12,6 +12,7 @@ import { motion } from "framer-motion";
 import { ArrowRight, Users, Sparkles, Heart, TrendingUp, Lock } from "lucide-react";
 import heroImage from "@/assets/landing-fans.jpg";
 import loverballLogo from "@/assets/loverball-logo-new.png";
+import philosophyImage from "@/assets/philosophy-image.jpg";
 
 const ALLOWED_EMAIL = "member@loverball.com";
 
@@ -270,27 +271,19 @@ const Index = () => {
               </p>
             </div>
 
-            <div className="grid grid-cols-2 gap-6">
-              {[
-                { icon: Users, label: "Community", value: "10K+" },
-                { icon: Sparkles, label: "Stories", value: "500+" },
-                { icon: Heart, label: "Events", value: "50+" },
-                { icon: TrendingUp, label: "Growth", value: "300%" },
-              ].map((stat, index) => (
-                <motion.div
-                  key={stat.label}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  viewport={{ once: true }}
-                  className="bg-pale-pink rounded-2xl p-6 text-center hover:shadow-lg transition-shadow"
-                >
-                  <stat.icon className="h-8 w-8 text-primary mx-auto mb-3" />
-                  <p className="text-3xl font-black text-primary">{stat.value}</p>
-                  <p className="text-sm text-foreground/70 font-medium">{stat.label}</p>
-                </motion.div>
-              ))}
-            </div>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              viewport={{ once: true }}
+              className="rounded-3xl overflow-hidden"
+            >
+              <img
+                src={philosophyImage}
+                alt="Loverball community member"
+                className="w-full h-full object-cover"
+              />
+            </motion.div>
           </motion.div>
         </div>
       </section>
