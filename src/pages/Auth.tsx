@@ -7,13 +7,26 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Separator } from "@/components/ui/separator";
 import { motion } from "framer-motion";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Ticket } from "lucide-react";
 import loverballLogo from "@/assets/loverball-logo-new.png";
+import { z } from "zod";
+
+const signUpSchema = z.object({
+  email: z.string().trim().email("Please enter a valid email address"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
+  inviteCode: z.string().trim().min(1, "Invite code is required"),
+});
+
+const signInSchema = z.object({
+  email: z.string().trim().email("Please enter a valid email address"),
+  password: z.string().min(1, "Password is required"),
+});
 
 const Auth = () => {
   const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [inviteCode, setInviteCode] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -24,9 +37,16 @@ const Auth = () => {
 
     try {
       if (isSignUp) {
+        // Validate inputs
+        const validation = signUpSchema.safeParse({ email, password, inviteCode });
+        if (!validation.success) {
+          throw new Error(validation.error.errors[0].message);
+        }
+
+        // First, sign up the user
         const { error, data } = await supabase.auth.signUp({
-          email,
-          password,
+          email: validation.data.email,
+          password: validation.data.password,
           options: {
             emailRedirectTo: `${window.location.origin}/onboarding`
           }
@@ -35,16 +55,38 @@ const Auth = () => {
         if (error) throw error;
         
         if (data.user) {
+          // Validate and use the invite code
+          const { data: inviteResult, error: inviteError } = await supabase
+            .rpc('validate_and_use_invite', { invite_code: validation.data.inviteCode });
+          
+          if (inviteError) {
+            // If invite validation fails, sign out and delete the user
+            await supabase.auth.signOut();
+            throw new Error("Invalid invite code. Please check and try again.");
+          }
+          
+          const result = inviteResult as { success: boolean; error?: string };
+          if (!result.success) {
+            await supabase.auth.signOut();
+            throw new Error(result.error || "Invalid invite code");
+          }
+
           toast({
             title: "Welcome to Loverball!",
-            description: "Let's set up your profile.",
+            description: "Your invite code has been verified. Let's set up your profile.",
           });
           navigate("/onboarding");
         }
       } else {
+        // Validate sign in inputs
+        const validation = signInSchema.safeParse({ email, password });
+        if (!validation.success) {
+          throw new Error(validation.error.errors[0].message);
+        }
+
         const { error, data } = await supabase.auth.signInWithPassword({
-          email,
-          password,
+          email: validation.data.email,
+          password: validation.data.password,
         });
         
         if (error) throw error;
@@ -54,7 +96,7 @@ const Auth = () => {
           .from('profiles')
           .select('*')
           .eq('id', data.user.id)
-          .single();
+          .maybeSingle();
 
         if (profile) {
           navigate("/following");
@@ -204,6 +246,27 @@ const Auth = () => {
                     className="rounded-none h-12 border-border bg-background placeholder:text-foreground/30"
                   />
                 </div>
+
+                {isSignUp && (
+                  <div className="space-y-2">
+                    <Label htmlFor="inviteCode" className="text-xs tracking-wider uppercase text-foreground/60 flex items-center gap-2">
+                      <Ticket className="w-3 h-3" />
+                      Invite Code
+                    </Label>
+                    <Input
+                      id="inviteCode"
+                      type="text"
+                      placeholder="Enter your invite code"
+                      value={inviteCode}
+                      onChange={(e) => setInviteCode(e.target.value.toUpperCase())}
+                      required
+                      className="rounded-none h-12 border-border bg-background placeholder:text-foreground/30 uppercase tracking-widest"
+                    />
+                    <p className="text-xs text-foreground/40">
+                      Need a code? Request one from an existing member.
+                    </p>
+                  </div>
+                )}
 
                 <Button 
                   type="submit" 
