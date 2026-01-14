@@ -98,7 +98,7 @@ const Auth = () => {
           <img 
             src={loverballLogo} 
             alt="Loverball" 
-            className="h-20 w-auto mx-auto object-contain mix-blend-multiply dark:mix-blend-normal"
+            className="h-32 w-auto mx-auto object-contain mix-blend-multiply dark:mix-blend-normal"
           />
           <CardTitle className="text-2xl font-bold">
             {isSignUp ? "Join Loverball" : "Welcome Back"}
