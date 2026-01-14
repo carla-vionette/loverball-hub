@@ -3,7 +3,7 @@ import { ArrowRight, Plus, Minus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import heroImage from "@/assets/landing-fans.jpg";
+import heroImage from "@/assets/hero-women.png";
 import athletesImage from "@/assets/landing-athletes.jpg";
 import communityImage from "@/assets/landing-community.jpg";
 import loverballLogo from "@/assets/loverball-logo-new.png";
@@ -49,7 +49,7 @@ const LandingPage = () => {
             </div>
             
             {/* Center logo */}
-            <img src={loverballLogo} alt="Loverball" className="h-10 w-auto absolute left-1/2 -translate-x-1/2" />
+            <img src={loverballLogo} alt="Loverball" className="h-16 w-auto absolute left-1/2 -translate-x-1/2" />
             
             {/* Right nav links */}
             <div className="hidden md:flex items-center gap-6">
@@ -111,7 +111,7 @@ const LandingPage = () => {
               <img
                 src={heroImage}
                 alt="Women sports fans celebrating together"
-                className="w-full h-full object-cover object-top"
+                className="w-full h-full object-cover object-center"
               />
             </motion.div>
           </div>
