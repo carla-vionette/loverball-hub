@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
+import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Onboarding from "./pages/Onboarding";
 import Ticker from "./pages/Ticker";
@@ -21,6 +22,7 @@ import MemberProfile from "./pages/MemberProfile";
 import Events from "./pages/Events";
 import MessagesPage from "./pages/MessagesPage";
 import Admin from "./pages/Admin";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
@@ -31,29 +33,25 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Navigate to="/following" replace />} />
-            <Route path="/ticker" element={<Ticker />} />
+        <Routes>
+            <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
-            <Route path="/onboarding" element={<Onboarding />} />
-            <Route path="/following" element={<Following />} />
-            <Route path="/network" element={<Network />} />
+            <Route path="/ticker" element={<ProtectedRoute><Ticker /></ProtectedRoute>} />
+            <Route path="/onboarding" element={<ProtectedRoute><Onboarding /></ProtectedRoute>} />
+            <Route path="/following" element={<ProtectedRoute><Following /></ProtectedRoute>} />
+            <Route path="/network" element={<ProtectedRoute><Network /></ProtectedRoute>} />
             <Route path="/gather" element={<Navigate to="/events" replace />} />
-            <Route path="/events" element={<Events />} />
-            
-            <Route path="/community" element={<Community />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/search" element={<Search />} />
-            <Route path="/shop" element={<Shop />} />
-            <Route path="/product/:handle" element={<ProductDetail />} />
-            {/* New networking features */}
-            <Route path="/invite" element={<Invite />} />
-            <Route path="/members" element={<Members />} />
-            <Route path="/members/:id" element={<MemberProfile />} />
-            <Route path="/events" element={<Events />} />
-            <Route path="/messages" element={<MessagesPage />} />
-            <Route path="/admin" element={<Admin />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="/events" element={<ProtectedRoute><Events /></ProtectedRoute>} />
+            <Route path="/community" element={<ProtectedRoute><Community /></ProtectedRoute>} />
+            <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+            <Route path="/search" element={<ProtectedRoute><Search /></ProtectedRoute>} />
+            <Route path="/shop" element={<ProtectedRoute><Shop /></ProtectedRoute>} />
+            <Route path="/product/:handle" element={<ProtectedRoute><ProductDetail /></ProtectedRoute>} />
+            <Route path="/invite" element={<ProtectedRoute><Invite /></ProtectedRoute>} />
+            <Route path="/members" element={<ProtectedRoute><Members /></ProtectedRoute>} />
+            <Route path="/members/:id" element={<ProtectedRoute><MemberProfile /></ProtectedRoute>} />
+            <Route path="/messages" element={<ProtectedRoute><MessagesPage /></ProtectedRoute>} />
+            <Route path="/admin" element={<ProtectedRoute requireAdmin><Admin /></ProtectedRoute>} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
