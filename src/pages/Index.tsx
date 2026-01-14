@@ -10,7 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/hooks/useAuth";
 import { motion } from "framer-motion";
 import { ArrowRight, Users, Sparkles, Heart, TrendingUp, Lock } from "lucide-react";
-import heroImage from "@/assets/landing-hero.jpg";
+import heroImage from "@/assets/landing-fans.jpg";
 import loverballLogo from "@/assets/loverball-logo-new.png";
 
 const ALLOWED_EMAIL = "member@loverball.com";
