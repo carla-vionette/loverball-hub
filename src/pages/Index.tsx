@@ -5,10 +5,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/hooks/useAuth";
 import loverballLogo from "@/assets/loverball-logo-new.png";
+import LandingPage from "@/components/LandingPage";
 
 const ALLOWED_EMAIL = "member@loverball.com";
 
@@ -20,15 +21,16 @@ const Index = () => {
   const { toast } = useToast();
   const { user, loading: authLoading } = useAuth();
 
+  // If authenticated with allowed email, show landing page
+  const isAuthenticated = user && user.email?.toLowerCase() === ALLOWED_EMAIL;
+
   useEffect(() => {
     if (!authLoading && user) {
-      if (user.email?.toLowerCase() === ALLOWED_EMAIL) {
-        navigate("/following");
-      } else {
+      if (user.email?.toLowerCase() !== ALLOWED_EMAIL) {
         supabase.auth.signOut();
       }
     }
-  }, [user, authLoading, navigate]);
+  }, [user, authLoading]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -56,7 +58,6 @@ const Index = () => {
         title: "Welcome!",
         description: "Successfully logged in.",
       });
-      navigate("/following");
     } catch (error: any) {
       toast({
         title: "Error",
@@ -110,7 +111,7 @@ const Index = () => {
 
   if (authLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-black">
+      <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="animate-pulse">
           <img 
             src={loverballLogo} 
@@ -122,26 +123,37 @@ const Index = () => {
     );
   }
 
+  // Show landing page if authenticated
+  if (isAuthenticated) {
+    return <LandingPage />;
+  }
+
+  // Show login page if not authenticated
   return (
-    <div className="min-h-screen flex items-center justify-center bg-black p-4">
-      <Card className="w-full max-w-md bg-zinc-900 border-zinc-800">
-        <CardHeader className="text-center space-y-4">
+    <div className="min-h-screen flex items-center justify-center bg-pale-pink p-4">
+      <Card className="w-full max-w-md bg-background border-border shadow-2xl">
+        <CardHeader className="text-center space-y-4 pb-2">
           <img 
             src={loverballLogo} 
             alt="Loverball" 
-            className="h-24 w-auto mx-auto object-contain"
+            className="h-20 w-auto mx-auto object-contain"
           />
-          <CardTitle className="text-2xl font-bold text-white">
-            Member Access
-          </CardTitle>
+          <div>
+            <h1 className="text-2xl font-black text-primary">
+              Member Access
+            </h1>
+            <p className="text-sm text-muted-foreground mt-1">
+              Sign in to access the platform
+            </p>
+          </div>
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="login" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 bg-zinc-800">
-              <TabsTrigger value="login" className="data-[state=active]:bg-primary">
+            <TabsList className="grid w-full grid-cols-2 bg-muted">
+              <TabsTrigger value="login" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-semibold">
                 Sign In
               </TabsTrigger>
-              <TabsTrigger value="signup" className="data-[state=active]:bg-primary">
+              <TabsTrigger value="signup" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-semibold">
                 Sign Up
               </TabsTrigger>
             </TabsList>
@@ -149,7 +161,7 @@ const Index = () => {
             <TabsContent value="login">
               <form onSubmit={handleLogin} className="space-y-4 mt-4">
                 <div className="space-y-2">
-                  <Label htmlFor="login-email" className="text-zinc-300">Email</Label>
+                  <Label htmlFor="login-email" className="text-foreground font-medium">Email</Label>
                   <Input
                     id="login-email"
                     type="email"
@@ -157,11 +169,11 @@ const Index = () => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
-                    className="bg-zinc-800 border-zinc-700 text-white placeholder:text-zinc-500"
+                    className="bg-background border-border text-foreground placeholder:text-muted-foreground"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="login-password" className="text-zinc-300">Password</Label>
+                  <Label htmlFor="login-password" className="text-foreground font-medium">Password</Label>
                   <Input
                     id="login-password"
                     type="password"
@@ -169,12 +181,12 @@ const Index = () => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
-                    className="bg-zinc-800 border-zinc-700 text-white placeholder:text-zinc-500"
+                    className="bg-background border-border text-foreground placeholder:text-muted-foreground"
                   />
                 </div>
                 <Button 
                   type="submit" 
-                  className="w-full bg-primary hover:bg-primary/90" 
+                  className="w-full font-bold" 
                   disabled={loading}
                 >
                   {loading ? "Signing in..." : "Sign In"}
@@ -185,7 +197,7 @@ const Index = () => {
             <TabsContent value="signup">
               <form onSubmit={handleSignup} className="space-y-4 mt-4">
                 <div className="space-y-2">
-                  <Label htmlFor="signup-email" className="text-zinc-300">Email</Label>
+                  <Label htmlFor="signup-email" className="text-foreground font-medium">Email</Label>
                   <Input
                     id="signup-email"
                     type="email"
@@ -193,11 +205,11 @@ const Index = () => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
-                    className="bg-zinc-800 border-zinc-700 text-white placeholder:text-zinc-500"
+                    className="bg-background border-border text-foreground placeholder:text-muted-foreground"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="signup-password" className="text-zinc-300">Password</Label>
+                  <Label htmlFor="signup-password" className="text-foreground font-medium">Password</Label>
                   <Input
                     id="signup-password"
                     type="password"
@@ -206,12 +218,12 @@ const Index = () => {
                     onChange={(e) => setPassword(e.target.value)}
                     required
                     minLength={6}
-                    className="bg-zinc-800 border-zinc-700 text-white placeholder:text-zinc-500"
+                    className="bg-background border-border text-foreground placeholder:text-muted-foreground"
                   />
                 </div>
                 <Button 
                   type="submit" 
-                  className="w-full bg-primary hover:bg-primary/90" 
+                  className="w-full font-bold" 
                   disabled={loading}
                 >
                   {loading ? "Creating account..." : "Create Account"}
