@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { MapPin, Edit, Sparkles } from "lucide-react";
+import { MapPin, Edit, Sparkles, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -32,6 +32,15 @@ const Profile = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    toast({
+      title: "Signed out",
+      description: "You have been logged out successfully.",
+    });
+    navigate("/");
+  };
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -123,10 +132,16 @@ const Profile = () => {
                         <p className="text-sm text-muted-foreground">{profile.pronouns}</p>
                       )}
                     </div>
-                    <Button variant="outline" size="sm" onClick={() => navigate("/onboarding")}>
-                      <Edit className="w-4 h-4 mr-2" />
-                      Edit
-                    </Button>
+                    <div className="flex items-center gap-2">
+                      <Button variant="outline" size="sm" onClick={() => navigate("/onboarding")}>
+                        <Edit className="w-4 h-4 mr-2" />
+                        Edit
+                      </Button>
+                      <Button variant="outline" size="sm" onClick={handleLogout} className="text-destructive hover:text-destructive">
+                        <LogOut className="w-4 h-4 mr-2" />
+                        Logout
+                      </Button>
+                    </div>
                   </div>
                   
                   <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
