@@ -138,7 +138,7 @@ const Index = () => {
       {/* Navigation - Centered Logo */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-background/90 backdrop-blur-sm border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
+          <div className="flex items-center justify-between h-16 relative">
             {/* Left nav links */}
             <div className="hidden md:flex items-center gap-6">
               <a href="#about" className="text-xs font-medium tracking-wider text-foreground/70 hover:text-primary transition-colors uppercase">About</a>
