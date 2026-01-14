@@ -110,34 +110,44 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Navigation */}
+      {/* Navigation - Centered Logo */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-background/90 backdrop-blur-sm border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            <img src={loverballLogo} alt="Loverball" className="h-10 w-auto" />
-            <div className="hidden md:flex items-center gap-8">
-              <a href="#about" className="text-sm font-medium text-foreground/70 hover:text-primary transition-colors">About</a>
-              <a href="#features" className="text-sm font-medium text-foreground/70 hover:text-primary transition-colors">Features</a>
-              <a href="#community" className="text-sm font-medium text-foreground/70 hover:text-primary transition-colors">Community</a>
+            {/* Left nav links */}
+            <div className="hidden md:flex items-center gap-6">
+              <a href="#about" className="text-xs font-medium tracking-wider text-foreground/70 hover:text-primary transition-colors uppercase">About</a>
+              <a href="#features" className="text-xs font-medium tracking-wider text-foreground/70 hover:text-primary transition-colors uppercase">Features</a>
+              <a href="#community" className="text-xs font-medium tracking-wider text-foreground/70 hover:text-primary transition-colors uppercase">Community</a>
+            </div>
+            
+            {/* Center logo */}
+            <img src={loverballLogo} alt="Loverball" className="h-10 w-auto absolute left-1/2 -translate-x-1/2" />
+            
+            {/* Right nav links */}
+            <div className="hidden md:flex items-center gap-6">
+              <a href="#" className="text-xs font-medium tracking-wider text-foreground/70 hover:text-primary transition-colors uppercase">Events</a>
+              <a href="#" className="text-xs font-medium tracking-wider text-foreground/70 hover:text-primary transition-colors uppercase">Shop</a>
               {isAuthenticated ? (
-                <Button onClick={() => navigate("/following")} size="sm">
+                <Button onClick={() => navigate("/following")} size="sm" className="rounded-none">
                   Enter Platform
                 </Button>
               ) : (
-                <Button onClick={scrollToMemberAccess} size="sm" variant="outline">
+                <Button onClick={scrollToMemberAccess} size="sm" variant="outline" className="rounded-none">
                   <Lock className="h-4 w-4 mr-2" />
                   Member Access
                 </Button>
               )}
             </div>
+            
             {/* Mobile nav button */}
             <div className="md:hidden">
               {isAuthenticated ? (
-                <Button onClick={() => navigate("/following")} size="sm">
+                <Button onClick={() => navigate("/following")} size="sm" className="rounded-none">
                   Enter
                 </Button>
               ) : (
-                <Button onClick={scrollToMemberAccess} size="sm" variant="outline">
+                <Button onClick={scrollToMemberAccess} size="sm" variant="outline" className="rounded-none">
                   <Lock className="h-4 w-4" />
                 </Button>
               )}
@@ -146,92 +156,92 @@ const Index = () => {
         </div>
       </nav>
 
-      {/* Hero Section */}
-      <section className="pt-16 min-h-screen relative overflow-hidden">
-        <div className="grid lg:grid-cols-2 min-h-screen">
-          {/* Image Side */}
-          <div className="relative h-[50vh] lg:h-auto order-2 lg:order-1">
+      {/* Hero Section - 3 Column Editorial Layout */}
+      <section className="pt-16 min-h-screen relative bg-background">
+        <div className="grid lg:grid-cols-12 min-h-screen">
+          {/* Left Content Column */}
+          <div className="lg:col-span-4 relative flex flex-col justify-center px-6 sm:px-8 lg:px-12 py-16 lg:py-0 order-2 lg:order-1">
+            {/* Accent color bar */}
+            <div className="absolute left-0 top-0 bottom-0 w-4 sm:w-8 bg-pale-pink hidden lg:block" />
+            
             <motion.div
-              initial={{ scale: 1.1, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ duration: 1.2, ease: "easeOut" }}
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="lg:pl-8"
+            >
+              <p className="text-primary text-sm font-medium tracking-widest mb-6 uppercase">Hey Friend.</p>
+              <h1 className="text-4xl sm:text-5xl lg:text-5xl font-serif font-normal leading-tight mb-6 text-foreground">
+                Her Game.<br />
+                Her Community.<br />
+                Her Platform.
+              </h1>
+              <p className="text-foreground/70 text-sm leading-relaxed mb-8 max-w-sm">
+                The platform where women's fandom controls the narrative. Stories, community, and culture—powered by passion for the games she loves.
+              </p>
+              {isAuthenticated ? (
+                <Button 
+                  onClick={() => navigate("/following")}
+                  className="rounded-none bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-6 text-sm tracking-wider"
+                >
+                  ENTER PLATFORM
+                </Button>
+              ) : (
+                <Button 
+                  onClick={scrollToMemberAccess}
+                  className="rounded-none bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-6 text-sm tracking-wider"
+                >
+                  LEARN MORE
+                </Button>
+              )}
+            </motion.div>
+          </div>
+
+          {/* Center Image Column */}
+          <div className="lg:col-span-5 relative h-[60vh] lg:h-auto order-1 lg:order-2">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 1 }}
               className="absolute inset-0"
             >
               <img
                 src={heroImage}
                 alt="Women sports fans celebrating together"
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover object-top"
               />
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent to-background/30 lg:hidden" />
             </motion.div>
           </div>
 
-          {/* Text Side */}
-          <div className="relative flex items-center justify-center p-8 lg:p-16 order-1 lg:order-2 bg-pale-pink">
-            <div className="max-w-xl">
-              <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.3 }}
+          {/* Right Navigation Column */}
+          <div className="lg:col-span-3 hidden lg:flex flex-col justify-center px-8 bg-background order-3">
+            <motion.nav
+              initial={{ opacity: 0, x: 30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, delay: 0.4 }}
+              className="space-y-6"
+            >
+              <a href="#about" className="flex items-center justify-between text-sm font-medium text-foreground hover:text-primary transition-colors group">
+                <span>ABOUT</span>
+                <span className="text-foreground/30 group-hover:text-primary transition-colors">›</span>
+              </a>
+              <a href="#features" className="flex items-center justify-between text-sm font-medium text-foreground hover:text-primary transition-colors group">
+                <span>FEATURES</span>
+                <span className="text-foreground/30 group-hover:text-primary transition-colors">›</span>
+              </a>
+              <a href="#community" className="flex items-center justify-between text-sm font-medium text-foreground hover:text-primary transition-colors group">
+                <span>COMMUNITY</span>
+                <span className="text-foreground/30 group-hover:text-primary transition-colors">›</span>
+              </a>
+              <Button 
+                onClick={scrollToMemberAccess}
+                variant="outline"
+                className="rounded-none border border-primary text-primary hover:bg-primary hover:text-primary-foreground w-full justify-between mt-4 py-5"
               >
-                <h1 className="text-6xl sm:text-7xl lg:text-8xl font-black text-primary tracking-tight leading-none mb-6">
-                  Loverball.
-                </h1>
-              </motion.div>
-
-              <motion.p
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.5 }}
-                className="text-xl sm:text-2xl font-semibold text-foreground mb-4"
-              >
-                Women Sports Fans. Elevated.
-              </motion.p>
-
-              <motion.p
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.6 }}
-                className="text-base sm:text-lg text-foreground/70 mb-8"
-              >
-                The platform where female fandom gets the spotlight. Stories, community, and culture—built by women, for women.
-              </motion.p>
-
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.7 }}
-                className="flex flex-col sm:flex-row gap-4"
-              >
-                {isAuthenticated ? (
-                  <Button 
-                    size="lg" 
-                    onClick={() => navigate("/following")}
-                    className="text-lg px-8 py-6 rounded-full group"
-                  >
-                    Enter Platform
-                    <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-                  </Button>
-                ) : (
-                  <Button 
-                    size="lg" 
-                    onClick={scrollToMemberAccess}
-                    className="text-lg px-8 py-6 rounded-full group"
-                  >
-                    Join the Movement
-                    <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-                  </Button>
-                )}
-                <Button 
-                  variant="outline" 
-                  size="lg"
-                  onClick={() => document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' })}
-                  className="text-lg px-8 py-6 rounded-full border-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground"
-                >
-                  Learn More
-                </Button>
-              </motion.div>
-            </div>
+                <span>INQUIRE</span>
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+            </motion.nav>
           </div>
         </div>
       </section>
