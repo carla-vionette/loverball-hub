@@ -249,8 +249,8 @@ const Index = () => {
               Our Philosophy
             </span>
             <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black text-foreground leading-tight max-w-4xl mx-auto">
-              <span className="text-primary">85%</span> of household purchasing decisions made by women.{" "}
-              <span className="italic font-serif">Yet we're overlooked in sports.</span>
+              <span className="text-primary">75%</span> of women globally identify as avid sports fans.{" "}
+              <span className="italic font-serif">Yet they remain overlooked.</span>
             </h2>
           </motion.div>
 
@@ -263,11 +263,10 @@ const Index = () => {
           >
             <div className="bg-primary rounded-3xl p-8 sm:p-12 text-primary-foreground">
               <p className="text-xl sm:text-2xl leading-relaxed mb-6">
-                Loverball is a content and community platform for the <strong>$28B women's sports market</strong>. 
-                AI-powered stories, community events, and narrative-driven coverage tailored to female fans.
+                Loverball is a content and community platform where female fandom thrives. Women control <strong>85% of household sports purchasing decisions</strong> and will command 75% of global discretionary spending by 2030.
               </p>
               <p className="text-lg opacity-90">
-                We're redefining how women experience sports—not as spectators, but as the heart of the culture.
+                We're creating the space for her to gather, share, and celebrate the games she loves—where narrative-driven coverage and authentic community meet the fastest-growing market in sports.
               </p>
             </div>
 
