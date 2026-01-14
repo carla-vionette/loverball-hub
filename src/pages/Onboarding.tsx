@@ -210,38 +210,42 @@ const Onboarding = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/10 via-background to-accent/10 p-4 flex items-center justify-center">
-      <Card className="w-full max-w-2xl">
-        <CardHeader>
-          <img 
-            src={loverballLogo} 
-            alt="Loverball" 
-            className="h-12 w-auto mb-4 object-contain mix-blend-multiply dark:mix-blend-normal"
-          />
-          <CardTitle className="text-2xl">Let's build your profile!</CardTitle>
-          <CardDescription>
-            Step {step} of {totalSteps}
-          </CardDescription>
-          <Progress value={progress} className="mt-2" />
-        </CardHeader>
+    <div className="min-h-screen bg-background">
+      {/* Navigation */}
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-background/90 backdrop-blur-sm border-b border-border">
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
+          <div className="flex items-center justify-center h-16">
+            <img src={loverballLogo} alt="Loverball" className="h-10 w-auto" />
+          </div>
+        </div>
+      </nav>
 
-        <CardContent className="space-y-6">
+      <div className="pt-24 pb-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-2xl mx-auto">
+          {/* Header */}
+          <div className="mb-8">
+            <p className="text-primary text-sm font-medium tracking-widest mb-4 uppercase">Step {step} of {totalSteps}</p>
+            <h1 className="text-3xl sm:text-4xl font-serif font-normal text-foreground mb-4">Let's build your profile.</h1>
+            <Progress value={progress} className="h-1" />
+          </div>
+
+          <div className="bg-pale-pink p-6 sm:p-10 space-y-6">
           {/* Step 1: Basic Info */}
           {step === 1 && (
-            <div className="space-y-4">
+            <div className="space-y-6">
               {/* Profile Photo Upload */}
               <div className="flex flex-col items-center gap-3">
-                <Label>Profile Photo</Label>
+                <Label className="text-xs tracking-wider uppercase text-foreground/60">Profile Photo</Label>
                 <div 
                   onClick={() => fileInputRef.current?.click()}
                   className="relative cursor-pointer group"
                 >
-                  <Avatar className="w-24 h-24 border-2 border-dashed border-muted-foreground/50 group-hover:border-primary transition-colors">
+                  <Avatar className="w-24 h-24 border-2 border-dashed border-foreground/20 group-hover:border-primary transition-colors">
                     {profilePhotoPreview ? (
                       <AvatarImage src={profilePhotoPreview} alt="Preview" className="object-cover" />
                     ) : (
-                      <AvatarFallback className="bg-muted">
-                        <Camera className="w-8 h-8 text-muted-foreground" />
+                      <AvatarFallback className="bg-background">
+                        <Camera className="w-8 h-8 text-foreground/40" />
                       </AvatarFallback>
                     )}
                   </Avatar>
@@ -256,23 +260,24 @@ const Onboarding = () => {
                   onChange={handlePhotoSelect}
                   className="hidden"
                 />
-                <p className="text-xs text-muted-foreground">Click to upload (max 5MB)</p>
+                <p className="text-xs text-foreground/40">Click to upload (max 5MB)</p>
               </div>
 
-              <div>
-                <Label htmlFor="name">Name *</Label>
+              <div className="space-y-2">
+                <Label htmlFor="name" className="text-xs tracking-wider uppercase text-foreground/60">Name *</Label>
                 <Input
                   id="name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Your name"
+                  className="rounded-none h-12 border-border bg-background"
                 />
               </div>
 
-              <div>
-                <Label htmlFor="pronouns">Pronouns</Label>
+              <div className="space-y-2">
+                <Label htmlFor="pronouns" className="text-xs tracking-wider uppercase text-foreground/60">Pronouns</Label>
                 <Select value={pronouns} onValueChange={setPronouns}>
-                  <SelectTrigger className="bg-background">
+                  <SelectTrigger className="bg-background rounded-none h-12">
                     <SelectValue placeholder="Select pronouns" />
                   </SelectTrigger>
                   <SelectContent className="bg-background z-50">
@@ -285,10 +290,10 @@ const Onboarding = () => {
                 </Select>
               </div>
 
-              <div>
-                <Label htmlFor="city">City *</Label>
+              <div className="space-y-2">
+                <Label htmlFor="city" className="text-xs tracking-wider uppercase text-foreground/60">City *</Label>
                 <Select value={city} onValueChange={setCity}>
-                  <SelectTrigger className="bg-background">
+                  <SelectTrigger className="bg-background rounded-none h-12">
                     <SelectValue placeholder="Select city" />
                   </SelectTrigger>
                   <SelectContent className="bg-background z-50">
@@ -305,11 +310,11 @@ const Onboarding = () => {
 
           {/* Step 2: Sports */}
           {step === 2 && (
-            <div className="space-y-4">
-              <div>
-                <Label>Age Range *</Label>
+            <div className="space-y-6">
+              <div className="space-y-2">
+                <Label className="text-xs tracking-wider uppercase text-foreground/60">Age Range *</Label>
                 <Select value={ageRange} onValueChange={setAgeRange}>
-                  <SelectTrigger className="bg-background">
+                  <SelectTrigger className="bg-background rounded-none h-12">
                     <SelectValue placeholder="Select age range" />
                   </SelectTrigger>
                   <SelectContent className="bg-background z-50">
@@ -322,11 +327,11 @@ const Onboarding = () => {
                 </Select>
               </div>
 
-              <div>
-                <Label>Favorite Sports * (select all that apply)</Label>
-                <div className="grid grid-cols-2 gap-3 mt-2">
+              <div className="space-y-3">
+                <Label className="text-xs tracking-wider uppercase text-foreground/60">Favorite Sports * (select all that apply)</Label>
+                <div className="grid grid-cols-2 gap-3">
                   {SPORTS_OPTIONS.map((sport) => (
-                    <div key={sport} className="flex items-center space-x-2">
+                    <div key={sport} className="flex items-center space-x-3 p-3 bg-background border border-border hover:border-primary transition-colors cursor-pointer" onClick={() => toggleArrayItem(favoriteSports, sport, setFavoriteSports)}>
                       <Checkbox
                         id={sport}
                         checked={favoriteSports.includes(sport)}
@@ -342,23 +347,24 @@ const Onboarding = () => {
                 </div>
               </div>
 
-              <div>
-                <Label htmlFor="teams">Favorite Teams & Players</Label>
-                <div className="flex gap-2 mt-1">
+              <div className="space-y-2">
+                <Label htmlFor="teams" className="text-xs tracking-wider uppercase text-foreground/60">Favorite Teams & Players</Label>
+                <div className="flex gap-2">
                   <Input
                     id="teams"
                     value={teamsInput}
                     onChange={(e) => setTeamsInput(e.target.value)}
                     placeholder="e.g., Lakers, LeBron, USWNT"
                     onKeyPress={(e) => e.key === "Enter" && (e.preventDefault(), addTeam())}
+                    className="rounded-none h-12 border-border bg-background"
                   />
-                  <Button type="button" onClick={addTeam}>
-                    Add
+                  <Button type="button" onClick={addTeam} className="rounded-none h-12 px-6">
+                    ADD
                   </Button>
                 </div>
-                <div className="flex flex-wrap gap-2 mt-2">
+                <div className="flex flex-wrap gap-2 mt-3">
                   {favTeams.map((team) => (
-                    <Badge key={team} variant="secondary" className="gap-1">
+                    <Badge key={team} variant="secondary" className="gap-1 rounded-none px-3 py-1">
                       {team}
                       <X
                         className="h-3 w-3 cursor-pointer"
@@ -373,12 +379,12 @@ const Onboarding = () => {
 
           {/* Step 3: Experience */}
           {step === 3 && (
-            <div className="space-y-4">
-              <div>
-                <Label>How do you like to experience sports? * (select all that apply)</Label>
-                <div className="grid grid-cols-1 gap-3 mt-2">
+            <div className="space-y-6">
+              <div className="space-y-3">
+                <Label className="text-xs tracking-wider uppercase text-foreground/60">How do you like to experience sports? * (select all that apply)</Label>
+                <div className="grid grid-cols-1 gap-3">
                   {EXPERIENCE_OPTIONS.map((exp) => (
-                    <div key={exp} className="flex items-center space-x-2">
+                    <div key={exp} className="flex items-center space-x-3 p-3 bg-background border border-border hover:border-primary transition-colors cursor-pointer" onClick={() => toggleArrayItem(experienceTypes, exp, setExperienceTypes)}>
                       <Checkbox
                         id={exp}
                         checked={experienceTypes.includes(exp)}
@@ -398,12 +404,12 @@ const Onboarding = () => {
 
           {/* Step 4: Interests */}
           {step === 4 && (
-            <div className="space-y-4">
-              <div>
-                <Label>What else are you into? * (select all that apply)</Label>
-                <div className="grid grid-cols-2 gap-3 mt-2">
+            <div className="space-y-6">
+              <div className="space-y-3">
+                <Label className="text-xs tracking-wider uppercase text-foreground/60">What else are you into? * (select all that apply)</Label>
+                <div className="grid grid-cols-2 gap-3">
                   {INTERESTS_OPTIONS.map((interest) => (
-                    <div key={interest} className="flex items-center space-x-2">
+                    <div key={interest} className="flex items-center space-x-3 p-3 bg-background border border-border hover:border-primary transition-colors cursor-pointer" onClick={() => toggleArrayItem(interests, interest, setInterests)}>
                       <Checkbox
                         id={interest}
                         checked={interests.includes(interest)}
@@ -423,11 +429,11 @@ const Onboarding = () => {
 
           {/* Step 5: Participation */}
           {step === 5 && (
-            <div className="space-y-4">
-              <div>
-                <Label>What's your comfort level with in-person events? *</Label>
+            <div className="space-y-6">
+              <div className="space-y-2">
+                <Label className="text-xs tracking-wider uppercase text-foreground/60">What's your comfort level with in-person events? *</Label>
                 <Select value={comfortLevel} onValueChange={setComfortLevel}>
-                  <SelectTrigger className="bg-background">
+                  <SelectTrigger className="bg-background rounded-none h-12">
                     <SelectValue placeholder="Select comfort level" />
                   </SelectTrigger>
                   <SelectContent className="bg-background z-50">
@@ -440,11 +446,11 @@ const Onboarding = () => {
                 </Select>
               </div>
 
-              <div>
-                <Label>What do you want to do on Loverball? * (select all that apply)</Label>
-                <div className="grid grid-cols-1 gap-3 mt-2">
+              <div className="space-y-3">
+                <Label className="text-xs tracking-wider uppercase text-foreground/60">What do you want to do on Loverball? * (select all that apply)</Label>
+                <div className="grid grid-cols-1 gap-3">
                   {PARTICIPATION_OPTIONS.map((option) => (
-                    <div key={option} className="flex items-center space-x-2">
+                    <div key={option} className="flex items-center space-x-3 p-3 bg-background border border-border hover:border-primary transition-colors cursor-pointer" onClick={() => toggleArrayItem(participation, option, setParticipation)}>
                       <Checkbox
                         id={option}
                         checked={participation.includes(option)}
@@ -462,33 +468,36 @@ const Onboarding = () => {
             </div>
           )}
 
-          <div className="flex gap-2 pt-4">
+          </div>
+
+          {/* Buttons */}
+          <div className="flex gap-3 pt-6">
             {step > 1 && (
-              <Button variant="outline" onClick={() => setStep(step - 1)}>
-                Back
+              <Button variant="outline" onClick={() => setStep(step - 1)} className="rounded-none h-12 px-8 text-sm tracking-wider">
+                BACK
               </Button>
             )}
             {step < totalSteps && (
               <Button
                 onClick={() => setStep(step + 1)}
                 disabled={!canProceed()}
-                className="flex-1"
+                className="flex-1 rounded-none h-12 text-sm tracking-wider"
               >
-                Continue
+                CONTINUE
               </Button>
             )}
             {step === totalSteps && (
               <Button
                 onClick={handleSubmit}
                 disabled={!canProceed() || loading}
-                className="flex-1"
+                className="flex-1 rounded-none h-12 text-sm tracking-wider"
               >
-                {loading ? "Creating profile..." : "Complete Profile"}
+                {loading ? "CREATING PROFILE..." : "COMPLETE PROFILE"}
               </Button>
             )}
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 };
