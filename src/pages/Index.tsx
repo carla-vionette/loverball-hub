@@ -260,9 +260,9 @@ const Index = () => {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
             viewport={{ once: true }}
-            className="grid md:grid-cols-2 gap-12 items-center"
+            className="grid md:grid-cols-2 gap-12 items-stretch"
           >
-            <div className="bg-primary rounded-3xl p-8 sm:p-12 text-primary-foreground">
+            <div className="bg-primary rounded-3xl p-8 sm:p-12 text-primary-foreground flex flex-col justify-center">
               <p className="text-xl sm:text-2xl leading-relaxed mb-6">
                 Loverball is a content and community platform where female fandom thrives. Women control <strong>85% of household sports purchasing decisions</strong> and will command 75% of global discretionary spending by 2030.
               </p>
@@ -276,7 +276,7 @@ const Index = () => {
               whileInView={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.8, delay: 0.2 }}
               viewport={{ once: true }}
-              className="rounded-3xl overflow-hidden"
+              className="rounded-3xl overflow-hidden h-full"
             >
               <img
                 src={philosophyImage}
