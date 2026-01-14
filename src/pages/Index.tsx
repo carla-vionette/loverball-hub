@@ -32,6 +32,12 @@ const Index = () => {
 
   const isAuthenticated = !!user;
 
+  // Redirect authenticated users to For You page
+  if (!authLoading && isAuthenticated) {
+    navigate("/following", { replace: true });
+    return null;
+  }
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
