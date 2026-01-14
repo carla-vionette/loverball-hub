@@ -267,7 +267,7 @@ const Index = () => {
                 Loverball is a content and community platform where female fandom thrives. Women control <strong>85% of household sports purchasing decisions</strong> and will command 75% of global discretionary spending by 2030.
               </p>
               <p className="text-lg opacity-90">
-                We're creating the space for her to gather, share, and celebrate the games she loves—where narrative-driven coverage and authentic community meet the fastest-growing market in sports.
+                We're creating the space for her to gather, share, and celebrate the games she loves.
               </p>
             </div>
 
