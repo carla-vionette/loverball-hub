@@ -9,50 +9,60 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/hooks/useAuth";
 import { motion } from "framer-motion";
-import { ArrowRight, Users, Sparkles, Heart, TrendingUp, Lock } from "lucide-react";
+import { ArrowRight, Users, Sparkles, Heart, TrendingUp, Lock, Ticket } from "lucide-react";
 import heroImage from "@/assets/landing-fans.jpg";
 import loverballLogo from "@/assets/loverball-logo-new.png";
 import philosophyImage from "@/assets/philosophy-image.jpg";
+import { z } from "zod";
 
-const ALLOWED_EMAIL = "member@loverball.com";
+const signUpSchema = z.object({
+  email: z.string().trim().email("Please enter a valid email address"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
+  inviteCode: z.string().trim().min(1, "Invite code is required"),
+});
 
 const Index = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [inviteCode, setInviteCode] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
   const { user, loading: authLoading } = useAuth();
 
-  const isAuthenticated = user && user.email?.toLowerCase() === ALLOWED_EMAIL;
+  const isAuthenticated = !!user;
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (email.toLowerCase() !== ALLOWED_EMAIL) {
-      toast({
-        title: "Access Denied",
-        description: "This email is not authorized to access the site.",
-        variant: "destructive",
-      });
-      return;
-    }
-
     setLoading(true);
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
+      const { error, data } = await supabase.auth.signInWithPassword({
+        email: email.trim(),
         password,
       });
 
       if (error) throw error;
 
-      toast({
-        title: "Welcome!",
-        description: "Successfully logged in.",
-      });
-      navigate("/following");
+      if (data.user) {
+        // Check if user has a profile
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', data.user.id)
+          .maybeSingle();
+
+        if (profile) {
+          navigate("/following");
+        } else {
+          navigate("/onboarding");
+        }
+
+        toast({
+          title: "Welcome back!",
+          description: "Successfully logged in.",
+        });
+      }
     } catch (error: any) {
       toast({
         title: "Error",
@@ -66,33 +76,48 @@ const Index = () => {
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (email.toLowerCase() !== ALLOWED_EMAIL) {
-      toast({
-        title: "Access Denied",
-        description: "This email is not authorized to sign up.",
-        variant: "destructive",
-      });
-      return;
-    }
-
     setLoading(true);
 
     try {
-      const { error } = await supabase.auth.signUp({
-        email,
-        password,
+      // Validate inputs
+      const validation = signUpSchema.safeParse({ email, password, inviteCode });
+      if (!validation.success) {
+        throw new Error(validation.error.errors[0].message);
+      }
+
+      // First, sign up the user
+      const { error, data } = await supabase.auth.signUp({
+        email: validation.data.email,
+        password: validation.data.password,
         options: {
-          emailRedirectTo: `${window.location.origin}/`,
+          emailRedirectTo: `${window.location.origin}/onboarding`,
         },
       });
 
       if (error) throw error;
 
-      toast({
-        title: "Account Created!",
-        description: "You can now sign in with your credentials.",
-      });
+      if (data.user) {
+        // Validate and use the invite code
+        const { data: inviteResult, error: inviteError } = await supabase
+          .rpc('validate_and_use_invite', { invite_code: validation.data.inviteCode });
+
+        if (inviteError) {
+          await supabase.auth.signOut();
+          throw new Error("Invalid invite code. Please check and try again.");
+        }
+
+        const result = inviteResult as { success: boolean; error?: string };
+        if (!result.success) {
+          await supabase.auth.signOut();
+          throw new Error(result.error || "Invalid invite code");
+        }
+
+        toast({
+          title: "Welcome to Loverball!",
+          description: "Your invite code has been verified. Let's set up your profile.",
+        });
+        navigate("/onboarding");
+      }
     } catch (error: any) {
       toast({
         title: "Error",
@@ -122,7 +147,7 @@ const Index = () => {
             </div>
             
             {/* Center logo */}
-            <img src={loverballLogo} alt="Loverball" className="h-10 w-auto absolute left-1/2 -translate-x-1/2" />
+            <img src={loverballLogo} alt="Loverball" className="h-16 w-auto absolute left-1/2 -translate-x-1/2" />
             
             {/* Right nav links */}
             <div className="hidden md:flex items-center gap-6">
@@ -521,6 +546,24 @@ const Index = () => {
                             minLength={6}
                             className="bg-background border-border text-foreground placeholder:text-muted-foreground rounded-none h-12"
                           />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="signup-invite" className="text-foreground text-xs tracking-wider uppercase flex items-center gap-2">
+                            <Ticket className="w-3 h-3" />
+                            Invite Code
+                          </Label>
+                          <Input
+                            id="signup-invite"
+                            type="text"
+                            placeholder="Enter your invite code"
+                            value={inviteCode}
+                            onChange={(e) => setInviteCode(e.target.value.toUpperCase())}
+                            required
+                            className="bg-background border-border text-foreground placeholder:text-muted-foreground rounded-none h-12 uppercase tracking-widest"
+                          />
+                          <p className="text-xs text-foreground/50">
+                            Need a code? Request one from an existing member.
+                          </p>
                         </div>
                         <Button 
                           type="submit" 
