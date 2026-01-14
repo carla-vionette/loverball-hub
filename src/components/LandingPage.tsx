@@ -86,7 +86,7 @@ const LandingPage = () => {
                 ELEVATE your Sports Experience with{" "}
                 <span className="italic font-serif font-normal">Loverball</span>
               </h1>
-              <p className="text-sm opacity-80 mb-8">Stories. Community. Culture.</p>
+              <p className="text-sm opacity-80 mb-8">Her Game. Her Community. Her Platform.</p>
               <Button 
                 onClick={() => navigate("/following")}
                 variant="outline"
