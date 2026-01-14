@@ -2,10 +2,12 @@ import { Home, Compass, MessageCircle, User, Search, Users, CalendarDays, Settin
 import { Link, useLocation } from "react-router-dom";
 import loverbballLogo from "@/assets/loverball-logo-new.png";
 import { useAuth } from "@/hooks/useAuth";
+import { useUnreadMessages } from "@/hooks/useUnreadMessages";
 
 const DesktopNav = () => {
   const location = useLocation();
   const { isMember, isAdmin } = useAuth();
+  const { hasUnread } = useUnreadMessages();
   
   const navItems = [
     { icon: Home, label: "For You", path: "/following" },
@@ -14,7 +16,7 @@ const DesktopNav = () => {
     ...(isMember ? [
       { icon: Heart, label: "Network", path: "/network" },
       { icon: Users, label: "Members", path: "/members" },
-      { icon: MessageCircle, label: "Messages", path: "/messages" },
+      { icon: MessageCircle, label: "Messages", path: "/messages", showBadge: true },
     ] : []),
     { icon: User, label: "Profile", path: "/profile" },
     ...(isAdmin ? [
@@ -32,6 +34,7 @@ const DesktopNav = () => {
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive = location.pathname === item.path;
+          const showBadge = 'showBadge' in item && item.showBadge && hasUnread;
           
           return (
             <Link
@@ -43,7 +46,12 @@ const DesktopNav = () => {
                   : "text-foreground/70 hover:text-foreground hover:bg-pale-pink/50"
               }`}
             >
-              <Icon className="w-5 h-5" />
+              <div className="relative">
+                <Icon className="w-5 h-5" />
+                {showBadge && (
+                  <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-primary rounded-full border-2 border-background" />
+                )}
+              </div>
               <span className="text-sm tracking-wide">{item.label}</span>
             </Link>
           );

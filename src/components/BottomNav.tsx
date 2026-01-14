@@ -1,10 +1,12 @@
 import { Home, Users, MessageCircle, User, CalendarDays, ShoppingBag, Heart } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { useUnreadMessages } from "@/hooks/useUnreadMessages";
 
 const BottomNav = () => {
   const location = useLocation();
   const { isMember } = useAuth();
+  const { hasUnread } = useUnreadMessages();
   
   const navItems = [
     { icon: Home, label: "Home", path: "/following" },
@@ -12,7 +14,7 @@ const BottomNav = () => {
     { icon: ShoppingBag, label: "Shop", path: "/shop" },
     ...(isMember ? [
       { icon: Heart, label: "Network", path: "/network" },
-      { icon: MessageCircle, label: "Chat", path: "/messages" },
+      { icon: MessageCircle, label: "Chat", path: "/messages", showBadge: true },
     ] : []),
     { icon: User, label: "Profile", path: "/profile" },
   ];
@@ -23,6 +25,7 @@ const BottomNav = () => {
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive = location.pathname === item.path;
+          const showBadge = 'showBadge' in item && item.showBadge && hasUnread;
           
           return (
             <Link
@@ -32,10 +35,15 @@ const BottomNav = () => {
                 isActive ? "bg-pale-pink" : ""
               }`}
             >
-              <Icon 
-                className={`w-5 h-5 ${isActive ? "text-primary" : "text-foreground/50"}`}
-                fill={isActive ? "currentColor" : "none"}
-              />
+              <div className="relative">
+                <Icon 
+                  className={`w-5 h-5 ${isActive ? "text-primary" : "text-foreground/50"}`}
+                  fill={isActive ? "currentColor" : "none"}
+                />
+                {showBadge && (
+                  <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-primary rounded-full border-2 border-background" />
+                )}
+              </div>
               <span className={`text-[10px] tracking-wider mt-1 ${isActive ? "text-primary font-medium" : "text-foreground/50"}`}>
                 {item.label}
               </span>
