@@ -302,16 +302,16 @@ const Index = () => {
               whileInView={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.8, delay: 0.1 }}
               viewport={{ once: true }}
-              className="lg:col-span-3 relative"
+              className="lg:col-span-4 relative"
             >
-              <div className="aspect-square overflow-hidden max-w-[280px] mx-auto">
+              <div className="aspect-[3/4] overflow-hidden">
                 <img
                   src={philosophyImage}
                   alt="Loverball community member"
                   className="w-full h-full object-cover"
                 />
               </div>
-              <div className="absolute -bottom-4 -right-4 w-24 h-24 bg-pale-pink -z-10" />
+              <div className="absolute -bottom-6 -right-6 w-32 h-32 bg-pale-pink -z-10" />
             </motion.div>
             
             {/* Right Column - Text */}
