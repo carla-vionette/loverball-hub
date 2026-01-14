@@ -49,7 +49,13 @@ const Profile = () => {
           .eq("id", user.id)
           .maybeSingle();
 
-        if (error) throw error;
+        // If there's an RLS error or no profile, redirect to onboarding
+        if (error) {
+          console.log("Profile fetch error:", error.message);
+          // User likely has no profile - redirect to onboarding
+          navigate("/onboarding");
+          return;
+        }
 
         if (!data) {
           // No profile found, redirect to onboarding
@@ -59,11 +65,9 @@ const Profile = () => {
 
         setProfile(data);
       } catch (error: any) {
-        toast({
-          title: "Error loading profile",
-          description: error.message,
-          variant: "destructive",
-        });
+        console.error("Profile error:", error);
+        // On any error, redirect to onboarding to create profile
+        navigate("/onboarding");
       } finally {
         setLoading(false);
       }
