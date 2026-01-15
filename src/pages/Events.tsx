@@ -229,6 +229,38 @@ const Events = () => {
     }
   };
 
+  const handleCancelRSVP = async (eventId: string) => {
+    if (!user) return;
+
+    try {
+      const { error } = await supabase
+        .from('event_rsvps')
+        .delete()
+        .eq('event_id', eventId)
+        .eq('user_id', user.id);
+
+      if (error) throw error;
+
+      setUserRsvps(prev => {
+        const updated = { ...prev };
+        delete updated[eventId];
+        return updated;
+      });
+
+      toast({
+        title: 'RSVP cancelled',
+        description: 'You have been removed from the guest list.',
+      });
+    } catch (error: any) {
+      console.error('Error cancelling RSVP:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to cancel RSVP. Please try again.',
+        variant: 'destructive',
+      });
+    }
+  };
+
   const filteredEvents = events.filter(event => {
     if (selectedFilter === 'All') return true;
     return event.sport_tags?.includes(selectedFilter);
@@ -325,6 +357,7 @@ const Events = () => {
                             event={event}
                             rsvpStatus={userRsvps[event.id]}
                             isMember={isMember}
+                            onCancelRSVP={() => handleCancelRSVP(event.id)}
                           />
                         ))}
                     </div>
