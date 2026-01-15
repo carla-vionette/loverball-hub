@@ -427,11 +427,11 @@ const Network = () => {
                   >
                     <div className="h-full rounded-3xl overflow-hidden bg-gradient-to-b from-muted to-background border border-border shadow-2xl">
                       {/* Profile Image */}
-                      <div className="relative h-3/5">
+                      <div className="relative h-3/5 bg-muted/50 flex items-center justify-center">
                         <img
                           src={currentProfile.profile_photo_url || ""}
                           alt={currentProfile.name}
-                          className="w-full h-full object-cover"
+                          className="w-full h-full object-contain"
                           onError={(e) => {
                             e.currentTarget.style.display = 'none';
                             e.currentTarget.nextElementSibling?.classList.remove('hidden');
@@ -442,7 +442,7 @@ const Network = () => {
                             {currentProfile.name.charAt(0)}
                           </span>
                         </div>
-                        <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent pointer-events-none" />
                       </div>
 
                       {/* Profile Info */}
