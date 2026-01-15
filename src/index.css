@@ -45,6 +45,9 @@ All colors MUST be HSL.
     --light-lime: 64 70% 60%;
     --light-lime-foreground: 217 19% 27%;
 
+    --ticker: 72 100% 50%; /* Neon Lime #CCFF00 */
+    --ticker-foreground: 0 0% 0%;
+
     --destructive: 0 84% 50%;
     --destructive-foreground: 0 0% 100%;
 

@@ -153,9 +153,9 @@ const LASportsTicker = ({
 
   if (isLoading) {
     return (
-      <div className={`${positionClasses} bg-primary`}>
+      <div className={`${positionClasses} bg-ticker`}>
         <div className="py-3 text-center">
-          <span className="text-primary-foreground animate-pulse">
+          <span className="text-ticker-foreground animate-pulse">
             Loading LA sports updates...
           </span>
         </div>
@@ -178,7 +178,7 @@ const LASportsTicker = ({
       />
       
       {/* Ticker Bar */}
-      <div className="bg-primary py-2 overflow-hidden">
+      <div className="bg-ticker py-2 overflow-hidden">
         <div className="ticker-wrapper">
           <div 
             className="ticker-content"
@@ -191,7 +191,7 @@ const LASportsTicker = ({
               return (
                 <span 
                   key={index} 
-                  className="ticker-item text-primary-foreground font-medium px-6 whitespace-nowrap inline-flex items-center gap-2"
+                  className="ticker-item text-ticker-foreground font-medium px-6 whitespace-nowrap inline-flex items-center gap-2"
                 >
                   {/* Team logos */}
                   {logos.length > 0 && !isHeadline && (
@@ -216,7 +216,7 @@ const LASportsTicker = ({
                     {item}
                   </span>
                   
-                  <span className="mx-4 text-primary-foreground/50">•</span>
+                  <span className="mx-4 text-ticker-foreground/50">•</span>
                 </span>
               );
             })}
