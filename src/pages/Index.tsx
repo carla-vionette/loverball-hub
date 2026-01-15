@@ -142,32 +142,35 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Navigation - Centered Logo */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-[hsl(40,33%,96%)] border-b border-border/30">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-[hsl(40,33%,96%)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-20 relative">
+          <div className="flex items-center justify-between h-16 relative">
             {/* Left nav links */}
             <div className="hidden md:flex items-center gap-8">
-              <a href="#about" className="text-xs font-medium tracking-[0.15em] text-foreground/70 hover:text-primary transition-colors uppercase">Home</a>
               <a href="#about" className="text-xs font-medium tracking-[0.15em] text-foreground/70 hover:text-primary transition-colors uppercase">About</a>
               <a href="#features" className="text-xs font-medium tracking-[0.15em] text-foreground/70 hover:text-primary transition-colors uppercase">Features</a>
               <a href="#community" className="text-xs font-medium tracking-[0.15em] text-foreground/70 hover:text-primary transition-colors uppercase">Community</a>
             </div>
             
             {/* Center logo */}
-            <img src={loverballLogo} alt="Loverball" className="h-20 w-auto absolute left-1/2 -translate-x-1/2" />
+            <img src={loverballLogo} alt="Loverball" className="h-10 w-auto absolute left-1/2 -translate-x-1/2" />
             
             {/* Right nav links */}
             <div className="hidden md:flex items-center gap-8">
               <a href="#" className="text-xs font-medium tracking-[0.15em] text-foreground/70 hover:text-primary transition-colors uppercase">Events</a>
               <a href="#" className="text-xs font-medium tracking-[0.15em] text-foreground/70 hover:text-primary transition-colors uppercase">Shop</a>
-              <a href="#" className="text-xs font-medium tracking-[0.15em] text-foreground/70 hover:text-primary transition-colors uppercase">Contact</a>
               {isAuthenticated ? (
                 <Button onClick={() => navigate("/following")} size="sm" className="rounded-none text-xs tracking-[0.1em]">
                   Enter
                 </Button>
               ) : (
-                <Button onClick={scrollToMemberAccess} size="sm" variant="ghost" className="rounded-none text-xs tracking-[0.1em] text-foreground/70 hover:text-primary">
-                  Login
+                <Button 
+                  onClick={scrollToMemberAccess} 
+                  variant="outline" 
+                  className="rounded-none border-foreground/20 text-xs tracking-[0.1em] px-4 py-2 h-auto"
+                >
+                  <Lock className="h-3 w-3 mr-2" />
+                  Member Access
                 </Button>
               )}
             </div>
@@ -192,32 +195,32 @@ const Index = () => {
       <section className="pt-16 min-h-screen relative bg-[hsl(40,33%,96%)]">
         <div className="grid lg:grid-cols-12 min-h-screen">
           {/* Left Content Column */}
-          <div className="lg:col-span-4 relative flex flex-col justify-center px-6 sm:px-8 lg:px-16 py-16 lg:py-0 order-2 lg:order-1">
+          <div className="lg:col-span-4 relative flex flex-col justify-center px-6 sm:px-8 lg:px-14 py-16 lg:py-0 order-2 lg:order-1">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
             >
-              <p className="text-primary text-xs font-medium tracking-[0.2em] mb-8 uppercase">Hey Friend.</p>
-              <h1 className="text-4xl sm:text-5xl lg:text-[3.25rem] font-serif font-normal leading-[1.1] mb-8 text-foreground">
+              <p className="text-primary text-xs font-medium tracking-[0.2em] mb-6 uppercase">Hey Friend.</p>
+              <h1 className="text-4xl sm:text-5xl lg:text-[3rem] font-serif font-normal leading-[1.15] mb-8 text-primary">
                 Her Game.<br />
                 Her Community.<br />
                 Her Platform.
               </h1>
-              <p className="text-foreground/60 text-[15px] leading-relaxed mb-10 max-w-[320px]">
+              <p className="text-foreground/50 text-[15px] leading-relaxed mb-10 max-w-[340px]">
                 The platform where women's fandom controls the narrative. Stories, community, and culture—powered by passion for the games she loves.
               </p>
               {isAuthenticated ? (
                 <Button 
                   onClick={() => navigate("/following")}
-                  className="rounded-none bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-5 text-xs tracking-[0.15em] font-medium"
+                  className="rounded-none bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-6 text-xs tracking-[0.15em] font-medium"
                 >
                   ENTER PLATFORM
                 </Button>
               ) : (
                 <Button 
                   onClick={scrollToMemberAccess}
-                  className="rounded-none bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-5 text-xs tracking-[0.15em] font-medium"
+                  className="rounded-none bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-6 text-xs tracking-[0.15em] font-medium"
                 >
                   LEARN MORE
                 </Button>
@@ -225,15 +228,13 @@ const Index = () => {
             </motion.div>
           </div>
 
-          {/* Center Image Column with Accent Bar */}
-          <div className="lg:col-span-5 relative h-[60vh] lg:h-auto order-1 lg:order-2 flex">
-            {/* Teal/Sage accent bar */}
-            <div className="hidden lg:block w-12 bg-[hsl(185,25%,75%)] shrink-0" />
+          {/* Center Image Column */}
+          <div className="lg:col-span-5 relative h-[60vh] lg:h-auto order-1 lg:order-2">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 1 }}
-              className="flex-1 relative"
+              className="h-full"
             >
               <img
                 src={heroImage}
@@ -249,26 +250,26 @@ const Index = () => {
               initial={{ opacity: 0, x: 30 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8, delay: 0.4 }}
-              className="space-y-5"
+              className="space-y-4"
             >
-              <a href="#about" className="flex items-center justify-between text-sm font-medium text-foreground hover:text-primary transition-colors group py-1">
-                <span className="tracking-wide">ABOUT</span>
-                <span className="text-foreground/30 group-hover:text-primary transition-colors text-lg">›</span>
+              <a href="#about" className="flex items-center justify-between text-sm font-medium text-primary hover:text-primary/80 transition-colors group py-2 border-b border-transparent hover:border-primary/20">
+                <span className="tracking-[0.1em]">ABOUT</span>
+                <span className="text-primary/40 group-hover:text-primary transition-colors">›</span>
               </a>
-              <a href="#features" className="flex items-center justify-between text-sm font-medium text-foreground hover:text-primary transition-colors group py-1">
-                <span className="tracking-wide">FEATURES</span>
-                <span className="text-foreground/30 group-hover:text-primary transition-colors text-lg">›</span>
+              <a href="#features" className="flex items-center justify-between text-sm font-medium text-primary hover:text-primary/80 transition-colors group py-2 border-b border-transparent hover:border-primary/20">
+                <span className="tracking-[0.1em]">FEATURES</span>
+                <span className="text-primary/40 group-hover:text-primary transition-colors">›</span>
               </a>
-              <a href="#community" className="flex items-center justify-between text-sm font-medium text-foreground hover:text-primary transition-colors group py-1">
-                <span className="tracking-wide">COMMUNITY</span>
-                <span className="text-foreground/30 group-hover:text-primary transition-colors text-lg">›</span>
+              <a href="#community" className="flex items-center justify-between text-sm font-medium text-primary hover:text-primary/80 transition-colors group py-2 border-b border-transparent hover:border-primary/20">
+                <span className="tracking-[0.1em]">COMMUNITY</span>
+                <span className="text-primary/40 group-hover:text-primary transition-colors">›</span>
               </a>
               <Button 
                 onClick={scrollToMemberAccess}
                 variant="outline"
-                className="rounded-none border border-[hsl(185,25%,75%)] text-foreground hover:bg-[hsl(185,25%,75%)] hover:text-foreground w-full justify-between mt-6 py-5 bg-transparent"
+                className="rounded-none border-primary/30 text-primary hover:bg-primary/5 w-full justify-between mt-4 py-5 bg-transparent"
               >
-                <span className="text-sm tracking-wide">INQUIRE</span>
+                <span className="text-sm tracking-[0.1em]">INQUIRE</span>
                 <ArrowRight className="h-4 w-4" />
               </Button>
             </motion.nav>
