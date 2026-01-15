@@ -407,7 +407,7 @@ const Index = () => {
               {
                 number: "01",
                 title: "AI-Powered Stats & Stories",
-                description: "Personalized sports content that speaks to what you care about. Beyond stats—the stories, drama, and culture that make the game matter.",
+                description: "Personalized sports content that speaks to what you care about. Not just stats—the stories, drama, and culture that make the game matter.",
               },
               {
                 number: "02",
