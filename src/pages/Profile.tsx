@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { MapPin, Edit, Sparkles, LogOut } from "lucide-react";
+import { MapPin, Edit, Sparkles, LogOut, Calendar, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -10,6 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import MobileHeader from "@/components/MobileHeader";
 import DesktopNav from "@/components/DesktopNav";
 import BottomNav from "@/components/BottomNav";
+import { format } from "date-fns";
 
 type Profile = {
   id: string;
@@ -27,8 +28,23 @@ type Profile = {
   profile_photo_url: string | null;
 };
 
+type RSVPEvent = {
+  id: string;
+  status: string;
+  event: {
+    id: string;
+    title: string;
+    event_date: string;
+    event_time: string | null;
+    venue_name: string | null;
+    city: string | null;
+    image_url: string | null;
+  };
+};
+
 const Profile = () => {
   const [profile, setProfile] = useState<Profile | null>(null);
+  const [rsvpEvents, setRsvpEvents] = useState<RSVPEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -52,30 +68,53 @@ const Profile = () => {
           return;
         }
 
-        const { data, error } = await supabase
-          .from("profiles")
-          .select("*")
-          .eq("id", user.id)
-          .maybeSingle();
+        // Fetch profile and RSVPs in parallel
+        const [profileResult, rsvpResult] = await Promise.all([
+          supabase
+            .from("profiles")
+            .select("*")
+            .eq("id", user.id)
+            .maybeSingle(),
+          supabase
+            .from("event_rsvps")
+            .select(`
+              id,
+              status,
+              event:events (
+                id,
+                title,
+                event_date,
+                event_time,
+                venue_name,
+                city,
+                image_url
+              )
+            `)
+            .eq("user_id", user.id)
+            .order("created_at", { ascending: false })
+        ]);
 
         // If there's an RLS error or no profile, redirect to onboarding
-        if (error) {
-          console.log("Profile fetch error:", error.message);
-          // User likely has no profile - redirect to onboarding
+        if (profileResult.error) {
+          console.log("Profile fetch error:", profileResult.error.message);
           navigate("/onboarding");
           return;
         }
 
-        if (!data) {
-          // No profile found, redirect to onboarding
+        if (!profileResult.data) {
           navigate("/onboarding");
           return;
         }
 
-        setProfile(data);
+        setProfile(profileResult.data);
+        
+        // Filter out any RSVPs where the event might be null
+        if (rsvpResult.data) {
+          const validRsvps = rsvpResult.data.filter(rsvp => rsvp.event !== null) as RSVPEvent[];
+          setRsvpEvents(validRsvps);
+        }
       } catch (error: any) {
         console.error("Profile error:", error);
-        // On any error, redirect to onboarding to create profile
         navigate("/onboarding");
       } finally {
         setLoading(false);
@@ -265,6 +304,65 @@ const Profile = () => {
                     </div>
                   </div>
                 )}
+              </CardContent>
+            </Card>
+          )}
+
+          {/* My RSVPed Events */}
+          {rsvpEvents.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Calendar className="w-5 h-5" />
+                  My Events
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid md:grid-cols-2 gap-4">
+                  {rsvpEvents.map((rsvp) => (
+                    <div 
+                      key={rsvp.id} 
+                      className="p-4 border rounded-lg cursor-pointer hover:border-primary transition-colors"
+                      onClick={() => navigate("/events")}
+                    >
+                      {rsvp.event.image_url ? (
+                        <img 
+                          src={rsvp.event.image_url} 
+                          alt={rsvp.event.title}
+                          className="w-full h-32 object-cover rounded-md mb-3"
+                        />
+                      ) : (
+                        <div className="w-full h-32 bg-muted rounded-md mb-3 flex items-center justify-center">
+                          <Calendar className="w-8 h-8 text-muted-foreground" />
+                        </div>
+                      )}
+                      <div className="flex items-start justify-between gap-2">
+                        <div>
+                          <p className="font-medium">{rsvp.event.title}</p>
+                          <p className="text-sm text-muted-foreground">
+                            {rsvp.event.venue_name || rsvp.event.city || "Location TBD"}
+                          </p>
+                          <div className="flex items-center gap-2 mt-1 text-xs text-muted-foreground">
+                            <Calendar className="w-3 h-3" />
+                            <span>{format(new Date(rsvp.event.event_date), "MMM d, yyyy")}</span>
+                            {rsvp.event.event_time && (
+                              <>
+                                <Clock className="w-3 h-3 ml-1" />
+                                <span>{rsvp.event.event_time}</span>
+                              </>
+                            )}
+                          </div>
+                        </div>
+                        <Badge 
+                          variant={rsvp.status === "confirmed" ? "default" : "secondary"}
+                          className="text-xs"
+                        >
+                          {rsvp.status}
+                        </Badge>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </CardContent>
             </Card>
           )}
