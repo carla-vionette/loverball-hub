@@ -8,3 +8,12 @@ verify_jwt = false
 
 [functions.send-event-reminders]
 verify_jwt = false
+
+[functions.notify-attendee-status]
+verify_jwt = false
+
+[functions.get-member-profiles]
+verify_jwt = false
+
+[functions.sports-stats]
+verify_jwt = false

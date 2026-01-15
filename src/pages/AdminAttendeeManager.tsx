@@ -156,7 +156,24 @@ const AdminAttendeeManager = () => {
     }
   };
 
-  const updateAttendeeStatus = async (attendeeId: string, newStatus: string) => {
+  const sendStatusNotification = async (userId: string, eventId: string, newStatus: string, previousStatus?: string, isPromotion?: boolean) => {
+    try {
+      const { error } = await supabase.functions.invoke('notify-attendee-status', {
+        body: { userId, eventId, newStatus, previousStatus, isPromotion }
+      });
+      
+      if (error) {
+        console.error('Notification error:', error);
+      }
+    } catch (err) {
+      console.error('Failed to send notification:', err);
+    }
+  };
+
+  const updateAttendeeStatus = async (attendeeId: string, newStatus: string, sendNotification = true) => {
+    const attendee = attendees.find(a => a.id === attendeeId);
+    const previousStatus = attendee?.status;
+    
     try {
       const { error } = await supabase
         .from('event_rsvps')
@@ -169,7 +186,13 @@ const AdminAttendeeManager = () => {
         a.id === attendeeId ? { ...a, status: newStatus } : a
       ));
 
-      toast({ title: 'Status updated' });
+      // Send notification if user_id is a real user (not a manual attendee placeholder)
+      if (sendNotification && attendee && attendee.profile) {
+        sendStatusNotification(attendee.user_id, id!, newStatus, previousStatus);
+        toast({ title: 'Status updated & notification sent' });
+      } else {
+        toast({ title: 'Status updated' });
+      }
     } catch (error: any) {
       console.error('Error updating status:', error);
       toast({ title: 'Error updating status', variant: 'destructive' });
@@ -216,7 +239,31 @@ const AdminAttendeeManager = () => {
   };
 
   const promoteFromWaitlist = async (attendeeId: string) => {
-    await updateAttendeeStatus(attendeeId, 'attending');
+    const attendee = attendees.find(a => a.id === attendeeId);
+    
+    try {
+      const { error } = await supabase
+        .from('event_rsvps')
+        .update({ status: 'attending' })
+        .eq('id', attendeeId);
+
+      if (error) throw error;
+
+      setAttendees(prev => prev.map(a => 
+        a.id === attendeeId ? { ...a, status: 'attending' } : a
+      ));
+
+      // Send promotion notification for real users
+      if (attendee && attendee.profile) {
+        sendStatusNotification(attendee.user_id, id!, 'attending', 'waitlist', true);
+        toast({ title: 'Promoted from waitlist!', description: 'Notification sent to attendee.' });
+      } else {
+        toast({ title: 'Promoted from waitlist!' });
+      }
+    } catch (error: any) {
+      console.error('Error promoting attendee:', error);
+      toast({ title: 'Error promoting attendee', variant: 'destructive' });
+    }
   };
 
   const exportCSV = () => {
