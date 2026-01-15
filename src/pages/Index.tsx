@@ -10,7 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/hooks/useAuth";
 import { motion } from "framer-motion";
 import { ArrowRight, Users, Sparkles, Heart, TrendingUp, Lock, Ticket } from "lucide-react";
-import heroImage from "@/assets/landing-fans.jpg";
+import heroImage from "@/assets/hero-women-new.jpg";
 import loverballLogo from "@/assets/loverball-logo-new.png";
 import philosophyImage from "@/assets/philosophy-image.jpg";
 import { z } from "zod";
