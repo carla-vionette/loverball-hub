@@ -278,9 +278,11 @@ export type Database = {
           neighborhood: string | null
           other_interests: string[] | null
           participation_preferences: string[] | null
+          phone_number: string | null
           primary_role: string | null
           profile_photo_url: string | null
           pronouns: string | null
+          sms_notifications_enabled: boolean | null
           sports_experience_types: string[] | null
           tiktok_url: string | null
           updated_at: string
@@ -306,9 +308,11 @@ export type Database = {
           neighborhood?: string | null
           other_interests?: string[] | null
           participation_preferences?: string[] | null
+          phone_number?: string | null
           primary_role?: string | null
           profile_photo_url?: string | null
           pronouns?: string | null
+          sms_notifications_enabled?: boolean | null
           sports_experience_types?: string[] | null
           tiktok_url?: string | null
           updated_at?: string
@@ -334,9 +338,11 @@ export type Database = {
           neighborhood?: string | null
           other_interests?: string[] | null
           participation_preferences?: string[] | null
+          phone_number?: string | null
           primary_role?: string | null
           profile_photo_url?: string | null
           pronouns?: string | null
+          sms_notifications_enabled?: boolean | null
           sports_experience_types?: string[] | null
           tiktok_url?: string | null
           updated_at?: string
