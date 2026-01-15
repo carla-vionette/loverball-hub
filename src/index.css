@@ -24,10 +24,10 @@ All colors MUST be HSL.
     --secondary: 224 64% 33%; /* Deep Navy #1E3A8A */
     --secondary-foreground: 0 0% 100%;
 
-    --muted: 48 96% 89%; /* Warm Cream #FEF3C7 */
+    --muted: 36 20% 90%; /* Warm Cream #eae6e0 */
     --muted-foreground: 217 19% 45%;
 
-    --accent: 48 60% 94%; /* Lighter Cream/Beige #FAF8F5 */
+    --accent: 36 15% 94%; /* Lighter Cream */
     --accent-foreground: 217 19% 27%;
 
     --coral: 4 56% 60%;
