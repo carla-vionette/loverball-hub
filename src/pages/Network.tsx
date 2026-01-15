@@ -4,6 +4,7 @@ import { motion, AnimatePresence, PanInfo } from "framer-motion";
 import { Heart, X, MessageCircle, Filter, Grid3X3, Layers, Users, ChevronDown, MapPin, Trophy, Sparkles } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { fetchAllProfiles, fetchProfilesByIds } from "@/lib/profileApi";
 import BottomNav from "@/components/BottomNav";
 import DesktopNav from "@/components/DesktopNav";
 import MobileHeader from "@/components/MobileHeader";
@@ -74,14 +75,18 @@ const Network = () => {
   const fetchProfiles = async () => {
     if (!user) return;
     
-    const { data, error } = await supabase
-      .from("profiles")
-      .select("id, name, profile_photo_url, bio, city, favorite_sports, favorite_la_teams, looking_for_tags, primary_role")
-      .neq("id", user.id);
+    const { data, error, rateLimited } = await fetchAllProfiles(
+      [],
+      "id, name, profile_photo_url, bio, city, favorite_sports, favorite_la_teams, looking_for_tags, primary_role"
+    );
     
     if (error) {
       console.error("Error fetching profiles:", error);
-      toast.error("Failed to load profiles");
+      if (rateLimited) {
+        toast.error("Rate limit exceeded. Please try again later.");
+      } else {
+        toast.error("Failed to load profiles");
+      }
     } else {
       setProfiles(data || []);
     }
@@ -123,10 +128,10 @@ const Network = () => {
       // Store connected user IDs to filter them out from swiping
       setConnectedIds(new Set(otherUserIds));
       
-      const { data: otherProfiles } = await supabase
-        .from("profiles")
-        .select("id, name, profile_photo_url, bio, city, favorite_sports, favorite_la_teams, looking_for_tags, primary_role")
-        .in("id", otherUserIds);
+      const { data: otherProfiles } = await fetchProfilesByIds(
+        otherUserIds,
+        "id, name, profile_photo_url, bio, city, favorite_sports, favorite_la_teams, looking_for_tags, primary_role"
+      );
       
       const matchesWithProfiles = matches.map(match => ({
         ...match,
