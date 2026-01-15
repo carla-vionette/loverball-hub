@@ -6,8 +6,9 @@ import MobileHeader from '@/components/MobileHeader';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { supabase } from '@/integrations/supabase/client';
+import { fetchProfileById } from '@/lib/profileApi';
 import { useAuth } from '@/hooks/useAuth';
+import { useToast } from '@/hooks/use-toast';
 import { Loader2, MapPin, Briefcase, Instagram, Linkedin, Globe, ArrowLeft } from 'lucide-react';
 
 interface MemberProfile {
@@ -33,6 +34,7 @@ const MemberProfile = () => {
   const [profile, setProfile] = useState<MemberProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const { isMember } = useAuth();
+  const { toast } = useToast();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -45,13 +47,18 @@ const MemberProfile = () => {
       if (!id) return;
 
       try {
-        const { data, error } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', id)
-          .maybeSingle();
+        const { data, error, rateLimited } = await fetchProfileById(id);
 
-        if (error) throw error;
+        if (error) {
+          if (rateLimited) {
+            toast({
+              title: 'Rate limit exceeded',
+              description: 'Please try again later.',
+              variant: 'destructive',
+            });
+          }
+          throw new Error(error);
+        }
         setProfile(data);
       } catch (error) {
         console.error('Error fetching profile:', error);

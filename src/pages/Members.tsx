@@ -6,6 +6,7 @@ import MobileHeader from '@/components/MobileHeader';
 import MemberCard from '@/components/MemberCard';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
+import { fetchProfilesByIds } from '@/lib/profileApi';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, Users, PartyPopper } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -58,17 +59,27 @@ const Members = () => {
 
       const memberIds = memberRoles?.map(r => r.user_id) || [];
 
-      // Get profiles of members not yet swiped
-      const { data: profilesData, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .in('id', memberIds)
-        .not('id', 'in', `(${swipedUserIds.join(',')})`);
+      // Get profiles of members using rate-limited API
+      const { data: profilesData, error, rateLimited } = await fetchProfilesByIds(memberIds);
 
-      if (error) throw error;
+      if (error) {
+        if (rateLimited) {
+          toast({
+            title: 'Rate limit exceeded',
+            description: 'Please try again later.',
+            variant: 'destructive',
+          });
+        }
+        throw new Error(error);
+      }
+
+      // Filter out swiped users client-side (safer than SQL string concatenation)
+      const filteredProfiles = (profilesData || []).filter(
+        (p: any) => !swipedUserIds.includes(p.id)
+      );
 
       // Shuffle profiles for variety
-      const shuffled = (profilesData || []).sort(() => Math.random() - 0.5);
+      const shuffled = filteredProfiles.sort(() => Math.random() - 0.5);
       setProfiles(shuffled);
     } catch (error) {
       console.error('Error fetching profiles:', error);
