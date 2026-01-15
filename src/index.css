@@ -8,78 +8,78 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Loverball Brand Colors - Bold Crimson & Cream */
-    --background: 33 100% 98%; /* #FFFBF6 - warm off-white/cream */
-    --foreground: 350 84% 35%; /* Dark crimson for text */
+    /* Loverball Brand Colors - Red, Navy & Cream */
+    --background: 0 0% 100%; /* White */
+    --foreground: 217 19% 27%; /* Charcoal #374151 */
 
     --card: 0 0% 100%;
-    --card-foreground: 350 84% 35%;
+    --card-foreground: 217 19% 27%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 350 84% 35%;
+    --popover-foreground: 217 19% 27%;
 
-    --primary: 355 79% 56%; /* #E63946 - Bold crimson red */
+    --primary: 0 84% 50%; /* Vibrant Red #DC2626 */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 355 70% 48%; /* #DC2E3A - Slightly darker crimson */
+    --secondary: 224 64% 33%; /* Deep Navy #1E3A8A */
     --secondary-foreground: 0 0% 100%;
 
-    --muted: 10 50% 95%; /* Light warm pink */
-    --muted-foreground: 350 84% 35%;
+    --muted: 48 96% 89%; /* Warm Cream #FEF3C7 */
+    --muted-foreground: 217 19% 45%;
 
-    --accent: 355 70% 65%; /* Lighter crimson accent */
-    --accent-foreground: 0 0% 100%;
+    --accent: 48 60% 94%; /* Lighter Cream/Beige #FAF8F5 */
+    --accent-foreground: 217 19% 27%;
 
     --coral: 4 56% 60%;
     --coral-foreground: 0 0% 100%;
 
-    --pale-pink: 10 80% 94%; /* Soft blush pink */
-    --pale-pink-foreground: 350 84% 35%;
+    --pale-pink: 48 96% 95%; /* Very light cream */
+    --pale-pink-foreground: 217 19% 27%;
 
-    --medium-blue: 197 39% 48%;
+    --medium-blue: 224 64% 45%; /* Lighter navy */
     --medium-blue-foreground: 0 0% 100%;
 
     --olive: 75 13% 52%;
     --olive-foreground: 0 0% 100%;
 
     --light-lime: 64 70% 60%;
-    --light-lime-foreground: 350 84% 35%;
+    --light-lime-foreground: 217 19% 27%;
 
-    --destructive: 355 79% 56%;
+    --destructive: 0 84% 50%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 10 30% 85%;
-    --input: 10 30% 85%;
-    --ring: 355 79% 56%;
+    --border: 217 19% 88%;
+    --input: 217 19% 88%;
+    --ring: 0 84% 50%;
 
     --radius: 0.5rem;
   }
 
   .dark {
-    --background: 6 100% 32%; /* #A30F00 - dark red */
-    --foreground: 8 100% 84%; /* #FFB3AB - soft pink tint */
+    --background: 222 47% 11%; /* Midnight Blue #0F172A */
+    --foreground: 48 60% 94%; /* Cream text */
 
-    --card: 6 100% 35%;
-    --card-foreground: 8 100% 84%;
+    --card: 224 64% 18%;
+    --card-foreground: 48 60% 94%;
 
-    --popover: 6 100% 35%;
-    --popover-foreground: 8 100% 84%;
+    --popover: 224 64% 18%;
+    --popover-foreground: 48 60% 94%;
 
-    --primary: 9 81% 50%; /* #E03A1C - medium red */
+    --primary: 0 84% 60%; /* Brighter Red #EF4444 */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 6 100% 42%;
+    --secondary: 224 64% 45%;
     --secondary-foreground: 0 0% 100%;
 
-    --muted: 6 100% 25%;
-    --muted-foreground: 8 100% 75%;
+    --muted: 224 64% 20%;
+    --muted-foreground: 48 60% 80%;
 
-    --accent: 8 100% 69%; /* #FF7461 - light red */
-    --accent-foreground: 6 100% 32%;
+    --accent: 0 84% 50%;
+    --accent-foreground: 0 0% 100%;
 
-    --border: 6 100% 40%;
-    --input: 6 100% 40%;
-    --ring: 9 81% 50%;
+    --border: 224 50% 25%;
+    --input: 224 50% 25%;
+    --ring: 0 84% 60%;
   }
 }
 
