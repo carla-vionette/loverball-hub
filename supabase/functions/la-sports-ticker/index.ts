@@ -5,6 +5,28 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// In-memory cache for rate limiting and performance
+interface CacheEntry {
+  data: unknown;
+  timestamp: number;
+}
+
+const cache: Map<string, CacheEntry> = new Map();
+const CACHE_TTL = 120000; // 2 minutes - sports data doesn't change by the second
+
+function getCachedData(key: string): unknown | null {
+  const entry = cache.get(key);
+  if (entry && (Date.now() - entry.timestamp) < CACHE_TTL) {
+    console.log(`Cache hit for: ${key}`);
+    return entry.data;
+  }
+  return null;
+}
+
+function setCachedData(key: string, data: unknown): void {
+  cache.set(key, { data, timestamp: Date.now() });
+}
+
 // ESPN API endpoints for different sports
 const ESPN_ENDPOINTS = {
   nba: 'https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard',
@@ -27,31 +49,17 @@ const ESPN_NEWS_ENDPOINTS = {
   nhl: 'https://site.api.espn.com/apis/site/v2/sports/hockey/nhl/news',
 };
 
-// LA Team identifiers for ESPN API
-const LA_TEAM_ABBREVS = {
-  // NBA
-  'LAL': 'Los Angeles Lakers',
-  'LAC': 'Los Angeles Clippers',
-  // WNBA
-  'LA': 'Los Angeles Sparks',
-  // NFL
-  'LAR': 'Los Angeles Rams',
-  // Chargers
-  'LAC_NFL': 'Los Angeles Chargers',
-  // MLB
-  'LAD': 'Los Angeles Dodgers',
-  'LAA': 'Los Angeles Angels',
-  // NHL
-  'LA_NHL': 'Los Angeles Kings',
-  'ANA': 'Anaheim Ducks',
-  // MLS
-  'LAG': 'LA Galaxy',
-  'LAFC': 'LAFC',
-  // NWSL
-  'ACFC': 'Angel City FC',
-  'SD': 'San Diego Wave FC',
-};
+// Reddit subreddits for LA teams
+const REDDIT_SUBREDDITS = [
+  'lakers', 'LAClippers', 'LASparks',
+  'LosAngelesRams', 'Chargers',
+  'Dodgers', 'angelsbaseball',
+  'losangeleskings', 'AnaheimDucks',
+  'LAGalaxy', 'LAFC', 'AngelCityFC',
+  'UCLA', 'USC'
+];
 
+// LA Team identifiers for ESPN API
 const LA_TEAM_NAMES = [
   'Lakers', 'Clippers', 'Sparks', 'Rams', 'Chargers', 'Dodgers', 'Angels',
   'Kings', 'Ducks', 'Galaxy', 'LAFC', 'Angel City', 'Wave',
@@ -94,9 +102,27 @@ interface ESPNResponse {
   events?: ESPNGame[];
 }
 
+interface RedditPost {
+  data: {
+    title: string;
+    score: number;
+    subreddit: string;
+    created_utc: number;
+    is_self: boolean;
+    num_comments: number;
+  };
+}
+
+interface RedditResponse {
+  data?: {
+    children?: RedditPost[];
+  };
+}
+
 interface TickerItem {
   text: string;
   priority: number; // Lower = higher priority (live games first)
+  source: 'espn' | 'reddit';
 }
 
 function isLATeam(teamName: string): boolean {
@@ -139,6 +165,10 @@ function formatPeriod(sport: string, period: number, clock: string): string {
 }
 
 async function fetchESPNData(endpoint: string): Promise<ESPNResponse | null> {
+  // Check cache first
+  const cached = getCachedData(`espn:${endpoint}`);
+  if (cached) return cached as ESPNResponse;
+
   try {
     const response = await fetch(endpoint, {
       headers: {
@@ -149,11 +179,71 @@ async function fetchESPNData(endpoint: string): Promise<ESPNResponse | null> {
       console.error(`ESPN API error for ${endpoint}: ${response.status}`);
       return null;
     }
-    return await response.json();
+    const data = await response.json();
+    setCachedData(`espn:${endpoint}`, data);
+    return data;
   } catch (error) {
     console.error(`Error fetching ${endpoint}:`, error);
     return null;
   }
+}
+
+async function fetchRedditPosts(): Promise<TickerItem[]> {
+  // Check cache first
+  const cached = getCachedData('reddit:all');
+  if (cached) return cached as TickerItem[];
+
+  const items: TickerItem[] = [];
+  
+  // Fetch from a few key subreddits to avoid rate limits
+  const prioritySubreddits = ['lakers', 'Dodgers', 'LosAngelesRams', 'LAFC', 'UCLA'];
+  
+  for (const subreddit of prioritySubreddits) {
+    try {
+      const response = await fetch(
+        `https://www.reddit.com/r/${subreddit}/hot.json?limit=3`,
+        {
+          headers: {
+            'User-Agent': 'Mozilla/5.0 (compatible; LASportsTickerBot/1.0)',
+          },
+        }
+      );
+      
+      if (!response.ok) {
+        console.log(`Reddit API returned ${response.status} for r/${subreddit}`);
+        continue;
+      }
+      
+      const data: RedditResponse = await response.json();
+      const posts = data.data?.children || [];
+      
+      for (const post of posts) {
+        const { title, score, num_comments } = post.data;
+        
+        // Skip stickied/low-engagement posts
+        if (score < 50 || num_comments < 10) continue;
+        
+        // Truncate title if too long
+        const truncated = title.length > 55 ? title.substring(0, 52) + '...' : title;
+        
+        items.push({
+          text: `r/${subreddit}: ${truncated}`,
+          priority: 5, // Reddit posts have lower priority than games/news
+          source: 'reddit'
+        });
+      }
+      
+      // Small delay to be respectful of Reddit's rate limits
+      await new Promise(resolve => setTimeout(resolve, 100));
+    } catch (error) {
+      console.error(`Error fetching Reddit r/${subreddit}:`, error);
+    }
+  }
+  
+  // Sort by implicit engagement (position in hot feed) and take top results
+  const result = items.slice(0, 5);
+  setCachedData('reddit:all', result);
+  return result;
 }
 
 function processGames(data: ESPNResponse | null, sport: string, category: string, gender: string): TickerItem[] {
@@ -199,7 +289,7 @@ function processGames(data: ESPNResponse | null, sport: string, category: string
       const period = event.status.period || 1;
       const periodText = statusType === 'STATUS_HALFTIME' ? 'Halftime' : formatPeriod(sport, period, clock);
       
-      tickerText = `${awayTeam.team.displayName} @ ${homeTeam.team.displayName} | Score: ${awayScore}-${homeScore} | ${periodText}`;
+      tickerText = `🔴 LIVE: ${awayTeam.team.displayName} @ ${homeTeam.team.displayName} | ${awayScore}-${homeScore} | ${periodText}`;
       priority = 1; // Highest priority for live games
     } else if (statusType === 'STATUS_FINAL' || event.status.type.completed) {
       // Final score
@@ -208,12 +298,12 @@ function processGames(data: ESPNResponse | null, sport: string, category: string
     } else if (statusType === 'STATUS_SCHEDULED') {
       // Upcoming game
       const gameTime = formatGameTime(competition.date);
-      tickerText = `${awayTeam.team.displayName} vs ${homeTeam.team.displayName} | ${gameTime}`;
+      tickerText = `📅 ${awayTeam.team.displayName} vs ${homeTeam.team.displayName} | ${gameTime}`;
       priority = 3;
     }
     
     if (tickerText) {
-      items.push({ text: tickerText, priority });
+      items.push({ text: tickerText, priority, source: 'espn' });
     }
   }
   
@@ -221,6 +311,10 @@ function processGames(data: ESPNResponse | null, sport: string, category: string
 }
 
 async function fetchNews(): Promise<TickerItem[]> {
+  // Check cache first
+  const cached = getCachedData('espn:news');
+  if (cached) return cached as TickerItem[];
+
   const items: TickerItem[] = [];
   
   for (const [sport, endpoint] of Object.entries(ESPN_NEWS_ENDPOINTS)) {
@@ -243,8 +337,9 @@ async function fetchNews(): Promise<TickerItem[]> {
           // Truncate headline if too long
           const truncated = headline.length > 60 ? headline.substring(0, 57) + '...' : headline;
           items.push({ 
-            text: `HEADLINE: ${truncated}`, 
-            priority: 4 
+            text: `📰 ${truncated}`, 
+            priority: 4,
+            source: 'espn'
           });
         }
       }
@@ -253,7 +348,9 @@ async function fetchNews(): Promise<TickerItem[]> {
     }
   }
   
-  return items.slice(0, 4); // Max 4 headlines
+  const result = items.slice(0, 4); // Max 4 headlines
+  setCachedData('espn:news', result);
+  return result;
 }
 
 serve(async (req) => {
@@ -264,6 +361,23 @@ serve(async (req) => {
 
   try {
     const { category = 'both', gender = 'both' } = await req.json().catch(() => ({}));
+    const cacheKey = `ticker:${category}:${gender}`;
+    
+    // Check main response cache
+    const cachedResponse = getCachedData(cacheKey);
+    if (cachedResponse) {
+      console.log(`Returning cached ticker response for ${cacheKey}`);
+      return new Response(
+        JSON.stringify(cachedResponse),
+        { 
+          headers: { 
+            ...corsHeaders, 
+            'Content-Type': 'application/json',
+            'X-Cache': 'HIT'
+          } 
+        }
+      );
+    }
     
     console.log(`Fetching LA sports ticker - category: ${category}, gender: ${gender}`);
     
@@ -296,47 +410,58 @@ serve(async (req) => {
       );
     }
     
-    // Fetch all data in parallel
-    const [gamesResults, newsItems] = await Promise.all([
+    // Fetch all data in parallel (ESPN games, ESPN news, Reddit posts)
+    const [gamesResults, newsItems, redditItems] = await Promise.all([
       Promise.all(
         endpointsToFetch.map(async ({ endpoint, sport }) => {
           const data = await fetchESPNData(endpoint);
           return processGames(data, sport, category, gender);
         })
       ),
-      fetchNews()
+      fetchNews(),
+      fetchRedditPosts()
     ]);
     
-    // Combine all game items
-    let allItems: TickerItem[] = gamesResults.flat();
+    // Combine all items
+    let allItems: TickerItem[] = [
+      ...gamesResults.flat(),
+      ...newsItems,
+      ...redditItems
+    ];
     
-    // Add news headlines
-    allItems = [...allItems, ...newsItems];
-    
-    // Sort by priority (live games first, then finals, then upcoming, then news)
+    // Sort by priority (live games first, then finals, then upcoming, then news, then reddit)
     allItems.sort((a, b) => a.priority - b.priority);
     
-    // Take top 15 items
-    const tickerItems = allItems.slice(0, 15).map(item => item.text);
+    // Take top 18 items (more room for reddit content)
+    const tickerItems = allItems.slice(0, 18).map(item => item.text);
     
-    console.log(`Processed ${tickerItems.length} real ticker items from ESPN`);
+    // Count sources for logging
+    const espnCount = allItems.filter(i => i.source === 'espn').length;
+    const redditCount = allItems.filter(i => i.source === 'reddit').length;
+    console.log(`Processed ${tickerItems.length} items (ESPN: ${espnCount}, Reddit: ${redditCount})`);
     
     // If no items found, provide a fallback message
     if (tickerItems.length === 0) {
       tickerItems.push('No live LA games right now. Check back soon for updates!');
     }
 
+    const responseData = { 
+      items: tickerItems,
+      updatedAt: new Date().toISOString(),
+      filters: { category, gender },
+      sources: ['ESPN', 'Reddit']
+    };
+    
+    // Cache the full response
+    setCachedData(cacheKey, responseData);
+
     return new Response(
-      JSON.stringify({ 
-        items: tickerItems,
-        updatedAt: new Date().toISOString(),
-        filters: { category, gender },
-        source: 'ESPN'
-      }),
+      JSON.stringify(responseData),
       { 
         headers: { 
           ...corsHeaders, 
-          'Content-Type': 'application/json' 
+          'Content-Type': 'application/json',
+          'X-Cache': 'MISS'
         } 
       }
     );
