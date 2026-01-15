@@ -278,38 +278,43 @@ const Index = () => {
       </section>
 
       {/* About Section - Clean Editorial Grid */}
-      <section id="about" className="py-40 bg-[hsl(40,33%,96%)]">
-        <div className="max-w-6xl mx-auto px-6 sm:px-8 lg:px-16">
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-start">
-            {/* Left Column - Stats with Image */}
+      <section id="about" className="py-32 bg-[hsl(40,33%,96%)]">
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-16">
+          <div className="grid lg:grid-cols-3 gap-12 lg:gap-16 items-start">
+            {/* Left Column - Stats */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
               viewport={{ once: true }}
             >
-              <p className="text-primary text-xs font-medium tracking-[0.2em] mb-10 uppercase">The Movement</p>
-              <div className="space-y-12">
-                {/* First stat with image beside it */}
-                <div className="flex gap-6 items-start">
-                  <div className="flex-1">
-                    <span className="text-6xl sm:text-7xl font-serif font-light text-foreground tracking-tight">75%</span>
-                    <p className="text-foreground/50 text-[15px] mt-4 leading-relaxed max-w-[280px]">of women globally identify as avid sports fans</p>
-                  </div>
-                  <div className="relative w-32 h-40 shrink-0">
-                    <img
-                      src={philosophyImage}
-                      alt="Loverball community member"
-                      className="w-full h-full object-cover object-top"
-                    />
-                    <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-[hsl(185,25%,75%)] -z-10" />
-                  </div>
-                </div>
-                {/* Second stat */}
+              <p className="text-primary text-xs font-medium tracking-[0.2em] mb-12 uppercase">The Movement</p>
+              <div className="space-y-16">
                 <div>
-                  <span className="text-6xl sm:text-7xl font-serif font-light text-foreground tracking-tight">85%</span>
-                  <p className="text-foreground/50 text-[15px] mt-4 leading-relaxed max-w-[280px]">of household sports purchasing decisions are controlled by women</p>
+                  <span className="text-7xl sm:text-8xl font-serif font-light text-primary tracking-tight">75%</span>
+                  <p className="text-foreground/50 text-[15px] mt-4 leading-relaxed max-w-[320px]">of women globally identify as avid sports fans</p>
                 </div>
+                <div>
+                  <span className="text-7xl sm:text-8xl font-serif font-light text-primary tracking-tight">85%</span>
+                  <p className="text-foreground/50 text-[15px] mt-4 leading-relaxed max-w-[320px]">of household sports purchasing decisions are controlled by women</p>
+                </div>
+              </div>
+            </motion.div>
+            
+            {/* Center Column - Image */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.98 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.8, delay: 0.1 }}
+              viewport={{ once: true }}
+              className="flex justify-center"
+            >
+              <div className="aspect-[3/4] w-full max-w-[380px] overflow-hidden">
+                <img
+                  src={philosophyImage}
+                  alt="Loverball community member"
+                  className="w-full h-full object-cover object-top"
+                />
               </div>
             </motion.div>
             
@@ -319,15 +324,15 @@ const Index = () => {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
               viewport={{ once: true }}
-              className="lg:pt-8"
+              className="lg:pt-16"
             >
-              <h2 className="text-3xl sm:text-4xl font-serif font-normal leading-[1.2] mb-8 text-foreground">
+              <h2 className="text-3xl sm:text-4xl font-serif font-normal leading-[1.2] mb-8 text-primary">
                 Yet she remains overlooked.
               </h2>
-              <p className="text-foreground/50 text-[15px] leading-[1.8] mb-6">
+              <p className="text-foreground/60 text-[15px] leading-[1.8] mb-6">
                 Loverball is a content and community platform where female fandom thrives. We're creating the space for her to gather, share, and celebrate the games she loves.
               </p>
-              <p className="text-foreground/50 text-[15px] leading-[1.8]">
+              <p className="text-foreground/60 text-[15px] leading-[1.8]">
                 By 2030, women will command 75% of global discretionary spending. The future of sports is female.
               </p>
             </motion.div>
