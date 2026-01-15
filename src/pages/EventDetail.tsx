@@ -429,7 +429,7 @@ const EventDetail = () => {
           >
             <ArrowLeft className="w-5 h-5" />
           </Button>
-          <img src={loverballLogo} alt="Loverball" className="h-8" />
+          <img src={loverballLogo} alt="Loverball" className="h-12" />
           <Button 
             variant="ghost" 
             size="icon"
