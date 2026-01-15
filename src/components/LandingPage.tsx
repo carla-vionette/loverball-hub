@@ -358,7 +358,7 @@ const LandingPage = () => {
       <footer className="py-12 px-4 sm:px-6 lg:px-8 bg-foreground text-background">
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-            <img src={loverballLogo} alt="Loverball" className="h-20 w-auto brightness-0 invert" />
+            <img src={loverballLogo} alt="Loverball" className="h-32 w-auto brightness-0 invert" />
             <p className="text-sm text-background/70">
               © 2024 Loverball. All rights reserved. Built by women, for women.
             </p>
