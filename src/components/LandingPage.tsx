@@ -89,7 +89,7 @@ const LandingPage = () => {
                 Experience
               </h1>
               <p className="text-foreground/70 text-sm leading-relaxed mb-8 max-w-sm">
-                The platform where women's fandom controls the narrative. Stories, community, and culture—powered by passion for the games she loves.
+                We are a community platform for women who love sports. Stories, community, and culture—powered by passion for the games she loves.
               </p>
               <Button 
                 onClick={() => navigate("/following")}
