@@ -77,12 +77,8 @@ const EventDetail = () => {
   const [countdown, setCountdown] = useState({ days: 0, hours: 0, minutes: 0 });
   const [showConfetti, setShowConfetti] = useState(false);
 
-  // Redirect non-authenticated users to signup
-  useEffect(() => {
-    if (!authLoading && !user) {
-      navigate(`/auth?redirect=/event/${id}&signup=true`);
-    }
-  }, [authLoading, user, id, navigate]);
+  // No longer redirect - allow guests to view event details
+  // They will see "Sign in to RSVP" button at bottom
 
   // Update OG meta tags dynamically
   useEffect(() => {
@@ -137,13 +133,15 @@ const EventDetail = () => {
     };
   }, [event]);
 
+  // Fetch event for everyone (including guests)
   useEffect(() => {
-    if (id && user) {
+    if (id) {
       fetchEvent();
       fetchAttendees();
     }
-  }, [id, user]);
+  }, [id]);
 
+  // Only fetch RSVP status for authenticated users
   useEffect(() => {
     if (user && id) {
       fetchRsvpStatus();
@@ -379,7 +377,7 @@ const EventDetail = () => {
   const isEventPast = eventDateTime ? isPast(eventDateTime) : false;
   const themeClass = themeStyles[event?.theme || 'default'] || themeStyles.default;
 
-  if (loading || authLoading) {
+  if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
