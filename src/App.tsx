@@ -20,6 +20,7 @@ import Invite from "./pages/Invite";
 import Members from "./pages/Members";
 import MemberProfile from "./pages/MemberProfile";
 import Events from "./pages/Events";
+import EventDetail from "./pages/EventDetail";
 import MessagesPage from "./pages/MessagesPage";
 import Admin from "./pages/Admin";
 import Terms from "./pages/Terms";
@@ -44,6 +45,7 @@ const App = () => (
             <Route path="/network" element={<ProtectedRoute><Network /></ProtectedRoute>} />
             <Route path="/gather" element={<Navigate to="/events" replace />} />
             <Route path="/events" element={<ProtectedRoute><Events /></ProtectedRoute>} />
+            <Route path="/event/:id" element={<EventDetail />} />
             <Route path="/community" element={<ProtectedRoute><Community /></ProtectedRoute>} />
             <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
             <Route path="/search" element={<ProtectedRoute><Search /></ProtectedRoute>} />
