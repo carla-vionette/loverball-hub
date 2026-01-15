@@ -11,10 +11,12 @@ const DesktopNav = () => {
   
   const navItems = [
     { icon: Home, label: "For You", path: "/following" },
+    ...(isMember ? [
+      { icon: Heart, label: "Network", path: "/network" },
+    ] : []),
     { icon: CalendarDays, label: "Events", path: "/events" },
     { icon: ShoppingBag, label: "Shop", path: "/shop" },
     ...(isMember ? [
-      { icon: Heart, label: "Network", path: "/network" },
       { icon: Users, label: "Members", path: "/members" },
       { icon: MessageCircle, label: "Messages", path: "/messages", showBadge: true },
     ] : []),
