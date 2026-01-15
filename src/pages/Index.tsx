@@ -144,7 +144,7 @@ const Index = () => {
       {/* Navigation - Centered Logo */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-[hsl(40,33%,96%)] border-b border-border/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-14 relative">
+          <div className="flex items-center justify-between h-20 relative">
             {/* Left nav links */}
             <div className="hidden md:flex items-center gap-8">
               <a href="#about" className="text-xs font-medium tracking-[0.15em] text-foreground/70 hover:text-primary transition-colors uppercase">Home</a>
@@ -154,7 +154,7 @@ const Index = () => {
             </div>
             
             {/* Center logo */}
-            <img src={loverballLogo} alt="Loverball" className="h-14 w-auto absolute left-1/2 -translate-x-1/2" />
+            <img src={loverballLogo} alt="Loverball" className="h-20 w-auto absolute left-1/2 -translate-x-1/2" />
             
             {/* Right nav links */}
             <div className="hidden md:flex items-center gap-8">
@@ -238,7 +238,7 @@ const Index = () => {
               <img
                 src={heroImage}
                 alt="Women sports fans celebrating together"
-                className="w-full h-full object-cover object-top"
+                className="w-full h-full object-cover object-[center_20%]"
               />
             </motion.div>
           </div>
