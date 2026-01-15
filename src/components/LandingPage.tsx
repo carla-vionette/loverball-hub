@@ -111,7 +111,7 @@ const LandingPage = () => {
               <img
                 src={heroImage}
                 alt="Women sports fans celebrating together"
-                className="w-full h-full object-cover object-[center_35%]"
+                className="w-full h-full object-cover object-top"
               />
             </motion.div>
           </div>
