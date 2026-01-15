@@ -812,80 +812,14 @@ const Admin = () => {
                                   <Pencil className="w-4 h-4 mr-1" />
                                   Edit
                                 </Button>
-                                <Dialog>
-                                  <DialogTrigger asChild>
-                                    <Button 
-                                      size="sm" 
-                                      variant="ghost"
-                                      onClick={() => fetchEventAttendees(event)}
-                                    >
-                                      <Users className="w-4 h-4 mr-1" />
-                                      RSVPs
-                                    </Button>
-                                  </DialogTrigger>
-                                  <DialogContent className="max-w-2xl">
-                                    <DialogHeader>
-                                      <DialogTitle className="flex items-center justify-between pr-8">
-                                        <span>Attendees: {selectedEvent?.title}</span>
-                                        {attendees.length > 0 && (
-                                          <Button size="sm" variant="outline" onClick={exportAttendeesCSV}>
-                                            Export CSV
-                                          </Button>
-                                        )}
-                                      </DialogTitle>
-                                    </DialogHeader>
-                                    {loadingAttendees ? (
-                                      <div className="flex justify-center py-8">
-                                        <Loader2 className="w-6 h-6 animate-spin" />
-                                      </div>
-                                    ) : attendees.length > 0 ? (
-                                      <div className="max-h-[60vh] overflow-y-auto">
-                                        <Table>
-                                          <TableHeader>
-                                            <TableRow>
-                                              <TableHead>Name</TableHead>
-                                              <TableHead>Status</TableHead>
-                                              <TableHead>Phone</TableHead>
-                                              <TableHead>City</TableHead>
-                                            </TableRow>
-                                          </TableHeader>
-                                          <TableBody>
-                                            {attendees.map((attendee) => (
-                                              <TableRow key={attendee.id}>
-                                                <TableCell className="font-medium">
-                                                  {attendee.profile?.name || 'Unknown'}
-                                                </TableCell>
-                                                <TableCell>
-                                                  <Badge variant={attendee.status === 'attending' || attendee.status === 'confirmed' ? 'default' : 'secondary'}>
-                                                    {attendee.status}
-                                                  </Badge>
-                                                </TableCell>
-                                                <TableCell>
-                                                  {attendee.profile?.phone_number ? (
-                                                    <a 
-                                                      href={`tel:${attendee.profile.phone_number}`}
-                                                      className="flex items-center gap-1 text-primary hover:underline"
-                                                    >
-                                                      <Phone className="w-3 h-3" />
-                                                      {attendee.profile.phone_number}
-                                                    </a>
-                                                  ) : (
-                                                    <span className="text-muted-foreground">-</span>
-                                                  )}
-                                                </TableCell>
-                                                <TableCell>{attendee.profile?.city || '-'}</TableCell>
-                                              </TableRow>
-                                            ))}
-                                          </TableBody>
-                                        </Table>
-                                      </div>
-                                    ) : (
-                                      <p className="text-center py-8 text-muted-foreground">
-                                        No attendees yet
-                                      </p>
-                                    )}
-                                  </DialogContent>
-                                </Dialog>
+                                <Button 
+                                  size="sm" 
+                                  variant="ghost"
+                                  onClick={() => navigate(`/admin/events/${event.id}/attendees`)}
+                                >
+                                  <Users className="w-4 h-4 mr-1" />
+                                  Manage RSVPs
+                                </Button>
                               </div>
                             </TableCell>
                           </TableRow>
