@@ -2,18 +2,35 @@ import { Home, Users, MessageCircle, User, CalendarDays, ShoppingBag, Heart } fr
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useUnreadMessages } from "@/hooks/useUnreadMessages";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const BottomNav = () => {
   const location = useLocation();
   const { isMember, loading } = useAuth();
   const { hasUnread } = useUnreadMessages();
   
+  // Show skeleton while loading
+  if (loading) {
+    return (
+      <nav className="fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur-sm border-t border-border z-50 md:hidden">
+        <div className="flex justify-around items-center h-16">
+          {[...Array(5)].map((_, i) => (
+            <div key={i} className="flex flex-col items-center justify-center flex-1 h-full gap-1">
+              <Skeleton className="w-5 h-5 rounded" />
+              <Skeleton className="w-8 h-2 rounded" />
+            </div>
+          ))}
+        </div>
+      </nav>
+    );
+  }
+  
   // Build nav items - member-only items show once auth is loaded
   const navItems = [
     { icon: Home, label: "Home", path: "/following" },
     { icon: CalendarDays, label: "Events", path: "/events" },
     { icon: ShoppingBag, label: "Shop", path: "/shop" },
-    ...(!loading && isMember ? [
+    ...(isMember ? [
       { icon: Heart, label: "Network", path: "/network" },
       { icon: MessageCircle, label: "Chat", path: "/messages", showBadge: true },
     ] : []),
