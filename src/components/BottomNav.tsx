@@ -5,14 +5,15 @@ import { useUnreadMessages } from "@/hooks/useUnreadMessages";
 
 const BottomNav = () => {
   const location = useLocation();
-  const { isMember } = useAuth();
+  const { isMember, loading } = useAuth();
   const { hasUnread } = useUnreadMessages();
   
+  // Build nav items - member-only items show once auth is loaded
   const navItems = [
     { icon: Home, label: "Home", path: "/following" },
     { icon: CalendarDays, label: "Events", path: "/events" },
     { icon: ShoppingBag, label: "Shop", path: "/shop" },
-    ...(isMember ? [
+    ...(!loading && isMember ? [
       { icon: Heart, label: "Network", path: "/network" },
       { icon: MessageCircle, label: "Chat", path: "/messages", showBadge: true },
     ] : []),
