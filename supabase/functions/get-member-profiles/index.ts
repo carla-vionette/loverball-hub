@@ -94,6 +94,19 @@ Deno.serve(async (req) => {
       );
     }
 
+    // Check if user is a member (required for network access)
+    const { data: isMember } = await supabaseAdmin.rpc('has_role', {
+      _user_id: user.id,
+      _role: 'member'
+    });
+
+    if (!isMember) {
+      return new Response(
+        JSON.stringify({ error: "Members only feature" }),
+        { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     // Get user's matches to determine which profiles get full visibility
     const { data: matches } = await supabaseAdmin
       .from("matches")
@@ -122,10 +135,10 @@ Deno.serve(async (req) => {
     let profileData: any = null;
     let queryError: any = null;
 
-    // Handle different query types
+    // Use admin client to query profiles (bypasses RLS, we handle security here)
     if (singleId) {
       // Single profile fetch
-      const result = await supabaseUser
+      const result = await supabaseAdmin
         .from("profiles")
         .select(selectFields)
         .eq("id", singleId)
@@ -134,20 +147,33 @@ Deno.serve(async (req) => {
       queryError = result.error;
     } else if (includeIds.length > 0) {
       // Fetch specific profiles by IDs
-      const result = await supabaseUser
+      const result = await supabaseAdmin
         .from("profiles")
         .select(selectFields)
         .in("id", includeIds);
       profileData = result.data;
       queryError = result.error;
     } else {
-      // Exclude current user by default
-      const result = await supabaseUser
-        .from("profiles")
-        .select(selectFields)
-        .neq("id", user.id);
-      profileData = result.data;
-      queryError = result.error;
+      // Fetch all member profiles (exclude current user by default)
+      // Also only fetch profiles of users who have the 'member' role
+      const { data: memberRoles } = await supabaseAdmin
+        .from("user_roles")
+        .select("user_id")
+        .eq("role", "member");
+      
+      const memberIds = memberRoles?.map(r => r.user_id) || [];
+      
+      if (memberIds.length > 0) {
+        const result = await supabaseAdmin
+          .from("profiles")
+          .select(selectFields)
+          .in("id", memberIds)
+          .neq("id", user.id);
+        profileData = result.data;
+        queryError = result.error;
+      } else {
+        profileData = [];
+      }
     }
 
     if (queryError) {
