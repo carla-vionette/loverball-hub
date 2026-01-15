@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Separator } from "@/components/ui/separator";
 import { motion } from "framer-motion";
-import { ArrowRight, Ticket } from "lucide-react";
+import { ArrowRight, Ticket, ArrowLeft } from "lucide-react";
 import loverballLogo from "@/assets/loverball-logo-new.png";
 import { z } from "zod";
 
@@ -23,13 +23,63 @@ const signInSchema = z.object({
 });
 
 const Auth = () => {
+  const [searchParams] = useSearchParams();
   const [isSignUp, setIsSignUp] = useState(false);
+  const [isResettingPassword, setIsResettingPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [inviteCode, setInviteCode] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  // Check if user came from a password reset link
+  useEffect(() => {
+    const isReset = searchParams.get('reset') === 'true';
+    if (isReset) {
+      setIsResettingPassword(true);
+    }
+  }, [searchParams]);
+
+  const handlePasswordReset = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      if (password !== confirmPassword) {
+        throw new Error("Passwords do not match");
+      }
+
+      if (password.length < 6) {
+        throw new Error("Password must be at least 6 characters");
+      }
+
+      const { error } = await supabase.auth.updateUser({
+        password: password
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Password Updated",
+        description: "Your password has been successfully reset. You can now sign in.",
+      });
+
+      setIsResettingPassword(false);
+      setPassword("");
+      setConfirmPassword("");
+      navigate("/following");
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleEmailAuth = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -158,10 +208,12 @@ const Auth = () => {
           >
             <p className="text-primary text-sm font-medium tracking-widest mb-6 uppercase">Welcome</p>
             <h1 className="text-4xl xl:text-5xl font-serif font-normal leading-tight mb-6 text-foreground">
-              {isSignUp ? "Join the Movement." : "Welcome Back."}
+              {isResettingPassword ? "Reset Password." : isSignUp ? "Join the Movement." : "Welcome Back."}
             </h1>
             <p className="text-foreground/60 text-sm leading-relaxed max-w-md">
-              {isSignUp 
+              {isResettingPassword
+                ? "Enter your new password below to regain access to your account."
+                : isSignUp 
                 ? "Create your account to connect with women who share your passion for sports."
                 : "Sign in to continue your journey with the community."}
             </p>
@@ -180,10 +232,66 @@ const Auth = () => {
             <div className="lg:hidden mb-12">
               <p className="text-primary text-sm font-medium tracking-widest mb-4 uppercase">Welcome</p>
               <h1 className="text-3xl font-serif font-normal leading-tight text-foreground">
-                {isSignUp ? "Join the Movement." : "Welcome Back."}
+                {isResettingPassword ? "Reset Password." : isSignUp ? "Join the Movement." : "Welcome Back."}
               </h1>
             </div>
 
+            {isResettingPassword ? (
+              <div className="space-y-8">
+                <form onSubmit={handlePasswordReset} className="space-y-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="newPassword" className="text-xs tracking-wider uppercase text-foreground/60">New Password</Label>
+                    <Input
+                      id="newPassword"
+                      type="password"
+                      placeholder="••••••••"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                      minLength={6}
+                      className="rounded-none h-12 border-border bg-background placeholder:text-foreground/30"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="confirmPassword" className="text-xs tracking-wider uppercase text-foreground/60">Confirm Password</Label>
+                    <Input
+                      id="confirmPassword"
+                      type="password"
+                      placeholder="••••••••"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      required
+                      minLength={6}
+                      className="rounded-none h-12 border-border bg-background placeholder:text-foreground/30"
+                    />
+                  </div>
+
+                  <Button 
+                    type="submit" 
+                    className="w-full rounded-none h-12 text-sm tracking-wider group" 
+                    disabled={loading}
+                  >
+                    {loading ? "UPDATING..." : "UPDATE PASSWORD"}
+                    <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                  </Button>
+                </form>
+
+                <div className="text-center">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsResettingPassword(false);
+                      navigate('/auth');
+                    }}
+                    className="text-sm text-foreground/60 hover:text-primary transition-colors flex items-center justify-center gap-2 mx-auto"
+                  >
+                    <ArrowLeft className="w-4 h-4" />
+                    Back to sign in
+                  </button>
+                </div>
+              </div>
+            ) : (
             <div className="space-y-8">
               <Button 
                 onClick={handleGoogleAuth}
@@ -290,6 +398,7 @@ const Auth = () => {
                 </button>
               </div>
             </div>
+            )}
           </motion.div>
         </div>
       </div>
