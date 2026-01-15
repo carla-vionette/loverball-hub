@@ -63,6 +63,10 @@ export default {
           DEFAULT: "hsl(var(--light-lime))",
           foreground: "hsl(var(--light-lime-foreground))",
         },
+        ticker: {
+          DEFAULT: "hsl(var(--ticker))",
+          foreground: "hsl(var(--ticker-foreground))",
+        },
         popover: {
           DEFAULT: "hsl(var(--popover))",
           foreground: "hsl(var(--popover-foreground))",
