@@ -123,39 +123,41 @@ const MemberProfile = () => {
                 </div>
               )}
 
-              {/* Social Links */}
-              <div className="absolute top-4 right-4 flex gap-2">
-                {profile.instagram_url && (
-                  <a 
-                    href={profile.instagram_url} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="p-2 bg-black/50 rounded-full text-white hover:bg-black/70 transition"
-                  >
-                    <Instagram className="w-5 h-5" />
-                  </a>
-                )}
-                {profile.linkedin_url && (
-                  <a 
-                    href={profile.linkedin_url} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="p-2 bg-black/50 rounded-full text-white hover:bg-black/70 transition"
-                  >
-                    <Linkedin className="w-5 h-5" />
-                  </a>
-                )}
-                {profile.website_url && (
-                  <a 
-                    href={profile.website_url} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="p-2 bg-black/50 rounded-full text-white hover:bg-black/70 transition"
-                  >
-                    <Globe className="w-5 h-5" />
-                  </a>
-                )}
-              </div>
+              {/* Social Links - only shown if available (edge function filters by match status) */}
+              {(profile.instagram_url || profile.linkedin_url || profile.website_url) && (
+                <div className="absolute top-4 right-4 flex gap-2">
+                  {profile.instagram_url && (
+                    <a 
+                      href={profile.instagram_url} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="p-2 bg-black/50 rounded-full text-white hover:bg-black/70 transition"
+                    >
+                      <Instagram className="w-5 h-5" />
+                    </a>
+                  )}
+                  {profile.linkedin_url && (
+                    <a 
+                      href={profile.linkedin_url} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="p-2 bg-black/50 rounded-full text-white hover:bg-black/70 transition"
+                    >
+                      <Linkedin className="w-5 h-5" />
+                    </a>
+                  )}
+                  {profile.website_url && (
+                    <a 
+                      href={profile.website_url} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="p-2 bg-black/50 rounded-full text-white hover:bg-black/70 transition"
+                    >
+                      <Globe className="w-5 h-5" />
+                    </a>
+                  )}
+                </div>
+              )}
             </div>
 
             <CardContent className="p-6">
