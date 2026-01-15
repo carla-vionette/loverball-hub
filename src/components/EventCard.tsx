@@ -1,8 +1,10 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
-import { Calendar, Clock, MapPin, Users, Lock } from "lucide-react";
+import { Calendar, Clock, MapPin, Users, Lock, Share2 } from "lucide-react";
 import { format } from "date-fns";
+import { useNavigate } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
 
 interface EventCardProps {
   event: {
@@ -36,6 +38,9 @@ const eventTypeLabels: Record<string, string> = {
 };
 
 const EventCard = ({ event, onRSVP, rsvpStatus, isMember }: EventCardProps) => {
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  
   const formatTime = (time: string) => {
     const [hours, minutes] = time.split(':');
     const date = new Date();
@@ -43,8 +48,43 @@ const EventCard = ({ event, onRSVP, rsvpStatus, isMember }: EventCardProps) => {
     return format(date, 'h:mm a');
   };
 
+  const handleShare = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const shareUrl = `${window.location.origin}/event/${event.id}`;
+    
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: event.title,
+          text: `Check out this event on Loverball: ${event.title}`,
+          url: shareUrl,
+        });
+      } catch (error) {
+        // User cancelled or error
+        copyToClipboard(shareUrl);
+      }
+    } else {
+      copyToClipboard(shareUrl);
+    }
+  };
+
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text);
+    toast({
+      title: "Link copied!",
+      description: "Share this link with friends.",
+    });
+  };
+
+  const handleCardClick = () => {
+    navigate(`/event/${event.id}`);
+  };
+
   return (
-    <Card className="overflow-hidden hover:shadow-lg transition-shadow">
+    <Card 
+      className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
+      onClick={handleCardClick}
+    >
       {/* Image */}
       <div className="relative h-48 bg-gradient-to-br from-primary/20 to-accent/20">
         {event.image_url ? (
@@ -77,6 +117,15 @@ const EventCard = ({ event, onRSVP, rsvpStatus, isMember }: EventCardProps) => {
             </Badge>
           </div>
         )}
+        
+        {/* Share Button */}
+        <button
+          onClick={handleShare}
+          className="absolute bottom-3 right-3 w-8 h-8 rounded-full bg-white/90 hover:bg-white flex items-center justify-center shadow-md transition-colors"
+          aria-label="Share event"
+        >
+          <Share2 className="w-4 h-4 text-foreground" />
+        </button>
       </div>
       
       <CardHeader className="pb-2">
@@ -147,7 +196,10 @@ const EventCard = ({ event, onRSVP, rsvpStatus, isMember }: EventCardProps) => {
           </Badge>
         ) : event.visibility === 'public' || isMember ? (
           <Button 
-            onClick={onRSVP} 
+            onClick={(e) => {
+              e.stopPropagation();
+              onRSVP?.();
+            }} 
             className="w-full"
             variant={event.visibility === 'invite_only' ? 'outline' : 'default'}
           >
