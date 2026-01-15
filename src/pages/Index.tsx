@@ -633,7 +633,7 @@ const Index = () => {
           </div>
           <div className="border-t border-background/10 pt-8">
             <p className="text-xs text-background/40">
-              © 2024 Loverball. All rights reserved. Built by women, for women.
+              © 2025 Loverball. All rights reserved. Built by women, for women.
             </p>
           </div>
         </div>

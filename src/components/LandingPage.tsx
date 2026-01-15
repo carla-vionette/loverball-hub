@@ -360,7 +360,7 @@ const LandingPage = () => {
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <img src={loverballLogo} alt="Loverball" className="h-32 w-auto brightness-0 invert" />
             <p className="text-sm text-background/70">
-              © 2024 Loverball. All rights reserved. Built by women, for women.
+              © 2025 Loverball. All rights reserved. Built by women, for women.
             </p>
             <div className="flex gap-6">
               <a href="#" className="text-sm text-background/70 hover:text-background transition-colors">Privacy</a>
