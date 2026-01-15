@@ -64,7 +64,7 @@ const EventDetail = () => {
         .from('events')
         .select('*')
         .eq('id', id)
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
       setEvent(data);
