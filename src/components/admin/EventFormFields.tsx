@@ -1,10 +1,14 @@
+import { useState, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
-import { Calendar, Clock, MapPin, Globe, Video, Palette, Users, Image } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Calendar, Clock, MapPin, Globe, Video, Palette, Users, Image, Upload, X, Loader2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 interface EventFormData {
   title: string;
@@ -42,6 +46,71 @@ const themeOptions = [
 ];
 
 export const EventFormFields = ({ formData, onChange }: EventFormFieldsProps) => {
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { toast } = useToast();
+
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      toast({
+        title: 'Invalid file type',
+        description: 'Please upload an image file (JPG, PNG, GIF, etc.)',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast({
+        title: 'File too large',
+        description: 'Please upload an image smaller than 5MB',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    setUploading(true);
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+      const filePath = `events/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('event-images')
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('event-images')
+        .getPublicUrl(filePath);
+
+      onChange('image_url', publicUrl);
+      toast({ title: 'Image uploaded!' });
+    } catch (error: any) {
+      console.error('Error uploading image:', error);
+      toast({
+        title: 'Upload failed',
+        description: error.message,
+        variant: 'destructive',
+      });
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  };
+
+  const removeImage = () => {
+    onChange('image_url', '');
+  };
+
   return (
     <div className="space-y-6">
       {/* Basic Info */}
@@ -75,20 +144,70 @@ export const EventFormFields = ({ formData, onChange }: EventFormFieldsProps) =>
           </div>
 
           <div>
-            <Label htmlFor="image_url">Cover Image URL</Label>
-            <div className="flex gap-2 mt-1.5">
-              <Image className="w-5 h-5 text-muted-foreground mt-2.5" />
-              <Input
-                id="image_url"
-                value={formData.image_url}
-                onChange={(e) => onChange('image_url', e.target.value)}
-                placeholder="https://example.com/image.jpg"
-                className="flex-1"
-              />
+            <Label>Cover Image</Label>
+            <div className="mt-1.5 space-y-3">
+              {/* Image Preview */}
+              {formData.image_url && (
+                <div className="relative rounded-lg overflow-hidden border border-border">
+                  <img 
+                    src={formData.image_url} 
+                    alt="Event cover" 
+                    className="w-full h-40 object-cover"
+                  />
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    size="icon"
+                    className="absolute top-2 right-2 h-8 w-8"
+                    onClick={removeImage}
+                  >
+                    <X className="w-4 h-4" />
+                  </Button>
+                </div>
+              )}
+
+              {/* Upload Button */}
+              <div className="flex gap-2">
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  className="hidden"
+                  id="image-upload"
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={uploading}
+                  className="flex-1"
+                >
+                  {uploading ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Uploading...
+                    </>
+                  ) : (
+                    <>
+                      <Upload className="w-4 h-4 mr-2" />
+                      {formData.image_url ? 'Replace Image' : 'Upload Image'}
+                    </>
+                  )}
+                </Button>
+              </div>
+
+              {/* URL Input (alternative) */}
+              <div className="flex gap-2 items-center">
+                <span className="text-xs text-muted-foreground">or</span>
+                <Input
+                  value={formData.image_url}
+                  onChange={(e) => onChange('image_url', e.target.value)}
+                  placeholder="Paste image URL"
+                  className="flex-1 text-sm"
+                />
+              </div>
             </div>
-            <p className="text-xs text-muted-foreground mt-1">
-              Paste a URL to your event banner image
-            </p>
           </div>
         </div>
       </section>
