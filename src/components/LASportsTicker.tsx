@@ -191,7 +191,7 @@ const LASportsTicker = ({
               return (
                 <span 
                   key={index} 
-                  className="ticker-item text-ticker-foreground font-medium px-6 whitespace-nowrap inline-flex items-center gap-2"
+                  className="ticker-item text-ticker-foreground font-bold text-sm tracking-wide px-6 whitespace-nowrap inline-flex items-center gap-2"
                 >
                   {/* Team logos */}
                   {logos.length > 0 && !isHeadline && (
