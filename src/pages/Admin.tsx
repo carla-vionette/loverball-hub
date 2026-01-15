@@ -16,7 +16,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Plus, Check, X, Copy, Users, Calendar, Ticket, RefreshCw, Eye, Phone, Mail, Instagram, Linkedin, Globe, Download } from 'lucide-react';
+import { Loader2, Plus, Check, X, Copy, Users, Calendar, Ticket, RefreshCw, Eye, Phone, Mail, Instagram, Linkedin, Globe, Download, Pencil } from 'lucide-react';
 import { format } from 'date-fns';
 
 interface Invite {
@@ -774,102 +774,10 @@ const Admin = () => {
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between">
                   <CardTitle>Events</CardTitle>
-                  <Dialog>
-                    <DialogTrigger asChild>
-                      <Button>
-                        <Plus className="w-4 h-4 mr-2" />
-                        Create Event
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className="max-w-lg">
-                      <DialogHeader>
-                        <DialogTitle>Create Event</DialogTitle>
-                      </DialogHeader>
-                      <div className="space-y-4 max-h-[60vh] overflow-y-auto">
-                        <div>
-                          <Label>Title *</Label>
-                          <Input 
-                            value={eventTitle}
-                            onChange={(e) => setEventTitle(e.target.value)}
-                            placeholder="WNBA Watch Party"
-                          />
-                        </div>
-                        <div>
-                          <Label>Description</Label>
-                          <Textarea 
-                            value={eventDescription}
-                            onChange={(e) => setEventDescription(e.target.value)}
-                            placeholder="Join us for..."
-                          />
-                        </div>
-                        <div className="grid grid-cols-2 gap-4">
-                          <div>
-                            <Label>Date *</Label>
-                            <Input 
-                              type="date"
-                              value={eventDate}
-                              onChange={(e) => setEventDate(e.target.value)}
-                            />
-                          </div>
-                          <div>
-                            <Label>Time</Label>
-                            <Input 
-                              type="time"
-                              value={eventTime}
-                              onChange={(e) => setEventTime(e.target.value)}
-                            />
-                          </div>
-                        </div>
-                        <div>
-                          <Label>Venue</Label>
-                          <Input 
-                            value={eventVenue}
-                            onChange={(e) => setEventVenue(e.target.value)}
-                            placeholder="The Parlor, West Hollywood"
-                          />
-                        </div>
-                        <div className="grid grid-cols-2 gap-4">
-                          <div>
-                            <Label>Type</Label>
-                            <Select value={eventType} onValueChange={setEventType}>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select type" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="watch_party">Watch Party</SelectItem>
-                                <SelectItem value="brunch">Brunch</SelectItem>
-                                <SelectItem value="panel">Panel</SelectItem>
-                                <SelectItem value="networking">Networking</SelectItem>
-                                <SelectItem value="party">Party</SelectItem>
-                                <SelectItem value="game">Game Day</SelectItem>
-                                <SelectItem value="other">Other</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
-                          <div>
-                            <Label>Visibility</Label>
-                            <Select value={eventVisibility} onValueChange={setEventVisibility}>
-                              <SelectTrigger>
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="public">Public</SelectItem>
-                                <SelectItem value="members_only">Members Only</SelectItem>
-                                <SelectItem value="invite_only">Invite Only</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
-                        </div>
-                        <Button 
-                          onClick={createEvent} 
-                          disabled={creatingEvent}
-                          className="w-full"
-                        >
-                          {creatingEvent ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Create Event'}
-                        </Button>
-                      </div>
-                    </DialogContent>
-                  </Dialog>
+                  <Button onClick={() => navigate('/admin/events/new/edit')}>
+                    <Plus className="w-4 h-4 mr-2" />
+                    Create Event
+                  </Button>
                 </CardHeader>
                 <CardContent>
                   {events.length > 0 ? (
@@ -880,7 +788,7 @@ const Admin = () => {
                           <TableHead>Date</TableHead>
                           <TableHead>Type</TableHead>
                           <TableHead>Visibility</TableHead>
-                          <TableHead>Attendees</TableHead>
+                          <TableHead>Actions</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -895,80 +803,90 @@ const Admin = () => {
                               </Badge>
                             </TableCell>
                             <TableCell>
-                              <Dialog>
-                                <DialogTrigger asChild>
-                                  <Button 
-                                    size="sm" 
-                                    variant="outline"
-                                    onClick={() => fetchEventAttendees(event)}
-                                  >
-                                    <Eye className="w-4 h-4 mr-1" />
-                                    View
-                                  </Button>
-                                </DialogTrigger>
-                                <DialogContent className="max-w-2xl">
-                                  <DialogHeader>
-                                    <DialogTitle className="flex items-center justify-between pr-8">
-                                      <span>Attendees: {selectedEvent?.title}</span>
-                                      {attendees.length > 0 && (
-                                        <Button size="sm" variant="outline" onClick={exportAttendeesCSV}>
-                                          Export CSV
-                                        </Button>
-                                      )}
-                                    </DialogTitle>
-                                  </DialogHeader>
-                                  {loadingAttendees ? (
-                                    <div className="flex justify-center py-8">
-                                      <Loader2 className="w-6 h-6 animate-spin" />
-                                    </div>
-                                  ) : attendees.length > 0 ? (
-                                    <div className="max-h-[60vh] overflow-y-auto">
-                                      <Table>
-                                        <TableHeader>
-                                          <TableRow>
-                                            <TableHead>Name</TableHead>
-                                            <TableHead>Status</TableHead>
-                                            <TableHead>Phone</TableHead>
-                                            <TableHead>City</TableHead>
-                                          </TableRow>
-                                        </TableHeader>
-                                        <TableBody>
-                                          {attendees.map((attendee) => (
-                                            <TableRow key={attendee.id}>
-                                              <TableCell className="font-medium">
-                                                {attendee.profile?.name || 'Unknown'}
-                                              </TableCell>
-                                              <TableCell>
-                                                <Badge variant={attendee.status === 'attending' || attendee.status === 'confirmed' ? 'default' : 'secondary'}>
-                                                  {attendee.status}
-                                                </Badge>
-                                              </TableCell>
-                                              <TableCell>
-                                                {attendee.profile?.phone_number ? (
-                                                  <a 
-                                                    href={`tel:${attendee.profile.phone_number}`}
-                                                    className="flex items-center gap-1 text-primary hover:underline"
-                                                  >
-                                                    <Phone className="w-3 h-3" />
-                                                    {attendee.profile.phone_number}
-                                                  </a>
-                                                ) : (
-                                                  <span className="text-muted-foreground">-</span>
-                                                )}
-                                              </TableCell>
-                                              <TableCell>{attendee.profile?.city || '-'}</TableCell>
+                              <div className="flex items-center gap-2">
+                                <Button 
+                                  size="sm" 
+                                  variant="outline"
+                                  onClick={() => navigate(`/admin/events/${event.id}/edit`)}
+                                >
+                                  <Pencil className="w-4 h-4 mr-1" />
+                                  Edit
+                                </Button>
+                                <Dialog>
+                                  <DialogTrigger asChild>
+                                    <Button 
+                                      size="sm" 
+                                      variant="ghost"
+                                      onClick={() => fetchEventAttendees(event)}
+                                    >
+                                      <Users className="w-4 h-4 mr-1" />
+                                      RSVPs
+                                    </Button>
+                                  </DialogTrigger>
+                                  <DialogContent className="max-w-2xl">
+                                    <DialogHeader>
+                                      <DialogTitle className="flex items-center justify-between pr-8">
+                                        <span>Attendees: {selectedEvent?.title}</span>
+                                        {attendees.length > 0 && (
+                                          <Button size="sm" variant="outline" onClick={exportAttendeesCSV}>
+                                            Export CSV
+                                          </Button>
+                                        )}
+                                      </DialogTitle>
+                                    </DialogHeader>
+                                    {loadingAttendees ? (
+                                      <div className="flex justify-center py-8">
+                                        <Loader2 className="w-6 h-6 animate-spin" />
+                                      </div>
+                                    ) : attendees.length > 0 ? (
+                                      <div className="max-h-[60vh] overflow-y-auto">
+                                        <Table>
+                                          <TableHeader>
+                                            <TableRow>
+                                              <TableHead>Name</TableHead>
+                                              <TableHead>Status</TableHead>
+                                              <TableHead>Phone</TableHead>
+                                              <TableHead>City</TableHead>
                                             </TableRow>
-                                          ))}
-                                        </TableBody>
-                                      </Table>
-                                    </div>
-                                  ) : (
-                                    <p className="text-center py-8 text-muted-foreground">
-                                      No attendees yet
-                                    </p>
-                                  )}
-                                </DialogContent>
-                              </Dialog>
+                                          </TableHeader>
+                                          <TableBody>
+                                            {attendees.map((attendee) => (
+                                              <TableRow key={attendee.id}>
+                                                <TableCell className="font-medium">
+                                                  {attendee.profile?.name || 'Unknown'}
+                                                </TableCell>
+                                                <TableCell>
+                                                  <Badge variant={attendee.status === 'attending' || attendee.status === 'confirmed' ? 'default' : 'secondary'}>
+                                                    {attendee.status}
+                                                  </Badge>
+                                                </TableCell>
+                                                <TableCell>
+                                                  {attendee.profile?.phone_number ? (
+                                                    <a 
+                                                      href={`tel:${attendee.profile.phone_number}`}
+                                                      className="flex items-center gap-1 text-primary hover:underline"
+                                                    >
+                                                      <Phone className="w-3 h-3" />
+                                                      {attendee.profile.phone_number}
+                                                    </a>
+                                                  ) : (
+                                                    <span className="text-muted-foreground">-</span>
+                                                  )}
+                                                </TableCell>
+                                                <TableCell>{attendee.profile?.city || '-'}</TableCell>
+                                              </TableRow>
+                                            ))}
+                                          </TableBody>
+                                        </Table>
+                                      </div>
+                                    ) : (
+                                      <p className="text-center py-8 text-muted-foreground">
+                                        No attendees yet
+                                      </p>
+                                    )}
+                                  </DialogContent>
+                                </Dialog>
+                              </div>
                             </TableCell>
                           </TableRow>
                         ))}
