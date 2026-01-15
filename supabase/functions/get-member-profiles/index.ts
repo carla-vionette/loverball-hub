@@ -9,6 +9,26 @@ const corsHeaders = {
 const MAX_REQUESTS = 100;
 const WINDOW_MINUTES = 15;
 
+// Sensitive fields that require a match/connection to view
+const SENSITIVE_FIELDS = [
+  'instagram_url',
+  'linkedin_url',
+  'tiktok_url',
+  'website_url',
+  'neighborhood',
+  'age_range',
+];
+
+// Strip sensitive fields from profile data
+const stripSensitiveFields = (profile: any): any => {
+  if (!profile) return profile;
+  const stripped = { ...profile };
+  for (const field of SENSITIVE_FIELDS) {
+    delete stripped[field];
+  }
+  return stripped;
+};
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -31,7 +51,7 @@ Deno.serve(async (req) => {
       global: { headers: { Authorization: authHeader } }
     });
     
-    // Service role client for rate limiting
+    // Service role client for rate limiting and match checks
     const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
 
     // Get user from token
@@ -70,6 +90,24 @@ Deno.serve(async (req) => {
         }),
         { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
+    }
+
+    // Get user's matches to determine which profiles get full visibility
+    const { data: matches } = await supabaseAdmin
+      .from("matches")
+      .select("user_a_id, user_b_id")
+      .or(`user_a_id.eq.${user.id},user_b_id.eq.${user.id}`)
+      .eq("status", "active");
+    
+    const matchedUserIds = new Set<string>();
+    if (matches) {
+      for (const match of matches) {
+        if (match.user_a_id === user.id) {
+          matchedUserIds.add(match.user_b_id);
+        } else {
+          matchedUserIds.add(match.user_a_id);
+        }
+      }
     }
 
     // Parse query parameters
@@ -125,8 +163,26 @@ Deno.serve(async (req) => {
       filteredData = profileData.filter((profile: any) => !excludeSet.has(profile.id));
     }
 
+    // Apply tiered visibility: strip sensitive fields unless matched or own profile
+    let processedData = filteredData;
+    if (Array.isArray(filteredData)) {
+      processedData = filteredData.map((profile: any) => {
+        // Own profile or matched user gets full data
+        if (profile.id === user.id || matchedUserIds.has(profile.id)) {
+          return profile;
+        }
+        // Otherwise strip sensitive fields
+        return stripSensitiveFields(profile);
+      });
+    } else if (filteredData) {
+      // Single profile
+      if (filteredData.id !== user.id && !matchedUserIds.has(filteredData.id)) {
+        processedData = stripSensitiveFields(filteredData);
+      }
+    }
+
     return new Response(
-      JSON.stringify({ data: filteredData }),
+      JSON.stringify({ data: processedData }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
 
