@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import BottomNav from '@/components/BottomNav';
 import DesktopNav from '@/components/DesktopNav';
 import MobileHeader from '@/components/MobileHeader';
+import EventPreviewCard from '@/components/EventPreviewCard';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -11,6 +12,9 @@ import { useAuth } from '@/hooks/useAuth';
 import { fetchProfileById } from '@/lib/profileApi';
 import { Loader2, Send, ArrowLeft, MessageCircle, Sparkles } from 'lucide-react';
 import { format } from 'date-fns';
+
+// Regex to detect event links in messages
+const EVENT_LINK_REGEX = /(?:https?:\/\/[^\s]*)?\/event\/([a-f0-9-]{36})/gi;
 
 interface Match {
   id: string;
@@ -360,31 +364,55 @@ const MessagesPage = () => {
                     </div>
                   )}
                   
-                  {messages.map((message) => (
-                    <div
-                      key={message.id}
-                      className={`mb-3 flex ${
-                        message.sender_id === user?.id ? 'justify-end' : 'justify-start'
-                      }`}
-                    >
+                  {messages.map((message) => {
+                    // Check if message contains an event link
+                    const eventMatches = [...message.content.matchAll(EVENT_LINK_REGEX)];
+                    const eventIds = eventMatches.map(match => match[1]);
+                    const hasEventLink = eventIds.length > 0;
+                    
+                    // Remove event links from display text
+                    const displayContent = hasEventLink 
+                      ? message.content.replace(EVENT_LINK_REGEX, '').trim()
+                      : message.content;
+
+                    return (
                       <div
-                        className={`max-w-[75%] px-4 py-2 rounded-2xl ${
-                          message.sender_id === user?.id
-                            ? 'bg-primary text-primary-foreground rounded-br-md'
-                            : 'bg-muted text-foreground rounded-bl-md'
+                        key={message.id}
+                        className={`mb-3 flex ${
+                          message.sender_id === user?.id ? 'justify-end' : 'justify-start'
                         }`}
                       >
-                        <p>{message.content}</p>
-                        <p className={`text-xs mt-1 ${
-                          message.sender_id === user?.id 
-                            ? 'text-primary-foreground/70' 
-                            : 'text-muted-foreground'
-                        }`}>
-                          {format(new Date(message.created_at), 'h:mm a')}
-                        </p>
+                        <div className="max-w-[75%] space-y-2">
+                          {/* Text content */}
+                          {displayContent && (
+                            <div
+                              className={`px-4 py-2 rounded-2xl ${
+                                message.sender_id === user?.id
+                                  ? 'bg-primary text-primary-foreground rounded-br-md'
+                                  : 'bg-muted text-foreground rounded-bl-md'
+                              }`}
+                            >
+                              <p>{displayContent}</p>
+                            </div>
+                          )}
+                          
+                          {/* Event preview cards */}
+                          {eventIds.map((eventId, idx) => (
+                            <EventPreviewCard key={`${message.id}-event-${idx}`} eventId={eventId} />
+                          ))}
+                          
+                          {/* Timestamp */}
+                          <p className={`text-xs ${
+                            message.sender_id === user?.id 
+                              ? 'text-right text-muted-foreground' 
+                              : 'text-left text-muted-foreground'
+                          }`}>
+                            {format(new Date(message.created_at), 'h:mm a')}
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                   <div ref={messagesEndRef} />
                 </ScrollArea>
 
