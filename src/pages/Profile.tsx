@@ -42,9 +42,20 @@ type RSVPEvent = {
   };
 };
 
+type SuggestedEvent = {
+  id: string;
+  title: string;
+  event_date: string;
+  event_time: string | null;
+  venue_name: string | null;
+  city: string | null;
+  image_url: string | null;
+};
+
 const Profile = () => {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [rsvpEvents, setRsvpEvents] = useState<RSVPEvent[]>([]);
+  const [suggestedEvents, setSuggestedEvents] = useState<SuggestedEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -68,8 +79,8 @@ const Profile = () => {
           return;
         }
 
-        // Fetch profile and RSVPs in parallel
-        const [profileResult, rsvpResult] = await Promise.all([
+        // Fetch profile, RSVPs, and suggested events in parallel
+        const [profileResult, rsvpResult, suggestedResult] = await Promise.all([
           supabase
             .from("profiles")
             .select("*")
@@ -91,7 +102,14 @@ const Profile = () => {
               )
             `)
             .eq("user_id", user.id)
-            .order("created_at", { ascending: false })
+            .order("created_at", { ascending: false }),
+          supabase
+            .from("events")
+            .select("id, title, event_date, event_time, venue_name, city, image_url")
+            .gte("event_date", new Date().toISOString().split("T")[0])
+            .eq("status", "published")
+            .order("event_date", { ascending: true })
+            .limit(4)
         ]);
 
         // If there's an RLS error or no profile, redirect to onboarding
@@ -112,6 +130,11 @@ const Profile = () => {
         if (rsvpResult.data) {
           const validRsvps = rsvpResult.data.filter(rsvp => rsvp.event !== null) as RSVPEvent[];
           setRsvpEvents(validRsvps);
+        }
+
+        // Set suggested events
+        if (suggestedResult.data) {
+          setSuggestedEvents(suggestedResult.data);
         }
       } catch (error: any) {
         console.error("Profile error:", error);
@@ -367,26 +390,41 @@ const Profile = () => {
             </Card>
           )}
 
-          {/* Recommended Events - Placeholder */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Recommended Events for You</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid md:grid-cols-2 gap-4">
-                <div className="p-4 border rounded-lg">
-                  <div className="w-full h-32 bg-muted rounded-md mb-3"></div>
-                  <p className="font-medium">Lakers Watch Party</p>
-                  <p className="text-sm text-muted-foreground">Echo Park • This Saturday</p>
+          {/* Recommended Events */}
+          {suggestedEvents.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Recommended Events for You</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid md:grid-cols-2 gap-4">
+                  {suggestedEvents.map((event) => (
+                    <div 
+                      key={event.id} 
+                      className="p-4 border rounded-lg cursor-pointer hover:border-primary transition-colors"
+                      onClick={() => navigate(`/event/${event.id}`)}
+                    >
+                      {event.image_url ? (
+                        <img 
+                          src={event.image_url} 
+                          alt={event.title}
+                          className="w-full h-32 object-cover rounded-md mb-3"
+                        />
+                      ) : (
+                        <div className="w-full h-32 bg-muted rounded-md mb-3 flex items-center justify-center">
+                          <Calendar className="w-8 h-8 text-muted-foreground" />
+                        </div>
+                      )}
+                      <p className="font-medium">{event.title}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {event.venue_name || event.city || "Location TBD"} • {format(new Date(event.event_date), "MMM d")}
+                      </p>
+                    </div>
+                  ))}
                 </div>
-                <div className="p-4 border rounded-lg">
-                  <div className="w-full h-32 bg-muted rounded-md mb-3"></div>
-                  <p className="font-medium">Women's Soccer Pickup</p>
-                  <p className="text-sm text-muted-foreground">Downtown LA • Every Sunday</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          )}
 
           {/* Recommended Content - Placeholder */}
           <Card>
