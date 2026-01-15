@@ -49,6 +49,8 @@ const Onboarding = () => {
   const [interests, setInterests] = useState<string[]>([]);
   const [comfortLevel, setComfortLevel] = useState("");
   const [participation, setParticipation] = useState<string[]>([]);
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [smsNotifications, setSmsNotifications] = useState(true);
   const [profilePhoto, setProfilePhoto] = useState<File | null>(null);
   const [profilePhotoPreview, setProfilePhotoPreview] = useState<string | null>(null);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
@@ -171,6 +173,8 @@ const Onboarding = () => {
         participation_preferences: participation,
         bio,
         profile_photo_url: photoUrl,
+        phone_number: phoneNumber || null,
+        sms_notifications_enabled: smsNotifications,
       });
 
       if (error) throw error;
@@ -463,6 +467,33 @@ const Onboarding = () => {
                       </label>
                     </div>
                   ))}
+                </div>
+              </div>
+
+              {/* Phone Number for SMS Reminders */}
+              <div className="space-y-4 pt-4 border-t border-border">
+                <div className="space-y-2">
+                  <Label htmlFor="phone" className="text-xs tracking-wider uppercase text-foreground/60">Phone Number (for event reminders)</Label>
+                  <Input
+                    id="phone"
+                    type="tel"
+                    value={phoneNumber}
+                    onChange={(e) => setPhoneNumber(e.target.value)}
+                    placeholder="+1 (555) 123-4567"
+                    className="rounded-none h-12 border-border bg-background"
+                  />
+                  <p className="text-xs text-muted-foreground">Optional. We'll text you reminders on event days.</p>
+                </div>
+                
+                <div className="flex items-center space-x-3 p-3 bg-background border border-border">
+                  <Checkbox
+                    id="sms-notifications"
+                    checked={smsNotifications}
+                    onCheckedChange={(checked) => setSmsNotifications(checked === true)}
+                  />
+                  <label htmlFor="sms-notifications" className="text-sm cursor-pointer">
+                    Send me SMS reminders for events I RSVP to
+                  </label>
                 </div>
               </div>
             </div>

@@ -16,7 +16,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Plus, Check, X, Copy, Users, Calendar, Ticket, RefreshCw } from 'lucide-react';
+import { Loader2, Plus, Check, X, Copy, Users, Calendar, Ticket, RefreshCw, Eye, Phone, Mail } from 'lucide-react';
 import { format } from 'date-fns';
 
 interface Invite {
@@ -48,6 +48,17 @@ interface Event {
   visibility: string;
 }
 
+interface EventAttendee {
+  id: string;
+  status: string;
+  user_id: string;
+  profile: {
+    name: string;
+    phone_number: string | null;
+    city: string | null;
+  } | null;
+}
+
 const Admin = () => {
   const [invites, setInvites] = useState<Invite[]>([]);
   const [applications, setApplications] = useState<Application[]>([]);
@@ -56,6 +67,11 @@ const Admin = () => {
   const [newInviteCode, setNewInviteCode] = useState('');
   const [newInviteMaxUses, setNewInviteMaxUses] = useState('10');
   const [creatingInvite, setCreatingInvite] = useState(false);
+  
+  // Attendee view state
+  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
+  const [attendees, setAttendees] = useState<EventAttendee[]>([]);
+  const [loadingAttendees, setLoadingAttendees] = useState(false);
   
   // Event form state
   const [eventTitle, setEventTitle] = useState('');
@@ -99,6 +115,71 @@ const Admin = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const fetchEventAttendees = async (event: Event) => {
+    setSelectedEvent(event);
+    setLoadingAttendees(true);
+    try {
+      const { data, error } = await supabase
+        .from('event_rsvps')
+        .select(`
+          id,
+          status,
+          user_id,
+          profile:profiles!inner (
+            name,
+            phone_number,
+            city
+          )
+        `)
+        .eq('event_id', event.id)
+        .order('created_at', { ascending: true });
+
+      if (error) throw error;
+      
+      // Transform the data to match our interface
+      const transformedData = (data || []).map(item => ({
+        id: item.id,
+        status: item.status,
+        user_id: item.user_id,
+        profile: item.profile ? {
+          name: (item.profile as any).name,
+          phone_number: (item.profile as any).phone_number,
+          city: (item.profile as any).city,
+        } : null
+      }));
+      
+      setAttendees(transformedData);
+    } catch (error) {
+      console.error('Error fetching attendees:', error);
+      toast({ title: 'Error loading attendees', variant: 'destructive' });
+    } finally {
+      setLoadingAttendees(false);
+    }
+  };
+
+  const exportAttendeesCSV = () => {
+    if (!selectedEvent || attendees.length === 0) return;
+    
+    const headers = ['Name', 'Status', 'Phone', 'City'];
+    const rows = attendees.map(a => [
+      a.profile?.name || 'Unknown',
+      a.status,
+      a.profile?.phone_number || '',
+      a.profile?.city || ''
+    ]);
+    
+    const csvContent = [headers, ...rows].map(row => row.join(',')).join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${selectedEvent.title.replace(/[^a-z0-9]/gi, '_')}_attendees.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+    
+    toast({ title: 'CSV downloaded!' });
   };
 
   const generateInviteCode = () => {
@@ -563,6 +644,7 @@ const Admin = () => {
                           <TableHead>Date</TableHead>
                           <TableHead>Type</TableHead>
                           <TableHead>Visibility</TableHead>
+                          <TableHead>Attendees</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -575,6 +657,82 @@ const Admin = () => {
                               <Badge variant={event.visibility === 'public' ? 'default' : 'secondary'}>
                                 {event.visibility.replace('_', ' ')}
                               </Badge>
+                            </TableCell>
+                            <TableCell>
+                              <Dialog>
+                                <DialogTrigger asChild>
+                                  <Button 
+                                    size="sm" 
+                                    variant="outline"
+                                    onClick={() => fetchEventAttendees(event)}
+                                  >
+                                    <Eye className="w-4 h-4 mr-1" />
+                                    View
+                                  </Button>
+                                </DialogTrigger>
+                                <DialogContent className="max-w-2xl">
+                                  <DialogHeader>
+                                    <DialogTitle className="flex items-center justify-between pr-8">
+                                      <span>Attendees: {selectedEvent?.title}</span>
+                                      {attendees.length > 0 && (
+                                        <Button size="sm" variant="outline" onClick={exportAttendeesCSV}>
+                                          Export CSV
+                                        </Button>
+                                      )}
+                                    </DialogTitle>
+                                  </DialogHeader>
+                                  {loadingAttendees ? (
+                                    <div className="flex justify-center py-8">
+                                      <Loader2 className="w-6 h-6 animate-spin" />
+                                    </div>
+                                  ) : attendees.length > 0 ? (
+                                    <div className="max-h-[60vh] overflow-y-auto">
+                                      <Table>
+                                        <TableHeader>
+                                          <TableRow>
+                                            <TableHead>Name</TableHead>
+                                            <TableHead>Status</TableHead>
+                                            <TableHead>Phone</TableHead>
+                                            <TableHead>City</TableHead>
+                                          </TableRow>
+                                        </TableHeader>
+                                        <TableBody>
+                                          {attendees.map((attendee) => (
+                                            <TableRow key={attendee.id}>
+                                              <TableCell className="font-medium">
+                                                {attendee.profile?.name || 'Unknown'}
+                                              </TableCell>
+                                              <TableCell>
+                                                <Badge variant={attendee.status === 'attending' || attendee.status === 'confirmed' ? 'default' : 'secondary'}>
+                                                  {attendee.status}
+                                                </Badge>
+                                              </TableCell>
+                                              <TableCell>
+                                                {attendee.profile?.phone_number ? (
+                                                  <a 
+                                                    href={`tel:${attendee.profile.phone_number}`}
+                                                    className="flex items-center gap-1 text-primary hover:underline"
+                                                  >
+                                                    <Phone className="w-3 h-3" />
+                                                    {attendee.profile.phone_number}
+                                                  </a>
+                                                ) : (
+                                                  <span className="text-muted-foreground">-</span>
+                                                )}
+                                              </TableCell>
+                                              <TableCell>{attendee.profile?.city || '-'}</TableCell>
+                                            </TableRow>
+                                          ))}
+                                        </TableBody>
+                                      </Table>
+                                    </div>
+                                  ) : (
+                                    <p className="text-center py-8 text-muted-foreground">
+                                      No attendees yet
+                                    </p>
+                                  )}
+                                </DialogContent>
+                              </Dialog>
                             </TableCell>
                           </TableRow>
                         ))}
