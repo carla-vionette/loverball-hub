@@ -157,8 +157,18 @@ const Index = () => {
             
             {/* Right nav links */}
             <div className="hidden md:flex items-center gap-8">
-              <a href="#" className="text-xs font-medium tracking-[0.15em] text-foreground/70 hover:text-primary transition-colors uppercase">Events</a>
-              <a href="#" className="text-xs font-medium tracking-[0.15em] text-foreground/70 hover:text-primary transition-colors uppercase">Shop</a>
+              <button 
+                onClick={() => isAuthenticated ? navigate("/events") : scrollToMemberAccess()} 
+                className="text-xs font-medium tracking-[0.15em] text-foreground/70 hover:text-primary transition-colors uppercase bg-transparent border-none cursor-pointer"
+              >
+                Events
+              </button>
+              <button 
+                onClick={() => isAuthenticated ? navigate("/shop") : scrollToMemberAccess()} 
+                className="text-xs font-medium tracking-[0.15em] text-foreground/70 hover:text-primary transition-colors uppercase bg-transparent border-none cursor-pointer"
+              >
+                Shop
+              </button>
               {isAuthenticated ? (
                 <Button onClick={() => navigate("/following")} size="sm" className="rounded-none text-xs tracking-[0.1em]">
                   Enter
