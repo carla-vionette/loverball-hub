@@ -12,6 +12,7 @@ import Following from "./pages/Following";
 import Network from "./pages/Network";
 import Community from "./pages/Community";
 import Profile from "./pages/Profile";
+import EditProfile from "./pages/EditProfile";
 import Search from "./pages/Search";
 import Shop from "./pages/Shop";
 import ProductDetail from "./pages/ProductDetail";
@@ -48,6 +49,7 @@ const App = () => (
             <Route path="/event/:id" element={<EventDetail />} />
             <Route path="/community" element={<ProtectedRoute><Community /></ProtectedRoute>} />
             <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+            <Route path="/profile/edit" element={<ProtectedRoute><EditProfile /></ProtectedRoute>} />
             <Route path="/search" element={<ProtectedRoute><Search /></ProtectedRoute>} />
             <Route path="/shop" element={<ProtectedRoute><Shop /></ProtectedRoute>} />
             <Route path="/product/:handle" element={<ProtectedRoute><ProductDetail /></ProtectedRoute>} />

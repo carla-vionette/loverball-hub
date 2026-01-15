@@ -172,7 +172,7 @@ const Profile = () => {
                       )}
                     </div>
                     <div className="flex items-center gap-2">
-                      <Button variant="outline" size="sm" onClick={() => navigate("/onboarding")}>
+                      <Button variant="outline" size="sm" onClick={() => navigate("/profile/edit")}>
                         <Edit className="w-4 h-4 mr-2" />
                         Edit
                       </Button>
