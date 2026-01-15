@@ -12,7 +12,7 @@ import { motion } from "framer-motion";
 import { ArrowRight, Users, Sparkles, Heart, TrendingUp, Lock, Ticket } from "lucide-react";
 import heroImage from "@/assets/hero-women-new.jpg";
 import loverballLogo from "@/assets/loverball-logo-new.png";
-import philosophyImage from "@/assets/community-friends.png";
+import philosophyImage from "@/assets/philosophy-image.jpg";
 import { z } from "zod";
 
 const signUpSchema = z.object({
