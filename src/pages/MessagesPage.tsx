@@ -4,6 +4,7 @@ import BottomNav from '@/components/BottomNav';
 import DesktopNav from '@/components/DesktopNav';
 import MobileHeader from '@/components/MobileHeader';
 import EventPreviewCard from '@/components/EventPreviewCard';
+import LinkPreviewCard from '@/components/LinkPreviewCard';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -15,6 +16,9 @@ import { format } from 'date-fns';
 
 // Regex to detect event links in messages
 const EVENT_LINK_REGEX = /(?:https?:\/\/[^\s]*)?\/event\/([a-f0-9-]{36})/gi;
+
+// Regex to detect external URLs (excluding internal event links)
+const EXTERNAL_URL_REGEX = /https?:\/\/(?!(?:[^\s]*\/event\/[a-f0-9-]{36}))[^\s]+/gi;
 
 interface Match {
   id: string;
@@ -368,12 +372,17 @@ const MessagesPage = () => {
                     // Check if message contains an event link
                     const eventMatches = [...message.content.matchAll(EVENT_LINK_REGEX)];
                     const eventIds = eventMatches.map(match => match[1]);
-                    const hasEventLink = eventIds.length > 0;
                     
-                    // Remove event links from display text
-                    const displayContent = hasEventLink 
-                      ? message.content.replace(EVENT_LINK_REGEX, '').trim()
-                      : message.content;
+                    // Check for external URLs (excluding event links)
+                    const contentWithoutEventLinks = message.content.replace(EVENT_LINK_REGEX, '');
+                    const externalUrlMatches = [...contentWithoutEventLinks.matchAll(EXTERNAL_URL_REGEX)];
+                    const externalUrls = externalUrlMatches.map(match => match[0]);
+                    
+                    // Remove all links from display text
+                    let displayContent = message.content
+                      .replace(EVENT_LINK_REGEX, '')
+                      .replace(EXTERNAL_URL_REGEX, '')
+                      .trim();
 
                     return (
                       <div
@@ -399,6 +408,11 @@ const MessagesPage = () => {
                           {/* Event preview cards */}
                           {eventIds.map((eventId, idx) => (
                             <EventPreviewCard key={`${message.id}-event-${idx}`} eventId={eventId} />
+                          ))}
+                          
+                          {/* External link preview cards */}
+                          {externalUrls.map((externalUrl, idx) => (
+                            <LinkPreviewCard key={`${message.id}-link-${idx}`} url={externalUrl} />
                           ))}
                           
                           {/* Timestamp */}
