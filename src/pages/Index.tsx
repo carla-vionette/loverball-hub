@@ -309,14 +309,14 @@ const Index = () => {
               viewport={{ once: true }}
               className="lg:col-span-4 relative"
             >
-              <div className="aspect-[3/4] overflow-hidden">
+              <div className="aspect-[4/5] max-h-[400px] overflow-hidden">
                 <img
                   src={philosophyImage}
                   alt="Loverball community member"
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover object-top"
                 />
               </div>
-              <div className="absolute -bottom-4 -right-4 w-24 h-24 bg-[hsl(185,25%,75%)] -z-10" />
+              <div className="absolute -bottom-3 -right-3 w-16 h-16 bg-[hsl(185,25%,75%)] -z-10" />
             </motion.div>
             
             {/* Right Column - Text */}
