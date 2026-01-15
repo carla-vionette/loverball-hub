@@ -33,12 +33,18 @@ const Auth = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
+  const redirectTo = searchParams.get('redirect') || '/following';
 
-  // Check if user came from a password reset link
+  // Check if user came from a password reset link or signup link
   useEffect(() => {
     const isReset = searchParams.get('reset') === 'true';
+    const wantsSignup = searchParams.get('signup') === 'true';
+    
     if (isReset) {
       setIsResettingPassword(true);
+    }
+    if (wantsSignup) {
+      setIsSignUp(true);
     }
   }, [searchParams]);
 
@@ -149,7 +155,7 @@ const Auth = () => {
           .maybeSingle();
 
         if (profile) {
-          navigate("/following");
+          navigate(redirectTo);
         } else {
           navigate("/onboarding");
         }

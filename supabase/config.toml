@@ -17,3 +17,6 @@ verify_jwt = false
 
 [functions.sports-stats]
 verify_jwt = false
+
+[functions.event-og-meta]
+verify_jwt = false
