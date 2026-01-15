@@ -1,7 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
-import { Calendar, Clock, MapPin, Users, Lock, Share2 } from "lucide-react";
+import { Calendar, Clock, MapPin, Users, Lock, Share2, X } from "lucide-react";
 import { format } from "date-fns";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
@@ -22,6 +22,7 @@ interface EventCardProps {
     capacity?: number | null;
   };
   onRSVP?: () => void;
+  onCancelRSVP?: () => void;
   rsvpStatus?: string | null;
   isMember?: boolean;
 }
@@ -37,7 +38,7 @@ const eventTypeLabels: Record<string, string> = {
   other: 'Event'
 };
 
-const EventCard = ({ event, onRSVP, rsvpStatus, isMember }: EventCardProps) => {
+const EventCard = ({ event, onRSVP, onCancelRSVP, rsvpStatus, isMember }: EventCardProps) => {
   const navigate = useNavigate();
   const { toast } = useToast();
   
@@ -186,14 +187,30 @@ const EventCard = ({ event, onRSVP, rsvpStatus, isMember }: EventCardProps) => {
         )}
       </CardContent>
       
-      <CardFooter>
+      <CardFooter className="flex gap-2">
         {rsvpStatus ? (
-          <Badge 
-            variant="secondary" 
-            className="w-full justify-center py-2 capitalize"
-          >
-            {rsvpStatus === 'attending' ? '✓ Attending' : rsvpStatus}
-          </Badge>
+          <>
+            <Badge 
+              variant="secondary" 
+              className="flex-1 justify-center py-2 capitalize"
+            >
+              {rsvpStatus === 'attending' ? '✓ Attending' : rsvpStatus}
+            </Badge>
+            {onCancelRSVP && (
+              <Button
+                variant="outline"
+                size="icon"
+                className="shrink-0"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onCancelRSVP();
+                }}
+                title="Cancel RSVP"
+              >
+                <X className="w-4 h-4" />
+              </Button>
+            )}
+          </>
         ) : event.visibility === 'public' || isMember ? (
           <Button 
             onClick={(e) => {
