@@ -238,7 +238,7 @@ const Index = () => {
               <img
                 src={heroImage}
                 alt="Women sports fans celebrating together"
-                className="w-full h-full object-cover object-[center_20%]"
+                className="w-full h-full object-cover object-center"
               />
             </motion.div>
           </div>
