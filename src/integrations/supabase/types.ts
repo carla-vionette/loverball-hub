@@ -45,6 +45,9 @@ export type Database = {
           created_at: string
           event_id: string
           id: string
+          name: string | null
+          phone: string | null
+          plus_ones: number | null
           status: string
           user_id: string
         }
@@ -52,6 +55,9 @@ export type Database = {
           created_at?: string
           event_id: string
           id?: string
+          name?: string | null
+          phone?: string | null
+          plus_ones?: number | null
           status?: string
           user_id: string
         }
@@ -59,6 +65,9 @@ export type Database = {
           created_at?: string
           event_id?: string
           id?: string
+          name?: string | null
+          phone?: string | null
+          plus_ones?: number | null
           status?: string
           user_id?: string
         }
@@ -74,54 +83,81 @@ export type Database = {
       }
       events: {
         Row: {
+          allow_plus_ones: boolean | null
           capacity: number | null
           city: string | null
           created_at: string
           description: string | null
+          end_time: string | null
           event_date: string
           event_time: string | null
           event_type: string | null
           host_user_id: string | null
           id: string
           image_url: string | null
+          location_map_url: string | null
+          location_type: string | null
+          rsvp_deadline: string | null
+          slug: string | null
           sport_tags: string[] | null
+          status: string | null
+          theme: string | null
           title: string
           updated_at: string
           venue_name: string | null
+          virtual_link: string | null
           visibility: string
         }
         Insert: {
+          allow_plus_ones?: boolean | null
           capacity?: number | null
           city?: string | null
           created_at?: string
           description?: string | null
+          end_time?: string | null
           event_date: string
           event_time?: string | null
           event_type?: string | null
           host_user_id?: string | null
           id?: string
           image_url?: string | null
+          location_map_url?: string | null
+          location_type?: string | null
+          rsvp_deadline?: string | null
+          slug?: string | null
           sport_tags?: string[] | null
+          status?: string | null
+          theme?: string | null
           title: string
           updated_at?: string
           venue_name?: string | null
+          virtual_link?: string | null
           visibility?: string
         }
         Update: {
+          allow_plus_ones?: boolean | null
           capacity?: number | null
           city?: string | null
           created_at?: string
           description?: string | null
+          end_time?: string | null
           event_date?: string
           event_time?: string | null
           event_type?: string | null
           host_user_id?: string | null
           id?: string
           image_url?: string | null
+          location_map_url?: string | null
+          location_type?: string | null
+          rsvp_deadline?: string | null
+          slug?: string | null
           sport_tags?: string[] | null
+          status?: string | null
+          theme?: string | null
           title?: string
           updated_at?: string
           venue_name?: string | null
+          virtual_link?: string | null
           visibility?: string
         }
         Relationships: []
