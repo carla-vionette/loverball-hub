@@ -28,12 +28,12 @@ const MemberCard = ({ profile, onSwipeLeft, onSwipeRight }: MemberCardProps) => 
   return (
     <div className="relative w-full h-full flex flex-col bg-card rounded-2xl overflow-hidden shadow-xl">
       {/* Photo Section */}
-      <div className="relative h-1/2 bg-muted">
+      <div className="relative h-1/2 bg-muted flex items-center justify-center">
         {profile.profile_photo_url ? (
           <img 
             src={profile.profile_photo_url} 
             alt={profile.name}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-contain bg-muted"
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/20 to-accent/20">
