@@ -254,7 +254,7 @@ const Index = () => {
                 Her Platform.
               </h1>
               <p className="text-foreground/50 text-[15px] leading-relaxed mb-10 max-w-[340px]">
-                We are a community platform for women who love sports. Stories, community, and culture—powered by passion for the games she loves.
+                We're a community platform for women who love sports—where stories, connection, and culture meet her passion for the game.
               </p>
               {isAuthenticated ? (
                 <Button 
@@ -682,7 +682,7 @@ const Index = () => {
             <div className="lg:col-span-4">
               <img src={loverballLogo} alt="Loverball" className="h-10 w-auto brightness-0 invert mb-6" />
               <p className="text-background/50 text-sm leading-relaxed max-w-xs">
-                We are a community platform for women who love sports.
+                We're a community platform for women who love sports.
               </p>
             </div>
             <div className="lg:col-span-2 lg:col-start-7">
