@@ -66,7 +66,7 @@ const themeStyles: Record<string, string> = {
 const EventDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { user, isMember } = useAuth();
+  const { user, isMember, loading: authLoading } = useAuth();
   const { toast } = useToast();
   const [event, setEvent] = useState<Event | null>(null);
   const [loading, setLoading] = useState(true);
@@ -77,12 +77,72 @@ const EventDetail = () => {
   const [countdown, setCountdown] = useState({ days: 0, hours: 0, minutes: 0 });
   const [showConfetti, setShowConfetti] = useState(false);
 
+  // Redirect non-authenticated users to signup
   useEffect(() => {
-    if (id) {
+    if (!authLoading && !user) {
+      navigate(`/auth?redirect=/event/${id}&signup=true`);
+    }
+  }, [authLoading, user, id, navigate]);
+
+  // Update OG meta tags dynamically
+  useEffect(() => {
+    if (!event) return;
+
+    const formatEventDate = () => {
+      const date = new Date(event.event_date);
+      return date.toLocaleDateString('en-US', {
+        weekday: 'long',
+        month: 'long',
+        day: 'numeric',
+        year: 'numeric'
+      });
+    };
+
+    const description = event.description 
+      ? event.description.substring(0, 150) + (event.description.length > 150 ? '...' : '')
+      : `Join us on ${formatEventDate()}`;
+    
+    const imageUrl = event.image_url || '/og-image.png';
+    const pageUrl = `${window.location.origin}/event/${event.id}`;
+
+    // Update document title
+    document.title = `${event.title} | Loverball`;
+
+    // Update or create meta tags
+    const updateMetaTag = (property: string, content: string, isName = false) => {
+      const attr = isName ? 'name' : 'property';
+      let meta = document.querySelector(`meta[${attr}="${property}"]`) as HTMLMetaElement;
+      if (!meta) {
+        meta = document.createElement('meta');
+        meta.setAttribute(attr, property);
+        document.head.appendChild(meta);
+      }
+      meta.content = content;
+    };
+
+    updateMetaTag('og:title', `${event.title} | Loverball`);
+    updateMetaTag('og:description', description);
+    updateMetaTag('og:image', imageUrl.startsWith('http') ? imageUrl : `${window.location.origin}${imageUrl}`);
+    updateMetaTag('og:url', pageUrl);
+    updateMetaTag('og:type', 'website');
+    updateMetaTag('twitter:card', 'summary_large_image', true);
+    updateMetaTag('twitter:title', `${event.title} | Loverball`, true);
+    updateMetaTag('twitter:description', description, true);
+    updateMetaTag('twitter:image', imageUrl.startsWith('http') ? imageUrl : `${window.location.origin}${imageUrl}`, true);
+    updateMetaTag('description', description, true);
+
+    // Cleanup on unmount
+    return () => {
+      document.title = 'Loverball | Her Game. Her Community. Her Platform.';
+    };
+  }, [event]);
+
+  useEffect(() => {
+    if (id && user) {
       fetchEvent();
       fetchAttendees();
     }
-  }, [id]);
+  }, [id, user]);
 
   useEffect(() => {
     if (user && id) {
@@ -319,7 +379,7 @@ const EventDetail = () => {
   const isEventPast = eventDateTime ? isPast(eventDateTime) : false;
   const themeClass = themeStyles[event?.theme || 'default'] || themeStyles.default;
 
-  if (loading) {
+  if (loading || authLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
