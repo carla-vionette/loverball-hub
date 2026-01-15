@@ -11,12 +11,14 @@ const WINDOW_MINUTES = 15;
 
 // Sensitive fields that require a match/connection to view
 const SENSITIVE_FIELDS = [
+  'phone_number',
   'instagram_url',
   'linkedin_url',
   'tiktok_url',
   'website_url',
   'neighborhood',
   'age_range',
+  'sms_notifications_enabled',
 ];
 
 // Strip sensitive fields from profile data
