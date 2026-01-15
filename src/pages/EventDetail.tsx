@@ -281,9 +281,20 @@ const EventDetail = () => {
                 {(event.venue_name || event.city) && (
                   <div className="flex items-center gap-3 text-muted-foreground">
                     <MapPin className="w-5 h-5 flex-shrink-0" />
-                    <span className="text-foreground font-medium">
-                      {event.venue_name}{event.venue_name && event.city ? ', ' : ''}{event.city}
-                    </span>
+                    {event.venue_name?.toLowerCase().includes('weplay') ? (
+                      <a 
+                        href="https://www.weplaystudios.com" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="text-primary font-medium hover:underline"
+                      >
+                        {event.venue_name}{event.venue_name && event.city ? ', ' : ''}{event.city}
+                      </a>
+                    ) : (
+                      <span className="text-foreground font-medium">
+                        {event.venue_name}{event.venue_name && event.city ? ', ' : ''}{event.city}
+                      </span>
+                    )}
                   </div>
                 )}
                 
