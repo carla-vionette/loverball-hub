@@ -403,19 +403,20 @@ const Network = () => {
                     <div className="h-full rounded-3xl overflow-hidden bg-gradient-to-b from-muted to-background border border-border shadow-2xl">
                       {/* Profile Image */}
                       <div className="relative h-3/5">
-                        {currentProfile.profile_photo_url ? (
-                          <img
-                            src={currentProfile.profile_photo_url}
-                            alt={currentProfile.name}
-                            className="w-full h-full object-cover"
-                          />
-                        ) : (
-                          <div className="w-full h-full bg-gradient-to-br from-primary/30 to-primary/10 flex items-center justify-center">
-                            <span className="text-8xl font-bold text-primary/50">
-                              {currentProfile.name.charAt(0)}
-                            </span>
-                          </div>
-                        )}
+                        <img
+                          src={currentProfile.profile_photo_url || ""}
+                          alt={currentProfile.name}
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            e.currentTarget.style.display = 'none';
+                            e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                          }}
+                        />
+                        <div className={`w-full h-full bg-gradient-to-br from-primary/30 to-primary/10 flex items-center justify-center absolute inset-0 ${currentProfile.profile_photo_url ? 'hidden' : ''}`}>
+                          <span className="text-8xl font-bold text-primary/50">
+                            {currentProfile.name.charAt(0)}
+                          </span>
+                        </div>
                         <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
                       </div>
 
@@ -521,19 +522,20 @@ const Network = () => {
                   className="rounded-2xl overflow-hidden bg-muted/50 border border-border hover:border-primary/50 transition-all group"
                 >
                   <div className="aspect-square relative">
-                    {profile.profile_photo_url ? (
-                      <img
-                        src={profile.profile_photo_url}
-                        alt={profile.name}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <div className="w-full h-full bg-gradient-to-br from-primary/30 to-primary/10 flex items-center justify-center">
-                        <span className="text-4xl font-bold text-primary/50">
-                          {profile.name.charAt(0)}
-                        </span>
-                      </div>
-                    )}
+                    <img
+                      src={profile.profile_photo_url || ""}
+                      alt={profile.name}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        e.currentTarget.style.display = 'none';
+                        e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                      }}
+                    />
+                    <div className={`w-full h-full bg-gradient-to-br from-primary/30 to-primary/10 flex items-center justify-center absolute inset-0 ${profile.profile_photo_url ? 'hidden' : ''}`}>
+                      <span className="text-4xl font-bold text-primary/50">
+                        {profile.name.charAt(0)}
+                      </span>
+                    </div>
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
                     <div className="absolute bottom-0 left-0 right-0 p-3">
                       <p className="font-semibold text-white truncate">{profile.name}</p>
