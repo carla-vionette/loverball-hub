@@ -46,6 +46,7 @@ const Network = () => {
   const [matchedProfile, setMatchedProfile] = useState<Profile | null>(null);
   const [myConnections, setMyConnections] = useState<Match[]>([]);
   const [swipedIds, setSwipedIds] = useState<Set<string>>(new Set());
+  const [connectedIds, setConnectedIds] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
   const [showFilters, setShowFilters] = useState(false);
   
@@ -59,10 +60,16 @@ const Network = () => {
       navigate("/profile");
       return;
     }
-    fetchProfiles();
     fetchMyConnections();
     fetchSwipedProfiles();
   }, [isMember, navigate]);
+  
+  // Fetch profiles after we know who we're connected to
+  useEffect(() => {
+    if (user && connectedIds.size >= 0) {
+      fetchProfiles();
+    }
+  }, [user, connectedIds]);
 
   const fetchProfiles = async () => {
     if (!user) return;
@@ -100,7 +107,8 @@ const Network = () => {
     const { data: matches, error } = await supabase
       .from("matches")
       .select("*")
-      .or(`user_a_id.eq.${user.id},user_b_id.eq.${user.id}`);
+      .or(`user_a_id.eq.${user.id},user_b_id.eq.${user.id}`)
+      .eq("status", "active");
     
     if (error) {
       console.error("Error fetching connections:", error);
@@ -111,6 +119,9 @@ const Network = () => {
       const otherUserIds = matches.map(m => 
         m.user_a_id === user.id ? m.user_b_id : m.user_a_id
       );
+      
+      // Store connected user IDs to filter them out from swiping
+      setConnectedIds(new Set(otherUserIds));
       
       const { data: otherProfiles } = await supabase
         .from("profiles")
@@ -125,6 +136,9 @@ const Network = () => {
       }));
       
       setMyConnections(matchesWithProfiles);
+    } else {
+      setConnectedIds(new Set());
+      setMyConnections([]);
     }
   };
 
@@ -162,6 +176,8 @@ const Network = () => {
       if (mutualSwipe) {
         setMatchedProfile(targetProfile);
         setShowMatchDialog(true);
+        // Add to connected IDs immediately to remove from swipe queue
+        setConnectedIds(prev => new Set([...prev, targetProfile.id]));
         fetchMyConnections();
       } else {
         toast.success("Connection request sent! 💕");
@@ -182,7 +198,11 @@ const Network = () => {
 
   const getFilteredProfiles = () => {
     return profiles.filter(profile => {
+      // Exclude already swiped profiles
       if (swipedIds.has(profile.id)) return false;
+      
+      // Exclude already connected (matched) profiles
+      if (connectedIds.has(profile.id)) return false;
       
       if (sportFilter !== "all") {
         if (!profile.favorite_sports?.includes(sportFilter)) return false;
