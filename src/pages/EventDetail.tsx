@@ -6,8 +6,10 @@ import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { Calendar, Clock, MapPin, Users, Lock, Share2, ArrowLeft, Loader2 } from "lucide-react";
-import { format } from "date-fns";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Calendar, Clock, MapPin, Users, Lock, Share2, ArrowLeft, Loader2, Check, X, HelpCircle, Video, ExternalLink } from "lucide-react";
+import { format, differenceInDays, differenceInHours, differenceInMinutes, isPast } from "date-fns";
+import { motion, AnimatePresence } from "framer-motion";
 import loverballLogo from "@/assets/loverball-logo-new.png";
 
 interface Event {
@@ -17,12 +19,28 @@ interface Event {
   image_url?: string | null;
   event_date: string;
   event_time?: string | null;
+  end_time?: string | null;
   venue_name?: string | null;
   city?: string | null;
   event_type?: string | null;
   sport_tags?: string[] | null;
   visibility: string;
   capacity?: number | null;
+  location_type?: string | null;
+  virtual_link?: string | null;
+  location_map_url?: string | null;
+  rsvp_deadline?: string | null;
+  theme?: string | null;
+}
+
+interface Attendee {
+  id: string;
+  user_id: string;
+  status: string;
+  profile: {
+    name: string;
+    profile_photo_url: string | null;
+  } | null;
 }
 
 const eventTypeLabels: Record<string, string> = {
@@ -36,6 +54,15 @@ const eventTypeLabels: Record<string, string> = {
   other: 'Event'
 };
 
+const themeStyles: Record<string, string> = {
+  default: 'from-primary/20 to-accent/20',
+  valentines: 'from-pink-500/30 to-red-500/30',
+  sports: 'from-orange-500/20 to-yellow-500/20',
+  elegant: 'from-purple-500/20 to-indigo-500/20',
+  summer: 'from-cyan-500/20 to-blue-500/20',
+  night: 'from-slate-800/80 to-slate-900/80',
+};
+
 const EventDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -45,10 +72,15 @@ const EventDetail = () => {
   const [loading, setLoading] = useState(true);
   const [rsvpStatus, setRsvpStatus] = useState<string | null>(null);
   const [rsvping, setRsvping] = useState(false);
+  const [attendees, setAttendees] = useState<Attendee[]>([]);
+  const [attendeeCounts, setAttendeeCounts] = useState({ yes: 0, maybe: 0, no: 0 });
+  const [countdown, setCountdown] = useState({ days: 0, hours: 0, minutes: 0 });
+  const [showConfetti, setShowConfetti] = useState(false);
 
   useEffect(() => {
     if (id) {
       fetchEvent();
+      fetchAttendees();
     }
   }, [id]);
 
@@ -57,6 +89,31 @@ const EventDetail = () => {
       fetchRsvpStatus();
     }
   }, [user, id]);
+
+  // Countdown timer
+  useEffect(() => {
+    if (!event) return;
+    
+    const eventDateTime = new Date(`${event.event_date}T${event.event_time || '00:00'}`);
+    
+    const updateCountdown = () => {
+      const now = new Date();
+      if (isPast(eventDateTime)) {
+        setCountdown({ days: 0, hours: 0, minutes: 0 });
+        return;
+      }
+      
+      setCountdown({
+        days: differenceInDays(eventDateTime, now),
+        hours: differenceInHours(eventDateTime, now) % 24,
+        minutes: differenceInMinutes(eventDateTime, now) % 60,
+      });
+    };
+    
+    updateCountdown();
+    const interval = setInterval(updateCountdown, 60000);
+    return () => clearInterval(interval);
+  }, [event]);
 
   const fetchEvent = async () => {
     try {
@@ -80,6 +137,52 @@ const EventDetail = () => {
     }
   };
 
+  const fetchAttendees = async () => {
+    if (!id) return;
+    
+    try {
+      const { data, error } = await supabase
+        .from('event_rsvps')
+        .select(`
+          id,
+          user_id,
+          status,
+          profile:profiles!inner (
+            name,
+            profile_photo_url
+          )
+        `)
+        .eq('event_id', id)
+        .in('status', ['attending', 'yes', 'maybe'])
+        .limit(20);
+
+      if (error) throw error;
+      
+      const transformedData = (data || []).map(item => ({
+        id: item.id,
+        user_id: item.user_id,
+        status: item.status,
+        profile: item.profile ? {
+          name: (item.profile as any).name,
+          profile_photo_url: (item.profile as any).profile_photo_url,
+        } : null
+      }));
+      
+      setAttendees(transformedData);
+      
+      // Count by status
+      const counts = { yes: 0, maybe: 0, no: 0 };
+      transformedData.forEach(a => {
+        if (a.status === 'attending' || a.status === 'yes') counts.yes++;
+        else if (a.status === 'maybe') counts.maybe++;
+        else if (a.status === 'no') counts.no++;
+      });
+      setAttendeeCounts(counts);
+    } catch (error) {
+      console.error('Error fetching attendees:', error);
+    }
+  };
+
   const fetchRsvpStatus = async () => {
     if (!user || !id) return;
 
@@ -97,9 +200,8 @@ const EventDetail = () => {
     }
   };
 
-  const handleRSVP = async () => {
+  const handleRSVP = async (status: 'yes' | 'maybe' | 'no') => {
     if (!user) {
-      // Redirect to auth with return URL
       navigate(`/auth?redirect=/event/${id}`);
       return;
     }
@@ -115,27 +217,41 @@ const EventDetail = () => {
       return;
     }
 
+    // Check RSVP deadline
+    if (event.rsvp_deadline && isPast(new Date(event.rsvp_deadline))) {
+      toast({
+        title: 'RSVPs closed',
+        description: 'The RSVP deadline has passed.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
     setRsvping(true);
     try {
-      const status = event.visibility === 'invite_only' ? 'requested' : 'attending';
+      const dbStatus = status === 'yes' ? 'attending' : status;
       
       const { error } = await supabase
         .from('event_rsvps')
         .upsert({
           event_id: event.id,
           user_id: user.id,
-          status,
+          status: dbStatus,
         });
 
       if (error) throw error;
 
-      setRsvpStatus(status);
+      setRsvpStatus(dbStatus);
+      fetchAttendees();
+
+      if (status === 'yes') {
+        setShowConfetti(true);
+        setTimeout(() => setShowConfetti(false), 3000);
+      }
 
       toast({
-        title: status === 'requested' ? 'Invite requested!' : 'RSVP confirmed!',
-        description: status === 'requested' 
-          ? 'The host will review your request.'
-          : 'We\'ll see you there!',
+        title: status === 'yes' ? "🎉 You're going!" : status === 'maybe' ? "Marked as maybe" : "RSVP updated",
+        description: status === 'yes' ? "We'll see you there!" : undefined,
       });
     } catch (error: any) {
       console.error('Error submitting RSVP:', error);
@@ -160,7 +276,6 @@ const EventDetail = () => {
           url: shareUrl,
         });
       } catch (error) {
-        // User cancelled or error
         copyToClipboard(shareUrl);
       }
     } else {
@@ -183,6 +298,27 @@ const EventDetail = () => {
     return format(date, 'h:mm a');
   };
 
+  const addToGoogleCalendar = () => {
+    if (!event) return;
+    const startDate = new Date(`${event.event_date}T${event.event_time || '00:00'}`);
+    const endDate = event.end_time 
+      ? new Date(`${event.event_date}T${event.end_time}`)
+      : new Date(startDate.getTime() + 2 * 60 * 60 * 1000);
+    
+    const url = new URL('https://calendar.google.com/calendar/render');
+    url.searchParams.set('action', 'TEMPLATE');
+    url.searchParams.set('text', event.title);
+    url.searchParams.set('dates', `${format(startDate, "yyyyMMdd'T'HHmmss")}/${format(endDate, "yyyyMMdd'T'HHmmss")}`);
+    if (event.venue_name) url.searchParams.set('location', `${event.venue_name}${event.city ? ', ' + event.city : ''}`);
+    if (event.description) url.searchParams.set('details', event.description);
+    
+    window.open(url.toString(), '_blank');
+  };
+
+  const eventDateTime = event ? new Date(`${event.event_date}T${event.event_time || '00:00'}`) : null;
+  const isEventPast = eventDateTime ? isPast(eventDateTime) : false;
+  const themeClass = themeStyles[event?.theme || 'default'] || themeStyles.default;
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -202,6 +338,27 @@ const EventDetail = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      {/* Confetti Animation */}
+      <AnimatePresence>
+        {showConfetti && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] pointer-events-none flex items-center justify-center"
+          >
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0 }}
+              className="text-8xl"
+            >
+              🎉
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-background/90 backdrop-blur-sm border-b border-border">
         <div className="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
@@ -223,9 +380,9 @@ const EventDetail = () => {
         </div>
       </header>
 
-      <main className="pt-16 pb-24">
+      <main className="pt-16 pb-32">
         {/* Hero Image */}
-        <div className="relative h-64 md:h-80 bg-gradient-to-br from-primary/20 to-accent/20">
+        <div className={`relative h-72 md:h-96 bg-gradient-to-br ${themeClass}`}>
           {event.image_url ? (
             <img 
               src={event.image_url} 
@@ -237,6 +394,9 @@ const EventDetail = () => {
               <Calendar className="w-24 h-24 text-primary/30" />
             </div>
           )}
+          
+          {/* Gradient Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
           
           {/* Badges */}
           <div className="absolute top-4 left-4 flex gap-2">
@@ -251,12 +411,40 @@ const EventDetail = () => {
                 {event.visibility === 'members_only' ? 'Members Only' : 'Invite Only'}
               </Badge>
             )}
+            {event.location_type === 'virtual' && (
+              <Badge variant="secondary" className="bg-blue-500/80 text-white border-0">
+                <Video className="w-3 h-3 mr-1" />
+                Virtual
+              </Badge>
+            )}
           </div>
+
+          {/* Countdown Timer */}
+          {!isEventPast && (countdown.days > 0 || countdown.hours > 0 || countdown.minutes > 0) && (
+            <div className="absolute bottom-4 right-4">
+              <div className="bg-black/70 backdrop-blur-sm rounded-lg px-4 py-2 text-white flex gap-4">
+                {countdown.days > 0 && (
+                  <div className="text-center">
+                    <p className="text-2xl font-bold">{countdown.days}</p>
+                    <p className="text-xs text-white/70">days</p>
+                  </div>
+                )}
+                <div className="text-center">
+                  <p className="text-2xl font-bold">{countdown.hours}</p>
+                  <p className="text-xs text-white/70">hrs</p>
+                </div>
+                <div className="text-center">
+                  <p className="text-2xl font-bold">{countdown.minutes}</p>
+                  <p className="text-xs text-white/70">min</p>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Content */}
-        <div className="max-w-4xl mx-auto px-4 -mt-8 relative z-10">
-          <Card>
+        <div className="max-w-4xl mx-auto px-4 -mt-12 relative z-10">
+          <Card className="overflow-hidden">
             <CardContent className="p-6">
               <h1 className="text-2xl md:text-3xl font-bold mb-4">{event.title}</h1>
               
@@ -274,6 +462,7 @@ const EventDetail = () => {
                     <Clock className="w-5 h-5 flex-shrink-0" />
                     <span className="text-foreground font-medium">
                       {formatTime(event.event_time)}
+                      {event.end_time && ` - ${formatTime(event.end_time)}`}
                     </span>
                   </div>
                 )}
@@ -286,9 +475,10 @@ const EventDetail = () => {
                         href="https://www.weplaystudios.com" 
                         target="_blank" 
                         rel="noopener noreferrer"
-                        className="text-primary font-medium hover:underline"
+                        className="text-primary font-medium hover:underline flex items-center gap-1"
                       >
                         {event.venue_name}{event.venue_name && event.city ? ', ' : ''}{event.city}
+                        <ExternalLink className="w-3 h-3" />
                       </a>
                     ) : (
                       <span className="text-foreground font-medium">
@@ -297,14 +487,54 @@ const EventDetail = () => {
                     )}
                   </div>
                 )}
+
+                {event.location_type === 'virtual' && event.virtual_link && (
+                  <div className="flex items-center gap-3 text-muted-foreground">
+                    <Video className="w-5 h-5 flex-shrink-0" />
+                    <a 
+                      href={event.virtual_link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-primary font-medium hover:underline"
+                    >
+                      Join Virtual Event
+                    </a>
+                  </div>
+                )}
                 
                 {event.capacity && (
                   <div className="flex items-center gap-3 text-muted-foreground">
                     <Users className="w-5 h-5 flex-shrink-0" />
-                    <span className="text-foreground font-medium">{event.capacity} spots available</span>
+                    <span className="text-foreground font-medium">
+                      {attendeeCounts.yes} going · {event.capacity - attendeeCounts.yes} spots left
+                    </span>
                   </div>
                 )}
               </div>
+
+              {/* Attendee Avatars */}
+              {attendees.length > 0 && (
+                <div className="mb-6">
+                  <p className="text-sm text-muted-foreground mb-2">
+                    {attendeeCounts.yes} going{attendeeCounts.maybe > 0 ? ` · ${attendeeCounts.maybe} maybe` : ''}
+                  </p>
+                  <div className="flex -space-x-2">
+                    {attendees.slice(0, 8).map((attendee) => (
+                      <Avatar key={attendee.id} className="w-10 h-10 border-2 border-background">
+                        <AvatarImage src={attendee.profile?.profile_photo_url || undefined} />
+                        <AvatarFallback className="bg-primary/10 text-primary text-sm">
+                          {attendee.profile?.name?.charAt(0).toUpperCase() || '?'}
+                        </AvatarFallback>
+                      </Avatar>
+                    ))}
+                    {attendees.length > 8 && (
+                      <div className="w-10 h-10 rounded-full bg-muted border-2 border-background flex items-center justify-center text-sm font-medium">
+                        +{attendees.length - 8}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
 
               {/* Sport Tags */}
               {event.sport_tags && event.sport_tags.length > 0 && (
@@ -324,9 +554,34 @@ const EventDetail = () => {
                 </div>
               )}
 
+              {/* Map Embed */}
+              {event.location_map_url && (
+                <div className="mb-6 rounded-lg overflow-hidden border">
+                  <iframe
+                    src={event.location_map_url}
+                    width="100%"
+                    height="200"
+                    style={{ border: 0 }}
+                    allowFullScreen
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                  />
+                </div>
+              )}
+
+              {/* Add to Calendar */}
+              {!isEventPast && (
+                <div className="mb-6">
+                  <Button variant="outline" size="sm" onClick={addToGoogleCalendar}>
+                    <Calendar className="w-4 h-4 mr-2" />
+                    Add to Google Calendar
+                  </Button>
+                </div>
+              )}
+
               {/* CTA for non-logged in users */}
               {!user && (
-                <div className="bg-pale-pink rounded-lg p-6 text-center mb-6">
+                <div className="bg-pale-pink rounded-lg p-6 text-center">
                   <h3 className="text-lg font-semibold mb-2">Join Loverball to RSVP</h3>
                   <p className="text-sm text-muted-foreground mb-4">
                     Connect with women who share your passion for sports.
@@ -346,41 +601,87 @@ const EventDetail = () => {
         </div>
       </main>
 
-      {/* Fixed Bottom RSVP Button */}
-      <div className="fixed bottom-0 left-0 right-0 bg-background border-t border-border p-4">
-        <div className="max-w-4xl mx-auto">
-          {rsvpStatus ? (
-            <Badge 
-              variant="secondary" 
-              className="w-full justify-center py-3 text-base capitalize"
-            >
-              {rsvpStatus === 'attending' ? '✓ You\'re Attending' : rsvpStatus}
-            </Badge>
-          ) : !user ? (
+      {/* Fixed Bottom RSVP Buttons */}
+      {user && !isEventPast && (
+        <div className="fixed bottom-0 left-0 right-0 bg-background border-t border-border p-4">
+          <div className="max-w-4xl mx-auto">
+            {rsvpStatus ? (
+              <div className="flex gap-2">
+                <Button
+                  variant={rsvpStatus === 'attending' || rsvpStatus === 'yes' ? 'default' : 'outline'}
+                  className="flex-1"
+                  onClick={() => handleRSVP('yes')}
+                  disabled={rsvping}
+                >
+                  <Check className="w-4 h-4 mr-2" />
+                  Going {rsvpStatus === 'attending' || rsvpStatus === 'yes' ? '✓' : ''}
+                </Button>
+                <Button
+                  variant={rsvpStatus === 'maybe' ? 'default' : 'outline'}
+                  className="flex-1"
+                  onClick={() => handleRSVP('maybe')}
+                  disabled={rsvping}
+                >
+                  <HelpCircle className="w-4 h-4 mr-2" />
+                  Maybe {rsvpStatus === 'maybe' ? '✓' : ''}
+                </Button>
+                <Button
+                  variant={rsvpStatus === 'no' ? 'destructive' : 'outline'}
+                  className="flex-1"
+                  onClick={() => handleRSVP('no')}
+                  disabled={rsvping}
+                >
+                  <X className="w-4 h-4 mr-2" />
+                  Can't Go
+                </Button>
+              </div>
+            ) : (
+              <div className="flex gap-2">
+                <Button
+                  className="flex-1 py-6"
+                  onClick={() => handleRSVP('yes')}
+                  disabled={rsvping}
+                >
+                  {rsvping ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : <Check className="w-5 h-5 mr-2" />}
+                  Going
+                </Button>
+                <Button
+                  variant="outline"
+                  className="flex-1 py-6"
+                  onClick={() => handleRSVP('maybe')}
+                  disabled={rsvping}
+                >
+                  <HelpCircle className="w-5 h-5 mr-2" />
+                  Maybe
+                </Button>
+                <Button
+                  variant="outline"
+                  className="flex-1 py-6"
+                  onClick={() => handleRSVP('no')}
+                  disabled={rsvping}
+                >
+                  <X className="w-5 h-5 mr-2" />
+                  Can't Go
+                </Button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Sign in prompt for guests */}
+      {!user && !isEventPast && (
+        <div className="fixed bottom-0 left-0 right-0 bg-background border-t border-border p-4">
+          <div className="max-w-4xl mx-auto">
             <Button 
               className="w-full py-6 text-base"
               onClick={() => navigate(`/auth?redirect=/event/${id}`)}
             >
               Sign In to RSVP
             </Button>
-          ) : event.visibility === 'public' || isMember ? (
-            <Button 
-              onClick={handleRSVP} 
-              className="w-full py-6 text-base"
-              disabled={rsvping}
-            >
-              {rsvping ? (
-                <Loader2 className="w-5 h-5 animate-spin mr-2" />
-              ) : null}
-              {event.visibility === 'invite_only' ? 'Request Invite' : 'RSVP Now'}
-            </Button>
-          ) : (
-            <Button variant="outline" className="w-full py-6 text-base" disabled>
-              Members Only Event
-            </Button>
-          )}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };
