@@ -704,7 +704,7 @@ const Index = () => {
               <p className="text-background/40 text-xs tracking-wider uppercase mb-4">Legal</p>
               <nav className="space-y-3">
                 <a href="#" className="block text-sm text-background/70 hover:text-background transition-colors">Privacy</a>
-                <a href="#" className="block text-sm text-background/70 hover:text-background transition-colors">Terms</a>
+                <a href="/terms" className="block text-sm text-background/70 hover:text-background transition-colors">Terms</a>
                 <a href="#" className="block text-sm text-background/70 hover:text-background transition-colors">Contact</a>
               </nav>
             </div>

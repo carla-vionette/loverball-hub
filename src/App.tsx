@@ -22,6 +22,7 @@ import MemberProfile from "./pages/MemberProfile";
 import Events from "./pages/Events";
 import MessagesPage from "./pages/MessagesPage";
 import Admin from "./pages/Admin";
+import Terms from "./pages/Terms";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 const queryClient = new QueryClient();
@@ -52,6 +53,7 @@ const App = () => (
             <Route path="/members/:id" element={<ProtectedRoute><MemberProfile /></ProtectedRoute>} />
             <Route path="/messages" element={<ProtectedRoute><MessagesPage /></ProtectedRoute>} />
             <Route path="/admin" element={<ProtectedRoute requireAdmin><Admin /></ProtectedRoute>} />
+            <Route path="/terms" element={<Terms />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
