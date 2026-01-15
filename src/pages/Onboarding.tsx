@@ -300,7 +300,7 @@ const Onboarding = () => {
                   <SelectTrigger className="bg-background rounded-none h-12">
                     <SelectValue placeholder="Select city" />
                   </SelectTrigger>
-                  <SelectContent className="bg-background z-50">
+                  <SelectContent className="bg-background z-50 max-h-60 overflow-y-auto">
                     {CITY_OPTIONS.map((option) => (
                       <SelectItem key={option} value={option}>
                         {option}
