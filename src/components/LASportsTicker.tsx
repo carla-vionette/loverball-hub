@@ -64,6 +64,58 @@ const TEAM_LOGOS: Record<string, string> = {
   'anteaters': 'https://a.espncdn.com/i/teamlogos/ncaa/500/300.png',
 };
 
+// Sport emojis based on content
+const SPORT_EMOJIS: Record<string, string> = {
+  basketball: '🏀',
+  nba: '🏀',
+  wnba: '🏀',
+  lakers: '🏀',
+  clippers: '🏀',
+  sparks: '🏀',
+  bruins: '🏀',
+  football: '🏈',
+  nfl: '🏈',
+  rams: '🏈',
+  chargers: '🏈',
+  trojans: '🏈',
+  soccer: '⚽',
+  mls: '⚽',
+  nwsl: '⚽',
+  galaxy: '⚽',
+  lafc: '⚽',
+  'angel city': '⚽',
+  wave: '⚽',
+  baseball: '⚾',
+  mlb: '⚾',
+  dodgers: '⚾',
+  angels: '⚾',
+  hockey: '🏒',
+  nhl: '🏒',
+  kings: '🏒',
+  ducks: '🏒',
+  volleyball: '🏐',
+  tennis: '🎾',
+  golf: '⛳',
+  swimming: '🏊',
+  track: '🏃',
+  gymnastics: '🤸',
+  'water polo': '🤽',
+  lacrosse: '🥍',
+};
+
+function getSportEmoji(text: string): string {
+  const textLower = text.toLowerCase();
+  
+  for (const [keyword, emoji] of Object.entries(SPORT_EMOJIS)) {
+    if (textLower.includes(keyword)) {
+      return emoji;
+    }
+  }
+  
+  // Default sports emoji
+  return '🏆';
+}
+
 function getTeamLogosFromText(text: string): string[] {
   const textLower = text.toLowerCase();
   const logos: string[] = [];
@@ -187,12 +239,16 @@ const LASportsTicker = ({
             {displayItems.map((item, index) => {
               const logos = getTeamLogosFromText(item);
               const isHeadline = item.startsWith('HEADLINE:');
+              const emoji = getSportEmoji(item);
               
               return (
                 <span 
                   key={index} 
                   className="ticker-item text-ticker-foreground font-bold text-sm tracking-wide px-6 whitespace-nowrap inline-flex items-center gap-2"
                 >
+                  {/* Sport emoji */}
+                  <span className="text-base">{emoji}</span>
+                  
                   {/* Team logos */}
                   {logos.length > 0 && !isHeadline && (
                     <span className="flex items-center gap-1">
