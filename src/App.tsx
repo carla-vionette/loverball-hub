@@ -24,6 +24,7 @@ import Events from "./pages/Events";
 import EventDetail from "./pages/EventDetail";
 import MessagesPage from "./pages/MessagesPage";
 import Admin from "./pages/Admin";
+import AdminEventEditor from "./pages/AdminEventEditor";
 import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -58,6 +59,7 @@ const App = () => (
             <Route path="/members/:id" element={<ProtectedRoute><MemberProfile /></ProtectedRoute>} />
             <Route path="/messages" element={<ProtectedRoute><MessagesPage /></ProtectedRoute>} />
             <Route path="/admin" element={<ProtectedRoute requireAdmin><Admin /></ProtectedRoute>} />
+            <Route path="/admin/events/:id/edit" element={<ProtectedRoute requireAdmin><AdminEventEditor /></ProtectedRoute>} />
             <Route path="/terms" element={<Terms />} />
             <Route path="/privacy" element={<Privacy />} />
             <Route path="*" element={<NotFound />} />
