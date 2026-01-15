@@ -1,5 +1,5 @@
-import { useState, useRef, useEffect } from "react";
-import { MessageCircle, Share2, Volume2, VolumeX, X, Send } from "lucide-react";
+import { useState, useRef, useEffect, useCallback } from "react";
+import { MessageCircle, Share2, Volume2, VolumeX, Send, Heart } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -27,6 +27,12 @@ interface VideoPostProps {
   isLiked?: boolean;
 }
 
+interface DoubleTapHeart {
+  id: number;
+  x: number;
+  y: number;
+}
+
 const VideoPost = ({
   videoUrl,
   username,
@@ -46,7 +52,10 @@ const VideoPost = ({
   const [commentList, setCommentList] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState("");
   const [isCommentsOpen, setIsCommentsOpen] = useState(false);
+  const [doubleTapHearts, setDoubleTapHearts] = useState<DoubleTapHeart[]>([]);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const lastTapRef = useRef<number>(0);
+  const tapTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -107,15 +116,66 @@ const VideoPost = ({
     };
   }, [muted]);
 
-  const handleLike = () => {
+  const handleLike = useCallback(() => {
     if (liked) {
       setLiked(false);
-      setLikeCount(likeCount - 1);
+      setLikeCount(prev => prev - 1);
     } else {
       setLiked(true);
-      setLikeCount(likeCount + 1);
+      setLikeCount(prev => prev + 1);
     }
-  };
+  }, [liked]);
+
+  // Double-tap to like handler
+  const handleDoubleTap = useCallback((e: React.MouseEvent | React.TouchEvent) => {
+    const now = Date.now();
+    const DOUBLE_TAP_DELAY = 300;
+
+    // Get tap position
+    let x: number, y: number;
+    if ('touches' in e) {
+      const touch = e.touches[0] || (e as React.TouchEvent).changedTouches[0];
+      const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+      x = touch.clientX - rect.left;
+      y = touch.clientY - rect.top;
+    } else {
+      const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+      x = e.clientX - rect.left;
+      y = e.clientY - rect.top;
+    }
+
+    if (now - lastTapRef.current < DOUBLE_TAP_DELAY) {
+      // Double tap detected!
+      if (tapTimeoutRef.current) {
+        clearTimeout(tapTimeoutRef.current);
+        tapTimeoutRef.current = null;
+      }
+
+      // Add heart animation at tap location
+      const heartId = Date.now();
+      setDoubleTapHearts(prev => [...prev, { id: heartId, x, y }]);
+
+      // Remove heart after animation
+      setTimeout(() => {
+        setDoubleTapHearts(prev => prev.filter(h => h.id !== heartId));
+      }, 1000);
+
+      // Like the video if not already liked
+      if (!liked) {
+        setLiked(true);
+        setLikeCount(prev => prev + 1);
+      }
+
+      lastTapRef.current = 0;
+    } else {
+      lastTapRef.current = now;
+      
+      // Set timeout for single tap (play/pause could go here)
+      tapTimeoutRef.current = setTimeout(() => {
+        tapTimeoutRef.current = null;
+      }, DOUBLE_TAP_DELAY);
+    }
+  }, [liked]);
 
   const handleShare = async () => {
     const shareData = {
@@ -160,20 +220,38 @@ const VideoPost = ({
   };
 
   return (
-    <div className="relative h-screen w-full snap-start snap-always bg-black flex items-center justify-center">
+    <div 
+      className="relative h-screen w-full snap-start snap-always bg-black flex items-center justify-center"
+      onClick={handleDoubleTap}
+      onTouchEnd={handleDoubleTap}
+    >
       <video
         ref={videoRef}
         src={videoUrl}
-        className="h-full w-auto max-w-full md:max-h-screen object-contain mt-14 md:mt-0"
+        className="h-full w-auto max-w-full md:max-h-screen object-contain mt-14 md:mt-0 pointer-events-none"
         loop
         playsInline
         muted={muted}
       />
       
-      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+      {/* Double-tap heart animations */}
+      {doubleTapHearts.map((heart) => (
+        <div
+          key={heart.id}
+          className="absolute pointer-events-none z-50 animate-double-tap-heart"
+          style={{
+            left: heart.x - 40,
+            top: heart.y - 40,
+          }}
+        >
+          <Heart className="w-20 h-20 text-primary fill-primary drop-shadow-lg" />
+        </div>
+      ))}
+      
+      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
       
       {/* Video Info */}
-      <div className="absolute bottom-32 md:bottom-6 left-4 right-20 text-white z-10">
+      <div className="absolute bottom-32 md:bottom-6 left-4 right-20 text-white z-10 pointer-events-none">
         <div className="flex items-center gap-3 mb-3">
           <Avatar className="h-10 w-10 border-2 border-white">
             <AvatarImage src={userAvatar} />
