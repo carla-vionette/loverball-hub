@@ -33,7 +33,7 @@ All colors MUST be HSL.
     --coral: 4 56% 60%;
     --coral-foreground: 0 0% 100%;
 
-    --pale-pink: 48 96% 95%; /* Very light cream */
+    --pale-pink: 0 100% 96%; /* Very light pink */
     --pale-pink-foreground: 217 19% 27%;
 
     --medium-blue: 224 64% 45%; /* Lighter navy */
