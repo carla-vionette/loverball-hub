@@ -17,7 +17,7 @@ const DesktopNav = () => {
     { icon: CalendarDays, label: "Events", path: "/events" },
     { icon: ShoppingBag, label: "Shop", path: "/shop" },
     ...(isMember ? [
-      { icon: Users, label: "Members", path: "/members" },
+      { icon: Users, label: "Matches", path: "/members" },
       { icon: MessageCircle, label: "Messages", path: "/messages", showBadge: true },
     ] : []),
     { icon: User, label: "Profile", path: "/profile" },
