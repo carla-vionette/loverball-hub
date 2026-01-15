@@ -121,7 +121,7 @@ const Invite = () => {
             <p className="text-sm text-muted-foreground">
               Don't have an invite code?{' '}
               <a 
-                href="https://instagram.com/loverball" 
+                href="https://www.instagram.com/loverballclub/" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="text-primary hover:underline"

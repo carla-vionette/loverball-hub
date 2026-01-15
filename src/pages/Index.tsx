@@ -696,9 +696,8 @@ const Index = () => {
             <div className="lg:col-span-2">
               <p className="text-background/40 text-xs tracking-wider uppercase mb-4">Connect</p>
               <nav className="space-y-3">
-                <a href="#" className="block text-sm text-background/70 hover:text-background transition-colors">Instagram</a>
-                <a href="#" className="block text-sm text-background/70 hover:text-background transition-colors">Twitter</a>
-                <a href="#" className="block text-sm text-background/70 hover:text-background transition-colors">TikTok</a>
+                <a href="https://www.instagram.com/loverballclub/" target="_blank" rel="noopener noreferrer" className="block text-sm text-background/70 hover:text-background transition-colors">Instagram</a>
+                <a href="https://www.tiktok.com/@loverballclub" target="_blank" rel="noopener noreferrer" className="block text-sm text-background/70 hover:text-background transition-colors">TikTok</a>
               </nav>
             </div>
             <div className="lg:col-span-2">
