@@ -9,7 +9,8 @@ import { Card, CardContent } from '@/components/ui/card';
 import { fetchProfileById } from '@/lib/profileApi';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, MapPin, Briefcase, Instagram, Linkedin, Globe, ArrowLeft } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { Loader2, MapPin, Briefcase, Instagram, Linkedin, Globe, ArrowLeft, Lock, Heart } from 'lucide-react';
 
 interface MemberProfile {
   id: string;
@@ -33,7 +34,9 @@ const MemberProfile = () => {
   const { id } = useParams<{ id: string }>();
   const [profile, setProfile] = useState<MemberProfile | null>(null);
   const [loading, setLoading] = useState(true);
-  const { isMember } = useAuth();
+  const [isMatched, setIsMatched] = useState(false);
+  const [isOwnProfile, setIsOwnProfile] = useState(false);
+  const { user, isMember } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -43,8 +46,23 @@ const MemberProfile = () => {
       return;
     }
 
-    const fetchProfile = async () => {
-      if (!id) return;
+    const fetchData = async () => {
+      if (!id || !user) return;
+
+      // Check if this is the user's own profile
+      if (id === user.id) {
+        setIsOwnProfile(true);
+      }
+
+      // Check if matched with this profile
+      const { data: matches } = await supabase
+        .from('matches')
+        .select('id')
+        .or(`and(user_a_id.eq.${user.id},user_b_id.eq.${id}),and(user_a_id.eq.${id},user_b_id.eq.${user.id})`)
+        .eq('status', 'active')
+        .limit(1);
+
+      setIsMatched(matches && matches.length > 0);
 
       try {
         const { data, error, rateLimited } = await fetchProfileById(id);
@@ -67,8 +85,12 @@ const MemberProfile = () => {
       }
     };
 
-    fetchProfile();
-  }, [id, isMember, navigate]);
+    fetchData();
+  }, [id, user, isMember, navigate]);
+
+  // Check if social links are hidden (not matched and not own profile)
+  const socialLinksHidden = !isOwnProfile && !isMatched && !profile?.instagram_url && !profile?.linkedin_url && !profile?.website_url;
+  const hasSocialLinks = profile?.instagram_url || profile?.linkedin_url || profile?.website_url;
 
   if (loading) {
     return (
@@ -124,7 +146,7 @@ const MemberProfile = () => {
               )}
 
               {/* Social Links - only shown if available (edge function filters by match status) */}
-              {(profile.instagram_url || profile.linkedin_url || profile.website_url) && (
+              {hasSocialLinks ? (
                 <div className="absolute top-4 right-4 flex gap-2">
                   {profile.instagram_url && (
                     <a 
@@ -157,10 +179,37 @@ const MemberProfile = () => {
                     </a>
                   )}
                 </div>
-              )}
+              ) : !isOwnProfile && !isMatched ? (
+                <div className="absolute top-4 right-4">
+                  <div className="flex items-center gap-2 px-3 py-2 bg-black/60 backdrop-blur-sm rounded-full text-white text-sm">
+                    <Lock className="w-4 h-4" />
+                    <span>Connect to see full profile</span>
+                  </div>
+                </div>
+              ) : null}
             </div>
 
             <CardContent className="p-6">
+              {/* Connect prompt banner for non-matched profiles */}
+              {!isOwnProfile && !isMatched && (
+                <div className="mb-6 p-4 rounded-xl bg-primary/10 border border-primary/20 flex items-center gap-3">
+                  <div className="p-2 rounded-full bg-primary/20">
+                    <Heart className="w-5 h-5 text-primary" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-foreground">Want to see more?</p>
+                    <p className="text-xs text-muted-foreground">Connect with {profile.name} to view their social links and full profile</p>
+                  </div>
+                  <Button 
+                    size="sm" 
+                    onClick={() => navigate('/network')}
+                    className="shrink-0"
+                  >
+                    Go to Network
+                  </Button>
+                </div>
+              )}
+
               <div className="flex items-center gap-2 mb-2">
                 <h1 className="text-2xl font-bold">{profile.name}</h1>
                 {profile.pronouns && (
