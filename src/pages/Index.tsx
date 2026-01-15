@@ -189,7 +189,7 @@ const Index = () => {
             </div>
             
             {/* Center logo */}
-            <img src={loverballLogo} alt="Loverball" className="h-14 w-auto absolute left-1/2 -translate-x-1/2" />
+            <img src={loverballLogo} alt="Loverball" className="h-20 w-auto absolute left-1/2 -translate-x-1/2" />
             
             {/* Right nav links */}
             <div className="hidden md:flex items-center gap-8">
