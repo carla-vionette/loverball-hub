@@ -276,27 +276,27 @@ const Index = () => {
         </div>
       </section>
 
-      {/* About Section - Editorial Grid */}
-      <section id="about" className="py-32 bg-background border-t border-border">
-        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
-          <div className="grid lg:grid-cols-12 gap-16 items-center">
+      {/* About Section - Clean Editorial Grid */}
+      <section id="about" className="py-40 bg-[hsl(40,33%,96%)]">
+        <div className="max-w-6xl mx-auto px-6 sm:px-8 lg:px-16">
+          <div className="grid lg:grid-cols-12 gap-12 lg:gap-20 items-start">
             {/* Left Column - Stats */}
             <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
               viewport={{ once: true }}
               className="lg:col-span-4"
             >
-              <p className="text-primary text-sm font-medium tracking-widest mb-8 uppercase">The Movement</p>
-              <div className="space-y-12">
+              <p className="text-primary text-xs font-medium tracking-[0.2em] mb-10 uppercase">The Movement</p>
+              <div className="space-y-16">
                 <div>
-                  <span className="text-6xl sm:text-7xl font-serif text-foreground">75%</span>
-                  <p className="text-foreground/60 text-sm mt-2 max-w-xs">of women globally identify as avid sports fans</p>
+                  <span className="text-6xl sm:text-7xl font-serif font-light text-foreground tracking-tight">75%</span>
+                  <p className="text-foreground/50 text-[15px] mt-4 leading-relaxed max-w-[280px]">of women globally identify as avid sports fans</p>
                 </div>
                 <div>
-                  <span className="text-6xl sm:text-7xl font-serif text-foreground">85%</span>
-                  <p className="text-foreground/60 text-sm mt-2 max-w-xs">of household sports purchasing decisions are controlled by women</p>
+                  <span className="text-6xl sm:text-7xl font-serif font-light text-foreground tracking-tight">85%</span>
+                  <p className="text-foreground/50 text-[15px] mt-4 leading-relaxed max-w-[280px]">of household sports purchasing decisions are controlled by women</p>
                 </div>
               </div>
             </motion.div>
@@ -316,24 +316,24 @@ const Index = () => {
                   className="w-full h-full object-cover"
                 />
               </div>
-              <div className="absolute -bottom-6 -right-6 w-32 h-32 bg-pale-pink -z-10" />
+              <div className="absolute -bottom-4 -right-4 w-24 h-24 bg-[hsl(185,25%,75%)] -z-10" />
             </motion.div>
             
             {/* Right Column - Text */}
             <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
               viewport={{ once: true }}
-              className="lg:col-span-4"
+              className="lg:col-span-4 lg:pt-8"
             >
-              <h2 className="text-3xl sm:text-4xl font-serif font-normal leading-tight mb-6 text-foreground">
+              <h2 className="text-3xl sm:text-4xl font-serif font-normal leading-[1.2] mb-8 text-foreground">
                 Yet she remains overlooked.
               </h2>
-              <p className="text-foreground/60 text-sm leading-relaxed mb-6">
+              <p className="text-foreground/50 text-[15px] leading-[1.8] mb-6">
                 Loverball is a content and community platform where female fandom thrives. We're creating the space for her to gather, share, and celebrate the games she loves.
               </p>
-              <p className="text-foreground/60 text-sm leading-relaxed">
+              <p className="text-foreground/50 text-[15px] leading-[1.8]">
                 By 2030, women will command 75% of global discretionary spending. The future of sports is female.
               </p>
             </motion.div>
@@ -341,9 +341,9 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Features Section - Editorial Stacked */}
-      <section id="features" className="py-32 bg-pale-pink border-t border-primary/10">
-        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
+      {/* Features Section - Minimal List */}
+      <section id="features" className="py-40 bg-white">
+        <div className="max-w-5xl mx-auto px-6 sm:px-8 lg:px-16">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -351,13 +351,13 @@ const Index = () => {
             viewport={{ once: true }}
             className="mb-20"
           >
-            <p className="text-primary text-sm font-medium tracking-widest mb-4 uppercase">Platform</p>
-            <h2 className="text-4xl sm:text-5xl font-serif font-normal text-foreground">
+            <p className="text-primary text-xs font-medium tracking-[0.2em] mb-6 uppercase">Platform</p>
+            <h2 className="text-4xl sm:text-5xl font-serif font-normal text-foreground leading-[1.1]">
               Built for Her
             </h2>
           </motion.div>
 
-          <div className="space-y-0">
+          <div className="border-t border-foreground/10">
             {[
               {
                 number: "01",
@@ -381,19 +381,19 @@ const Index = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
                 viewport={{ once: true }}
-                className="grid lg:grid-cols-12 gap-8 py-12 border-t border-foreground/10 group hover:bg-background/50 transition-colors px-6 -mx-6"
+                className="grid lg:grid-cols-12 gap-6 lg:gap-12 py-10 border-b border-foreground/10 group cursor-pointer"
               >
                 <div className="lg:col-span-1">
-                  <span className="text-sm font-medium text-foreground/40">{feature.number}</span>
+                  <span className="text-xs font-medium text-foreground/30 tracking-wider">{feature.number}</span>
                 </div>
                 <div className="lg:col-span-4">
-                  <h3 className="text-2xl font-serif text-foreground group-hover:text-primary transition-colors">{feature.title}</h3>
+                  <h3 className="text-xl font-serif text-foreground group-hover:text-primary transition-colors duration-300">{feature.title}</h3>
                 </div>
                 <div className="lg:col-span-6">
-                  <p className="text-foreground/60 text-sm leading-relaxed">{feature.description}</p>
+                  <p className="text-foreground/50 text-[15px] leading-[1.8]">{feature.description}</p>
                 </div>
                 <div className="lg:col-span-1 flex items-center justify-end">
-                  <ArrowRight className="h-5 w-5 text-foreground/20 group-hover:text-primary group-hover:translate-x-1 transition-all" />
+                  <ArrowRight className="h-4 w-4 text-foreground/20 group-hover:text-primary group-hover:translate-x-1 transition-all duration-300" />
                 </div>
               </motion.div>
             ))}
@@ -401,28 +401,28 @@ const Index = () => {
         </div>
       </section>
 
-      {/* CTA Section - Editorial Split */}
-      <section id="community" className="py-32 bg-primary border-t border-primary-foreground/10">
-        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
+      {/* CTA Section - Clean Editorial */}
+      <section id="community" className="py-32 bg-[hsl(40,33%,96%)]">
+        <div className="max-w-5xl mx-auto px-6 sm:px-8 lg:px-16">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
               viewport={{ once: true }}
             >
-              <p className="text-primary-foreground/60 text-sm font-medium tracking-widest mb-6 uppercase">Join Us</p>
-              <h2 className="text-4xl sm:text-5xl font-serif font-normal text-primary-foreground leading-tight mb-6">
+              <p className="text-primary text-xs font-medium tracking-[0.2em] mb-8 uppercase">Join Us</p>
+              <h2 className="text-3xl sm:text-4xl font-serif font-normal text-foreground leading-[1.2] mb-6">
                 Ready to be part of the movement?
               </h2>
-              <p className="text-primary-foreground/70 text-sm leading-relaxed max-w-md">
+              <p className="text-foreground/50 text-[15px] leading-[1.8] max-w-md">
                 Be part of the community redefining women's sports fandom. Your story matters here.
               </p>
             </motion.div>
             
             <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
               viewport={{ once: true }}
               className="flex lg:justify-end"
@@ -430,7 +430,7 @@ const Index = () => {
               {isAuthenticated ? (
                 <Button 
                   onClick={() => navigate("/following")}
-                  className="rounded-none bg-background text-primary hover:bg-background/90 px-12 py-6 text-sm tracking-wider font-medium group"
+                  className="rounded-none bg-primary text-primary-foreground hover:bg-primary/90 px-10 py-5 text-xs tracking-[0.15em] font-medium group"
                 >
                   ENTER PLATFORM
                   <ArrowRight className="ml-3 h-4 w-4 group-hover:translate-x-1 transition-transform" />
@@ -438,7 +438,7 @@ const Index = () => {
               ) : (
                 <Button 
                   onClick={scrollToMemberAccess}
-                  className="rounded-none bg-background text-primary hover:bg-background/90 px-12 py-6 text-sm tracking-wider font-medium group"
+                  className="rounded-none bg-primary text-primary-foreground hover:bg-primary/90 px-10 py-5 text-xs tracking-[0.15em] font-medium group"
                 >
                   GET ACCESS
                   <ArrowRight className="ml-3 h-4 w-4 group-hover:translate-x-1 transition-transform" />
