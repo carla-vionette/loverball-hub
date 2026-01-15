@@ -461,7 +461,7 @@ const Index = () => {
                 Ready to be part of the movement?
               </h2>
               <p className="text-foreground/50 text-[15px] leading-[1.8] max-w-md">
-                Be part of the community redefining women's sports fandom. Your story matters here.
+                Be part of the community redefining women's sports fandom. Your fandom matters here.
               </p>
             </motion.div>
             
