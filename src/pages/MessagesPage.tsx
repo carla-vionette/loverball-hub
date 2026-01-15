@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import { fetchProfileById } from '@/lib/profileApi';
 import { Loader2, Send, ArrowLeft, MessageCircle, Sparkles } from 'lucide-react';
 import { format } from 'date-fns';
 
@@ -82,12 +83,11 @@ const MessagesPage = () => {
         (matchesData || []).map(async (match) => {
           const otherUserId = match.user_a_id === user.id ? match.user_b_id : match.user_a_id;
           
-          // Get other user's profile
-          const { data: profileData } = await supabase
-            .from('profiles')
-            .select('id, name, profile_photo_url, primary_role')
-            .eq('id', otherUserId)
-            .maybeSingle();
+          // Get other user's profile using rate-limited API
+          const { data: profileData } = await fetchProfileById(
+            otherUserId,
+            'id, name, profile_photo_url, primary_role'
+          );
 
           // Get chat for this match
           const { data: chatData } = await supabase
