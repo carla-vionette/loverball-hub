@@ -16,7 +16,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Plus, Check, X, Copy, Users, Calendar, Ticket, RefreshCw, Eye, Phone, Mail } from 'lucide-react';
+import { Loader2, Plus, Check, X, Copy, Users, Calendar, Ticket, RefreshCw, Eye, Phone, Mail, Instagram, Linkedin, Globe, Download } from 'lucide-react';
 import { format } from 'date-fns';
 
 interface Invite {
@@ -59,11 +59,35 @@ interface EventAttendee {
   } | null;
 }
 
+interface MemberProfile {
+  id: string;
+  name: string;
+  bio: string | null;
+  city: string | null;
+  neighborhood: string | null;
+  phone_number: string | null;
+  instagram_url: string | null;
+  linkedin_url: string | null;
+  website_url: string | null;
+  tiktok_url: string | null;
+  primary_role: string | null;
+  industries: string[] | null;
+  favorite_la_teams: string[] | null;
+  looking_for_tags: string[] | null;
+  favorite_sports: string[] | null;
+  age_range: string | null;
+  pronouns: string | null;
+  profile_photo_url: string | null;
+  created_at: string;
+}
+
 const Admin = () => {
   const [invites, setInvites] = useState<Invite[]>([]);
   const [applications, setApplications] = useState<Application[]>([]);
   const [events, setEvents] = useState<Event[]>([]);
+  const [members, setMembers] = useState<MemberProfile[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadingMembers, setLoadingMembers] = useState(false);
   const [newInviteCode, setNewInviteCode] = useState('');
   const [newInviteMaxUses, setNewInviteMaxUses] = useState('10');
   const [creatingInvite, setCreatingInvite] = useState(false);
@@ -110,11 +134,67 @@ const Admin = () => {
       setInvites(invitesRes.data || []);
       setApplications(applicationsRes.data || []);
       setEvents(eventsRes.data || []);
+      
+      // Fetch members
+      fetchMembers();
     } catch (error) {
       console.error('Error fetching admin data:', error);
     } finally {
       setLoading(false);
     }
+  };
+
+  const fetchMembers = async () => {
+    setLoadingMembers(true);
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .order('created_at', { ascending: false });
+      
+      if (error) throw error;
+      setMembers(data || []);
+    } catch (error) {
+      console.error('Error fetching members:', error);
+    } finally {
+      setLoadingMembers(false);
+    }
+  };
+
+  const exportMembersCSV = () => {
+    if (members.length === 0) return;
+    
+    const headers = ['Name', 'Pronouns', 'Age Range', 'City', 'Neighborhood', 'Phone', 'Instagram', 'LinkedIn', 'Website', 'Role', 'Industries', 'Looking For', 'Favorite Teams', 'Favorite Sports', 'Joined'];
+    const rows = members.map(m => [
+      m.name,
+      m.pronouns || '',
+      m.age_range || '',
+      m.city || '',
+      m.neighborhood || '',
+      m.phone_number || '',
+      m.instagram_url || '',
+      m.linkedin_url || '',
+      m.website_url || '',
+      m.primary_role || '',
+      (m.industries || []).join('; '),
+      (m.looking_for_tags || []).join('; '),
+      (m.favorite_la_teams || []).join('; '),
+      (m.favorite_sports || []).join('; '),
+      format(new Date(m.created_at), 'yyyy-MM-dd')
+    ]);
+    
+    const csvContent = [headers, ...rows].map(row => 
+      row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',')
+    ).join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `loverball_members_${format(new Date(), 'yyyy-MM-dd')}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+    
+    toast({ title: 'Members CSV downloaded!' });
   };
 
   const fetchEventAttendees = async (event: Event) => {
@@ -326,7 +406,18 @@ const Admin = () => {
           </div>
 
           {/* Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            <Card>
+              <CardContent className="pt-6">
+                <div className="flex items-center gap-4">
+                  <Users className="w-8 h-8 text-primary" />
+                  <div>
+                    <p className="text-2xl font-bold">{members.length}</p>
+                    <p className="text-muted-foreground">Members</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
             <Card>
               <CardContent className="pt-6">
                 <div className="flex items-center gap-4">
@@ -362,8 +453,12 @@ const Admin = () => {
             </Card>
           </div>
 
-          <Tabs defaultValue="applications" className="w-full">
+          <Tabs defaultValue="members" className="w-full">
             <TabsList className="mb-6">
+              <TabsTrigger value="members">
+                Members
+                <Badge className="ml-2" variant="secondary">{members.length}</Badge>
+              </TabsTrigger>
               <TabsTrigger value="applications">
                 Applications
                 {pendingApplications.length > 0 && (
@@ -373,6 +468,147 @@ const Admin = () => {
               <TabsTrigger value="invites">Invite Codes</TabsTrigger>
               <TabsTrigger value="events">Events</TabsTrigger>
             </TabsList>
+
+            {/* Members Tab */}
+            <TabsContent value="members">
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between">
+                  <CardTitle>All Members ({members.length})</CardTitle>
+                  <Button variant="outline" onClick={exportMembersCSV} disabled={members.length === 0}>
+                    <Download className="w-4 h-4 mr-2" />
+                    Export CSV
+                  </Button>
+                </CardHeader>
+                <CardContent>
+                  {loadingMembers ? (
+                    <div className="flex justify-center py-8">
+                      <Loader2 className="w-6 h-6 animate-spin" />
+                    </div>
+                  ) : members.length > 0 ? (
+                    <div className="overflow-x-auto">
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>Photo</TableHead>
+                            <TableHead>Name</TableHead>
+                            <TableHead>Location</TableHead>
+                            <TableHead>Phone</TableHead>
+                            <TableHead>Social</TableHead>
+                            <TableHead>Role</TableHead>
+                            <TableHead>Industries</TableHead>
+                            <TableHead>Favorite Teams</TableHead>
+                            <TableHead>Joined</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {members.map((member) => (
+                            <TableRow key={member.id}>
+                              <TableCell>
+                                {member.profile_photo_url ? (
+                                  <img 
+                                    src={member.profile_photo_url} 
+                                    alt={member.name}
+                                    className="w-10 h-10 rounded-full object-cover"
+                                  />
+                                ) : (
+                                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-medium">
+                                    {member.name.charAt(0).toUpperCase()}
+                                  </div>
+                                )}
+                              </TableCell>
+                              <TableCell>
+                                <div>
+                                  <p className="font-medium">{member.name}</p>
+                                  {member.pronouns && (
+                                    <p className="text-xs text-muted-foreground">{member.pronouns}</p>
+                                  )}
+                                  {member.age_range && (
+                                    <p className="text-xs text-muted-foreground">{member.age_range}</p>
+                                  )}
+                                </div>
+                              </TableCell>
+                              <TableCell>
+                                <div className="text-sm">
+                                  {member.city && <p>{member.city}</p>}
+                                  {member.neighborhood && (
+                                    <p className="text-muted-foreground">{member.neighborhood}</p>
+                                  )}
+                                </div>
+                              </TableCell>
+                              <TableCell>
+                                {member.phone_number ? (
+                                  <a 
+                                    href={`tel:${member.phone_number}`}
+                                    className="flex items-center gap-1 text-primary hover:underline text-sm"
+                                  >
+                                    <Phone className="w-3 h-3" />
+                                    {member.phone_number}
+                                  </a>
+                                ) : (
+                                  <span className="text-muted-foreground">-</span>
+                                )}
+                              </TableCell>
+                              <TableCell>
+                                <div className="flex gap-2">
+                                  {member.instagram_url && (
+                                    <a href={member.instagram_url} target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80">
+                                      <Instagram className="w-4 h-4" />
+                                    </a>
+                                  )}
+                                  {member.linkedin_url && (
+                                    <a href={member.linkedin_url} target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80">
+                                      <Linkedin className="w-4 h-4" />
+                                    </a>
+                                  )}
+                                  {member.website_url && (
+                                    <a href={member.website_url} target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80">
+                                      <Globe className="w-4 h-4" />
+                                    </a>
+                                  )}
+                                  {!member.instagram_url && !member.linkedin_url && !member.website_url && (
+                                    <span className="text-muted-foreground">-</span>
+                                  )}
+                                </div>
+                              </TableCell>
+                              <TableCell>
+                                <span className="text-sm">{member.primary_role || '-'}</span>
+                              </TableCell>
+                              <TableCell>
+                                <div className="flex flex-wrap gap-1 max-w-[200px]">
+                                  {member.industries?.slice(0, 2).map((ind, i) => (
+                                    <Badge key={i} variant="secondary" className="text-xs">{ind}</Badge>
+                                  ))}
+                                  {(member.industries?.length || 0) > 2 && (
+                                    <Badge variant="outline" className="text-xs">+{member.industries!.length - 2}</Badge>
+                                  )}
+                                  {!member.industries?.length && <span className="text-muted-foreground">-</span>}
+                                </div>
+                              </TableCell>
+                              <TableCell>
+                                <div className="flex flex-wrap gap-1 max-w-[200px]">
+                                  {member.favorite_la_teams?.slice(0, 2).map((team, i) => (
+                                    <Badge key={i} variant="secondary" className="text-xs">{team}</Badge>
+                                  ))}
+                                  {(member.favorite_la_teams?.length || 0) > 2 && (
+                                    <Badge variant="outline" className="text-xs">+{member.favorite_la_teams!.length - 2}</Badge>
+                                  )}
+                                  {!member.favorite_la_teams?.length && <span className="text-muted-foreground">-</span>}
+                                </div>
+                              </TableCell>
+                              <TableCell className="text-sm text-muted-foreground">
+                                {format(new Date(member.created_at), 'MMM d, yyyy')}
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </div>
+                  ) : (
+                    <p className="text-muted-foreground text-center py-8">No members yet</p>
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
 
             {/* Applications Tab */}
             <TabsContent value="applications">
