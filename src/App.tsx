@@ -28,6 +28,7 @@ import AdminEventEditor from "./pages/AdminEventEditor";
 import AdminAttendeeManager from "./pages/AdminAttendeeManager";
 import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
+import Video from "./pages/Video";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 const queryClient = new QueryClient();
@@ -41,6 +42,7 @@ const App = () => (
         <BrowserRouter>
         <Routes>
             <Route path="/" element={<Index />} />
+            <Route path="/video/:id" element={<Video />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/ticker" element={<ProtectedRoute><Ticker /></ProtectedRoute>} />
             <Route path="/onboarding" element={<ProtectedRoute><Onboarding /></ProtectedRoute>} />
