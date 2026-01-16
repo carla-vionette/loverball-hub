@@ -180,13 +180,31 @@ const EventDetail = () => {
 
   const fetchEvent = async () => {
     try {
-      const { data, error } = await supabase
+      // First try to fetch by ID (UUID)
+      let { data, error } = await supabase
         .from('events')
         .select('*')
         .eq('id', id)
         .maybeSingle();
 
+      // If not found by ID, try by slug
+      if (!data && id) {
+        const slugResult = await supabase
+          .from('events')
+          .select('*')
+          .eq('slug', id)
+          .maybeSingle();
+        
+        data = slugResult.data;
+        error = slugResult.error;
+      }
+
       if (error) throw error;
+      
+      if (!data) {
+        console.error('Event not found for id/slug:', id);
+      }
+      
       setEvent(data);
     } catch (error) {
       console.error('Error fetching event:', error);
