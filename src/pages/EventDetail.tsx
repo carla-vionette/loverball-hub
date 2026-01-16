@@ -324,7 +324,10 @@ const EventDetail = () => {
   };
 
   const handleShare = async () => {
-    const shareUrl = window.location.href;
+    // Use the edge function URL for sharing - it serves proper OG meta tags
+    // for social media crawlers and redirects real users to the event page
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+    const shareUrl = `${supabaseUrl}/functions/v1/event-og-meta?id=${event?.id}`;
     
     if (navigator.share) {
       try {
