@@ -7,10 +7,12 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Calendar, Clock, MapPin, Users, Lock, Share2, ArrowLeft, Loader2, Check, X, HelpCircle, Video, ExternalLink } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Calendar, Clock, MapPin, Users, Lock, Share2, ArrowLeft, Loader2, Check, X, HelpCircle, Video, ExternalLink, Copy, Link2 } from "lucide-react";
 import { format, differenceInDays, differenceInHours, differenceInMinutes, isPast } from "date-fns";
 import { motion, AnimatePresence } from "framer-motion";
 import loverballLogo from "@/assets/loverball-logo-new.png";
+import SharePreview from "@/components/SharePreview";
 
 interface Event {
   id: string;
@@ -76,6 +78,7 @@ const EventDetail = () => {
   const [attendeeCounts, setAttendeeCounts] = useState({ yes: 0, maybe: 0, no: 0 });
   const [countdown, setCountdown] = useState({ days: 0, hours: 0, minutes: 0 });
   const [showConfetti, setShowConfetti] = useState(false);
+  const [showShareDialog, setShowShareDialog] = useState(false);
 
   // No longer redirect - allow guests to view event details
   // They will see "Sign in to RSVP" button at bottom
@@ -323,11 +326,24 @@ const EventDetail = () => {
     }
   };
 
-  const handleShare = async () => {
-    // Use the edge function URL for sharing - it serves proper OG meta tags
-    // for social media crawlers and redirects real users to the event page
+  const getShareUrl = () => {
     const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-    const shareUrl = `${supabaseUrl}/functions/v1/event-og-meta?id=${event?.id}`;
+    return `${supabaseUrl}/functions/v1/event-og-meta?id=${event?.id}`;
+  };
+
+  const getShareDescription = () => {
+    if (!event) return '';
+    return event.description 
+      ? event.description.substring(0, 150) + (event.description.length > 150 ? '...' : '')
+      : `Join us on ${format(new Date(event.event_date), 'EEEE, MMMM d, yyyy')}`;
+  };
+
+  const handleShare = () => {
+    setShowShareDialog(true);
+  };
+
+  const handleNativeShare = async () => {
+    const shareUrl = getShareUrl();
     
     if (navigator.share) {
       try {
@@ -337,10 +353,8 @@ const EventDetail = () => {
           url: shareUrl,
         });
       } catch (error) {
-        copyToClipboard(shareUrl);
+        // User cancelled or error
       }
-    } else {
-      copyToClipboard(shareUrl);
     }
   };
 
@@ -350,6 +364,7 @@ const EventDetail = () => {
       title: "Link copied!",
       description: "Share this link with friends.",
     });
+    setShowShareDialog(false);
   };
 
   const formatTime = (time: string) => {
@@ -743,6 +758,60 @@ const EventDetail = () => {
           </div>
         </div>
       )}
+
+      {/* Share Dialog */}
+      <Dialog open={showShareDialog} onOpenChange={setShowShareDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Share2 className="w-5 h-5" />
+              Share Event
+            </DialogTitle>
+          </DialogHeader>
+          
+          {event && (
+            <div className="space-y-4">
+              <SharePreview
+                title={`${event.title} | Loverball`}
+                description={getShareDescription()}
+                imageUrl={event.image_url}
+              />
+              
+              {/* Share Actions */}
+              <div className="flex gap-2">
+                <Button 
+                  variant="outline" 
+                  className="flex-1"
+                  onClick={() => copyToClipboard(getShareUrl())}
+                >
+                  <Copy className="w-4 h-4 mr-2" />
+                  Copy Link
+                </Button>
+                {typeof navigator.share === 'function' && (
+                  <Button 
+                    className="flex-1"
+                    onClick={handleNativeShare}
+                  >
+                    <Share2 className="w-4 h-4 mr-2" />
+                    Share
+                  </Button>
+                )}
+              </div>
+              
+              {/* Share URL Preview */}
+              <div className="bg-muted rounded-lg p-3">
+                <p className="text-xs text-muted-foreground mb-1 flex items-center gap-1">
+                  <Link2 className="w-3 h-3" />
+                  Share URL
+                </p>
+                <p className="text-xs font-mono text-foreground break-all">
+                  {getShareUrl()}
+                </p>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
