@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Calendar, Clock, MapPin, Users, Lock, Share2, ArrowLeft, Loader2, Check, X, HelpCircle, Video, ExternalLink, Copy, Link2 } from "lucide-react";
+import { Calendar, Clock, MapPin, Users, Lock, Share2, ArrowLeft, Loader2, Check, X, HelpCircle, Video, ExternalLink, Copy, Link2, Image, Download } from "lucide-react";
 import { format, differenceInDays, differenceInHours, differenceInMinutes, isPast } from "date-fns";
 import { motion, AnimatePresence } from "framer-motion";
 import loverballLogo from "@/assets/loverball-logo-new.png";
@@ -79,6 +79,8 @@ const EventDetail = () => {
   const [countdown, setCountdown] = useState({ days: 0, hours: 0, minutes: 0 });
   const [showConfetti, setShowConfetti] = useState(false);
   const [showShareDialog, setShowShareDialog] = useState(false);
+  const [generatingCard, setGeneratingCard] = useState(false);
+  const [generatedCardUrl, setGeneratedCardUrl] = useState<string | null>(null);
 
   // No longer redirect - allow guests to view event details
   // They will see "Sign in to RSVP" button at bottom
@@ -377,6 +379,66 @@ const EventDetail = () => {
       description: "Event details copied to clipboard.",
     });
     setShowShareDialog(false);
+  };
+
+  const generateEventCard = async () => {
+    if (!event) return;
+    
+    setGeneratingCard(true);
+    setGeneratedCardUrl(null);
+    
+    try {
+      const eventDate = format(new Date(event.event_date), 'EEEE, MMMM d, yyyy');
+      const eventTime = event.event_time ? formatTime(event.event_time) : undefined;
+      
+      const { data, error } = await supabase.functions.invoke('generate-event-card', {
+        body: {
+          title: event.title,
+          date: eventDate,
+          time: eventTime,
+          venue: event.venue_name,
+          city: event.city,
+          eventType: event.event_type
+        }
+      });
+      
+      if (error) throw error;
+      
+      if (data?.imageUrl) {
+        setGeneratedCardUrl(data.imageUrl);
+        toast({
+          title: "Card generated!",
+          description: "Your shareable event card is ready.",
+        });
+      } else {
+        throw new Error('No image received');
+      }
+    } catch (error) {
+      console.error('Error generating event card:', error);
+      toast({
+        title: "Generation failed",
+        description: "Could not generate the event card. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setGeneratingCard(false);
+    }
+  };
+
+  const downloadEventCard = () => {
+    if (!generatedCardUrl) return;
+    
+    const link = document.createElement('a');
+    link.href = generatedCardUrl;
+    link.download = `${event?.title?.replace(/[^a-z0-9]/gi, '-').toLowerCase() || 'event'}-card.png`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    toast({
+      title: "Downloaded!",
+      description: "Event card saved to your device.",
+    });
   };
 
   const formatTime = (time: string) => {
@@ -808,6 +870,68 @@ const EventDetail = () => {
                     Share
                   </Button>
                 )}
+              </div>
+              
+              {/* Generate Shareable Card */}
+              <div className="border-t pt-4">
+                <p className="text-sm font-medium mb-2 flex items-center gap-2">
+                  <Image className="w-4 h-4" />
+                  Create Shareable Card
+                </p>
+                
+                {generatedCardUrl ? (
+                  <div className="space-y-3">
+                    <img 
+                      src={generatedCardUrl} 
+                      alt="Event card preview" 
+                      className="w-full rounded-lg border"
+                    />
+                    <div className="flex gap-2">
+                      <Button 
+                        variant="outline" 
+                        className="flex-1"
+                        onClick={generateEventCard}
+                        disabled={generatingCard}
+                      >
+                        {generatingCard ? (
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        ) : (
+                          <Image className="w-4 h-4 mr-2" />
+                        )}
+                        Regenerate
+                      </Button>
+                      <Button 
+                        className="flex-1"
+                        onClick={downloadEventCard}
+                      >
+                        <Download className="w-4 h-4 mr-2" />
+                        Download
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <Button 
+                    variant="outline" 
+                    className="w-full"
+                    onClick={generateEventCard}
+                    disabled={generatingCard}
+                  >
+                    {generatingCard ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        Generating...
+                      </>
+                    ) : (
+                      <>
+                        <Image className="w-4 h-4 mr-2" />
+                        Generate Event Card
+                      </>
+                    )}
+                  </Button>
+                )}
+                <p className="text-xs text-muted-foreground mt-2">
+                  Create a beautiful image to share on Instagram, LinkedIn, or other platforms
+                </p>
               </div>
               
               {/* Share Text Preview */}
