@@ -241,7 +241,7 @@ const Index = () => {
               </div>
               {/* Overlapping ribbon */}
               <div className="absolute -bottom-4 -right-4 lg:right-auto lg:-left-8 bg-primary text-primary-foreground px-6 py-3 rounded-full shadow-lg">
-                <span className="text-sm font-medium tracking-wide">🤍</span>
+                <span className="text-sm font-medium tracking-wide">⚽️🏀🎾🏈⚾️</span>
               </div>
             </motion.div>
 
