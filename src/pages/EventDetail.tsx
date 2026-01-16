@@ -327,7 +327,7 @@ const EventDetail = () => {
   };
 
   const getShareUrl = () => {
-    return `${window.location.origin}/event/${event?.id}`;
+    return `https://loverball-hub.lovable.app/event/${event?.id}`;
   };
 
   const getFormattedShareText = () => {
