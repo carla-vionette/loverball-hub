@@ -263,7 +263,7 @@ const VideoPost = ({
       </div>
 
       {/* Action Buttons */}
-      <div className="absolute top-20 md:top-6 right-4 flex flex-col items-center gap-6 z-10">
+      <div className="absolute top-32 md:top-6 right-4 flex flex-col items-center gap-6 z-10">
         <button
           onClick={handleLike}
           className="flex flex-col items-center gap-1 transition-transform active:scale-90"
