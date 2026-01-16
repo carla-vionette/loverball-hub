@@ -253,7 +253,7 @@ const Index = () => {
               </div>
               {/* Overlapping ribbon */}
               <div className="absolute -bottom-4 -right-4 lg:right-auto lg:-left-8 bg-primary text-primary-foreground px-6 py-3 rounded-full shadow-lg">
-                <span className="text-sm font-medium tracking-wide">Est. 2024</span>
+                <span className="text-sm font-medium tracking-wide">Est. 2025</span>
               </div>
             </motion.div>
 
@@ -492,20 +492,6 @@ const Index = () => {
               <p className="text-foreground/60 text-lg leading-relaxed mb-8 max-w-lg">
                 Be part of the community redefining women's sports fandom. Your fandom matters here.
               </p>
-              
-              {/* Stats row */}
-              <div className="grid grid-cols-3 gap-6 mb-10">
-                {[
-                  { value: "10K+", label: "Members" },
-                  { value: "500+", label: "Stories" },
-                  { value: "50+", label: "Events" },
-                ].map((stat) => (
-                  <div key={stat.label} className="text-center">
-                    <p className="text-3xl sm:text-4xl font-serif text-primary mb-1">{stat.value}</p>
-                    <p className="text-sm text-foreground/50">{stat.label}</p>
-                  </div>
-                ))}
-              </div>
 
               <Button 
                 onClick={scrollToMemberAccess}
