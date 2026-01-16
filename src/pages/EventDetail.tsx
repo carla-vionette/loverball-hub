@@ -331,6 +331,14 @@ const EventDetail = () => {
     return `${supabaseUrl}/functions/v1/event-og-meta?id=${event?.id}`;
   };
 
+  const getFormattedShareText = () => {
+    if (!event) return '';
+    const eventDate = format(new Date(event.event_date), 'EEE, MMM d');
+    const eventTime = event.event_time ? formatTime(event.event_time) : '';
+    const shareUrl = getShareUrl();
+    return `${event.title} - ${eventDate} @ ${eventTime}\n${shareUrl}`;
+  };
+
   const getShareDescription = () => {
     if (!event) return '';
     return event.description 
@@ -344,12 +352,13 @@ const EventDetail = () => {
 
   const handleNativeShare = async () => {
     const shareUrl = getShareUrl();
+    const formattedText = getFormattedShareText();
     
     if (navigator.share) {
       try {
         await navigator.share({
           title: event?.title || 'Loverball Event',
-          text: `Check out this event on Loverball: ${event?.title}`,
+          text: formattedText,
           url: shareUrl,
         });
       } catch (error) {
@@ -358,11 +367,12 @@ const EventDetail = () => {
     }
   };
 
-  const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text);
+  const copyToClipboard = () => {
+    const formattedText = getFormattedShareText();
+    navigator.clipboard.writeText(formattedText);
     toast({
-      title: "Link copied!",
-      description: "Share this link with friends.",
+      title: "Copied!",
+      description: "Event details copied to clipboard.",
     });
     setShowShareDialog(false);
   };
@@ -782,7 +792,7 @@ const EventDetail = () => {
                 <Button 
                   variant="outline" 
                   className="flex-1"
-                  onClick={() => copyToClipboard(getShareUrl())}
+                  onClick={() => copyToClipboard()}
                 >
                   <Copy className="w-4 h-4 mr-2" />
                   Copy Link
