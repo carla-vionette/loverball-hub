@@ -10,6 +10,7 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { useCartStore } from "@/stores/cartStore";
 import { toast } from "sonner";
 import { Loader2, ShoppingBag } from "lucide-react";
+import loverballLogo from "@/assets/loverball-logo-new.png";
 
 const Shop = () => {
   const [products, setProducts] = useState<ShopifyProduct[]>([]);
@@ -56,17 +57,23 @@ const Shop = () => {
       <MobileHeader />
       
       <main className="container mx-auto px-4 py-8">
-        <div className="flex justify-between items-start mb-10">
-          <div>
-            <span className="inline-block bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium tracking-wide mb-4">
-              Shop
-            </span>
-            <h1 className="text-4xl font-serif font-normal mb-2">Boutique</h1>
-            <p className="text-muted-foreground text-lg">Official merchandise and gear</p>
-          </div>
-          <div className="hidden md:block">
-            <CartDrawer />
-          </div>
+        {/* Hero Section with Large Logo */}
+        <div className="flex flex-col items-center text-center mb-12">
+          <img 
+            src={loverballLogo} 
+            alt="Loverball" 
+            className="h-24 md:h-32 w-auto mb-6"
+          />
+          <span className="inline-block bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium tracking-wide mb-4">
+            Shop
+          </span>
+          <h1 className="text-4xl md:text-5xl font-serif font-normal mb-3">Boutique</h1>
+          <p className="text-muted-foreground text-lg max-w-md">Official Loverball merchandise and gear for women who love sports</p>
+        </div>
+        
+        {/* Desktop Cart */}
+        <div className="hidden md:flex justify-end mb-8">
+          <CartDrawer />
         </div>
         
         {/* Fixed cart button for mobile */}
@@ -89,16 +96,16 @@ const Shop = () => {
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
             {products.map((product) => {
               const { node } = product;
               const image = node.images.edges[0]?.node;
               const price = node.priceRange.minVariantPrice;
               
               return (
-                <Card key={node.id} className="overflow-hidden hover:shadow-xl transition-all duration-300 rounded-2xl border-border/50 group">
+                <Card key={node.id} className="overflow-hidden hover:shadow-xl transition-all duration-300 rounded-2xl border-border/50 group bg-card">
                   <Link to={`/product/${node.handle}`}>
-                    <div className="aspect-square overflow-hidden bg-secondary/30">
+                    <div className="aspect-square overflow-hidden bg-gradient-to-br from-secondary/30 to-muted/30">
                       {image ? (
                         <img
                           src={image.url}
@@ -107,27 +114,28 @@ const Shop = () => {
                         />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">
-                          <ShoppingBag className="h-16 w-16 text-muted-foreground/50" />
+                          <ShoppingBag className="h-12 w-12 md:h-16 md:w-16 text-muted-foreground/50" />
                         </div>
                       )}
                     </div>
                   </Link>
                   
-                  <CardContent className="pt-5">
+                  <CardContent className="pt-4 md:pt-5 px-3 md:px-6">
                     <Link to={`/product/${node.handle}`}>
-                      <h3 className="font-serif font-semibold text-lg mb-2 hover:text-primary transition-colors">
+                      <h3 className="font-serif font-semibold text-sm md:text-lg mb-1 md:mb-2 hover:text-primary transition-colors line-clamp-2">
                         {node.title}
                       </h3>
                     </Link>
-                    <p className="text-2xl font-medium text-primary">
+                    <p className="text-lg md:text-2xl font-medium text-primary">
                       ${parseFloat(price.amount).toFixed(2)}
                     </p>
                   </CardContent>
                   
-                  <CardFooter className="pt-0">
+                  <CardFooter className="pt-0 px-3 md:px-6 pb-4 md:pb-6">
                     <Button 
                       onClick={() => handleAddToCart(product)}
-                      className="w-full rounded-full"
+                      className="w-full rounded-full text-xs md:text-sm"
+                      size="sm"
                     >
                       Add to Cart
                     </Button>
