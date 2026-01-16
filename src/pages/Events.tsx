@@ -288,10 +288,13 @@ const Events = () => {
       <BottomNav />
       
       <main className="md:ml-64 pt-16 md:pt-0 pb-20 md:pb-0">
-        <div className="container mx-auto px-4 py-6 max-w-6xl">
-          <div className="mb-6">
-            <h1 className="text-3xl font-bold mb-2">Events</h1>
-            <p className="text-muted-foreground">
+        <div className="container mx-auto px-4 py-8 max-w-6xl">
+          <div className="mb-8">
+            <span className="inline-block bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium tracking-wide mb-4">
+              Community
+            </span>
+            <h1 className="text-4xl font-serif font-normal mb-3">Events</h1>
+            <p className="text-muted-foreground text-lg">
               Join watch parties, brunches, picnics, field days, and more with the Loverball community.
             </p>
           </div>
@@ -299,13 +302,17 @@ const Events = () => {
           {hasDbEvents ? (
             <>
               {/* Sport Filters */}
-              <div className="mb-6 overflow-x-auto pb-2">
+              <div className="mb-8 overflow-x-auto pb-2">
                 <div className="flex gap-2 min-w-max">
                   {sportFilters.map((filter) => (
                     <Badge
                       key={filter}
                       variant={selectedFilter === filter ? 'default' : 'outline'}
-                      className="cursor-pointer px-4 py-2 text-sm"
+                      className={`cursor-pointer px-5 py-2.5 text-sm rounded-full transition-all ${
+                        selectedFilter === filter 
+                          ? 'bg-primary text-primary-foreground' 
+                          : 'hover:bg-secondary/50'
+                      }`}
                       onClick={() => setSelectedFilter(filter)}
                     >
                       {filter}
@@ -315,9 +322,9 @@ const Events = () => {
               </div>
 
               <Tabs defaultValue="upcoming" className="w-full">
-                <TabsList className="mb-6">
-                  <TabsTrigger value="upcoming">Upcoming</TabsTrigger>
-                  <TabsTrigger value="my-events">My Events</TabsTrigger>
+                <TabsList className="mb-8 bg-secondary/50 rounded-full p-1">
+                  <TabsTrigger value="upcoming" className="rounded-full data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-6">Upcoming</TabsTrigger>
+                  <TabsTrigger value="my-events" className="rounded-full data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-6">My Events</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="upcoming">
@@ -375,50 +382,50 @@ const Events = () => {
             </>
           ) : (
             /* Sample events showcase when no DB events */
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {sampleEvents.map((event) => (
-                <Card key={event.id} className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer">
+                <Card key={event.id} className="overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer rounded-2xl border-border/50 group">
                   <div className="relative aspect-video overflow-hidden">
                     <img
                       src={event.image}
                       alt={event.title}
-                      className="w-full h-full object-cover hover:scale-105 transition-transform"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
-                    <Badge className={`absolute top-3 right-3 ${typeColors[event.type] || 'bg-muted text-muted-foreground'}`}>
+                    <Badge className={`absolute top-3 right-3 rounded-full px-3 ${typeColors[event.type] || 'bg-muted text-muted-foreground'}`}>
                       {event.type}
                     </Badge>
                   </div>
                   
-                  <CardContent className="pt-4">
-                    <h3 className="font-bold text-lg mb-3 line-clamp-2">{event.title}</h3>
+                  <CardContent className="pt-5">
+                    <h3 className="font-serif font-semibold text-lg mb-3 line-clamp-2 group-hover:text-primary transition-colors">{event.title}</h3>
                     
-                    <div className="space-y-2 mb-4">
+                    <div className="space-y-2.5 mb-4">
                       <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <Calendar className="w-4 h-4 flex-shrink-0" />
+                        <Calendar className="w-4 h-4 flex-shrink-0 text-primary/70" />
                         <span>{event.date}</span>
                       </div>
                       <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <Clock className="w-4 h-4 flex-shrink-0" />
+                        <Clock className="w-4 h-4 flex-shrink-0 text-primary/70" />
                         <span>{event.time}</span>
                       </div>
                       <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <MapPin className="w-4 h-4 flex-shrink-0" />
+                        <MapPin className="w-4 h-4 flex-shrink-0 text-primary/70" />
                         <span className="line-clamp-1">{event.location}, {event.city}</span>
                       </div>
                       <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <Users className="w-4 h-4 flex-shrink-0" />
+                        <Users className="w-4 h-4 flex-shrink-0 text-primary/70" />
                         <span>{event.attendees}/{event.maxAttendees} attending</span>
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-between pt-3 border-t border-border">
+                    <div className="flex items-center justify-between pt-4 border-t border-border/50">
                       <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-xs font-bold text-primary">
+                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">
                           {event.hostName.split(' ').map(n => n[0]).join('')}
                         </div>
                         <span className="text-sm text-muted-foreground">by {event.hostName}</span>
                       </div>
-                      <Button size="sm" className="rounded-full">
+                      <Button size="sm" className="rounded-full px-5">
                         Join
                       </Button>
                     </div>

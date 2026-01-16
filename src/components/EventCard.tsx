@@ -61,7 +61,6 @@ const EventCard = ({ event, onRSVP, onCancelRSVP, rsvpStatus, isMember }: EventC
           url: shareUrl,
         });
       } catch (error) {
-        // User cancelled or error
         copyToClipboard(shareUrl);
       }
     } else {
@@ -83,27 +82,27 @@ const EventCard = ({ event, onRSVP, onCancelRSVP, rsvpStatus, isMember }: EventC
 
   return (
     <Card 
-      className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
+      className="overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer rounded-2xl border-border/50 group"
       onClick={handleCardClick}
     >
       {/* Image */}
-      <div className="relative h-48 bg-gradient-to-br from-primary/20 to-accent/20">
+      <div className="relative h-48 bg-gradient-to-br from-primary/10 to-secondary/10 overflow-hidden">
         {event.image_url ? (
           <img 
             src={event.image_url} 
             alt={event.title}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center">
-            <Calendar className="w-16 h-16 text-primary/30" />
+            <Calendar className="w-16 h-16 text-primary/20" />
           </div>
         )}
         
         {/* Visibility Badge */}
         {event.visibility !== 'public' && (
           <div className="absolute top-3 right-3">
-            <Badge variant="secondary" className="bg-black/60 text-white border-0">
+            <Badge variant="secondary" className="bg-foreground/80 text-background border-0 rounded-full px-3">
               <Lock className="w-3 h-3 mr-1" />
               {event.visibility === 'members_only' ? 'Members Only' : 'Invite Only'}
             </Badge>
@@ -113,7 +112,7 @@ const EventCard = ({ event, onRSVP, onCancelRSVP, rsvpStatus, isMember }: EventC
         {/* Event Type */}
         {event.event_type && (
           <div className="absolute top-3 left-3">
-            <Badge className="bg-primary text-white">
+            <Badge className="bg-primary text-primary-foreground rounded-full px-3">
               {eventTypeLabels[event.event_type] || event.event_type}
             </Badge>
           </div>
@@ -122,7 +121,7 @@ const EventCard = ({ event, onRSVP, onCancelRSVP, rsvpStatus, isMember }: EventC
         {/* Share Button */}
         <button
           onClick={handleShare}
-          className="absolute bottom-3 right-3 w-8 h-8 rounded-full bg-white/90 hover:bg-white flex items-center justify-center shadow-md transition-colors"
+          className="absolute bottom-3 right-3 w-9 h-9 rounded-full bg-background/90 hover:bg-background flex items-center justify-center shadow-lg transition-all duration-200 hover:scale-105"
           aria-label="Share event"
         >
           <Share2 className="w-4 h-4 text-foreground" />
@@ -130,7 +129,7 @@ const EventCard = ({ event, onRSVP, onCancelRSVP, rsvpStatus, isMember }: EventC
       </div>
       
       <CardHeader className="pb-2">
-        <h3 className="text-lg font-semibold text-foreground line-clamp-2">
+        <h3 className="text-lg font-serif font-semibold text-foreground line-clamp-2 group-hover:text-primary transition-colors">
           {event.title}
         </h3>
       </CardHeader>
@@ -138,13 +137,13 @@ const EventCard = ({ event, onRSVP, onCancelRSVP, rsvpStatus, isMember }: EventC
       <CardContent className="space-y-3">
         {/* Date & Time */}
         <div className="flex items-center gap-4 text-sm text-muted-foreground">
-          <span className="flex items-center gap-1">
-            <Calendar className="w-4 h-4" />
+          <span className="flex items-center gap-1.5">
+            <Calendar className="w-4 h-4 text-primary/70" />
             {format(new Date(event.event_date), 'MMM d, yyyy')}
           </span>
           {event.event_time && (
-            <span className="flex items-center gap-1">
-              <Clock className="w-4 h-4" />
+            <span className="flex items-center gap-1.5">
+              <Clock className="w-4 h-4 text-primary/70" />
               {formatTime(event.event_time)}
             </span>
           )}
@@ -152,8 +151,8 @@ const EventCard = ({ event, onRSVP, onCancelRSVP, rsvpStatus, isMember }: EventC
         
         {/* Location */}
         {(event.venue_name || event.city) && (
-          <div className="flex items-center gap-1 text-sm text-muted-foreground">
-            <MapPin className="w-4 h-4 flex-shrink-0" />
+          <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+            <MapPin className="w-4 h-4 flex-shrink-0 text-primary/70" />
             <span className="truncate">
               {event.venue_name}{event.venue_name && event.city ? ', ' : ''}{event.city}
             </span>
@@ -162,8 +161,8 @@ const EventCard = ({ event, onRSVP, onCancelRSVP, rsvpStatus, isMember }: EventC
         
         {/* Capacity */}
         {event.capacity && (
-          <div className="flex items-center gap-1 text-sm text-muted-foreground">
-            <Users className="w-4 h-4" />
+          <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+            <Users className="w-4 h-4 text-primary/70" />
             <span>{event.capacity} spots</span>
           </div>
         )}
@@ -177,9 +176,9 @@ const EventCard = ({ event, onRSVP, onCancelRSVP, rsvpStatus, isMember }: EventC
         
         {/* Sport Tags */}
         {event.sport_tags && event.sport_tags.length > 0 && (
-          <div className="flex flex-wrap gap-1">
+          <div className="flex flex-wrap gap-1.5">
             {event.sport_tags.map((tag) => (
-              <Badge key={tag} variant="outline" className="text-xs">
+              <Badge key={tag} variant="outline" className="text-xs rounded-full px-2.5 border-primary/30 text-primary/80">
                 {tag}
               </Badge>
             ))}
@@ -187,12 +186,12 @@ const EventCard = ({ event, onRSVP, onCancelRSVP, rsvpStatus, isMember }: EventC
         )}
       </CardContent>
       
-      <CardFooter className="flex gap-2">
+      <CardFooter className="flex gap-2 pt-4 border-t border-border/50">
         {rsvpStatus ? (
           <>
             <Badge 
               variant="secondary" 
-              className="flex-1 justify-center py-2 capitalize"
+              className="flex-1 justify-center py-2.5 capitalize rounded-full bg-primary/10 text-primary"
             >
               {rsvpStatus === 'attending' ? '✓ Attending' : rsvpStatus}
             </Badge>
@@ -200,7 +199,7 @@ const EventCard = ({ event, onRSVP, onCancelRSVP, rsvpStatus, isMember }: EventC
               <Button
                 variant="outline"
                 size="icon"
-                className="shrink-0"
+                className="shrink-0 rounded-full"
                 onClick={(e) => {
                   e.stopPropagation();
                   onCancelRSVP();
@@ -217,13 +216,13 @@ const EventCard = ({ event, onRSVP, onCancelRSVP, rsvpStatus, isMember }: EventC
               e.stopPropagation();
               onRSVP?.();
             }} 
-            className="w-full"
+            className="w-full rounded-full"
             variant={event.visibility === 'invite_only' ? 'outline' : 'default'}
           >
             {event.visibility === 'invite_only' ? 'Request Invite' : 'RSVP'}
           </Button>
         ) : (
-          <Button variant="outline" className="w-full" disabled>
+          <Button variant="outline" className="w-full rounded-full" disabled>
             Members Only
           </Button>
         )}

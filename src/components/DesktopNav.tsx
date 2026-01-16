@@ -27,9 +27,9 @@ const DesktopNav = () => {
   ];
 
   return (
-    <aside className="hidden md:flex fixed left-0 top-0 h-screen w-64 bg-background border-r border-border flex-col z-50">
-      <div className="p-6 border-b border-border flex items-center justify-center">
-        <img src={loverbballLogo} alt="Loverball" className="h-20 w-auto object-contain" />
+    <aside className="hidden md:flex fixed left-0 top-0 h-screen w-64 bg-background border-r border-border/50 flex-col z-50">
+      <div className="p-6 border-b border-border/50 flex items-center justify-center">
+        <img src={loverbballLogo} alt="Loverball" className="h-16 w-auto object-contain" />
       </div>
       
       <nav className="flex-1 py-6 overflow-y-auto">
@@ -42,10 +42,10 @@ const DesktopNav = () => {
             <Link
               key={item.path}
               to={item.path}
-              className={`flex items-center gap-4 px-6 py-3.5 transition-colors ${
+              className={`flex items-center gap-4 px-6 py-3.5 mx-3 rounded-xl transition-all duration-200 ${
                 isActive 
-                  ? "text-primary font-medium border-r-2 border-primary bg-pale-pink" 
-                  : "text-foreground/70 hover:text-foreground hover:bg-pale-pink/50"
+                  ? "text-primary font-medium bg-primary/10" 
+                  : "text-foreground/60 hover:text-foreground hover:bg-secondary/50"
               }`}
             >
               <div className="relative">
@@ -60,10 +60,10 @@ const DesktopNav = () => {
         })}
       </nav>
 
-      <div className="p-4 border-t border-border">
+      <div className="p-4 border-t border-border/50">
         <Link
           to="/search"
-          className="flex items-center gap-4 px-6 py-3 text-foreground/60 hover:text-foreground hover:bg-pale-pink/50 transition-colors"
+          className="flex items-center gap-4 px-6 py-3 mx-3 rounded-xl text-foreground/50 hover:text-foreground hover:bg-secondary/50 transition-all duration-200"
         >
           <Search className="w-5 h-5" />
           <span className="text-sm tracking-wide">Search</span>
