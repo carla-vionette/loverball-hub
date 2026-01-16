@@ -230,7 +230,7 @@ const LASportsTicker = ({
       />
       
       {/* Ticker Bar */}
-      <div className="bg-ticker py-2 overflow-hidden">
+      <div className="bg-ticker py-1.5 md:py-2 overflow-hidden">
         <div className="ticker-wrapper">
           <div 
             className="ticker-content"
@@ -244,10 +244,10 @@ const LASportsTicker = ({
               return (
                 <span 
                   key={index} 
-                  className="ticker-item text-ticker-foreground font-bold text-sm tracking-wide px-6 whitespace-nowrap inline-flex items-center gap-2"
+                  className="ticker-item text-ticker-foreground font-bold text-xs md:text-sm tracking-wide px-4 md:px-6 whitespace-nowrap inline-flex items-center gap-1.5 md:gap-2"
                 >
                   {/* Sport emoji */}
-                  <span className="text-base">{emoji}</span>
+                  <span className="text-sm md:text-base">{emoji}</span>
                   
                   {/* Team logos */}
                   {logos.length > 0 && !isHeadline && (
@@ -257,7 +257,7 @@ const LASportsTicker = ({
                           key={logoIndex}
                           src={logo}
                           alt=""
-                          className="w-6 h-6 object-contain rounded-sm bg-white/10 p-0.5"
+                          className="w-5 h-5 md:w-6 md:h-6 object-contain rounded-sm bg-white/10 p-0.5"
                           onError={(e) => {
                             // Hide broken images
                             (e.target as HTMLImageElement).style.display = 'none';

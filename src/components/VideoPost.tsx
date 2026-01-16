@@ -221,14 +221,14 @@ const VideoPost = ({
 
   return (
     <div 
-      className="relative h-screen w-full snap-start snap-always bg-black flex items-center justify-center"
+      className="relative h-[100dvh] w-full snap-start snap-always bg-black flex items-center justify-center"
       onClick={handleDoubleTap}
       onTouchEnd={handleDoubleTap}
     >
       <video
         ref={videoRef}
         src={videoUrl}
-        className="h-full w-auto max-w-full md:max-h-screen object-contain mt-14 md:mt-0 pointer-events-none"
+        className="h-full w-full md:w-auto md:max-w-full object-cover md:object-contain mt-8 md:mt-0 pointer-events-none"
         loop
         playsInline
         muted={muted}
