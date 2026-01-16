@@ -37,18 +37,18 @@ const StatsTicker = () => {
 
   if (isLoading) {
     return (
-      <div className="bg-[#bc1c23] py-3 overflow-hidden">
-        <div className="text-white text-center">Loading latest sports stats...</div>
+      <div className="bg-ticker py-3 overflow-hidden">
+        <div className="text-ticker-foreground text-center">Loading latest sports stats...</div>
       </div>
     );
   }
 
   return (
-    <div className="bg-[#bc1c23] py-3 overflow-hidden relative">
+    <div className="bg-ticker py-3 overflow-hidden relative">
       <div className="ticker-wrapper">
         <div className="ticker-content">
           {[...stats, ...stats].map((stat, index) => (
-            <span key={index} className="ticker-item text-white font-medium px-8">
+            <span key={index} className="ticker-item text-ticker-foreground font-medium px-8">
               {stat}
             </span>
           ))}
