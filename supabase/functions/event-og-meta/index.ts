@@ -5,7 +5,20 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-Deno.serve(async (req) => {
+// Escape HTML entities for safe insertion into HTML
+function escapeHtml(text: string): string {
+  const map: Record<string, string> = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#039;',
+  };
+  return text.replace(/[&<>"']/g, (m) => map[m]);
+}
+
+Deno.serve(async (req: Request) => {
+  // Handle CORS preflight
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
@@ -15,40 +28,39 @@ Deno.serve(async (req) => {
     const eventId = url.searchParams.get('id');
 
     if (!eventId) {
-      return new Response('Event ID required', { status: 400, headers: corsHeaders });
+      return new Response('Missing event ID', { status: 400, headers: corsHeaders });
     }
 
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+    console.log(`Fetching event: ${eventId}`);
 
+    // Create Supabase client
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    // Fetch event data
     const { data: event, error } = await supabase
       .from('events')
-      .select('id, title, description, image_url, event_date, event_time, venue_name, city, event_type')
+      .select('id, title, description, event_date, event_time, venue_name, city, image_url, event_type')
       .eq('id', eventId)
       .single();
 
     if (error || !event) {
       console.error('Event not found:', error);
-      return new Response(null, {
-        status: 302,
-        headers: { 'Location': 'https://loverball-hub.lovable.app/events' },
-      });
+      return new Response('Event not found', { status: 404, headers: corsHeaders });
     }
 
-    // Format date
-    const eventDate = new Date(event.event_date);
+    console.log(`Event found: ${event.title}`);
+
+    // Format date nicely
+    const eventDate = new Date(event.event_date + 'T00:00:00');
     const formattedDate = eventDate.toLocaleDateString('en-US', {
-      weekday: 'long',
-      month: 'long',
-      day: 'numeric',
-    });
-    const shortDate = eventDate.toLocaleDateString('en-US', {
+      weekday: 'short',
       month: 'short',
       day: 'numeric',
     });
 
-    // Format time
+    // Format time if available
     let timeStr = '';
     if (event.event_time) {
       const [hours, minutes] = event.event_time.split(':');
@@ -57,8 +69,15 @@ Deno.serve(async (req) => {
       timeStr = date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
     }
 
-    // Build OG title - clear format like requested
-    const ogTitle = `${event.title} – Loverball Women's Sports Night`;
+    // Build OG title with event name, date, and time
+    let ogTitle = event.title;
+    if (formattedDate) {
+      ogTitle += ` | ${formattedDate}`;
+    }
+    if (timeStr) {
+      ogTitle += ` @ ${timeStr}`;
+    }
+    ogTitle += ' – Loverball';
     
     // Build short, punchy description (1-2 sentences)
     const locationStr = [event.venue_name, event.city].filter(Boolean).join(', ');
@@ -79,7 +98,12 @@ Deno.serve(async (req) => {
         'fitness': 'fitness session',
       };
       const eventTypeStr = event.event_type ? eventTypeLabels[event.event_type] || 'event' : 'event';
-      ogDescription = `Join us for an epic ${eventTypeStr}! ${formattedDate}${timeStr ? ` at ${timeStr}` : ''}${locationStr ? ` @ ${locationStr}` : ''}.`;
+      ogDescription = `Join us for an epic ${eventTypeStr}!`;
+    }
+    
+    // Add location if available
+    if (locationStr) {
+      ogDescription += ` 📍 ${locationStr}`;
     }
     
     // Add a call to action
@@ -103,13 +127,11 @@ Deno.serve(async (req) => {
     
     const eventUrl = `https://loverball-hub.lovable.app/event/${event.id}`;
 
-    console.log('Serving OG meta for event:', event.title);
-    console.log('OG Title:', ogTitle);
-    console.log('OG Description:', ogDescription);
-    console.log('OG Image:', ogImage);
+    console.log(`OG Title: ${ogTitle}`);
+    console.log(`OG Description: ${ogDescription}`);
+    console.log(`OG Image: ${ogImage}`);
 
-    // Return HTML with OG meta tags for social media crawlers
-    // Real users will be redirected via JavaScript
+    // Return HTML with OG meta tags for social crawlers
     const html = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -158,36 +180,27 @@ Deno.serve(async (req) => {
 <body style="font-family: system-ui, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; background: linear-gradient(135deg, #ff6b9d 0%, #c44569 100%);">
   <div style="text-align: center; padding: 2rem; background: white; border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); max-width: 400px;">
     <h1 style="margin: 0 0 1rem; color: #c44569;">${escapeHtml(event.title)}</h1>
-    <p style="color: #666; margin: 0 0 1rem;">${escapeHtml(formattedDate)}${timeStr ? ` • ${timeStr}` : ''}</p>
-    ${locationStr ? `<p style="color: #888; margin: 0 0 1.5rem;">📍 ${escapeHtml(locationStr)}</p>` : ''}
-    <p style="color: #333;">Redirecting to <a href="${escapeHtml(eventUrl)}" style="color: #c44569; font-weight: 600;">event page</a>...</p>
+    <p style="margin: 0 0 0.5rem; color: #666;">📅 ${escapeHtml(formattedDate)}${timeStr ? ` @ ${escapeHtml(timeStr)}` : ''}</p>
+    ${locationStr ? `<p style="margin: 0 0 1rem; color: #666;">📍 ${escapeHtml(locationStr)}</p>` : ''}
+    <p style="color: #999; font-size: 0.875rem;">Redirecting to event page...</p>
   </div>
 </body>
 </html>`;
 
     return new Response(html, {
-      status: 200,
-      headers: { 
+      headers: {
+        ...corsHeaders,
         'Content-Type': 'text/html; charset=utf-8',
         'Cache-Control': 'public, max-age=3600',
       },
     });
 
-  } catch (error) {
-    console.error('Error in event-og-meta:', error);
-    return new Response(null, {
-      status: 302,
-      headers: { 'Location': 'https://loverball-hub.lovable.app/events' },
+  } catch (error: unknown) {
+    console.error('Error in event-og-meta function:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    return new Response(`Server error: ${errorMessage}`, { 
+      status: 500,
+      headers: corsHeaders 
     });
   }
 });
-
-// Helper to escape HTML entities
-function escapeHtml(text: string): string {
-  return text
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#039;');
-}
