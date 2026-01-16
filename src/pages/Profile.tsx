@@ -176,54 +176,67 @@ const Profile = () => {
           {/* Profile Header */}
           <Card className="overflow-hidden">
             <CardContent className="pt-8 pb-6">
-              <div className="flex items-start gap-5">
-                <Avatar className="w-24 h-24 border-4 border-primary/20">
-                  {profile.profile_photo_url ? (
-                    <AvatarImage src={profile.profile_photo_url} alt={profile.name} className="object-cover" />
-                  ) : null}
-                  <AvatarFallback className="bg-primary text-primary-foreground text-2xl font-serif">
-                    {initials}
-                  </AvatarFallback>
-                </Avatar>
-                
-                <div className="flex-1">
-                  <div className="flex items-start justify-between mb-3">
-                    <div>
-                      <h1 className="text-2xl font-serif font-semibold">{profile.name}</h1>
-                      {profile.pronouns && (
-                        <p className="text-sm text-muted-foreground">{profile.pronouns}</p>
+              <div className="flex flex-col md:flex-row md:items-start gap-5">
+                <div className="flex items-start gap-4 md:gap-5">
+                  <Avatar className="w-20 h-20 md:w-24 md:h-24 border-4 border-primary/20 flex-shrink-0">
+                    {profile.profile_photo_url ? (
+                      <AvatarImage src={profile.profile_photo_url} alt={profile.name} className="object-cover" />
+                    ) : null}
+                    <AvatarFallback className="bg-primary text-primary-foreground text-xl md:text-2xl font-serif">
+                      {initials}
+                    </AvatarFallback>
+                  </Avatar>
+                  
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-start justify-between mb-2 md:mb-3">
+                      <div>
+                        <h1 className="text-xl md:text-2xl font-serif font-semibold">{profile.name}</h1>
+                        {profile.pronouns && (
+                          <p className="text-sm text-muted-foreground">{profile.pronouns}</p>
+                        )}
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground mb-3 md:mb-4">
+                      <MapPin className="w-4 h-4 text-primary/70 flex-shrink-0" />
+                      <span className="truncate">{locationText}</span>
+                      {profile.age_range && (
+                        <>
+                          <span>•</span>
+                          <span>{profile.age_range}</span>
+                        </>
                       )}
                     </div>
-                    <div className="flex items-center gap-2">
+                    
+                    <div className="flex items-center gap-2 md:hidden">
                       <Button variant="outline" size="sm" onClick={() => navigate("/profile/edit")} className="rounded-full">
-                        <Edit className="w-4 h-4 mr-2" />
+                        <Edit className="w-4 h-4 mr-1" />
                         Edit
                       </Button>
                       <Button variant="outline" size="sm" onClick={handleLogout} className="text-destructive hover:text-destructive rounded-full">
-                        <LogOut className="w-4 h-4 mr-2" />
-                        Logout
+                        <LogOut className="w-4 h-4" />
                       </Button>
                     </div>
                   </div>
                   
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
-                    <MapPin className="w-4 h-4 text-primary/70" />
-                    <span>{locationText}</span>
-                    {profile.age_range && (
-                      <>
-                        <span>•</span>
-                        <span>{profile.age_range}</span>
-                      </>
-                    )}
+                  <div className="hidden md:flex items-center gap-2">
+                    <Button variant="outline" size="sm" onClick={() => navigate("/profile/edit")} className="rounded-full">
+                      <Edit className="w-4 h-4 mr-2" />
+                      Edit
+                    </Button>
+                    <Button variant="outline" size="sm" onClick={handleLogout} className="text-destructive hover:text-destructive rounded-full">
+                      <LogOut className="w-4 h-4 mr-2" />
+                      Logout
+                    </Button>
                   </div>
-                  
-                  {profile.bio && (
-                    <div className="flex items-start gap-2 p-4 bg-primary/5 rounded-xl border border-primary/10">
-                      <Sparkles className="w-4 h-4 mt-1 text-primary flex-shrink-0" />
-                      <p className="text-sm">{profile.bio}</p>
-                    </div>
-                  )}
                 </div>
+                
+                {profile.bio && (
+                  <div className="flex items-start gap-2 p-4 bg-primary/5 rounded-xl border border-primary/10 w-full md:flex-1">
+                    <Sparkles className="w-4 h-4 mt-1 text-primary flex-shrink-0" />
+                    <p className="text-sm">{profile.bio}</p>
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>
