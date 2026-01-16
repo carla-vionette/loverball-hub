@@ -1,3 +1,11 @@
+@import "@fontsource/libre-baskerville/400.css";
+@import "@fontsource/libre-baskerville/400-italic.css";
+@import "@fontsource/libre-baskerville/700.css";
+@import "@fontsource/dm-sans/400.css";
+@import "@fontsource/dm-sans/500.css";
+@import "@fontsource/dm-sans/600.css";
+@import "@fontsource/dm-sans/700.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -8,81 +16,84 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Loverball Brand Colors - Red, Navy & Cream */
-    --background: 0 0% 100%; /* White */
-    --foreground: 217 19% 27%; /* Charcoal #374151 */
+    /* Loverball Brand Colors - Editorial Aesthetic */
+    /* Warm light beige background */
+    --background: 40 33% 96%; /* Warm Beige #F7F4EE */
+    --foreground: 0 0% 13%; /* Near Black #222222 */
 
-    --card: 0 0% 100%;
-    --card-foreground: 217 19% 27%;
+    --card: 40 40% 98%;
+    --card-foreground: 0 0% 13%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 217 19% 27%;
+    --popover: 40 40% 98%;
+    --popover-foreground: 0 0% 13%;
 
-    --primary: 0 84% 50%; /* Vibrant Red #DC2626 */
+    /* Punchy Tomato Red */
+    --primary: 4 74% 49%; /* Tomato Red #DA3A2B */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 224 64% 33%; /* Deep Navy #1E3A8A */
-    --secondary-foreground: 0 0% 100%;
+    --secondary: 40 25% 90%; /* Lighter beige for sections */
+    --secondary-foreground: 0 0% 13%;
 
-    --muted: 0 100% 94%; /* Soft Pink #ffe2e2 */
-    --muted-foreground: 217 19% 45%;
+    --muted: 40 25% 92%;
+    --muted-foreground: 0 0% 40%;
 
-    --accent: 0 80% 97%; /* Lighter Pink */
-    --accent-foreground: 217 19% 27%;
+    --accent: 4 74% 49%; /* Tomato Red for accents */
+    --accent-foreground: 0 0% 100%;
 
+    /* Additional brand colors */
     --coral: 4 56% 60%;
     --coral-foreground: 0 0% 100%;
 
-    --pale-pink: 0 100% 96%; /* Very light pink */
-    --pale-pink-foreground: 217 19% 27%;
+    --pale-pink: 40 40% 94%; /* Warm off-white */
+    --pale-pink-foreground: 0 0% 13%;
 
-    --medium-blue: 224 64% 45%; /* Lighter navy */
+    --medium-blue: 224 64% 45%;
     --medium-blue-foreground: 0 0% 100%;
 
     --olive: 75 13% 52%;
     --olive-foreground: 0 0% 100%;
 
     --light-lime: 64 70% 60%;
-    --light-lime-foreground: 217 19% 27%;
+    --light-lime-foreground: 0 0% 13%;
 
-    --ticker: 72 100% 50%; /* Neon Lime #CCFF00 */
-    --ticker-foreground: 0 0% 0%;
+    --ticker: 4 74% 49%; /* Tomato red ticker */
+    --ticker-foreground: 0 0% 100%;
 
     --destructive: 0 84% 50%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 217 19% 88%;
-    --input: 217 19% 88%;
-    --ring: 0 84% 50%;
+    --border: 40 15% 85%;
+    --input: 40 15% 85%;
+    --ring: 4 74% 49%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
   }
 
   .dark {
-    --background: 222 47% 11%; /* Midnight Blue #0F172A */
-    --foreground: 48 60% 94%; /* Cream text */
+    --background: 0 0% 8%; /* Near Black */
+    --foreground: 40 33% 94%; /* Warm cream text */
 
-    --card: 224 64% 18%;
-    --card-foreground: 48 60% 94%;
+    --card: 0 0% 12%;
+    --card-foreground: 40 33% 94%;
 
-    --popover: 224 64% 18%;
-    --popover-foreground: 48 60% 94%;
+    --popover: 0 0% 12%;
+    --popover-foreground: 40 33% 94%;
 
-    --primary: 0 84% 60%; /* Brighter Red #EF4444 */
+    --primary: 4 74% 55%; /* Brighter Tomato Red */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 224 64% 45%;
-    --secondary-foreground: 0 0% 100%;
+    --secondary: 0 0% 15%;
+    --secondary-foreground: 40 33% 94%;
 
-    --muted: 224 64% 20%;
-    --muted-foreground: 48 60% 80%;
+    --muted: 0 0% 18%;
+    --muted-foreground: 40 20% 70%;
 
-    --accent: 0 84% 50%;
+    --accent: 4 74% 55%;
     --accent-foreground: 0 0% 100%;
 
-    --border: 224 50% 25%;
-    --input: 224 50% 25%;
-    --ring: 0 84% 60%;
+    --border: 0 0% 20%;
+    --input: 0 0% 20%;
+    --ring: 4 74% 55%;
   }
 }
 
@@ -91,7 +102,77 @@ All colors MUST be HSL.
     @apply border-border;
   }
 
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-serif;
+  }
+}
+
+@layer components {
+  /* Editorial underline accent */
+  .editorial-underline {
+    @apply relative inline-block;
+  }
+  
+  .editorial-underline::after {
+    content: '';
+    @apply absolute bottom-0 left-0 w-full h-[2px] bg-primary;
+  }
+
+  /* Pill button style */
+  .pill-button {
+    @apply px-6 py-2 rounded-full text-sm font-medium tracking-wide transition-all duration-300;
+  }
+
+  /* Editorial card with shadow */
+  .editorial-card {
+    @apply bg-card shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-shadow duration-300;
+  }
+
+  .editorial-card:hover {
+    @apply shadow-[0_12px_40px_rgb(0,0,0,0.12)];
+  }
+
+  /* Overlapping element style */
+  .overlap-left {
+    @apply relative lg:-ml-12 lg:z-10;
+  }
+
+  .overlap-right {
+    @apply relative lg:-mr-12 lg:z-10;
+  }
+
+  /* Editorial ribbon/banner */
+  .ribbon {
+    @apply bg-primary text-primary-foreground px-4 py-1 text-xs font-medium tracking-widest uppercase;
+  }
+
+  /* Encircled text annotation */
+  .annotation-circle {
+    @apply relative inline-block;
+  }
+
+  .annotation-circle::before {
+    content: '';
+    @apply absolute -inset-2 border-2 border-primary rounded-full;
+  }
+}
+
+@layer utilities {
+  /* Smooth hover transitions */
+  .hover-lift {
+    @apply transition-transform duration-300 hover:-translate-y-1;
+  }
+
+  /* Text balance for better typography */
+  .text-balance {
+    text-wrap: balance;
   }
 }
