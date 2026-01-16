@@ -12,7 +12,7 @@ const BottomNav = () => {
   // Show skeleton while loading
   if (loading) {
     return (
-      <nav className="fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur-sm border-t border-border z-50 md:hidden">
+      <nav className="fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur-sm border-t border-border/50 z-50 md:hidden">
         <div className="flex justify-around items-center h-16">
           {[...Array(5)].map((_, i) => (
             <div key={i} className="flex flex-col items-center justify-center flex-1 h-full gap-1">
@@ -38,7 +38,7 @@ const BottomNav = () => {
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur-sm border-t border-border z-50 md:hidden">
+    <nav className="fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur-sm border-t border-border/50 z-50 md:hidden safe-area-pb">
       <div className="flex justify-around items-center h-16 animate-fade-in">
         {navItems.map((item) => {
           const Icon = item.icon;
@@ -49,8 +49,8 @@ const BottomNav = () => {
             <Link
               key={item.path}
               to={item.path}
-              className={`flex flex-col items-center justify-center flex-1 h-full transition-colors ${
-                isActive ? "bg-pale-pink" : ""
+              className={`flex flex-col items-center justify-center flex-1 h-full transition-colors rounded-lg mx-1 ${
+                isActive ? "bg-primary/10" : ""
               }`}
             >
               <div className="relative">

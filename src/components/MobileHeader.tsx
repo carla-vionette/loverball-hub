@@ -6,7 +6,7 @@ const MobileHeader = () => {
   const navigate = useNavigate();
 
   return (
-    <header className="md:hidden fixed top-0 left-0 right-0 bg-background/95 backdrop-blur-sm border-b border-border z-40 px-4 py-2">
+    <header className="md:hidden fixed top-0 left-0 right-0 bg-background/95 backdrop-blur-sm border-b border-border/50 z-40 px-4 py-3">
       <div className="flex items-center gap-3">
         <Link to="/" className="flex items-center flex-shrink-0">
           <img 
@@ -18,7 +18,7 @@ const MobileHeader = () => {
         
         <button
           onClick={() => navigate('/search')}
-          className="flex-1 flex items-center gap-2 px-4 py-2 bg-pale-pink border border-border text-foreground/60 text-sm tracking-wide"
+          className="flex-1 flex items-center gap-2 px-4 py-2.5 bg-secondary/50 border border-border/50 text-foreground/60 text-sm tracking-wide rounded-full hover:bg-secondary transition-colors"
         >
           <Search className="w-4 h-4" />
           <span>Search...</span>
