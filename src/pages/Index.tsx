@@ -248,7 +248,7 @@ const Index = () => {
                 <img
                   src={heroImage}
                   alt="Women sports fans celebrating together"
-                  className="w-full h-full object-cover object-[center_25%]"
+                  className="w-full h-full object-cover object-[center_35%]"
                 />
               </div>
               {/* Overlapping ribbon */}
