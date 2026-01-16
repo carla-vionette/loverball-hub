@@ -810,14 +810,14 @@ const EventDetail = () => {
                 )}
               </div>
               
-              {/* Share URL Preview */}
+              {/* Share Text Preview */}
               <div className="bg-muted rounded-lg p-3">
                 <p className="text-xs text-muted-foreground mb-1 flex items-center gap-1">
                   <Link2 className="w-3 h-3" />
-                  Share URL
+                  What will be shared
                 </p>
-                <p className="text-xs font-mono text-foreground break-all">
-                  {getShareUrl()}
+                <p className="text-sm font-medium text-foreground whitespace-pre-line">
+                  {getFormattedShareText()}
                 </p>
               </div>
             </div>
