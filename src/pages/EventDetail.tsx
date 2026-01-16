@@ -327,8 +327,7 @@ const EventDetail = () => {
   };
 
   const getShareUrl = () => {
-    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-    return `${supabaseUrl}/functions/v1/event-og-meta?id=${event?.id}`;
+    return `${window.location.origin}/event/${event?.id}`;
   };
 
   const getFormattedShareText = () => {
