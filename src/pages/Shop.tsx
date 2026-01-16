@@ -55,11 +55,14 @@ const Shop = () => {
       <DesktopNav />
       <MobileHeader />
       
-      <main className="container mx-auto px-4 py-6">
-        <div className="flex justify-between items-center mb-8">
+      <main className="container mx-auto px-4 py-8">
+        <div className="flex justify-between items-start mb-10">
           <div>
-            <h1 className="text-4xl font-bold mb-2">Boutique</h1>
-            <p className="text-muted-foreground">Official merchandise and gear</p>
+            <span className="inline-block bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium tracking-wide mb-4">
+              Shop
+            </span>
+            <h1 className="text-4xl font-serif font-normal mb-2">Boutique</h1>
+            <p className="text-muted-foreground text-lg">Official merchandise and gear</p>
           </div>
           <CartDrawer />
         </div>
@@ -70,8 +73,10 @@ const Shop = () => {
           </div>
         ) : products.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 text-center">
-            <ShoppingBag className="h-16 w-16 text-muted-foreground mb-4" />
-            <h2 className="text-2xl font-semibold mb-2">No products found</h2>
+            <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mb-6">
+              <ShoppingBag className="h-10 w-10 text-primary" />
+            </div>
+            <h2 className="text-2xl font-serif mb-3">No products found</h2>
             <p className="text-muted-foreground max-w-md">
               Start adding products to your store by describing what you'd like to sell in the chat!
             </p>
@@ -84,38 +89,38 @@ const Shop = () => {
               const price = node.priceRange.minVariantPrice;
               
               return (
-                <Card key={node.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+                <Card key={node.id} className="overflow-hidden hover:shadow-xl transition-all duration-300 rounded-2xl border-border/50 group">
                   <Link to={`/product/${node.handle}`}>
-                    <div className="aspect-square overflow-hidden bg-secondary/20">
+                    <div className="aspect-square overflow-hidden bg-secondary/30">
                       {image ? (
                         <img
                           src={image.url}
                           alt={image.altText || node.title}
-                          className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                         />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">
-                          <ShoppingBag className="h-16 w-16 text-muted-foreground" />
+                          <ShoppingBag className="h-16 w-16 text-muted-foreground/50" />
                         </div>
                       )}
                     </div>
                   </Link>
                   
-                  <CardContent className="pt-4">
+                  <CardContent className="pt-5">
                     <Link to={`/product/${node.handle}`}>
-                      <h3 className="font-semibold text-lg mb-1 hover:text-primary transition-colors">
+                      <h3 className="font-serif font-semibold text-lg mb-2 hover:text-primary transition-colors">
                         {node.title}
                       </h3>
                     </Link>
-                    <p className="text-xl font-bold">
-                      {price.currencyCode} ${parseFloat(price.amount).toFixed(2)}
+                    <p className="text-2xl font-medium text-primary">
+                      ${parseFloat(price.amount).toFixed(2)}
                     </p>
                   </CardContent>
                   
-                  <CardFooter>
+                  <CardFooter className="pt-0">
                     <Button 
                       onClick={() => handleAddToCart(product)}
-                      className="w-full"
+                      className="w-full rounded-full"
                     >
                       Add to Cart
                     </Button>
