@@ -52,33 +52,6 @@ const SharePreview = ({
         </div>
       </Card>
       
-      {/* Platform Examples */}
-      <div className="flex justify-center gap-6 pt-2">
-        <div className="text-center">
-          <div className="w-8 h-8 rounded-full bg-[#1877F2] flex items-center justify-center mx-auto mb-1">
-            <span className="text-white text-xs font-bold">f</span>
-          </div>
-          <p className="text-[10px] text-muted-foreground">Facebook</p>
-        </div>
-        <div className="text-center">
-          <div className="w-8 h-8 rounded-full bg-black flex items-center justify-center mx-auto mb-1">
-            <span className="text-white text-xs font-bold">𝕏</span>
-          </div>
-          <p className="text-[10px] text-muted-foreground">X/Twitter</p>
-        </div>
-        <div className="text-center">
-          <div className="w-8 h-8 rounded-full bg-[#0A66C2] flex items-center justify-center mx-auto mb-1">
-            <span className="text-white text-xs font-bold">in</span>
-          </div>
-          <p className="text-[10px] text-muted-foreground">LinkedIn</p>
-        </div>
-        <div className="text-center">
-          <div className="w-8 h-8 rounded-full bg-[#25D366] flex items-center justify-center mx-auto mb-1">
-            <span className="text-white text-xs font-bold">W</span>
-          </div>
-          <p className="text-[10px] text-muted-foreground">WhatsApp</p>
-        </div>
-      </div>
     </div>
   );
 };
