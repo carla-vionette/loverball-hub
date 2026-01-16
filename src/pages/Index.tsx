@@ -396,7 +396,7 @@ const Index = () => {
                 We're creating the space for her to gather, share, and celebrate the games she loves. AI-powered stories, community events, and narrative-driven coverage tailored to female fans.
               </p>
               <p className="text-foreground/60 text-base leading-relaxed mb-8">
-                By 2030, women will command <span className="text-primary font-semibold">75% of global discretionary spending</span>. The future of sports is female.
+                By 2030, women will command 75% of global discretionary spending. <span className="text-primary font-semibold">The future of sports is female.</span>
               </p>
               <Button 
                 onClick={scrollToMemberAccess}
