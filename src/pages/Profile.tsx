@@ -174,32 +174,32 @@ const Profile = () => {
       <main className="md:ml-64 pb-20 md:pb-8 pt-20 md:pt-8">
         <div className="max-w-4xl mx-auto px-4 space-y-6">
           {/* Profile Header */}
-          <Card>
-            <CardContent className="pt-6">
-              <div className="flex items-start gap-4">
-                <Avatar className="w-20 h-20">
+          <Card className="overflow-hidden">
+            <CardContent className="pt-8 pb-6">
+              <div className="flex items-start gap-5">
+                <Avatar className="w-24 h-24 border-4 border-primary/20">
                   {profile.profile_photo_url ? (
                     <AvatarImage src={profile.profile_photo_url} alt={profile.name} className="object-cover" />
                   ) : null}
-                  <AvatarFallback className="bg-primary text-primary-foreground text-2xl">
+                  <AvatarFallback className="bg-primary text-primary-foreground text-2xl font-serif">
                     {initials}
                   </AvatarFallback>
                 </Avatar>
                 
                 <div className="flex-1">
-                  <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-start justify-between mb-3">
                     <div>
-                      <h1 className="text-2xl font-bold">{profile.name}</h1>
+                      <h1 className="text-2xl font-serif font-semibold">{profile.name}</h1>
                       {profile.pronouns && (
                         <p className="text-sm text-muted-foreground">{profile.pronouns}</p>
                       )}
                     </div>
                     <div className="flex items-center gap-2">
-                      <Button variant="outline" size="sm" onClick={() => navigate("/profile/edit")}>
+                      <Button variant="outline" size="sm" onClick={() => navigate("/profile/edit")} className="rounded-full">
                         <Edit className="w-4 h-4 mr-2" />
                         Edit
                       </Button>
-                      <Button variant="outline" size="sm" onClick={handleLogout} className="text-destructive hover:text-destructive">
+                      <Button variant="outline" size="sm" onClick={handleLogout} className="text-destructive hover:text-destructive rounded-full">
                         <LogOut className="w-4 h-4 mr-2" />
                         Logout
                       </Button>
@@ -207,7 +207,7 @@ const Profile = () => {
                   </div>
                   
                   <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
-                    <MapPin className="w-4 h-4" />
+                    <MapPin className="w-4 h-4 text-primary/70" />
                     <span>{locationText}</span>
                     {profile.age_range && (
                       <>
@@ -218,7 +218,7 @@ const Profile = () => {
                   </div>
                   
                   {profile.bio && (
-                    <div className="flex items-start gap-2 p-3 bg-muted rounded-lg">
+                    <div className="flex items-start gap-2 p-4 bg-primary/5 rounded-xl border border-primary/10">
                       <Sparkles className="w-4 h-4 mt-1 text-primary flex-shrink-0" />
                       <p className="text-sm">{profile.bio}</p>
                     </div>
