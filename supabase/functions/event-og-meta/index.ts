@@ -86,8 +86,20 @@ Deno.serve(async (req) => {
     ogDescription += ' RSVP to hang with women who love sports.';
 
     // Get OG image URL - use event image or fallback to branded image
-    const fallbackImage = 'https://loverball-hub.lovable.app/og-image.png';
-    const ogImage = event.image_url || fallbackImage;
+    // IMPORTANT: Must be absolute URLs for social media crawlers
+    const baseUrl = 'https://loverball-hub.lovable.app';
+    const fallbackImage = `${baseUrl}/og-image.png`;
+    
+    // Convert relative image URLs to absolute
+    let ogImage = fallbackImage;
+    if (event.image_url) {
+      if (event.image_url.startsWith('http')) {
+        ogImage = event.image_url;
+      } else {
+        // Relative URL - prepend base URL
+        ogImage = `${baseUrl}${event.image_url.startsWith('/') ? '' : '/'}${event.image_url}`;
+      }
+    }
     
     const eventUrl = `https://loverball-hub.lovable.app/event/${event.id}`;
 
