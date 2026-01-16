@@ -64,6 +64,13 @@ const Shop = () => {
             <h1 className="text-4xl font-serif font-normal mb-2">Boutique</h1>
             <p className="text-muted-foreground text-lg">Official merchandise and gear</p>
           </div>
+          <div className="hidden md:block">
+            <CartDrawer />
+          </div>
+        </div>
+        
+        {/* Fixed cart button for mobile */}
+        <div className="md:hidden fixed top-4 right-4 z-50">
           <CartDrawer />
         </div>
 
