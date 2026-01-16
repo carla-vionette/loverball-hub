@@ -294,11 +294,14 @@ const EventDetail = () => {
       
       const { error } = await supabase
         .from('event_rsvps')
-        .upsert({
-          event_id: event.id,
-          user_id: user.id,
-          status: dbStatus,
-        });
+        .upsert(
+          {
+            event_id: event.id,
+            user_id: user.id,
+            status: dbStatus,
+          },
+          { onConflict: 'event_id,user_id' }
+        );
 
       if (error) throw error;
 
