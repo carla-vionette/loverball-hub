@@ -426,25 +426,49 @@ const Profile = () => {
             </Card>
           )}
 
-          {/* Recommended Content - Placeholder */}
+          {/* Recommended Content */}
           <Card>
             <CardHeader>
               <CardTitle>Recommended Content</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid md:grid-cols-3 gap-4">
-                <div className="p-4 border rounded-lg">
-                  <div className="w-full h-24 bg-muted rounded-md mb-2"></div>
+                <a 
+                  href="https://www.wnba.com/news" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="p-4 border rounded-lg cursor-pointer hover:border-primary hover:bg-muted/50 transition-colors block"
+                >
+                  <div className="w-full h-24 bg-gradient-to-br from-orange-500/20 to-primary/20 rounded-md mb-2 flex items-center justify-center">
+                    <span className="text-2xl">🏀</span>
+                  </div>
                   <p className="text-sm font-medium">Top WNBA Highlights</p>
-                </div>
-                <div className="p-4 border rounded-lg">
-                  <div className="w-full h-24 bg-muted rounded-md mb-2"></div>
+                  <p className="text-xs text-muted-foreground">Latest news & videos</p>
+                </a>
+                <a 
+                  href="https://www.nba.com/lakers" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="p-4 border rounded-lg cursor-pointer hover:border-primary hover:bg-muted/50 transition-colors block"
+                >
+                  <div className="w-full h-24 bg-gradient-to-br from-purple-500/20 to-yellow-500/20 rounded-md mb-2 flex items-center justify-center">
+                    <span className="text-2xl">💜💛</span>
+                  </div>
                   <p className="text-sm font-medium">Lakers Season Preview</p>
-                </div>
-                <div className="p-4 border rounded-lg">
-                  <div className="w-full h-24 bg-muted rounded-md mb-2"></div>
+                  <p className="text-xs text-muted-foreground">Team updates & schedule</p>
+                </a>
+                <a 
+                  href="https://www.latimes.com/sports" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="p-4 border rounded-lg cursor-pointer hover:border-primary hover:bg-muted/50 transition-colors block"
+                >
+                  <div className="w-full h-24 bg-gradient-to-br from-blue-500/20 to-accent/20 rounded-md mb-2 flex items-center justify-center">
+                    <span className="text-2xl">📰</span>
+                  </div>
                   <p className="text-sm font-medium">Local Sports News</p>
-                </div>
+                  <p className="text-xs text-muted-foreground">LA Times Sports</p>
+                </a>
               </div>
             </CardContent>
           </Card>
