@@ -269,8 +269,7 @@ const Index = () => {
                   Hey Friend.
                 </p>
                 <h1 className="text-4xl sm:text-5xl lg:text-6xl font-serif font-normal leading-[1.1] mb-6">
-                  Her Game.<br />
-                  Her Community.<br />
+                  <span className="whitespace-nowrap">Her Game. Her Community.</span><br />
                   <span className="italic">Her Platform.</span>
                 </h1>
                 <p className="text-primary-foreground/80 text-lg leading-relaxed mb-8 max-w-md">
