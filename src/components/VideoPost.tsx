@@ -17,6 +17,7 @@ interface Comment {
 }
 
 interface VideoPostProps {
+  id: number;
   videoUrl: string;
   username: string;
   userAvatar?: string;
@@ -34,6 +35,7 @@ interface DoubleTapHeart {
 }
 
 const VideoPost = ({
+  id,
   videoUrl,
   username,
   userAvatar,
@@ -178,10 +180,11 @@ const VideoPost = ({
   }, [liked]);
 
   const handleShare = async () => {
+    const videoUrl = `${window.location.origin}/video/${id}`;
     const shareData = {
       title: `Video by ${username}`,
       text: caption,
-      url: window.location.href,
+      url: videoUrl,
     };
 
     try {
@@ -190,13 +193,13 @@ const VideoPost = ({
         setShareCount(prev => prev + 1);
         toast.success("Thanks for sharing!");
       } else {
-        await navigator.clipboard.writeText(window.location.href);
+        await navigator.clipboard.writeText(videoUrl);
         setShareCount(prev => prev + 1);
         toast.success("Link copied to clipboard!");
       }
     } catch (error) {
       if ((error as Error).name !== 'AbortError') {
-        await navigator.clipboard.writeText(window.location.href);
+        await navigator.clipboard.writeText(videoUrl);
         toast.success("Link copied to clipboard!");
       }
     }
