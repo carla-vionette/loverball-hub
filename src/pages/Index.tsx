@@ -260,7 +260,7 @@ const Index = () => {
                 <p className="text-primary-foreground/80 text-sm font-medium tracking-widest mb-6 uppercase">
                   Hey Friend.
                 </p>
-                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-serif font-normal leading-[1.1] mb-6">
+                <h1 className="text-[2rem] sm:text-5xl lg:text-6xl font-serif font-normal leading-[1.1] mb-6">
                   Her Game.<br />
                   Her Community.<br />
                   <span className="italic">Her Platform.</span>
