@@ -58,12 +58,16 @@ const StatsTicker = () => {
         .ticker-wrapper {
           width: 100%;
           overflow: hidden;
+          contain: content;
         }
         
         .ticker-content {
           display: inline-flex;
           animation: scroll 60s linear infinite;
           white-space: nowrap;
+          will-change: transform;
+          transform: translateZ(0);
+          backface-visibility: hidden;
         }
         
         .ticker-item {
@@ -72,10 +76,10 @@ const StatsTicker = () => {
         
         @keyframes scroll {
           0% {
-            transform: translateX(0);
+            transform: translate3d(0, 0, 0);
           }
           100% {
-            transform: translateX(-50%);
+            transform: translate3d(-50%, 0, 0);
           }
         }
         
