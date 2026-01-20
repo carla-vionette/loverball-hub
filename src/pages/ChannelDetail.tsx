@@ -10,6 +10,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { Loader2, Play, Plus, Heart, Eye, ArrowLeft, Settings, Pencil } from 'lucide-react';
+import { getVideoThumbnail } from '@/lib/videoUtils';
 
 interface CreatorChannel {
   id: string;
@@ -231,17 +232,15 @@ const ChannelDetail = () => {
                   <Link to={`/hub/video/${video.id}`}>
                     <Card className="overflow-hidden border-border/50 hover:border-primary/50 transition-colors">
                       <div className="relative aspect-[9/16] bg-muted">
-                        {video.thumbnail_url ? (
-                          <img
-                            src={video.thumbnail_url}
-                            alt={video.title}
-                            className="w-full h-full object-cover"
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center">
-                            <Play className="w-8 h-8 text-muted-foreground" />
-                          </div>
-                        )}
+                        <img
+                          src={getVideoThumbnail(video.thumbnail_url, video.video_url)}
+                          alt={video.title}
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.src = '/placeholder.svg';
+                          }}
+                        />
                         {video.duration_seconds && (
                           <span className="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-1.5 py-0.5 rounded">
                             {formatDuration(video.duration_seconds)}
