@@ -21,9 +21,6 @@ const DesktopNav = () => {
       { icon: MessageCircle, label: "Messages", path: "/messages", showBadge: true },
     ] : []),
     { icon: User, label: "Profile", path: "/profile" },
-    ...(isMember ? [
-      { icon: Users, label: "Connections", path: "/members" },
-    ] : []),
     ...(isAdmin ? [
       { icon: Settings, label: "Admin", path: "/admin" },
     ] : []),
