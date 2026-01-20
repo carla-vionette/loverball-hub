@@ -16,7 +16,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Plus, Check, X, Copy, Users, Calendar, Ticket, RefreshCw, Eye, Phone, Mail, Instagram, Linkedin, Globe, Download, Pencil } from 'lucide-react';
+import { Loader2, Plus, Check, X, Copy, Users, Calendar, Ticket, RefreshCw, Eye, Phone, Mail, Instagram, Linkedin, Globe, Download, Pencil, Video } from 'lucide-react';
 import { format } from 'date-fns';
 
 interface Invite {
@@ -399,10 +399,16 @@ const Admin = () => {
         <div className="container mx-auto px-4 py-6 max-w-6xl">
           <div className="flex items-center justify-between mb-6">
             <h1 className="text-3xl font-bold">Admin Dashboard</h1>
-            <Button variant="outline" size="sm" onClick={fetchData}>
-              <RefreshCw className="w-4 h-4 mr-2" />
-              Refresh
-            </Button>
+            <div className="flex gap-2">
+              <Button variant="outline" size="sm" onClick={() => navigate('/admin/creators')}>
+                <Video className="w-4 h-4 mr-2" />
+                Creators
+              </Button>
+              <Button variant="outline" size="sm" onClick={fetchData}>
+                <RefreshCw className="w-4 h-4 mr-2" />
+                Refresh
+              </Button>
+            </div>
           </div>
 
           {/* Stats */}
