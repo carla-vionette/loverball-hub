@@ -224,7 +224,7 @@ const VideoPost = ({
 
   return (
     <div 
-      className="relative w-full aspect-[9/16] max-h-[85vh] bg-background flex items-center justify-center rounded-lg overflow-hidden"
+      className="relative h-[100dvh] w-full snap-start snap-always bg-background flex items-center justify-center"
       onClick={handleDoubleTap}
       onTouchEnd={handleDoubleTap}
     >

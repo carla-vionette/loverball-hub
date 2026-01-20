@@ -295,7 +295,6 @@ const LASportsTicker = ({
         .ticker-wrapper {
           width: 100%;
           overflow: hidden;
-          contain: content;
         }
         
         .ticker-content {
@@ -303,15 +302,6 @@ const LASportsTicker = ({
           animation: ticker-scroll 45s linear infinite;
           white-space: nowrap;
           align-items: center;
-          will-change: transform;
-          transform: translateZ(0);
-          backface-visibility: hidden;
-        }
-        
-        @media (max-width: 768px) {
-          .ticker-content {
-            animation-duration: 75s;
-          }
         }
         
         .ticker-item {
@@ -321,10 +311,10 @@ const LASportsTicker = ({
         
         @keyframes ticker-scroll {
           0% {
-            transform: translate3d(0, 0, 0);
+            transform: translateX(0);
           }
           100% {
-            transform: translate3d(-50%, 0, 0);
+            transform: translateX(-50%);
           }
         }
         

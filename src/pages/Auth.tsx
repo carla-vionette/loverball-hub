@@ -33,7 +33,7 @@ const Auth = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
-  const redirectTo = searchParams.get('redirect') || '/profile';
+  const redirectTo = searchParams.get('redirect') || '/following';
 
   // Check if user came from a password reset link or signup link
   useEffect(() => {
@@ -75,7 +75,7 @@ const Auth = () => {
       setIsResettingPassword(false);
       setPassword("");
       setConfirmPassword("");
-      navigate("/profile");
+      navigate("/following");
     } catch (error: any) {
       toast({
         title: "Error",

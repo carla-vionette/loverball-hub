@@ -163,8 +163,8 @@ const Following = () => {
     }
   };
 
-  // Interleave Story Hub videos with static videos - memoize to prevent recalculation
-  const combinedFeed = (() => {
+  // Interleave Story Hub videos with static videos
+  const combinedFeed = () => {
     const combined: React.ReactNode[] = [];
     let staticIndex = 0;
     let hubIndex = 0;
@@ -204,7 +204,7 @@ const Following = () => {
     }
 
     return combined;
-  })();
+  };
 
   if (loading) {
     return (
@@ -220,25 +220,21 @@ const Following = () => {
       <DesktopNav />
       <BottomNav />
       
-      {/* Sticky LA Sports Ticker */}
-      <div className="fixed top-12 md:top-0 left-0 right-0 md:left-64 z-30">
+      <div className="fixed top-16 md:top-0 left-0 right-0 md:left-64 z-30">
         <LASportsTicker />
       </div>
       
-      {/* Video Feed - Standard scrolling layout */}
-      <main className="md:ml-64 pt-24 md:pt-12 pb-24 md:pb-4 px-0 md:px-4">
-        <div className="flex flex-col gap-0 md:gap-6 max-w-2xl mx-auto">
-          {combinedFeed.length > 0 ? (
-            combinedFeed
-          ) : (
-            <div className="h-[60vh] flex items-center justify-center">
-              <div className="text-center px-6">
-                <h2 className="text-2xl font-bold mb-2 text-foreground">No content yet</h2>
-                <p className="text-muted-foreground">Check back soon for videos from Story Hub creators</p>
-              </div>
+      <main className="md:ml-64 snap-y snap-mandatory h-screen overflow-y-scroll pt-[92px] md:pt-[48px]">
+        {combinedFeed().length > 0 ? (
+          combinedFeed()
+        ) : (
+          <div className="h-screen flex items-center justify-center text-white">
+            <div className="text-center">
+              <h2 className="text-2xl font-bold mb-2">No content yet</h2>
+              <p className="text-muted-foreground">Follow creators to see their videos here</p>
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </main>
     </div>
   );
