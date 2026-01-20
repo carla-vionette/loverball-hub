@@ -40,6 +40,87 @@ export type Database = {
           },
         ]
       }
+      creator_applications: {
+        Row: {
+          admin_notes: string | null
+          applicant_user_id: string
+          content_focus: string
+          created_at: string
+          desired_channel_name: string
+          example_content_links: string | null
+          id: string
+          reviewed_at: string | null
+          social_handles: string | null
+          status: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          applicant_user_id: string
+          content_focus: string
+          created_at?: string
+          desired_channel_name: string
+          example_content_links?: string | null
+          id?: string
+          reviewed_at?: string | null
+          social_handles?: string | null
+          status?: string
+        }
+        Update: {
+          admin_notes?: string | null
+          applicant_user_id?: string
+          content_focus?: string
+          created_at?: string
+          desired_channel_name?: string
+          example_content_links?: string | null
+          id?: string
+          reviewed_at?: string | null
+          social_handles?: string | null
+          status?: string
+        }
+        Relationships: []
+      }
+      creator_channels: {
+        Row: {
+          avatar_url: string | null
+          channel_name: string
+          created_at: string
+          description: string | null
+          id: string
+          owner_user_id: string
+          slug: string
+          social_links: Json | null
+          sport_focus: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          channel_name: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          owner_user_id: string
+          slug: string
+          social_links?: Json | null
+          sport_focus?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          channel_name?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          owner_user_id?: string
+          slug?: string
+          social_links?: Json | null
+          sport_focus?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       event_rsvps: {
         Row: {
           created_at: string
@@ -493,6 +574,114 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      video_likes: {
+        Row: {
+          created_at: string
+          id: string
+          user_id: string
+          video_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          user_id: string
+          video_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          user_id?: string
+          video_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "video_likes_video_id_fkey"
+            columns: ["video_id"]
+            isOneToOne: false
+            referencedRelation: "videos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      video_views: {
+        Row: {
+          created_at: string
+          id: string
+          user_id: string | null
+          video_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          user_id?: string | null
+          video_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          user_id?: string | null
+          video_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "video_views_video_id_fkey"
+            columns: ["video_id"]
+            isOneToOne: false
+            referencedRelation: "videos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      videos: {
+        Row: {
+          channel_id: string
+          created_at: string
+          description: string | null
+          duration_seconds: number | null
+          id: string
+          is_published: boolean
+          published_at: string | null
+          tags: string[] | null
+          thumbnail_url: string | null
+          title: string
+          video_url: string
+        }
+        Insert: {
+          channel_id: string
+          created_at?: string
+          description?: string | null
+          duration_seconds?: number | null
+          id?: string
+          is_published?: boolean
+          published_at?: string | null
+          tags?: string[] | null
+          thumbnail_url?: string | null
+          title: string
+          video_url: string
+        }
+        Update: {
+          channel_id?: string
+          created_at?: string
+          description?: string | null
+          duration_seconds?: number | null
+          id?: string
+          is_published?: boolean
+          published_at?: string | null
+          tags?: string[] | null
+          thumbnail_url?: string | null
+          title?: string
+          video_url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "videos_channel_id_fkey"
+            columns: ["channel_id"]
+            isOneToOne: false
+            referencedRelation: "creator_channels"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
