@@ -7,6 +7,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { Heart, Eye, Share2, Volume2, VolumeX, Play, Pause } from 'lucide-react';
+import { getVideoThumbnail } from '@/lib/videoUtils';
 
 interface VideoHubPostProps {
   id: string;
@@ -203,7 +204,7 @@ const VideoHubPost = ({
           <video
             ref={videoRef}
             src={videoUrl}
-            poster={thumbnailUrl || undefined}
+            poster={getVideoThumbnail(thumbnailUrl, videoUrl)}
             className="w-full h-full object-cover"
             loop
             muted={isMuted}
