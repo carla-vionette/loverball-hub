@@ -11,7 +11,7 @@ import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
-import { Loader2, Play, Heart, Eye, ChevronRight } from 'lucide-react';
+import { Loader2, Play, Heart, Eye, ChevronRight, Upload } from 'lucide-react';
 import VideoHubPost from '@/components/VideoHubPost';
 
 interface CreatorChannel {
@@ -41,13 +41,14 @@ interface Video {
 
 const VideoHub = () => {
   const [channels, setChannels] = useState<CreatorChannel[]>([]);
+  const [myChannels, setMyChannels] = useState<CreatorChannel[]>([]);
   const [videos, setVideos] = useState<Video[]>([]);
   const [loading, setLoading] = useState(true);
   const { user, isMember } = useAuth();
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [user]);
 
   const fetchData = async () => {
     try {
@@ -72,6 +73,19 @@ const VideoHub = () => {
       if (videosRes.error) throw videosRes.error;
 
       setChannels(channelsRes.data || []);
+
+      // If user is logged in, fetch their channels
+      if (user) {
+        const myChannelsRes = await supabase
+          .from('creator_channels')
+          .select('*')
+          .eq('owner_user_id', user.id)
+          .eq('status', 'approved');
+        
+        if (!myChannelsRes.error) {
+          setMyChannels(myChannelsRes.data || []);
+        }
+      }
 
       // Get like and view counts for each video
       const videosWithCounts = await Promise.all(
@@ -125,7 +139,7 @@ const VideoHub = () => {
         {/* Hero Section */}
         <section className="px-4 py-8 text-center bg-gradient-to-b from-primary/20 to-transparent">
           <h1 className="text-3xl md:text-4xl font-bold text-white mb-3">
-            Loverball Video Hub
+            Stories Hub
           </h1>
           <p className="text-muted-foreground text-lg mb-6 max-w-xl mx-auto">
             Curated channels from approved creators in the women's sports community
@@ -134,7 +148,7 @@ const VideoHub = () => {
             <Button asChild variant="outline">
               <Link to="#channels">Browse Channels</Link>
             </Button>
-            {isMember && (
+            {isMember && myChannels.length === 0 && (
               <Button asChild>
                 <Link to="/apply-creator">Apply to Be a Creator</Link>
               </Button>
@@ -146,6 +160,44 @@ const VideoHub = () => {
             )}
           </div>
         </section>
+
+        {/* My Channels - Creator Access */}
+        {myChannels.length > 0 && (
+          <section className="px-4 py-6 bg-primary/5 border-y border-primary/20">
+            <h2 className="text-lg font-semibold text-white mb-4">My Channels</h2>
+            <div className="flex gap-4 flex-wrap">
+              {myChannels.map((channel) => (
+                <Card key={channel.id} className="bg-card/80 border-primary/30 flex-1 min-w-[280px] max-w-md">
+                  <CardContent className="p-4">
+                    <div className="flex items-center gap-4">
+                      <Avatar className="w-12 h-12">
+                        <AvatarImage src={channel.avatar_url || ''} alt={channel.channel_name} />
+                        <AvatarFallback className="bg-primary/20 text-primary">
+                          {channel.channel_name.substring(0, 2).toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-medium text-foreground truncate">{channel.channel_name}</h3>
+                        <p className="text-sm text-muted-foreground truncate">{channel.sport_focus || 'Multi-Sport'}</p>
+                      </div>
+                      <div className="flex gap-2">
+                        <Button asChild size="sm" variant="outline">
+                          <Link to={`/channel/${channel.slug}`}>View</Link>
+                        </Button>
+                        <Button asChild size="sm">
+                          <Link to={`/hub/upload?channel=${channel.id}`}>
+                            <Upload className="w-4 h-4 mr-1" />
+                            Upload
+                          </Link>
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* Featured Channels Carousel */}
         {channels.length > 0 && (
