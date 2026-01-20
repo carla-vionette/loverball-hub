@@ -70,6 +70,12 @@ const StatsTicker = () => {
           backface-visibility: hidden;
         }
         
+        @media (max-width: 768px) {
+          .ticker-content {
+            animation-duration: 90s;
+          }
+        }
+        
         .ticker-item {
           display: inline-block;
         }
