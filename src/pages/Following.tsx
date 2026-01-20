@@ -224,13 +224,13 @@ const Following = () => {
         <LASportsTicker />
       </div>
       
-      <main className="md:ml-64 snap-y snap-mandatory h-screen overflow-y-scroll pt-[92px] md:pt-[48px]">
+      <main className="md:ml-64 snap-y snap-mandatory h-[100dvh] overflow-y-scroll pt-[92px] md:pt-[48px] pb-20 md:pb-0">
         {combinedFeed.length > 0 ? (
           combinedFeed
         ) : (
-          <div className="h-screen flex items-center justify-center text-white">
+          <div className="h-[calc(100dvh-180px)] flex items-center justify-center">
             <div className="text-center">
-              <h2 className="text-2xl font-bold mb-2">No content yet</h2>
+              <h2 className="text-2xl font-bold mb-2 text-foreground">No content yet</h2>
               <p className="text-muted-foreground">Follow creators to see their videos here</p>
             </div>
           </div>
