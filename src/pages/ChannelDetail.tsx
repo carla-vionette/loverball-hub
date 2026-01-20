@@ -9,7 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
-import { Loader2, Play, Plus, Heart, Eye, ArrowLeft, Settings } from 'lucide-react';
+import { Loader2, Play, Plus, Heart, Eye, ArrowLeft, Settings, Pencil } from 'lucide-react';
 
 interface CreatorChannel {
   id: string;
@@ -227,48 +227,55 @@ const ChannelDetail = () => {
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {videos.map((video) => (
-                <Link
-                  key={video.id}
-                  to={`/hub/video/${video.id}`}
-                  className="group"
-                >
-                  <Card className="overflow-hidden border-border/50 hover:border-primary/50 transition-colors">
-                    <div className="relative aspect-[9/16] bg-muted">
-                      {video.thumbnail_url ? (
-                        <img
-                          src={video.thumbnail_url}
-                          alt={video.title}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center">
-                          <Play className="w-8 h-8 text-muted-foreground" />
+                <div key={video.id} className="group relative">
+                  <Link to={`/hub/video/${video.id}`}>
+                    <Card className="overflow-hidden border-border/50 hover:border-primary/50 transition-colors">
+                      <div className="relative aspect-[9/16] bg-muted">
+                        {video.thumbnail_url ? (
+                          <img
+                            src={video.thumbnail_url}
+                            alt={video.title}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center">
+                            <Play className="w-8 h-8 text-muted-foreground" />
+                          </div>
+                        )}
+                        {video.duration_seconds && (
+                          <span className="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-1.5 py-0.5 rounded">
+                            {formatDuration(video.duration_seconds)}
+                          </span>
+                        )}
+                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
+                          <Play className="w-10 h-10 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
                         </div>
-                      )}
-                      {video.duration_seconds && (
-                        <span className="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-1.5 py-0.5 rounded">
-                          {formatDuration(video.duration_seconds)}
-                        </span>
-                      )}
-                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
-                        <Play className="w-10 h-10 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
                       </div>
-                    </div>
-                    <CardContent className="p-3">
-                      <h3 className="font-medium text-sm line-clamp-2 mb-2">
-                        {video.title}
-                      </h3>
-                      <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                        <span className="flex items-center gap-1">
-                          <Heart className="w-3 h-3" /> {video.like_count}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <Eye className="w-3 h-3" /> {video.view_count}
-                        </span>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </Link>
+                      <CardContent className="p-3">
+                        <h3 className="font-medium text-sm line-clamp-2 mb-2">
+                          {video.title}
+                        </h3>
+                        <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                          <span className="flex items-center gap-1">
+                            <Heart className="w-3 h-3" /> {video.like_count}
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <Eye className="w-3 h-3" /> {video.view_count}
+                          </span>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </Link>
+                  {isOwner && (
+                    <Link
+                      to={`/video/${video.id}/edit`}
+                      className="absolute top-2 right-2 bg-background/90 hover:bg-background p-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity z-10"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <Pencil className="w-4 h-4 text-foreground" />
+                    </Link>
+                  )}
+                </div>
               ))}
             </div>
           )}
