@@ -9,7 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
-import { Loader2, Play, Plus, Heart, Eye, ArrowLeft } from 'lucide-react';
+import { Loader2, Play, Plus, Heart, Eye, ArrowLeft, Settings } from 'lucide-react';
 
 interface CreatorChannel {
   id: string;
@@ -190,12 +190,20 @@ const ChannelDetail = () => {
                   </Button>
                 )}
                 {isOwner && (
-                  <Button asChild>
-                    <Link to="/upload-video">
-                      <Plus className="w-4 h-4 mr-2" />
-                      Upload Video
-                    </Link>
-                  </Button>
+                  <>
+                    <Button asChild>
+                      <Link to="/upload-video">
+                        <Plus className="w-4 h-4 mr-2" />
+                        Upload Video
+                      </Link>
+                    </Button>
+                    <Button asChild variant="outline">
+                      <Link to={`/channel/${slug}/edit`}>
+                        <Settings className="w-4 h-4 mr-2" />
+                        Edit Channel
+                      </Link>
+                    </Button>
+                  </>
                 )}
               </div>
             </div>
