@@ -1,4 +1,4 @@
-import { Home, Users, MessageCircle, User, CalendarDays, ShoppingBag, Heart } from "lucide-react";
+import { Home, Users, MessageCircle, User, CalendarDays, ShoppingBag, Heart, Play } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useUnreadMessages } from "@/hooks/useUnreadMessages";
@@ -28,8 +28,8 @@ const BottomNav = () => {
   // Build nav items - member-only items show once auth is loaded
   const navItems = [
     { icon: Home, label: "Home", path: "/following" },
+    { icon: Play, label: "Hub", path: "/hub" },
     { icon: CalendarDays, label: "Events", path: "/events" },
-    { icon: ShoppingBag, label: "Shop", path: "/shop" },
     ...(isMember ? [
       { icon: Heart, label: "Network", path: "/network" },
       { icon: MessageCircle, label: "Chat", path: "/messages", showBadge: true },
