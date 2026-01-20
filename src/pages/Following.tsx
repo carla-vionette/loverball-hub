@@ -221,22 +221,24 @@ const Following = () => {
       <BottomNav />
       
       {/* Sticky LA Sports Ticker */}
-      <div className="fixed top-16 md:top-0 left-0 right-0 md:left-64 z-30">
+      <div className="fixed top-12 md:top-0 left-0 right-0 md:left-64 z-30">
         <LASportsTicker />
       </div>
       
-      {/* Video Feed - Full screen vertical scroll */}
-      <main className="md:ml-64 h-[100dvh] overflow-y-scroll snap-y snap-mandatory pt-[88px] md:pt-[40px]">
-        {combinedFeed.length > 0 ? (
-          combinedFeed
-        ) : (
-          <div className="h-[calc(100dvh-120px)] flex items-center justify-center">
-            <div className="text-center px-6">
-              <h2 className="text-2xl font-bold mb-2 text-foreground">No content yet</h2>
-              <p className="text-muted-foreground">Check back soon for videos from Story Hub creators</p>
+      {/* Video Feed - Standard scrolling layout */}
+      <main className="md:ml-64 pt-24 md:pt-12 pb-24 md:pb-4 px-0 md:px-4">
+        <div className="flex flex-col gap-0 md:gap-6 max-w-2xl mx-auto">
+          {combinedFeed.length > 0 ? (
+            combinedFeed
+          ) : (
+            <div className="h-[60vh] flex items-center justify-center">
+              <div className="text-center px-6">
+                <h2 className="text-2xl font-bold mb-2 text-foreground">No content yet</h2>
+                <p className="text-muted-foreground">Check back soon for videos from Story Hub creators</p>
+              </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </main>
     </div>
   );
