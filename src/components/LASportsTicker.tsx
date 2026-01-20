@@ -308,6 +308,12 @@ const LASportsTicker = ({
           backface-visibility: hidden;
         }
         
+        @media (max-width: 768px) {
+          .ticker-content {
+            animation-duration: 75s;
+          }
+        }
+        
         .ticker-item {
           display: inline-flex;
           align-items: center;
