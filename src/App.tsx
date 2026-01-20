@@ -36,6 +36,7 @@ import ChannelsList from "./pages/ChannelsList";
 import ApplyCreator from "./pages/ApplyCreator";
 import UploadVideo from "./pages/UploadVideo";
 import HubVideoDetail from "./pages/HubVideoDetail";
+import EditChannel from "./pages/EditChannel";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 const queryClient = new QueryClient();
@@ -56,6 +57,7 @@ const App = () => (
             <Route path="/channels" element={<ChannelsList />} />
             <Route path="/apply-creator" element={<ProtectedRoute><ApplyCreator /></ProtectedRoute>} />
             <Route path="/upload-video" element={<ProtectedRoute><UploadVideo /></ProtectedRoute>} />
+            <Route path="/channel/:slug/edit" element={<ProtectedRoute><EditChannel /></ProtectedRoute>} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/ticker" element={<ProtectedRoute><Ticker /></ProtectedRoute>} />
             <Route path="/onboarding" element={<ProtectedRoute><Onboarding /></ProtectedRoute>} />
