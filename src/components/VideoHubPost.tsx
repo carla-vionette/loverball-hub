@@ -219,7 +219,7 @@ const VideoHubPost = ({
   return (
     <div
       ref={containerRef}
-      className="relative w-full h-[calc(100vh-180px)] md:h-[600px] bg-black snap-start"
+      className="relative w-full h-[calc(100vh-180px)] md:h-[600px] bg-background snap-start"
     >
       {/* Video or Embed */}
       {isEmbeddable ? (
