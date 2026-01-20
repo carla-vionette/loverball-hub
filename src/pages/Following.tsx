@@ -163,8 +163,8 @@ const Following = () => {
     }
   };
 
-  // Interleave Story Hub videos with static videos
-  const combinedFeed = () => {
+  // Interleave Story Hub videos with static videos - memoize to prevent recalculation
+  const combinedFeed = (() => {
     const combined: React.ReactNode[] = [];
     let staticIndex = 0;
     let hubIndex = 0;
@@ -204,7 +204,7 @@ const Following = () => {
     }
 
     return combined;
-  };
+  })();
 
   if (loading) {
     return (
@@ -225,8 +225,8 @@ const Following = () => {
       </div>
       
       <main className="md:ml-64 snap-y snap-mandatory h-screen overflow-y-scroll pt-[92px] md:pt-[48px]">
-        {combinedFeed().length > 0 ? (
-          combinedFeed()
+        {combinedFeed.length > 0 ? (
+          combinedFeed
         ) : (
           <div className="h-screen flex items-center justify-center text-white">
             <div className="text-center">
