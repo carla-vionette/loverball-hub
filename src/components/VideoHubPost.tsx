@@ -221,6 +221,10 @@ const VideoHubPost = ({
       ref={containerRef}
       className="relative w-full h-[calc(100vh-180px)] md:h-[600px] bg-background snap-start"
     >
+      {/* Side gradient overlays for polished look on desktop */}
+      <div className="hidden md:block absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-background via-background/60 to-transparent pointer-events-none z-[1]" />
+      <div className="hidden md:block absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-background via-background/60 to-transparent pointer-events-none z-[1]" />
+
       {/* Video or Embed */}
       {isEmbeddable ? (
         <iframe
