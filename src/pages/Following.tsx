@@ -1,16 +1,42 @@
+import { useState, useEffect } from 'react';
 import BottomNav from "@/components/BottomNav";
 import DesktopNav from "@/components/DesktopNav";
 import MobileHeader from "@/components/MobileHeader";
 import VideoPost from "@/components/VideoPost";
+import VideoHubPost from "@/components/VideoHubPost";
 import LASportsTicker from "@/components/LASportsTicker";
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
+import { Loader2 } from 'lucide-react';
 import christineVideo from "@/assets/christine-video.mov";
 import colorCoverageVideo from "@/assets/color-coverage-video.mp4";
 import playMeVideo from "@/assets/play-me-video.mp4";
 import risingStarsVideo from "@/assets/rising-stars-video.mp4";
 import matchPointVideo from "@/assets/match-point-video.mp4";
 
+interface StoryHubVideo {
+  id: string;
+  title: string;
+  description: string | null;
+  video_url: string;
+  thumbnail_url: string | null;
+  tags: string[];
+  channel: {
+    channel_name: string;
+    slug: string;
+    avatar_url: string | null;
+  };
+  like_count: number;
+  view_count: number;
+}
+
 const Following = () => {
-  const followingVideos = [
+  const [storyHubVideos, setStoryHubVideos] = useState<StoryHubVideo[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { user } = useAuth();
+
+  // Static videos for the feed
+  const staticVideos = [
     {
       id: 1,
       videoUrl: playMeVideo,
@@ -63,6 +89,114 @@ const Following = () => {
     },
   ];
 
+  useEffect(() => {
+    fetchStoryHubVideos();
+  }, []);
+
+  const fetchStoryHubVideos = async () => {
+    try {
+      const { data: videosData, error } = await supabase
+        .from('videos')
+        .select(`
+          id,
+          title,
+          description,
+          video_url,
+          thumbnail_url,
+          tags,
+          channel:creator_channels!inner(
+            channel_name,
+            slug,
+            avatar_url
+          )
+        `)
+        .eq('is_published', true)
+        .order('published_at', { ascending: false })
+        .limit(10);
+
+      if (error) throw error;
+
+      // Get like and view counts for each video
+      const videosWithCounts = await Promise.all(
+        (videosData || []).map(async (video) => {
+          const [likesRes, viewsRes] = await Promise.all([
+            supabase
+              .from('video_likes')
+              .select('id', { count: 'exact', head: true })
+              .eq('video_id', video.id),
+            supabase
+              .from('video_views')
+              .select('id', { count: 'exact', head: true })
+              .eq('video_id', video.id)
+          ]);
+
+          return {
+            ...video,
+            like_count: likesRes.count || 0,
+            view_count: viewsRes.count || 0
+          };
+        })
+      );
+
+      setStoryHubVideos(videosWithCounts);
+    } catch (error) {
+      console.error('Error fetching Story Hub videos:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Interleave Story Hub videos with static videos
+  const combinedFeed = () => {
+    const combined: React.ReactNode[] = [];
+    let staticIndex = 0;
+    let hubIndex = 0;
+
+    // First show Story Hub videos, then static videos
+    while (hubIndex < storyHubVideos.length || staticIndex < staticVideos.length) {
+      // Add a Story Hub video
+      if (hubIndex < storyHubVideos.length) {
+        const video = storyHubVideos[hubIndex];
+        combined.push(
+          <VideoHubPost
+            key={`hub-${video.id}`}
+            id={video.id}
+            videoUrl={video.video_url}
+            thumbnailUrl={video.thumbnail_url}
+            title={video.title}
+            description={video.description}
+            channelName={video.channel.channel_name}
+            channelSlug={video.channel.slug}
+            channelAvatar={video.channel.avatar_url}
+            likeCount={video.like_count}
+            viewCount={video.view_count}
+            tags={video.tags || []}
+          />
+        );
+        hubIndex++;
+      }
+      
+      // Add a static video after every 2 hub videos (or always if no hub videos)
+      if (staticIndex < staticVideos.length && (hubIndex % 2 === 0 || storyHubVideos.length === 0)) {
+        const video = staticVideos[staticIndex];
+        combined.push(
+          <VideoPost key={`static-${video.id}`} {...video} />
+        );
+        staticIndex++;
+      }
+    }
+
+    return combined;
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-black">
       <MobileHeader />
@@ -74,10 +208,8 @@ const Following = () => {
       </div>
       
       <main className="md:ml-64 snap-y snap-mandatory h-screen overflow-y-scroll pt-[92px] md:pt-[48px]">
-        {followingVideos.length > 0 ? (
-          followingVideos.map((video) => (
-            <VideoPost key={video.id} {...video} />
-          ))
+        {combinedFeed().length > 0 ? (
+          combinedFeed()
         ) : (
           <div className="h-screen flex items-center justify-center text-white">
             <div className="text-center">
