@@ -104,7 +104,7 @@ const Following = () => {
           video_url,
           thumbnail_url,
           tags,
-          channel:creator_channels!inner(
+          creator_channels!inner(
             channel_name,
             slug,
             avatar_url
@@ -114,9 +114,13 @@ const Following = () => {
         .order('published_at', { ascending: false })
         .limit(10);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching videos:', error);
+        setLoading(false);
+        return;
+      }
 
-      // Get like and view counts for each video
+      // Transform and get like/view counts for each video
       const videosWithCounts = await Promise.all(
         (videosData || []).map(async (video) => {
           const [likesRes, viewsRes] = await Promise.all([
@@ -130,8 +134,21 @@ const Following = () => {
               .eq('video_id', video.id)
           ]);
 
+          // Handle the channel data - it comes as an object from the join
+          const channelData = video.creator_channels as { channel_name: string; slug: string; avatar_url: string | null };
+
           return {
-            ...video,
+            id: video.id,
+            title: video.title,
+            description: video.description,
+            video_url: video.video_url,
+            thumbnail_url: video.thumbnail_url,
+            tags: video.tags || [],
+            channel: {
+              channel_name: channelData?.channel_name || 'Unknown',
+              slug: channelData?.slug || '',
+              avatar_url: channelData?.avatar_url || null
+            },
             like_count: likesRes.count || 0,
             view_count: viewsRes.count || 0
           };
