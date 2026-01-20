@@ -3,11 +3,15 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
-import { Heart, Eye, Share2, Volume2, VolumeX, Play, Pause } from 'lucide-react';
+import { Eye, Share2, Volume2, VolumeX, Play, MessageCircle, Send } from 'lucide-react';
 import { getVideoThumbnail } from '@/lib/videoUtils';
+import WhistleIcon from '@/components/icons/WhistleIcon';
 
 interface VideoHubPostProps {
   id: string;
@@ -41,6 +45,10 @@ const VideoHubPost = ({
   const [isMuted, setIsMuted] = useState(true);
   const [isPlaying, setIsPlaying] = useState(false);
   const [hasViewed, setHasViewed] = useState(false);
+  const [isCommentsOpen, setIsCommentsOpen] = useState(false);
+  const [commentList, setCommentList] = useState<{ id: string; username: string; text: string; timestamp: string }[]>([]);
+  const [newComment, setNewComment] = useState('');
+  const [commentCount, setCommentCount] = useState(0);
   const videoRef = useRef<HTMLVideoElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const { user, isMember } = useAuth();
@@ -146,6 +154,28 @@ const VideoHubPost = ({
     }
   };
 
+  const handleAddComment = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newComment.trim()) return;
+
+    if (!user) {
+      navigate('/auth');
+      return;
+    }
+
+    const comment = {
+      id: Date.now().toString(),
+      username: 'You',
+      text: newComment.trim(),
+      timestamp: 'Just now',
+    };
+
+    setCommentList(prev => [comment, ...prev]);
+    setCommentCount(prev => prev + 1);
+    setNewComment('');
+    toast({ title: 'Comment added!' });
+  };
+
   const toggleMute = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (videoRef.current) {
@@ -245,17 +275,6 @@ const VideoHubPost = ({
         <span className="font-medium text-white drop-shadow-md">{channelName}</span>
       </Link>
 
-      {/* Mute Button - Top Right */}
-      {!isEmbeddable && (
-        <Button
-          variant="ghost"
-          size="icon"
-          className="absolute top-4 right-4 text-white bg-black/30 hover:bg-black/50 rounded-full z-10"
-          onClick={toggleMute}
-        >
-          {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
-        </Button>
-      )}
 
       {/* Video Info - Bottom */}
       <div className="absolute bottom-4 left-4 right-20 z-10">
@@ -279,25 +298,90 @@ const VideoHubPost = ({
       </div>
 
       {/* Action Buttons - Right Side */}
-      <div className="absolute right-4 bottom-24 flex flex-col gap-4 z-10">
-        <Button
-          variant="ghost"
-          size="icon"
-          className={`rounded-full bg-black/30 hover:bg-black/50 ${isLiked ? 'text-red-500' : 'text-white'}`}
+      <div className="absolute top-1/3 md:top-auto md:bottom-24 right-4 flex flex-col items-center gap-6 z-10">
+        <button
           onClick={handleLike}
+          className="flex flex-col items-center gap-1 transition-transform active:scale-90"
         >
-          <Heart className={`w-6 h-6 ${isLiked ? 'fill-current' : ''}`} />
-        </Button>
-        <span className="text-white text-xs text-center -mt-2">{likeCount}</span>
+          <WhistleIcon className="w-8 h-8 text-white" filled={isLiked} />
+          <span className="text-white text-xs font-semibold">{likeCount}</span>
+        </button>
 
-        <Button
-          variant="ghost"
-          size="icon"
-          className="rounded-full bg-black/30 hover:bg-black/50 text-white"
+        {/* Comment Button with Sheet */}
+        <Sheet open={isCommentsOpen} onOpenChange={setIsCommentsOpen}>
+          <SheetTrigger asChild>
+            <button className="flex flex-col items-center gap-1 transition-transform active:scale-90">
+              <MessageCircle className="w-8 h-8 text-white" />
+              <span className="text-white text-xs font-semibold">{commentCount}</span>
+            </button>
+          </SheetTrigger>
+          <SheetContent side="bottom" className="h-[70vh] rounded-t-xl">
+            <SheetHeader className="border-b pb-3">
+              <SheetTitle className="text-center">{commentCount} Comments</SheetTitle>
+            </SheetHeader>
+            
+            <ScrollArea className="flex-1 h-[calc(70vh-140px)] py-4">
+              {commentList.length === 0 ? (
+                <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
+                  <MessageCircle className="w-12 h-12 mb-2 opacity-50" />
+                  <p>No comments yet</p>
+                  <p className="text-sm">Be the first to comment!</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {commentList.map((comment) => (
+                    <div key={comment.id} className="flex gap-3 px-1">
+                      <Avatar className="h-8 w-8 flex-shrink-0">
+                        <AvatarFallback>{comment.username[0]?.toUpperCase()}</AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2">
+                          <span className="font-semibold text-sm">{comment.username}</span>
+                          <span className="text-xs text-muted-foreground">{comment.timestamp}</span>
+                        </div>
+                        <p className="text-sm mt-0.5">{comment.text}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </ScrollArea>
+            
+            {/* Comment Input */}
+            <form onSubmit={handleAddComment} className="absolute bottom-0 left-0 right-0 p-4 border-t bg-background">
+              <div className="flex gap-2">
+                <Input
+                  value={newComment}
+                  onChange={(e) => setNewComment(e.target.value)}
+                  placeholder="Add a comment..."
+                  className="flex-1"
+                />
+                <Button type="submit" size="icon" disabled={!newComment.trim()}>
+                  <Send className="w-4 h-4" />
+                </Button>
+              </div>
+            </form>
+          </SheetContent>
+        </Sheet>
+
+        {/* Share Button */}
+        <button 
           onClick={handleShare}
+          className="flex flex-col items-center gap-1 transition-transform active:scale-90"
         >
-          <Share2 className="w-6 h-6" />
-        </Button>
+          <Share2 className="w-8 h-8 text-white" />
+        </button>
+
+        <button
+          onClick={toggleMute}
+          className="flex flex-col items-center gap-1 transition-transform active:scale-90 mt-4"
+        >
+          {isMuted ? (
+            <VolumeX className="w-8 h-8 text-white" />
+          ) : (
+            <Volume2 className="w-8 h-8 text-white" />
+          )}
+        </button>
 
         <div className="flex flex-col items-center">
           <Eye className="w-5 h-5 text-white/70" />
