@@ -22,7 +22,7 @@ const DesktopNav = () => {
     ] : []),
     { icon: User, label: "Profile", path: "/profile" },
     ...(isMember ? [
-      { icon: Users, label: "Matches", path: "/members" },
+      { icon: Users, label: "Connections", path: "/members" },
     ] : []),
     ...(isAdmin ? [
       { icon: Settings, label: "Admin", path: "/admin" },
