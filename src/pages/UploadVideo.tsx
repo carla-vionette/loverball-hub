@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import BottomNav from "@/components/BottomNav";
 import DesktopNav from "@/components/DesktopNav";
@@ -10,16 +10,21 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Progress } from '@/components/ui/progress';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Video, ArrowLeft, X, Plus, Link as LinkIcon } from 'lucide-react';
+import { Loader2, Video, ArrowLeft, X, Plus, Link as LinkIcon, Upload, FileVideo } from 'lucide-react';
 
 interface CreatorChannel {
   id: string;
   channel_name: string;
   slug: string;
 }
+
+const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100MB
+const ALLOWED_VIDEO_TYPES = ['video/mp4', 'video/quicktime', 'video/webm', 'video/x-msvideo', 'video/x-m4v'];
 
 const UploadVideo = () => {
   const [channels, setChannels] = useState<CreatorChannel[]>([]);
@@ -32,6 +37,11 @@ const UploadVideo = () => {
   const [tagInput, setTagInput] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [uploadMethod, setUploadMethod] = useState<'url' | 'file'>('url');
+  const [videoFile, setVideoFile] = useState<File | null>(null);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { user } = useAuth();
   const { toast } = useToast();
@@ -102,17 +112,102 @@ const UploadVideo = () => {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
 
-    if (!selectedChannelId || !title.trim() || !videoUrl.trim()) {
-      toast({ title: 'Required fields missing', description: 'Please fill in channel, title, and video URL', variant: 'destructive' });
+    // Validate file type
+    if (!ALLOWED_VIDEO_TYPES.includes(file.type)) {
+      toast({ 
+        title: 'Invalid file type', 
+        description: 'Please select a valid video file (MP4, MOV, WebM, AVI, M4V)',
+        variant: 'destructive'
+      });
       return;
     }
 
-    if (!isValidUrl(videoUrl)) {
-      toast({ title: 'Invalid URL', description: 'Please enter a valid video URL', variant: 'destructive' });
+    // Validate file size
+    if (file.size > MAX_FILE_SIZE) {
+      toast({ 
+        title: 'File too large', 
+        description: 'Please select a video under 100MB',
+        variant: 'destructive'
+      });
       return;
+    }
+
+    setVideoFile(file);
+    // Auto-fill title from filename if empty
+    if (!title) {
+      const nameWithoutExt = file.name.replace(/\.[^/.]+$/, '');
+      setTitle(nameWithoutExt);
+    }
+  };
+
+  const uploadVideoFile = async (): Promise<string | null> => {
+    if (!videoFile || !selectedChannelId) return null;
+
+    setUploading(true);
+    setUploadProgress(0);
+
+    try {
+      const fileExt = videoFile.name.split('.').pop();
+      const fileName = `${selectedChannelId}/${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+
+      // Simulate progress since Supabase doesn't provide real progress
+      const progressInterval = setInterval(() => {
+        setUploadProgress(prev => Math.min(prev + 10, 90));
+      }, 500);
+
+      const { data, error } = await supabase.storage
+        .from('videos')
+        .upload(fileName, videoFile, {
+          cacheControl: '3600',
+          upsert: false
+        });
+
+      clearInterval(progressInterval);
+      setUploadProgress(100);
+
+      if (error) throw error;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('videos')
+        .getPublicUrl(fileName);
+
+      return publicUrl;
+    } catch (error: any) {
+      console.error('Upload error:', error);
+      toast({ title: 'Upload failed', description: error.message, variant: 'destructive' });
+      return null;
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!selectedChannelId || !title.trim()) {
+      toast({ title: 'Required fields missing', description: 'Please fill in channel and title', variant: 'destructive' });
+      return;
+    }
+
+    // Validate based on upload method
+    if (uploadMethod === 'url') {
+      if (!videoUrl.trim()) {
+        toast({ title: 'Video URL required', description: 'Please enter a video URL', variant: 'destructive' });
+        return;
+      }
+      if (!isValidUrl(videoUrl)) {
+        toast({ title: 'Invalid URL', description: 'Please enter a valid video URL', variant: 'destructive' });
+        return;
+      }
+    } else {
+      if (!videoFile) {
+        toast({ title: 'Video file required', description: 'Please select a video file to upload', variant: 'destructive' });
+        return;
+      }
     }
 
     if (thumbnailUrl && !isValidUrl(thumbnailUrl)) {
@@ -122,13 +217,25 @@ const UploadVideo = () => {
 
     setSubmitting(true);
     try {
+      let finalVideoUrl = videoUrl;
+
+      // Upload file if using file upload method
+      if (uploadMethod === 'file' && videoFile) {
+        const uploadedUrl = await uploadVideoFile();
+        if (!uploadedUrl) {
+          setSubmitting(false);
+          return;
+        }
+        finalVideoUrl = uploadedUrl;
+      }
+
       const { data, error } = await supabase
         .from('videos')
         .insert({
           channel_id: selectedChannelId,
           title: title.trim(),
           description: description.trim() || null,
-          video_url: videoUrl.trim(),
+          video_url: finalVideoUrl,
           thumbnail_url: thumbnailUrl.trim() || null,
           tags,
           is_published: true,
@@ -151,6 +258,13 @@ const UploadVideo = () => {
     }
   };
 
+  const formatFileSize = (bytes: number) => {
+    if (bytes < 1024 * 1024) {
+      return `${(bytes / 1024).toFixed(1)} KB`;
+    }
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -171,7 +285,7 @@ const UploadVideo = () => {
           <Button variant="ghost" size="sm" asChild className="mb-4">
             <Link to="/hub">
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Video Hub
+              Back to Stories Hub
             </Link>
           </Button>
 
@@ -184,7 +298,7 @@ const UploadVideo = () => {
                 <div>
                   <CardTitle>Upload Video</CardTitle>
                   <CardDescription>
-                    Share a video from YouTube, TikTok, Vimeo, or any video URL
+                    Share a video file or link from YouTube, TikTok, Vimeo
                   </CardDescription>
                 </div>
               </div>
@@ -210,23 +324,90 @@ const UploadVideo = () => {
                   </div>
                 )}
 
-                {/* Video URL */}
-                <div className="space-y-2">
-                  <Label htmlFor="videoUrl">Video URL *</Label>
-                  <div className="relative">
-                    <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                    <Input
-                      id="videoUrl"
-                      placeholder="https://youtube.com/watch?v=... or https://tiktok.com/..."
-                      value={videoUrl}
-                      onChange={(e) => setVideoUrl(e.target.value)}
-                      className="pl-10"
+                {/* Video Source Tabs */}
+                <Tabs value={uploadMethod} onValueChange={(v) => setUploadMethod(v as 'url' | 'file')}>
+                  <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="url" className="gap-2">
+                      <LinkIcon className="w-4 h-4" />
+                      Video URL
+                    </TabsTrigger>
+                    <TabsTrigger value="file" className="gap-2">
+                      <Upload className="w-4 h-4" />
+                      Upload File
+                    </TabsTrigger>
+                  </TabsList>
+
+                  <TabsContent value="url" className="space-y-2 mt-4">
+                    <Label htmlFor="videoUrl">Video URL *</Label>
+                    <div className="relative">
+                      <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                      <Input
+                        id="videoUrl"
+                        placeholder="https://youtube.com/watch?v=... or https://tiktok.com/..."
+                        value={videoUrl}
+                        onChange={(e) => setVideoUrl(e.target.value)}
+                        className="pl-10"
+                      />
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      Paste a link to YouTube, TikTok, Vimeo, or a direct video file URL
+                    </p>
+                  </TabsContent>
+
+                  <TabsContent value="file" className="space-y-4 mt-4">
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="video/mp4,video/quicktime,video/webm,video/x-msvideo,video/x-m4v"
+                      onChange={handleFileSelect}
+                      className="hidden"
                     />
-                  </div>
-                  <p className="text-xs text-muted-foreground">
-                    Paste a link to YouTube, TikTok, Vimeo, or a direct video file URL
-                  </p>
-                </div>
+                    
+                    {!videoFile ? (
+                      <div
+                        onClick={() => fileInputRef.current?.click()}
+                        className="border-2 border-dashed border-border rounded-lg p-8 text-center cursor-pointer hover:border-primary/50 transition-colors"
+                      >
+                        <FileVideo className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
+                        <p className="font-medium mb-1">Click to select a video</p>
+                        <p className="text-xs text-muted-foreground">
+                          MP4, MOV, WebM, AVI, M4V • Max 100MB
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="bg-muted/50 rounded-lg p-4">
+                        <div className="flex items-center gap-3">
+                          <FileVideo className="w-10 h-10 text-primary" />
+                          <div className="flex-1 min-w-0">
+                            <p className="font-medium truncate">{videoFile.name}</p>
+                            <p className="text-xs text-muted-foreground">
+                              {formatFileSize(videoFile.size)}
+                            </p>
+                          </div>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => {
+                              setVideoFile(null);
+                              if (fileInputRef.current) fileInputRef.current.value = '';
+                            }}
+                          >
+                            <X className="w-4 h-4" />
+                          </Button>
+                        </div>
+                        {uploading && (
+                          <div className="mt-3">
+                            <Progress value={uploadProgress} className="h-2" />
+                            <p className="text-xs text-muted-foreground mt-1">
+                              Uploading... {uploadProgress}%
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </TabsContent>
+                </Tabs>
 
                 {/* Title */}
                 <div className="space-y-2">
@@ -306,11 +487,11 @@ const UploadVideo = () => {
                   )}
                 </div>
 
-                <Button type="submit" className="w-full" disabled={submitting}>
-                  {submitting ? (
+                <Button type="submit" className="w-full" disabled={submitting || uploading}>
+                  {submitting || uploading ? (
                     <>
                       <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      Publishing...
+                      {uploading ? 'Uploading...' : 'Publishing...'}
                     </>
                   ) : (
                     'Publish Video'
