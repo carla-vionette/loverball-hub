@@ -228,6 +228,10 @@ const VideoPost = ({
       onClick={handleDoubleTap}
       onTouchEnd={handleDoubleTap}
     >
+      {/* Side gradient overlays for polished look on desktop */}
+      <div className="hidden md:block absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-background via-background/80 to-transparent pointer-events-none z-[1]" />
+      <div className="hidden md:block absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-background via-background/80 to-transparent pointer-events-none z-[1]" />
+      
       <video
         ref={videoRef}
         src={videoUrl}
