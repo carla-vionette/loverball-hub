@@ -219,7 +219,7 @@ const VideoHubPost = ({
   return (
     <div
       ref={containerRef}
-      className="relative w-full aspect-[9/16] md:aspect-video max-h-[80vh] bg-background rounded-lg overflow-hidden"
+      className="relative w-full h-[calc(100dvh-88px)] md:h-[calc(100dvh-40px)] bg-background snap-start snap-always"
     >
       {/* Side gradient overlays for polished look on desktop */}
       <div className="hidden md:block absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-background via-background/60 to-transparent pointer-events-none z-[1]" />
