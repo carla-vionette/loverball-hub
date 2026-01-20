@@ -16,6 +16,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, Video, ArrowLeft, X, Plus, Link as LinkIcon, Upload, FileVideo } from 'lucide-react';
+import { extractThumbnailFromUrl } from '@/lib/videoUtils';
 
 interface CreatorChannel {
   id: string;
@@ -109,6 +110,19 @@ const UploadVideo = () => {
       return true;
     } catch {
       return false;
+    }
+  };
+
+  // Auto-extract thumbnail when video URL changes
+  const handleVideoUrlChange = (url: string) => {
+    setVideoUrl(url);
+    
+    // Auto-fill thumbnail if empty and we can extract one
+    if (!thumbnailUrl && url) {
+      const extracted = extractThumbnailFromUrl(url);
+      if (extracted) {
+        setThumbnailUrl(extracted);
+      }
     }
   };
 
@@ -345,7 +359,7 @@ const UploadVideo = () => {
                         id="videoUrl"
                         placeholder="https://youtube.com/watch?v=... or https://tiktok.com/..."
                         value={videoUrl}
-                        onChange={(e) => setVideoUrl(e.target.value)}
+                        onChange={(e) => handleVideoUrlChange(e.target.value)}
                         className="pl-10"
                       />
                     </div>
