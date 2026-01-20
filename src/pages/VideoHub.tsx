@@ -185,7 +185,7 @@ const VideoHub = () => {
                           <Link to={`/channel/${channel.slug}`}>View</Link>
                         </Button>
                         <Button asChild size="sm">
-                          <Link to={`/hub/upload?channel=${channel.id}`}>
+                          <Link to={`/upload-video?channel=${channel.id}`}>
                             <Upload className="w-4 h-4 mr-1" />
                             Upload
                           </Link>
