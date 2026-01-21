@@ -51,20 +51,24 @@ const EventCard = ({ event, onRSVP, onCancelRSVP, rsvpStatus, isMember }: EventC
 
   const handleShare = async (e: React.MouseEvent) => {
     e.stopPropagation();
-    const shareUrl = `${window.location.origin}/event/${event.id}`;
+    // Use edge function URL for rich link previews on iMessage, WhatsApp, Teams, etc.
+    const shareUrl = `https://nfjavjfxgxrpvieinpdp.supabase.co/functions/v1/event-og-meta?id=${event.id}`;
+    const eventDate = format(new Date(event.event_date), 'EEE, MMM d');
+    const eventTime = event.event_time ? formatTime(event.event_time) : '';
+    const formattedText = `${event.title} - ${eventDate}${eventTime ? ` @ ${eventTime}` : ''}\n${shareUrl}`;
     
     if (navigator.share) {
       try {
         await navigator.share({
           title: event.title,
-          text: `Check out this event on Loverball: ${event.title}`,
+          text: formattedText,
           url: shareUrl,
         });
       } catch (error) {
-        copyToClipboard(shareUrl);
+        copyToClipboard(formattedText);
       }
     } else {
-      copyToClipboard(shareUrl);
+      copyToClipboard(formattedText);
     }
   };
 
