@@ -329,8 +329,10 @@ const EventDetail = () => {
     }
   };
 
+  // Use edge function URL for sharing - this enables rich link previews on iMessage, WhatsApp, etc.
+  // The edge function returns HTML with proper OG meta tags that crawlers can parse
   const getShareUrl = () => {
-    return `https://loverball-hub.lovable.app/event/${event?.id}`;
+    return `https://nfjavjfxgxrpvieinpdp.supabase.co/functions/v1/event-og-meta?id=${event?.id}`;
   };
 
   const getFormattedShareText = () => {
