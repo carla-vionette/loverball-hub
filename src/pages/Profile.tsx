@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { MapPin, Edit, Sparkles, LogOut, Calendar, Clock, Users } from "lucide-react";
+import { MapPin, Edit, Sparkles, LogOut, Calendar, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -237,23 +237,6 @@ const Profile = () => {
                     <p className="text-sm">{profile.bio}</p>
                   </div>
                 )}
-              </div>
-              
-              {/* Connections Button */}
-              <div 
-                className="mt-4 p-4 border rounded-xl cursor-pointer hover:border-primary hover:bg-muted/50 transition-colors flex items-center justify-between"
-                onClick={() => navigate("/members")}
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                    <Users className="w-5 h-5 text-primary" />
-                  </div>
-                  <div>
-                    <p className="font-medium">Connections</p>
-                    <p className="text-sm text-muted-foreground">View your matches</p>
-                  </div>
-                </div>
-                <span className="text-muted-foreground">→</span>
               </div>
             </CardContent>
           </Card>

@@ -8,7 +8,7 @@ import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Onboarding from "./pages/Onboarding";
 import Ticker from "./pages/Ticker";
-import ForYou from "./pages/ForYou";
+import Following from "./pages/Following";
 import Network from "./pages/Network";
 import Community from "./pages/Community";
 import Profile from "./pages/Profile";
@@ -26,18 +26,8 @@ import MessagesPage from "./pages/MessagesPage";
 import Admin from "./pages/Admin";
 import AdminEventEditor from "./pages/AdminEventEditor";
 import AdminAttendeeManager from "./pages/AdminAttendeeManager";
-import AdminCreators from "./pages/AdminCreators";
 import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
-import Video from "./pages/Video";
-import VideoHub from "./pages/VideoHub";
-import ChannelDetail from "./pages/ChannelDetail";
-import ChannelsList from "./pages/ChannelsList";
-import ApplyCreator from "./pages/ApplyCreator";
-import UploadVideo from "./pages/UploadVideo";
-import HubVideoDetail from "./pages/HubVideoDetail";
-import EditChannel from "./pages/EditChannel";
-import EditVideo from "./pages/EditVideo";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 const queryClient = new QueryClient();
@@ -51,20 +41,10 @@ const App = () => (
         <BrowserRouter>
         <Routes>
             <Route path="/" element={<Index />} />
-            <Route path="/video/:id" element={<Video />} />
-            <Route path="/hub" element={<VideoHub />} />
-            <Route path="/hub/video/:id" element={<HubVideoDetail />} />
-            <Route path="/channel/:slug" element={<ChannelDetail />} />
-            <Route path="/channels" element={<ChannelsList />} />
-            <Route path="/apply-creator" element={<ProtectedRoute><ApplyCreator /></ProtectedRoute>} />
-            <Route path="/upload-video" element={<ProtectedRoute><UploadVideo /></ProtectedRoute>} />
-            <Route path="/channel/:slug/edit" element={<ProtectedRoute><EditChannel /></ProtectedRoute>} />
-            <Route path="/video/:id/edit" element={<ProtectedRoute><EditVideo /></ProtectedRoute>} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/ticker" element={<ProtectedRoute><Ticker /></ProtectedRoute>} />
             <Route path="/onboarding" element={<ProtectedRoute><Onboarding /></ProtectedRoute>} />
-            <Route path="/foryou" element={<ProtectedRoute><ForYou /></ProtectedRoute>} />
-            <Route path="/following" element={<Navigate to="/foryou" replace />} />
+            <Route path="/following" element={<ProtectedRoute><Following /></ProtectedRoute>} />
             <Route path="/network" element={<ProtectedRoute><Network /></ProtectedRoute>} />
             <Route path="/gather" element={<Navigate to="/events" replace />} />
             <Route path="/events" element={<ProtectedRoute><Events /></ProtectedRoute>} />
@@ -82,7 +62,6 @@ const App = () => (
             <Route path="/admin" element={<ProtectedRoute requireAdmin><Admin /></ProtectedRoute>} />
             <Route path="/admin/events/:id/edit" element={<ProtectedRoute requireAdmin><AdminEventEditor /></ProtectedRoute>} />
             <Route path="/admin/events/:id/attendees" element={<ProtectedRoute requireAdmin><AdminAttendeeManager /></ProtectedRoute>} />
-            <Route path="/admin/creators" element={<ProtectedRoute requireAdmin><AdminCreators /></ProtectedRoute>} />
             <Route path="/terms" element={<Terms />} />
             <Route path="/privacy" element={<Privacy />} />
             <Route path="*" element={<NotFound />} />

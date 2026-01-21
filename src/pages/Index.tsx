@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -37,7 +37,10 @@ const Index = () => {
 
   // Redirect authenticated users to For You page
   if (!authLoading && isAuthenticated) {
-    return <Navigate to="/foryou" replace />;
+    navigate("/following", {
+      replace: true
+    });
+    return null;
   }
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -56,7 +59,7 @@ const Index = () => {
           data: profile
         } = await supabase.from('profiles').select('*').eq('id', data.user.id).maybeSingle();
         if (profile) {
-          navigate("/foryou");
+          navigate("/following");
         } else {
           navigate("/onboarding");
         }
@@ -200,7 +203,7 @@ const Index = () => {
               <button onClick={() => isAuthenticated ? navigate("/shop") : scrollToMemberAccess()} className="px-5 py-2 text-sm font-medium text-foreground/70 hover:text-foreground hover:bg-secondary rounded-full transition-all bg-transparent border-none cursor-pointer">
                 Shop
               </button>
-              {isAuthenticated ? <Button onClick={() => navigate("/foryou")} className="rounded-full bg-primary hover:bg-primary/90 px-6">
+              {isAuthenticated ? <Button onClick={() => navigate("/following")} className="rounded-full bg-primary hover:bg-primary/90 px-6">
                   Enter
                 </Button> : <Button onClick={scrollToMemberAccess} className="rounded-full bg-primary hover:bg-primary/90 px-6">
                   <Lock className="h-4 w-4 mr-2" />
