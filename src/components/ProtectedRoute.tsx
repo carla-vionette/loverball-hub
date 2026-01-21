@@ -19,7 +19,7 @@ const ProtectedRoute = ({
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-black">
+      <div className="min-h-screen flex items-center justify-center bg-background">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
     );
@@ -30,7 +30,7 @@ const ProtectedRoute = ({
   }
 
   if (requireAdmin && !isAdmin) {
-    return <Navigate to="/following" replace />;
+    return <Navigate to="/foryou" replace />;
   }
 
   if (requireMember && !isMember) {
