@@ -33,15 +33,7 @@ const Auth = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
-  const redirectTo = (() => {
-    const raw = searchParams.get('redirect');
-    if (!raw) return '/following';
-    try {
-      return decodeURIComponent(raw);
-    } catch {
-      return raw;
-    }
-  })();
+  const redirectTo = searchParams.get('redirect') || '/following';
 
   // Check if user came from a password reset link or signup link
   useEffect(() => {

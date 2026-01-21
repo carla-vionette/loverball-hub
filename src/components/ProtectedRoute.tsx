@@ -19,20 +19,18 @@ const ProtectedRoute = ({
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
+      <div className="min-h-screen flex items-center justify-center bg-black">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
     );
   }
 
   if (!user) {
-    // Send unauthenticated users to the auth page and bring them back after sign-in.
-    const redirect = encodeURIComponent(`${location.pathname}${location.search}`);
-    return <Navigate to={`/auth?redirect=${redirect}`} replace />;
+    return <Navigate to="/" state={{ from: location }} replace />;
   }
 
   if (requireAdmin && !isAdmin) {
-    return <Navigate to="/foryou" replace />;
+    return <Navigate to="/following" replace />;
   }
 
   if (requireMember && !isMember) {

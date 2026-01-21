@@ -17,7 +17,6 @@ interface Comment {
 }
 
 interface VideoPostProps {
-  id: number;
   videoUrl: string;
   username: string;
   userAvatar?: string;
@@ -35,7 +34,6 @@ interface DoubleTapHeart {
 }
 
 const VideoPost = ({
-  id,
   videoUrl,
   username,
   userAvatar,
@@ -180,11 +178,10 @@ const VideoPost = ({
   }, [liked]);
 
   const handleShare = async () => {
-    const videoUrl = `${window.location.origin}/video/${id}`;
     const shareData = {
       title: `Video by ${username}`,
       text: caption,
-      url: videoUrl,
+      url: window.location.href,
     };
 
     try {
@@ -193,13 +190,13 @@ const VideoPost = ({
         setShareCount(prev => prev + 1);
         toast.success("Thanks for sharing!");
       } else {
-        await navigator.clipboard.writeText(videoUrl);
+        await navigator.clipboard.writeText(window.location.href);
         setShareCount(prev => prev + 1);
         toast.success("Link copied to clipboard!");
       }
     } catch (error) {
       if ((error as Error).name !== 'AbortError') {
-        await navigator.clipboard.writeText(videoUrl);
+        await navigator.clipboard.writeText(window.location.href);
         toast.success("Link copied to clipboard!");
       }
     }
@@ -224,14 +221,10 @@ const VideoPost = ({
 
   return (
     <div 
-      className="relative h-[100dvh] w-full snap-start snap-always bg-background flex items-center justify-center"
+      className="relative h-[100dvh] w-full snap-start snap-always bg-black flex items-center justify-center"
       onClick={handleDoubleTap}
       onTouchEnd={handleDoubleTap}
     >
-      {/* Side gradient overlays for polished look on desktop */}
-      <div className="hidden md:block absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-background via-background/80 to-transparent pointer-events-none z-[1]" />
-      <div className="hidden md:block absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-background via-background/80 to-transparent pointer-events-none z-[1]" />
-      
       <video
         ref={videoRef}
         src={videoUrl}
@@ -270,7 +263,7 @@ const VideoPost = ({
       </div>
 
       {/* Action Buttons */}
-      <div className="absolute top-1/3 md:top-6 right-4 flex flex-col items-center gap-6 z-10">
+      <div className="absolute top-32 md:top-6 right-4 flex flex-col items-center gap-6 z-10">
         <button
           onClick={handleLike}
           className="flex flex-col items-center gap-1 transition-transform active:scale-90"
