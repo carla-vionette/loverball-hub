@@ -12,13 +12,26 @@ function escapeHtml(text: string): string {
   return text.replace(/[&<>"']/g, (m) => map[m]);
 }
 
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+};
+
 Deno.serve(async (req: Request) => {
+  // Handle CORS preflight
+  if (req.method === 'OPTIONS') {
+    return new Response(null, { headers: corsHeaders });
+  }
+
   try {
     const url = new URL(req.url);
     const eventId = url.searchParams.get('id');
 
     if (!eventId) {
-      return new Response('Missing event ID', { status: 400 });
+      return new Response('Missing event ID', { 
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'text/plain' }
+      });
     }
 
     console.log(`Fetching event: ${eventId}`);
@@ -37,7 +50,10 @@ Deno.serve(async (req: Request) => {
 
     if (error || !event) {
       console.error('Event not found:', error);
-      return new Response('Event not found', { status: 404 });
+      return new Response('Event not found', { 
+        status: 404,
+        headers: { ...corsHeaders, 'Content-Type': 'text/plain' }
+      });
     }
 
     console.log(`Event found: ${event.title}`);
@@ -150,17 +166,25 @@ Deno.serve(async (req: Request) => {
 </body>
 </html>`;
 
-    return new Response(html, {
+    // Create response with explicit HTML content type
+    const response = new Response(html, {
       status: 200,
-      headers: {
+      headers: new Headers({
+        ...corsHeaders,
         'Content-Type': 'text/html; charset=utf-8',
-        'Cache-Control': 'public, max-age=300',
-      },
+        'Cache-Control': 'public, max-age=300, s-maxage=300',
+        'X-Content-Type-Options': 'nosniff',
+      }),
     });
+
+    return response;
 
   } catch (error: unknown) {
     console.error('Error in event-og-meta function:', error);
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    return new Response(`Server error: ${errorMessage}`, { status: 500 });
+    return new Response(`Server error: ${errorMessage}`, { 
+      status: 500,
+      headers: { ...corsHeaders, 'Content-Type': 'text/plain' }
+    });
   }
 });
