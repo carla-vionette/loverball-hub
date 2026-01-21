@@ -8,7 +8,7 @@ import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Onboarding from "./pages/Onboarding";
 import Ticker from "./pages/Ticker";
-import Following from "./pages/Following";
+import ForYou from "./pages/ForYou";
 import Network from "./pages/Network";
 import Community from "./pages/Community";
 import Profile from "./pages/Profile";
@@ -63,7 +63,8 @@ const App = () => (
             <Route path="/auth" element={<Auth />} />
             <Route path="/ticker" element={<ProtectedRoute><Ticker /></ProtectedRoute>} />
             <Route path="/onboarding" element={<ProtectedRoute><Onboarding /></ProtectedRoute>} />
-            <Route path="/following" element={<ProtectedRoute><Following /></ProtectedRoute>} />
+            <Route path="/foryou" element={<ProtectedRoute><ForYou /></ProtectedRoute>} />
+            <Route path="/following" element={<Navigate to="/foryou" replace />} />
             <Route path="/network" element={<ProtectedRoute><Network /></ProtectedRoute>} />
             <Route path="/gather" element={<Navigate to="/events" replace />} />
             <Route path="/events" element={<ProtectedRoute><Events /></ProtectedRoute>} />
