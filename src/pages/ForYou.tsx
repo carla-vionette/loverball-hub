@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import BottomNav from "@/components/BottomNav";
 import DesktopNav from "@/components/DesktopNav";
 import MobileHeader from "@/components/MobileHeader";
@@ -6,7 +6,6 @@ import VideoPost from "@/components/VideoPost";
 import VideoHubPost from "@/components/VideoHubPost";
 import LASportsTicker from "@/components/LASportsTicker";
 import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from '@/hooks/useAuth';
 import { Loader2 } from 'lucide-react';
 import christineVideo from "@/assets/christine-video.mov";
 import colorCoverageVideo from "@/assets/color-coverage-video.mp4";
@@ -33,7 +32,7 @@ interface StoryHubVideo {
 const ForYou = () => {
   const [storyHubVideos, setStoryHubVideos] = useState<StoryHubVideo[]>([]);
   const [loading, setLoading] = useState(true);
-  const { user } = useAuth();
+  const mountedRef = useRef(true);
 
   // Static videos for the feed
   const staticVideos = [
@@ -90,7 +89,21 @@ const ForYou = () => {
   ];
 
   useEffect(() => {
+    mountedRef.current = true;
+
+    // Watchdog: if the fetch chain hangs (e.g. a network request never resolves),
+    // don't keep the user stuck on a spinner forever.
+    const watchdog = window.setTimeout(() => {
+      if (mountedRef.current) setLoading(false);
+    }, 8_000);
+
     fetchStoryHubVideos();
+
+    return () => {
+      mountedRef.current = false;
+      window.clearTimeout(watchdog);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchStoryHubVideos = async () => {
@@ -155,11 +168,11 @@ const ForYou = () => {
         })
       );
 
-      setStoryHubVideos(videosWithCounts);
+       if (mountedRef.current) setStoryHubVideos(videosWithCounts);
     } catch (error) {
       console.error('Error fetching Story Hub videos:', error);
     } finally {
-      setLoading(false);
+      if (mountedRef.current) setLoading(false);
     }
   };
 
