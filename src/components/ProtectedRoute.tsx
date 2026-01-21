@@ -26,7 +26,9 @@ const ProtectedRoute = ({
   }
 
   if (!user) {
-    return <Navigate to="/" state={{ from: location }} replace />;
+    // Send unauthenticated users to the auth page and bring them back after sign-in.
+    const redirect = encodeURIComponent(`${location.pathname}${location.search}`);
+    return <Navigate to={`/auth?redirect=${redirect}`} replace />;
   }
 
   if (requireAdmin && !isAdmin) {
