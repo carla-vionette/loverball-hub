@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -37,10 +37,7 @@ const Index = () => {
 
   // Redirect authenticated users to For You page
   if (!authLoading && isAuthenticated) {
-    navigate("/foryou", {
-      replace: true
-    });
-    return null;
+    return <Navigate to="/foryou" replace />;
   }
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
