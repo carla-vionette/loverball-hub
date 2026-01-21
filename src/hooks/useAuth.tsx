@@ -1,4 +1,4 @@
-import { useState, useEffect, createContext, useContext, ReactNode } from 'react';
+import { useState, useEffect, createContext, useContext, ReactNode, useRef } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -22,6 +22,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [role, setRole] = useState<AppRole | null>(null);
+  const initializedRef = useRef(false);
 
   const fetchUserRole = async (userId: string) => {
     const { data, error } = await supabase
@@ -45,39 +46,32 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   useEffect(() => {
-    // Set up auth state listener FIRST
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-        
-        // Defer role fetch to avoid deadlock
-        if (session?.user) {
-          setTimeout(() => {
-            fetchUserRole(session.user.id).then(setRole);
-          }, 0);
-        } else {
-          setRole(null);
-        }
-        
-        setLoading(false);
-      }
-    );
+    const applySession = async (s: Session | null) => {
+      setSession(s);
+      setUser(s?.user ?? null);
 
-    // THEN check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      
-      if (session?.user) {
-        fetchUserRole(session.user.id).then((r) => {
-          setRole(r);
-          setLoading(false);
-        });
+      if (s?.user) {
+        const userRole = await fetchUserRole(s.user.id);
+        setRole(userRole);
       } else {
-        setLoading(false);
+        setRole(null);
       }
+    };
+
+    // Listener can fire before the initial session is hydrated. We keep `loading=true`
+    // until the initial getSession() finishes to avoid ProtectedRoute redirects.
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, s) => {
+      applySession(s).finally(() => {
+        if (initializedRef.current) setLoading(false);
+      });
     });
+
+    (async () => {
+      const { data: { session: s } } = await supabase.auth.getSession();
+      await applySession(s);
+      initializedRef.current = true;
+      setLoading(false);
+    })();
 
     return () => subscription.unsubscribe();
   }, []);
