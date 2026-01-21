@@ -27,7 +27,7 @@ const BottomNav = () => {
   
   // Build nav items - member-only items show once auth is loaded
   const navItems = [
-    { icon: Home, label: "Home", path: "/following" },
+    { icon: Home, label: "Home", path: "/foryou" },
     { icon: Play, label: "Stories", path: "/hub" },
     { icon: CalendarDays, label: "Events", path: "/events" },
     ...(isMember ? [

@@ -30,7 +30,7 @@ interface StoryHubVideo {
   view_count: number;
 }
 
-const Following = () => {
+const ForYou = () => {
   const [storyHubVideos, setStoryHubVideos] = useState<StoryHubVideo[]>([]);
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
@@ -228,7 +228,7 @@ const Following = () => {
         {combinedFeed().length > 0 ? (
           combinedFeed()
         ) : (
-          <div className="h-screen flex items-center justify-center text-white">
+          <div className="h-screen flex items-center justify-center">
             <div className="text-center">
               <h2 className="text-2xl font-bold mb-2">No content yet</h2>
               <p className="text-muted-foreground">Follow creators to see their videos here</p>
@@ -240,4 +240,4 @@ const Following = () => {
   );
 };
 
-export default Following;
+export default ForYou;
