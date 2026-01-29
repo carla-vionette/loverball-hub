@@ -1,10 +1,16 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
-import { Calendar, Clock, MapPin, Users, Lock, Share2, X } from "lucide-react";
+import { Calendar, Clock, MapPin, Users, Lock, Share2, X, CalendarPlus } from "lucide-react";
 import { format } from "date-fns";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface EventCardProps {
   event: {
@@ -80,6 +86,82 @@ const EventCard = ({ event, onRSVP, onCancelRSVP, rsvpStatus, isMember }: EventC
     });
   };
 
+  const generateCalendarLinks = () => {
+    const eventDate = new Date(event.event_date);
+    let startDate = eventDate;
+    let endDate = new Date(eventDate);
+    
+    if (event.event_time) {
+      const [hours, minutes] = event.event_time.split(':');
+      startDate.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+      endDate = new Date(startDate);
+      endDate.setHours(endDate.getHours() + 2); // Default 2 hour event
+    } else {
+      startDate.setHours(12, 0, 0, 0);
+      endDate.setHours(14, 0, 0, 0);
+    }
+    
+    const formatForGoogle = (date: Date) => {
+      return date.toISOString().replace(/-|:|\.\d{3}/g, '');
+    };
+    
+    const formatForICS = (date: Date) => {
+      return date.toISOString().replace(/-|:|\.\d{3}/g, '').slice(0, -1);
+    };
+    
+    const title = encodeURIComponent(event.title);
+    const location = encodeURIComponent(`${event.venue_name || ''}${event.venue_name && event.city ? ', ' : ''}${event.city || ''}`);
+    const details = encodeURIComponent(event.description || '');
+    
+    // Google Calendar
+    const googleUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${formatForGoogle(startDate)}/${formatForGoogle(endDate)}&location=${location}&details=${details}`;
+    
+    // Apple Calendar (webcal format)
+    const appleUrl = `webcal://calendar.google.com/calendar/ical/${encodeURIComponent(event.id)}%40group.calendar.google.com/public/basic.ics`;
+    
+    // ICS file content
+    const icsContent = `BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Loverball//Event//EN
+BEGIN:VEVENT
+DTSTART:${formatForICS(startDate)}Z
+DTEND:${formatForICS(endDate)}Z
+SUMMARY:${event.title}
+DESCRIPTION:${event.description || ''}
+LOCATION:${event.venue_name || ''}${event.venue_name && event.city ? ', ' : ''}${event.city || ''}
+END:VEVENT
+END:VCALENDAR`;
+    
+    return { googleUrl, icsContent };
+  };
+
+  const handleAddToGoogleCalendar = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const { googleUrl } = generateCalendarLinks();
+    window.open(googleUrl, '_blank');
+  };
+
+  const handleAddToAppleCalendar = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    handleDownloadICS(e);
+  };
+
+  const handleDownloadICS = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const { icsContent } = generateCalendarLinks();
+    const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `${event.title.replace(/[^a-z0-9]/gi, '_')}.ics`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    toast({
+      title: "Calendar file downloaded!",
+      description: "Open the .ics file to add to your calendar.",
+    });
+  };
+
   const handleCardClick = () => {
     navigate(`/event/${event.id}`);
   };
@@ -121,6 +203,30 @@ const EventCard = ({ event, onRSVP, onCancelRSVP, rsvpStatus, isMember }: EventC
             </Badge>
           </div>
         )}
+        
+        {/* Calendar Button */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button
+              onClick={(e) => e.stopPropagation()}
+              className="absolute bottom-3 right-14 w-9 h-9 rounded-full bg-background/90 hover:bg-background flex items-center justify-center shadow-lg transition-all duration-200 hover:scale-105"
+              aria-label="Add to calendar"
+            >
+              <CalendarPlus className="w-4 h-4 text-foreground" />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-48 bg-background border-border z-50">
+            <DropdownMenuItem onClick={handleAddToGoogleCalendar} className="cursor-pointer">
+              Add to Google Calendar
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={handleAddToAppleCalendar} className="cursor-pointer">
+              Add to Apple Calendar
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={handleDownloadICS} className="cursor-pointer">
+              Download .ics file
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
         
         {/* Share Button */}
         <button
