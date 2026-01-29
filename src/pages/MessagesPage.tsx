@@ -255,41 +255,80 @@ const MessagesPage = () => {
             
             <ScrollArea className="flex-1">
               {matches.length > 0 ? (
-                matches.map((match) => (
-                  <button
-                    key={match.id}
-                    onClick={() => handleSelectMatch(match)}
-                    className={`w-full p-4 flex items-center gap-3 hover:bg-muted transition border-b border-border ${
-                      selectedMatch?.id === match.id ? 'bg-muted' : ''
-                    }`}
-                  >
-                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center overflow-hidden flex-shrink-0">
-                      {match.other_user.profile_photo_url ? (
-                        <img 
-                          src={match.other_user.profile_photo_url} 
-                          alt={match.other_user.name}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <span className="text-lg font-bold text-primary/50">
-                          {match.other_user.name.charAt(0).toUpperCase()}
-                        </span>
-                      )}
-                    </div>
-                    <div className="flex-1 text-left min-w-0">
-                      <p className="font-semibold truncate">{match.other_user.name}</p>
-                      {match.last_message ? (
-                        <p className="text-sm text-muted-foreground truncate">
-                          {match.last_message.content}
-                        </p>
-                      ) : (
-                        <p className="text-sm text-muted-foreground italic">
-                          New match! Say hello 👋
-                        </p>
-                      )}
-                    </div>
-                  </button>
-                ))
+                matches.map((match) => {
+                  // Determine if this conversation has unread messages
+                  // For now, we'll consider conversations without a last_message as "new/unread"
+                  const isUnread = !match.last_message;
+                  
+                  // Format relative timestamp
+                  const getRelativeTime = (dateString: string) => {
+                    const date = new Date(dateString);
+                    const now = new Date();
+                    const diffMs = now.getTime() - date.getTime();
+                    const diffMins = Math.floor(diffMs / 60000);
+                    const diffHours = Math.floor(diffMs / 3600000);
+                    const diffDays = Math.floor(diffMs / 86400000);
+                    
+                    if (diffMins < 1) return 'Now';
+                    if (diffMins < 60) return `${diffMins}m ago`;
+                    if (diffHours < 24) return `${diffHours}h ago`;
+                    if (diffDays === 1) return 'Yesterday';
+                    if (diffDays < 7) return `${diffDays}d ago`;
+                    return format(date, 'MMM d');
+                  };
+                  
+                  const timestamp = match.last_message?.created_at || match.created_at;
+                  
+                  return (
+                    <button
+                      key={match.id}
+                      onClick={() => handleSelectMatch(match)}
+                      className={`w-full p-4 flex items-center gap-3 hover:bg-muted transition border-b border-border ${
+                        selectedMatch?.id === match.id ? 'bg-muted' : ''
+                      } ${!isUnread ? 'opacity-80' : ''}`}
+                    >
+                      {/* Unread indicator */}
+                      <div className="w-2 flex-shrink-0">
+                        {isUnread && (
+                          <div className="w-2 h-2 rounded-full bg-primary" />
+                        )}
+                      </div>
+                      
+                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center overflow-hidden flex-shrink-0">
+                        {match.other_user.profile_photo_url ? (
+                          <img 
+                            src={match.other_user.profile_photo_url} 
+                            alt={match.other_user.name}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <span className="text-lg font-bold text-primary/50">
+                            {match.other_user.name.charAt(0).toUpperCase()}
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex-1 text-left min-w-0">
+                        <div className="flex items-center justify-between gap-2">
+                          <p className={`truncate ${isUnread ? 'font-bold' : 'font-semibold'}`}>
+                            {match.other_user.name}
+                          </p>
+                          <span className="text-xs text-muted-foreground flex-shrink-0">
+                            {getRelativeTime(timestamp)}
+                          </span>
+                        </div>
+                        {match.last_message ? (
+                          <p className={`text-sm truncate ${isUnread ? 'text-foreground font-medium' : 'text-muted-foreground'}`}>
+                            {match.last_message.content}
+                          </p>
+                        ) : (
+                          <p className="text-sm text-primary font-medium italic">
+                            New match! Say hello 👋
+                          </p>
+                        )}
+                      </div>
+                    </button>
+                  );
+                })
               ) : (
                 <div className="p-6 text-center">
                   <MessageCircle className="w-12 h-12 mx-auto text-muted-foreground mb-3" />

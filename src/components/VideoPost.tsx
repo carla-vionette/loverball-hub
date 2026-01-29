@@ -262,25 +262,25 @@ const VideoPost = ({
         <p className="text-sm line-clamp-3">{caption}</p>
       </div>
 
-      {/* Action Buttons */}
-      <div className="absolute top-32 md:top-6 right-4 flex flex-col items-center gap-6 z-10">
+      {/* Action Buttons - Larger touch targets (48x48px) with 20px spacing */}
+      <div className="absolute top-32 md:top-6 right-4 flex flex-col items-center gap-5 z-10">
         <button
           onClick={handleLike}
-          className="flex flex-col items-center gap-1 transition-transform active:scale-90"
+          className="flex flex-col items-center gap-1.5 transition-transform active:scale-90 w-12 h-12 justify-center"
         >
           <WhistleIcon
-            className="w-8 h-8 text-white"
+            className="w-10 h-10 text-white drop-shadow-lg"
             filled={liked}
           />
-          <span className="text-white text-xs font-semibold">{likeCount}</span>
+          <span className="text-white text-sm font-bold drop-shadow-md">{likeCount}</span>
         </button>
 
         {/* Comment Button with Sheet */}
         <Sheet open={isCommentsOpen} onOpenChange={setIsCommentsOpen}>
           <SheetTrigger asChild>
-            <button className="flex flex-col items-center gap-1 transition-transform active:scale-90">
-              <MessageCircle className="w-8 h-8 text-white" />
-              <span className="text-white text-xs font-semibold">{commentCount}</span>
+            <button className="flex flex-col items-center gap-1.5 transition-transform active:scale-90 w-12 h-12 justify-center">
+              <MessageCircle className="w-10 h-10 text-white drop-shadow-lg" />
+              <span className="text-white text-sm font-bold drop-shadow-md">{commentCount}</span>
             </button>
           </SheetTrigger>
           <SheetContent side="bottom" className="h-[70vh] rounded-t-xl">
@@ -336,20 +336,20 @@ const VideoPost = ({
         {/* Share Button */}
         <button 
           onClick={handleShare}
-          className="flex flex-col items-center gap-1 transition-transform active:scale-90"
+          className="flex flex-col items-center gap-1.5 transition-transform active:scale-90 w-12 h-12 justify-center"
         >
-          <Share2 className="w-8 h-8 text-white" />
-          <span className="text-white text-xs font-semibold">{shareCount}</span>
+          <Share2 className="w-10 h-10 text-white drop-shadow-lg" />
+          <span className="text-white text-sm font-bold drop-shadow-md">{shareCount}</span>
         </button>
 
         <button
           onClick={() => setMuted(!muted)}
-          className="flex flex-col items-center gap-1 transition-transform active:scale-90 mt-4"
+          className="flex flex-col items-center gap-1.5 transition-transform active:scale-90 mt-2 w-12 h-12 justify-center"
         >
           {muted ? (
-            <VolumeX className="w-8 h-8 text-white" />
+            <VolumeX className="w-10 h-10 text-white drop-shadow-lg" />
           ) : (
-            <Volume2 className="w-8 h-8 text-white" />
+            <Volume2 className="w-10 h-10 text-white drop-shadow-lg" />
           )}
         </button>
       </div>
