@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence, PanInfo } from "framer-motion";
-import { Heart, X, MessageCircle, Filter, Grid3X3, Layers, Users, ChevronDown, MapPin, Trophy, Sparkles } from "lucide-react";
+import { Heart, X, MessageCircle, Filter, Grid3X3, Layers, Users, ChevronDown, MapPin, Trophy, Sparkles, RotateCcw } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { fetchAllProfiles, fetchProfilesByIds } from "@/lib/profileApi";
@@ -50,6 +50,11 @@ const Network = () => {
   const [connectedIds, setConnectedIds] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
   const [showFilters, setShowFilters] = useState(false);
+  
+  // Undo state
+  const [lastSwipe, setLastSwipe] = useState<{ profileId: string; direction: "left" | "right" } | null>(null);
+  const [showUndo, setShowUndo] = useState(false);
+  const undoTimerRef = useRef<NodeJS.Timeout | null>(null);
   
   // Filters
   const [sportFilter, setSportFilter] = useState<string>("all");
@@ -167,6 +172,21 @@ const Network = () => {
     }
 
     setSwipedIds(prev => new Set([...prev, targetProfile.id]));
+    
+    // Show undo button
+    setLastSwipe({ profileId: targetProfile.id, direction });
+    setShowUndo(true);
+    
+    // Clear any existing timer
+    if (undoTimerRef.current) {
+      clearTimeout(undoTimerRef.current);
+    }
+    
+    // Hide undo after 3 seconds
+    undoTimerRef.current = setTimeout(() => {
+      setShowUndo(false);
+      setLastSwipe(null);
+    }, 3000);
 
     if (direction === "right") {
       // Check if it's a match
@@ -184,12 +204,51 @@ const Network = () => {
         // Add to connected IDs immediately to remove from swipe queue
         setConnectedIds(prev => new Set([...prev, targetProfile.id]));
         fetchMyConnections();
+        // Hide undo on match
+        setShowUndo(false);
+        setLastSwipe(null);
       } else {
         toast.success("Connection request sent! 💕");
       }
     }
 
     setCurrentIndex(prev => prev + 1);
+  };
+  
+  const handleUndo = async () => {
+    if (!user || !lastSwipe) return;
+    
+    // Delete the swipe from the database
+    const { error } = await supabase
+      .from("swipes")
+      .delete()
+      .eq("swiper_id", user.id)
+      .eq("target_user_id", lastSwipe.profileId);
+    
+    if (error) {
+      console.error("Error undoing swipe:", error);
+      toast.error("Failed to undo swipe");
+      return;
+    }
+    
+    // Remove from swiped IDs
+    setSwipedIds(prev => {
+      const newSet = new Set(prev);
+      newSet.delete(lastSwipe.profileId);
+      return newSet;
+    });
+    
+    // Go back to previous card
+    setCurrentIndex(prev => Math.max(0, prev - 1));
+    
+    // Hide undo
+    setShowUndo(false);
+    setLastSwipe(null);
+    if (undoTimerRef.current) {
+      clearTimeout(undoTimerRef.current);
+    }
+    
+    toast.success("Swipe undone!");
   };
 
   const handleDragEnd = (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
@@ -538,6 +597,23 @@ const Network = () => {
                   </motion.button>
                 </div>
               )}
+              
+              {/* Undo Button */}
+              <AnimatePresence>
+                {showUndo && (
+                  <motion.button
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    exit={{ y: 20, opacity: 0 }}
+                    transition={{ type: "spring", damping: 20 }}
+                    onClick={handleUndo}
+                    className="absolute bottom-24 left-1/2 -translate-x-1/2 flex items-center gap-2 px-4 py-2 bg-background/95 backdrop-blur-sm border border-border rounded-full shadow-lg hover:bg-muted transition-colors"
+                  >
+                    <RotateCcw className="w-4 h-4 text-primary" />
+                    <span className="text-sm font-medium">Undo</span>
+                  </motion.button>
+                )}
+              </AnimatePresence>
             </div>
           ) : (
             /* Grid Mode */
