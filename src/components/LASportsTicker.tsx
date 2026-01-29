@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import LATickerControls from "./LATickerControls";
+import { ChevronUp, ChevronDown } from "lucide-react";
 
 interface TickerData {
   items: string[];
@@ -140,6 +141,7 @@ const LASportsTicker = ({
   const [tickerData, setTickerData] = useState<TickerData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isCollapsed, setIsCollapsed] = useState(false);
   
   // Filter states
   const [category, setCategory] = useState<"college" | "pro" | "both">("both");
@@ -215,8 +217,24 @@ const LASportsTicker = ({
     );
   }
 
+  // Collapsed state - show minimal expand button
+  if (isCollapsed) {
+    return (
+      <div className={`${positionClasses}`}>
+        <button
+          onClick={() => setIsCollapsed(false)}
+          className="w-full bg-ticker/90 backdrop-blur-sm py-1.5 flex items-center justify-center gap-2 hover:bg-ticker transition-colors"
+          data-expanded="false"
+        >
+          <span className="text-xs text-ticker-foreground font-medium">Show Scores</span>
+          <ChevronDown className="w-4 h-4 text-ticker-foreground" />
+        </button>
+      </div>
+    );
+  }
+
   return (
-    <div className={`${positionClasses} shadow-lg`}>
+    <div className={`${positionClasses} shadow-lg`} data-expanded="true">
       {/* Controls */}
       <LATickerControls
         category={category}
@@ -230,8 +248,8 @@ const LASportsTicker = ({
       />
       
       {/* Ticker Bar */}
-      <div className="bg-ticker py-1.5 md:py-2 overflow-hidden">
-        <div className="ticker-wrapper">
+      <div className="bg-ticker py-1.5 md:py-2 overflow-hidden relative">
+        <div className="ticker-wrapper pr-10">
           <div 
             className="ticker-content"
             style={{ animationPlayState: isPaused ? 'paused' : 'running' }}
@@ -278,6 +296,15 @@ const LASportsTicker = ({
             })}
           </div>
         </div>
+        
+        {/* Collapse toggle button */}
+        <button
+          onClick={() => setIsCollapsed(true)}
+          className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 hover:bg-black/20 rounded-full transition-colors"
+          aria-label="Collapse ticker"
+        >
+          <ChevronUp className="w-4 h-4 text-ticker-foreground" />
+        </button>
       </div>
 
       {/* Last Updated */}
