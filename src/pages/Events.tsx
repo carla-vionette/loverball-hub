@@ -301,23 +301,30 @@ const Events = () => {
 
           {hasDbEvents ? (
             <>
-              {/* Sport Filters */}
-              <div className="mb-8 overflow-x-auto pb-2">
-                <div className="flex gap-2 min-w-max">
-                  {sportFilters.map((filter) => (
-                    <Badge
-                      key={filter}
-                      variant={selectedFilter === filter ? 'default' : 'outline'}
-                      className={`cursor-pointer px-5 py-2.5 text-sm rounded-full transition-all ${
-                        selectedFilter === filter 
-                          ? 'bg-primary text-primary-foreground' 
-                          : 'hover:bg-secondary/50'
-                      }`}
-                      onClick={() => setSelectedFilter(filter)}
-                    >
-                      {filter}
-                    </Badge>
-                  ))}
+              {/* Sport Filters - Horizontally Scrollable */}
+              <div className="mb-8 relative">
+                {/* Left fade gradient */}
+                <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none md:hidden" />
+                {/* Right fade gradient */}
+                <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none md:hidden" />
+                
+                <div className="overflow-x-auto scrollbar-hide -mx-4 px-4">
+                  <div className="flex gap-2 min-w-max py-1">
+                    {sportFilters.map((filter) => (
+                      <Badge
+                        key={filter}
+                        variant={selectedFilter === filter ? 'default' : 'outline'}
+                        className={`cursor-pointer px-5 py-2.5 text-sm rounded-full transition-all whitespace-nowrap ${
+                          selectedFilter === filter 
+                            ? 'bg-primary text-primary-foreground' 
+                            : 'hover:bg-secondary/50'
+                        }`}
+                        onClick={() => setSelectedFilter(filter)}
+                      >
+                        {filter}
+                      </Badge>
+                    ))}
+                  </div>
                 </div>
               </div>
 
