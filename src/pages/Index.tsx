@@ -340,7 +340,7 @@ const Index = () => {
             once: true
           }} className="space-y-12">
               <div className="bg-secondary/50 p-8 rounded-2xl">
-                <span className="text-6xl sm:text-7xl font-serif font-normal text-primary">75%</span>
+                <span className="text-6xl sm:text-7xl font-serif font-normal text-primary">72%</span>
                 <p className="text-foreground/60 text-base mt-4 leading-relaxed">
                   of women globally identify as <span className="text-primary font-medium">avid sports fans</span>
                 </p>
