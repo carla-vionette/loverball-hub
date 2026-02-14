@@ -9,6 +9,7 @@ import Auth from "./pages/Auth";
 import Onboarding from "./pages/Onboarding";
 import Ticker from "./pages/Ticker";
 import Following from "./pages/Following";
+import Horoscope from "./pages/Horoscope";
 import Network from "./pages/Network";
 import Community from "./pages/Community";
 import Profile from "./pages/Profile";
@@ -45,6 +46,7 @@ const App = () => (
             <Route path="/ticker" element={<ProtectedRoute><Ticker /></ProtectedRoute>} />
             <Route path="/onboarding" element={<ProtectedRoute><Onboarding /></ProtectedRoute>} />
             <Route path="/following" element={<ProtectedRoute><Following /></ProtectedRoute>} />
+            <Route path="/horoscope" element={<ProtectedRoute><Horoscope /></ProtectedRoute>} />
             <Route path="/network" element={<ProtectedRoute><Network /></ProtectedRoute>} />
             <Route path="/gather" element={<Navigate to="/events" replace />} />
             <Route path="/events" element={<ProtectedRoute><Events /></ProtectedRoute>} />
