@@ -43,6 +43,7 @@ import VideoChannel from "./pages/video/VideoChannel";
 import VideoUpload from "./pages/video/VideoUpload";
 import CreateChannel from "./pages/video/CreateChannel";
 import ChannelDashboard from "./pages/video/ChannelDashboard";
+import VideoWatch from "./pages/video/VideoWatch";
 
 const queryClient = new QueryClient();
 
@@ -89,6 +90,7 @@ const App = () => (
               
               <Route path="feed" element={<VideoFeed />} />
               <Route path="channel/:id" element={<VideoChannel />} />
+              <Route path="video/:id" element={<VideoWatch />} />
               <Route path="upload" element={<VideoUpload />} />
               <Route path="channel/create" element={<CreateChannel />} />
               <Route path="dashboard" element={<ChannelDashboard />} />
