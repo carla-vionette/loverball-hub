@@ -95,6 +95,39 @@ All colors MUST be HSL.
     --input: 0 0% 20%;
     --ring: 4 74% 55%;
   }
+
+  /* Video Streaming Dark Theme - scoped to .video-theme */
+  .video-theme {
+    --background: 0 0% 8%; /* #141414 */
+    --foreground: 0 0% 100%; /* white */
+
+    --card: 0 0% 10%; /* #1a1a1a */
+    --card-foreground: 0 0% 100%;
+
+    --popover: 0 0% 10%;
+    --popover-foreground: 0 0% 100%;
+
+    --primary: 4 90% 50%; /* #e50914 Netflix red */
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 0 0% 13%;
+    --secondary-foreground: 0 0% 70%; /* #b3b3b3 */
+
+    --muted: 0 0% 16%;
+    --muted-foreground: 0 0% 70%;
+
+    --accent: 4 90% 50%;
+    --accent-foreground: 0 0% 100%;
+
+    --border: 0 0% 18%;
+    --input: 0 0% 18%;
+    --ring: 4 90% 50%;
+
+    --destructive: 0 84% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --video-hover: 0 0% 17%; /* #2a2a2a */
+  }
 }
 
 @layer base {
