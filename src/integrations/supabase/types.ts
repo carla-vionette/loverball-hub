@@ -82,42 +82,84 @@ export type Database = {
       creator_channels: {
         Row: {
           avatar_url: string | null
+          banner_url: string | null
+          brand_colors: Json | null
           channel_name: string
+          channel_type: string
+          contact_email: string | null
+          content_language: string | null
           created_at: string
           description: string | null
+          follower_count: number
+          founded_year: number | null
           id: string
+          league: string | null
+          location: string | null
           owner_user_id: string
           slug: string
           social_links: Json | null
           sport_focus: string | null
           status: string
+          target_audience: string | null
+          total_views: number
           updated_at: string
+          upload_schedule: string | null
+          verified: boolean
+          website_url: string | null
         }
         Insert: {
           avatar_url?: string | null
+          banner_url?: string | null
+          brand_colors?: Json | null
           channel_name: string
+          channel_type?: string
+          contact_email?: string | null
+          content_language?: string | null
           created_at?: string
           description?: string | null
+          follower_count?: number
+          founded_year?: number | null
           id?: string
+          league?: string | null
+          location?: string | null
           owner_user_id: string
           slug: string
           social_links?: Json | null
           sport_focus?: string | null
           status?: string
+          target_audience?: string | null
+          total_views?: number
           updated_at?: string
+          upload_schedule?: string | null
+          verified?: boolean
+          website_url?: string | null
         }
         Update: {
           avatar_url?: string | null
+          banner_url?: string | null
+          brand_colors?: Json | null
           channel_name?: string
+          channel_type?: string
+          contact_email?: string | null
+          content_language?: string | null
           created_at?: string
           description?: string | null
+          follower_count?: number
+          founded_year?: number | null
           id?: string
+          league?: string | null
+          location?: string | null
           owner_user_id?: string
           slug?: string
           social_links?: Json | null
           sport_focus?: string | null
           status?: string
+          target_audience?: string | null
+          total_views?: number
           updated_at?: string
+          upload_schedule?: string | null
+          verified?: boolean
+          website_url?: string | null
         }
         Relationships: []
       }
