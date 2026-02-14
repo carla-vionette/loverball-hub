@@ -37,7 +37,7 @@ import VideoForYou from "./pages/video/VideoForYou";
 import VideoDiscover from "./pages/video/VideoDiscover";
 
 import VideoSearch from "./pages/video/VideoSearch";
-import VideoProfile from "./pages/video/VideoProfile";
+
 import VideoFeed from "./pages/video/VideoFeed";
 import VideoChannel from "./pages/video/VideoChannel";
 import VideoUpload from "./pages/video/VideoUpload";
@@ -86,7 +86,7 @@ const App = () => (
               <Route path="discover" element={<VideoDiscover />} />
               
               <Route path="search" element={<VideoSearch />} />
-              <Route path="profile" element={<VideoProfile />} />
+              
               <Route path="feed" element={<VideoFeed />} />
               <Route path="channel/:id" element={<VideoChannel />} />
               <Route path="upload" element={<VideoUpload />} />
