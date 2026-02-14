@@ -31,6 +31,14 @@ import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
 import ProtectedRoute from "./components/ProtectedRoute";
 
+// Video streaming pages
+import VideoLayout from "./components/video/VideoLayout";
+import VideoForYou from "./pages/video/VideoForYou";
+import VideoDiscover from "./pages/video/VideoDiscover";
+import VideoUpload from "./pages/video/VideoUpload";
+import VideoSearch from "./pages/video/VideoSearch";
+import VideoProfile from "./pages/video/VideoProfile";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -66,6 +74,16 @@ const App = () => (
             <Route path="/admin/events/:id/attendees" element={<ProtectedRoute requireAdmin><AdminAttendeeManager /></ProtectedRoute>} />
             <Route path="/terms" element={<Terms />} />
             <Route path="/privacy" element={<Privacy />} />
+
+            {/* Video Streaming Section */}
+            <Route path="/watch" element={<VideoLayout />}>
+              <Route index element={<VideoForYou />} />
+              <Route path="discover" element={<VideoDiscover />} />
+              <Route path="upload" element={<VideoUpload />} />
+              <Route path="search" element={<VideoSearch />} />
+              <Route path="profile" element={<VideoProfile />} />
+            </Route>
+
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
