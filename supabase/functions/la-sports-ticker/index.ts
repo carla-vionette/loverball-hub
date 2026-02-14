@@ -164,26 +164,38 @@ function formatPeriod(sport: string, period: number, clock: string): string {
   return clock;
 }
 
+// Fetch with timeout and retry
+async function fetchWithRetry(url: string, options: RequestInit = {}, retries = 3, timeoutMs = 5000): Promise<Response | null> {
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), timeoutMs);
+      const res = await fetch(url, { ...options, signal: controller.signal });
+      clearTimeout(timeout);
+      if (res.ok) return res;
+      console.warn(`Attempt ${attempt} for ${url}: status ${res.status}`);
+      await res.text();
+    } catch (err) {
+      console.warn(`Attempt ${attempt} for ${url}: ${err instanceof Error ? err.message : err}`);
+    }
+    if (attempt < retries) await new Promise(r => setTimeout(r, 800 * attempt));
+  }
+  return null;
+}
+
 async function fetchESPNData(endpoint: string): Promise<ESPNResponse | null> {
-  // Check cache first
   const cached = getCachedData(`espn:${endpoint}`);
   if (cached) return cached as ESPNResponse;
 
+  const res = await fetchWithRetry(endpoint, {
+    headers: { 'User-Agent': 'Mozilla/5.0 (compatible; SportsTickerBot/1.0)' },
+  });
+  if (!res) return null;
   try {
-    const response = await fetch(endpoint, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (compatible; SportsTickerBot/1.0)',
-      },
-    });
-    if (!response.ok) {
-      console.error(`ESPN API error for ${endpoint}: ${response.status}`);
-      return null;
-    }
-    const data = await response.json();
+    const data = await res.json();
     setCachedData(`espn:${endpoint}`, data);
     return data;
-  } catch (error) {
-    console.error(`Error fetching ${endpoint}:`, error);
+  } catch {
     return null;
   }
 }

@@ -156,7 +156,7 @@ const HEALTH_INSIGHTS: Record<string, string[]> = {
   pisces: ["Swimming and water activities are your medicine.", "Meditation reaches deeper levels today.", "Creative movement like dance heals the soul."],
 };
 
-function generateHoroscope(sign: string, day: string) {
+function generateLocalHoroscope(sign: string, day: string) {
   const signData = ZODIAC_DATA[sign.toLowerCase()];
   if (!signData) return null;
 
@@ -175,10 +175,8 @@ function generateHoroscope(sign: string, day: string) {
   const career = pick(CAREER_INSIGHTS[sign.toLowerCase()] || CAREER_INSIGHTS.aries, rng);
   const health = pick(HEALTH_INSIGHTS[sign.toLowerCase()] || HEALTH_INSIGHTS.aries, rng);
 
-  // Compatible today (pick 3 from sign's compatible list)
   const compatToday = signData.compatible.slice(0, 3);
 
-  // Weekly data
   const weekDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
   const weekly = weekDays.map((dayName, i) => {
     const dayRng = seedRandom(`${sign}-${dateStr}-${i}`);
@@ -186,7 +184,7 @@ function generateHoroscope(sign: string, day: string) {
     return {
       day: dayName,
       summary: dayReadings[Math.floor(dayRng() * dayReadings.length)].substring(0, 80) + "...",
-      rating: Math.floor(dayRng() * 3) + 3, // 3-5 stars
+      rating: Math.floor(dayRng() * 3) + 3,
     };
   });
 
@@ -202,7 +200,55 @@ function generateHoroscope(sign: string, day: string) {
     insights: { love, career, health, growth: `Your ${signData.traits[0]} nature guides personal growth today. Lean into being ${signData.traits[1]} and watch barriers dissolve.` },
     compatibleToday: compatToday,
     weekly,
+    source: 'local',
   };
+}
+
+// Fetch with timeout and retry
+async function fetchWithRetry(url: string, options: RequestInit = {}, retries = 3, timeoutMs = 5000): Promise<Response> {
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), timeoutMs);
+      const res = await fetch(url, { ...options, signal: controller.signal });
+      clearTimeout(timeout);
+      if (res.ok) return res;
+      console.warn(`Attempt ${attempt} failed with status ${res.status}`);
+      await res.text(); // consume body
+    } catch (err) {
+      console.warn(`Attempt ${attempt} error:`, err instanceof Error ? err.message : err);
+    }
+    if (attempt < retries) await new Promise(r => setTimeout(r, 1000 * attempt));
+  }
+  throw new Error(`All ${retries} attempts failed`);
+}
+
+// In-memory cache for Aztro responses
+const aztroCache: Map<string, { data: any; timestamp: number }> = new Map();
+const AZTRO_CACHE_TTL = 3600000; // 1 hour
+
+async function fetchAztroHoroscope(sign: string, day: string) {
+  const cacheKey = `aztro:${sign}:${day}`;
+  const cached = aztroCache.get(cacheKey);
+  if (cached && Date.now() - cached.timestamp < AZTRO_CACHE_TTL) {
+    console.log(`Aztro cache hit: ${cacheKey}`);
+    return cached.data;
+  }
+
+  try {
+    const res = await fetchWithRetry(
+      `https://aztro.sameerkumar.website/?sign=${sign.toLowerCase()}&day=${day}`,
+      { method: 'POST' },
+      2,
+      5000
+    );
+    const data = await res.json();
+    aztroCache.set(cacheKey, { data, timestamp: Date.now() });
+    return data;
+  } catch (err) {
+    console.warn('Aztro API unavailable, using local fallback:', err instanceof Error ? err.message : err);
+    return null;
+  }
 }
 
 serve(async (req) => {
@@ -211,20 +257,45 @@ serve(async (req) => {
   try {
     const body = await req.json().catch(() => ({}));
     const { sign = "aries", day = "today" } = body;
-    const result = generateHoroscope(sign, day);
+    const signLower = sign.toLowerCase();
 
-    if (!result) {
+    if (!ZODIAC_DATA[signLower]) {
       return new Response(JSON.stringify({ error: "Invalid zodiac sign" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    return new Response(JSON.stringify(result), {
+    // Try Aztro API first, fall back to local generation
+    const aztroData = await fetchAztroHoroscope(signLower, day);
+    const localData = generateLocalHoroscope(signLower, day);
+
+    if (!localData) {
+      return new Response(JSON.stringify({ error: "Failed to generate horoscope" }), {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Merge Aztro data into local data if available
+    if (aztroData && aztroData.description) {
+      localData.reading = aztroData.description;
+      localData.mood = aztroData.mood || localData.mood;
+      localData.luckyNumber = parseInt(aztroData.lucky_number) || localData.luckyNumber;
+      localData.luckyColor = aztroData.color || localData.luckyColor;
+      localData.luckyTime = aztroData.lucky_time || localData.luckyTime;
+      localData.source = 'aztro';
+    }
+
+    return new Response(JSON.stringify({
+      ...localData,
+      lastUpdated: new Date().toISOString(),
+    }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (error: unknown) {
     const msg = error instanceof Error ? error.message : "Unknown error";
+    console.error('Horoscope error:', msg);
     return new Response(JSON.stringify({ error: msg }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
