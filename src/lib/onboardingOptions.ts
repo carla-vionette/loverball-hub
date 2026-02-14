@@ -104,18 +104,18 @@ export const SPORTS_OPTIONS = [
 ];
 
 export const CONTENT_INTERESTS_OPTIONS = [
-  "Technology",
-  "Business",
-  "Entertainment",
-  "Health",
-  "Science",
-  "Politics",
-  "Lifestyle",
-  "Travel",
-  "Food",
-  "Fashion",
-  "Gaming",
-  "Finance"
+  "Sports News",
+  "Game Highlights",
+  "Player Interviews",
+  "Trade Rumors",
+  "Fantasy Sports",
+  "Sports Betting",
+  "Draft Coverage",
+  "Sports Culture",
+  "Women in Sports",
+  "Youth Sports",
+  "Sports Tech",
+  "Athlete Lifestyle"
 ];
 
 export const EXPERIENCE_OPTIONS = [
@@ -132,18 +132,18 @@ export const EXPERIENCE_OPTIONS = [
 ];
 
 export const INTERESTS_OPTIONS = [
-  "Music",
-  "Art & Museums",
-  "Nightlife & Bars",
-  "Wellness & Fitness",
-  "Food & Dining",
-  "Community Service",
-  "Outdoor Activities",
-  "Books & Reading",
-  "Gaming",
-  "Fashion & Beauty",
-  "Tech & Innovation",
-  "Theater & Performance"
+  "Watch Parties",
+  "Tailgating",
+  "Sports Podcasts",
+  "Fitness & Training",
+  "Sports Memorabilia",
+  "Sneaker Culture",
+  "Sports Photography",
+  "Coaching & Mentoring",
+  "Sports Volunteering",
+  "Stadium Food & Culture",
+  "Sports Travel",
+  "Esports & Gaming"
 ];
 
 export const COMFORT_LEVEL_OPTIONS = [
