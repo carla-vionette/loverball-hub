@@ -378,6 +378,7 @@ export type Database = {
         Row: {
           age_range: string | null
           bio: string | null
+          birthday: string | null
           city: string | null
           created_at: string
           event_comfort_level: string | null
@@ -408,6 +409,7 @@ export type Database = {
         Insert: {
           age_range?: string | null
           bio?: string | null
+          birthday?: string | null
           city?: string | null
           created_at?: string
           event_comfort_level?: string | null
@@ -438,6 +440,7 @@ export type Database = {
         Update: {
           age_range?: string | null
           bio?: string | null
+          birthday?: string | null
           city?: string | null
           created_at?: string
           event_comfort_level?: string | null
