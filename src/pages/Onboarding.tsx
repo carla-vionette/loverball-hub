@@ -19,7 +19,6 @@ import { Checkbox } from "@/components/ui/checkbox";
 import {
   PRONOUN_OPTIONS,
   CITY_OPTIONS,
-  AGE_RANGE_OPTIONS,
   SPORTS_OPTIONS,
   CONTENT_INTERESTS_OPTIONS,
 } from "@/lib/onboardingOptions";
@@ -39,7 +38,6 @@ const Onboarding = () => {
   const [name, setName] = useState("");
   const [pronouns, setPronouns] = useState("");
   const [city, setCity] = useState("");
-  const [ageRange, setAgeRange] = useState("");
   const [birthday, setBirthday] = useState("");
   const [profilePhoto, setProfilePhoto] = useState<File | null>(null);
   const [profilePhotoPreview, setProfilePhotoPreview] = useState<string | null>(null);
@@ -161,7 +159,6 @@ const Onboarding = () => {
         name,
         pronouns,
         city,
-        age_range: ageRange,
         favorite_sports: favoriteSports,
         favorite_teams_players: favTeams,
         other_interests: contentInterests,
@@ -352,19 +349,6 @@ const Onboarding = () => {
                       </Select>
                     </div>
 
-                    <div className="space-y-2">
-                      <Label className="text-xs tracking-wider uppercase text-foreground/60">Age Range</Label>
-                      <Select value={ageRange} onValueChange={setAgeRange}>
-                        <SelectTrigger className="bg-background rounded-none h-12">
-                          <SelectValue placeholder="Select age range" />
-                        </SelectTrigger>
-                        <SelectContent className="bg-background z-50">
-                          {AGE_RANGE_OPTIONS.map((option) => (
-                            <SelectItem key={option} value={option}>{option}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
                   </div>
                 )}
 
@@ -478,7 +462,7 @@ const Onboarding = () => {
                         <div>
                           <h3 className="font-serif text-xl">{name}</h3>
                           <p className="text-sm text-muted-foreground">
-                            {city}{pronouns ? ` · ${pronouns}` : ""}{ageRange ? ` · ${ageRange}` : ""}
+                            {city}{pronouns ? ` · ${pronouns}` : ""}
                           </p>
                         </div>
                       </div>
