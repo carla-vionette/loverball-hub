@@ -30,21 +30,30 @@ export const AGE_RANGE_OPTIONS = [
 ];
 
 export const SPORTS_OPTIONS = [
-  "Basketball",
-  "Football (NFL)",
+  "NFL",
+  "NBA",
+  "MLB",
+  "NHL",
   "Soccer",
-  "Softball",
   "Tennis",
-  "Volleyball",
-  "Baseball",
-  "WNBA",
-  "Hockey",
   "Golf",
-  "Track & Field",
-  "Swimming",
-  "Cycling",
-  "MMA/Boxing",
-  "Esports"
+  "MMA",
+  "NASCAR"
+];
+
+export const CONTENT_INTERESTS_OPTIONS = [
+  "Technology",
+  "Business",
+  "Entertainment",
+  "Health",
+  "Science",
+  "Politics",
+  "Lifestyle",
+  "Travel",
+  "Food",
+  "Fashion",
+  "Gaming",
+  "Finance"
 ];
 
 export const EXPERIENCE_OPTIONS = [
