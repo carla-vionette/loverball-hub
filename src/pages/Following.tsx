@@ -1,70 +1,24 @@
 import BottomNav from "@/components/BottomNav";
 import DesktopNav from "@/components/DesktopNav";
 import MobileHeader from "@/components/MobileHeader";
-import VideoPost from "@/components/VideoPost";
 import LASportsTicker from "@/components/LASportsTicker";
-import christineVideo from "@/assets/christine-video.mov";
-import colorCoverageVideo from "@/assets/color-coverage-video.mp4";
-import playMeVideo from "@/assets/play-me-video.mp4";
-import risingStarsVideo from "@/assets/rising-stars-video.mp4";
-import matchPointVideo from "@/assets/match-point-video.mp4";
+import { useNavigate } from "react-router-dom";
+import { CalendarDays, Users, ShoppingBag, Heart } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import loverballLogo from "@/assets/loverball-logo-new.png";
 
 const Following = () => {
-  const followingVideos = [
-    {
-      id: 1,
-      videoUrl: playMeVideo,
-      username: "TeamDynamics",
-      userAvatar: "",
-      caption: "Play Me - An inspiring story about teamwork and determination on the court! 🏀 #TeamSpirit #BasketballLife",
-      likes: 8924,
-      comments: 567,
-      shares: 423,
-    },
-    {
-      id: 2,
-      videoUrl: risingStarsVideo,
-      username: "YouthSports",
-      userAvatar: "",
-      caption: "Rising Stars - Watch the next generation shine on the court! 🌟🏀 #RisingStars #YouthBasketball #FutureChampions",
-      likes: 5234,
-      comments: 312,
-      shares: 189,
-    },
-    {
-      id: 3,
-      videoUrl: colorCoverageVideo,
-      username: "Larissa_Bball",
-      userAvatar: "",
-      caption: "Larissa on the court with the Falcons. 🏀 #Basketball #Falcons #WomenInSports",
-      likes: 2847,
-      comments: 156,
-      shares: 89,
-    },
-    {
-      id: 4,
-      videoUrl: matchPointVideo,
-      username: "CourtSide",
-      userAvatar: "",
-      caption: "Match Point - Charlie and Katarina compete for love and glory on the tennis court 🎾❤️ #MatchPoint #Tennis #SportsRomance",
-      likes: 3842,
-      comments: 298,
-      shares: 176,
-    },
-    {
-      id: 5,
-      videoUrl: christineVideo,
-      username: "thechristinewang",
-      userAvatar: "",
-      caption: "Christine sharing her sports journey and inspiring others to stay active! 🏀⚽️ #SportsLife #Inspiration #WomenInSports",
-      likes: 3547,
-      comments: 234,
-      shares: 156,
-    },
+  const navigate = useNavigate();
+
+  const quickLinks = [
+    { icon: CalendarDays, label: "Events", description: "Browse upcoming events & watch parties", path: "/events" },
+    { icon: Heart, label: "Network", description: "Discover & connect with other fans", path: "/network" },
+    { icon: Users, label: "Members", description: "See your matches & connections", path: "/members" },
+    { icon: ShoppingBag, label: "Shop", description: "Browse Loverball merch", path: "/shop" },
   ];
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-background">
       <MobileHeader />
       <DesktopNav />
       <BottomNav />
@@ -73,19 +27,37 @@ const Following = () => {
         <LASportsTicker />
       </div>
       
-      <main className="md:ml-64 snap-y snap-mandatory h-screen overflow-y-scroll pt-[92px] md:pt-[48px]">
-        {followingVideos.length > 0 ? (
-          followingVideos.map((video) => (
-            <VideoPost key={video.id} {...video} />
-          ))
-        ) : (
-          <div className="h-screen flex items-center justify-center text-white">
-            <div className="text-center">
-              <h2 className="text-2xl font-bold mb-2">No content yet</h2>
-              <p className="text-muted-foreground">Follow creators to see their videos here</p>
-            </div>
+      <main className="md:ml-64 pb-20 md:pb-8 pt-[92px] md:pt-[48px]">
+        <div className="container mx-auto px-4 py-8 max-w-2xl">
+          <div className="flex flex-col items-center text-center mb-10">
+            <img src={loverballLogo} alt="Loverball" className="h-16 w-auto mb-4" />
+            <h1 className="text-2xl font-serif text-foreground mb-2">Welcome to Loverball</h1>
+            <p className="text-foreground/60 text-sm">Your home for women in sports culture.</p>
           </div>
-        )}
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {quickLinks.map((link) => {
+              const Icon = link.icon;
+              return (
+                <Card
+                  key={link.path}
+                  className="cursor-pointer hover:border-primary hover:shadow-md transition-all duration-200"
+                  onClick={() => navigate(link.path)}
+                >
+                  <CardContent className="flex items-start gap-4 p-5">
+                    <div className="p-2.5 rounded-xl bg-primary/10">
+                      <Icon className="w-5 h-5 text-primary" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-foreground">{link.label}</p>
+                      <p className="text-sm text-foreground/50 mt-0.5">{link.description}</p>
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+        </div>
       </main>
     </div>
   );
