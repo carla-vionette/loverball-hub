@@ -39,6 +39,7 @@ import VideoDiscover from "./pages/video/VideoDiscover";
 import VideoSearch from "./pages/video/VideoSearch";
 import VideoProfile from "./pages/video/VideoProfile";
 import VideoFeed from "./pages/video/VideoFeed";
+import VideoChannel from "./pages/video/VideoChannel";
 
 const queryClient = new QueryClient();
 
@@ -84,6 +85,7 @@ const App = () => (
               <Route path="search" element={<VideoSearch />} />
               <Route path="profile" element={<VideoProfile />} />
               <Route path="feed" element={<VideoFeed />} />
+              <Route path="channel/:id" element={<VideoChannel />} />
             </Route>
 
             <Route path="*" element={<NotFound />} />
