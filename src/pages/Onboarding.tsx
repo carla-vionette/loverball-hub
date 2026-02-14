@@ -49,6 +49,7 @@ const Onboarding = () => {
   const [interests, setInterests] = useState<string[]>([]);
   const [comfortLevel, setComfortLevel] = useState("");
   const [participation, setParticipation] = useState<string[]>([]);
+  const [birthday, setBirthday] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [smsNotifications, setSmsNotifications] = useState(true);
   const [profilePhoto, setProfilePhoto] = useState<File | null>(null);
@@ -173,6 +174,7 @@ const Onboarding = () => {
         participation_preferences: participation,
         bio,
         profile_photo_url: photoUrl,
+        birthday: birthday || null,
         phone_number: phoneNumber || null,
         sms_notifications_enabled: smsNotifications,
       });
@@ -274,6 +276,17 @@ const Onboarding = () => {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Your name"
+                  className="rounded-none h-12 border-border bg-background"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="birthday" className="text-xs tracking-wider uppercase text-foreground/60">Birthday</Label>
+                <Input
+                  id="birthday"
+                  type="date"
+                  value={birthday}
+                  onChange={(e) => setBirthday(e.target.value)}
                   className="rounded-none h-12 border-border bg-background"
                 />
               </div>
