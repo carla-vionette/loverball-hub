@@ -1,4 +1,4 @@
-import { Home, Users, MessageCircle, User, CalendarDays, ShoppingBag, Heart } from "lucide-react";
+import { Home, Users, MessageCircle, User, CalendarDays, ShoppingBag } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useUnreadMessages } from "@/hooks/useUnreadMessages";
@@ -31,7 +31,7 @@ const BottomNav = () => {
     { icon: CalendarDays, label: "Events", path: "/events" },
     { icon: ShoppingBag, label: "Shop", path: "/shop" },
     ...(isMember ? [
-      { icon: Heart, label: "Network", path: "/network" },
+      { icon: Users, label: "Members", path: "/members" },
       { icon: MessageCircle, label: "Chat", path: "/messages", showBadge: true },
     ] : []),
     { icon: User, label: "Profile", path: "/profile" },

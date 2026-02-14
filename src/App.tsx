@@ -10,7 +10,7 @@ import Onboarding from "./pages/Onboarding";
 import Ticker from "./pages/Ticker";
 
 import Horoscope from "./pages/Horoscope";
-import Network from "./pages/Network";
+
 import Community from "./pages/Community";
 import Profile from "./pages/Profile";
 import EditProfile from "./pages/EditProfile";
@@ -57,7 +57,7 @@ const App = () => (
             <Route path="/onboarding" element={<ProtectedRoute><Onboarding /></ProtectedRoute>} />
             <Route path="/following" element={<Navigate to="/profile" replace />} />
             <Route path="/horoscope" element={<ProtectedRoute><Horoscope /></ProtectedRoute>} />
-            <Route path="/network" element={<ProtectedRoute><Network /></ProtectedRoute>} />
+            <Route path="/network" element={<Navigate to="/members" replace />} />
             <Route path="/gather" element={<Navigate to="/events" replace />} />
             <Route path="/events" element={<ProtectedRoute><Events /></ProtectedRoute>} />
             <Route path="/event/:id" element={<EventDetail />} />
