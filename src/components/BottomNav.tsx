@@ -32,9 +32,11 @@ const BottomNav = () => {
     { icon: ShoppingBag, label: "Shop", path: "/shop" },
     ...(isMember ? [
       { icon: Users, label: "Members", path: "/members" },
-      { icon: MessageCircle, label: "Chat", path: "/messages", showBadge: true },
     ] : []),
     { icon: User, label: "Profile", path: "/profile" },
+    ...(isMember ? [
+      { icon: MessageCircle, label: "Chat", path: "/messages", showBadge: true },
+    ] : []),
   ];
 
   return (

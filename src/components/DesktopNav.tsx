@@ -15,9 +15,11 @@ const DesktopNav = () => {
     { icon: ShoppingBag, label: "Shop", path: "/shop" },
     ...(isMember ? [
       { icon: Users, label: "Members", path: "/members" },
-      { icon: MessageCircle, label: "Messages", path: "/messages", showBadge: true },
     ] : []),
     { icon: User, label: "Profile", path: "/profile" },
+    ...(isMember ? [
+      { icon: MessageCircle, label: "Messages", path: "/messages", showBadge: true },
+    ] : []),
     ...(isAdmin ? [
       { icon: Settings, label: "Admin", path: "/admin" },
     ] : []),
