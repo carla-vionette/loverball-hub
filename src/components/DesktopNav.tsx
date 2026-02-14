@@ -10,7 +10,7 @@ const DesktopNav = () => {
   const { hasUnread } = useUnreadMessages();
   
   const navItems = [
-    { icon: Home, label: "For You", path: "/following" },
+    { icon: Home, label: "For You", path: "/profile" },
     ...(isMember ? [
       { icon: Heart, label: "Network", path: "/network" },
     ] : []),
