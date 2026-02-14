@@ -26,3 +26,6 @@ verify_jwt = false
 
 [functions.sports-scoreboard]
 verify_jwt = false
+
+[functions.horoscope]
+verify_jwt = false
