@@ -230,7 +230,7 @@ const CreateChannel = () => {
       if (error) throw error;
 
       toast({ title: "Channel created!", description: "Your channel is pending review." });
-      navigate("/watch/profile");
+      navigate("/watch/dashboard");
     } catch (err: any) {
       toast({ title: "Error", description: err.message || "Failed to create channel", variant: "destructive" });
     } finally {
