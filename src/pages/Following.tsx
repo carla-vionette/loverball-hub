@@ -285,7 +285,7 @@ const Following = () => {
                           <Badge variant="outline" className="text-[10px] rounded-none capitalize">{zodiac.element}</Badge>
                         </div>
                         <p className="text-sm text-foreground/80 leading-relaxed line-clamp-2">{HOROSCOPE_MESSAGES[zodiac.name]}</p>
-                        <Button variant="link" className="px-0 mt-1 text-primary h-auto text-xs gap-1">
+                        <Button variant="link" className="px-0 mt-1 text-primary h-auto text-xs gap-1" onClick={() => navigate("/horoscope")}>
                           Read Full Horoscope <ChevronRight className="w-3 h-3" />
                         </Button>
                       </div>
