@@ -1,18 +1,29 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { MapPin, Edit, Sparkles, LogOut, Calendar, Clock } from "lucide-react";
+import { MapPin, Edit, Sparkles, LogOut, Calendar, Clock, TrendingUp, TrendingDown, Newspaper, Trophy, Flame, Bookmark, BookOpen, Award, ChevronRight, ArrowUpRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import MobileHeader from "@/components/MobileHeader";
 import DesktopNav from "@/components/DesktopNav";
 import BottomNav from "@/components/BottomNav";
+import LASportsTicker from "@/components/LASportsTicker";
 import { format } from "date-fns";
+import { motion } from "framer-motion";
+import {
+  BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
+  PieChart, Pie, Cell, Legend,
+} from "recharts";
+import {
+  generateReadingActivity, CONTENT_BREAKDOWN, TEAM_PERFORMANCE,
+  generateStreakData, RECENT_ACTIVITY,
+} from "@/lib/mockStatsData";
 
-type Profile = {
+type ProfileData = {
   id: string;
   name: string;
   pronouns: string | null;
@@ -26,6 +37,7 @@ type Profile = {
   participation_preferences: string[] | null;
   bio: string | null;
   profile_photo_url: string | null;
+  birthday: string | null;
 };
 
 type RSVPEvent = {
@@ -52,20 +64,112 @@ type SuggestedEvent = {
   image_url: string | null;
 };
 
+// --- Zodiac helpers ---
+const ZODIAC_SIGNS = [
+  { name: "Capricorn", symbol: "♑", element: "earth", dates: [{ m: 12, d: 22 }, { m: 1, d: 19 }] },
+  { name: "Aquarius", symbol: "♒", element: "air", dates: [{ m: 1, d: 20 }, { m: 2, d: 18 }] },
+  { name: "Pisces", symbol: "♓", element: "water", dates: [{ m: 2, d: 19 }, { m: 3, d: 20 }] },
+  { name: "Aries", symbol: "♈", element: "fire", dates: [{ m: 3, d: 21 }, { m: 4, d: 19 }] },
+  { name: "Taurus", symbol: "♉", element: "earth", dates: [{ m: 4, d: 20 }, { m: 5, d: 20 }] },
+  { name: "Gemini", symbol: "♊", element: "air", dates: [{ m: 5, d: 21 }, { m: 6, d: 20 }] },
+  { name: "Cancer", symbol: "♋", element: "water", dates: [{ m: 6, d: 21 }, { m: 7, d: 22 }] },
+  { name: "Leo", symbol: "♌", element: "fire", dates: [{ m: 7, d: 23 }, { m: 8, d: 22 }] },
+  { name: "Virgo", symbol: "♍", element: "earth", dates: [{ m: 8, d: 23 }, { m: 9, d: 22 }] },
+  { name: "Libra", symbol: "♎", element: "air", dates: [{ m: 9, d: 23 }, { m: 10, d: 22 }] },
+  { name: "Scorpio", symbol: "♏", element: "water", dates: [{ m: 10, d: 23 }, { m: 11, d: 21 }] },
+  { name: "Sagittarius", symbol: "♐", element: "fire", dates: [{ m: 11, d: 22 }, { m: 12, d: 21 }] },
+];
+
+const ELEMENT_GRADIENTS: Record<string, string> = {
+  fire: "from-red-500/20 via-orange-400/10 to-yellow-500/5",
+  earth: "from-emerald-600/20 via-green-500/10 to-lime-400/5",
+  air: "from-sky-500/20 via-blue-400/10 to-indigo-300/5",
+  water: "from-blue-600/20 via-cyan-500/10 to-teal-400/5",
+};
+
+const HOROSCOPE_MESSAGES: Record<string, string> = {
+  Aries: "Bold energy fuels your day. A surprise connection through sports could open a new door.",
+  Taurus: "Steady wins the race today. Your loyalty to your favorite team mirrors your approach to life.",
+  Gemini: "Your social butterfly energy is at a peak. Multiple conversations lead to one meaningful connection.",
+  Cancer: "Home court advantage is yours today. Nurture your inner circle and watch your community grow.",
+  Leo: "You're the MVP today. Your confidence attracts attention and your leadership shines.",
+  Virgo: "Details matter today. Your analytical eye catches something others miss.",
+  Libra: "Balance is your superpower. A partnership opportunity arises that aligns with your values.",
+  Scorpio: "Intensity drives your focus. Go deep on something you're passionate about.",
+  Sagittarius: "Adventure calls! Explore a new sport or attend an event outside your comfort zone.",
+  Capricorn: "Discipline meets opportunity. Your hard work in building community connections starts to pay dividends.",
+  Aquarius: "Innovation is your theme. A unique idea for bringing fans together sparks excitement.",
+  Pisces: "Intuition guides your game today. Creative expression through sports brings unexpected fulfillment.",
+};
+
+function getZodiacSign(birthday: string | null) {
+  if (!birthday) return null;
+  const date = new Date(birthday);
+  const month = date.getMonth() + 1;
+  const day = date.getDate();
+  for (const sign of ZODIAC_SIGNS) {
+    const [start, end] = sign.dates;
+    if (sign.name === "Capricorn") {
+      if ((month === 12 && day >= 22) || (month === 1 && day <= 19)) return sign;
+    } else if ((month === start.m && day >= start.d) || (month === end.m && day <= end.d)) {
+      return sign;
+    }
+  }
+  return ZODIAC_SIGNS[0];
+}
+
+function getGreeting(): string {
+  const hour = new Date().getHours();
+  if (hour < 12) return "Good morning";
+  if (hour < 17) return "Good afternoon";
+  return "Good evening";
+}
+
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  show: { opacity: 1, transition: { staggerChildren: 0.08 } },
+};
+const staggerItem = {
+  hidden: { opacity: 0, y: 16 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.35, ease: [0.25, 0.1, 0.25, 1] as const } },
+};
+
+const HEATMAP_COLORS = ["bg-border", "bg-primary/20", "bg-primary/40", "bg-primary/70", "bg-primary"];
+const DAYS_LABELS = ["S", "M", "T", "W", "T", "F", "S"];
+
+const ChartTooltip = ({ active, payload, label }: any) => {
+  if (!active || !payload?.length) return null;
+  return (
+    <div className="bg-popover border border-border px-3 py-2 shadow-lg text-xs">
+      <p className="font-medium text-foreground">{label}</p>
+      <p className="text-primary">{payload[0].value} articles</p>
+    </div>
+  );
+};
+
+const PieTooltip = ({ active, payload }: any) => {
+  if (!active || !payload?.length) return null;
+  return (
+    <div className="bg-popover border border-border px-3 py-2 shadow-lg text-xs">
+      <p className="font-medium text-foreground">{payload[0].name}</p>
+      <p className="text-primary">{payload[0].value}%</p>
+    </div>
+  );
+};
+
 const Profile = () => {
-  const [profile, setProfile] = useState<Profile | null>(null);
+  const [profile, setProfile] = useState<ProfileData | null>(null);
   const [rsvpEvents, setRsvpEvents] = useState<RSVPEvent[]>([]);
   const [suggestedEvents, setSuggestedEvents] = useState<SuggestedEvent[]>([]);
   const [loading, setLoading] = useState(true);
+  const [currentTime, setCurrentTime] = useState(new Date());
+  const [dateRange, setDateRange] = useState<"7" | "30" | "all">("30");
   const navigate = useNavigate();
   const { toast } = useToast();
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
-    toast({
-      title: "Signed out",
-      description: "You have been logged out successfully.",
-    });
+    toast({ title: "Signed out", description: "You have been logged out successfully." });
     navigate("/");
   };
 
@@ -73,79 +177,40 @@ const Profile = () => {
     const fetchProfile = async () => {
       try {
         const { data: { user } } = await supabase.auth.getUser();
-        
-        if (!user) {
-          navigate("/auth");
-          return;
-        }
+        if (!user) { navigate("/auth"); return; }
 
-        // Fetch profile, RSVPs, and suggested events in parallel
         const [profileResult, rsvpResult, suggestedResult] = await Promise.all([
-          supabase
-            .from("profiles")
-            .select("*")
-            .eq("id", user.id)
-            .maybeSingle(),
-          supabase
-            .from("event_rsvps")
-            .select(`
-              id,
-              status,
-              event:events (
-                id,
-                title,
-                event_date,
-                event_time,
-                venue_name,
-                city,
-                image_url
-              )
-            `)
-            .eq("user_id", user.id)
-            .order("created_at", { ascending: false }),
-          supabase
-            .from("events")
-            .select("id, title, event_date, event_time, venue_name, city, image_url")
-            .gte("event_date", new Date().toISOString().split("T")[0])
-            .eq("status", "published")
-            .order("event_date", { ascending: true })
-            .limit(4)
+          supabase.from("profiles").select("*").eq("id", user.id).maybeSingle(),
+          supabase.from("event_rsvps").select(`id, status, event:events (id, title, event_date, event_time, venue_name, city, image_url)`).eq("user_id", user.id).order("created_at", { ascending: false }),
+          supabase.from("events").select("id, title, event_date, event_time, venue_name, city, image_url").gte("event_date", new Date().toISOString().split("T")[0]).eq("status", "published").order("event_date", { ascending: true }).limit(4),
         ]);
 
-        // If there's an RLS error or no profile, redirect to onboarding
-        if (profileResult.error) {
-          console.log("Profile fetch error:", profileResult.error.message);
-          navigate("/onboarding");
-          return;
-        }
-
-        if (!profileResult.data) {
-          navigate("/onboarding");
-          return;
-        }
+        if (profileResult.error || !profileResult.data) { navigate("/onboarding"); return; }
 
         setProfile(profileResult.data);
-        
-        // Filter out any RSVPs where the event might be null
         if (rsvpResult.data) {
-          const validRsvps = rsvpResult.data.filter(rsvp => rsvp.event !== null) as RSVPEvent[];
-          setRsvpEvents(validRsvps);
+          setRsvpEvents(rsvpResult.data.filter(r => r.event !== null) as RSVPEvent[]);
         }
-
-        // Set suggested events
-        if (suggestedResult.data) {
-          setSuggestedEvents(suggestedResult.data);
-        }
-      } catch (error: any) {
-        console.error("Profile error:", error);
-        navigate("/onboarding");
-      } finally {
-        setLoading(false);
-      }
+        if (suggestedResult.data) setSuggestedEvents(suggestedResult.data);
+      } catch { navigate("/onboarding"); } finally { setLoading(false); }
     };
-
     fetchProfile();
   }, [navigate, toast]);
+
+  useEffect(() => {
+    const timer = setInterval(() => setCurrentTime(new Date()), 60000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const readingData = useMemo(() => generateReadingActivity(dateRange === "7" ? 7 : 30), [dateRange]);
+  const streakData = useMemo(() => generateStreakData(), []);
+
+  const totalArticles = readingData.reduce((s, d) => s + d.articles, 0);
+  const totalMinutes = totalArticles * 4;
+  const avgPerDay = Math.round(totalMinutes / readingData.length);
+  const favTopic = CONTENT_BREAKDOWN[0];
+  const activePerfTeams = TEAM_PERFORMANCE.filter(t => t.winPct > 0);
+  const combinedWinPct = activePerfTeams.length > 0 ? activePerfTeams.reduce((s, t) => s + t.winPct, 0) / activePerfTeams.length : 0;
 
   if (loading) {
     return (
@@ -157,288 +222,368 @@ const Profile = () => {
 
   if (!profile) return null;
 
-  const initials = profile.name
-    .split(" ")
-    .map((n) => n[0])
-    .join("")
-    .toUpperCase();
-
+  const initials = profile.name.split(" ").map(n => n[0]).join("").toUpperCase();
   const locationText = profile.city || "Location not set";
+  const zodiac = getZodiacSign(profile.birthday);
+  const greeting = getGreeting();
+  const userName = profile.name?.split(" ")[0] || "there";
+  const formattedDate = currentTime.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" });
+  const formattedTime = currentTime.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
 
   return (
     <div className="min-h-screen bg-background">
       <MobileHeader />
       <DesktopNav />
       <BottomNav />
-      
-      <main className="md:ml-64 pb-20 md:pb-8 pt-20 md:pt-8">
-        <div className="max-w-4xl mx-auto px-4 space-y-6">
-          {/* Profile Header */}
-          <Card className="overflow-hidden">
-            <CardContent className="pt-8 pb-6">
-              <div className="flex flex-col md:flex-row md:items-start gap-5">
-                <div className="flex items-start gap-4 md:gap-5">
-                  <Avatar className="w-20 h-20 md:w-24 md:h-24 border-4 border-primary/20 flex-shrink-0">
-                    {profile.profile_photo_url ? (
-                      <AvatarImage src={profile.profile_photo_url} alt={profile.name} className="object-cover" />
-                    ) : null}
-                    <AvatarFallback className="bg-primary text-primary-foreground text-xl md:text-2xl font-serif">
-                      {initials}
-                    </AvatarFallback>
-                  </Avatar>
-                  
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-start justify-between mb-2 md:mb-3">
-                      <div>
-                        <h1 className="text-xl md:text-2xl font-serif font-semibold">{profile.name}</h1>
-                        {profile.pronouns && (
-                          <p className="text-sm text-muted-foreground">{profile.pronouns}</p>
-                        )}
+      <div className="fixed top-16 md:top-0 left-0 right-0 md:left-64 z-30">
+        <LASportsTicker />
+      </div>
+
+      <main className="md:ml-64 pb-20 md:pb-8 pt-[92px] md:pt-[48px]">
+        <div className="max-w-4xl mx-auto px-4">
+          <motion.div variants={staggerContainer} initial="hidden" animate="show" className="space-y-6">
+
+            {/* GREETING HEADER */}
+            <motion.div variants={staggerItem} className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2">
+              <div>
+                <h1 className="text-2xl sm:text-3xl font-serif text-foreground">{greeting}, {userName}!</h1>
+                <p className="text-sm text-muted-foreground">{formattedDate} · {formattedTime}</p>
+              </div>
+              <Tabs value={dateRange} onValueChange={(v) => setDateRange(v as any)} className="w-fit">
+                <TabsList className="h-8">
+                  <TabsTrigger value="7" className="text-xs px-3 h-7">7 Days</TabsTrigger>
+                  <TabsTrigger value="30" className="text-xs px-3 h-7">30 Days</TabsTrigger>
+                  <TabsTrigger value="all" className="text-xs px-3 h-7">All Time</TabsTrigger>
+                </TabsList>
+              </Tabs>
+            </motion.div>
+
+            {/* PROFILE HEADER CARD */}
+            <motion.div variants={staggerItem}>
+              <Card className="overflow-hidden">
+                <CardContent className="pt-8 pb-6">
+                  <div className="flex flex-col md:flex-row md:items-start gap-5">
+                    <div className="flex items-start gap-4 md:gap-5">
+                      <Avatar className="w-20 h-20 md:w-24 md:h-24 border-4 border-primary/20 flex-shrink-0">
+                        {profile.profile_photo_url ? (
+                          <AvatarImage src={profile.profile_photo_url} alt={profile.name} className="object-cover" />
+                        ) : null}
+                        <AvatarFallback className="bg-primary text-primary-foreground text-xl md:text-2xl font-serif">{initials}</AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-start justify-between mb-2 md:mb-3">
+                          <div>
+                            <h2 className="text-xl md:text-2xl font-serif font-semibold">{profile.name}</h2>
+                            {profile.pronouns && <p className="text-sm text-muted-foreground">{profile.pronouns}</p>}
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground mb-3 md:mb-4">
+                          <MapPin className="w-4 h-4 text-primary/70 flex-shrink-0" />
+                          <span className="truncate">{locationText}</span>
+                          {profile.age_range && (<><span>•</span><span>{profile.age_range}</span></>)}
+                        </div>
+                        <div className="flex items-center gap-2 md:hidden">
+                          <Button variant="outline" size="sm" onClick={() => navigate("/profile/edit")} className="rounded-full"><Edit className="w-4 h-4 mr-1" />Edit</Button>
+                          <Button variant="outline" size="sm" onClick={handleLogout} className="text-destructive hover:text-destructive rounded-full"><LogOut className="w-4 h-4" /></Button>
+                        </div>
+                      </div>
+                      <div className="hidden md:flex items-center gap-2">
+                        <Button variant="outline" size="sm" onClick={() => navigate("/profile/edit")} className="rounded-full"><Edit className="w-4 h-4 mr-2" />Edit</Button>
+                        <Button variant="outline" size="sm" onClick={handleLogout} className="text-destructive hover:text-destructive rounded-full"><LogOut className="w-4 h-4 mr-2" />Logout</Button>
                       </div>
                     </div>
-                    
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground mb-3 md:mb-4">
-                      <MapPin className="w-4 h-4 text-primary/70 flex-shrink-0" />
-                      <span className="truncate">{locationText}</span>
-                      {profile.age_range && (
-                        <>
-                          <span>•</span>
-                          <span>{profile.age_range}</span>
-                        </>
-                      )}
+                    {profile.bio && (
+                      <div className="flex items-start gap-2 p-4 bg-primary/5 rounded-xl border border-primary/10 w-full md:flex-1">
+                        <Sparkles className="w-4 h-4 mt-1 text-primary flex-shrink-0" />
+                        <p className="text-sm">{profile.bio}</p>
+                      </div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+
+            {/* STATS OVERVIEW CARDS */}
+            <motion.div variants={staggerItem} className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              <Card className="border-border/50">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between mb-1">
+                    <Newspaper className="w-4 h-4 text-primary" />
+                    <span className="flex items-center text-xs text-emerald-600 font-medium"><TrendingUp className="w-3 h-3 mr-0.5" /> +12%</span>
+                  </div>
+                  <p className="text-2xl font-serif font-bold text-foreground">{totalArticles}</p>
+                  <p className="text-xs text-muted-foreground">Articles Read</p>
+                </CardContent>
+              </Card>
+              <Card className="border-border/50">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between mb-1">
+                    <BookOpen className="w-4 h-4 text-medium-blue" />
+                    <Badge variant="secondary" className="text-[10px] px-1.5 py-0 rounded-sm">{favTopic.value}%</Badge>
+                  </div>
+                  <p className="text-lg font-serif font-bold text-foreground truncate">{favTopic.name}</p>
+                  <p className="text-xs text-muted-foreground">Favorite Topic</p>
+                </CardContent>
+              </Card>
+              <Card className="border-border/50">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between mb-1">
+                    <Clock className="w-4 h-4 text-olive" />
+                    <span className="text-xs text-muted-foreground">{avgPerDay}m/day</span>
+                  </div>
+                  <p className="text-2xl font-serif font-bold text-foreground">{totalMinutes}</p>
+                  <p className="text-xs text-muted-foreground">Minutes Read</p>
+                </CardContent>
+              </Card>
+              <Card className="border-border/50">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between mb-1">
+                    <Trophy className="w-4 h-4 text-primary" />
+                    {combinedWinPct >= 0.5 ? <TrendingUp className="w-3.5 h-3.5 text-emerald-600" /> : <TrendingDown className="w-3.5 h-3.5 text-destructive" />}
+                  </div>
+                  <p className="text-2xl font-serif font-bold text-foreground">{(combinedWinPct * 100).toFixed(0)}%</p>
+                  <p className="text-xs text-muted-foreground">Win Rate</p>
+                </CardContent>
+              </Card>
+            </motion.div>
+
+            {/* HOROSCOPE PREVIEW */}
+            {zodiac && (
+              <motion.div variants={staggerItem}>
+                <Card className="overflow-hidden border-border/50">
+                  <div className={`bg-gradient-to-br ${ELEMENT_GRADIENTS[zodiac.element]} p-5`}>
+                    <div className="flex items-start gap-4">
+                      <div className="text-4xl">{zodiac.symbol}</div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-1">
+                          <h3 className="font-serif text-base text-foreground">{zodiac.name}</h3>
+                          <Badge variant="outline" className="text-[10px] rounded-none capitalize">{zodiac.element}</Badge>
+                        </div>
+                        <p className="text-sm text-foreground/80 leading-relaxed line-clamp-2">{HOROSCOPE_MESSAGES[zodiac.name]}</p>
+                        <Button variant="link" className="px-0 mt-1 text-primary h-auto text-xs gap-1" onClick={() => navigate("/horoscope")}>
+                          Read Full Horoscope <ChevronRight className="w-3 h-3" />
+                        </Button>
+                      </div>
                     </div>
-                    
-                    <div className="flex items-center gap-2 md:hidden">
-                      <Button variant="outline" size="sm" onClick={() => navigate("/profile/edit")} className="rounded-full">
-                        <Edit className="w-4 h-4 mr-1" />
-                        Edit
-                      </Button>
-                      <Button variant="outline" size="sm" onClick={handleLogout} className="text-destructive hover:text-destructive rounded-full">
-                        <LogOut className="w-4 h-4" />
-                      </Button>
-                    </div>
                   </div>
-                  
-                  <div className="hidden md:flex items-center gap-2">
-                    <Button variant="outline" size="sm" onClick={() => navigate("/profile/edit")} className="rounded-full">
-                      <Edit className="w-4 h-4 mr-2" />
-                      Edit
-                    </Button>
-                    <Button variant="outline" size="sm" onClick={handleLogout} className="text-destructive hover:text-destructive rounded-full">
-                      <LogOut className="w-4 h-4 mr-2" />
-                      Logout
-                    </Button>
-                  </div>
-                </div>
-                
-                {profile.bio && (
-                  <div className="flex items-start gap-2 p-4 bg-primary/5 rounded-xl border border-primary/10 w-full md:flex-1">
-                    <Sparkles className="w-4 h-4 mt-1 text-primary flex-shrink-0" />
-                    <p className="text-sm">{profile.bio}</p>
-                  </div>
-                )}
-              </div>
-            </CardContent>
-          </Card>
+                </Card>
+              </motion.div>
+            )}
 
-          <div className="grid md:grid-cols-2 gap-6">
-            {/* Favorite Sports */}
-            {profile.favorite_sports && profile.favorite_sports.length > 0 && (
-              <Card>
-                <CardHeader>
-                  <CardTitle>Favorite Sports</CardTitle>
+            {/* PROFILE DETAILS */}
+            <motion.div variants={staggerItem} className="grid md:grid-cols-2 gap-6">
+              {profile.favorite_sports && profile.favorite_sports.length > 0 && (
+                <Card><CardHeader><CardTitle>Favorite Sports</CardTitle></CardHeader><CardContent><div className="flex flex-wrap gap-2">{profile.favorite_sports.map(s => <Badge key={s} variant="secondary">{s}</Badge>)}</div></CardContent></Card>
+              )}
+              {profile.favorite_teams_players && profile.favorite_teams_players.length > 0 && (
+                <Card><CardHeader><CardTitle>Favorite Teams & Players</CardTitle></CardHeader><CardContent><div className="flex flex-wrap gap-2">{profile.favorite_teams_players.map(t => <Badge key={t} variant="outline">{t}</Badge>)}</div></CardContent></Card>
+              )}
+              {profile.sports_experience_types && profile.sports_experience_types.length > 0 && (
+                <Card><CardHeader><CardTitle>How I Experience Sports</CardTitle></CardHeader><CardContent><div className="flex flex-wrap gap-2">{profile.sports_experience_types.map(t => <Badge key={t} variant="secondary">{t}</Badge>)}</div></CardContent></Card>
+              )}
+              {profile.other_interests && profile.other_interests.length > 0 && (
+                <Card><CardHeader><CardTitle>Other Interests</CardTitle></CardHeader><CardContent><div className="flex flex-wrap gap-2">{profile.other_interests.map(i => <Badge key={i} variant="outline">{i}</Badge>)}</div></CardContent></Card>
+              )}
+            </motion.div>
+
+            {/* EVENT PREFERENCES */}
+            {(profile.event_comfort_level || (profile.participation_preferences && profile.participation_preferences.length > 0)) && (
+              <motion.div variants={staggerItem}>
+                <Card>
+                  <CardHeader><CardTitle>Event Preferences</CardTitle></CardHeader>
+                  <CardContent className="space-y-4">
+                    {profile.event_comfort_level && (<div><p className="text-sm font-medium mb-2">Comfort Level</p><Badge variant="secondary">{profile.event_comfort_level}</Badge></div>)}
+                    {profile.participation_preferences && profile.participation_preferences.length > 0 && (
+                      <div><p className="text-sm font-medium mb-2">I want to</p><div className="flex flex-wrap gap-2">{profile.participation_preferences.map(p => <Badge key={p} variant="outline">{p}</Badge>)}</div></div>
+                    )}
+                  </CardContent>
+                </Card>
+              </motion.div>
+            )}
+
+            {/* READING ACTIVITY CHART */}
+            <motion.div variants={staggerItem}>
+              <Card className="border-border/50">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm font-medium tracking-wider uppercase text-foreground/60">Reading Activity</CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <div className="flex flex-wrap gap-2">
-                    {profile.favorite_sports.map((sport) => (
-                      <Badge key={sport} variant="secondary">
-                        {sport}
-                      </Badge>
-                    ))}
+                <CardContent className="pb-4">
+                  <div className="h-48 sm:h-56">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart data={readingData} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
+                        <XAxis dataKey="label" tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} tickLine={false} axisLine={false} interval={dateRange === "7" ? 0 : "preserveStartEnd"} />
+                        <YAxis tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} tickLine={false} axisLine={false} allowDecimals={false} />
+                        <Tooltip content={<ChartTooltip />} cursor={{ fill: "hsl(var(--muted))" }} />
+                        <Bar dataKey="articles" fill="hsl(var(--primary))" radius={[3, 3, 0, 0]} maxBarSize={32} />
+                      </BarChart>
+                    </ResponsiveContainer>
                   </div>
                 </CardContent>
               </Card>
-            )}
+            </motion.div>
 
-            {/* Favorite Teams */}
-            {profile.favorite_teams_players && profile.favorite_teams_players.length > 0 && (
-              <Card>
-                <CardHeader>
-                  <CardTitle>Favorite Teams & Players</CardTitle>
-                </CardHeader>
+            {/* CONTENT BREAKDOWN + ENGAGEMENT STREAK */}
+            <motion.div variants={staggerItem} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Card className="border-border/50">
+                <CardHeader className="pb-2"><CardTitle className="text-sm font-medium tracking-wider uppercase text-foreground/60">Content Breakdown</CardTitle></CardHeader>
                 <CardContent>
-                  <div className="flex flex-wrap gap-2">
-                    {profile.favorite_teams_players.map((team) => (
-                      <Badge key={team} variant="outline">
-                        {team}
-                      </Badge>
-                    ))}
+                  <div className="h-52">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie data={CONTENT_BREAKDOWN} cx="50%" cy="50%" innerRadius={50} outerRadius={80} paddingAngle={2} dataKey="value">
+                          {CONTENT_BREAKDOWN.map((entry, index) => <Cell key={index} fill={entry.fill} />)}
+                        </Pie>
+                        <Tooltip content={<PieTooltip />} />
+                        <Legend formatter={(value: string) => <span className="text-xs text-foreground">{value}</span>} iconSize={8} wrapperStyle={{ fontSize: 10 }} />
+                      </PieChart>
+                    </ResponsiveContainer>
                   </div>
                 </CardContent>
               </Card>
-            )}
 
-            {/* How They Experience Sports */}
-            {profile.sports_experience_types && profile.sports_experience_types.length > 0 && (
-              <Card>
-                <CardHeader>
-                  <CardTitle>How I Experience Sports</CardTitle>
+              <Card className="border-border/50">
+                <CardHeader className="pb-2">
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-sm font-medium tracking-wider uppercase text-foreground/60">Engagement Streak</CardTitle>
+                    <Badge className="bg-primary/10 text-primary border-primary/20 text-[10px] gap-1 hover:bg-primary/10"><Flame className="w-3 h-3" /> {streakData.currentStreak} day streak</Badge>
+                  </div>
                 </CardHeader>
                 <CardContent>
-                  <div className="flex flex-wrap gap-2">
-                    {profile.sports_experience_types.map((type) => (
-                      <Badge key={type} variant="secondary">
-                        {type}
-                      </Badge>
-                    ))}
+                  <div className="flex items-center gap-1.5 mb-2">
+                    <Award className="w-3.5 h-3.5 text-primary" />
+                    <span className="text-xs text-muted-foreground">Best: {streakData.bestStreak} days</span>
                   </div>
-                </CardContent>
-              </Card>
-            )}
-
-            {/* Other Interests */}
-            {profile.other_interests && profile.other_interests.length > 0 && (
-              <Card>
-                <CardHeader>
-                  <CardTitle>Other Interests</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex flex-wrap gap-2">
-                    {profile.other_interests.map((interest) => (
-                      <Badge key={interest} variant="outline">
-                        {interest}
-                      </Badge>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-          </div>
-
-          {/* Event Preferences */}
-          {(profile.event_comfort_level || (profile.participation_preferences && profile.participation_preferences.length > 0)) && (
-            <Card>
-              <CardHeader>
-                <CardTitle>Event Preferences</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {profile.event_comfort_level && (
-                  <div>
-                    <p className="text-sm font-medium mb-2">Comfort Level</p>
-                    <Badge variant="secondary">{profile.event_comfort_level}</Badge>
-                  </div>
-                )}
-                {profile.participation_preferences && profile.participation_preferences.length > 0 && (
-                  <div>
-                    <p className="text-sm font-medium mb-2">I want to</p>
-                    <div className="flex flex-wrap gap-2">
-                      {profile.participation_preferences.map((pref) => (
-                        <Badge key={pref} variant="outline">
-                          {pref}
-                        </Badge>
+                  <div className="overflow-x-auto">
+                    <div className="flex gap-1">
+                      <div className="flex flex-col gap-1 mr-1">
+                        {DAYS_LABELS.map((d, i) => (
+                          <div key={i} className="h-3.5 w-3 flex items-center justify-center">
+                            <span className="text-[8px] text-muted-foreground">{i % 2 === 1 ? d : ""}</span>
+                          </div>
+                        ))}
+                      </div>
+                      {streakData.weeks.map((week, wi) => (
+                        <div key={wi} className="flex flex-col gap-1">
+                          {week.map((day, di) => (
+                            <div key={di} className={`h-3.5 w-3.5 rounded-sm transition-colors ${day.level < 0 ? "bg-transparent" : HEATMAP_COLORS[day.level]}`} title={day.level >= 0 ? `${day.date}: ${day.level} activities` : ""} />
+                          ))}
+                        </div>
                       ))}
                     </div>
                   </div>
-                )}
-              </CardContent>
-            </Card>
-          )}
+                  <div className="flex items-center gap-1 mt-3 justify-end">
+                    <span className="text-[9px] text-muted-foreground mr-1">Less</span>
+                    {HEATMAP_COLORS.map((c, i) => <div key={i} className={`h-3 w-3 rounded-sm ${c}`} />)}
+                    <span className="text-[9px] text-muted-foreground ml-1">More</span>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
 
-          {/* My RSVPed Events */}
-          {rsvpEvents.length > 0 && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Calendar className="w-5 h-5" />
-                  My Events
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid md:grid-cols-2 gap-4">
-                  {rsvpEvents.map((rsvp) => (
-                    <div 
-                      key={rsvp.id} 
-                      className="p-4 border rounded-lg cursor-pointer hover:border-primary transition-colors"
-                      onClick={() => navigate("/events")}
-                    >
-                      {rsvp.event.image_url ? (
-                        <img 
-                          src={rsvp.event.image_url} 
-                          alt={rsvp.event.title}
-                          className="w-full h-32 object-cover rounded-md mb-3"
-                        />
-                      ) : (
-                        <div className="w-full h-32 bg-muted rounded-md mb-3 flex items-center justify-center">
-                          <Calendar className="w-8 h-8 text-muted-foreground" />
+            {/* FAVORITE TEAMS PERFORMANCE */}
+            <motion.div variants={staggerItem}>
+              <Card className="border-border/50">
+                <CardHeader className="pb-2"><CardTitle className="text-sm font-medium tracking-wider uppercase text-foreground/60">Favorite Teams Performance</CardTitle></CardHeader>
+                <CardContent className="p-0">
+                  <div className="divide-y divide-border">
+                    {TEAM_PERFORMANCE.map(team => (
+                      <div key={team.name} className="flex items-center gap-3 px-4 sm:px-6 py-3 hover:bg-muted/30 transition-colors">
+                        <img src={team.logo} alt={team.name} className="w-9 h-9 object-contain rounded-sm bg-white p-0.5" onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm font-medium text-foreground">{team.name}</span>
+                            <Badge variant="outline" className="text-[9px] px-1.5 py-0 rounded-sm">{team.league}</Badge>
+                          </div>
+                          <p className="text-xs text-muted-foreground">{team.nextGame}</p>
                         </div>
-                      )}
-                      <div className="flex items-start justify-between gap-2">
-                        <div>
-                          <p className="font-medium">{rsvp.event.title}</p>
-                          <p className="text-sm text-muted-foreground">
-                            {rsvp.event.venue_name || rsvp.event.city || "Location TBD"}
-                          </p>
-                          <div className="flex items-center gap-2 mt-1 text-xs text-muted-foreground">
-                            <Calendar className="w-3 h-3" />
-                            <span>{format(new Date(rsvp.event.event_date), "MMM d, yyyy")}</span>
-                            {rsvp.event.event_time && (
-                              <>
-                                <Clock className="w-3 h-3 ml-1" />
-                                <span>{rsvp.event.event_time}</span>
-                              </>
-                            )}
+                        <div className="text-right">
+                          <p className="text-sm font-serif font-bold text-foreground">{team.record}</p>
+                          {team.last5.length > 0 && (
+                            <div className="flex gap-0.5 mt-1 justify-end">
+                              {team.last5.map((win, i) => <div key={i} className={`w-2 h-2 rounded-full ${win ? "bg-emerald-500" : "bg-destructive/60"}`} />)}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+
+            {/* MY RSVPED EVENTS */}
+            {rsvpEvents.length > 0 && (
+              <motion.div variants={staggerItem}>
+                <Card>
+                  <CardHeader><CardTitle className="flex items-center gap-2"><Calendar className="w-5 h-5" />My Events</CardTitle></CardHeader>
+                  <CardContent>
+                    <div className="grid md:grid-cols-2 gap-4">
+                      {rsvpEvents.map(rsvp => (
+                        <div key={rsvp.id} className="p-4 border rounded-lg cursor-pointer hover:border-primary transition-colors" onClick={() => navigate("/events")}>
+                          {rsvp.event.image_url ? <img src={rsvp.event.image_url} alt={rsvp.event.title} className="w-full h-32 object-cover rounded-md mb-3" /> : <div className="w-full h-32 bg-muted rounded-md mb-3 flex items-center justify-center"><Calendar className="w-8 h-8 text-muted-foreground" /></div>}
+                          <div className="flex items-start justify-between gap-2">
+                            <div>
+                              <p className="font-medium">{rsvp.event.title}</p>
+                              <p className="text-sm text-muted-foreground">{rsvp.event.venue_name || rsvp.event.city || "Location TBD"}</p>
+                              <div className="flex items-center gap-2 mt-1 text-xs text-muted-foreground">
+                                <Calendar className="w-3 h-3" /><span>{format(new Date(rsvp.event.event_date), "MMM d, yyyy")}</span>
+                                {rsvp.event.event_time && (<><Clock className="w-3 h-3 ml-1" /><span>{rsvp.event.event_time}</span></>)}
+                              </div>
+                            </div>
+                            <Badge variant={rsvp.status === "confirmed" ? "default" : "secondary"} className="text-xs">{rsvp.status}</Badge>
                           </div>
                         </div>
-                        <Badge 
-                          variant={rsvp.status === "confirmed" ? "default" : "secondary"}
-                          className="text-xs"
-                        >
-                          {rsvp.status}
-                        </Badge>
-                      </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          )}
+                  </CardContent>
+                </Card>
+              </motion.div>
+            )}
 
-          {/* Recommended Events */}
-          {suggestedEvents.length > 0 && (
-            <Card>
-              <CardHeader>
-                <CardTitle>Recommended Events for You</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid md:grid-cols-2 gap-4">
-                  {suggestedEvents.map((event) => (
-                    <div 
-                      key={event.id} 
-                      className="p-4 border rounded-lg cursor-pointer hover:border-primary transition-colors"
-                      onClick={() => navigate(`/event/${event.id}`)}
-                    >
-                      {event.image_url ? (
-                        <img 
-                          src={event.image_url} 
-                          alt={event.title}
-                          className="w-full h-32 object-cover rounded-md mb-3"
-                        />
-                      ) : (
-                        <div className="w-full h-32 bg-muted rounded-md mb-3 flex items-center justify-center">
-                          <Calendar className="w-8 h-8 text-muted-foreground" />
+            {/* RECOMMENDED EVENTS */}
+            {suggestedEvents.length > 0 && (
+              <motion.div variants={staggerItem}>
+                <Card>
+                  <CardHeader><CardTitle>Recommended Events for You</CardTitle></CardHeader>
+                  <CardContent>
+                    <div className="grid md:grid-cols-2 gap-4">
+                      {suggestedEvents.map(event => (
+                        <div key={event.id} className="p-4 border rounded-lg cursor-pointer hover:border-primary transition-colors" onClick={() => navigate(`/event/${event.id}`)}>
+                          {event.image_url ? <img src={event.image_url} alt={event.title} className="w-full h-32 object-cover rounded-md mb-3" /> : <div className="w-full h-32 bg-muted rounded-md mb-3 flex items-center justify-center"><Calendar className="w-8 h-8 text-muted-foreground" /></div>}
+                          <p className="font-medium">{event.title}</p>
+                          <p className="text-sm text-muted-foreground">{event.venue_name || event.city || "Location TBD"} • {format(new Date(event.event_date), "MMM d")}</p>
                         </div>
-                      )}
-                      <p className="font-medium">{event.title}</p>
-                      <p className="text-sm text-muted-foreground">
-                        {event.venue_name || event.city || "Location TBD"} • {format(new Date(event.event_date), "MMM d")}
-                      </p>
+                      ))}
                     </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          )}
+                  </CardContent>
+                </Card>
+              </motion.div>
+            )}
 
+            {/* RECENT ACTIVITY FEED */}
+            <motion.div variants={staggerItem}>
+              <Card className="border-border/50">
+                <CardHeader className="pb-2"><CardTitle className="text-sm font-medium tracking-wider uppercase text-foreground/60">Recent Activity</CardTitle></CardHeader>
+                <CardContent className="p-0">
+                  <div className="divide-y divide-border">
+                    {RECENT_ACTIVITY.map((activity, i) => (
+                      <div key={i} className="flex items-start gap-3 px-4 sm:px-6 py-3">
+                        <div className={`mt-0.5 p-1.5 rounded-full ${activity.type === "read" ? "bg-primary/10" : "bg-medium-blue/10"}`}>
+                          {activity.type === "read" ? <BookOpen className="w-3 h-3 text-primary" /> : <Bookmark className="w-3 h-3 text-medium-blue" />}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm text-foreground leading-snug"><span className="text-muted-foreground">{activity.type === "read" ? "Read:" : "Bookmarked:"}</span> <span className="font-medium">{activity.title}</span></p>
+                          <p className="text-xs text-muted-foreground mt-0.5">{activity.time}</p>
+                        </div>
+                        <ArrowUpRight className="w-3.5 h-3.5 text-foreground/20 mt-1 shrink-0" />
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+
+          </motion.div>
         </div>
       </main>
     </div>
