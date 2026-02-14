@@ -1,11 +1,10 @@
-import { Home, Compass, PlusCircle, Search, User, Tv, ArrowLeft } from "lucide-react";
+import { Home, Compass, Search, User, Tv, ArrowLeft } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import loverbballLogo from "@/assets/loverball-logo-new.png";
 
 const navItems = [
   { icon: Home, label: "For You", path: "/watch" },
   { icon: Compass, label: "Discover", path: "/watch/discover" },
-  { icon: PlusCircle, label: "Upload", path: "/watch/upload" },
   { icon: Search, label: "Search", path: "/watch/search" },
   { icon: User, label: "Profile", path: "/watch/profile" },
 ];
