@@ -1,6 +1,7 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Play, TrendingUp, Flame } from "lucide-react";
+import { Play, TrendingUp, Flame, Tv } from "lucide-react";
 import VideoCard from "@/components/video/VideoCard";
 import { MOCK_VIDEOS, VIDEO_CATEGORIES } from "@/lib/mockVideoData";
 
@@ -31,6 +32,13 @@ const VideoForYou = () => {
             <Play className="w-5 h-5 text-primary" fill="currentColor" />
             <h1 className="text-lg font-bold tracking-tight">For You</h1>
           </div>
+          <Link
+            to="/watch/feed"
+            className="flex items-center gap-1.5 bg-primary text-primary-foreground px-3 py-1.5 rounded-full text-xs font-bold hover:bg-primary/90 transition-colors"
+          >
+            <Tv className="w-3.5 h-3.5" />
+            Feed
+          </Link>
         </div>
 
         {/* Category pills */}
