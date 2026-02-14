@@ -1,0 +1,53 @@
+{
+  "name": "Loverball",
+  "short_name": "Loverball",
+  "description": "Her Game. Her Community. A platform for women who love sports.",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F7F4EE",
+  "theme_color": "#DA3A2B",
+  "categories": ["sports", "social", "entertainment"],
+  "icons": [
+    {
+      "src": "/favicon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/favicon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "share_target": {
+    "action": "/share",
+    "method": "GET",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url"
+    }
+  },
+  "shortcuts": [
+    {
+      "name": "Watch",
+      "url": "/watch",
+      "description": "Watch sports videos"
+    },
+    {
+      "name": "Events",
+      "url": "/events",
+      "description": "Browse upcoming events"
+    },
+    {
+      "name": "Shop",
+      "url": "/shop",
+      "description": "Shop Loverball merch"
+    }
+  ],
+  "screenshots": [],
+  "prefer_related_applications": false
+}
