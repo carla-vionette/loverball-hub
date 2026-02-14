@@ -322,7 +322,7 @@ const MessagesPage = () => {
                           </p>
                         ) : (
                           <p className="text-sm text-primary font-medium italic">
-                            New match! Say hello 👋
+                            New connection! Say hello 👋
                           </p>
                         )}
                       </div>
@@ -333,7 +333,7 @@ const MessagesPage = () => {
                 <div className="p-6 text-center">
                   <MessageCircle className="w-12 h-12 mx-auto text-muted-foreground mb-3" />
                   <p className="text-muted-foreground">
-                    No matches yet. Keep swiping!
+                    No conversations yet.
                   </p>
                   <Button 
                     className="mt-4" 
@@ -496,7 +496,7 @@ const MessagesPage = () => {
                   <MessageCircle className="w-16 h-16 mx-auto text-muted-foreground mb-4" />
                   <p className="text-xl font-semibold mb-2">Select a conversation</p>
                   <p className="text-muted-foreground">
-                    Choose a match to start chatting
+                    Choose a conversation to start chatting
                   </p>
                 </div>
               </div>
