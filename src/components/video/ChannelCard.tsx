@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { CheckCircle, Flame, Play } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import type { DiscoverChannel } from "@/lib/discoverChannelData";
 import loverbballLogo from "@/assets/loverball-logo-red.png";
 
@@ -41,6 +42,7 @@ const FollowButton = ({ initial = false }: { initial?: boolean }) => {
 };
 
 const ChannelCard = ({ channel, variant = "team" }: ChannelCardProps) => {
+  const navigate = useNavigate();
   const logoSrc = channel.category === "loverball" ? loverbballLogo : channel.logo;
   const isLoverball = variant === "loverball";
   const isTrending = variant === "trending";
@@ -48,6 +50,7 @@ const ChannelCard = ({ channel, variant = "team" }: ChannelCardProps) => {
   return (
     <motion.div
       whileHover={{ scale: 1.05 }}
+      onClick={() => navigate(`/watch/channel/${channel.id}`)}
       className={`group relative flex-shrink-0 cursor-pointer rounded-xl overflow-hidden transition-colors ${
         isLoverball
           ? "w-[200px] md:w-[220px] bg-card border-2 border-primary/30"
