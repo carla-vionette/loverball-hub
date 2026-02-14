@@ -439,46 +439,6 @@ const Profile = () => {
             </Card>
           )}
 
-          {/* Recommended Content */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Recommended Content</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid md:grid-cols-3 gap-4">
-                <div 
-                  onClick={() => navigate("/home")}
-                  className="p-4 border rounded-lg cursor-pointer hover:border-primary hover:bg-muted/50 transition-colors block"
-                >
-                  <div className="w-full h-24 bg-gradient-to-br from-orange-500/20 to-primary/20 rounded-md mb-2 flex items-center justify-center">
-                    <span className="text-2xl">🏀</span>
-                  </div>
-                  <p className="text-sm font-medium">Color Coverage</p>
-                  <p className="text-xs text-muted-foreground">Larissa on the court</p>
-                </div>
-                <div 
-                  onClick={() => navigate("/home")}
-                  className="p-4 border rounded-lg cursor-pointer hover:border-primary hover:bg-muted/50 transition-colors block"
-                >
-                  <div className="w-full h-24 bg-gradient-to-br from-green-500/20 to-yellow-500/20 rounded-md mb-2 flex items-center justify-center">
-                    <span className="text-2xl">⚽️</span>
-                  </div>
-                  <p className="text-sm font-medium">Play Me</p>
-                  <p className="text-xs text-muted-foreground">Soccer championship story</p>
-                </div>
-                <div 
-                  onClick={() => navigate("/home")}
-                  className="p-4 border rounded-lg cursor-pointer hover:border-primary hover:bg-muted/50 transition-colors block"
-                >
-                  <div className="w-full h-24 bg-gradient-to-br from-pink-500/20 to-accent/20 rounded-md mb-2 flex items-center justify-center">
-                    <span className="text-2xl">🎾</span>
-                  </div>
-                  <p className="text-sm font-medium">Match Point</p>
-                  <p className="text-xs text-muted-foreground">Tennis romance story</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
         </div>
       </main>
     </div>
