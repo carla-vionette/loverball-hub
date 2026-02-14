@@ -11,7 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import MobileHeader from "@/components/MobileHeader";
 import DesktopNav from "@/components/DesktopNav";
 import BottomNav from "@/components/BottomNav";
-import LASportsTicker from "@/components/LASportsTicker";
+
 import { format } from "date-fns";
 import { motion } from "framer-motion";
 import {
@@ -227,9 +227,6 @@ const Profile = () => {
       <MobileHeader />
       <DesktopNav />
       <BottomNav />
-      <div className="fixed top-16 md:top-0 left-0 right-0 md:left-64 z-30">
-        <LASportsTicker />
-      </div>
 
       <main className="md:ml-64 pb-20 md:pb-8 pt-[92px] md:pt-[48px]">
         <div className="max-w-4xl mx-auto px-4">
