@@ -15,10 +15,7 @@ import LASportsTicker from "@/components/LASportsTicker";
 import { format } from "date-fns";
 import { motion } from "framer-motion";
 import {
-  PieChart, Pie, Cell, Legend, Tooltip, ResponsiveContainer,
-} from "recharts";
-import {
-  CONTENT_BREAKDOWN, TEAM_PERFORMANCE,
+  TEAM_PERFORMANCE,
   generateStreakData, RECENT_ACTIVITY,
 } from "@/lib/mockStatsData";
 
@@ -203,7 +200,7 @@ const Profile = () => {
 
   const streakData = useMemo(() => generateStreakData(), []);
 
-  const favTopic = CONTENT_BREAKDOWN[0];
+  
   const activePerfTeams = TEAM_PERFORMANCE.filter(t => t.winPct > 0);
   const combinedWinPct = activePerfTeams.length > 0 ? activePerfTeams.reduce((s, t) => s + t.winPct, 0) / activePerfTeams.length : 0;
 
@@ -299,17 +296,7 @@ const Profile = () => {
             </motion.div>
 
             {/* STATS OVERVIEW CARDS */}
-            <motion.div variants={staggerItem} className="grid grid-cols-2 md:grid-cols-3 gap-3">
-              <Card className="border-border/50">
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between mb-1">
-                    <BookOpen className="w-4 h-4 text-primary" />
-                    <Badge variant="secondary" className="text-[10px] px-1.5 py-0 rounded-sm">{favTopic.value}%</Badge>
-                  </div>
-                  <p className="text-lg font-serif font-bold text-foreground truncate">{favTopic.name}</p>
-                  <p className="text-xs text-muted-foreground">Top Interest</p>
-                </CardContent>
-              </Card>
+            <motion.div variants={staggerItem} className="grid grid-cols-2 gap-3">
               <Card className="border-border/50">
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between mb-1">
@@ -388,25 +375,8 @@ const Profile = () => {
 
 
 
-            {/* CONTENT BREAKDOWN + ENGAGEMENT STREAK */}
-            <motion.div variants={staggerItem} className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Card className="border-border/50">
-                <CardHeader className="pb-2"><CardTitle className="text-sm font-medium tracking-wider uppercase text-foreground/60">Content Breakdown</CardTitle></CardHeader>
-                <CardContent>
-                  <div className="h-52">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <PieChart>
-                        <Pie data={CONTENT_BREAKDOWN} cx="50%" cy="50%" innerRadius={50} outerRadius={80} paddingAngle={2} dataKey="value">
-                          {CONTENT_BREAKDOWN.map((entry, index) => <Cell key={index} fill={entry.fill} />)}
-                        </Pie>
-                        <Tooltip content={<PieTooltip />} />
-                        <Legend formatter={(value: string) => <span className="text-xs text-foreground">{value}</span>} iconSize={8} wrapperStyle={{ fontSize: 10 }} />
-                      </PieChart>
-                    </ResponsiveContainer>
-                  </div>
-                </CardContent>
-              </Card>
-
+            {/* ENGAGEMENT STREAK */}
+            <motion.div variants={staggerItem}>
               <Card className="border-border/50">
                 <CardHeader className="pb-2">
                   <div className="flex items-center justify-between">
