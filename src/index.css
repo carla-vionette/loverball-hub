@@ -218,4 +218,40 @@ All colors MUST be HSL.
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
+
+  /* Touch-friendly tap target */
+  .tap-target {
+    @apply min-h-[44px] min-w-[44px];
+  }
+
+  /* Focus visible ring for keyboard navigation */
+  .focus-ring {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background;
+  }
+
+  /* Safe area padding for notched devices */
+  .safe-top { padding-top: env(safe-area-inset-top); }
+  .safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
+  .safe-left { padding-left: env(safe-area-inset-left); }
+  .safe-right { padding-right: env(safe-area-inset-right); }
+
+  /* Micro-interaction: button press */
+  .press-scale {
+    @apply transition-transform duration-150 active:scale-95;
+  }
+
+  /* Smooth 60fps momentum scrolling */
+  .momentum-scroll {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: contain;
+  }
+
+  /* Reduced motion: disable animations */
+  @media (prefers-reduced-motion: reduce) {
+    .hover-lift,
+    .press-scale {
+      transition: none !important;
+      transform: none !important;
+    }
+  }
 }
