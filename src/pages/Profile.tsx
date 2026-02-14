@@ -1,7 +1,7 @@
 import { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { MapPin, Edit, Sparkles, LogOut, Calendar, Clock, TrendingUp, TrendingDown, Newspaper, Trophy, Flame, Bookmark, BookOpen, Award, ChevronRight, ArrowUpRight } from "lucide-react";
+import { MapPin, Edit, Sparkles, LogOut, Calendar, Clock, TrendingUp, TrendingDown, Trophy, Flame, Bookmark, BookOpen, Award, ChevronRight, ArrowUpRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -15,11 +15,10 @@ import LASportsTicker from "@/components/LASportsTicker";
 import { format } from "date-fns";
 import { motion } from "framer-motion";
 import {
-  BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
-  PieChart, Pie, Cell, Legend,
+  PieChart, Pie, Cell, Legend, Tooltip, ResponsiveContainer,
 } from "recharts";
 import {
-  generateReadingActivity, CONTENT_BREAKDOWN, TEAM_PERFORMANCE,
+  CONTENT_BREAKDOWN, TEAM_PERFORMANCE,
   generateStreakData, RECENT_ACTIVITY,
 } from "@/lib/mockStatsData";
 
@@ -202,12 +201,8 @@ const Profile = () => {
     return () => clearInterval(timer);
   }, []);
 
-  const readingData = useMemo(() => generateReadingActivity(dateRange === "7" ? 7 : 30), [dateRange]);
   const streakData = useMemo(() => generateStreakData(), []);
 
-  const totalArticles = readingData.reduce((s, d) => s + d.articles, 0);
-  const totalMinutes = totalArticles * 4;
-  const avgPerDay = Math.round(totalMinutes / readingData.length);
   const favTopic = CONTENT_BREAKDOWN[0];
   const activePerfTeams = TEAM_PERFORMANCE.filter(t => t.winPct > 0);
   const combinedWinPct = activePerfTeams.length > 0 ? activePerfTeams.reduce((s, t) => s + t.winPct, 0) / activePerfTeams.length : 0;
@@ -304,35 +299,15 @@ const Profile = () => {
             </motion.div>
 
             {/* STATS OVERVIEW CARDS */}
-            <motion.div variants={staggerItem} className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <motion.div variants={staggerItem} className="grid grid-cols-2 md:grid-cols-3 gap-3">
               <Card className="border-border/50">
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between mb-1">
-                    <Newspaper className="w-4 h-4 text-primary" />
-                    <span className="flex items-center text-xs text-emerald-600 font-medium"><TrendingUp className="w-3 h-3 mr-0.5" /> +12%</span>
-                  </div>
-                  <p className="text-2xl font-serif font-bold text-foreground">{totalArticles}</p>
-                  <p className="text-xs text-muted-foreground">Articles Read</p>
-                </CardContent>
-              </Card>
-              <Card className="border-border/50">
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between mb-1">
-                    <BookOpen className="w-4 h-4 text-medium-blue" />
+                    <BookOpen className="w-4 h-4 text-primary" />
                     <Badge variant="secondary" className="text-[10px] px-1.5 py-0 rounded-sm">{favTopic.value}%</Badge>
                   </div>
                   <p className="text-lg font-serif font-bold text-foreground truncate">{favTopic.name}</p>
-                  <p className="text-xs text-muted-foreground">Favorite Topic</p>
-                </CardContent>
-              </Card>
-              <Card className="border-border/50">
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between mb-1">
-                    <Clock className="w-4 h-4 text-olive" />
-                    <span className="text-xs text-muted-foreground">{avgPerDay}m/day</span>
-                  </div>
-                  <p className="text-2xl font-serif font-bold text-foreground">{totalMinutes}</p>
-                  <p className="text-xs text-muted-foreground">Minutes Read</p>
+                  <p className="text-xs text-muted-foreground">Top Interest</p>
                 </CardContent>
               </Card>
               <Card className="border-border/50">
@@ -342,7 +317,16 @@ const Profile = () => {
                     {combinedWinPct >= 0.5 ? <TrendingUp className="w-3.5 h-3.5 text-emerald-600" /> : <TrendingDown className="w-3.5 h-3.5 text-destructive" />}
                   </div>
                   <p className="text-2xl font-serif font-bold text-foreground">{(combinedWinPct * 100).toFixed(0)}%</p>
-                  <p className="text-xs text-muted-foreground">Win Rate</p>
+                  <p className="text-xs text-muted-foreground">Team Win Rate</p>
+                </CardContent>
+              </Card>
+              <Card className="border-border/50">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between mb-1">
+                    <Flame className="w-4 h-4 text-primary" />
+                  </div>
+                  <p className="text-2xl font-serif font-bold text-foreground">{streakData.currentStreak}</p>
+                  <p className="text-xs text-muted-foreground">Day Streak</p>
                 </CardContent>
               </Card>
             </motion.div>
@@ -401,26 +385,8 @@ const Profile = () => {
               </motion.div>
             )}
 
-            {/* READING ACTIVITY CHART */}
-            <motion.div variants={staggerItem}>
-              <Card className="border-border/50">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium tracking-wider uppercase text-foreground/60">Reading Activity</CardTitle>
-                </CardHeader>
-                <CardContent className="pb-4">
-                  <div className="h-48 sm:h-56">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={readingData} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
-                        <XAxis dataKey="label" tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} tickLine={false} axisLine={false} interval={dateRange === "7" ? 0 : "preserveStartEnd"} />
-                        <YAxis tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} tickLine={false} axisLine={false} allowDecimals={false} />
-                        <Tooltip content={<ChartTooltip />} cursor={{ fill: "hsl(var(--muted))" }} />
-                        <Bar dataKey="articles" fill="hsl(var(--primary))" radius={[3, 3, 0, 0]} maxBarSize={32} />
-                      </BarChart>
-                    </ResponsiveContainer>
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
+
+
 
             {/* CONTENT BREAKDOWN + ENGAGEMENT STREAK */}
             <motion.div variants={staggerItem} className="grid grid-cols-1 md:grid-cols-2 gap-4">
