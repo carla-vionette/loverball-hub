@@ -35,7 +35,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import VideoLayout from "./components/video/VideoLayout";
 import VideoForYou from "./pages/video/VideoForYou";
 import VideoDiscover from "./pages/video/VideoDiscover";
-import VideoUpload from "./pages/video/VideoUpload";
+
 import VideoSearch from "./pages/video/VideoSearch";
 import VideoProfile from "./pages/video/VideoProfile";
 import VideoFeed from "./pages/video/VideoFeed";
@@ -80,7 +80,7 @@ const App = () => (
             <Route path="/watch" element={<VideoLayout />}>
               <Route index element={<VideoForYou />} />
               <Route path="discover" element={<VideoDiscover />} />
-              <Route path="upload" element={<VideoUpload />} />
+              
               <Route path="search" element={<VideoSearch />} />
               <Route path="profile" element={<VideoProfile />} />
               <Route path="feed" element={<VideoFeed />} />
