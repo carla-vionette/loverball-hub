@@ -59,16 +59,61 @@ interface GameData {
   broadcast?: string;
 }
 
+// Fetch with timeout and retry
+async function fetchWithRetry(url: string, retries = 3, timeoutMs = 5000): Promise<Response | null> {
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), timeoutMs);
+      const res = await fetch(url, {
+        headers: { 'User-Agent': 'Mozilla/5.0 (compatible; SportsBot/1.0)' },
+        signal: controller.signal,
+      });
+      clearTimeout(timeout);
+      if (res.ok) return res;
+      console.warn(`Attempt ${attempt} for ${url}: status ${res.status}`);
+      await res.text(); // consume body
+    } catch (err) {
+      console.warn(`Attempt ${attempt} for ${url}: ${err instanceof Error ? err.message : err}`);
+    }
+    if (attempt < retries) await new Promise(r => setTimeout(r, 800 * attempt));
+  }
+  return null;
+}
+
 async function fetchESPN(url: string): Promise<any> {
   const cached = getCached(url);
   if (cached) return cached;
+  const res = await fetchWithRetry(url);
+  if (!res) return null;
   try {
-    const res = await fetch(url, { headers: { 'User-Agent': 'Mozilla/5.0 (compatible; SportsBot/1.0)' } });
-    if (!res.ok) return null;
     const data = await res.json();
     setCache(url, data);
     return data;
   } catch { return null; }
+}
+
+// TheSportsDB supplementary data
+const THESPORTSDB_BASE = 'https://www.thesportsdb.com/api/v1/json/3';
+const LEAGUE_IDS: Record<string, string> = {
+  nba: '4387', nfl: '4391', mlb: '4424', nhl: '4380', mls: '4346',
+};
+
+async function fetchTheSportsDBNextEvents(sport: string): Promise<any[]> {
+  const leagueId = LEAGUE_IDS[sport];
+  if (!leagueId) return [];
+  const cacheKey = `thesportsdb:${sport}`;
+  const cached = getCached(cacheKey);
+  if (cached) return cached as any[];
+  
+  const res = await fetchWithRetry(`${THESPORTSDB_BASE}/eventsnextleague.php?id=${leagueId}`, 2, 5000);
+  if (!res) return [];
+  try {
+    const data = await res.json();
+    const events = data?.events || [];
+    setCache(cacheKey, events);
+    return events;
+  } catch { return []; }
 }
 
 function processGames(data: any, sport: string): GameData[] {
@@ -176,8 +221,17 @@ serve(async (req) => {
       }
     }
 
-    const results = await Promise.all(fetches);
-    const allGames = results.flat();
+    // Also fetch TheSportsDB upcoming events for supplementary data
+    const sportsDBFetches = sportKeys
+      .filter(k => LEAGUE_IDS[k])
+      .map(k => fetchTheSportsDBNextEvents(k));
+
+    const [espnResults, ...sportsDBResults] = await Promise.all([
+      Promise.all(fetches),
+      ...sportsDBFetches,
+    ]);
+
+    const allGames = (espnResults as GameData[][]).flat();
 
     // Deduplicate by game id
     const seen = new Set<string>();
@@ -192,12 +246,26 @@ serve(async (req) => {
     live.sort((a, b) => (b.period || 0) - (a.period || 0));
     scheduled.sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime());
 
+    // TheSportsDB upcoming events (supplementary, flattened)
+    const theSportsDBUpcoming = sportsDBResults.flat().filter((e: any) =>
+      e && (e.strHomeTeam || e.strAwayTeam)
+    ).map((e: any) => ({
+      id: e.idEvent,
+      event: `${e.strAwayTeam} vs ${e.strHomeTeam}`,
+      date: e.dateEvent,
+      time: e.strTime,
+      league: e.strLeague,
+      source: 'thesportsdb',
+    })).slice(0, 10);
+
     const responseData = {
       live,
       final: final_,
       scheduled,
+      theSportsDBUpcoming,
       totalGames: unique.length,
       updatedAt: new Date().toISOString(),
+      sources: ['ESPN', 'TheSportsDB'],
     };
 
     setCache(cacheKey, responseData);
