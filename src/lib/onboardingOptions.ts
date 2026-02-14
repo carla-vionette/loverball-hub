@@ -30,15 +30,77 @@ export const AGE_RANGE_OPTIONS = [
 ];
 
 export const SPORTS_OPTIONS = [
+  // Major Leagues
   "NFL",
   "NBA",
+  "WNBA",
   "MLB",
   "NHL",
+  "MLS",
+  "NWSL",
+  // Ball Sports
   "Soccer",
   "Tennis",
   "Golf",
+  "Volleyball",
+  "Beach Volleyball",
+  "Rugby",
+  "Cricket",
+  "Lacrosse",
+  "Softball",
+  "Pickleball",
+  "Badminton",
+  "Table Tennis",
+  // Combat & Martial Arts
   "MMA",
-  "NASCAR"
+  "Boxing",
+  "Wrestling",
+  "Jiu-Jitsu",
+  "Taekwondo",
+  "Fencing",
+  // Ice & Snow
+  "Figure Skating",
+  "Ice Hockey",
+  "Speed Skating",
+  "Skiing",
+  "Snowboarding",
+  "Curling",
+  // Skating & Wheels
+  "Skateboarding",
+  "Roller Skating",
+  "Roller Derby",
+  "BMX",
+  "Cycling",
+  // Water Sports
+  "Swimming",
+  "Surfing",
+  "Water Polo",
+  "Diving",
+  "Rowing",
+  "Sailing",
+  "Kayaking",
+  // Track & Field
+  "Track & Field",
+  "Marathon / Running",
+  "Cross Country",
+  // Motorsports
+  "NASCAR",
+  "Formula 1",
+  "IndyCar",
+  // Gymnastics & Dance
+  "Gymnastics",
+  "Cheerleading",
+  "Dance Sport",
+  // Other
+  "Esports",
+  "Rock Climbing",
+  "Hiking",
+  "Yoga & Wellness",
+  "CrossFit",
+  "Equestrian",
+  "Archery",
+  "Disc Golf",
+  "Other"
 ];
 
 export const CONTENT_INTERESTS_OPTIONS = [
