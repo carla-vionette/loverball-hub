@@ -9,11 +9,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useAuth } from "@/hooks/useAuth";
 import { motion, useInView } from "framer-motion";
-import { ArrowRight, Lock, Ticket, Users, Sparkles, Calendar, X, Menu, Mail } from "lucide-react";
+import { ArrowRight, Lock, Ticket, Users, Sparkles, Calendar, X, Menu, Mail, Play, Eye, Heart } from "lucide-react";
 import heroImage from "@/assets/hero-women-new.png";
 import loverballLogo from "@/assets/loverball-script-logo.png";
 import philosophyImage from "@/assets/philosophy-image.jpg";
 import communityImage from "@/assets/landing-community.jpg";
+import athletesImage from "@/assets/landing-athletes.jpg";
+import fansImage from "@/assets/landing-fans.jpg";
+import { FEED_VIDEOS } from "@/lib/feedVideoData";
 import { z } from "zod";
 
 const signUpSchema = z.object({
@@ -22,27 +25,20 @@ const signUpSchema = z.object({
   inviteCode: z.string().trim().min(1, "Invite code is required"),
 });
 
-// Animated counter component
-const AnimatedStat = ({ value, suffix = "%" }: { value: number; suffix?: string }) => {
-  const ref = useRef<HTMLSpanElement>(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
-  const [count, setCount] = useState(0);
+const channels = [
+  { name: "LA Sparks", sport: "WNBA", followers: "12.4K", image: "https://a.espncdn.com/i/teamlogos/wnba/500/la.png" },
+  { name: "Angel City FC", sport: "NWSL", followers: "18.2K", image: "https://a.espncdn.com/i/teamlogos/soccer/500/6926.png" },
+  { name: "Lakers", sport: "NBA", followers: "45.1K", image: "https://a.espncdn.com/i/teamlogos/nba/500/lal.png" },
+  { name: "Dodgers", sport: "MLB", followers: "38.7K", image: "https://a.espncdn.com/i/teamlogos/mlb/500/lad.png" },
+  { name: "USWNT", sport: "Soccer", followers: "52.3K", image: "https://a.espncdn.com/i/teamlogos/soccer/500/660.png" },
+  { name: "UCLA Bruins", sport: "NCAA", followers: "9.8K", image: "https://a.espncdn.com/i/teamlogos/ncaa/500/26.png" },
+];
 
-  useEffect(() => {
-    if (!isInView) return;
-    let start = 0;
-    const duration = 1500;
-    const step = (timestamp: number) => {
-      if (!start) start = timestamp;
-      const progress = Math.min((timestamp - start) / duration, 1);
-      setCount(Math.floor(progress * value));
-      if (progress < 1) requestAnimationFrame(step);
-    };
-    requestAnimationFrame(step);
-  }, [isInView, value]);
-
-  return <span ref={ref}>{count}{suffix}</span>;
-};
+const howItWorks = [
+  { step: "01", icon: Heart, title: "Follow Your Teams", description: "Pick the teams and sports you love. We'll curate content and events just for you." },
+  { step: "02", icon: Play, title: "Watch Exclusive Content", description: "Original stories, player interviews, and behind-the-scenes access you won't find anywhere else." },
+  { step: "03", icon: Users, title: "Connect With Fans", description: "Join watch parties, brunches, and meetups with women who share your passion for the game." },
+];
 
 const Index = () => {
   const [email, setEmail] = useState("");
@@ -144,90 +140,65 @@ const Index = () => {
 
   const openAuthModal = () => setAuthModalOpen(true);
 
-  const testimonials = [
-    "\"Finally a sports community that gets me.\" — Alicia, Lakers fan 💜💛",
-    "\"I met my best friends at a Loverball watch party.\" — Dani, WNBA superfan 🏀",
-    "\"The content here actually speaks to women fans.\" — Maria, soccer obsessed ⚽",
-    "\"Loverball made me feel like my fandom matters.\" — Priya, tennis & F1 🏎️",
-  ];
-
-  const features = [
-    {
-      icon: Sparkles,
-      title: "AI-Powered Stats & Stories",
-      description: "Personalized sports content that speaks to what you care about. Not just stats—the stories, drama, and culture that make the game matter.",
-    },
-    {
-      icon: Calendar,
-      title: "Community Events",
-      description: "Watch parties, meetups, and experiences designed for women who love sports. Find your squad. Build your community.",
-    },
-    {
-      icon: Users,
-      title: "Exclusive Content",
-      description: "Behind-the-scenes access, player interviews, and insider perspectives you won't find anywhere else.",
-    },
-  ];
-
-  const communityTestimonials = [
-    { quote: "Loverball changed how I experience game day. I finally have a crew that matches my energy.", name: "Jasmine T.", sport: "Basketball & WNBA", avatar: "🏀" },
-    { quote: "The watch parties are incredible—I've never felt more connected to other women sports fans.", name: "Sophia R.", sport: "Soccer & Liga MX", avatar: "⚽" },
-    { quote: "As a die-hard baseball fan, finding women who go just as hard for their teams was everything.", name: "Kayla M.", sport: "Baseball & Dodgers", avatar: "⚾" },
-  ];
+  const latestVideos = FEED_VIDEOS.slice(0, 4);
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border/50">
+      {/* ── Coral Ticker ── */}
+      <div className="bg-primary py-2 overflow-hidden">
+        <motion.div
+          animate={{ x: [0, -1200] }}
+          transition={{ duration: 14, repeat: Infinity, ease: "linear" }}
+          className="flex gap-16 whitespace-nowrap"
+        >
+          {[...Array(12)].map((_, i) => (
+            <span key={i} className="flex items-center gap-16 text-xs tracking-[0.4em] font-sans font-bold text-primary-foreground/90 uppercase">
+              <span>Her Game Her Rules</span>
+              <span className="text-primary-foreground/40">♦</span>
+              <span>Join the Movement</span>
+              <span className="text-primary-foreground/40">♦</span>
+            </span>
+          ))}
+        </motion.div>
+      </div>
+
+      {/* ── Navigation ── */}
+      <nav className="sticky top-0 z-50 bg-primary">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
-          <div className="flex items-center justify-between h-20">
-            {/* Left nav */}
-            <div className="hidden md:flex items-center gap-2">
-              <a href="#about" className="px-5 py-2 text-sm font-medium text-foreground/70 hover:text-foreground hover:bg-secondary rounded-full transition-all">About</a>
-              <a href="#features" className="px-5 py-2 text-sm font-medium text-foreground/70 hover:text-foreground hover:bg-secondary rounded-full transition-all">Features</a>
-              <a href="#community" className="px-5 py-2 text-sm font-medium text-foreground/70 hover:text-foreground hover:bg-secondary rounded-full transition-all">Community</a>
+          <div className="flex items-center justify-between h-16">
+            <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="md:hidden text-primary-foreground/80 hover:text-primary-foreground transition-colors">
+              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
+
+            <img src={loverballLogo} alt="Loverball" className="h-24 w-auto absolute left-1/2 -translate-x-1/2 brightness-0 invert" />
+
+            <div className="hidden md:flex items-center gap-8">
+              <a href="#channels" className="text-xs font-sans tracking-widest uppercase text-primary-foreground/70 hover:text-primary-foreground transition-colors">Channels</a>
+              <a href="#about" className="text-xs font-sans tracking-widest uppercase text-primary-foreground/70 hover:text-primary-foreground transition-colors">About</a>
+              <a href="#how-it-works" className="text-xs font-sans tracking-widest uppercase text-primary-foreground/70 hover:text-primary-foreground transition-colors">How It Works</a>
             </div>
 
-            {/* Center logo */}
-            <img src={loverballLogo} alt="Loverball" className="h-24 w-auto absolute left-1/2 -translate-x-1/2" />
-
-            {/* Right nav */}
-            <div className="hidden md:flex items-center gap-3">
-              <button onClick={() => (isAuthenticated ? navigate("/events") : openAuthModal())} className="px-5 py-2 text-sm font-medium text-foreground/70 hover:text-foreground hover:bg-secondary rounded-full transition-all bg-transparent border-none cursor-pointer">Events</button>
-              <button onClick={() => (isAuthenticated ? navigate("/shop") : openAuthModal())} className="px-5 py-2 text-sm font-medium text-foreground/70 hover:text-foreground hover:bg-secondary rounded-full transition-all bg-transparent border-none cursor-pointer">Shop</button>
-              {isAuthenticated ? (
-                <Button onClick={() => navigate("/following")} className="rounded-full bg-primary hover:bg-primary/90 px-6">Enter</Button>
-              ) : (
-                <Button onClick={openAuthModal} className="rounded-full bg-primary hover:bg-primary/90 px-6">
-                  <Lock className="h-4 w-4 mr-2" />
-                  Member Access
-                </Button>
-              )}
-            </div>
-
-            {/* Mobile hamburger */}
-            <div className="md:hidden">
-              <Button variant="ghost" size="icon" onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="rounded-full">
-                {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-              </Button>
-            </div>
+            <Button
+              onClick={openAuthModal}
+              className="rounded-full bg-white text-primary hover:bg-white/90 font-sans text-xs tracking-widest uppercase px-6"
+            >
+              <Lock className="h-3.5 w-3.5 mr-1.5" />
+              Member Access
+            </Button>
           </div>
         </div>
 
         {/* Mobile menu */}
         {mobileMenuOpen && (
-          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="md:hidden bg-background border-t border-border/50 px-6 py-4 space-y-2">
-            <a href="#about" onClick={() => setMobileMenuOpen(false)} className="block py-3 text-sm font-medium text-foreground/70">About</a>
-            <a href="#features" onClick={() => setMobileMenuOpen(false)} className="block py-3 text-sm font-medium text-foreground/70">Features</a>
-            <a href="#community" onClick={() => setMobileMenuOpen(false)} className="block py-3 text-sm font-medium text-foreground/70">Community</a>
-            <Button onClick={() => { setMobileMenuOpen(false); openAuthModal(); }} className="w-full rounded-full mt-2">
-              <Lock className="h-4 w-4 mr-2" /> Member Access
-            </Button>
+          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="md:hidden bg-primary border-t border-white/10 px-6 py-4 space-y-2">
+            <a href="#channels" onClick={() => setMobileMenuOpen(false)} className="block py-3 text-sm font-sans text-primary-foreground/70 tracking-widest uppercase">Channels</a>
+            <a href="#about" onClick={() => setMobileMenuOpen(false)} className="block py-3 text-sm font-sans text-primary-foreground/70 tracking-widest uppercase">About</a>
+            <a href="#how-it-works" onClick={() => setMobileMenuOpen(false)} className="block py-3 text-sm font-sans text-primary-foreground/70 tracking-widest uppercase">How It Works</a>
           </motion.div>
         )}
       </nav>
 
-      {/* Auth Modal */}
+      {/* ── Auth Modal ── */}
       <Dialog open={authModalOpen} onOpenChange={setAuthModalOpen}>
         <DialogContent className="sm:max-w-md rounded-3xl p-0 overflow-hidden border-border/20">
           <div className="p-8 sm:p-10">
@@ -295,137 +266,131 @@ const Index = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Hero Section */}
-      <section className="pt-20 relative bg-background">
+      {/* ═══════════════════════════════════════════════
+          1. HERO — Full coral, headline + 3 polaroids
+         ═══════════════════════════════════════════════ */}
+      <section className="relative bg-primary py-24 lg:py-36 overflow-hidden">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
-          <div className="grid lg:grid-cols-2 gap-8 lg:gap-0 items-center min-h-[75vh] py-12">
-            {/* Left - Hero Image (reduced 25%) */}
-            <motion.div initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }} className="relative order-1">
-              <div className="relative aspect-[4/5] lg:aspect-[4/4] overflow-hidden rounded-2xl shadow-2xl">
-                <img src={heroImage} alt="Women sports fans celebrating together" className="w-full h-full object-cover object-[center_35%]" />
+          <div className="grid lg:grid-cols-2 gap-12 items-center min-h-[520px]">
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1, ease: "easeOut" }}
+            >
+              <p className="script-accent text-white/50 mb-4">welcome to loverball</p>
+              <h1 className="text-5xl sm:text-6xl lg:text-[4.5rem] font-display text-white leading-[0.93] mb-8">
+                Where Women<br />
+                Sports Fans<br />
+                Find Their <em>Tribe</em>
+              </h1>
+              <p className="text-lg text-white/75 font-serif leading-relaxed mb-12 max-w-md">
+                The content and community platform built for women who live and breathe sports. Real stories, real connections, real culture — all in one place.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Button
+                  onClick={openAuthModal}
+                  size="lg"
+                  className="rounded-full bg-white text-primary hover:bg-white/90 px-10 py-7 text-base font-sans tracking-widest uppercase shadow-2xl"
+                >
+                  Join Loverball
+                </Button>
+                <Button
+                  onClick={() => document.getElementById("channels")?.scrollIntoView({ behavior: "smooth" })}
+                  size="lg"
+                  className="rounded-full bg-transparent border-2 border-white/40 text-white hover:bg-white/10 px-10 py-7 text-base font-sans tracking-widest uppercase"
+                >
+                  Explore Content
+                </Button>
               </div>
             </motion.div>
 
-            {/* Right - Content Card */}
-            <motion.div initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8, delay: 0.2 }} className="relative order-2 lg:-ml-24 z-10">
-              <div className="bg-foreground text-background p-8 sm:p-12 lg:p-14 rounded-3xl shadow-2xl">
-                <h1 className="text-[2rem] sm:text-5xl lg:text-6xl font-sans font-normal leading-[1.1] mb-6 text-background whitespace-nowrap">
-                  Her Game.<br />
-                  Her Community.<br />
-                  Her Platform.
-                </h1>
-                <p className="text-background/60 text-lg leading-relaxed mb-8 max-w-md">
-                  The only platform built for women sports fans—where AI-powered stories, real-world events, and authentic community celebrate her game.
-                </p>
-                <div className="flex flex-col sm:flex-row gap-4">
-                  <Button onClick={openAuthModal} size="lg" className="rounded-full bg-accent text-accent-foreground hover:bg-accent/90 px-10 py-6 text-base font-semibold shadow-lg">
-                    Join Loverball
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </Button>
-                  <Button variant="outline" size="lg" onClick={() => document.getElementById("about")?.scrollIntoView({ behavior: "smooth" })} className="rounded-full border-2 border-background/30 text-background hover:bg-background/10 px-8 py-6 text-base font-medium bg-transparent">
-                    How It Works
-                  </Button>
-                </div>
+            {/* 3 Polaroid photos — asymmetric (desktop) */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 1, delay: 0.3 }}
+              className="relative hidden lg:block h-[540px]"
+            >
+              <div className="polaroid absolute top-0 right-4 w-56 z-10">
+                <img src={athletesImage} alt="Athletes" className="w-full aspect-square object-cover" />
+                <p className="text-center mt-1 font-serif text-xs text-foreground/50 italic">game day ✨</p>
+              </div>
+              <div className="polaroid-alt absolute top-32 -left-4 w-48 z-20">
+                <img src={communityImage} alt="Community" className="w-full aspect-square object-cover" />
+                <p className="text-center mt-1 font-serif text-xs text-foreground/50 italic">squad goals</p>
+              </div>
+              <div className="polaroid absolute bottom-0 right-14 w-52 rotate-[4deg] z-10">
+                <img src={heroImage} alt="Sports culture" className="w-full aspect-[3/4] object-cover object-top" />
+                <p className="text-center mt-1 font-serif text-xs text-foreground/50 italic">the culture</p>
               </div>
             </motion.div>
+
+            {/* Mobile polaroid row */}
+            <div className="flex gap-4 lg:hidden overflow-x-auto pb-4 -mx-2 px-2 scrollbar-hide">
+              <div className="polaroid min-w-[160px]">
+                <img src={athletesImage} alt="Athletes" className="w-full aspect-square object-cover" />
+              </div>
+              <div className="polaroid-alt min-w-[160px]">
+                <img src={communityImage} alt="Community" className="w-full aspect-square object-cover" />
+              </div>
+              <div className="polaroid min-w-[160px]">
+                <img src={heroImage} alt="Culture" className="w-full aspect-[3/4] object-cover object-top" />
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-
-      {/* About Section - "Why Loverball?" */}
-      <section id="about" className="py-32 lg:py-40 bg-gradient-to-b from-card to-background">
+      {/* ═══════════════════════════════════════════════
+          2. FEATURED CHANNELS — White bg, team cards
+         ═══════════════════════════════════════════════ */}
+      <section id="channels" className="py-24 lg:py-32 bg-white">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
-          <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} viewport={{ once: true }} className="text-center mb-24">
-            <span className="inline-block text-muted-foreground text-xs font-medium tracking-widest uppercase mb-4">The Movement</span>
-            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-sans font-normal text-foreground">
-              Why <span className="italic">Loverball</span>?
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <p className="text-xs font-sans tracking-[0.3em] uppercase text-foreground/50 mb-4">Featured Channels</p>
+            <h2 className="font-display text-5xl md:text-6xl text-foreground">
+              Discover Your <em className="text-primary">Teams</em>
             </h2>
           </motion.div>
 
-          <div className="grid lg:grid-cols-3 gap-16 lg:gap-8 items-start">
-            {/* Stats */}
-            <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} viewport={{ once: true }} className="space-y-8">
-              <div className="bg-secondary/60 p-10 rounded-3xl">
-                <span className="text-6xl sm:text-7xl font-sans font-normal text-foreground">
-                  <AnimatedStat value={72} />
-                </span>
-                <p className="text-foreground/60 text-base mt-4 leading-relaxed">
-                  of women globally identify as <span className="text-foreground font-medium">avid sports fans</span>
-                </p>
-                <p className="text-foreground/30 text-xs mt-3">Source: Nielsen Sports 2024</p>
-              </div>
-              <div className="bg-secondary/60 p-10 rounded-3xl">
-                <span className="text-6xl sm:text-7xl font-sans font-normal text-foreground">
-                  <AnimatedStat value={85} />
-                </span>
-                <p className="text-foreground/60 text-base mt-4 leading-relaxed">
-                  of household sports purchasing decisions are <span className="text-foreground font-medium">controlled by women</span>
-                </p>
-                <p className="text-foreground/30 text-xs mt-3">Source: ESPN/espnW Research 2024</p>
-              </div>
-            </motion.div>
-
-            {/* Center Image (reduced 30%) */}
-            <motion.div initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8, delay: 0.1 }} viewport={{ once: true }} className="relative">
-              <div className="aspect-[3/4] max-h-[420px] mx-auto overflow-hidden rounded-2xl shadow-xl">
-                <img src={philosophyImage} alt="Loverball community member" className="w-full h-full object-cover object-top" />
-              </div>
-              <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 bg-foreground text-background px-6 py-3 rounded-full shadow-lg whitespace-nowrap">
-                <span className="text-sm font-medium">Yet she remains overlooked.</span>
-              </div>
-            </motion.div>
-
-            {/* Text content */}
-            <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.2 }} viewport={{ once: true }} className="lg:pt-8">
-              <h3 className="text-2xl sm:text-3xl font-sans font-normal leading-snug mb-6 text-foreground">
-                Loverball is the platform where <span className="italic">female fandom</span> thrives.
-              </h3>
-              <p className="text-foreground/60 text-base leading-relaxed mb-6">
-                We're creating the space for her to gather, share, and celebrate the games she loves. AI-powered stories, community events, and narrative-driven coverage tailored to female fans.
-              </p>
-              <p className="text-foreground/60 text-base leading-relaxed mb-8">
-                By 2030, women will command 75% of global discretionary spending. <span className="font-semibold">The future of sports is female.</span>
-              </p>
-              <Button onClick={openAuthModal} className="rounded-full px-8">
-                Join Loverball
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-
-      {/* Features Section */}
-      <section id="features" className="py-28 lg:py-36 bg-gradient-to-b from-background to-card/50">
-        <div className="max-w-7xl mx-auto px-6 lg:px-12">
-          <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} viewport={{ once: true }} className="text-center mb-16">
-            <span className="inline-block text-muted-foreground text-xs font-medium tracking-widest uppercase mb-4">Our Platform</span>
-            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-sans font-normal text-foreground">
-              Built <span className="italic">For Her</span>
-            </h2>
-          </motion.div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            {features.map((feature, index) => (
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {channels.map((channel, i) => (
               <motion.div
-                key={feature.title}
-                initial={{ opacity: 0, y: 30 }}
+                key={channel.name}
+                initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
+                transition={{ duration: 0.5, delay: i * 0.08 }}
                 viewport={{ once: true }}
-                className="group"
               >
-                <div className="bg-card p-8 rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.04)] hover:shadow-[0_12px_40px_rgba(0,0,0,0.1)] hover:-translate-y-1 transition-all duration-300 h-full border border-border/20">
-                  <div className="w-14 h-14 bg-secondary rounded-2xl flex items-center justify-center mb-6 group-hover:bg-foreground group-hover:text-background transition-colors duration-300">
-                    <feature.icon className="h-7 w-7 text-foreground group-hover:text-background transition-colors duration-300" />
+                <div className="group bg-card border border-border rounded-2xl overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer h-full">
+                  <div className="relative bg-lavender/40 p-8 flex items-center justify-center h-36">
+                    <img
+                      src={channel.image}
+                      alt={channel.name}
+                      className="w-16 h-16 object-contain group-hover:scale-110 transition-transform duration-300"
+                      onError={e => { (e.target as HTMLImageElement).style.display = "none"; }}
+                    />
+                    <span className="absolute top-3 left-3 category-tag bg-primary/10 text-primary">{channel.sport}</span>
                   </div>
-                  <h3 className="text-xl font-sans text-foreground mb-4">{feature.title}</h3>
-                  <p className="text-foreground/60 leading-relaxed mb-4">{feature.description}</p>
-                  <button onClick={() => document.getElementById("about")?.scrollIntoView({ behavior: "smooth" })} className="text-sm font-medium text-foreground/70 hover:text-foreground transition-colors inline-flex items-center gap-1">
-                    Learn More <ArrowRight className="h-3 w-3" />
-                  </button>
+                  <div className="p-5 flex items-center justify-between">
+                    <div>
+                      <h3 className="font-display text-lg text-foreground group-hover:text-primary transition-colors normal-case">{channel.name}</h3>
+                      <p className="text-xs font-sans text-muted-foreground mt-0.5">{channel.followers} followers</p>
+                    </div>
+                    <Button
+                      onClick={(e) => { e.stopPropagation(); openAuthModal(); }}
+                      size="sm"
+                      className="rounded-full bg-primary text-primary-foreground hover:bg-primary/90 text-xs font-sans tracking-widest uppercase px-5"
+                    >
+                      Follow
+                    </Button>
+                  </div>
                 </div>
               </motion.div>
             ))}
@@ -433,110 +398,240 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Community Section */}
-      <section id="community" className="py-28 lg:py-36 bg-card">
+      {/* ═══════════════════════════════════════════════
+          3. COMMUNITY — Lavender bg, two-column
+         ═══════════════════════════════════════════════ */}
+      <section id="about" className="bg-lavender py-24 lg:py-32 overflow-hidden">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-0 items-center">
-            <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }} viewport={{ once: true }} className="lg:pr-12 order-2 lg:order-1">
-              <span className="inline-block text-muted-foreground text-xs font-medium tracking-widest uppercase mb-4">Community</span>
-              <h2 className="text-4xl sm:text-5xl font-sans font-normal text-foreground leading-tight mb-6">
-                Ready to be part of the <span className="italic">movement</span>?
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+            >
+              <p className="script-accent text-primary mb-2">our community</p>
+              <h2 className="font-display text-5xl md:text-6xl text-primary mb-8 leading-[0.95]">
+                Built By <em>Fans,</em><br />
+                For Fans
               </h2>
-              <p className="text-foreground/60 text-lg leading-relaxed mb-8 max-w-lg">
-                Be part of the community redefining women's sports fandom. Your fandom matters here.
+              <p className="text-lg font-serif text-lavender-foreground/80 leading-relaxed mb-6">
+                We believe every woman deserves a front-row seat — not just to the game, but to the <em className="font-bold">culture, community, and conversations</em> around it.
               </p>
-              <Button onClick={openAuthModal} size="lg" className="rounded-full bg-accent text-accent-foreground hover:bg-accent/90 px-10 py-6 text-base font-semibold">
-                Join Loverball
-                <ArrowRight className="ml-2 h-5 w-5" />
+              <p className="text-base font-serif text-lavender-foreground/60 leading-relaxed mb-6">
+                From watch parties and brunches to original stories and exclusive content, Loverball is where women fans gather, connect, and celebrate the sports they love.
+              </p>
+              <p className="text-base font-serif text-lavender-foreground/60 leading-relaxed mb-10">
+                Born in Los Angeles, built for the $28B women's sports market.
+              </p>
+              <Button
+                onClick={openAuthModal}
+                className="rounded-full bg-primary text-primary-foreground hover:bg-primary/90 px-8 py-5 font-sans text-xs tracking-widest uppercase"
+              >
+                Join the Community
+                <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </motion.div>
 
-            <motion.div initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.8, delay: 0.2 }} viewport={{ once: true }} className="relative order-1 lg:order-2">
-              <div className="aspect-[4/3] overflow-hidden rounded-2xl shadow-xl lg:-ml-12">
-                <img src={communityImage} alt="Loverball community at a watch party" className="w-full h-full object-cover" />
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              viewport={{ once: true }}
+              className="flex justify-center"
+            >
+              <div className="relative">
+                <div className="polaroid-alt w-72 sm:w-80">
+                  <img src={fansImage} alt="Women sports fans" className="w-full aspect-[3/4] object-cover" />
+                  <p className="text-center mt-1 font-serif text-sm text-foreground/50 italic">our community 💛</p>
+                </div>
+                <div className="polaroid absolute -bottom-8 -left-12 w-36 z-20 hidden sm:block">
+                  <img src={communityImage} alt="Community event" className="w-full aspect-square object-cover" />
+                </div>
               </div>
-              <div className="hidden lg:block absolute -bottom-8 -left-8 w-32 h-32 bg-accent/20 rounded-3xl -z-10" />
             </motion.div>
           </div>
         </div>
       </section>
 
-
-      {/* Final CTA */}
-      <section className="py-24 bg-foreground">
-        <div className="max-w-4xl mx-auto px-6 lg:px-12 text-center">
-          <motion.div initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8 }} viewport={{ once: true }}>
-            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-sans text-background mb-6">
-              Ready to <span className="italic">Join</span>?
+      {/* ═══════════════════════════════════════════════
+          4. HOW IT WORKS — White bg, 3-column
+         ═══════════════════════════════════════════════ */}
+      <section id="how-it-works" className="py-24 lg:py-32 bg-white">
+        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+          <div className="text-center mb-16">
+            <p className="script-accent text-primary mb-2">how it works</p>
+            <h2 className="font-display text-5xl md:text-6xl text-foreground">
+              Getting <em className="text-primary">Started</em>
             </h2>
-            <p className="text-xl text-background/60 mb-10 max-w-2xl mx-auto">
-              Be part of the movement redefining women's sports fandom.
+          </div>
+          <div className="grid md:grid-cols-3 gap-8">
+            {howItWorks.map((step, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: i * 0.15 }}
+                viewport={{ once: true }}
+              >
+                <div className="border border-border rounded-2xl p-8 h-full hover:border-primary hover:shadow-lg transition-all duration-300">
+                  <span className="font-display text-6xl text-primary/20 leading-none block mb-6">{step.step}</span>
+                  <div className="w-14 h-14 rounded-full bg-lavender flex items-center justify-center mb-6">
+                    <step.icon className="w-7 h-7 text-primary" />
+                  </div>
+                  <h3 className="text-2xl font-display text-foreground mb-3 normal-case">{step.title}</h3>
+                  <p className="text-foreground/60 leading-relaxed font-serif">{step.description}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════════
+          5. CONTENT PREVIEW — Trending videos
+         ═══════════════════════════════════════════════ */}
+      <section className="py-24 lg:py-32 bg-background">
+        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <p className="text-xs font-sans tracking-[0.3em] uppercase text-foreground/50 mb-4">What's Hot</p>
+            <h2 className="font-display text-5xl md:text-6xl text-foreground">
+              Trending <em className="text-primary">Now</em>
+            </h2>
+          </motion.div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {latestVideos.map((video, i) => (
+              <motion.div
+                key={video.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: i * 0.08 }}
+                viewport={{ once: true }}
+                className={i === 0 ? 'sm:col-span-2 sm:row-span-2' : ''}
+              >
+                <div
+                  className="group bg-card border border-border rounded-2xl overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer h-full"
+                  onClick={openAuthModal}
+                >
+                  <div className={`relative ${i === 0 ? 'aspect-[4/3]' : 'aspect-video'} bg-muted overflow-hidden`}>
+                    <img src={video.thumbnail} alt={video.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className="w-14 h-14 rounded-full bg-primary flex items-center justify-center shadow-xl">
+                        <Play className="w-6 h-6 text-primary-foreground ml-0.5" />
+                      </div>
+                    </div>
+                    {video.duration && (
+                      <span className="absolute bottom-2 right-2 bg-black/70 text-white text-[10px] px-1.5 py-0.5 rounded font-sans font-bold">
+                        {Math.floor(video.duration / 60)}:{String(video.duration % 60).padStart(2, '0')}
+                      </span>
+                    )}
+                  </div>
+                  <div className="p-4">
+                    <h4 className="text-sm font-display line-clamp-2 group-hover:text-primary transition-colors normal-case">{video.title}</h4>
+                    <div className="flex items-center gap-3 mt-2">
+                      <p className="text-xs text-muted-foreground font-sans">{video.channelName}</p>
+                      {video.views && (
+                        <span className="flex items-center gap-1 text-xs text-muted-foreground font-sans">
+                          <Eye className="w-3 h-3" />
+                          {video.views >= 1000 ? `${(video.views / 1000).toFixed(1)}K` : video.views}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════════
+          6. FINAL CTA — Full coral, email signup
+         ═══════════════════════════════════════════════ */}
+      <section className="py-28 lg:py-36 bg-primary">
+        <div className="max-w-3xl mx-auto px-6 lg:px-12 text-center">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+          >
+            <p className="script-accent text-white/50 mb-4">ready?</p>
+            <h2 className="text-5xl sm:text-6xl lg:text-7xl font-display text-white mb-6 leading-[0.95] italic">
+              Ready to Join<br />the <em>Movement?</em>
+            </h2>
+            <p className="text-lg font-serif text-white/65 mb-4 max-w-xl mx-auto leading-relaxed">
+              Sign up to get early access to events, exclusive content, and connect with women who love the game as much as you do.
             </p>
-            <Button size="lg" onClick={openAuthModal} className="rounded-full text-lg px-10 py-7 bg-accent text-accent-foreground hover:bg-accent/90 font-semibold shadow-xl">
-              Join Loverball
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
+            <p className="text-sm font-sans text-white/40 mb-10 tracking-wider uppercase">
+              Join 10,000+ women sports fans
+            </p>
+
+            <div className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto mb-6">
+              <input
+                type="email"
+                value={newsletterEmail}
+                onChange={e => setNewsletterEmail(e.target.value)}
+                placeholder="Enter your email"
+                className="flex-1 px-6 py-4 rounded-full bg-white/15 border border-white/25 text-white placeholder:text-white/40 font-sans text-sm focus:outline-none focus:ring-2 focus:ring-white/50 backdrop-blur-sm"
+              />
+              <Button
+                onClick={openAuthModal}
+                size="lg"
+                className="rounded-full bg-white text-primary hover:bg-white/90 px-8 py-4 font-sans tracking-widest uppercase text-sm shadow-xl whitespace-nowrap"
+              >
+                Join Free
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </div>
+            <p className="text-xs text-white/35 font-sans">Free to join. No credit card required.</p>
           </motion.div>
         </div>
       </section>
 
-      {/* Footer */}
+      {/* ── Footer ── */}
       <footer className="py-16" style={{ backgroundColor: "#1a1a1a" }}>
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
-          {/* Newsletter */}
-          <div className="mb-16 pb-12 border-b border-white/10">
-            <div className="max-w-md mx-auto text-center">
-              <h3 className="text-2xl font-sans font-normal text-white mb-3">Stay in the loop</h3>
-              <p className="text-white/50 text-sm mb-6">Get the latest on events, content drops, and community updates.</p>
-              <form onSubmit={(e) => { e.preventDefault(); toast({ title: "Subscribed!", description: "You'll hear from us soon." }); setNewsletterEmail(""); }} className="flex gap-2">
-                <Input
-                  type="email"
-                  placeholder="Enter your email"
-                  value={newsletterEmail}
-                  onChange={(e) => setNewsletterEmail(e.target.value)}
-                  required
-                  className="flex-1 rounded-full bg-white/10 border-white/10 text-white placeholder:text-white/40 h-12"
-                />
-                <Button type="submit" className="rounded-full bg-accent text-accent-foreground hover:bg-accent/90 px-6 h-12">
-                  <Mail className="h-4 w-4" />
-                </Button>
-              </form>
-            </div>
-          </div>
-
           <div className="grid lg:grid-cols-12 gap-12 items-start mb-12">
             <div className="lg:col-span-4">
               <img src={loverballLogo} alt="Loverball" className="h-14 w-auto brightness-0 invert mb-4" />
-              <p className="text-white/50 text-sm leading-relaxed max-w-xs">
-                We're a community platform for women who love sports.
+              <p className="text-white/50 text-sm leading-relaxed max-w-xs font-serif">
+                The community platform for women who love sports.
               </p>
             </div>
             <div className="lg:col-span-2 lg:col-start-7">
-              <p className="text-white/40 text-sm font-medium tracking-wide uppercase mb-4">Platform</p>
+              <p className="text-white/40 text-xs font-sans font-bold tracking-widest uppercase mb-4">Platform</p>
               <nav className="space-y-3">
-                <a href="#about" className="block text-sm text-white/70 hover:text-white transition-colors">About</a>
-                <a href="#features" className="block text-sm text-white/70 hover:text-white transition-colors">Features</a>
-                <a href="#community" className="block text-sm text-white/70 hover:text-white transition-colors">Community</a>
+                <a href="#channels" className="block text-sm text-white/60 hover:text-white transition-colors font-sans">Channels</a>
+                <a href="#about" className="block text-sm text-white/60 hover:text-white transition-colors font-sans">About</a>
+                <a href="#how-it-works" className="block text-sm text-white/60 hover:text-white transition-colors font-sans">How It Works</a>
               </nav>
             </div>
             <div className="lg:col-span-2">
-              <p className="text-white/40 text-sm font-medium tracking-wide uppercase mb-4">Connect</p>
+              <p className="text-white/40 text-xs font-sans font-bold tracking-widest uppercase mb-4">Connect</p>
               <nav className="space-y-3">
-                <a href="https://www.instagram.com/loverballclub/" target="_blank" rel="noopener noreferrer" className="block text-sm text-white/70 hover:text-white transition-colors">Instagram</a>
-                <a href="https://www.tiktok.com/@loverballclub" target="_blank" rel="noopener noreferrer" className="block text-sm text-white/70 hover:text-white transition-colors">TikTok</a>
+                <a href="https://www.instagram.com/loverballclub/" target="_blank" rel="noopener noreferrer" className="block text-sm text-white/60 hover:text-white transition-colors font-sans">Instagram</a>
+                <a href="https://www.tiktok.com/@loverballclub" target="_blank" rel="noopener noreferrer" className="block text-sm text-white/60 hover:text-white transition-colors font-sans">TikTok</a>
               </nav>
             </div>
             <div className="lg:col-span-2">
-              <p className="text-white/40 text-sm font-medium tracking-wide uppercase mb-4">Legal</p>
+              <p className="text-white/40 text-xs font-sans font-bold tracking-widest uppercase mb-4">Legal</p>
               <nav className="space-y-3">
-                <a href="/privacy" className="block text-sm text-white/70 hover:text-white transition-colors">Privacy</a>
-                <a href="/terms" className="block text-sm text-white/70 hover:text-white transition-colors">Terms</a>
-                <a href="#" className="block text-sm text-white/70 hover:text-white transition-colors">Contact</a>
+                <a href="/privacy" className="block text-sm text-white/60 hover:text-white transition-colors font-sans">Privacy</a>
+                <a href="/terms" className="block text-sm text-white/60 hover:text-white transition-colors font-sans">Terms</a>
+                <a href="#" className="block text-sm text-white/60 hover:text-white transition-colors font-sans">Contact</a>
               </nav>
             </div>
           </div>
           <div className="border-t border-white/10 pt-8">
-            <p className="text-sm text-white/40">© 2026 Loverball. All rights reserved. Built by women, for women.</p>
+            <p className="text-sm text-white/40 font-sans">© 2026 Loverball. All rights reserved. Built by women, for women.</p>
           </div>
         </div>
       </footer>
