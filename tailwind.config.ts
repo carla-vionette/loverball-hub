@@ -132,10 +132,6 @@ export default {
           DEFAULT: "hsl(var(--coral))",
           foreground: "hsl(var(--coral-foreground))",
         },
-        lavender: {
-          DEFAULT: "hsl(var(--lavender))",
-          foreground: "hsl(var(--lavender-foreground))",
-        },
         "pale-pink": {
           DEFAULT: "hsl(var(--pale-pink))",
           foreground: "hsl(var(--pale-pink-foreground))",

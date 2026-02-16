@@ -29,31 +29,31 @@
 @layer base {
   :root {
     /* ── Brand ── */
-    --brand: 210 80% 55%;               /* Light Blue */
+    --brand: 0 100% 64%;                /* #FF4747 Vibrant Red */
     --brand-foreground: 0 0% 100%;
 
     /* ── Core palette ── */
-    --background: 0 0% 100%;            /* Clean White */
-    --foreground: 220 15% 15%;          /* Dark charcoal */
+    --background: 38 30% 94%;           /* Cream #F5F1E8 */
+    --foreground: 0 0% 5%;              /* Near black */
 
-    --card: 210 20% 98%;                /* Very light blue-gray */
-    --card-foreground: 220 15% 15%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 5%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 220 15% 15%;
+    --popover-foreground: 0 0% 5%;
 
-    /* Primary = Light Blue (CTAs, accent blocks, highlights) */
-    --primary: 210 80% 55%;             /* #3B8BFF */
+    /* Primary = Vibrant Red (headlines, CTAs, accent blocks) */
+    --primary: 0 100% 64%;              /* #FF4747 */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 25% 96%;           /* Very light blue */
-    --secondary-foreground: 220 15% 20%;
+    --secondary: 35 25% 88%;            /* Warm beige #E8DCC8 */
+    --secondary-foreground: 0 0% 12%;
 
-    --muted: 210 15% 94%;
-    --muted-foreground: 210 10% 45%;
+    --muted: 35 18% 90%;
+    --muted-foreground: 25 8% 45%;
 
-    /* Accent = Primary blue for interactive elements */
-    --accent: 210 80% 55%;
+    /* Accent = Black (contrast CTAs, line art, graphic elements) */
+    --accent: 0 0% 5%;
     --accent-foreground: 0 0% 100%;
 
     /* ── Status colors ── */
@@ -61,41 +61,37 @@
     --success-foreground: 0 0% 100%;
     --warning: 38 92% 50%;
     --warning-foreground: 0 0% 0%;
-    --info: 210 80% 55%;
+    --info: 0 100% 64%;
     --info-foreground: 0 0% 100%;
     --destructive: 0 84% 50%;
     --destructive-foreground: 0 0% 100%;
 
     /* ── Additional brand ── */
-    --coral: 210 80% 55%;
+    --coral: 0 100% 64%;                /* Same vibrant red */
     --coral-foreground: 0 0% 100%;
-    --pale-pink: 210 30% 96%;
-    --pale-pink-foreground: 220 15% 15%;
-    --medium-blue: 210 60% 60%;
+    --pale-pink: 35 22% 92%;            /* Light cream */
+    --pale-pink-foreground: 0 0% 5%;
+    --medium-blue: 0 85% 52%;           /* Deeper red */
     --medium-blue-foreground: 0 0% 100%;
-    --olive: 210 15% 38%;
+    --olive: 35 18% 38%;                /* Warm taupe */
     --olive-foreground: 0 0% 100%;
-    --light-lime: 210 80% 55%;
+    --light-lime: 0 100% 64%;           /* Red accent */
     --light-lime-foreground: 0 0% 100%;
-    --ticker: 210 80% 55%;
+    --ticker: 0 100% 64%;               /* Red ticker */
     --ticker-foreground: 0 0% 100%;
 
-    /* Contrast tones */
-    --terracotta: 220 15% 15%;
+    /* Terracotta → warm muted red-brown */
+    --terracotta: 8 55% 48%;            /* Muted terracotta */
     --terracotta-foreground: 0 0% 100%;
-    --warm-beige: 210 20% 95%;
-    --warm-beige-foreground: 220 15% 15%;
-
-    /* ── Lavender section token ── */
-    --lavender: 210 30% 96%;
-    --lavender-foreground: 220 15% 20%;
+    --warm-beige: 35 25% 88%;           /* #E8DCC8 */
+    --warm-beige-foreground: 0 0% 5%;
 
     /* ── Chrome ── */
-    --border: 210 15% 90%;
-    --input: 210 15% 90%;
-    --ring: 210 80% 55%;
+    --border: 35 15% 85%;
+    --input: 35 15% 85%;
+    --ring: 0 100% 64%;
 
-    --radius: 0.625rem;
+    --radius: 0.5rem;
   }
 
   .dark {
@@ -108,11 +104,11 @@
     --popover: 0 0% 10%;
     --popover-foreground: 35 15% 92%;
 
-    --primary: 5 100% 64%;
+    --primary: 0 100% 64%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 270 40% 20%;
-    --secondary-foreground: 270 40% 80%;
+    --secondary: 0 0% 14%;
+    --secondary-foreground: 35 10% 70%;
 
     --muted: 0 0% 18%;
     --muted-foreground: 25 5% 55%;
@@ -124,17 +120,14 @@
     --success-foreground: 0 0% 100%;
     --warning: 38 92% 50%;
     --warning-foreground: 0 0% 0%;
-    --info: 5 100% 64%;
+    --info: 0 100% 64%;
     --info-foreground: 0 0% 100%;
     --destructive: 0 84% 50%;
     --destructive-foreground: 0 0% 100%;
 
-    --lavender: 270 40% 20%;
-    --lavender-foreground: 270 40% 80%;
-
     --border: 0 0% 20%;
     --input: 0 0% 20%;
-    --ring: 5 100% 64%;
+    --ring: 0 100% 64%;
   }
 
   /* Video Streaming Dark Theme */
@@ -222,20 +215,6 @@
     @apply shadow-[0_12px_40px_rgb(0,0,0,0.12)] -translate-y-1;
   }
 
-  /* Polaroid photo frame */
-  .polaroid {
-    @apply bg-white p-2 pb-8 shadow-[0_4px_20px_rgba(0,0,0,0.1)] rotate-[-2deg] transition-transform duration-300;
-  }
-  .polaroid:hover {
-    @apply rotate-0 shadow-[0_8px_30px_rgba(0,0,0,0.15)];
-  }
-  .polaroid-alt {
-    @apply bg-white p-2 pb-8 shadow-[0_4px_20px_rgba(0,0,0,0.1)] rotate-[3deg] transition-transform duration-300;
-  }
-  .polaroid-alt:hover {
-    @apply rotate-0 shadow-[0_8px_30px_rgba(0,0,0,0.15)];
-  }
-
   /* Quote card */
   .quote-card {
     @apply relative p-8 sm:p-12 rounded-2xl;
@@ -245,32 +224,60 @@
     @apply absolute top-4 left-6 text-7xl leading-none opacity-20 font-display;
   }
 
-  /* Color block sections */
+  /* Color block section */
+  .color-block-red {
+    background-color: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
+  }
+  .color-block-blue {
+    background-color: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
+  }
   .color-block-coral {
     background-color: hsl(var(--primary));
     color: hsl(var(--primary-foreground));
   }
-  .color-block-lavender {
-    background-color: hsl(var(--lavender));
-    color: hsl(var(--lavender-foreground));
+  .color-block-terracotta {
+    background-color: hsl(var(--terracotta));
+    color: hsl(var(--terracotta-foreground));
   }
   .color-block-beige {
     background-color: hsl(var(--warm-beige));
     color: hsl(var(--warm-beige-foreground));
+  }
+  .color-block-sand {
+    background-color: hsl(var(--secondary));
+    color: hsl(var(--secondary-foreground));
   }
   .color-block-black {
     background-color: hsl(var(--accent));
     color: hsl(var(--accent-foreground));
   }
 
-  /* Script overlay accent */
-  .script-accent {
-    @apply font-script text-3xl sm:text-4xl;
+  /* Overlapping element style */
+  .overlap-left { @apply relative lg:-ml-12 lg:z-10; }
+  .overlap-right { @apply relative lg:-mr-12 lg:z-10; }
+
+  /* Ribbon / banner */
+  .ribbon {
+    @apply bg-primary text-primary-foreground px-4 py-1 text-xs font-medium tracking-widest uppercase;
+  }
+
+  /* Annotation circle */
+  .annotation-circle { @apply relative inline-block; }
+  .annotation-circle::before {
+    content: '';
+    @apply absolute -inset-2 border-2 border-primary rounded-full;
+  }
+
+  /* Numbered section label */
+  .section-number {
+    @apply font-display text-8xl text-primary/10 leading-none;
   }
 
   /* Category tag */
   .category-tag {
-    @apply inline-block px-3 py-1 text-xs font-bold tracking-widest uppercase rounded-full;
+    @apply inline-block px-3 py-1 text-xs font-bold tracking-widest uppercase rounded-sm;
   }
 
   /* Status toast variants */
