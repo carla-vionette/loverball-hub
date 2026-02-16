@@ -16,58 +16,57 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Loverball Brand Colors - Sage & Lime Aesthetic */
-    /* Soft sage green background */
-    --background: 100 12% 90%; /* Muted sage #E2E6DC */
-    --foreground: 0 0% 10%; /* Near Black #1A1A1A */
+    /* Soft sage-green aesthetic */
+    --background: 90 14% 87%; /* Muted sage #D9DFCE */
+    --foreground: 0 0% 8%; /* Near Black */
 
-    --card: 100 10% 96%; /* Light sage-white */
-    --card-foreground: 0 0% 10%;
+    --card: 90 12% 93%; /* Light sage-white */
+    --card-foreground: 0 0% 8%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 10%;
+    --popover: 90 10% 96%;
+    --popover-foreground: 0 0% 8%;
 
-    /* Dark primary for key actions */
-    --primary: 0 0% 8%; /* Near Black #141414 */
+    /* Dark primary */
+    --primary: 0 0% 8%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 100 10% 93%; /* Lighter sage */
-    --secondary-foreground: 0 0% 10%;
+    --secondary: 90 10% 90%;
+    --secondary-foreground: 0 0% 15%;
 
-    --muted: 100 8% 88%;
-    --muted-foreground: 0 0% 40%;
+    --muted: 90 8% 84%;
+    --muted-foreground: 0 0% 45%;
 
-    /* Neon Lime accent for highlights */
-    --accent: 72 100% 50%; /* Neon Lime #CCFF00 */
+    /* Neon Yellow accent */
+    --accent: 66 100% 60%; /* Bright neon yellow #E8FF3A */
     --accent-foreground: 0 0% 0%;
 
     /* Additional brand colors */
     --coral: 4 56% 60%;
     --coral-foreground: 0 0% 100%;
 
-    --pale-pink: 100 10% 95%;
+    --pale-pink: 90 10% 95%;
     --pale-pink-foreground: 0 0% 10%;
 
     --medium-blue: 224 64% 45%;
     --medium-blue-foreground: 0 0% 100%;
 
-    --olive: 100 12% 52%;
+    --olive: 90 12% 52%;
     --olive-foreground: 0 0% 100%;
 
-    --light-lime: 72 100% 50%;
+    --light-lime: 66 100% 60%;
     --light-lime-foreground: 0 0% 0%;
 
-    --ticker: 72 100% 50%; /* Neon Lime #CCFF00 */
+    --ticker: 66 100% 60%;
     --ticker-foreground: 0 0% 0%;
 
     --destructive: 0 84% 50%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 100 8% 84%;
-    --input: 100 8% 84%;
+    --border: 90 8% 80%;
+    --input: 90 8% 80%;
     --ring: 0 0% 8%;
 
-    --radius: 1.25rem;
+    --radius: 1.5rem;
   }
 
   .dark {
@@ -145,7 +144,7 @@ All colors MUST be HSL.
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply font-serif;
+    @apply font-sans;
   }
 }
 
