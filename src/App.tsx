@@ -13,6 +13,7 @@ import Ticker from "./pages/Ticker";
 import Horoscope from "./pages/Horoscope";
 
 import Community from "./pages/Community";
+import GroupChat from "./pages/GroupChat";
 import Profile from "./pages/Profile";
 import EditProfile from "./pages/EditProfile";
 import ProfileInterests from "./pages/ProfileInterests";
@@ -72,6 +73,7 @@ const App = () => (
             <Route path="/events" element={<ProtectedRoute><Events /></ProtectedRoute>} />
             <Route path="/event/:id" element={<EventDetail />} />
             <Route path="/community" element={<ProtectedRoute><Community /></ProtectedRoute>} />
+            <Route path="/community/:groupId" element={<ProtectedRoute><GroupChat /></ProtectedRoute>} />
             <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
             <Route path="/profile/edit" element={<ProtectedRoute><EditProfile /></ProtectedRoute>} />
             <Route path="/profile/interests" element={<ProtectedRoute><ProfileInterests /></ProtectedRoute>} />
