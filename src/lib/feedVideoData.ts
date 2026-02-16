@@ -3,6 +3,7 @@ import colorCoverageVideo2 from "@/assets/color-coverage-video-2.mp4";
 import matchPointVideo from "@/assets/match-point-video.mp4";
 import playMeVideo from "@/assets/play-me-video.mp4";
 import risingStarsVideo from "@/assets/rising-stars-video.mp4";
+import feedVideo6 from "@/assets/feed-video-6.mp4";
 import feedVideo1 from "@/assets/feed-video-1.mp4";
 import feedVideo2 from "@/assets/feed-video-2.mp4";
 import feedVideo3 from "@/assets/feed-video-3.mp4";
@@ -160,5 +161,21 @@ export const FEED_VIDEOS: FeedVideoItem[] = [
     views: 82000,
     uploadDate: "2026-02-05",
     tags: ["track", "field", "athletics"],
+  },
+  {
+    id: "feed_009",
+    channelId: "loverball",
+    channelName: "Loverball",
+    channelAvatar: thumbBase + "1535930749574-1399327ce78f?w=80&h=80&fit=crop&crop=faces",
+    videoUrl: feedVideo6,
+    thumbnail: risingStarsThumb,
+    title: "Game Ready — Pregame Vibes ✨",
+    description: "The energy before tip-off hits different. Get locked in.",
+    duration: 32,
+    likes: 6200,
+    views: 104000,
+    uploadDate: "2026-02-14",
+    tags: ["pregame", "vibes", "culture"],
+    isFollowing: true,
   },
 ];
