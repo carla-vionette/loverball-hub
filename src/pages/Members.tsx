@@ -12,6 +12,7 @@ import { Loader2, Users, PartyPopper } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import PageError from '@/components/PageError';
 import PageSkeleton from '@/components/PageSkeleton';
+import { trackConnectionAction } from '@/lib/analytics';
 
 interface MemberProfile {
   id: string;
@@ -116,6 +117,7 @@ const Members = () => {
         });
 
       if (swipeError) throw swipeError;
+      trackConnectionAction(direction === 'right' ? 'request' : 'reject', targetProfile.id);
 
       // Check if it's a match (the trigger handles this, but we check for UI)
       if (direction === 'right') {

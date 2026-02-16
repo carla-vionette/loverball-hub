@@ -8,6 +8,7 @@ import { AuthProvider } from "@/hooks/useAuth";
 import { Loader2 } from "lucide-react";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
 import NetworkStatus from "@/components/NetworkStatus";
+import { usePageTracking } from "@/hooks/usePageTracking";
 
 // Only eagerly load the landing page and auth (critical path)
 import Index from "./pages/Index";
@@ -64,6 +65,11 @@ const PageLoader = () => (
   </div>
 );
 
+const PageTracker = () => {
+  usePageTracking();
+  return null;
+};
+
 const App = () => (
   <ErrorBoundary>
     <QueryClientProvider client={queryClient}>
@@ -73,6 +79,7 @@ const App = () => (
           <Sonner />
           <NetworkStatus />
           <BrowserRouter>
+            <PageTracker />
             <Suspense fallback={<PageLoader />}>
               <Routes>
               <Route path="/" element={<Index />} />
