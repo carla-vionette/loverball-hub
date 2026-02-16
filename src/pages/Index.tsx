@@ -277,14 +277,14 @@ const Index = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1, ease: "easeOut" }}
             >
-              <p className="script-accent text-white/50 mb-4">welcome to loverball</p>
-              <h1 className="text-5xl sm:text-6xl lg:text-[4.5rem] font-display text-white leading-[0.93] mb-8">
-                Where Women<br />
-                Sports Fans<br />
-                Find Their <em>Tribe</em>
+              <p className="script-accent text-white/60 mb-4">welcome to loverball</p>
+              <h1 className="text-5xl sm:text-6xl lg:text-[5rem] font-display text-white leading-[0.9] mb-6">
+                Where Her <em>Game</em><br />
+                Meets Her<br />
+                <em>Community</em>
               </h1>
-              <p className="text-lg text-white/75 font-serif leading-relaxed mb-12 max-w-md">
-                The content and community platform built for women who live and breathe sports. Real stories, real connections, real culture — all in one place.
+              <p className="text-lg text-white/80 font-serif leading-relaxed mb-10 max-w-md">
+                The platform where women sports fans connect, celebrate, and elevate the game together. Original content, live events, and a community that gets it.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button
@@ -295,11 +295,11 @@ const Index = () => {
                   Join Loverball
                 </Button>
                 <Button
-                  onClick={() => document.getElementById("channels")?.scrollIntoView({ behavior: "smooth" })}
+                  onClick={() => document.getElementById("how-it-works")?.scrollIntoView({ behavior: "smooth" })}
                   size="lg"
-                  className="rounded-full bg-transparent border-2 border-white/40 text-white hover:bg-white/10 px-10 py-7 text-base font-sans tracking-widest uppercase"
+                  className="rounded-full bg-transparent border-2 border-white text-white hover:bg-white/10 px-10 py-7 text-base font-sans tracking-widest uppercase"
                 >
-                  Explore Content
+                  How It Works
                 </Button>
               </div>
             </motion.div>
