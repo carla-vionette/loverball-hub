@@ -15,60 +15,61 @@
 @layer base {
   :root {
     /* ── Brand ── */
-    --brand: 72 100% 50%;            /* #CDFF00 Loverball Yellow */
-    --brand-foreground: 0 0% 0%;
+    --brand: 202 53% 67%;            /* #7DB6D9 Sky Blue */
+    --brand-foreground: 0 0% 100%;
 
     /* ── Core palette ── */
-    --background: 0 0% 96%;          /* #F5F5F5 Light */
-    --foreground: 0 0% 0%;           /* #000000 Primary text */
+    --background: 40 33% 93%;        /* #F5F1E9 Warm Cream */
+    --foreground: 0 0% 13%;          /* #222222 Charcoal */
 
     --card: 0 0% 100%;               /* #FFFFFF */
-    --card-foreground: 0 0% 0%;
+    --card-foreground: 0 0% 13%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 0%;
+    --popover-foreground: 0 0% 13%;
 
-    /* Primary = brand */
-    --primary: 72 100% 50%;
-    --primary-foreground: 0 0% 0%;
+    /* Primary = Sky Blue (buttons, links) */
+    --primary: 202 53% 67%;          /* #7DB6D9 */
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 0 0% 96%;           /* #F5F5F5 */
-    --secondary-foreground: 0 0% 40%; /* #666666 Secondary text */
+    --secondary: 30 30% 86%;         /* #E7DDCF Beige */
+    --secondary-foreground: 0 0% 30%;
 
-    --muted: 0 0% 92%;
-    --muted-foreground: 0 0% 40%;    /* #666666 */
+    --muted: 30 25% 90%;
+    --muted-foreground: 0 0% 40%;
 
-    --accent: 72 100% 50%;
-    --accent-foreground: 0 0% 0%;
+    /* Accent = Muted Teal (headings, dividers) */
+    --accent: 199 47% 41%;           /* #397A9B */
+    --accent-foreground: 0 0% 100%;
 
     /* ── Status colors ── */
-    --success: 142 72% 42%;          /* Green */
+    --success: 142 72% 42%;
     --success-foreground: 0 0% 100%;
-    --warning: 38 92% 50%;           /* Amber */
+    --warning: 38 92% 50%;
     --warning-foreground: 0 0% 0%;
-    --info: 210 100% 52%;            /* Blue */
+    --info: 210 100% 52%;
     --info-foreground: 0 0% 100%;
-    --destructive: 0 84% 50%;        /* Red */
+    --destructive: 0 84% 50%;
     --destructive-foreground: 0 0% 100%;
 
     /* ── Additional brand ── */
-    --coral: 4 56% 60%;
+    --coral: 5 86% 62%;              /* #F15B4B Coral */
     --coral-foreground: 0 0% 100%;
-    --pale-pink: 0 0% 97%;
-    --pale-pink-foreground: 0 0% 10%;
-    --medium-blue: 224 64% 45%;
+    --pale-pink: 40 33% 95%;
+    --pale-pink-foreground: 0 0% 13%;
+    --medium-blue: 199 47% 41%;      /* Teal */
     --medium-blue-foreground: 0 0% 100%;
     --olive: 90 12% 52%;
     --olive-foreground: 0 0% 100%;
-    --light-lime: 72 100% 50%;
-    --light-lime-foreground: 0 0% 0%;
-    --ticker: 72 100% 50%;
-    --ticker-foreground: 0 0% 0%;
+    --light-lime: 20 89% 60%;        /* #F37A3F Grapefruit */
+    --light-lime-foreground: 0 0% 100%;
+    --ticker: 199 47% 41%;           /* Teal ticker */
+    --ticker-foreground: 0 0% 100%;
 
     /* ── Chrome ── */
-    --border: 0 0% 88%;
-    --input: 0 0% 88%;
-    --ring: 72 100% 50%;
+    --border: 30 20% 82%;
+    --input: 30 20% 82%;
+    --ring: 202 53% 67%;
 
     --radius: 1.5rem;
   }
