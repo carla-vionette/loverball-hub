@@ -253,9 +253,17 @@ const Connections = () => {
               </Tabs>
 
               {filteredSuggestions.length === 0 ? (
-                <div className="text-center py-12 text-muted-foreground">
-                  <Users className="w-12 h-12 mx-auto mb-3 opacity-30" />
-                  <p className="text-sm">No suggestions match this filter. Try another!</p>
+                <div className="text-center py-16">
+                  <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center">
+                    <Sparkles className="w-8 h-8 text-primary" />
+                  </div>
+                  <h3 className="text-lg font-semibold mb-1">Building your connections...</h3>
+                  <p className="text-sm text-muted-foreground max-w-xs mx-auto mb-6">
+                    We're finding the best people for you. Try switching filters or check back soon as more members join!
+                  </p>
+                  <Button variant="outline" className="rounded-full" onClick={() => setActiveFilter("all")}>
+                    View All Suggestions
+                  </Button>
                 </div>
               ) : (
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
