@@ -44,18 +44,18 @@ const LandingPage = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Navigation - Pill Style */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border/50">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-secondary/95 backdrop-blur-sm border-b border-border/50">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <div className="flex items-center justify-between h-20">
-            {/* Left nav links - Pill style */}
+            {/* Left nav links */}
             <div className="hidden md:flex items-center gap-2">
-              <a href="#about" className="px-5 py-2 text-sm font-medium text-foreground/70 hover:text-foreground hover:bg-secondary rounded-full transition-all">
+              <a href="#about" className="px-5 py-2 text-sm font-medium text-foreground/70 hover:text-foreground hover:bg-background rounded-full transition-all">
                 About
               </a>
-              <a href="#features" className="px-5 py-2 text-sm font-medium text-foreground/70 hover:text-foreground hover:bg-secondary rounded-full transition-all">
+              <a href="#features" className="px-5 py-2 text-sm font-medium text-foreground/70 hover:text-foreground hover:bg-background rounded-full transition-all">
                 Features
               </a>
-              <a href="#community" className="px-5 py-2 text-sm font-medium text-foreground/70 hover:text-foreground hover:bg-secondary rounded-full transition-all">
+              <a href="#community" className="px-5 py-2 text-sm font-medium text-foreground/70 hover:text-foreground hover:bg-background rounded-full transition-all">
                 Community
               </a>
             </div>
@@ -65,13 +65,13 @@ const LandingPage = () => {
             
             {/* Right nav links */}
             <div className="hidden md:flex items-center gap-3">
-              <a href="#" className="px-5 py-2 text-sm font-medium text-foreground/70 hover:text-foreground hover:bg-secondary rounded-full transition-all">
+              <a href="#" className="px-5 py-2 text-sm font-medium text-foreground/70 hover:text-foreground hover:bg-background rounded-full transition-all">
                 Events
               </a>
-              <a href="#" className="px-5 py-2 text-sm font-medium text-foreground/70 hover:text-foreground hover:bg-secondary rounded-full transition-all">
+              <a href="#" className="px-5 py-2 text-sm font-medium text-foreground/70 hover:text-foreground hover:bg-background rounded-full transition-all">
                 Shop
               </a>
-              <Button onClick={() => navigate("/following")} className="rounded-full bg-primary hover:bg-primary/90 px-6">
+              <Button onClick={() => navigate("/following")} className="rounded-full px-6">
                 Join Now
               </Button>
             </div>
@@ -104,7 +104,7 @@ const LandingPage = () => {
                 />
               </div>
               {/* Overlapping ribbon */}
-              <div className="absolute -bottom-4 -right-4 lg:right-auto lg:-left-8 bg-primary text-primary-foreground px-6 py-3 rounded-full shadow-lg">
+              <div className="absolute -bottom-4 -right-4 lg:right-auto lg:-left-8 bg-coral text-coral-foreground px-6 py-3 rounded-full shadow-lg">
                 <span className="text-sm font-medium tracking-wide">Est. 2024</span>
               </div>
             </motion.div>
@@ -116,23 +116,23 @@ const LandingPage = () => {
               transition={{ duration: 0.8, delay: 0.2 }}
               className="relative order-2 lg:-ml-24 z-10"
             >
-              <div className="bg-primary text-primary-foreground p-8 sm:p-12 lg:p-14 rounded-2xl shadow-2xl">
-                <p className="text-primary-foreground/80 text-sm font-medium tracking-widest mb-6 uppercase">
+              <div className="bg-accent text-accent-foreground p-8 sm:p-12 lg:p-14 rounded-2xl shadow-2xl">
+                <p className="text-accent-foreground/70 text-sm font-medium tracking-widest mb-6 uppercase">
                   Hey Friend.
                 </p>
-                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-sans font-normal leading-[1.1] mb-6">
+                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-sans font-normal leading-[1.1] mb-6 text-accent-foreground">
                   Let's Elevate<br />
                   Your Sports<br />
                   <span className="italic">Experience</span>
                 </h1>
-                <p className="text-primary-foreground/80 text-lg leading-relaxed mb-8 max-w-md">
+                <p className="text-accent-foreground/80 text-lg leading-relaxed mb-8 max-w-md">
                   We're a community platform for women who love sports—where stories, connection, and culture meet her passion for the game.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4">
                   <Button 
                     onClick={() => navigate("/following")}
                     size="lg"
-                    className="rounded-full bg-background text-primary hover:bg-background/90 px-8 py-6 text-base font-medium"
+                    className="rounded-full bg-primary text-primary-foreground hover:bg-primary/85 px-8 py-6 text-base font-medium"
                   >
                     Learn More
                     <ArrowRight className="ml-2 h-5 w-5" />
@@ -145,7 +145,7 @@ const LandingPage = () => {
       </section>
 
       {/* Scrolling Ticker */}
-      <div className="bg-primary text-primary-foreground py-4 overflow-hidden">
+      <div className="bg-accent text-accent-foreground py-4 overflow-hidden">
         <motion.div
           animate={{ x: [0, -1000] }}
           transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
@@ -154,16 +154,16 @@ const LandingPage = () => {
           {[...Array(10)].map((_, i) => (
             <span key={i} className="flex items-center gap-12 text-sm tracking-widest font-medium">
               <span>WOMEN'S SPORTS ELEVATED</span>
-              <span className="text-primary-foreground/60">◆</span>
+              <span className="text-accent-foreground/50">◆</span>
               <span>JOIN THE MOVEMENT</span>
-              <span className="text-primary-foreground/60">◆</span>
+              <span className="text-accent-foreground/50">◆</span>
             </span>
           ))}
         </motion.div>
       </div>
 
       {/* Statement Section */}
-      <section className="py-24 bg-white">
+      <section className="py-24 bg-card">
         <div className="max-w-5xl mx-auto px-6 lg:px-12 text-center">
           <motion.p
             initial={{ opacity: 0, y: 30 }}
@@ -173,9 +173,9 @@ const LandingPage = () => {
             className="text-2xl sm:text-3xl lg:text-4xl text-foreground leading-relaxed"
           >
             We specialize in creating{" "}
-            <span className="italic font-sans text-primary border-b-2 border-primary">tailored</span>{" "}
+            <span className="italic font-sans text-accent border-b-2 border-coral">tailored</span>{" "}
             sports content and experiences that drive engagement, build brand loyalty, and{" "}
-            <span className="italic font-sans text-primary border-b-2 border-primary">inspire women.</span>
+            <span className="italic font-sans text-accent border-b-2 border-coral">inspire women.</span>
           </motion.p>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -227,21 +227,21 @@ const LandingPage = () => {
               viewport={{ once: true }}
               className="relative lg:-ml-20 z-10"
             >
-              <div className="bg-primary text-primary-foreground p-8 sm:p-12 rounded-2xl shadow-2xl">
-                <span className="inline-block bg-primary-foreground/20 text-primary-foreground px-4 py-2 rounded-full text-sm font-medium tracking-wide mb-6">
+              <div className="bg-accent text-accent-foreground p-8 sm:p-12 rounded-2xl shadow-2xl">
+                <span className="inline-block bg-accent-foreground/15 text-accent-foreground px-4 py-2 rounded-full text-sm font-medium tracking-wide mb-6">
                   About Loverball
                 </span>
-                <h2 className="text-3xl sm:text-4xl font-sans mb-6">About Loverball</h2>
-                <p className="text-lg leading-relaxed mb-4 text-primary-foreground/90">
+                <h2 className="text-3xl sm:text-4xl font-sans mb-6 text-accent-foreground">About Loverball</h2>
+                <p className="text-lg leading-relaxed mb-4 text-accent-foreground/90">
                   <strong>85% of household purchasing decisions</strong> are made by women. Yet we're overlooked in sports coverage and community.
                 </p>
-                <p className="text-lg leading-relaxed mb-8 text-primary-foreground/90">
+                <p className="text-lg leading-relaxed mb-8 text-accent-foreground/90">
                   Loverball is a content and community platform for the <strong>$28B women's sports market</strong>. AI-powered stories, community events, and narrative-driven coverage tailored to female fans.
                 </p>
                 <Button 
                   onClick={() => navigate("/following")}
                   size="lg"
-                  className="rounded-full bg-background text-primary hover:bg-background/90 px-8"
+                  className="rounded-full bg-primary text-primary-foreground hover:bg-primary/85 px-8"
                 >
                   Learn More
                 </Button>
@@ -252,7 +252,7 @@ const LandingPage = () => {
       </section>
 
       {/* Features Section - Cards */}
-      <section id="features" className="py-24 lg:py-32 bg-white">
+      <section id="features" className="py-24 lg:py-32 bg-card">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -261,11 +261,11 @@ const LandingPage = () => {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <span className="inline-block bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium tracking-wide mb-6">
+            <span className="inline-block bg-coral/10 text-coral px-4 py-2 rounded-full text-sm font-medium tracking-wide mb-6">
               Our Services
             </span>
             <h2 className="text-4xl sm:text-5xl lg:text-6xl font-sans font-normal text-foreground">
-              Built <span className="italic">For Her</span>
+              Built <span className="italic text-accent">For Her</span>
             </h2>
           </motion.div>
 
@@ -279,11 +279,11 @@ const LandingPage = () => {
                 viewport={{ once: true }}
                 className="group"
               >
-                <div className="bg-background p-8 rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.1)] transition-all duration-300 h-full border border-border/50">
-                  <div className="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-primary group-hover:text-primary-foreground transition-colors duration-300">
-                    <feature.icon className="h-7 w-7 text-primary group-hover:text-primary-foreground transition-colors duration-300" />
+                <div className="bg-background p-8 rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)] transition-all duration-300 h-full border border-border/50">
+                  <div className="w-14 h-14 bg-primary/15 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-accent group-hover:text-accent-foreground transition-colors duration-300">
+                    <feature.icon className="h-7 w-7 text-primary group-hover:text-accent-foreground transition-colors duration-300" />
                   </div>
-                  <h3 className="text-xl font-sans text-foreground mb-4 group-hover:text-primary transition-colors duration-300">
+                  <h3 className="text-xl font-sans text-foreground mb-4 group-hover:text-accent transition-colors duration-300">
                     {feature.title}
                   </h3>
                   <p className="text-foreground/60 leading-relaxed">
@@ -300,11 +300,11 @@ const LandingPage = () => {
               <div key={item.title} className="border-b border-border/50">
                 <button
                   onClick={() => setOpenAccordion(openAccordion === index ? null : index)}
-                  className="w-full py-6 flex items-center justify-between text-left hover:text-primary transition-colors"
+                  className="w-full py-6 flex items-center justify-between text-left hover:text-accent transition-colors"
                 >
                   <span className="text-xl font-sans text-foreground">{item.title}</span>
                   {openAccordion === index ? (
-                    <Minus className="h-5 w-5 text-primary shrink-0" />
+                    <Minus className="h-5 w-5 text-coral shrink-0" />
                   ) : (
                     <Plus className="h-5 w-5 text-foreground/50 shrink-0" />
                   )}
@@ -335,11 +335,11 @@ const LandingPage = () => {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <span className="inline-block bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium tracking-wide mb-6">
+            <span className="inline-block bg-coral/10 text-coral px-4 py-2 rounded-full text-sm font-medium tracking-wide mb-6">
               Join Us
             </span>
             <h2 className="text-5xl sm:text-6xl lg:text-7xl font-sans text-foreground">
-              Our <span className="italic text-primary">Community</span>
+              Our <span className="italic text-accent">Community</span>
             </h2>
           </motion.div>
 
@@ -356,9 +356,9 @@ const LandingPage = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
                 viewport={{ once: true }}
-                className="bg-white p-8 rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.06)] text-center border border-border/50"
+                className="bg-card p-8 rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.04)] text-center border border-border/50"
               >
-                <p className="text-5xl sm:text-6xl font-sans text-primary mb-2">{stat.value}</p>
+                <p className="text-5xl sm:text-6xl font-sans text-accent mb-2">{stat.value}</p>
                 <p className="text-lg font-medium text-foreground mb-1">{stat.label}</p>
                 <p className="text-sm text-foreground/60">{stat.desc}</p>
               </motion.div>
@@ -382,13 +382,13 @@ const LandingPage = () => {
             </div>
             {/* Decorative elements */}
             <div className="hidden lg:block absolute -top-6 -left-6 w-24 h-24 bg-primary/20 rounded-2xl -z-10" />
-            <div className="hidden lg:block absolute -bottom-6 -right-6 w-24 h-24 bg-primary/20 rounded-2xl -z-10" />
+            <div className="hidden lg:block absolute -bottom-6 -right-6 w-24 h-24 bg-coral/20 rounded-2xl -z-10" />
           </motion.div>
         </div>
       </section>
 
       {/* Final CTA */}
-      <section className="py-24 bg-primary">
+      <section className="py-24 bg-accent">
         <div className="max-w-4xl mx-auto px-6 lg:px-12 text-center">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
@@ -396,16 +396,16 @@ const LandingPage = () => {
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-sans text-primary-foreground mb-6">
+            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-sans text-accent-foreground mb-6">
               Ready to <span className="italic">Join</span>?
             </h2>
-            <p className="text-xl text-primary-foreground/80 mb-10 max-w-2xl mx-auto">
+            <p className="text-xl text-accent-foreground/80 mb-10 max-w-2xl mx-auto">
               Be part of the movement redefining women's sports fandom.
             </p>
             <Button 
               size="lg"
               onClick={() => navigate("/following")}
-              className="rounded-full text-lg px-10 py-7 bg-background text-primary hover:bg-background/90 font-medium shadow-xl"
+              className="rounded-full text-lg px-10 py-7 bg-primary text-primary-foreground hover:bg-primary/85 font-medium shadow-xl"
             >
               Explore Now
               <ArrowRight className="ml-2 h-5 w-5" />
@@ -415,17 +415,17 @@ const LandingPage = () => {
       </section>
 
       {/* Footer */}
-      <footer className="py-16 bg-foreground text-background">
+      <footer className="py-16 bg-secondary text-foreground">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <div className="flex flex-col md:flex-row items-center justify-between gap-8">
-            <img src={loverballLogo} alt="Loverball" className="h-14 w-auto brightness-0 invert" />
-            <p className="text-sm text-background/50">
+            <img src={loverballLogo} alt="Loverball" className="h-14 w-auto" />
+            <p className="text-sm text-foreground/50">
               © 2025 Loverball. All rights reserved. Built by women, for women.
             </p>
             <div className="flex gap-6">
-              <a href="#" className="text-sm text-background/50 hover:text-background transition-colors">Privacy</a>
-              <a href="#" className="text-sm text-background/50 hover:text-background transition-colors">Terms</a>
-              <a href="#" className="text-sm text-background/50 hover:text-background transition-colors">Contact</a>
+              <a href="#" className="text-sm text-foreground/50 hover:text-foreground transition-colors">Privacy</a>
+              <a href="#" className="text-sm text-foreground/50 hover:text-foreground transition-colors">Terms</a>
+              <a href="#" className="text-sm text-foreground/50 hover:text-foreground transition-colors">Contact</a>
             </div>
           </div>
         </div>
