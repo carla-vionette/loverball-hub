@@ -10,7 +10,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { motion } from "framer-motion";
 import { ArrowRight, Lock, Ticket, Users, Sparkles, Calendar } from "lucide-react";
 import heroImage from "@/assets/hero-women-new.png";
-import loverballLogo from "@/assets/loverball-logo-new.png";
+import loverballLogo from "@/assets/loverball-script-logo.png";
 import philosophyImage from "@/assets/philosophy-image.jpg";
 import communityImage from "@/assets/landing-community.jpg";
 import { z } from "zod";

@@ -6,7 +6,7 @@ import { useState } from "react";
 import heroImage from "@/assets/hero-women.png";
 import athletesImage from "@/assets/landing-athletes.jpg";
 import communityImage from "@/assets/landing-community.jpg";
-import loverballLogo from "@/assets/loverball-logo-new.png";
+import loverballLogo from "@/assets/loverball-script-logo.png";
 
 const LandingPage = () => {
   const navigate = useNavigate();

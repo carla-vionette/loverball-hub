@@ -27,7 +27,7 @@ import {
   PARTICIPATION_OPTIONS,
 } from "@/lib/onboardingOptions";
 import { X, Camera, Loader2, ArrowLeft } from "lucide-react";
-import loverballLogo from "@/assets/loverball-logo-new.png";
+import loverballLogo from "@/assets/loverball-script-logo.png";
 import MobileHeader from "@/components/MobileHeader";
 import DesktopNav from "@/components/DesktopNav";
 import BottomNav from "@/components/BottomNav";
