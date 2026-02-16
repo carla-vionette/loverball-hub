@@ -12,7 +12,7 @@ const BottomNav = () => {
   // Show skeleton while loading
   if (loading) {
     return (
-      <nav className="fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur-sm border-t border-border/50 z-50 md:hidden">
+      <nav className="fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur-sm border-t border-border/50 z-50 md:hidden" aria-label="Loading navigation">
         <div className="flex justify-around items-center h-16">
           {[...Array(5)].map((_, i) => (
             <div key={i} className="flex flex-col items-center justify-center flex-1 h-full gap-1">
@@ -25,7 +25,6 @@ const BottomNav = () => {
     );
   }
   
-  // Build nav items - member-only items show once auth is loaded
   const navItems = [
     { icon: Play, label: "For You", path: "/watch" },
     { icon: Heart, label: "Connect", path: "/connections" },
@@ -36,7 +35,11 @@ const BottomNav = () => {
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden safe-area-pb px-3 pb-2">
+    <nav
+      className="fixed bottom-0 left-0 right-0 z-50 md:hidden safe-area-pb px-3 pb-2"
+      role="navigation"
+      aria-label="Main navigation"
+    >
       <div className="flex justify-around items-center h-16 bg-card/90 backdrop-blur-md rounded-[2rem] shadow-[0_4px_24px_rgba(0,0,0,0.08)] border border-border/20 animate-fade-in">
         {navItems.map((item) => {
           const Icon = item.icon;
@@ -47,7 +50,9 @@ const BottomNav = () => {
             <Link
               key={item.path}
               to={item.path}
-              className={`flex flex-col items-center justify-center flex-1 h-full transition-all duration-200 rounded-2xl mx-0.5 ${
+              aria-current={isActive ? "page" : undefined}
+              aria-label={`${item.label}${showBadge ? ', new messages' : ''}`}
+              className={`flex flex-col items-center justify-center flex-1 h-full transition-all duration-200 rounded-2xl mx-0.5 tap-target focus-ring ${
                 isActive ? "bg-accent text-accent-foreground" : ""
               }`}
             >
@@ -55,9 +60,10 @@ const BottomNav = () => {
                 <Icon 
                   className={`w-5 h-5 ${isActive ? "text-accent-foreground" : "text-foreground/40"}`}
                   fill={isActive ? "currentColor" : "none"}
+                  aria-hidden="true"
                 />
                 {showBadge && (
-                  <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-accent rounded-full border-2 border-card" />
+                  <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-accent rounded-full border-2 border-card" aria-hidden="true" />
                 )}
               </div>
               <span className={`text-[10px] tracking-wider mt-1 ${isActive ? "text-accent-foreground font-semibold" : "text-foreground/40"}`}>

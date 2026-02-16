@@ -6,9 +6,9 @@ const VideoLayout = () => {
   return (
     <div className="min-h-screen bg-background text-foreground font-sans">
       <VideoSidebar />
-      <div className="md:ml-60">
+      <main id="main-content" className="md:ml-60" role="main">
         <Outlet />
-      </div>
+      </main>
       <VideoBottomNav />
     </div>
   );

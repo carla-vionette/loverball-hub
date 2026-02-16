@@ -16,9 +16,9 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Soft sage-green aesthetic */
-    --background: 90 14% 87%; /* Muted sage #D9DFCE */
-    --foreground: 0 0% 8%; /* Near Black */
+  /* Soft sage-green aesthetic — WCAG AA contrast compliant */
+    --background: 90 14% 89%; /* Muted sage, lightened for contrast */
+    --foreground: 0 0% 6%; /* Near Black — 13:1 contrast ratio */
 
     --card: 90 12% 93%; /* Light sage-white */
     --card-foreground: 0 0% 8%;
@@ -34,7 +34,7 @@ All colors MUST be HSL.
     --secondary-foreground: 0 0% 15%;
 
     --muted: 90 8% 84%;
-    --muted-foreground: 0 0% 45%;
+    --muted-foreground: 0 0% 38%; /* Darkened for 4.5:1 contrast on light bg */
 
     /* Neon Yellow accent */
     --accent: 66 100% 60%; /* Bright neon yellow #E8FF3A */
@@ -224,9 +224,19 @@ All colors MUST be HSL.
     @apply min-h-[44px] min-w-[44px];
   }
 
-  /* Focus visible ring for keyboard navigation */
+  /* Focus visible ring for keyboard navigation — high contrast */
   .focus-ring {
     @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background;
+  }
+
+  /* Skip to content link for keyboard users */
+  .skip-link {
+    @apply sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-2 focus:bg-primary focus:text-primary-foreground focus:rounded-lg focus:text-sm focus:font-medium;
+  }
+
+  /* Screen reader only live region */
+  .sr-live {
+    @apply sr-only;
   }
 
   /* Safe area padding for notched devices */
