@@ -38,7 +38,7 @@ const VideoCard = ({
         className="relative rounded-xl overflow-hidden group cursor-pointer"
       >
         <Link to={`/watch/video/${id}`}>
-          <div className="aspect-video relative">
+          <div className="aspect-[9/16] relative">
             <img src={thumbnail} alt={title} className="w-full h-full object-cover" />
             <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent" />
             <div className="absolute bottom-0 left-0 right-0 p-6">
@@ -69,7 +69,7 @@ const VideoCard = ({
           whileHover={{ backgroundColor: "hsl(var(--video-hover))" }}
           className="flex gap-3 p-2 rounded-lg transition-colors group cursor-pointer"
         >
-          <div className="relative w-40 aspect-video rounded-lg overflow-hidden flex-shrink-0">
+          <div className="relative w-28 aspect-[9/16] rounded-lg overflow-hidden flex-shrink-0">
             <img src={thumbnail} alt={title} className="w-full h-full object-cover" />
             <span className="absolute bottom-1 right-1 bg-background/80 text-foreground text-[10px] font-medium px-1.5 py-0.5 rounded">
               {duration}
@@ -95,7 +95,7 @@ const VideoCard = ({
         whileHover={{ scale: 1.03 }}
         className="group cursor-pointer"
       >
-        <div className="relative aspect-video rounded-lg overflow-hidden mb-3">
+        <div className="relative aspect-[9/16] rounded-lg overflow-hidden mb-3">
           <img src={thumbnail} alt={title} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
           <div className="absolute inset-0 bg-background/0 group-hover:bg-background/20 transition-colors" />
           <span className="absolute bottom-2 right-2 bg-background/80 text-foreground text-[10px] font-medium px-1.5 py-0.5 rounded flex items-center gap-1">
