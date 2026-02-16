@@ -46,14 +46,14 @@ const WelcomeSplash = ({ name, onDismiss }: WelcomeSplashProps) => {
             <p className="text-accent text-xs tracking-[0.3em] uppercase mb-6">
               Welcome back
             </p>
-            <h1 className="text-3xl md:text-5xl font-serif text-white leading-tight mb-8">
+            <h1 className="text-3xl md:text-5xl font-sans text-white leading-tight mb-8">
               Hey, {firstName}.
             </h1>
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 1, delay: 0.8 }}
-              className="text-white/60 text-lg md:text-xl font-serif italic leading-relaxed"
+              className="text-white/60 text-lg md:text-xl font-sans italic leading-relaxed"
             >
               "{quote}"
             </motion.p>
