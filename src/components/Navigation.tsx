@@ -31,10 +31,10 @@ const Navigation = () => {
                   key={item.path}
                   to={item.path}
                   className={cn(
-                    "flex items-center gap-2 px-4 py-2 rounded-full transition-all duration-200 text-sm font-bold tracking-wider uppercase",
+                    "flex items-center gap-2 px-4 py-2 rounded-full transition-all duration-200 text-sm font-sans font-bold tracking-wider uppercase",
                     isActive
                       ? "bg-primary text-primary-foreground shadow-sm"
-                      : "text-foreground/70 hover:bg-primary/5 hover:text-primary"
+                      : "text-foreground/70 hover:bg-primary/10 hover:text-primary"
                   )}
                 >
                   <Icon className="w-4 h-4" />
