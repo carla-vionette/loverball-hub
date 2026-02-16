@@ -111,7 +111,7 @@ const FeedVideoPlayer = ({ video, isActive, isMuted, onToggleMute }: FeedVideoPl
       className="relative w-full h-full bg-black overflow-hidden select-none"
       onClick={handleTap}
     >
-      {/* Video */}
+      {/* Video — force vertical crop */}
       <video
         ref={videoRef}
         src={video.videoUrl}
@@ -120,7 +120,7 @@ const FeedVideoPlayer = ({ video, isActive, isMuted, onToggleMute }: FeedVideoPl
         playsInline
         muted={isMuted}
         preload="metadata"
-        className="absolute inset-0 w-full h-full object-contain bg-black"
+        className="absolute inset-0 w-full h-full object-cover bg-black"
       />
 
       {/* Double-tap indicators */}
