@@ -1,31 +1,28 @@
 import { motion } from "framer-motion";
-import { ArrowRight, Menu } from "lucide-react";
+import { ArrowRight, Menu, Plus, Minus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import heroImage from "@/assets/hero-women.png";
 import athletesImage from "@/assets/landing-athletes.jpg";
 import communityImage from "@/assets/landing-community.jpg";
-import fansImage from "@/assets/landing-fans.jpg";
 import loverballLogo from "@/assets/loverball-script-logo.png";
-
-const channels = [
-  { name: "WNBA Coverage", sport: "Basketball", desc: "Game recaps, player spotlights, and insider analysis of every WNBA season moment.", image: "https://a.espncdn.com/i/teamlogos/wnba/500/la.png" },
-  { name: "Angel City FC", sport: "Soccer", desc: "Match previews, fan culture, and behind-the-scenes access to LA's favorite NWSL club.", image: "https://a.espncdn.com/i/teamlogos/soccer/500/6926.png" },
-  { name: "NCAA Women's", sport: "College Sports", desc: "March Madness, volleyball, track & field — covering the athletes before they go pro.", image: "https://a.espncdn.com/i/teamlogos/ncaa/500/26.png" },
-  { name: "Tennis & Golf", sport: "Individual Sports", desc: "Grand Slam stories, LPGA highlights, and the personalities shaping women's individual sports.", image: "https://a.espncdn.com/i/teamlogos/leagues/500/wta.png" },
-  { name: "Olympics 2028", sport: "LA28", desc: "Countdown to LA28 — athlete profiles, event previews, and the road to the Games.", image: "https://upload.wikimedia.org/wikipedia/en/thumb/a/a7/2028_Summer_Olympics_logo.svg/200px-2028_Summer_Olympics_logo.svg.png" },
-  { name: "Culture & Style", sport: "Lifestyle", desc: "Where sports meets fashion, wellness, and the culture that surrounds the game.", image: "https://a.espncdn.com/i/teamlogos/soccer/500/5765.png" },
-];
 
 const LandingPage = () => {
   const navigate = useNavigate();
-  const [email, setEmail] = useState("");
+  const [openAccordion, setOpenAccordion] = useState<number | null>(0);
+
+  const services = [
+    { title: "AI-Powered Content", desc: "Personalized sports stories that speak to what you care about. Beyond stats — the drama, culture, and narratives." },
+    { title: "Community Events", desc: "Watch parties, brunches, and experiences designed for women who love sports. Find your squad." },
+    { title: "Exclusive Access", desc: "Behind-the-scenes content, player interviews, and insider perspectives you won't find anywhere else." },
+    { title: "Brand Partnerships", desc: "Connect with brands that align with your values and passion for women's sports culture." },
+  ];
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Coral scrolling ticker */}
-      <div className="bg-primary py-2 overflow-hidden">
+      {/* Red scrolling ticker banner */}
+      <div className="bg-primary py-2.5 overflow-hidden">
         <motion.div
           animate={{ x: [0, -1200] }}
           transition={{ duration: 14, repeat: Infinity, ease: "linear" }}
@@ -33,30 +30,34 @@ const LandingPage = () => {
         >
           {[...Array(12)].map((_, i) => (
             <span key={i} className="flex items-center gap-16 text-xs tracking-[0.4em] font-sans font-bold text-primary-foreground/90 uppercase">
-              <span>Her Game Her Rules</span>
-              <span className="text-primary-foreground/40">♦</span>
+              <span>Skyrocket Your Sports Experience</span>
+              <span className="text-primary-foreground/40">★</span>
               <span>Join the Movement</span>
-              <span className="text-primary-foreground/40">♦</span>
+              <span className="text-primary-foreground/40">★</span>
             </span>
           ))}
         </motion.div>
       </div>
 
-      {/* Navigation */}
-      <nav className="sticky top-0 z-50 bg-primary">
+      {/* Navigation — Minimal editorial */}
+      <nav className="sticky top-0 z-50 bg-background/98 backdrop-blur-sm border-b border-border/50">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
-          <div className="flex items-center justify-between h-16">
-            <button className="text-primary-foreground/80 hover:text-primary-foreground transition-colors">
+          <div className="flex items-center justify-between h-20">
+            <button className="flex items-center gap-2 text-sm font-sans tracking-widest uppercase text-foreground/60 hover:text-foreground transition-colors">
               <Menu className="w-5 h-5" />
+              <span className="hidden sm:inline">Menu</span>
             </button>
-            <img src={loverballLogo} alt="Loverball" className="h-24 w-auto absolute left-1/2 -translate-x-1/2 brightness-0 invert" />
+
+            <img src={loverballLogo} alt="Loverball" className="h-28 w-auto absolute left-1/2 -translate-x-1/2" />
+
             <div className="hidden md:flex items-center gap-8">
-              <a href="#content" className="text-xs font-sans tracking-widest uppercase text-primary-foreground/70 hover:text-primary-foreground transition-colors">Content</a>
-              <a href="#about" className="text-xs font-sans tracking-widest uppercase text-primary-foreground/70 hover:text-primary-foreground transition-colors">About</a>
+              <a href="#about" className="text-sm font-sans tracking-widest uppercase text-foreground/50 hover:text-primary transition-colors">About</a>
+              <a href="#services" className="text-sm font-sans tracking-widest uppercase text-foreground/50 hover:text-primary transition-colors">Services</a>
             </div>
+
             <Button
               onClick={() => navigate("/following")}
-              className="rounded-full bg-white text-primary hover:bg-white/90 font-sans text-xs tracking-widest uppercase px-6"
+              className="rounded-full bg-accent text-accent-foreground hover:bg-accent/90 font-sans text-xs tracking-widest uppercase px-6"
             >
               Join Now
             </Button>
@@ -64,88 +65,176 @@ const LandingPage = () => {
         </div>
       </nav>
 
-      {/* ═══════════════════════════════════════════
-          HERO — Full coral, headline + 3 polaroids
-         ═══════════════════════════════════════════ */}
-      <section className="relative bg-primary py-24 lg:py-36 overflow-hidden">
-        <div className="max-w-7xl mx-auto px-6 lg:px-12">
-          <div className="grid lg:grid-cols-2 gap-12 items-center min-h-[520px]">
-            {/* Headline side */}
-            <motion.div
-              initial={{ opacity: 0, y: 40 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1, ease: "easeOut" }}
-            >
-              <p className="script-accent text-white/50 mb-4">welcome to loverball</p>
-              <h1 className="text-5xl sm:text-6xl lg:text-[4.75rem] font-display text-white leading-[0.93] mb-8">
-                Where Her <em>Game</em><br />
-                Meets Her<br />
-                <em>Community</em>
-              </h1>
-              <p className="text-lg text-white/75 font-serif leading-relaxed mb-12 max-w-md">
-                The content and community platform built for women who live and breathe sports. Real stories, real connections, real culture — all in one place.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Button
-                  onClick={() => navigate("/following")}
-                  size="lg"
-                  className="rounded-full bg-white text-primary hover:bg-white/90 px-10 py-7 text-base font-sans tracking-widest uppercase shadow-2xl"
-                >
-                  Join Loverball
-                </Button>
-                <Button
-                  onClick={() => {
-                    document.getElementById("content")?.scrollIntoView({ behavior: "smooth" });
-                  }}
-                  size="lg"
-                  className="rounded-full bg-transparent border-2 border-white/40 text-white hover:bg-white/10 px-10 py-7 text-base font-sans tracking-widest uppercase"
-                >
-                  How It Works
-                </Button>
-              </div>
-            </motion.div>
+      {/* Hero Section — Split editorial with red headline */}
+      <section className="relative min-h-[92vh] flex items-center overflow-hidden">
+        <div className="absolute inset-0">
+          <img
+            src={heroImage}
+            alt="Women in sports community"
+            className="w-full h-full object-cover object-[center_35%]"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-background/80 via-background/40 to-transparent" />
+        </div>
 
-            {/* 3 Polaroid photos — asymmetric */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 1, delay: 0.3 }}
-              className="relative hidden lg:block h-[540px]"
-            >
-              <div className="polaroid absolute top-0 right-4 w-56 z-10">
-                <img src={athletesImage} alt="Athletes" className="w-full aspect-square object-cover" />
-                <p className="text-center mt-1 font-serif text-xs text-foreground/50 italic">game day ✨</p>
-              </div>
-              <div className="polaroid-alt absolute top-32 -left-4 w-48 z-20">
-                <img src={communityImage} alt="Community" className="w-full aspect-square object-cover" />
-                <p className="text-center mt-1 font-serif text-xs text-foreground/50 italic">squad goals</p>
-              </div>
-              <div className="polaroid absolute bottom-0 right-14 w-52 rotate-[4deg] z-10">
-                <img src={heroImage} alt="Sports culture" className="w-full aspect-[3/4] object-cover object-top" />
-                <p className="text-center mt-1 font-serif text-xs text-foreground/50 italic">the culture</p>
-              </div>
-            </motion.div>
+        <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-12 w-full">
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, ease: "easeOut" }}
+            className="max-w-2xl"
+          >
+            <h1 className="text-6xl sm:text-7xl lg:text-[5.5rem] font-display text-primary leading-[0.92] mb-8">
+              Expand your<br />
+              <em>Influence,</em><br />
+              Amplify your<br />
+              <em>Impact</em>
+            </h1>
+            <p className="text-lg text-foreground/70 font-serif leading-relaxed mb-10 max-w-md">
+              Where women's sports culture meets connection, storytelling, and sisterhood.
+            </p>
+          </motion.div>
+        </div>
 
-            {/* Mobile polaroid row */}
-            <div className="flex gap-4 lg:hidden overflow-x-auto pb-4 -mx-2 px-2 scrollbar-hide">
-              <div className="polaroid min-w-[160px]">
-                <img src={athletesImage} alt="Athletes" className="w-full aspect-square object-cover" />
-              </div>
-              <div className="polaroid-alt min-w-[160px]">
-                <img src={communityImage} alt="Community" className="w-full aspect-square object-cover" />
-              </div>
-              <div className="polaroid min-w-[160px]">
-                <img src={heroImage} alt="Culture" className="w-full aspect-[3/4] object-cover object-top" />
-              </div>
+        {/* Red pill CTA floating bottom right */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6, duration: 0.6 }}
+          className="absolute bottom-12 right-12 z-20 hidden md:block"
+        >
+          <Button
+            onClick={() => navigate("/following")}
+            size="lg"
+            className="rounded-full bg-primary text-primary-foreground hover:bg-primary/90 px-10 py-7 text-base font-sans tracking-widest uppercase shadow-2xl"
+          >
+            Start Now
+            <ArrowRight className="ml-2 h-5 w-5" />
+          </Button>
+        </motion.div>
+      </section>
+
+      {/* About Section — Split: photo left, red block right */}
+      <section id="about" className="py-0">
+        <div className="grid lg:grid-cols-2 min-h-[600px]">
+          {/* Left — Editorial photo */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="relative overflow-hidden"
+          >
+            <img
+              src={athletesImage}
+              alt="Women athletes editorial"
+              className="w-full h-full object-cover min-h-[400px]"
+            />
+          </motion.div>
+
+          {/* Right — Red block with content */}
+          <motion.div
+            initial={{ opacity: 0, x: 30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            viewport={{ once: true }}
+            className="bg-primary text-primary-foreground p-10 sm:p-14 lg:p-20 flex flex-col justify-center relative"
+          >
+            {/* Circular cutout accent */}
+            <div className="w-20 h-20 rounded-full border-2 border-primary-foreground/30 flex items-center justify-center mb-8">
+              <span className="font-display text-2xl italic">LB</span>
             </div>
+            <p className="text-xs font-sans tracking-[0.3em] uppercase text-primary-foreground/50 mb-4">
+              About Us
+            </p>
+            <h2 className="font-display text-5xl md:text-6xl text-primary-foreground mb-8 leading-[0.95]">
+              <em>Hi!</em> We're<br />Loverball.
+            </h2>
+            <p className="text-lg font-serif text-primary-foreground/85 leading-relaxed mb-6">
+              We specialize in creating <em className="font-bold">tailored</em> sports content and experiences that drive engagement, build brand loyalty, and <em className="font-bold">inspire women.</em>
+            </p>
+            <p className="text-base font-serif text-primary-foreground/65 leading-relaxed mb-10">
+              Born in Los Angeles, Loverball is a content and community platform for the $28B women's sports market.
+            </p>
+            <Button
+              onClick={() => navigate("/following")}
+              variant="outline"
+              className="rounded-full border-2 border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary px-8 py-5 font-sans text-xs tracking-widest uppercase w-fit"
+            >
+              Learn About Us
+            </Button>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Red ticker divider */}
+      <div className="bg-primary py-2.5 overflow-hidden">
+        <motion.div
+          animate={{ x: [-1200, 0] }}
+          transition={{ duration: 14, repeat: Infinity, ease: "linear" }}
+          className="flex gap-16 whitespace-nowrap"
+        >
+          {[...Array(12)].map((_, i) => (
+            <span key={i} className="flex items-center gap-16 text-xs tracking-[0.4em] font-sans font-bold text-primary-foreground/90 uppercase">
+              <span>Her Game Her Rules</span>
+              <span className="text-primary-foreground/40">★</span>
+              <span>Women's Sports Elevated</span>
+              <span className="text-primary-foreground/40">★</span>
+            </span>
+          ))}
+        </motion.div>
+      </div>
+
+      {/* Services Section — White grid with red accents */}
+      <section id="services" className="py-24 lg:py-32 bg-background">
+        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="text-center mb-20"
+          >
+            <h2 className="font-display text-5xl md:text-6xl lg:text-7xl text-primary italic">
+              Our Services
+            </h2>
+          </motion.div>
+
+          {/* Services accordion */}
+          <div className="max-w-3xl mx-auto">
+            {services.map((service, index) => (
+              <div key={service.title} className="border-b border-border">
+                <button
+                  onClick={() => setOpenAccordion(openAccordion === index ? null : index)}
+                  className="w-full py-7 flex items-center justify-between text-left group"
+                >
+                  <div className="flex items-center gap-6">
+                    <span className="font-display text-3xl text-primary/40">0{index + 1}</span>
+                    <span className="text-xl font-display text-foreground group-hover:text-primary transition-colors">{service.title}</span>
+                  </div>
+                  {openAccordion === index ? (
+                    <Minus className="h-5 w-5 text-primary shrink-0" />
+                  ) : (
+                    <Plus className="h-5 w-5 text-foreground/40 shrink-0" />
+                  )}
+                </button>
+                <motion.div
+                  initial={false}
+                  animate={{ height: openAccordion === index ? "auto" : 0, opacity: openAccordion === index ? 1 : 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="overflow-hidden"
+                >
+                  <p className="pb-7 pl-16 text-foreground/60 leading-relaxed font-serif max-w-xl">
+                    {service.desc}
+                  </p>
+                </motion.div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* ═══════════════════════════════════════════
-          FEATURED CONTENT — White bg, channel grid
-         ═══════════════════════════════════════════ */}
-      <section id="content" className="py-24 lg:py-32 bg-background">
+      {/* Does This Sound Familiar — Pain points grid */}
+      <section className="py-24 bg-secondary">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -154,37 +243,27 @@ const LandingPage = () => {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <p className="text-xs font-sans tracking-[0.3em] uppercase text-foreground/50 mb-4">Featured Channels</p>
-            <h2 className="font-display text-5xl md:text-6xl text-foreground">
-              Content You'll <em className="text-primary">Love</em>
+            <h2 className="font-display text-5xl md:text-6xl text-primary italic mb-4">
+              Does this sound familiar?
             </h2>
           </motion.div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {channels.map((channel, i) => (
+          <div className="grid md:grid-cols-3 gap-6">
+            {[
+              { title: "Missing the Stories", desc: "Sports coverage that doesn't speak to you — just stats and highlights without the culture and narratives that matter." },
+              { title: "No Community", desc: "Feeling like the only woman in the room who's passionate about the game. Where's your crew?" },
+              { title: "Left Out", desc: "Events, content, and experiences designed without you in mind. It's time for something built for her." },
+            ].map((item, i) => (
               <motion.div
-                key={channel.name}
+                key={item.title}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: i * 0.08 }}
+                transition={{ duration: 0.5, delay: i * 0.1 }}
                 viewport={{ once: true }}
               >
-                <div className="group bg-card border border-border rounded-2xl overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer h-full">
-                  {/* Card top — sport type badge + logo */}
-                  <div className="relative bg-lavender/50 p-8 flex items-center justify-center h-40">
-                    <img
-                      src={channel.image}
-                      alt={channel.name}
-                      className="w-20 h-20 object-contain group-hover:scale-110 transition-transform duration-300"
-                      onError={e => { (e.target as HTMLImageElement).style.display = "none"; }}
-                    />
-                    <span className="absolute top-3 left-3 category-tag bg-primary/10 text-primary">{channel.sport}</span>
-                  </div>
-                  {/* Card body */}
-                  <div className="p-6">
-                    <h3 className="font-display text-xl text-foreground mb-2 group-hover:text-primary transition-colors normal-case">{channel.name}</h3>
-                    <p className="font-serif text-foreground/60 leading-relaxed text-sm">{channel.desc}</p>
-                  </div>
+                <div className="bg-card border border-border p-8 h-full hover:border-primary transition-colors duration-300">
+                  <h3 className="font-display text-2xl text-primary mb-4 normal-case italic">{item.title}</h3>
+                  <p className="font-serif text-foreground/60 leading-relaxed">{item.desc}</p>
                 </div>
               </motion.div>
             ))}
@@ -192,55 +271,57 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* ═══════════════════════════════════════════
-          ABOUT — Lavender bg, coral headline, image
-         ═══════════════════════════════════════════ */}
-      <section id="about" className="bg-lavender py-24 lg:py-32 overflow-hidden">
+      {/* Portfolio / Community showcase */}
+      <section className="py-24 lg:py-32 bg-background">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8 }}
-              viewport={{ once: true }}
-            >
-              <p className="script-accent text-primary mb-2">about us</p>
-              <h2 className="font-display text-5xl md:text-6xl text-primary mb-8 leading-[0.95]">
-                Built for Women<br />
-                Who Live &amp; <em>Breathe</em><br />
-                Sports
-              </h2>
-              <p className="text-lg font-serif text-lavender-foreground/80 leading-relaxed mb-6">
-                We believe every woman deserves a front-row seat — not just to the game, but to the <em className="font-bold">culture, community, and conversations</em> around it.
-              </p>
-              <p className="text-base font-serif text-lavender-foreground/60 leading-relaxed mb-10">
-                Born in Los Angeles, Loverball is a content and community platform for the $28B women's sports market. From watch parties to original content, we're redefining what it means to be a fan.
-              </p>
-              <Button
-                onClick={() => navigate("/following")}
-                className="rounded-full bg-primary text-primary-foreground hover:bg-primary/90 px-8 py-5 font-sans text-xs tracking-widest uppercase"
-              >
-                Learn More
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="max-w-3xl mb-16"
+          >
+            <h2 className="font-display text-5xl md:text-6xl text-foreground leading-[1.05] mb-6">
+              Welcome to our <em className="text-primary">Community</em>
+            </h2>
+            <p className="text-xl font-serif text-foreground/60 leading-relaxed">
+              <em>Explore</em> how we help women connect through sports, build real friendships, and <em>achieve their goals</em> together.
+            </p>
+          </motion.div>
 
-            {/* Lifestyle image */}
+          {/* Photo grid */}
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.6 }}
               viewport={{ once: true }}
-              className="flex justify-center"
+              className="col-span-2 row-span-2"
             >
-              <div className="relative">
-                <div className="polaroid-alt w-72 sm:w-80">
-                  <img src={fansImage} alt="Women sports fans" className="w-full aspect-[3/4] object-cover" />
-                  <p className="text-center mt-1 font-serif text-sm text-foreground/50 italic">our community 💛</p>
-                </div>
-                {/* Small accent polaroid */}
-                <div className="polaroid absolute -bottom-8 -left-12 w-36 z-20 hidden sm:block">
-                  <img src={communityImage} alt="Community event" className="w-full aspect-square object-cover" />
+              <div className="aspect-[4/3] overflow-hidden group cursor-pointer">
+                <img src={communityImage} alt="Loverball community" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+              </div>
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              viewport={{ once: true }}
+            >
+              <div className="aspect-square overflow-hidden group cursor-pointer">
+                <img src={athletesImage} alt="Women athletes" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+              </div>
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              viewport={{ once: true }}
+            >
+              <div className="aspect-square overflow-hidden group cursor-pointer bg-primary flex items-center justify-center">
+                <div className="text-center p-6">
+                  <p className="font-display text-5xl text-primary-foreground mb-2">10K+</p>
+                  <p className="font-sans text-xs tracking-widest uppercase text-primary-foreground/70">Members</p>
                 </div>
               </div>
             </motion.div>
@@ -248,10 +329,36 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* ═══════════════════════════════════════════
-          CTA — Coral bg, bold headline, email/button
-         ═══════════════════════════════════════════ */}
-      <section className="py-28 lg:py-36 bg-primary">
+      {/* Transformation CTA — Large serif headline */}
+      <section className="py-24 lg:py-32 bg-secondary">
+        <div className="max-w-5xl mx-auto px-6 lg:px-12 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="font-display text-5xl sm:text-6xl lg:text-7xl text-foreground leading-[1.05] mb-8">
+              Transform <em className="text-primary">Brands</em> with Creative<br />
+              Sports <em className="text-primary">Solutions</em>
+            </h2>
+            <p className="text-xl font-serif text-foreground/50 leading-relaxed mb-12 max-w-2xl mx-auto">
+              We partner with forward-thinking brands to reach the most influential audience in sports.
+            </p>
+            <Button
+              size="lg"
+              onClick={() => navigate("/following")}
+              className="rounded-full bg-primary text-primary-foreground hover:bg-primary/90 text-base px-12 py-7 font-sans tracking-widest uppercase shadow-xl"
+            >
+              Get Started
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Button>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Final CTA — Black block */}
+      <section className="py-32 bg-accent">
         <div className="max-w-3xl mx-auto px-6 lg:px-12 text-center">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
@@ -259,42 +366,28 @@ const LandingPage = () => {
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
           >
-            <p className="script-accent text-white/50 mb-4">ready?</p>
-            <h2 className="text-5xl sm:text-6xl lg:text-7xl font-display text-white mb-6 leading-[0.95] italic">
-              Join the Community<br />
-              Redefining <em>Fandom</em>
+            <h2 className="text-5xl sm:text-6xl lg:text-7xl font-display text-primary mb-8 leading-[0.95] italic">
+              Ready to Join<br />the Movement?
             </h2>
-            <p className="text-lg font-serif text-white/60 mb-10 max-w-xl mx-auto leading-relaxed">
-              Sign up to get early access to events, exclusive content, and connect with women who love the game as much as you do.
+            <p className="text-lg font-serif text-accent-foreground/60 mb-12 max-w-xl mx-auto leading-relaxed">
+              Be part of the community redefining women's sports fandom.
             </p>
-
-            {/* Email capture */}
-            <div className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto mb-6">
-              <input
-                type="email"
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-                placeholder="Enter your email"
-                className="flex-1 px-6 py-4 rounded-full bg-white/15 border border-white/25 text-white placeholder:text-white/40 font-sans text-sm focus:outline-none focus:ring-2 focus:ring-white/50 backdrop-blur-sm"
-              />
-              <Button
-                onClick={() => navigate("/following")}
-                size="lg"
-                className="rounded-full bg-white text-primary hover:bg-white/90 px-8 py-4 font-sans tracking-widest uppercase text-sm shadow-xl whitespace-nowrap"
-              >
-                Join Free
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </div>
-            <p className="text-xs text-white/40 font-sans">Free to join. No credit card required.</p>
+            <Button
+              size="lg"
+              onClick={() => navigate("/following")}
+              className="rounded-full bg-primary text-primary-foreground hover:bg-primary/90 text-base px-12 py-7 font-sans tracking-widest uppercase shadow-2xl"
+            >
+              Join Loverball
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Button>
           </motion.div>
         </div>
       </section>
 
-      {/* Footer */}
+      {/* Footer — Cream with red accents */}
       <footer className="py-16 bg-background">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
-          <div className="h-[2px] bg-primary/20 mb-12" />
+          <div className="h-[3px] bg-primary mb-12" />
           <div className="flex flex-col md:flex-row items-center justify-between gap-8">
             <img src={loverballLogo} alt="Loverball" className="h-14 w-auto" />
             <p className="text-sm text-foreground/40 font-sans">
