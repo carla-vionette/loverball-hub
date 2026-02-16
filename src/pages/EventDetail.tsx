@@ -13,6 +13,7 @@ import { format, differenceInDays, differenceInHours, differenceInMinutes, isPas
 import { motion, AnimatePresence } from "framer-motion";
 import loverballLogo from "@/assets/loverball-script-logo.png";
 import SharePreview from "@/components/SharePreview";
+import { trackEventRSVP, trackContentView } from "@/lib/analytics";
 
 interface Event {
   id: string;
@@ -186,6 +187,7 @@ const EventDetail = () => {
 
       if (error) throw error;
       setEvent(data);
+      if (data) trackContentView("event", data.id, data.title);
     } catch (error) {
       console.error('Error fetching event:', error);
       toast({
@@ -307,6 +309,7 @@ const EventDetail = () => {
 
       setRsvpStatus(dbStatus);
       fetchAttendees();
+      trackEventRSVP(event.id, dbStatus, event.title);
 
       if (status === 'yes') {
         setShowConfetti(true);

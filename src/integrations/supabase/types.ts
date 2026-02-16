@@ -14,6 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
+      analytics_events: {
+        Row: {
+          created_at: string
+          duration_ms: number | null
+          event_name: string
+          event_type: string
+          id: string
+          page_path: string | null
+          properties: Json | null
+          referrer_path: string | null
+          session_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          duration_ms?: number | null
+          event_name: string
+          event_type: string
+          id?: string
+          page_path?: string | null
+          properties?: Json | null
+          referrer_path?: string | null
+          session_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          duration_ms?: number | null
+          event_name?: string
+          event_type?: string
+          id?: string
+          page_path?: string | null
+          properties?: Json | null
+          referrer_path?: string | null
+          session_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       chats: {
         Row: {
           created_at: string
