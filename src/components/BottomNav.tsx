@@ -30,6 +30,7 @@ const BottomNav = () => {
     { icon: Play, label: "For You", path: "/watch" },
     { icon: Heart, label: "Connect", path: "/connections" },
     { icon: MessageCircle, label: "DMs", path: "/dms", showBadge: true },
+    { icon: ShoppingBag, label: "Shop", path: "/shop" },
     { icon: CalendarDays, label: "Events", path: "/events" },
     { icon: User, label: "Profile", path: "/profile" },
   ];
