@@ -193,7 +193,7 @@ const Index = () => {
             </div>
             
             {/* Center logo */}
-            <img src={loverballLogo} alt="Loverball" className="h-12 w-auto absolute left-1/2 -translate-x-1/2" />
+            <img src={loverballLogo} alt="Loverball" className="h-16 w-auto absolute left-1/2 -translate-x-1/2" />
             
             {/* Right nav */}
             <div className="hidden md:flex items-center gap-3">
@@ -675,7 +675,7 @@ const Index = () => {
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <div className="grid lg:grid-cols-12 gap-12 items-start mb-12">
             <div className="lg:col-span-4">
-              <img src={loverballLogo} alt="Loverball" className="h-10 w-auto brightness-0 invert mb-4" />
+              <img src={loverballLogo} alt="Loverball" className="h-14 w-auto brightness-0 invert mb-4" />
               <p className="text-background/50 text-sm leading-relaxed max-w-xs">
                 We're a community platform for women who love sports.
               </p>
