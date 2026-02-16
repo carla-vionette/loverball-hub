@@ -101,7 +101,7 @@ const VideoWatch = () => {
   return (
     <div className="min-h-screen pb-20 md:pb-6">
       {/* Player */}
-      <div className="w-full aspect-video bg-background sticky top-0 z-30 md:static md:max-w-5xl md:mx-auto md:mt-4 md:rounded-xl md:overflow-hidden">
+      <div className="w-full aspect-[9/16] max-h-[70vh] bg-background sticky top-0 z-30 md:static md:max-w-md md:mx-auto md:mt-4 md:rounded-xl md:overflow-hidden">
         <VideoPlayer
           ref={playerRef}
           src={video.videoUrl}
