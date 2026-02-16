@@ -290,7 +290,7 @@ const Events = () => {
       <main className="md:ml-64 pt-16 md:pt-0 pb-20 md:pb-0">
         <div className="container mx-auto px-4 py-8 max-w-6xl">
           <div className="mb-8">
-            <span className="inline-block bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium tracking-wide mb-4">
+            <span className="inline-block bg-accent text-accent-foreground px-4 py-2 rounded-full text-sm font-semibold tracking-wide mb-4">
               Community
             </span>
             <h1 className="text-4xl font-serif font-normal mb-3">Events</h1>
@@ -329,7 +329,7 @@ const Events = () => {
               </div>
 
               <Tabs defaultValue="upcoming" className="w-full">
-                <TabsList className="mb-8 bg-secondary/50 rounded-full p-1">
+                <TabsList className="mb-8 bg-card rounded-full p-1 border border-border/20">
                   <TabsTrigger value="upcoming" className="rounded-full data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-6">Upcoming</TabsTrigger>
                   <TabsTrigger value="my-events" className="rounded-full data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-6">My Events</TabsTrigger>
                 </TabsList>

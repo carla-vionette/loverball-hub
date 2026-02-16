@@ -34,8 +34,8 @@ const BottomNav = () => {
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur-sm border-t border-border/50 z-50 md:hidden safe-area-pb">
-      <div className="flex justify-around items-center h-16 animate-fade-in">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden safe-area-pb px-3 pb-2">
+      <div className="flex justify-around items-center h-16 bg-card/90 backdrop-blur-md rounded-[2rem] shadow-[0_4px_24px_rgba(0,0,0,0.08)] border border-border/20 animate-fade-in">
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive = location.pathname === item.path;
@@ -45,20 +45,20 @@ const BottomNav = () => {
             <Link
               key={item.path}
               to={item.path}
-              className={`flex flex-col items-center justify-center flex-1 h-full transition-colors rounded-lg mx-1 ${
-                isActive ? "bg-primary/10" : ""
+              className={`flex flex-col items-center justify-center flex-1 h-full transition-all duration-200 rounded-2xl mx-0.5 ${
+                isActive ? "bg-accent text-accent-foreground" : ""
               }`}
             >
               <div className="relative">
                 <Icon 
-                  className={`w-5 h-5 ${isActive ? "text-primary" : "text-foreground/50"}`}
+                  className={`w-5 h-5 ${isActive ? "text-accent-foreground" : "text-foreground/40"}`}
                   fill={isActive ? "currentColor" : "none"}
                 />
                 {showBadge && (
-                  <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-primary rounded-full border-2 border-background" />
+                  <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-accent rounded-full border-2 border-card" />
                 )}
               </div>
-              <span className={`text-[10px] tracking-wider mt-1 ${isActive ? "text-primary font-medium" : "text-foreground/50"}`}>
+              <span className={`text-[10px] tracking-wider mt-1 ${isActive ? "text-accent-foreground font-semibold" : "text-foreground/40"}`}>
                 {item.label}
               </span>
             </Link>

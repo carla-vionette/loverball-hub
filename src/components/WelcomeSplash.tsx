@@ -43,7 +43,7 @@ const WelcomeSplash = ({ name, onDismiss }: WelcomeSplashProps) => {
             transition={{ duration: 0.8, delay: 0.3 }}
             className="text-center px-8 max-w-lg"
           >
-            <p className="text-primary text-xs tracking-[0.3em] uppercase mb-6">
+            <p className="text-accent text-xs tracking-[0.3em] uppercase mb-6">
               Welcome back
             </p>
             <h1 className="text-3xl md:text-5xl font-serif text-white leading-tight mb-8">

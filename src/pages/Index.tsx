@@ -240,8 +240,8 @@ const Index = () => {
                 <img src={heroImage} alt="Women sports fans celebrating together" className="w-full h-full object-cover object-[center_35%]" />
               </div>
               {/* Overlapping ribbon */}
-              <div className="absolute -bottom-4 -right-4 lg:right-auto lg:-left-8 bg-primary text-primary-foreground px-6 py-3 rounded-full shadow-lg">
-                <span className="text-sm font-medium tracking-wide">⚽️🏀🎾🏈⚾️</span>
+              <div className="absolute -bottom-4 -right-4 lg:right-auto lg:-left-8 bg-accent text-accent-foreground px-6 py-3 rounded-full shadow-lg">
+                <span className="text-sm font-semibold tracking-wide">⚽️🏀🎾🏈⚾️</span>
               </div>
             </motion.div>
 
@@ -256,26 +256,26 @@ const Index = () => {
             duration: 0.8,
             delay: 0.2
           }} className="relative order-2 lg:-ml-24 z-10">
-              <div className="bg-primary text-primary-foreground p-8 sm:p-12 lg:p-14 rounded-2xl shadow-2xl">
-                <p className="text-primary-foreground/80 text-sm font-medium tracking-widest mb-6 uppercase">
+              <div className="bg-foreground text-background p-8 sm:p-12 lg:p-14 rounded-3xl shadow-2xl">
+                <p className="text-background/60 text-sm font-medium tracking-widest mb-6 uppercase">
                   Hey Friend.
                 </p>
-                <h1 className="text-[2rem] sm:text-5xl lg:text-6xl font-serif font-normal leading-[1.1] mb-6">
+                <h1 className="text-[2rem] sm:text-5xl lg:text-6xl font-serif font-normal leading-[1.1] mb-6 text-background">
                   Her Game.<br />
                   Her Community.<br />
                   <span className="italic">Her Platform.</span>
                 </h1>
-                <p className="text-primary-foreground/80 text-lg leading-relaxed mb-8 max-w-md">
+                <p className="text-background/60 text-lg leading-relaxed mb-8 max-w-md">
                   We're a community platform for women who love sports—where stories, connection, and culture meet her passion for the game.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4">
-                  <Button onClick={scrollToMemberAccess} size="lg" className="rounded-full bg-background text-primary hover:bg-background/90 px-8 py-6 text-base font-medium">
+                  <Button onClick={scrollToMemberAccess} size="lg" className="rounded-full bg-accent text-accent-foreground hover:bg-accent/90 px-8 py-6 text-base font-semibold">
                     Get Started
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
                   <Button variant="outline" size="lg" onClick={() => document.getElementById('about')?.scrollIntoView({
                   behavior: 'smooth'
-                })} className="rounded-full border-2 border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10 px-8 py-6 text-base font-medium bg-transparent">
+                })} className="rounded-full border-2 border-background/30 text-background hover:bg-background/10 px-8 py-6 text-base font-medium bg-transparent">
                     Learn More
                   </Button>
                 </div>
@@ -286,7 +286,7 @@ const Index = () => {
       </section>
 
       {/* Scrolling Ticker */}
-      <div className="bg-primary text-primary-foreground py-4 overflow-hidden">
+      <div className="bg-foreground text-background py-4 overflow-hidden">
         <motion.div animate={{
         x: [0, -1000]
       }} transition={{
@@ -304,7 +304,7 @@ const Index = () => {
       </div>
 
       {/* About Section - Editorial Grid */}
-      <section id="about" className="py-24 lg:py-32 bg-white">
+      <section id="about" className="py-24 lg:py-32 bg-card">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           {/* Section Header */}
           <motion.div initial={{
@@ -318,11 +318,11 @@ const Index = () => {
         }} viewport={{
           once: true
         }} className="text-center mb-20">
-            <span className="inline-block bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium tracking-wide mb-6">
+            <span className="inline-block bg-accent text-accent-foreground px-4 py-2 rounded-full text-sm font-semibold tracking-wide mb-6">
               The Movement
             </span>
             <h2 className="text-4xl sm:text-5xl lg:text-6xl font-serif font-normal text-foreground mb-6">
-              Why <span className="italic text-primary">Loverball</span>?
+              Why <span className="italic">Loverball</span>?
             </h2>
           </motion.div>
 
@@ -339,16 +339,16 @@ const Index = () => {
           }} viewport={{
             once: true
           }} className="space-y-12">
-              <div className="bg-secondary/50 p-8 rounded-2xl">
-                <span className="text-6xl sm:text-7xl font-serif font-normal text-primary">72%</span>
+              <div className="bg-secondary p-8 rounded-3xl">
+                <span className="text-6xl sm:text-7xl font-serif font-normal text-foreground">72%</span>
                 <p className="text-foreground/60 text-base mt-4 leading-relaxed">
-                  of women globally identify as <span className="text-primary font-medium">avid sports fans</span>
+                   of women globally identify as <span className="text-foreground font-medium">avid sports fans</span>
                 </p>
               </div>
-              <div className="bg-secondary/50 p-8 rounded-2xl">
-                <span className="text-6xl sm:text-7xl font-serif font-normal text-primary">85%</span>
+              <div className="bg-secondary p-8 rounded-3xl">
+                <span className="text-6xl sm:text-7xl font-serif font-normal text-foreground">85%</span>
                 <p className="text-foreground/60 text-base mt-4 leading-relaxed">
-                  of household sports purchasing decisions are <span className="text-primary font-medium">controlled by women</span>
+                  of household sports purchasing decisions are <span className="text-foreground font-medium">controlled by women</span>
                 </p>
               </div>
             </motion.div>
@@ -370,7 +370,7 @@ const Index = () => {
                 <img src={philosophyImage} alt="Loverball community member" className="w-full h-full object-cover object-top" />
               </div>
               {/* Overlapping annotation */}
-              <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground px-6 py-3 rounded-full shadow-lg whitespace-nowrap">
+              <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 bg-foreground text-background px-6 py-3 rounded-full shadow-lg whitespace-nowrap">
                 <span className="text-sm font-medium">Yet she remains overlooked.</span>
               </div>
             </motion.div>
@@ -389,15 +389,15 @@ const Index = () => {
             once: true
           }} className="lg:pt-8">
               <h3 className="text-2xl sm:text-3xl font-serif font-normal leading-snug mb-6 text-foreground">
-                Loverball is the platform where <span className="text-primary italic">female fandom</span> thrives.
+                Loverball is the platform where <span className="italic">female fandom</span> thrives.
               </h3>
               <p className="text-foreground/60 text-base leading-relaxed mb-6">
                 We're creating the space for her to gather, share, and celebrate the games she loves. AI-powered stories, community events, and narrative-driven coverage tailored to female fans.
               </p>
               <p className="text-foreground/60 text-base leading-relaxed mb-8">
-                By 2030, women will command 75% of global discretionary spending. <span className="text-primary font-semibold">The future of sports is female.</span>
+                By 2030, women will command 75% of global discretionary spending. <span className="font-semibold">The future of sports is female.</span>
               </p>
-              <Button onClick={scrollToMemberAccess} className="rounded-full bg-primary hover:bg-primary/90 px-8">
+              <Button onClick={scrollToMemberAccess} className="rounded-full px-8">
                 Join the Movement
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
@@ -420,7 +420,7 @@ const Index = () => {
         }} viewport={{
           once: true
         }} className="text-center mb-16">
-            <span className="inline-block bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium tracking-wide mb-6">
+            <span className="inline-block bg-accent text-accent-foreground px-4 py-2 rounded-full text-sm font-semibold tracking-wide mb-6">
               Our Services
             </span>
             <h2 className="text-4xl sm:text-5xl lg:text-6xl font-serif font-normal text-foreground">
@@ -453,11 +453,11 @@ const Index = () => {
           }} viewport={{
             once: true
           }} className="group">
-                <div className="bg-white p-8 rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.1)] transition-all duration-300 h-full border border-border/50">
-                  <div className="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-primary group-hover:text-primary-foreground transition-colors duration-300">
-                    <feature.icon className="h-7 w-7 text-primary group-hover:text-primary-foreground transition-colors duration-300" />
+                <div className="bg-card p-8 rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)] transition-all duration-300 h-full border border-border/20">
+                  <div className="w-14 h-14 bg-accent rounded-2xl flex items-center justify-center mb-6 group-hover:bg-foreground group-hover:text-background transition-colors duration-300">
+                    <feature.icon className="h-7 w-7 text-accent-foreground group-hover:text-background transition-colors duration-300" />
                   </div>
-                  <h3 className="text-xl font-serif text-foreground mb-4 group-hover:text-primary transition-colors duration-300">
+                  <h3 className="text-xl font-serif text-foreground mb-4 transition-colors duration-300">
                     {feature.title}
                   </h3>
                   <p className="text-foreground/60 leading-relaxed">
@@ -470,7 +470,7 @@ const Index = () => {
       </section>
 
       {/* Community Section - Image + Text Overlap */}
-      <section id="community" className="py-24 lg:py-32 bg-white">
+      <section id="community" className="py-24 lg:py-32 bg-card">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-0 items-center">
             {/* Content Block */}
@@ -485,11 +485,11 @@ const Index = () => {
           }} viewport={{
             once: true
           }} className="lg:pr-12 order-2 lg:order-1">
-              <span className="inline-block bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium tracking-wide mb-6">
+              <span className="inline-block bg-accent text-accent-foreground px-4 py-2 rounded-full text-sm font-semibold tracking-wide mb-6">
                 Join Us
               </span>
               <h2 className="text-4xl sm:text-5xl font-serif font-normal text-foreground leading-tight mb-6">
-                Ready to be part of the <span className="text-primary italic">movement</span>?
+                Ready to be part of the <span className="italic">movement</span>?
               </h2>
               <p className="text-foreground/60 text-lg leading-relaxed mb-8 max-w-lg">
                 Be part of the community redefining women's sports fandom. Your fandom matters here.
@@ -518,7 +518,7 @@ const Index = () => {
                 <img src={communityImage} alt="Loverball community" className="w-full h-full object-cover" />
               </div>
               {/* Overlapping color block */}
-              <div className="hidden lg:block absolute -bottom-8 -left-8 w-32 h-32 bg-primary/20 rounded-2xl -z-10" />
+              <div className="hidden lg:block absolute -bottom-8 -left-8 w-32 h-32 bg-accent/30 rounded-3xl -z-10" />
             </motion.div>
           </div>
         </div>
@@ -540,11 +540,11 @@ const Index = () => {
           }} viewport={{
             once: true
           }}>
-                <span className="inline-block bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium tracking-wide mb-6">
+                <span className="inline-block bg-accent text-accent-foreground px-4 py-2 rounded-full text-sm font-semibold tracking-wide mb-6">
                   Member Access
                 </span>
                 <h2 className="text-4xl sm:text-5xl font-serif font-normal text-foreground leading-tight mb-6">
-                  Sign in to access the <span className="text-primary italic">full platform</span>.
+                  Sign in to access the <span className="italic">full platform</span>.
                 </h2>
                 <p className="text-foreground/60 text-lg leading-relaxed max-w-md">
                   Join our community of women who are passionate about sports. Get access to exclusive content, events, and connections.
@@ -564,9 +564,9 @@ const Index = () => {
           }} viewport={{
             once: true
           }}>
-                <div className="bg-white p-8 sm:p-10 rounded-2xl shadow-[0_8px_30px_rgba(0,0,0,0.08)] border border-border/50">
+                <div className="bg-card p-8 sm:p-10 rounded-3xl shadow-[0_8px_30px_rgba(0,0,0,0.06)] border border-border/20">
                   <Tabs defaultValue="login" className="w-full">
-                    <TabsList className="grid w-full grid-cols-2 bg-secondary/50 rounded-full p-1 h-14">
+                    <TabsList className="grid w-full grid-cols-2 bg-secondary rounded-full p-1 h-14">
                       <TabsTrigger value="login" className="rounded-full data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-sm font-medium">
                         Sign In
                       </TabsTrigger>
@@ -643,7 +643,7 @@ const Index = () => {
         </section>}
 
       {/* Final CTA Banner */}
-      <section className="py-20 bg-primary">
+      <section className="py-20 bg-foreground">
         <div className="max-w-4xl mx-auto px-6 lg:px-12 text-center">
           <motion.div initial={{
           opacity: 0,
@@ -656,13 +656,13 @@ const Index = () => {
         }} viewport={{
           once: true
         }}>
-            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-serif text-primary-foreground mb-6">
+            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-serif text-background mb-6">
               Ready to <span className="italic">Join</span>?
             </h2>
-            <p className="text-xl text-primary-foreground/80 mb-10 max-w-2xl mx-auto">
+            <p className="text-xl text-background/60 mb-10 max-w-2xl mx-auto">
               Be part of the movement redefining women's sports fandom.
             </p>
-            <Button size="lg" onClick={scrollToMemberAccess} className="rounded-full text-lg px-10 py-7 bg-background text-primary hover:bg-background/90 font-medium shadow-xl">
+            <Button size="lg" onClick={scrollToMemberAccess} className="rounded-full text-lg px-10 py-7 bg-accent text-accent-foreground hover:bg-accent/90 font-semibold shadow-xl">
               Get Started Now
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
