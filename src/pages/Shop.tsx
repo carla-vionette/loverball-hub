@@ -102,7 +102,7 @@ const Shop = () => {
             alt="Loverball" 
             className="h-24 md:h-32 w-auto mb-6"
           />
-          <span className="inline-block bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium tracking-wide mb-4">
+          <span className="inline-block bg-accent text-accent-foreground px-4 py-2 rounded-full text-sm font-semibold tracking-wide mb-4">
             Shop
           </span>
           <h1 className="text-4xl md:text-5xl font-serif font-normal mb-3">Boutique</h1>
