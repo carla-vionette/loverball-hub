@@ -133,6 +133,30 @@ const staggerItem = {
 const HEATMAP_COLORS = ["bg-border", "bg-primary/20", "bg-primary/40", "bg-primary/70", "bg-primary"];
 const DAYS_LABELS = ["S", "M", "T", "W", "T", "F", "S"];
 
+const ExpandableBio = ({ bio }: { bio: string }) => {
+  const [expanded, setExpanded] = useState(false);
+  const isLong = bio.length > 100;
+
+  return (
+    <div className="flex items-start gap-2 p-4 bg-primary/5 rounded-xl border border-primary/10 w-full md:flex-1">
+      <Sparkles className="w-4 h-4 mt-1 text-primary flex-shrink-0" />
+      <div className="flex-1 min-w-0">
+        <p className="text-sm">
+          {isLong && !expanded ? `${bio.slice(0, 100)}...` : bio}
+        </p>
+        {isLong && (
+          <button
+            onClick={() => setExpanded(!expanded)}
+            className="text-xs text-primary font-medium mt-1 hover:underline"
+          >
+            {expanded ? "Show less" : "Read more"}
+          </button>
+        )}
+      </div>
+    </div>
+  );
+};
+
 const ChartTooltip = ({ active, payload, label }: any) => {
   if (!active || !payload?.length) return null;
   return (
@@ -282,10 +306,7 @@ const Profile = () => {
                       </div>
                     </div>
                     {profile.bio && (
-                      <div className="flex items-start gap-2 p-4 bg-primary/5 rounded-xl border border-primary/10 w-full md:flex-1">
-                        <Sparkles className="w-4 h-4 mt-1 text-primary flex-shrink-0" />
-                        <p className="text-sm">{profile.bio}</p>
-                      </div>
+                      <ExpandableBio bio={profile.bio} />
                     )}
                   </div>
                 </CardContent>
