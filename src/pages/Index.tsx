@@ -25,11 +25,11 @@ import { z } from "zod";
 const signUpSchema = z.object({
   email: z.string().trim().email("Please enter a valid email address"),
   password: z.string().min(6, "Password must be at least 6 characters"),
-  inviteCode: z.string().trim().min(1, "Invite code is required"),
+  inviteCode: z.string().trim().min(1, "Invite code is required")
 });
 
 // Animated counter component
-const AnimatedStat = ({ value, suffix = "%" }: { value: number; suffix?: string }) => {
+const AnimatedStat = ({ value, suffix = "%" }: {value: number;suffix?: string;}) => {
   const ref = useRef<HTMLSpanElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
   const [count, setCount] = useState(0);
@@ -75,7 +75,7 @@ const Index = () => {
     try {
       const { error, data } = await supabase.auth.signInWithPassword({
         email: email.trim(),
-        password,
+        password
       });
       if (error) throw error;
       if (data.user) {
@@ -100,7 +100,7 @@ const Index = () => {
     setLoading(true);
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
-        redirectTo: `${window.location.origin}/auth?reset=true`,
+        redirectTo: `${window.location.origin}/auth?reset=true`
       });
       if (error) throw error;
       toast({ title: "Check your email", description: "We've sent you a password reset link." });
@@ -121,18 +121,18 @@ const Index = () => {
       const { error, data } = await supabase.auth.signUp({
         email: validation.data.email,
         password: validation.data.password,
-        options: { emailRedirectTo: `${window.location.origin}/onboarding` },
+        options: { emailRedirectTo: `${window.location.origin}/onboarding` }
       });
       if (error) throw error;
       if (data.user) {
         const { data: inviteResult, error: inviteError } = await supabase.rpc("validate_and_use_invite", {
-          invite_code: validation.data.inviteCode,
+          invite_code: validation.data.inviteCode
         });
         if (inviteError) {
           await supabase.auth.signOut();
           throw new Error("Invalid invite code. Please check and try again.");
         }
-        const result = inviteResult as { success: boolean; error?: string };
+        const result = inviteResult as {success: boolean;error?: string;};
         if (!result.success) {
           await supabase.auth.signOut();
           throw new Error(result.error || "Invalid invite code");
@@ -151,26 +151,26 @@ const Index = () => {
   const openAuthModal = () => setAuthModalOpen(true);
 
   const sportCategories = [
-    { label: "WNBA", color: "bg-accent text-accent-foreground" },
-    { label: "SOCCER", color: "bg-terracotta text-terracotta-foreground" },
-    { label: "TENNIS", color: "bg-accent text-accent-foreground" },
-    { label: "BASKETBALL", color: "bg-terracotta text-terracotta-foreground" },
-    { label: "VOLLEYBALL", color: "bg-accent text-accent-foreground" },
-  ];
+  { label: "WNBA", color: "bg-accent text-accent-foreground" },
+  { label: "SOCCER", color: "bg-terracotta text-terracotta-foreground" },
+  { label: "TENNIS", color: "bg-accent text-accent-foreground" },
+  { label: "BASKETBALL", color: "bg-terracotta text-terracotta-foreground" },
+  { label: "VOLLEYBALL", color: "bg-accent text-accent-foreground" }];
+
 
   const upcomingEvents = [
-    { date: "MAR 22", title: "WNBA Season Opener Watch Party", venue: "The Victorian, Santa Monica", type: "Watch Party" },
-    { date: "MAR 28", title: "Loverball Run Club × Griffith Park", venue: "Griffith Observatory Trailhead", type: "Meetup" },
-    { date: "APR 05", title: "Angel City FC Home Opener", venue: "BMO Stadium, DTLA", type: "Game Day" },
-    { date: "APR 12", title: "Women in Sports Panel + Mixer", venue: "Soho House, WeHo", type: "Panel" },
-    { date: "APR 19", title: "March Madness Final Four Party", venue: "Loverball HQ, Venice", type: "Watch Party" },
-  ];
+  { date: "MAR 22", title: "WNBA Season Opener Watch Party", venue: "The Victorian, Santa Monica", type: "Watch Party" },
+  { date: "MAR 28", title: "Loverball Run Club × Griffith Park", venue: "Griffith Observatory Trailhead", type: "Meetup" },
+  { date: "APR 05", title: "Angel City FC Home Opener", venue: "BMO Stadium, DTLA", type: "Game Day" },
+  { date: "APR 12", title: "Women in Sports Panel + Mixer", venue: "Soho House, WeHo", type: "Panel" },
+  { date: "APR 19", title: "March Madness Final Four Party", venue: "Loverball HQ, Venice", type: "Watch Party" }];
+
 
   return (
     <div className="min-h-screen bg-background">
       {/* ══════════════════════════════════════════
-          EDITORIAL NAV — Minimal masthead style
-         ══════════════════════════════════════════ */}
+           EDITORIAL NAV — Minimal masthead style
+          ══════════════════════════════════════════ */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-background/98 backdrop-blur-sm">
         <div className="max-w-[1400px] mx-auto px-8 lg:px-16">
           <div className="flex items-center justify-between h-20">
@@ -188,8 +188,8 @@ const Index = () => {
 
             {/* Right — CTA + links */}
             <div className="hidden lg:flex items-center gap-10">
-              <button onClick={() => (isAuthenticated ? navigate("/shop") : openAuthModal())} className="text-[11px] font-sans font-medium tracking-[0.2em] uppercase text-foreground/50 hover:text-foreground transition-colors bg-transparent border-none cursor-pointer">Shop</button>
-              <button onClick={() => (isAuthenticated ? navigate("/watch") : openAuthModal())} className="text-[11px] font-sans font-medium tracking-[0.2em] uppercase text-foreground/50 hover:text-foreground transition-colors bg-transparent border-none cursor-pointer">Watch</button>
+              <button onClick={() => isAuthenticated ? navigate("/shop") : openAuthModal()} className="text-[11px] font-sans font-medium tracking-[0.2em] uppercase text-foreground/50 hover:text-foreground transition-colors bg-transparent border-none cursor-pointer">Shop</button>
+              <button onClick={() => isAuthenticated ? navigate("/watch") : openAuthModal()} className="text-[11px] font-sans font-medium tracking-[0.2em] uppercase text-foreground/50 hover:text-foreground transition-colors bg-transparent border-none cursor-pointer">Watch</button>
               <Button onClick={openAuthModal} className="rounded-full bg-primary text-primary-foreground hover:bg-primary/90 px-7 py-2 text-[11px] font-sans font-medium tracking-[0.15em] uppercase h-auto">
                 Join Loverball
               </Button>
@@ -205,21 +205,21 @@ const Index = () => {
         </div>
 
         {/* Mobile dropdown */}
-        {mobileMenuOpen && (
-          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="lg:hidden bg-background border-t border-border/30 px-8 py-6 space-y-1">
+        {mobileMenuOpen &&
+        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="lg:hidden bg-background border-t border-border/30 px-8 py-6 space-y-1">
             <a href="#about" onClick={() => setMobileMenuOpen(false)} className="block py-3 text-[11px] font-sans font-medium tracking-[0.2em] uppercase text-foreground/60">About</a>
             <a href="#stories" onClick={() => setMobileMenuOpen(false)} className="block py-3 text-[11px] font-sans font-medium tracking-[0.2em] uppercase text-foreground/60">Stories</a>
             <a href="#events" onClick={() => setMobileMenuOpen(false)} className="block py-3 text-[11px] font-sans font-medium tracking-[0.2em] uppercase text-foreground/60">Events</a>
-            <Button onClick={() => { setMobileMenuOpen(false); openAuthModal(); }} className="w-full rounded-full mt-4 bg-primary text-primary-foreground text-[11px] tracking-[0.15em] uppercase">
+            <Button onClick={() => {setMobileMenuOpen(false);openAuthModal();}} className="w-full rounded-full mt-4 bg-primary text-primary-foreground text-[11px] tracking-[0.15em] uppercase">
               Join Loverball
             </Button>
           </motion.div>
-        )}
+        }
       </nav>
 
       {/* ══════════════════════════════════════════
-          AUTH MODAL — unchanged logic
-         ══════════════════════════════════════════ */}
+           AUTH MODAL — unchanged logic
+          ══════════════════════════════════════════ */}
       <Dialog open={authModalOpen} onOpenChange={setAuthModalOpen}>
         <DialogContent className="sm:max-w-md rounded-3xl p-0 overflow-hidden border-border/20">
           <div className="p-8 sm:p-10">
@@ -234,8 +234,8 @@ const Index = () => {
               </TabsList>
 
               <TabsContent value="login">
-                {showForgotPassword ? (
-                  <form onSubmit={handleForgotPassword} className="space-y-5 mt-8">
+                {showForgotPassword ?
+                <form onSubmit={handleForgotPassword} className="space-y-5 mt-8">
                     <div className="space-y-2">
                       <Label htmlFor="reset-email" className="text-foreground text-[11px] tracking-[0.1em] uppercase">Email</Label>
                       <Input id="reset-email" type="email" placeholder="Enter your email" value={email} onChange={(e) => setEmail(e.target.value)} required className="bg-background border-border text-foreground rounded-xl h-12" />
@@ -243,9 +243,9 @@ const Index = () => {
                     <p className="text-muted-foreground text-sm">We'll send you a link to reset your password.</p>
                     <Button type="submit" className="w-full rounded-full h-12 text-[11px] font-sans tracking-[0.1em] uppercase" disabled={loading}>{loading ? "Sending..." : "Send Reset Link"}</Button>
                     <button type="button" onClick={() => setShowForgotPassword(false)} className="w-full text-sm text-primary hover:text-primary/80 transition-colors font-medium">Back to sign in</button>
-                  </form>
-                ) : (
-                  <form onSubmit={handleLogin} className="space-y-5 mt-8">
+                  </form> :
+
+                <form onSubmit={handleLogin} className="space-y-5 mt-8">
                     <div className="space-y-2">
                       <Label htmlFor="login-email" className="text-foreground text-[11px] tracking-[0.1em] uppercase">Email</Label>
                       <Input id="login-email" type="email" placeholder="Enter your email" value={email} onChange={(e) => setEmail(e.target.value)} required className="bg-background border-border text-foreground rounded-xl h-12" />
@@ -259,7 +259,7 @@ const Index = () => {
                     </div>
                     <Button type="submit" className="w-full rounded-full h-12 text-[11px] font-sans tracking-[0.1em] uppercase" disabled={loading}>{loading ? "Signing in..." : "Sign In"}</Button>
                   </form>
-                )}
+                }
               </TabsContent>
 
               <TabsContent value="signup">
@@ -288,8 +288,8 @@ const Index = () => {
       </Dialog>
 
       {/* ══════════════════════════════════════════
-          HERO — Editorial split: headline left, asymmetric image right
-         ══════════════════════════════════════════ */}
+           HERO — Editorial split: headline left, asymmetric image right
+          ══════════════════════════════════════════ */}
       <section className="pt-20">
         <div className="max-w-[1400px] mx-auto px-8 lg:px-16">
           <div className="grid lg:grid-cols-12 gap-0 min-h-[85vh] items-center py-16 lg:py-0">
@@ -298,8 +298,8 @@ const Index = () => {
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.9, ease: "easeOut" }}
-              className="lg:col-span-5 relative z-10 py-12 lg:py-0"
-            >
+              className="lg:col-span-5 relative z-10 py-12 lg:py-0">
+
               <span className="text-[11px] font-sans font-medium tracking-[0.3em] uppercase text-accent mb-6 block">Women's Sports Fandom Club</span>
               <h1 className="font-condensed text-[4rem] sm:text-[5.5rem] lg:text-[7rem] leading-[0.9] tracking-tight text-foreground mb-8 uppercase">
                 Her<br />
@@ -325,8 +325,8 @@ const Index = () => {
               initial={{ opacity: 0, x: 40 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.9, delay: 0.2 }}
-              className="lg:col-span-7 relative"
-            >
+              className="lg:col-span-7 relative">
+
               {/* Teal color block behind */}
               <div className="absolute top-8 right-0 w-[85%] h-[90%] bg-secondary rounded-sm" />
               {/* Main image */}
@@ -341,22 +341,22 @@ const Index = () => {
       </section>
 
       {/* ══════════════════════════════════════════
-          TICKER STRIP — Sport category badges
-         ══════════════════════════════════════════ */}
+           TICKER STRIP — Sport category badges
+          ══════════════════════════════════════════ */}
       <div className="bg-foreground py-4 overflow-hidden">
         <div className="flex items-center gap-12 animate-[shimmer_20s_linear_infinite] whitespace-nowrap px-8">
-          {[...sportCategories, ...sportCategories, ...sportCategories].map((cat, i) => (
-            <span key={i} className="text-[11px] font-sans font-bold tracking-[0.3em] uppercase text-background/70 flex items-center gap-3">
+          {[...sportCategories, ...sportCategories, ...sportCategories].map((cat, i) =>
+          <span key={i} className="text-[11px] font-sans font-bold tracking-[0.3em] uppercase text-background/70 flex items-center gap-3">
               <span className="w-1.5 h-1.5 rounded-full bg-accent inline-block" />
               {cat.label}
             </span>
-          ))}
+          )}
         </div>
       </div>
 
       {/* ══════════════════════════════════════════
-          ABOUT — Asymmetric editorial grid with stats
-         ══════════════════════════════════════════ */}
+           ABOUT — Asymmetric editorial grid with stats
+          ══════════════════════════════════════════ */}
       <section id="about" className="py-28 lg:py-40">
         <div className="max-w-[1400px] mx-auto px-8 lg:px-16">
           <div className="grid lg:grid-cols-12 gap-8 lg:gap-0">
@@ -366,8 +366,8 @@ const Index = () => {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
               viewport={{ once: true }}
-              className="lg:col-span-4 lg:pr-16"
-            >
+              className="lg:col-span-4 lg:pr-16">
+
               <span className="font-condensed text-[3rem] lg:text-[4rem] leading-none tracking-tight text-secondary uppercase block mb-10">FANDOM</span>
               <div className="space-y-10">
                 <div>
@@ -387,8 +387,8 @@ const Index = () => {
               whileInView={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.8, delay: 0.1 }}
               viewport={{ once: true }}
-              className="lg:col-span-4"
-            >
+              className="lg:col-span-4">
+
               <div className="aspect-[3/4] overflow-hidden rounded-sm">
                 <img src={philosophyImage} alt="Loverball community" className="w-full h-full object-cover object-top" />
               </div>
@@ -400,8 +400,8 @@ const Index = () => {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
               viewport={{ once: true }}
-              className="lg:col-span-4 lg:pl-16 flex flex-col justify-center"
-            >
+              className="lg:col-span-4 lg:pl-16 flex flex-col justify-center">
+
               <h2 className="font-display text-3xl lg:text-4xl text-foreground leading-tight mb-6">
                 We specialize in creating <em>tailored</em> sports content and experiences that <em>inspire women.</em>
               </h2>
@@ -418,8 +418,8 @@ const Index = () => {
       </section>
 
       {/* ══════════════════════════════════════════
-          QUOTE — Color block band (teal)
-         ══════════════════════════════════════════ */}
+           QUOTE — Color block band (teal)
+          ══════════════════════════════════════════ */}
       <section className="bg-secondary py-20 lg:py-28">
         <div className="max-w-[900px] mx-auto px-8 lg:px-16 text-center">
           <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ duration: 1 }} viewport={{ once: true }}>
@@ -435,8 +435,8 @@ const Index = () => {
       </section>
 
       {/* ══════════════════════════════════════════
-          FEATURES — Editorial numbered cards
-         ══════════════════════════════════════════ */}
+           FEATURES — Editorial numbered cards
+          ══════════════════════════════════════════ */}
       <section id="features" className="py-28 lg:py-40 bg-background">
         <div className="max-w-[1400px] mx-auto px-8 lg:px-16">
           <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ duration: 0.8 }} viewport={{ once: true }} className="mb-20">
@@ -445,31 +445,31 @@ const Index = () => {
 
           <div className="grid md:grid-cols-3 gap-px bg-border">
             {[
-              { num: "01", title: "AI-Powered Stories", desc: "Personalized sports content that speaks to what you care about. Beyond stats — the stories, drama, and culture.", icon: Sparkles },
-              { num: "02", title: "Community Events", desc: "Watch parties, meetups, and experiences designed for women who love sports. Find your squad.", icon: Calendar },
-              { num: "03", title: "Exclusive Content", desc: "Behind-the-scenes access, player interviews, and insider perspectives you won't find anywhere else.", icon: Users },
-            ].map((feature, i) => (
-              <motion.div
-                key={feature.num}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: i * 0.1 }}
-                viewport={{ once: true }}
-                className="bg-background p-10 lg:p-14 group"
-              >
+            { num: "01", title: "AI-Powered Stories", desc: "Personalized sports content that speaks to what you care about. Beyond stats — the stories, drama, and culture.", icon: Sparkles },
+            { num: "02", title: "Community Events", desc: "Watch parties, meetups, and experiences designed for women who love sports. Find your squad.", icon: Calendar },
+            { num: "03", title: "Exclusive Content", desc: "Behind-the-scenes access, player interviews, and insider perspectives you won't find anywhere else.", icon: Users }].
+            map((feature, i) =>
+            <motion.div
+              key={feature.num}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: i * 0.1 }}
+              viewport={{ once: true }}
+              className="bg-background p-10 lg:p-14 group">
+
                 <span className="font-condensed text-6xl text-border leading-none block mb-8">{feature.num}</span>
                 <feature.icon className="w-6 h-6 text-accent mb-5" />
                 <h3 className="font-condensed text-2xl uppercase text-foreground mb-4 tracking-wide">{feature.title}</h3>
                 <p className="text-muted-foreground leading-relaxed text-[15px]">{feature.desc}</p>
               </motion.div>
-            ))}
+            )}
           </div>
         </div>
       </section>
 
       {/* ══════════════════════════════════════════
-          COMMUNITY — Masonry photo grid + text
-         ══════════════════════════════════════════ */}
+           COMMUNITY — Masonry photo grid + text
+          ══════════════════════════════════════════ */}
       <section id="stories" className="py-28 lg:py-40 bg-card">
         <div className="max-w-[1400px] mx-auto px-8 lg:px-16">
           <div className="grid lg:grid-cols-12 gap-8 lg:gap-16">
@@ -479,23 +479,23 @@ const Index = () => {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
               viewport={{ once: true }}
-              className="lg:col-span-4 flex flex-col justify-center"
-            >
+              className="lg:col-span-4 flex flex-col justify-center">
+
               <span className="font-condensed text-[3rem] lg:text-[4rem] leading-none tracking-tight text-secondary uppercase block mb-8">STORIES</span>
               <p className="text-lg font-serif text-muted-foreground leading-relaxed mb-6">
                 Connect with thousands of women who share your passion for sports. Build real friendships, discover new content, and celebrate your fandom together.
               </p>
               <div className="grid grid-cols-3 gap-6 mb-8">
                 {[
-                  { value: "10K+", label: "Members" },
-                  { value: "500+", label: "Stories" },
-                  { value: "50+", label: "Events" },
-                ].map((stat) => (
-                  <div key={stat.label}>
+                { value: "10K+", label: "Members" },
+                { value: "500+", label: "Stories" },
+                { value: "50+", label: "Events" }].
+                map((stat) =>
+                <div key={stat.label}>
                     <p className="font-condensed text-3xl text-foreground">{stat.value}</p>
                     <p className="text-[10px] font-sans tracking-[0.2em] uppercase text-muted-foreground mt-1">{stat.label}</p>
                   </div>
-                ))}
+                )}
               </div>
               <Button onClick={openAuthModal} className="rounded-full bg-primary text-primary-foreground hover:bg-primary/90 px-8 py-5 text-[11px] font-sans font-medium tracking-[0.15em] uppercase w-fit h-auto">
                 Explore Community
@@ -513,7 +513,7 @@ const Index = () => {
                 </motion.div>
                 <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1 }} viewport={{ once: true }}>
                   <div className="aspect-[4/3] overflow-hidden rounded-sm hover:scale-[1.02] transition-transform duration-500">
-                    <img src={athletesImage} alt="Athletes" className="w-full h-full object-cover" />
+                    
                   </div>
                 </motion.div>
                 <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.2 }} viewport={{ once: true }}>
@@ -528,8 +528,8 @@ const Index = () => {
       </section>
 
       {/* ══════════════════════════════════════════
-          EVENTS — Editorial schedule listing
-         ══════════════════════════════════════════ */}
+           EVENTS — Editorial schedule listing
+          ══════════════════════════════════════════ */}
       <section id="events" className="py-28 lg:py-40 bg-background">
         <div className="max-w-[1400px] mx-auto px-8 lg:px-16">
           <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ duration: 0.8 }} viewport={{ once: true }} className="flex items-end justify-between mb-16">
@@ -540,16 +540,16 @@ const Index = () => {
           </motion.div>
 
           <div className="border-t border-foreground/10">
-            {upcomingEvents.map((event, i) => (
-              <motion.div
-                key={event.title}
-                initial={{ opacity: 0, y: 10 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: i * 0.05 }}
-                viewport={{ once: true }}
-                onClick={openAuthModal}
-                className="grid grid-cols-12 gap-4 py-6 border-b border-foreground/10 items-center cursor-pointer group hover:bg-muted/30 transition-colors px-4 -mx-4"
-              >
+            {upcomingEvents.map((event, i) =>
+            <motion.div
+              key={event.title}
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: i * 0.05 }}
+              viewport={{ once: true }}
+              onClick={openAuthModal}
+              className="grid grid-cols-12 gap-4 py-6 border-b border-foreground/10 items-center cursor-pointer group hover:bg-muted/30 transition-colors px-4 -mx-4">
+
                 <div className="col-span-2 md:col-span-1">
                   <span className="font-condensed text-xl text-accent">{event.date}</span>
                 </div>
@@ -566,7 +566,7 @@ const Index = () => {
                   <ArrowRight className="h-4 w-4 text-foreground/20 group-hover:text-secondary transition-colors inline" />
                 </div>
               </motion.div>
-            ))}
+            )}
           </div>
 
           <div className="mt-8 md:hidden text-center">
@@ -578,31 +578,31 @@ const Index = () => {
       </section>
 
       {/* ══════════════════════════════════════════
-          PRESS — Color block with testimonials
-         ══════════════════════════════════════════ */}
+           PRESS — Color block with testimonials
+          ══════════════════════════════════════════ */}
       <section className="bg-accent py-20 lg:py-28">
         <div className="max-w-[1400px] mx-auto px-8 lg:px-16">
           <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ duration: 0.8 }} viewport={{ once: true }}>
             <span className="font-condensed text-[3rem] lg:text-[4rem] leading-none tracking-tight text-accent-foreground/30 uppercase block mb-12">WHAT THEY SAY</span>
             <div className="grid md:grid-cols-3 gap-8 lg:gap-12">
               {[
-                { quote: "Finally a sports community that gets me.", name: "Alicia", detail: "Lakers fan" },
-                { quote: "I met my best friends at a Loverball watch party.", name: "Dani", detail: "WNBA superfan" },
-                { quote: "The content here actually speaks to women fans.", name: "Maria", detail: "Soccer obsessed" },
-              ].map((t, i) => (
-                <motion.div key={t.name} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: i * 0.1 }} viewport={{ once: true }}>
+              { quote: "Finally a sports community that gets me.", name: "Alicia", detail: "Lakers fan" },
+              { quote: "I met my best friends at a Loverball watch party.", name: "Dani", detail: "WNBA superfan" },
+              { quote: "The content here actually speaks to women fans.", name: "Maria", detail: "Soccer obsessed" }].
+              map((t, i) =>
+              <motion.div key={t.name} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: i * 0.1 }} viewport={{ once: true }}>
                   <p className="font-display text-xl lg:text-2xl text-accent-foreground italic leading-relaxed mb-6">"{t.quote}"</p>
                   <p className="text-[11px] font-sans font-medium tracking-[0.2em] uppercase text-accent-foreground/70">— {t.name}, {t.detail}</p>
                 </motion.div>
-              ))}
+              )}
             </div>
           </motion.div>
         </div>
       </section>
 
       {/* ══════════════════════════════════════════
-          APP / PRODUCT FOCUS — Editorial feature
-         ══════════════════════════════════════════ */}
+           APP / PRODUCT FOCUS — Editorial feature
+          ══════════════════════════════════════════ */}
       <section className="py-28 lg:py-40 bg-background">
         <div className="max-w-[1400px] mx-auto px-8 lg:px-16">
           <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-center">
@@ -610,24 +610,24 @@ const Index = () => {
               initial={{ opacity: 0, x: -30 }}
               whileInView={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8 }}
-              viewport={{ once: true }}
-            >
+              viewport={{ once: true }}>
+
               <span className="font-condensed text-[3rem] lg:text-[4rem] leading-none tracking-tight text-secondary uppercase block mb-8">THE APP</span>
               <h2 className="font-display text-3xl lg:text-4xl text-foreground leading-tight mb-8">
                 Your fandom, <em className="text-secondary">personalized.</em>
               </h2>
               <div className="space-y-6">
                 {[
-                  "AI-powered sports stories tailored to your interests",
-                  "Community events and watch parties near you",
-                  "Connect with other women fans in your city",
-                  "Exclusive content and behind-the-scenes access",
-                ].map((item, i) => (
-                  <div key={i} className="flex items-start gap-4">
+                "AI-powered sports stories tailored to your interests",
+                "Community events and watch parties near you",
+                "Connect with other women fans in your city",
+                "Exclusive content and behind-the-scenes access"].
+                map((item, i) =>
+                <div key={i} className="flex items-start gap-4">
                     <span className="w-1.5 h-1.5 rounded-full bg-accent mt-2.5 flex-shrink-0" />
                     <p className="text-base text-muted-foreground leading-relaxed">{item}</p>
                   </div>
-                ))}
+                )}
               </div>
               <div className="mt-10">
                 <Button onClick={openAuthModal} size="lg" className="rounded-full bg-primary text-primary-foreground hover:bg-primary/90 px-10 py-6 text-[11px] font-sans font-medium tracking-[0.15em] uppercase shadow-lg h-auto">
@@ -642,8 +642,8 @@ const Index = () => {
               whileInView={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
               viewport={{ once: true }}
-              className="relative"
-            >
+              className="relative">
+
               {/* Coral block behind */}
               <div className="absolute -top-6 -right-6 w-[85%] h-[85%] bg-accent/10 rounded-sm" />
               <div className="relative aspect-[4/5] overflow-hidden rounded-sm shadow-xl">
@@ -655,8 +655,8 @@ const Index = () => {
       </section>
 
       {/* ══════════════════════════════════════════
-          FINAL CTA — Dark editorial band
-         ══════════════════════════════════════════ */}
+           FINAL CTA — Dark editorial band
+          ══════════════════════════════════════════ */}
       <section className="py-28 lg:py-36 bg-foreground">
         <div className="max-w-[900px] mx-auto px-8 lg:px-16 text-center">
           <motion.div initial={{ opacity: 0, scale: 0.97 }} whileInView={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8 }} viewport={{ once: true }}>
@@ -675,8 +675,8 @@ const Index = () => {
       </section>
 
       {/* ══════════════════════════════════════════
-          FOOTER — Dark editorial
-         ══════════════════════════════════════════ */}
+           FOOTER — Dark editorial
+          ══════════════════════════════════════════ */}
       <footer className="py-16 bg-foreground border-t border-background/10">
         <div className="max-w-[1400px] mx-auto px-8 lg:px-16">
           {/* Newsletter */}
@@ -684,15 +684,15 @@ const Index = () => {
             <div className="max-w-md mx-auto text-center">
               <h3 className="font-condensed text-2xl uppercase tracking-wide text-background mb-3">Stay In The Loop</h3>
               <p className="text-background/40 text-sm mb-6">Get the latest on events, content drops, and community updates.</p>
-              <form onSubmit={(e) => { e.preventDefault(); toast({ title: "Subscribed!", description: "You'll hear from us soon." }); setNewsletterEmail(""); }} className="flex gap-2">
+              <form onSubmit={(e) => {e.preventDefault();toast({ title: "Subscribed!", description: "You'll hear from us soon." });setNewsletterEmail("");}} className="flex gap-2">
                 <Input
                   type="email"
                   placeholder="Enter your email"
                   value={newsletterEmail}
                   onChange={(e) => setNewsletterEmail(e.target.value)}
                   required
-                  className="flex-1 rounded-full bg-background/10 border-background/10 text-background placeholder:text-background/30 h-12"
-                />
+                  className="flex-1 rounded-full bg-background/10 border-background/10 text-background placeholder:text-background/30 h-12" />
+
                 <Button type="submit" className="rounded-full bg-accent text-accent-foreground hover:bg-accent/90 px-6 h-12">
                   <Mail className="h-4 w-4" />
                 </Button>
@@ -736,8 +736,8 @@ const Index = () => {
           </div>
         </div>
       </footer>
-    </div>
-  );
+    </div>);
+
 };
 
 export default Index;
