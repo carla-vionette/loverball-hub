@@ -189,7 +189,7 @@ const Index = () => {
             </div>
 
             {/* Center logo */}
-            <img src={loverballLogo} alt="Loverball" className="h-16 w-auto absolute left-1/2 -translate-x-1/2" />
+            <img src={loverballLogo} alt="Loverball" className="h-24 w-auto absolute left-1/2 -translate-x-1/2" />
 
             {/* Right nav */}
             <div className="hidden md:flex items-center gap-3">
@@ -332,21 +332,6 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Scrolling Testimonials Marquee */}
-      <div className="bg-foreground text-background py-4 overflow-hidden">
-        <motion.div animate={{ x: [0, -2000] }} transition={{ duration: 30, repeat: Infinity, ease: "linear" }} className="flex gap-16 whitespace-nowrap">
-          {[...Array(4)].map((_, repeat) => (
-            <span key={repeat} className="flex items-center gap-16">
-              {testimonials.map((t, i) => (
-                <span key={`${repeat}-${i}`} className="flex items-center gap-16 text-sm tracking-wide font-medium">
-                  <span className="text-background/80">{t}</span>
-                  <span className="text-background/30">◆</span>
-                </span>
-              ))}
-            </span>
-          ))}
-        </motion.div>
-      </div>
 
       {/* About Section - "Why Loverball?" */}
       <section id="about" className="py-32 lg:py-40 bg-gradient-to-b from-card to-background">
@@ -411,37 +396,6 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Social Proof - Testimonials */}
-      <section className="py-28 lg:py-36 bg-background">
-        <div className="max-w-7xl mx-auto px-6 lg:px-12">
-          <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} viewport={{ once: true }} className="text-center mb-16">
-            <span className="inline-block text-muted-foreground text-xs font-medium tracking-widest uppercase mb-4">Testimonials</span>
-            <h2 className="text-4xl sm:text-5xl font-sans font-normal text-foreground">
-              What Our Community <span className="italic">Says</span>
-            </h2>
-          </motion.div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            {communityTestimonials.map((t, index) => (
-              <motion.div
-                key={t.name}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                viewport={{ once: true }}
-                className="bg-card p-8 rounded-3xl border border-border/20 shadow-[0_4px_20px_rgba(0,0,0,0.04)]"
-              >
-                <div className="text-4xl mb-4">{t.avatar}</div>
-                <p className="text-foreground/80 text-base leading-relaxed mb-6 italic">"{t.quote}"</p>
-                <div>
-                  <p className="font-semibold text-foreground text-sm">{t.name}</p>
-                  <p className="text-muted-foreground text-xs">{t.sport}</p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* Features Section */}
       <section id="features" className="py-28 lg:py-36 bg-gradient-to-b from-background to-card/50">
@@ -507,19 +461,6 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Featured In / Trust */}
-      <section className="py-20 bg-background">
-        <div className="max-w-5xl mx-auto px-6 lg:px-12 text-center">
-          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} viewport={{ once: true }}>
-            <span className="inline-block text-muted-foreground text-xs font-medium tracking-widest uppercase mb-8">As Seen In</span>
-            <div className="flex flex-wrap items-center justify-center gap-10 opacity-40">
-              {["ESPN", "The Cut", "Bleacher Report", "Refinery29", "Sports Illustrated"].map((name) => (
-                <span key={name} className="text-lg sm:text-xl font-sans font-semibold text-foreground tracking-wide">{name}</span>
-              ))}
-            </div>
-          </motion.div>
-        </div>
-      </section>
 
       {/* Final CTA */}
       <section className="py-24 bg-foreground">
