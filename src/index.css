@@ -2,6 +2,7 @@
 @import "@fontsource/dm-sans/500.css";
 @import "@fontsource/dm-sans/600.css";
 @import "@fontsource/dm-sans/700.css";
+@import "@fontsource/pacifico/400.css";
 
 @tailwind base;
 @tailwind components;
@@ -15,32 +16,32 @@
 @layer base {
   :root {
     /* ── Brand ── */
-    --brand: 202 53% 67%;            /* #7DB6D9 Sky Blue */
+    --brand: 340 100% 55%;           /* #FF1766 Hot Pink */
     --brand-foreground: 0 0% 100%;
 
     /* ── Core palette ── */
-    --background: 40 33% 93%;        /* #F5F1E9 Warm Cream */
-    --foreground: 0 0% 13%;          /* #222222 Charcoal */
+    --background: 0 0% 100%;         /* #FFFFFF White */
+    --foreground: 0 0% 7%;           /* #111111 Near Black */
 
     --card: 0 0% 100%;               /* #FFFFFF */
-    --card-foreground: 0 0% 13%;
+    --card-foreground: 0 0% 7%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 13%;
+    --popover-foreground: 0 0% 7%;
 
-    /* Primary = Sky Blue (buttons, links) */
-    --primary: 202 53% 67%;          /* #7DB6D9 */
+    /* Primary = Hot Pink (buttons, links, CTAs) */
+    --primary: 340 100% 55%;         /* #FF1766 */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 30 30% 86%;         /* #E7DDCF Beige */
-    --secondary-foreground: 0 0% 30%;
+    --secondary: 0 0% 96%;           /* #F5F5F5 Light Gray */
+    --secondary-foreground: 0 0% 20%;
 
-    --muted: 30 25% 90%;
-    --muted-foreground: 0 0% 40%;
+    --muted: 0 0% 94%;
+    --muted-foreground: 0 0% 45%;
 
-    /* Accent = Muted Teal (headings, dividers) */
-    --accent: 199 47% 41%;           /* #397A9B */
-    --accent-foreground: 0 0% 100%;
+    /* Accent = Neon Yellow (highlights, tags) */
+    --accent: 60 100% 50%;           /* #FFFF00 */
+    --accent-foreground: 0 0% 0%;
 
     /* ── Status colors ── */
     --success: 142 72% 42%;
@@ -53,47 +54,47 @@
     --destructive-foreground: 0 0% 100%;
 
     /* ── Additional brand ── */
-    --coral: 5 86% 62%;              /* #F15B4B Coral */
+    --coral: 340 100% 55%;           /* Same as primary pink */
     --coral-foreground: 0 0% 100%;
-    --pale-pink: 40 33% 95%;
-    --pale-pink-foreground: 0 0% 13%;
-    --medium-blue: 199 47% 41%;      /* Teal */
+    --pale-pink: 340 100% 95%;       /* Very light pink */
+    --pale-pink-foreground: 0 0% 7%;
+    --medium-blue: 340 80% 45%;      /* Deeper pink */
     --medium-blue-foreground: 0 0% 100%;
-    --olive: 90 12% 52%;
-    --olive-foreground: 0 0% 100%;
-    --light-lime: 20 89% 60%;        /* #F37A3F Grapefruit */
-    --light-lime-foreground: 0 0% 100%;
-    --ticker: 199 47% 41%;           /* Teal ticker */
+    --olive: 60 70% 45%;             /* Muted yellow */
+    --olive-foreground: 0 0% 0%;
+    --light-lime: 60 100% 50%;       /* Neon Yellow */
+    --light-lime-foreground: 0 0% 0%;
+    --ticker: 0 0% 7%;               /* Black ticker */
     --ticker-foreground: 0 0% 100%;
 
     /* ── Chrome ── */
-    --border: 30 20% 82%;
-    --input: 30 20% 82%;
-    --ring: 202 53% 67%;
+    --border: 0 0% 88%;
+    --input: 0 0% 88%;
+    --ring: 340 100% 55%;
 
-    --radius: 1.5rem;
+    --radius: 0.75rem;
   }
 
   .dark {
-    --background: 0 0% 8%;
+    --background: 0 0% 5%;
     --foreground: 0 0% 96%;
 
-    --card: 0 0% 12%;
+    --card: 0 0% 9%;
     --card-foreground: 0 0% 96%;
 
-    --popover: 0 0% 12%;
+    --popover: 0 0% 9%;
     --popover-foreground: 0 0% 96%;
 
-    --primary: 72 100% 50%;
-    --primary-foreground: 0 0% 0%;
+    --primary: 340 100% 55%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 0 0% 15%;
+    --secondary: 0 0% 13%;
     --secondary-foreground: 0 0% 70%;
 
-    --muted: 0 0% 18%;
+    --muted: 0 0% 16%;
     --muted-foreground: 0 0% 60%;
 
-    --accent: 72 100% 50%;
+    --accent: 60 100% 50%;
     --accent-foreground: 0 0% 0%;
 
     --success: 142 72% 42%;
@@ -105,9 +106,9 @@
     --destructive: 0 84% 50%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 0 0% 20%;
-    --input: 0 0% 20%;
-    --ring: 72 100% 50%;
+    --border: 0 0% 18%;
+    --input: 0 0% 18%;
+    --ring: 340 100% 55%;
   }
 
   /* Video Streaming Dark Theme */
