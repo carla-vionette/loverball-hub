@@ -15,7 +15,7 @@ const VideoSidebar = () => {
     <aside className="hidden md:flex fixed left-0 top-0 h-screen w-60 bg-card/60 backdrop-blur-sm border-r border-border/20 flex-col z-50">
       {/* Logo */}
       <div className="p-5 border-b border-border/20 flex items-center gap-3">
-        <img src={scriptLogo} alt="Loverball" className="h-7" />
+        <img src={scriptLogo} alt="Loverball" className="h-8" />
         <span className="text-sm font-medium text-foreground/50">Watch</span>
       </div>
 
