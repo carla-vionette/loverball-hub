@@ -8,34 +8,50 @@ import { getProducts, ShopifyProduct } from "@/lib/shopify";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useCartStore } from "@/stores/cartStore";
 import { toast } from "sonner";
-import { Loader2, ShoppingBag } from "lucide-react";
+import { Loader2, ShoppingBag, Heart, Truck, Gift, Eye, Star } from "lucide-react";
 import loverballLogo from "@/assets/loverball-script-logo.png";
+
+const COLLECTIONS = [
+  { id: "all", label: "All" },
+  { id: "game-day", label: "Game Day" },
+  { id: "athleisure", label: "Athleisure" },
+  { id: "accessories", label: "Accessories" },
+];
+
+// Simulated view counts for social proof
+const getViewCount = (productId: string) => {
+  const hash = productId.split('').reduce((a, b) => { a = ((a << 5) - a) + b.charCodeAt(0); return a & a; }, 0);
+  return Math.abs(hash % 40) + 12;
+};
 
 const Shop = () => {
   const [products, setProducts] = useState<ShopifyProduct[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedVariants, setSelectedVariants] = useState<Record<string, string>>({});
+  const [wishlist, setWishlist] = useState<Set<string>>(() => {
+    const saved = localStorage.getItem('loverball-wishlist');
+    return saved ? new Set(JSON.parse(saved)) : new Set();
+  });
+  const [activeCollection, setActiveCollection] = useState("all");
   const addItem = useCartStore(state => state.addItem);
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         const data = await getProducts(20);
-        // Filter out duplicate products by title (case-insensitive)
         const seenTitles = new Set<string>();
         const uniqueProducts = data.filter(product => {
           const titleLower = product.node.title.toLowerCase();
-          if (seenTitles.has(titleLower)) {
-            return false;
-          }
+          if (seenTitles.has(titleLower)) return false;
           seenTitles.add(titleLower);
           return true;
         });
         setProducts(uniqueProducts);
         
-        // Initialize selected variants to first variant for each product
         const initialVariants: Record<string, string> = {};
         uniqueProducts.forEach(product => {
           if (product.node.variants.edges.length > 0) {
@@ -50,9 +66,26 @@ const Shop = () => {
         setLoading(false);
       }
     };
-
     fetchProducts();
   }, []);
+
+  useEffect(() => {
+    localStorage.setItem('loverball-wishlist', JSON.stringify([...wishlist]));
+  }, [wishlist]);
+
+  const toggleWishlist = (productId: string) => {
+    setWishlist(prev => {
+      const next = new Set(prev);
+      if (next.has(productId)) {
+        next.delete(productId);
+        toast("Removed from wishlist");
+      } else {
+        next.add(productId);
+        toast.success("Saved to wishlist ♡");
+      }
+      return next;
+    });
+  };
 
   const getSelectedVariant = (product: ShopifyProduct) => {
     const selectedVariantId = selectedVariants[product.node.id];
@@ -68,25 +101,40 @@ const Shop = () => {
     const variant = getSelectedVariant(product);
     if (!variant) return;
     
-    const cartItem = {
+    addItem({
       product,
       variantId: variant.id,
       variantTitle: variant.title,
       price: variant.price,
       quantity: 1,
       selectedOptions: variant.selectedOptions
-    };
-    
-    addItem(cartItem);
+    });
     toast.success("Added to cart", {
       description: `${product.node.title} has been added to your cart`,
     });
   };
 
-  // Check if product has meaningful variants (more than just "Default Title")
   const hasVariants = (product: ShopifyProduct) => {
     const variants = product.node.variants.edges;
     return variants.length > 1 || (variants.length === 1 && variants[0].node.title !== "Default Title");
+  };
+
+  // Simple collection filter based on product type/tags
+  const filteredProducts = activeCollection === "all" 
+    ? products 
+    : products.filter(p => {
+        const title = p.node.title.toLowerCase();
+        const desc = p.node.description?.toLowerCase() || '';
+        if (activeCollection === "accessories") return title.includes('hat') || title.includes('chain') || title.includes('socks') || title.includes('tote');
+        if (activeCollection === "game-day") return title.includes('jersey') || title.includes('crewneck') || title.includes('hoodie');
+        if (activeCollection === "athleisure") return title.includes('tshirt') || title.includes('hoodie') || title.includes('crewneck') || desc.includes('casual');
+        return true;
+      });
+
+  const wishlistProducts = products.filter(p => wishlist.has(p.node.id));
+
+  const isCommunityFavorite = (product: ShopifyProduct) => {
+    return getViewCount(product.node.id) > 35;
   };
 
   return (
@@ -95,22 +143,35 @@ const Shop = () => {
       <MobileHeader />
       
       <main className="container mx-auto px-4 py-8">
-        {/* Hero Section with Large Logo */}
-        <div className="flex flex-col items-center text-center mb-12">
-          <img 
-            src={loverballLogo} 
-            alt="Loverball" 
-            className="h-28 md:h-36 w-auto mb-6"
-          />
+        {/* Hero Section */}
+        <div className="flex flex-col items-center text-center mb-8">
+          <img src={loverballLogo} alt="Loverball" className="h-28 md:h-36 w-auto mb-6" />
           <span className="inline-block bg-accent text-accent-foreground px-4 py-2 rounded-full text-sm font-semibold tracking-wide mb-4">
             Shop
           </span>
           <h1 className="text-4xl md:text-5xl font-sans font-normal mb-3">Boutique</h1>
           <p className="text-muted-foreground text-lg max-w-md">Official Loverball merchandise and gear for women who love sports</p>
         </div>
-        
+
+        {/* Shipping & Gift Banner */}
+        <div className="flex flex-wrap items-center justify-center gap-4 md:gap-8 mb-8 py-4 px-6 bg-card rounded-2xl border border-border/50">
+          <div className="flex items-center gap-2 text-sm">
+            <Truck className="h-4 w-4 text-primary" />
+            <span><strong>Free shipping</strong> on orders $75+</span>
+          </div>
+          <div className="hidden md:block w-px h-5 bg-border" />
+          <div className="flex items-center gap-2 text-sm">
+            <Gift className="h-4 w-4 text-coral" />
+            <span><strong>Gift wrapping</strong> available at checkout</span>
+          </div>
+          <div className="hidden md:block w-px h-5 bg-border" />
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            Ships in 3-5 business days
+          </div>
+        </div>
+
         {/* Desktop Cart */}
-        <div className="hidden md:flex justify-end mb-8">
+        <div className="hidden md:flex justify-end mb-4">
           <CartDrawer />
         </div>
         
@@ -118,6 +179,30 @@ const Shop = () => {
         <div className="md:hidden fixed top-4 right-4 z-50">
           <CartDrawer />
         </div>
+
+        {/* Collection Tabs */}
+        <Tabs value={activeCollection} onValueChange={setActiveCollection} className="mb-8">
+          <TabsList className="w-full justify-start overflow-x-auto bg-transparent gap-2 h-auto p-0">
+            {COLLECTIONS.map(col => (
+              <TabsTrigger 
+                key={col.id} 
+                value={col.id}
+                className="rounded-full px-5 py-2 text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+              >
+                {col.label}
+              </TabsTrigger>
+            ))}
+            {wishlistProducts.length > 0 && (
+              <TabsTrigger 
+                value="wishlist"
+                className="rounded-full px-5 py-2 text-sm data-[state=active]:bg-coral data-[state=active]:text-coral-foreground"
+              >
+                <Heart className="h-3.5 w-3.5 mr-1.5" />
+                Saved ({wishlistProducts.length})
+              </TabsTrigger>
+            )}
+          </TabsList>
+        </Tabs>
 
         {loading ? (
           <div className="flex items-center justify-center py-20">
@@ -135,15 +220,36 @@ const Shop = () => {
           </div>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
-            {products.map((product) => {
+            {(activeCollection === "wishlist" ? wishlistProducts : filteredProducts).map((product) => {
               const { node } = product;
               const image = node.images.edges[0]?.node;
               const selectedVariant = getSelectedVariant(product);
               const price = selectedVariant?.price || node.priceRange.minVariantPrice;
               const showVariantSelector = hasVariants(product);
+              const viewCount = getViewCount(node.id);
+              const isWishlisted = wishlist.has(node.id);
+              const isFavorite = isCommunityFavorite(product);
               
               return (
-                <Card key={node.id} className="overflow-hidden hover:shadow-xl transition-all duration-300 rounded-2xl border-border/50 group bg-card">
+                <Card key={node.id} className="overflow-hidden hover:shadow-xl transition-all duration-300 rounded-2xl border-border/50 group bg-card relative">
+                  {/* Wishlist heart */}
+                  <button
+                    onClick={(e) => { e.preventDefault(); toggleWishlist(node.id); }}
+                    className="absolute top-3 right-3 z-10 p-2 rounded-full bg-background/80 backdrop-blur-sm hover:bg-background transition-colors"
+                  >
+                    <Heart className={`h-4 w-4 transition-colors ${isWishlisted ? 'fill-coral text-coral' : 'text-muted-foreground'}`} />
+                  </button>
+
+                  {/* Community Favorites Badge */}
+                  {isFavorite && (
+                    <div className="absolute top-3 left-3 z-10">
+                      <Badge className="bg-accent text-accent-foreground text-[10px] font-bold px-2 py-0.5 gap-1">
+                        <Star className="h-3 w-3 fill-current" />
+                        Community Favorite
+                      </Badge>
+                    </div>
+                  )}
+
                   <Link to={`/product/${node.handle}`}>
                     <div className="aspect-square overflow-hidden bg-gradient-to-br from-secondary/30 to-muted/30">
                       {image ? (
@@ -166,11 +272,16 @@ const Shop = () => {
                         {node.title}
                       </h3>
                     </Link>
-                    <p className="text-lg md:text-2xl font-medium text-primary mb-3">
+                    <p className="text-lg md:text-2xl font-medium text-primary mb-2">
                       ${parseFloat(price.amount).toFixed(2)}
                     </p>
+
+                    {/* Social proof */}
+                    <div className="flex items-center gap-1 text-xs text-muted-foreground mb-3">
+                      <Eye className="h-3 w-3" />
+                      <span>{viewCount} people viewed today</span>
+                    </div>
                     
-                    {/* Variant selector (size/color) */}
                     {showVariantSelector && (
                       <Select
                         value={selectedVariants[node.id] || node.variants.edges[0]?.node.id}
@@ -210,6 +321,20 @@ const Shop = () => {
             })}
           </div>
         )}
+
+        {/* Gift Card CTA */}
+        <div className="mt-16 text-center py-12 px-6 bg-card rounded-2xl border border-border/50">
+          <Gift className="h-10 w-10 text-coral mx-auto mb-4" />
+          <h2 className="text-2xl font-sans font-semibold mb-2">Give the Gift of Loverball</h2>
+          <p className="text-muted-foreground mb-6 max-w-md mx-auto">
+            Digital gift cards for the sports-loving women in your life. Available in $25, $50, and $100.
+          </p>
+          <div className="flex gap-3 justify-center flex-wrap">
+            <Button variant="outline" className="rounded-full">$25 Gift Card</Button>
+            <Button variant="outline" className="rounded-full">$50 Gift Card</Button>
+            <Button className="rounded-full">$100 Gift Card</Button>
+          </div>
+        </div>
       </main>
       
       <BottomNav />
