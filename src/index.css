@@ -29,11 +29,11 @@
 @layer base {
   :root {
     /* ── Brand ── */
-    --brand: 5 100% 64%;                /* #FF5850 Vibrant Coral */
+    --brand: 2 100% 61%;                /* #FF3B3B Bold Red */
     --brand-foreground: 0 0% 100%;
 
     /* ── Core palette ── */
-    --background: 40 20% 97%;           /* Off-white cream #FAF9F7 */
+    --background: 40 33% 95%;           /* Cream #F5F1E8 */
     --foreground: 0 0% 5%;              /* Near black */
 
     --card: 0 0% 100%;
@@ -42,11 +42,11 @@
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 5%;
 
-    /* Primary = Vibrant Coral (hero sections, CTAs, accent blocks) */
-    --primary: 5 100% 64%;              /* #FF5850 */
+    /* Primary = Bold Red (hero sections, CTAs, accent blocks) */
+    --primary: 2 100% 61%;              /* #FF3B3B */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 270 60% 90%;           /* Soft lavender #E5C5FF */
+    --secondary: 40 33% 95%;            /* Cream background */
     --secondary-foreground: 0 0% 12%;
 
     --muted: 35 18% 92%;
@@ -61,39 +61,39 @@
     --success-foreground: 0 0% 100%;
     --warning: 38 92% 50%;
     --warning-foreground: 0 0% 0%;
-    --info: 5 100% 64%;
+    --info: 2 100% 61%;
     --info-foreground: 0 0% 100%;
     --destructive: 0 84% 50%;
     --destructive-foreground: 0 0% 100%;
 
     /* ── Additional brand ── */
-    --coral: 5 100% 64%;                /* Vibrant coral */
+    --coral: 2 100% 61%;                /* Bold red */
     --coral-foreground: 0 0% 100%;
-    --pale-pink: 270 50% 95%;           /* Very light lavender */
+    --pale-pink: 0 60% 96%;            /* Very light pink */
     --pale-pink-foreground: 0 0% 5%;
     --medium-blue: 270 55% 70%;         /* Medium lavender */
     --medium-blue-foreground: 0 0% 100%;
     --olive: 35 18% 38%;                /* Warm taupe */
     --olive-foreground: 0 0% 100%;
-    --light-lime: 5 100% 64%;           /* Coral accent */
+    --light-lime: 2 100% 61%;           /* Red accent */
     --light-lime-foreground: 0 0% 100%;
-    --ticker: 5 100% 64%;               /* Coral ticker */
+    --ticker: 2 100% 61%;               /* Red ticker */
     --ticker-foreground: 0 0% 100%;
 
-    /* Lavender tones */
-    --terracotta: 270 55% 75%;          /* Soft lavender accent */
+    /* Lavender / contrast tones */
+    --terracotta: 0 0% 5%;              /* Black accent */
     --terracotta-foreground: 0 0% 100%;
-    --warm-beige: 35 25% 88%;           /* #E8DCC8 */
+    --warm-beige: 40 33% 91%;           /* Deeper cream */
     --warm-beige-foreground: 0 0% 5%;
 
     /* ── Lavender section token ── */
-    --lavender: 270 60% 90%;
+    --lavender: 0 60% 96%;              /* Very light pink */
     --lavender-foreground: 0 0% 12%;
 
     /* ── Chrome ── */
     --border: 35 15% 88%;
     --input: 35 15% 88%;
-    --ring: 5 100% 64%;
+    --ring: 2 100% 61%;
 
     --radius: 0.625rem;
   }
