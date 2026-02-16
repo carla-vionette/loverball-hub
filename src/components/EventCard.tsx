@@ -296,6 +296,20 @@ END:VCALENDAR`;
         )}
       </CardContent>
       
+      {/* Friend attendance indicator */}
+      <div className="px-6 pb-2">
+        <div className="flex items-center gap-2">
+          <div className="flex -space-x-2">
+            {[0, 1, 2].map((i) => (
+              <div key={i} className="w-6 h-6 rounded-full border-2 border-card bg-gradient-to-br from-primary/20 to-secondary/30 flex items-center justify-center">
+                <span className="text-[8px] font-semibold text-primary/70">{String.fromCharCode(65 + i)}</span>
+              </div>
+            ))}
+          </div>
+          <span className="text-xs text-muted-foreground">3 friends attending</span>
+        </div>
+      </div>
+
       <CardFooter className="flex gap-2 pt-4 border-t border-border/50">
         {rsvpStatus ? (
           <>
