@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useCartStore } from "@/stores/cartStore";
 import { toast } from "sonner";
 import { Loader2, ShoppingBag } from "lucide-react";
-import loverballLogo from "@/assets/loverball-logo-new.png";
+import loverballLogo from "@/assets/loverball-script-logo.png";
 
 const Shop = () => {
   const [products, setProducts] = useState<ShopifyProduct[]>([]);

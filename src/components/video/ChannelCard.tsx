@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { CheckCircle, Flame, Play } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import type { DiscoverChannel } from "@/lib/discoverChannelData";
-import loverbballLogo from "@/assets/loverball-logo-red.png";
+import loverbballLogo from "@/assets/loverball-script-logo.png";
 
 const formatFollowers = (n: number) => {
   if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;

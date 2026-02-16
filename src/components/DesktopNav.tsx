@@ -1,6 +1,6 @@
 import { User, Search, CalendarDays, Settings, ShoppingBag, Play } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
-import loverbballLogo from "@/assets/loverball-logo-new.png";
+import loverbballLogo from "@/assets/loverball-script-logo.png";
 import { useAuth } from "@/hooks/useAuth";
 import { useUnreadMessages } from "@/hooks/useUnreadMessages";
 

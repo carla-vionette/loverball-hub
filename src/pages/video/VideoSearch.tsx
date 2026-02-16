@@ -11,7 +11,7 @@ import {
   type DiscoverChannel,
 } from "@/lib/discoverChannelData";
 import ChannelCard from "@/components/video/ChannelCard";
-import loverbballLogo from "@/assets/loverball-logo-red.png";
+import loverbballLogo from "@/assets/loverball-script-logo.png";
 
 // ─── Constants ──────────────────────────────────────────
 const ALL_CHANNELS = [...PRO_TEAMS, ...COLLEGE_TEAMS, ...CREATOR_CHANNELS, ...LOVERBALL_CHANNELS];
