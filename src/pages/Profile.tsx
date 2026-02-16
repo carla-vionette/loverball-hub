@@ -412,7 +412,7 @@ const Profile = () => {
                           <p className="text-xs text-muted-foreground">{team.nextGame}</p>
                         </div>
                         <div className="text-right">
-                          <p className="text-sm font-sans font-bold text-foreground">{team.record}</p>
+                          <p className={`text-sm font-sans font-bold ${team.winPct > 0.5 ? "text-emerald-600" : team.winPct > 0 && team.winPct < 0.5 ? "text-destructive" : "text-foreground"}`}>{team.record}</p>
                           {team.last5.length > 0 && (
                             <div className="flex gap-0.5 mt-1 justify-end">
                               {team.last5.map((win, i) => <div key={i} className={`w-2 h-2 rounded-full ${win ? "bg-emerald-500" : "bg-destructive/60"}`} />)}
