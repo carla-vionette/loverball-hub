@@ -199,7 +199,7 @@ const FeedVideoPlayer = ({ video, isActive, isMuted, onToggleMute }: FeedVideoPl
   return (
     <div
       ref={containerRef}
-      className="relative w-full h-full bg-background overflow-hidden select-none"
+      className="relative w-full h-full bg-black overflow-hidden select-none"
       onClick={handleTap}
     >
       {/* Video */}
@@ -211,7 +211,7 @@ const FeedVideoPlayer = ({ video, isActive, isMuted, onToggleMute }: FeedVideoPl
         playsInline
         muted={isMuted}
         preload="metadata"
-        className="absolute inset-0 w-full h-full object-contain bg-background"
+        className="absolute inset-0 w-full h-full object-contain bg-black"
       />
 
       {/* Loading spinner */}
@@ -223,8 +223,8 @@ const FeedVideoPlayer = ({ video, isActive, isMuted, onToggleMute }: FeedVideoPl
             exit={{ opacity: 0 }}
             className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none"
           >
-            <div className="w-10 h-10 rounded-full bg-background/30 backdrop-blur-sm flex items-center justify-center">
-              <div className="w-6 h-6 border-2 border-foreground/30 border-t-foreground rounded-full animate-spin" />
+            <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
+              <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin" />
             </div>
           </motion.div>
         )}
@@ -241,7 +241,7 @@ const FeedVideoPlayer = ({ video, isActive, isMuted, onToggleMute }: FeedVideoPl
               doubleTapSide === "left" ? "left-12" : "right-12"
             }`}
           >
-            <div className="bg-foreground/20 backdrop-blur-sm rounded-full px-4 py-2 text-foreground text-sm font-medium font-sans">
+            <div className="bg-white/20 backdrop-blur-sm rounded-full px-4 py-2 text-white text-sm font-medium font-sans">
               {doubleTapSide === "left" ? "−10s" : "+10s"}
             </div>
           </motion.div>
@@ -257,11 +257,11 @@ const FeedVideoPlayer = ({ video, isActive, isMuted, onToggleMute }: FeedVideoPl
             exit={{ opacity: 0 }}
             className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none"
           >
-            <div className="w-16 h-16 rounded-full bg-background/30 backdrop-blur-sm flex items-center justify-center">
+            <div className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
               {isPlaying ? (
-                <Pause className="w-7 h-7 text-foreground" fill="currentColor" />
+                <Pause className="w-7 h-7 text-white" fill="currentColor" />
               ) : (
-                <Play className="w-7 h-7 text-foreground ml-1" fill="currentColor" />
+                <Play className="w-7 h-7 text-white ml-1" fill="currentColor" />
               )}
             </div>
           </motion.div>
@@ -269,7 +269,7 @@ const FeedVideoPlayer = ({ video, isActive, isMuted, onToggleMute }: FeedVideoPl
       </AnimatePresence>
 
       {/* Bottom gradient overlay */}
-      <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-background/90 via-background/30 to-transparent pointer-events-none" />
+      <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/90 via-black/30 to-transparent pointer-events-none" />
 
       {/* Channel info + description — bottom left */}
       <div className="absolute bottom-20 left-4 right-20 z-10 pointer-events-auto">
@@ -277,21 +277,21 @@ const FeedVideoPlayer = ({ video, isActive, isMuted, onToggleMute }: FeedVideoPl
           <img
             src={video.channelAvatar}
             alt={video.channelName}
-            className="w-10 h-10 rounded-full object-cover border-2 border-foreground/20"
+            className="w-10 h-10 rounded-full object-cover border-2 border-white/20"
           />
-          <span className="text-sm font-bold text-foreground font-sans">{video.channelName}</span>
+          <span className="text-sm font-bold text-white font-sans">{video.channelName}</span>
           <button
             onClick={(e) => { e.stopPropagation(); setFollowing(!following); }}
             className={`px-3 py-1 rounded-full text-xs font-bold transition-colors font-sans ${
-              following ? "bg-secondary text-muted-foreground" : "bg-primary text-primary-foreground"
+              following ? "bg-white/20 text-white" : "bg-accent text-accent-foreground"
             }`}
           >
             {following ? "Following" : "Follow"}
           </button>
         </div>
-        <h3 className="text-base font-bold text-foreground leading-tight mb-1">{video.title}</h3>
-        <p className="text-xs text-foreground/70 line-clamp-2 font-sans">{video.description}</p>
-        <div className="flex items-center gap-2 mt-2 text-[10px] text-foreground/50 font-sans">
+        <h3 className="text-base font-bold text-white leading-tight mb-1">{video.title}</h3>
+        <p className="text-xs text-white/70 line-clamp-2 font-sans">{video.description}</p>
+        <div className="flex items-center gap-2 mt-2 text-[10px] text-white/50 font-sans">
           {video.tags.map((tag) => (
             <span key={tag}>#{tag}</span>
           ))}
@@ -302,47 +302,47 @@ const FeedVideoPlayer = ({ video, isActive, isMuted, onToggleMute }: FeedVideoPl
       <div className="absolute right-3 bottom-24 z-10 flex flex-col items-center gap-4 pointer-events-auto">
         {/* Like */}
         <button onClick={(e) => { e.stopPropagation(); handleLike(); }} className="flex flex-col items-center gap-1">
-          <div className={`w-11 h-11 rounded-full flex items-center justify-center transition-colors ${liked ? "bg-primary/20" : "bg-foreground/10 backdrop-blur-sm"}`}>
-            <ThumbsUp className={`w-5 h-5 ${liked ? "text-primary" : "text-foreground"}`} fill={liked ? "currentColor" : "none"} />
+          <div className={`w-11 h-11 rounded-full flex items-center justify-center transition-colors ${liked ? "bg-accent/30" : "bg-white/10 backdrop-blur-sm"}`}>
+            <ThumbsUp className={`w-5 h-5 ${liked ? "text-accent" : "text-white"}`} fill={liked ? "currentColor" : "none"} />
           </div>
-          <span className={`text-[10px] font-medium font-sans ${liked ? "text-primary" : "text-foreground/70"}`}>{formatCount(likeCount)}</span>
+          <span className={`text-[10px] font-medium font-sans ${liked ? "text-accent" : "text-white/70"}`}>{formatCount(likeCount)}</span>
         </button>
 
         {/* Dislike */}
         <button onClick={(e) => { e.stopPropagation(); handleDislike(); }} className="flex flex-col items-center gap-1">
-          <div className={`w-11 h-11 rounded-full flex items-center justify-center transition-colors ${disliked ? "bg-destructive/20" : "bg-foreground/10 backdrop-blur-sm"}`}>
-            <ThumbsDown className={`w-5 h-5 ${disliked ? "text-destructive" : "text-foreground"}`} fill={disliked ? "currentColor" : "none"} />
+          <div className={`w-11 h-11 rounded-full flex items-center justify-center transition-colors ${disliked ? "bg-destructive/20" : "bg-white/10 backdrop-blur-sm"}`}>
+            <ThumbsDown className={`w-5 h-5 ${disliked ? "text-destructive" : "text-white"}`} fill={disliked ? "currentColor" : "none"} />
           </div>
         </button>
 
         {/* Share */}
         <button onClick={(e) => { e.stopPropagation(); handleShare(); }} className="flex flex-col items-center gap-1">
-          <div className="w-11 h-11 rounded-full bg-foreground/10 backdrop-blur-sm flex items-center justify-center">
-            <Share2 className="w-5 h-5 text-foreground" />
+          <div className="w-11 h-11 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center">
+            <Share2 className="w-5 h-5 text-white" />
           </div>
-          <span className="text-[10px] text-foreground/70 font-sans">Share</span>
+          <span className="text-[10px] text-white/70 font-sans">Share</span>
         </button>
 
         {/* Bookmark */}
         <button onClick={(e) => { e.stopPropagation(); setBookmarked(!bookmarked); }} className="flex flex-col items-center gap-1">
-          <div className={`w-11 h-11 rounded-full flex items-center justify-center transition-colors ${bookmarked ? "bg-primary/20" : "bg-foreground/10 backdrop-blur-sm"}`}>
-            <Bookmark className={`w-5 h-5 ${bookmarked ? "text-primary" : "text-foreground"}`} fill={bookmarked ? "currentColor" : "none"} />
+          <div className={`w-11 h-11 rounded-full flex items-center justify-center transition-colors ${bookmarked ? "bg-accent/30" : "bg-white/10 backdrop-blur-sm"}`}>
+            <Bookmark className={`w-5 h-5 ${bookmarked ? "text-accent" : "text-white"}`} fill={bookmarked ? "currentColor" : "none"} />
           </div>
-          <span className="text-[10px] text-foreground/70 font-sans">Save</span>
+          <span className="text-[10px] text-white/70 font-sans">Save</span>
         </button>
 
         {/* Mute */}
         <button onClick={(e) => { e.stopPropagation(); onToggleMute(); }} className="flex flex-col items-center gap-1">
-          <div className="w-11 h-11 rounded-full bg-foreground/10 backdrop-blur-sm flex items-center justify-center">
-            {isMuted ? <VolumeX className="w-5 h-5 text-foreground" /> : <Volume2 className="w-5 h-5 text-foreground" />}
+          <div className="w-11 h-11 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center">
+            {isMuted ? <VolumeX className="w-5 h-5 text-white" /> : <Volume2 className="w-5 h-5 text-white" />}
           </div>
         </button>
 
         {/* Speed */}
         <div className="relative">
           <button onClick={(e) => { e.stopPropagation(); setShowSpeedMenu(!showSpeedMenu); }} className="flex flex-col items-center gap-1">
-            <div className="w-11 h-11 rounded-full bg-foreground/10 backdrop-blur-sm flex items-center justify-center">
-              <span className="text-xs font-bold text-foreground font-sans">{playbackSpeed}x</span>
+            <div className="w-11 h-11 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center">
+              <span className="text-xs font-bold text-white font-sans">{playbackSpeed}x</span>
             </div>
           </button>
           <AnimatePresence>
@@ -351,15 +351,15 @@ const FeedVideoPlayer = ({ video, isActive, isMuted, onToggleMute }: FeedVideoPl
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.8 }}
-                className="absolute right-full mr-2 bottom-0 bg-card/95 backdrop-blur-xl border border-border/30 rounded-xl p-1 min-w-[80px] shadow-2xl"
+                className="absolute right-full mr-2 bottom-0 bg-black/90 backdrop-blur-xl border border-white/10 rounded-2xl p-1 min-w-[80px] shadow-2xl"
                 onClick={(e) => e.stopPropagation()}
               >
                 {PLAYBACK_SPEEDS.map((s) => (
                   <button
                     key={s}
                     onClick={() => { setPlaybackSpeed(s); setShowSpeedMenu(false); }}
-                    className={`w-full text-center px-3 py-2 text-xs rounded-lg transition-colors font-sans ${
-                      playbackSpeed === s ? "bg-primary/20 text-primary font-bold" : "text-foreground hover:bg-foreground/10"
+                    className={`w-full text-center px-3 py-2 text-xs rounded-xl transition-colors font-sans ${
+                      playbackSpeed === s ? "bg-accent/30 text-accent font-bold" : "text-white hover:bg-white/10"
                     }`}
                   >
                     {s}x
@@ -373,16 +373,16 @@ const FeedVideoPlayer = ({ video, isActive, isMuted, onToggleMute }: FeedVideoPl
         {/* PiP */}
         {document.pictureInPictureEnabled && (
           <button onClick={(e) => { e.stopPropagation(); handlePiP(); }} className="flex flex-col items-center gap-1">
-            <div className="w-11 h-11 rounded-full bg-foreground/10 backdrop-blur-sm flex items-center justify-center">
-              <PictureInPicture2 className="w-5 h-5 text-foreground" />
+            <div className="w-11 h-11 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center">
+              <PictureInPicture2 className="w-5 h-5 text-white" />
             </div>
           </button>
         )}
 
         {/* Fullscreen */}
         <button onClick={(e) => { e.stopPropagation(); handleFullscreen(); }} className="flex flex-col items-center gap-1">
-          <div className="w-11 h-11 rounded-full bg-foreground/10 backdrop-blur-sm flex items-center justify-center">
-            <Maximize className="w-5 h-5 text-foreground" />
+          <div className="w-11 h-11 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center">
+            <Maximize className="w-5 h-5 text-white" />
           </div>
         </button>
       </div>
@@ -391,20 +391,20 @@ const FeedVideoPlayer = ({ video, isActive, isMuted, onToggleMute }: FeedVideoPl
       <div className="absolute bottom-0 left-0 right-0 z-20 pointer-events-auto px-0">
         {/* Time display */}
         <div className="flex items-center justify-between px-4 pb-1">
-          <span className="text-[10px] text-foreground/50 font-mono font-sans">{formatTime(currentTime)}</span>
-          <span className="text-[10px] text-foreground/50 font-mono font-sans">{formatTime(duration)}</span>
+          <span className="text-[10px] text-white/50 font-mono font-sans">{formatTime(currentTime)}</span>
+          <span className="text-[10px] text-white/50 font-mono font-sans">{formatTime(duration)}</span>
         </div>
         <div
-          className="h-1.5 bg-foreground/10 cursor-pointer group"
+          className="h-1.5 bg-white/10 cursor-pointer group"
           onClick={(e) => { e.stopPropagation(); handleProgressClick(e); }}
         >
           {/* Buffered */}
-          <div className="absolute bottom-0 h-1.5 bg-foreground/20 rounded-none" style={{ width: `${buffered}%` }} />
+          <div className="absolute bottom-0 h-1.5 bg-white/20 rounded-none" style={{ width: `${buffered}%` }} />
           {/* Progress */}
-          <div className="absolute bottom-0 h-1.5 bg-primary transition-[width] duration-100" style={{ width: `${progress}%` }} />
+          <div className="absolute bottom-0 h-1.5 bg-accent transition-[width] duration-100" style={{ width: `${progress}%` }} />
           {/* Handle */}
           <div
-            className="absolute bottom-0 w-3 h-3 bg-primary rounded-full -translate-x-1/2 -translate-y-[3px] opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
+            className="absolute bottom-0 w-3 h-3 bg-accent rounded-full -translate-x-1/2 -translate-y-[3px] opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
             style={{ left: `${progress}%` }}
           />
         </div>

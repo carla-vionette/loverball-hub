@@ -4,7 +4,7 @@ import VideoSidebar from "./VideoSidebar";
 
 const VideoLayout = () => {
   return (
-    <div className="video-theme min-h-screen bg-background text-foreground font-sans">
+    <div className="min-h-screen bg-background text-foreground font-sans">
       <VideoSidebar />
       <div className="md:ml-60">
         <Outlet />
