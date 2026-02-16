@@ -19,7 +19,7 @@ import fansImage from "@/assets/landing-fans.jpg";
 import fieldDay from "@/assets/field-day.jpg";
 import teamSpirit from "@/assets/team-spirit.jpg";
 import pickupGame from "@/assets/pickup-game.jpg";
-import wnbaWatch from "@/assets/wnba-watch-party.jpg";
+import wnbaWatch from "@/assets/soccer-friends.png";
 import { z } from "zod";
 
 const signUpSchema = z.object({
