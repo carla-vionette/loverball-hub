@@ -11,7 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Calendar, Clock, MapPin, Users, Lock, Share2, ArrowLeft, Loader2, Check, X, HelpCircle, Video, ExternalLink, Copy, Link2 } from "lucide-react";
 import { format, differenceInDays, differenceInHours, differenceInMinutes, isPast } from "date-fns";
 import { motion, AnimatePresence } from "framer-motion";
-import loverballLogo from "@/assets/loverball-logo-new.png";
+import loverballLogo from "@/assets/loverball-script-logo.png";
 import SharePreview from "@/components/SharePreview";
 
 interface Event {

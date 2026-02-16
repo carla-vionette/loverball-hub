@@ -10,7 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import loverbballLogo from "@/assets/loverball-logo-red.png";
+import loverbballLogo from "@/assets/loverball-script-logo.png";
 
 // ─── Types & Constants ──────────────────────────────────
 interface VideoFile {

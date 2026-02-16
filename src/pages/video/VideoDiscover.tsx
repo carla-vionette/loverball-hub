@@ -5,7 +5,7 @@ import ChannelRow from "@/components/video/ChannelRow";
 import ChannelCard from "@/components/video/ChannelCard";
 import { FollowButton } from "@/components/video/ChannelCard";
 import { Skeleton } from "@/components/ui/skeleton";
-import loverbballLogo from "@/assets/loverball-logo-red.png";
+import loverbballLogo from "@/assets/loverball-script-logo.png";
 import {
   FEATURED_CHANNELS,
   PRO_TEAMS,
