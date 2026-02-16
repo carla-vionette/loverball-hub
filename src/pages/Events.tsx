@@ -10,11 +10,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Calendar, MapPin, Users, Clock, Plus, SlidersHorizontal, Image, X } from 'lucide-react';
+import { Calendar, MapPin, Users, Clock, Plus, SlidersHorizontal, Image, X } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar as CalendarPicker } from '@/components/ui/calendar';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
+import PageError from '@/components/PageError';
+import PageSkeleton from '@/components/PageSkeleton';
+import { ErrorBoundary } from '@/components/ui/error-boundary';
 import {
   Sheet,
   SheetContent,
@@ -77,6 +80,7 @@ const Events = () => {
   const [events, setEvents] = useState<Event[]>([]);
   const [pastEvents, setPastEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState<string | null>(null);
   const [selectedFilter, setSelectedFilter] = useState('All');
   const [userRsvps, setUserRsvps] = useState<Record<string, string>>({});
   const [attendeeCounts, setAttendeeCounts] = useState<Record<string, number>>({});
@@ -104,6 +108,7 @@ const Events = () => {
 
   const fetchEvents = async () => {
     try {
+      setFetchError(null);
       const { data, error } = await supabase
         .from('events')
         .select('*')
@@ -126,8 +131,9 @@ const Events = () => {
           setAttendeeCounts(counts);
         }
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error fetching events:', error);
+      setFetchError(error?.message || 'Failed to load events');
     } finally {
       setLoading(false);
     }
@@ -220,8 +226,32 @@ const Events = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      <div className="min-h-screen bg-background">
+        <MobileHeader />
+        <DesktopNav />
+        <BottomNav />
+        <main className="md:ml-64 pt-16 md:pt-0 pb-20 md:pb-0">
+          <div className="container mx-auto px-4 py-8 max-w-6xl">
+            <PageSkeleton variant="cards" count={6} />
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  if (fetchError) {
+    return (
+      <div className="min-h-screen bg-background">
+        <MobileHeader />
+        <DesktopNav />
+        <BottomNav />
+        <main className="md:ml-64 pt-16 md:pt-0 pb-20 md:pb-0">
+          <PageError
+            variant={!navigator.onLine ? "network" : "generic"}
+            message={fetchError}
+            onRetry={() => { setLoading(true); fetchEvents(); fetchPastEvents(); }}
+          />
+        </main>
       </div>
     );
   }

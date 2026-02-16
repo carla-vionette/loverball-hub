@@ -14,6 +14,9 @@ import { useCartStore } from "@/stores/cartStore";
 import { toast } from "sonner";
 import { Loader2, ShoppingBag, Heart, Truck, Gift, Eye, Star } from "lucide-react";
 import loverballLogo from "@/assets/loverball-script-logo.png";
+import PageError from "@/components/PageError";
+import PageSkeleton from "@/components/PageSkeleton";
+import { ErrorBoundary } from "@/components/ui/error-boundary";
 
 const COLLECTIONS = [
   { id: "all", label: "All" },
@@ -31,7 +34,7 @@ const getViewCount = (productId: string) => {
 const Shop = () => {
   const [products, setProducts] = useState<ShopifyProduct[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedVariants, setSelectedVariants] = useState<Record<string, string>>({});
+  const [fetchError, setFetchError] = useState<string | null>(null);
   const [wishlist, setWishlist] = useState<Set<string>>(() => {
     const saved = localStorage.getItem('loverball-wishlist');
     return saved ? new Set(JSON.parse(saved)) : new Set();
@@ -39,9 +42,12 @@ const Shop = () => {
   const [activeCollection, setActiveCollection] = useState("all");
   const addItem = useCartStore(state => state.addItem);
 
+  const [selectedVariants, setSelectedVariants] = useState<Record<string, string>>({});
+
   useEffect(() => {
     const fetchProducts = async () => {
       try {
+        setFetchError(null);
         const data = await getProducts(20);
         const seenTitles = new Set<string>();
         const uniqueProducts = data.filter(product => {
@@ -59,8 +65,9 @@ const Shop = () => {
           }
         });
         setSelectedVariants(initialVariants);
-      } catch (error) {
+      } catch (error: any) {
         console.error('Error fetching products:', error);
+        setFetchError(error?.message || "Failed to load products");
         toast.error("Failed to load products");
       } finally {
         setLoading(false);
@@ -205,18 +212,25 @@ const Shop = () => {
         </Tabs>
 
         {loading ? (
-          <div className="flex items-center justify-center py-20">
-            <Loader2 className="h-8 w-8 animate-spin text-primary" />
-          </div>
+          <PageSkeleton variant="cards" count={8} />
+        ) : fetchError ? (
+          <PageError
+            variant={!navigator.onLine ? "network" : "generic"}
+            message={fetchError}
+            onRetry={() => { setLoading(true); setFetchError(null); window.location.reload(); }}
+          />
         ) : products.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 text-center">
             <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mb-6">
               <ShoppingBag className="h-10 w-10 text-primary" />
             </div>
-            <h2 className="text-2xl font-sans mb-3">No products found</h2>
-            <p className="text-muted-foreground max-w-md">
-              Start adding products to your store by describing what you'd like to sell in the chat!
+            <h2 className="text-2xl font-sans mb-3">Shop coming soon</h2>
+            <p className="text-muted-foreground max-w-md mb-6">
+              We're curating the best Loverball merchandise. Check back soon for exclusive drops!
             </p>
+            <Button variant="outline" className="rounded-full" onClick={() => window.location.reload()}>
+              Refresh
+            </Button>
           </div>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">

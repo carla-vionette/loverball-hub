@@ -8,6 +8,7 @@ import MobileHeader from "@/components/MobileHeader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Loader2, MessageCircle, Send, ArrowLeft } from "lucide-react";
+import PageSkeleton from "@/components/PageSkeleton";
 import { cn } from "@/lib/utils";
 
 interface MatchWithProfile {
@@ -304,9 +305,7 @@ const DirectMessages = () => {
 
       <main className="container mx-auto px-0 md:px-4 py-0 md:py-6 max-w-5xl">
         {loading ? (
-          <div className="flex items-center justify-center py-20">
-            <Loader2 className="h-8 w-8 animate-spin text-primary" />
-          </div>
+          <PageSkeleton variant="list" count={8} />
         ) : (
           <div className="flex h-[calc(100vh-8rem)] md:h-[calc(100vh-6rem)] border border-border/30 rounded-none md:rounded-2xl overflow-hidden bg-card">
             {/* Left panel - conversation list */}
