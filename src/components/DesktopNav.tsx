@@ -1,4 +1,4 @@
-import { User, Search, CalendarDays, Settings, ShoppingBag, Play } from "lucide-react";
+import { User, Search, CalendarDays, Settings, ShoppingBag, Play, Heart, MessageCircle } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import loverbballLogo from "@/assets/loverball-script-logo.png";
 import { useAuth } from "@/hooks/useAuth";
@@ -11,6 +11,8 @@ const DesktopNav = () => {
   
   const navItems = [
     { icon: Play, label: "For You", path: "/watch" },
+    { icon: Heart, label: "Connections", path: "/connections" },
+    { icon: MessageCircle, label: "DMs", path: "/dms", showBadge: true },
     { icon: CalendarDays, label: "Events", path: "/events" },
     { icon: ShoppingBag, label: "Shop", path: "/shop" },
     { icon: User, label: "Profile", path: "/profile" },
