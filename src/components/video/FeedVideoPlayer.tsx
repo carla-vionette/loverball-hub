@@ -1,5 +1,5 @@
 import { useRef, useEffect, useState, useCallback } from "react";
-import { Heart, MessageCircle, Share2, Volume2, VolumeX, Play, Bookmark, Send } from "lucide-react";
+import { Heart, MessageCircle, Share2, Volume2, VolumeX, Play, Bookmark } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { FeedVideoItem } from "@/lib/feedVideoData";
 
@@ -16,12 +16,7 @@ const formatCount = (n: number) => {
   return String(n);
 };
 
-const MOCK_COMMENTS = [
-  { name: "Grace Morgan", text: "Great point played!", avatar: "GM" },
-  { name: "Luke Anderson", text: "Insane backhand shot!", avatar: "LA" },
-  { name: "Ryan Mitchell", text: "Your style is perfect!", avatar: "RM" },
-  { name: "Emma Collins", text: "She's on fire!", avatar: "EC" },
-];
+
 
 const FeedVideoPlayer = ({ video, isActive, isMuted, onToggleMute }: FeedVideoPlayerProps) => {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -33,7 +28,7 @@ const FeedVideoPlayer = ({ video, isActive, isMuted, onToggleMute }: FeedVideoPl
   const [bookmarked, setBookmarked] = useState(false);
   const [following, setFollowing] = useState(video.isFollowing ?? false);
   const [likeCount, setLikeCount] = useState(video.likes);
-  const [commentText, setCommentText] = useState("");
+  
   const [doubleTapSide, setDoubleTapSide] = useState<"left" | "right" | null>(null);
   const lastTapRef = useRef<{ time: number; x: number }>({ time: 0, x: 0 });
   const playPauseTimeout = useRef<ReturnType<typeof setTimeout>>();
@@ -232,46 +227,6 @@ const FeedVideoPlayer = ({ video, isActive, isMuted, onToggleMute }: FeedVideoPl
         </button>
       </div>
 
-      {/* Bottom-left: scrolling comments overlay */}
-      <div className="absolute bottom-28 left-4 right-20 z-10 space-y-2.5 pointer-events-none">
-        {MOCK_COMMENTS.map((comment, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: i * 0.15 + 0.3 }}
-            className="flex items-center gap-2.5"
-          >
-            <div className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center shrink-0">
-              <span className="text-[10px] font-bold text-white">{comment.avatar}</span>
-            </div>
-            <div>
-              <span className="text-xs font-bold text-white">{comment.name}</span>
-              <p className="text-xs text-white/70">{comment.text}</p>
-            </div>
-          </motion.div>
-        ))}
-      </div>
-
-      {/* Bottom: comment input */}
-      <div className="absolute bottom-4 left-4 right-4 z-20 pointer-events-auto">
-        <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md rounded-full px-4 py-2.5">
-          <input
-            type="text"
-            placeholder="Type your comment..."
-            value={commentText}
-            onChange={(e) => setCommentText(e.target.value)}
-            onClick={(e) => e.stopPropagation()}
-            className="flex-1 bg-transparent text-white text-sm placeholder:text-white/40 outline-none"
-          />
-          <button
-            onClick={(e) => { e.stopPropagation(); setCommentText(""); }}
-            className="w-9 h-9 rounded-full bg-accent flex items-center justify-center shrink-0"
-          >
-            <Send className="w-4 h-4 text-accent-foreground" />
-          </button>
-        </div>
-      </div>
 
       {/* Progress bar */}
       <div className="absolute bottom-0 left-0 right-0 z-30 h-0.5 bg-white/10">
