@@ -43,32 +43,29 @@ const LandingPage = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Navigation - Pill Style */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-secondary/95 backdrop-blur-sm border-b border-border/50">
+      {/* Navigation - Bold Editorial */}
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border/50">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <div className="flex items-center justify-between h-20">
-            {/* Left nav links */}
             <div className="hidden md:flex items-center gap-2">
-              <a href="#about" className="px-5 py-2 text-sm font-medium text-foreground/70 hover:text-foreground hover:bg-background rounded-full transition-all">
+              <a href="#about" className="px-5 py-2 text-sm font-bold tracking-wider uppercase text-foreground/70 hover:text-primary hover:bg-primary/5 rounded-full transition-all">
                 About
               </a>
-              <a href="#features" className="px-5 py-2 text-sm font-medium text-foreground/70 hover:text-foreground hover:bg-background rounded-full transition-all">
+              <a href="#features" className="px-5 py-2 text-sm font-bold tracking-wider uppercase text-foreground/70 hover:text-primary hover:bg-primary/5 rounded-full transition-all">
                 Features
               </a>
-              <a href="#community" className="px-5 py-2 text-sm font-medium text-foreground/70 hover:text-foreground hover:bg-background rounded-full transition-all">
+              <a href="#community" className="px-5 py-2 text-sm font-bold tracking-wider uppercase text-foreground/70 hover:text-primary hover:bg-primary/5 rounded-full transition-all">
                 Community
               </a>
             </div>
             
-            {/* Center logo */}
             <img src={loverballLogo} alt="Loverball" className="h-32 w-auto absolute left-1/2 -translate-x-1/2" />
             
-            {/* Right nav links */}
             <div className="hidden md:flex items-center gap-3">
-              <a href="#" className="px-5 py-2 text-sm font-medium text-foreground/70 hover:text-foreground hover:bg-background rounded-full transition-all">
+              <a href="#" className="px-5 py-2 text-sm font-bold tracking-wider uppercase text-foreground/70 hover:text-primary hover:bg-primary/5 rounded-full transition-all">
                 Events
               </a>
-              <a href="#" className="px-5 py-2 text-sm font-medium text-foreground/70 hover:text-foreground hover:bg-background rounded-full transition-all">
+              <a href="#" className="px-5 py-2 text-sm font-bold tracking-wider uppercase text-foreground/70 hover:text-primary hover:bg-primary/5 rounded-full transition-all">
                 Shop
               </a>
               <Button onClick={() => navigate("/following")} className="rounded-full px-6">
@@ -76,7 +73,6 @@ const LandingPage = () => {
               </Button>
             </div>
             
-            {/* Mobile button */}
             <Button onClick={() => navigate("/following")} size="sm" className="md:hidden rounded-full">
               Join
             </Button>
@@ -84,12 +80,11 @@ const LandingPage = () => {
         </div>
       </nav>
 
-      {/* Hero Section - Overlapping Editorial Layout */}
+      {/* Hero Section — Overlapping Editorial */}
       <section className="pt-20 min-h-screen relative bg-background">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-0 items-center min-h-[calc(100vh-80px)] py-12">
             
-            {/* Left - Large Hero Image */}
             <motion.div
               initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
@@ -103,36 +98,35 @@ const LandingPage = () => {
                   className="w-full h-full object-cover object-[center_35%]"
                 />
               </div>
-              {/* Overlapping ribbon */}
-              <div className="absolute -bottom-4 -right-4 lg:right-auto lg:-left-8 bg-coral text-coral-foreground px-6 py-3 rounded-full shadow-lg">
-                <span className="text-sm font-medium tracking-wide">Est. 2024</span>
+              <div className="absolute -bottom-4 -right-4 lg:right-auto lg:-left-8 bg-accent text-accent-foreground px-6 py-3 rounded-full shadow-lg">
+                <span className="text-sm font-bold tracking-wider">Est. 2024</span>
               </div>
             </motion.div>
 
-            {/* Right - Content Card (Overlapping) */}
             <motion.div
               initial={{ opacity: 0, x: 30 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
               className="relative order-2 lg:-ml-24 z-10"
             >
-              <div className="bg-accent text-accent-foreground p-8 sm:p-12 lg:p-14 rounded-2xl shadow-2xl">
-                <p className="text-accent-foreground/70 text-sm font-medium tracking-widest mb-6 uppercase">
+              <div className="color-block-blue p-8 sm:p-12 lg:p-14 rounded-2xl shadow-2xl">
+                <p className="text-white/60 text-sm font-bold tracking-[0.3em] mb-6 uppercase">
                   Hey Friend.
                 </p>
-                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-sans font-normal leading-[1.1] mb-6 text-accent-foreground">
+                <h1 className="text-5xl sm:text-6xl lg:text-7xl font-display leading-none mb-6 text-white uppercase tracking-tight">
                   Let's Elevate<br />
                   Your Sports<br />
-                  <span className="italic">Experience</span>
+                  <span className="font-script normal-case text-accent">Experience</span>
                 </h1>
-                <p className="text-accent-foreground/80 text-lg leading-relaxed mb-8 max-w-md">
+                <p className="text-white/80 text-lg leading-relaxed mb-8 max-w-md font-sans normal-case">
                   We're a community platform for women who love sports—where stories, connection, and culture meet her passion for the game.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4">
                   <Button 
                     onClick={() => navigate("/following")}
                     size="lg"
-                    className="rounded-full bg-primary text-primary-foreground hover:bg-primary/85 px-8 py-6 text-base font-medium"
+                    variant="accent"
+                    className="rounded-full px-8 py-6 text-base"
                   >
                     Learn More
                     <ArrowRight className="ml-2 h-5 w-5" />
@@ -145,38 +139,40 @@ const LandingPage = () => {
       </section>
 
       {/* Scrolling Ticker */}
-      <div className="bg-accent text-accent-foreground py-4 overflow-hidden">
+      <div className="color-block-coral py-4 overflow-hidden">
         <motion.div
           animate={{ x: [0, -1000] }}
           transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
           className="flex gap-12 whitespace-nowrap"
         >
           {[...Array(10)].map((_, i) => (
-            <span key={i} className="flex items-center gap-12 text-sm tracking-widest font-medium">
+            <span key={i} className="flex items-center gap-12 text-sm tracking-[0.3em] font-bold text-white/90">
               <span>WOMEN'S SPORTS ELEVATED</span>
-              <span className="text-accent-foreground/50">◆</span>
+              <span className="text-white/40">◆</span>
               <span>JOIN THE MOVEMENT</span>
-              <span className="text-accent-foreground/50">◆</span>
+              <span className="text-white/40">◆</span>
             </span>
           ))}
         </motion.div>
       </div>
 
-      {/* Statement Section */}
-      <section className="py-24 bg-card">
+      {/* Statement Section — Quote Block */}
+      <section className="py-24 bg-background">
         <div className="max-w-5xl mx-auto px-6 lg:px-12 text-center">
-          <motion.p
+          <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
-            className="text-2xl sm:text-3xl lg:text-4xl text-foreground leading-relaxed"
+            className="quote-card color-block-blue rounded-3xl"
           >
-            We specialize in creating{" "}
-            <span className="italic font-sans text-accent border-b-2 border-coral">tailored</span>{" "}
-            sports content and experiences that drive engagement, build brand loyalty, and{" "}
-            <span className="italic font-sans text-accent border-b-2 border-coral">inspire women.</span>
-          </motion.p>
+            <p className="text-2xl sm:text-3xl lg:text-4xl text-white leading-relaxed font-sans relative z-10">
+              We specialize in creating{" "}
+              <span className="italic font-bold">tailored</span>{" "}
+              sports content and experiences that drive engagement, build brand loyalty, and{" "}
+              <span className="italic font-bold">inspire women.</span>
+            </p>
+          </motion.div>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -196,11 +192,10 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* About Section - Overlapping Image Grid */}
-      <section id="about" className="py-24 lg:py-32 bg-background">
+      {/* About Section — Overlapping Image Grid */}
+      <section id="about" className="py-24 lg:py-32 color-block-beige">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-0 items-center">
-            {/* Image Side with overlap */}
             <motion.div
               initial={{ opacity: 0, x: -30 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -215,11 +210,9 @@ const LandingPage = () => {
                   className="w-full h-full object-cover"
                 />
               </div>
-              {/* Decorative element */}
-              <div className="hidden lg:block absolute -bottom-8 -right-8 w-32 h-32 bg-primary/20 rounded-2xl -z-10" />
+              <div className="hidden lg:block absolute -bottom-8 -right-8 w-32 h-32 bg-accent/30 rounded-2xl -z-10" />
             </motion.div>
 
-            {/* Content Side - Overlapping Card */}
             <motion.div
               initial={{ opacity: 0, x: 30 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -227,21 +220,21 @@ const LandingPage = () => {
               viewport={{ once: true }}
               className="relative lg:-ml-20 z-10"
             >
-              <div className="bg-accent text-accent-foreground p-8 sm:p-12 rounded-2xl shadow-2xl">
-                <span className="inline-block bg-accent-foreground/15 text-accent-foreground px-4 py-2 rounded-full text-sm font-medium tracking-wide mb-6">
+              <div className="color-block-terracotta p-8 sm:p-12 rounded-2xl shadow-2xl">
+                <span className="category-tag bg-white/20 text-white mb-6 inline-block">
                   About Loverball
                 </span>
-                <h2 className="text-3xl sm:text-4xl font-sans mb-6 text-accent-foreground">About Loverball</h2>
-                <p className="text-lg leading-relaxed mb-4 text-accent-foreground/90">
+                <h2 className="text-white mt-4 mb-6">About Us</h2>
+                <p className="text-lg leading-relaxed mb-4 text-white/90 font-sans normal-case">
                   <strong>85% of household purchasing decisions</strong> are made by women. Yet we're overlooked in sports coverage and community.
                 </p>
-                <p className="text-lg leading-relaxed mb-8 text-accent-foreground/90">
+                <p className="text-lg leading-relaxed mb-8 text-white/90 font-sans normal-case">
                   Loverball is a content and community platform for the <strong>$28B women's sports market</strong>. AI-powered stories, community events, and narrative-driven coverage tailored to female fans.
                 </p>
                 <Button 
                   onClick={() => navigate("/following")}
                   size="lg"
-                  className="rounded-full bg-primary text-primary-foreground hover:bg-primary/85 px-8"
+                  className="rounded-full bg-white text-foreground hover:bg-white/90 px-8"
                 >
                   Learn More
                 </Button>
@@ -251,8 +244,8 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* Features Section - Cards */}
-      <section id="features" className="py-24 lg:py-32 bg-card">
+      {/* Features Section — Bold Color Cards */}
+      <section id="features" className="py-24 lg:py-32 bg-background">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -261,11 +254,11 @@ const LandingPage = () => {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <span className="inline-block bg-coral/10 text-coral px-4 py-2 rounded-full text-sm font-medium tracking-wide mb-6">
+            <span className="category-tag bg-accent text-accent-foreground mb-6 inline-block">
               Our Services
             </span>
-            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-sans font-normal text-foreground">
-              Built <span className="italic text-accent">For Her</span>
+            <h2 className="text-foreground mt-4">
+              Built For Her
             </h2>
           </motion.div>
 
@@ -279,14 +272,14 @@ const LandingPage = () => {
                 viewport={{ once: true }}
                 className="group"
               >
-                <div className="bg-background p-8 rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)] transition-all duration-300 h-full border border-border/50">
-                  <div className="w-14 h-14 bg-primary/15 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-accent group-hover:text-accent-foreground transition-colors duration-300">
-                    <feature.icon className="h-7 w-7 text-primary group-hover:text-accent-foreground transition-colors duration-300" />
+                <div className="bg-card p-8 rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.04)] hover:shadow-[0_12px_40px_rgba(0,0,0,0.10)] transition-all duration-300 h-full border border-border/50 hover:-translate-y-1">
+                  <div className="w-14 h-14 bg-primary/15 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-primary group-hover:text-white transition-colors duration-300">
+                    <feature.icon className="h-7 w-7 text-primary group-hover:text-white transition-colors duration-300" />
                   </div>
-                  <h3 className="text-xl font-sans text-foreground mb-4 group-hover:text-accent transition-colors duration-300">
+                  <h4 className="text-xl font-bold text-foreground mb-4 group-hover:text-primary transition-colors duration-300">
                     {feature.title}
-                  </h3>
-                  <p className="text-foreground/60 leading-relaxed">
+                  </h4>
+                  <p className="text-muted-foreground leading-relaxed">
                     {feature.description}
                   </p>
                 </div>
@@ -294,19 +287,19 @@ const LandingPage = () => {
             ))}
           </div>
 
-          {/* Accordion for additional features */}
+          {/* Accordion */}
           <div className="max-w-3xl mx-auto border-t border-border/50">
             {accordionItems.map((item, index) => (
               <div key={item.title} className="border-b border-border/50">
                 <button
                   onClick={() => setOpenAccordion(openAccordion === index ? null : index)}
-                  className="w-full py-6 flex items-center justify-between text-left hover:text-accent transition-colors"
+                  className="w-full py-6 flex items-center justify-between text-left hover:text-primary transition-colors"
                 >
-                  <span className="text-xl font-sans text-foreground">{item.title}</span>
+                  <span className="text-xl font-bold text-foreground">{item.title}</span>
                   {openAccordion === index ? (
-                    <Minus className="h-5 w-5 text-coral shrink-0" />
+                    <Minus className="h-5 w-5 text-accent shrink-0" />
                   ) : (
-                    <Plus className="h-5 w-5 text-foreground/50 shrink-0" />
+                    <Plus className="h-5 w-5 text-muted-foreground shrink-0" />
                   )}
                 </button>
                 <motion.div
@@ -315,7 +308,7 @@ const LandingPage = () => {
                   transition={{ duration: 0.3 }}
                   className="overflow-hidden"
                 >
-                  <p className="pb-6 text-foreground/60 leading-relaxed max-w-2xl">
+                  <p className="pb-6 text-muted-foreground leading-relaxed max-w-2xl">
                     {item.description}
                   </p>
                 </motion.div>
@@ -326,7 +319,7 @@ const LandingPage = () => {
       </section>
 
       {/* Community Section */}
-      <section id="community" className="py-24 lg:py-32 bg-background">
+      <section id="community" className="py-24 lg:py-32 color-block-beige">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <motion.div
             initial={{ opacity: 0, y: 40 }}
@@ -335,20 +328,20 @@ const LandingPage = () => {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <span className="inline-block bg-coral/10 text-coral px-4 py-2 rounded-full text-sm font-medium tracking-wide mb-6">
+            <span className="category-tag bg-primary text-primary-foreground mb-6 inline-block">
               Join Us
             </span>
-            <h2 className="text-5xl sm:text-6xl lg:text-7xl font-sans text-foreground">
-              Our <span className="italic text-accent">Community</span>
+            <h2 className="text-foreground mt-4">
+              Our Community
             </h2>
           </motion.div>
 
           {/* Stats Grid */}
           <div className="grid md:grid-cols-3 gap-8 mb-16">
             {[
-              { value: "10K+", label: "Active Members", desc: "Women who share your passion" },
-              { value: "500+", label: "Stories", desc: "AI-powered content weekly" },
-              { value: "50+", label: "Events", desc: "Community experiences monthly" },
+              { value: "10K+", label: "Active Members", desc: "Women who share your passion", color: "color-block-blue" },
+              { value: "500+", label: "Stories", desc: "AI-powered content weekly", color: "color-block-coral" },
+              { value: "50+", label: "Events", desc: "Community experiences monthly", color: "color-block-terracotta" },
             ].map((stat, index) => (
               <motion.div
                 key={stat.label}
@@ -356,11 +349,11 @@ const LandingPage = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
                 viewport={{ once: true }}
-                className="bg-card p-8 rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.04)] text-center border border-border/50"
+                className={`${stat.color} p-8 rounded-2xl text-center`}
               >
-                <p className="text-5xl sm:text-6xl font-sans text-accent mb-2">{stat.value}</p>
-                <p className="text-lg font-medium text-foreground mb-1">{stat.label}</p>
-                <p className="text-sm text-foreground/60">{stat.desc}</p>
+                <p className="font-display text-6xl sm:text-7xl text-white mb-2 uppercase">{stat.value}</p>
+                <p className="text-lg font-bold text-white mb-1">{stat.label}</p>
+                <p className="text-sm text-white/70">{stat.desc}</p>
               </motion.div>
             ))}
           </div>
@@ -380,15 +373,14 @@ const LandingPage = () => {
                 className="w-full h-full object-cover"
               />
             </div>
-            {/* Decorative elements */}
             <div className="hidden lg:block absolute -top-6 -left-6 w-24 h-24 bg-primary/20 rounded-2xl -z-10" />
-            <div className="hidden lg:block absolute -bottom-6 -right-6 w-24 h-24 bg-coral/20 rounded-2xl -z-10" />
+            <div className="hidden lg:block absolute -bottom-6 -right-6 w-24 h-24 bg-accent/20 rounded-2xl -z-10" />
           </motion.div>
         </div>
       </section>
 
       {/* Final CTA */}
-      <section className="py-24 bg-accent">
+      <section className="py-28 color-block-blue">
         <div className="max-w-4xl mx-auto px-6 lg:px-12 text-center">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
@@ -396,16 +388,17 @@ const LandingPage = () => {
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-sans text-accent-foreground mb-6">
-              Ready to <span className="italic">Join</span>?
+            <h2 className="text-5xl sm:text-6xl lg:text-7xl font-display text-white mb-6 uppercase tracking-tight">
+              Ready to Join?
             </h2>
-            <p className="text-xl text-accent-foreground/80 mb-10 max-w-2xl mx-auto">
+            <p className="text-xl text-white/70 mb-10 max-w-2xl mx-auto font-sans normal-case">
               Be part of the movement redefining women's sports fandom.
             </p>
             <Button 
               size="lg"
               onClick={() => navigate("/following")}
-              className="rounded-full text-lg px-10 py-7 bg-primary text-primary-foreground hover:bg-primary/85 font-medium shadow-xl"
+              variant="accent"
+              className="rounded-full text-lg px-10 py-7 shadow-xl"
             >
               Explore Now
               <ArrowRight className="ml-2 h-5 w-5" />
@@ -415,17 +408,17 @@ const LandingPage = () => {
       </section>
 
       {/* Footer */}
-      <footer className="py-16 bg-secondary text-foreground">
+      <footer className="py-16 bg-foreground">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <div className="flex flex-col md:flex-row items-center justify-between gap-8">
-            <img src={loverballLogo} alt="Loverball" className="h-14 w-auto" />
-            <p className="text-sm text-foreground/50">
-              © 2025 Loverball. All rights reserved. Built by women, for women.
+            <img src={loverballLogo} alt="Loverball" className="h-14 w-auto brightness-0 invert" />
+            <p className="text-sm text-background/40">
+              © 2026 Loverball. All rights reserved. Built by women, for women.
             </p>
             <div className="flex gap-6">
-              <a href="#" className="text-sm text-foreground/50 hover:text-foreground transition-colors">Privacy</a>
-              <a href="#" className="text-sm text-foreground/50 hover:text-foreground transition-colors">Terms</a>
-              <a href="#" className="text-sm text-foreground/50 hover:text-foreground transition-colors">Contact</a>
+              <a href="/privacy" className="text-sm text-background/50 hover:text-background transition-colors">Privacy</a>
+              <a href="/terms" className="text-sm text-background/50 hover:text-background transition-colors">Terms</a>
+              <a href="#" className="text-sm text-background/50 hover:text-background transition-colors">Contact</a>
             </div>
           </div>
         </div>

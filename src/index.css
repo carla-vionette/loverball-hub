@@ -3,112 +3,119 @@
 @import "@fontsource/dm-sans/600.css";
 @import "@fontsource/dm-sans/700.css";
 @import "@fontsource/pacifico/400.css";
+@import "@fontsource/bebas-neue/400.css";
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 /* ============================================================
-   LOVERBALL DESIGN SYSTEM
+   LOVERBALL DESIGN SYSTEM — Bold Editorial Sports Aesthetic
    All colors are HSL. Use semantic tokens everywhere.
    ============================================================ */
 
 @layer base {
   :root {
     /* ── Brand ── */
-    --brand: 340 100% 55%;           /* #FF1766 Hot Pink */
+    --brand: 216 100% 50%;              /* #0066FF Electric Blue */
     --brand-foreground: 0 0% 100%;
 
     /* ── Core palette ── */
-    --background: 0 0% 100%;         /* #FFFFFF White */
-    --foreground: 0 0% 7%;           /* #111111 Near Black */
+    --background: 40 30% 97%;           /* Warm cream #FAF7F2 */
+    --foreground: 220 25% 10%;          /* Near navy-black */
 
-    --card: 0 0% 100%;               /* #FFFFFF */
-    --card-foreground: 0 0% 7%;
+    --card: 0 0% 100%;
+    --card-foreground: 220 25% 10%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 7%;
+    --popover-foreground: 220 25% 10%;
 
-    /* Primary = Hot Pink (buttons, links, CTAs) */
-    --primary: 340 100% 55%;         /* #FF1766 */
+    /* Primary = Electric Blue (hero, CTAs, quote blocks) */
+    --primary: 216 100% 50%;            /* #0066FF */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 0 0% 96%;           /* #F5F5F5 Light Gray */
-    --secondary-foreground: 0 0% 20%;
+    --secondary: 40 20% 94%;            /* Warm light beige */
+    --secondary-foreground: 220 25% 20%;
 
-    --muted: 0 0% 94%;
-    --muted-foreground: 0 0% 45%;
+    --muted: 40 15% 92%;
+    --muted-foreground: 220 10% 45%;
 
-    /* Accent = Neon Yellow (highlights, tags) */
-    --accent: 60 100% 50%;           /* #FFFF00 */
-    --accent-foreground: 0 0% 0%;
+    /* Accent = Coral/Salmon Pink (accents, secondary buttons) */
+    --accent: 5 100% 71%;               /* #FF6B6B Coral */
+    --accent-foreground: 0 0% 100%;
 
     /* ── Status colors ── */
     --success: 142 72% 42%;
     --success-foreground: 0 0% 100%;
     --warning: 38 92% 50%;
     --warning-foreground: 0 0% 0%;
-    --info: 210 100% 52%;
+    --info: 216 100% 50%;
     --info-foreground: 0 0% 100%;
     --destructive: 0 84% 50%;
     --destructive-foreground: 0 0% 100%;
 
     /* ── Additional brand ── */
-    --coral: 340 100% 55%;           /* Same as primary pink */
+    --coral: 5 100% 71%;                /* #FF6B6B Coral pink */
     --coral-foreground: 0 0% 100%;
-    --pale-pink: 340 100% 95%;       /* Very light pink */
-    --pale-pink-foreground: 0 0% 7%;
-    --medium-blue: 340 80% 45%;      /* Deeper pink */
+    --pale-pink: 15 60% 92%;            /* Warm nude/beige */
+    --pale-pink-foreground: 220 25% 10%;
+    --medium-blue: 216 80% 40%;         /* Deeper electric blue */
     --medium-blue-foreground: 0 0% 100%;
-    --olive: 60 70% 45%;             /* Muted yellow */
-    --olive-foreground: 0 0% 0%;
-    --light-lime: 60 100% 50%;       /* Neon Yellow */
-    --light-lime-foreground: 0 0% 0%;
-    --ticker: 0 0% 7%;               /* Black ticker */
+    --olive: 12 75% 45%;                /* Terracotta/rust */
+    --olive-foreground: 0 0% 100%;
+    --light-lime: 18 85% 55%;           /* Warm orange accent */
+    --light-lime-foreground: 0 0% 100%;
+    --ticker: 216 100% 50%;             /* Blue ticker */
     --ticker-foreground: 0 0% 100%;
 
+    /* Terracotta accent token */
+    --terracotta: 8 72% 53%;            /* #E85D4D */
+    --terracotta-foreground: 0 0% 100%;
+    --warm-beige: 25 35% 82%;           /* #D4B5A8 */
+    --warm-beige-foreground: 220 25% 10%;
+
     /* ── Chrome ── */
-    --border: 0 0% 88%;
-    --input: 0 0% 88%;
-    --ring: 340 100% 55%;
+    --border: 30 15% 88%;
+    --input: 30 15% 88%;
+    --ring: 216 100% 50%;
 
     --radius: 0.75rem;
   }
 
   .dark {
-    --background: 0 0% 5%;
+    --background: 220 20% 6%;
     --foreground: 0 0% 96%;
 
-    --card: 0 0% 9%;
+    --card: 220 20% 10%;
     --card-foreground: 0 0% 96%;
 
-    --popover: 0 0% 9%;
+    --popover: 220 20% 10%;
     --popover-foreground: 0 0% 96%;
 
-    --primary: 340 100% 55%;
+    --primary: 216 100% 55%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 0 0% 13%;
+    --secondary: 220 15% 14%;
     --secondary-foreground: 0 0% 70%;
 
-    --muted: 0 0% 16%;
-    --muted-foreground: 0 0% 60%;
+    --muted: 220 15% 18%;
+    --muted-foreground: 220 10% 55%;
 
-    --accent: 60 100% 50%;
-    --accent-foreground: 0 0% 0%;
+    --accent: 5 100% 71%;
+    --accent-foreground: 0 0% 100%;
 
     --success: 142 72% 42%;
     --success-foreground: 0 0% 100%;
     --warning: 38 92% 50%;
     --warning-foreground: 0 0% 0%;
-    --info: 210 100% 52%;
+    --info: 216 100% 52%;
     --info-foreground: 0 0% 100%;
     --destructive: 0 84% 50%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 0 0% 18%;
-    --input: 0 0% 18%;
-    --ring: 340 100% 55%;
+    --border: 220 15% 20%;
+    --input: 220 15% 20%;
+    --ring: 216 100% 55%;
   }
 
   /* Video Streaming Dark Theme */
@@ -119,17 +126,17 @@
     --card-foreground: 0 0% 100%;
     --popover: 0 0% 10%;
     --popover-foreground: 0 0% 100%;
-    --primary: 4 90% 50%;
+    --primary: 5 100% 60%;
     --primary-foreground: 0 0% 100%;
     --secondary: 0 0% 13%;
     --secondary-foreground: 0 0% 70%;
     --muted: 0 0% 16%;
     --muted-foreground: 0 0% 70%;
-    --accent: 4 90% 50%;
+    --accent: 5 100% 60%;
     --accent-foreground: 0 0% 100%;
     --border: 0 0% 18%;
     --input: 0 0% 18%;
-    --ring: 4 90% 50%;
+    --ring: 5 100% 60%;
     --destructive: 0 84% 50%;
     --destructive-foreground: 0 0% 100%;
     --video-hover: 0 0% 17%;
@@ -138,7 +145,8 @@
 
 /* ============================================================
    TYPOGRAPHY SCALE
-   Font: DM Sans (400, 500, 600, 700)
+   Display: Bebas Neue (bold condensed uppercase headlines)
+   Body: DM Sans (400, 500, 600, 700)
    ============================================================ */
 
 @layer base {
@@ -154,10 +162,10 @@
     @apply bg-background text-foreground font-sans antialiased text-base leading-relaxed;
   }
 
-  /* Heading hierarchy */
-  h1 { @apply font-sans font-bold text-4xl md:text-5xl leading-tight tracking-tight; }
-  h2 { @apply font-sans font-bold text-3xl md:text-4xl leading-tight tracking-tight; }
-  h3 { @apply font-sans font-semibold text-2xl leading-snug; }
+  /* Heading hierarchy — condensed uppercase display font */
+  h1 { @apply font-display text-5xl md:text-6xl lg:text-7xl leading-none tracking-tight uppercase; }
+  h2 { @apply font-display text-4xl md:text-5xl leading-none tracking-tight uppercase; }
+  h3 { @apply font-display text-2xl md:text-3xl leading-tight uppercase; }
   h4 { @apply font-sans font-semibold text-xl leading-snug; }
   h5 { @apply font-sans font-medium text-lg leading-normal; }
   h6 { @apply font-sans font-medium text-base leading-normal; }
@@ -178,7 +186,7 @@
   }
   .editorial-underline::after {
     content: '';
-    @apply absolute bottom-0 left-0 w-full h-[2px] bg-primary;
+    @apply absolute bottom-0 left-0 w-full h-[3px] bg-accent;
   }
 
   /* Pill button style */
@@ -188,10 +196,37 @@
 
   /* Editorial card with shadow */
   .editorial-card {
-    @apply bg-card shadow-[0_8px_30px_rgb(0,0,0,0.06)] transition-shadow duration-300;
+    @apply bg-card shadow-[0_8px_30px_rgb(0,0,0,0.06)] transition-all duration-300;
   }
   .editorial-card:hover {
-    @apply shadow-[0_12px_40px_rgb(0,0,0,0.10)];
+    @apply shadow-[0_12px_40px_rgb(0,0,0,0.12)] -translate-y-1;
+  }
+
+  /* Quote card */
+  .quote-card {
+    @apply relative p-8 sm:p-12 rounded-2xl;
+  }
+  .quote-card::before {
+    content: '\201C';
+    @apply absolute top-4 left-6 text-7xl leading-none opacity-20 font-display;
+  }
+
+  /* Color block section */
+  .color-block-blue {
+    background-color: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
+  }
+  .color-block-coral {
+    background-color: hsl(var(--accent));
+    color: hsl(var(--accent-foreground));
+  }
+  .color-block-terracotta {
+    background-color: hsl(var(--terracotta));
+    color: hsl(var(--terracotta-foreground));
+  }
+  .color-block-beige {
+    background-color: hsl(var(--warm-beige));
+    color: hsl(var(--warm-beige-foreground));
   }
 
   /* Overlapping element style */
@@ -207,7 +242,17 @@
   .annotation-circle { @apply relative inline-block; }
   .annotation-circle::before {
     content: '';
-    @apply absolute -inset-2 border-2 border-primary rounded-full;
+    @apply absolute -inset-2 border-2 border-accent rounded-full;
+  }
+
+  /* Numbered section label */
+  .section-number {
+    @apply font-display text-8xl text-primary/10 leading-none;
+  }
+
+  /* Category tag */
+  .category-tag {
+    @apply inline-block px-3 py-1 text-xs font-bold tracking-widest uppercase rounded-sm;
   }
 
   /* Status toast variants */
