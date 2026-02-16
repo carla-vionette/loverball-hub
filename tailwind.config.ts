@@ -66,7 +66,9 @@ export default {
     extend: {
       fontFamily: {
         sans: ["DM Sans", "system-ui", "sans-serif"],
-        display: ["Bebas Neue", "Impact", "sans-serif"],
+        serif: ["Cormorant", "Georgia", "serif"],
+        display: ["Playfair Display", "Georgia", "serif"],
+        condensed: ["Bebas Neue", "Impact", "sans-serif"],
         script: ["Pacifico", "cursive"],
       },
       fontSize: {
