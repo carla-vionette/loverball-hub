@@ -66,6 +66,7 @@ export default {
     extend: {
       fontFamily: {
         sans: ["DM Sans", "system-ui", "sans-serif"],
+        display: ["Bebas Neue", "Impact", "sans-serif"],
         script: ["Pacifico", "cursive"],
       },
       fontSize: {
@@ -148,6 +149,14 @@ export default {
         ticker: {
           DEFAULT: "hsl(var(--ticker))",
           foreground: "hsl(var(--ticker-foreground))",
+        },
+        terracotta: {
+          DEFAULT: "hsl(var(--terracotta))",
+          foreground: "hsl(var(--terracotta-foreground))",
+        },
+        "warm-beige": {
+          DEFAULT: "hsl(var(--warm-beige))",
+          foreground: "hsl(var(--warm-beige-foreground))",
         },
         popover: {
           DEFAULT: "hsl(var(--popover))",
