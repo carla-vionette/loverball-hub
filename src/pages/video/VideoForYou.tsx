@@ -25,16 +25,16 @@ const VideoForYou = () => {
 
   return (
     <div className="min-h-screen pb-20 md:pb-6">
-      {/* Mobile Header */}
-      <header className="sticky top-0 z-40 bg-background/90 backdrop-blur-md px-4 py-3 md:px-8 md:py-4 border-b border-border/20">
+      {/* Header */}
+      <header className="sticky top-0 z-40 bg-background/80 backdrop-blur-md px-4 py-3 md:px-8 md:py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Play className="w-5 h-5 text-primary" fill="currentColor" />
+            <Play className="w-5 h-5 text-foreground" fill="currentColor" />
             <h1 className="text-lg font-bold tracking-tight">For You</h1>
           </div>
           <Link
             to="/watch/feed"
-            className="flex items-center gap-1.5 bg-primary text-primary-foreground px-3 py-1.5 rounded-full text-xs font-bold hover:bg-primary/90 transition-colors"
+            className="flex items-center gap-1.5 bg-accent text-accent-foreground px-4 py-2 rounded-full text-xs font-bold hover:bg-accent/90 transition-colors"
           >
             <Tv className="w-3.5 h-3.5" />
             Feed
@@ -47,10 +47,10 @@ const VideoForYou = () => {
             <button
               key={cat}
               onClick={() => setActiveCategory(cat)}
-              className={`whitespace-nowrap px-4 py-1.5 rounded-full text-xs font-medium transition-colors ${
+              className={`whitespace-nowrap px-4 py-1.5 rounded-full text-xs font-medium transition-all ${
                 activeCategory === cat
                   ? "bg-foreground text-background"
-                  : "bg-secondary text-muted-foreground hover:bg-secondary/80"
+                  : "bg-card text-muted-foreground hover:bg-secondary border border-border/20"
               }`}
             >
               {cat}
@@ -76,7 +76,9 @@ const VideoForYou = () => {
         {activeCategory === "All" && (
           <motion.section variants={item}>
             <div className="flex items-center gap-2 mb-4">
-              <Flame className="w-4 h-4 text-primary" />
+              <div className="w-7 h-7 rounded-full bg-accent flex items-center justify-center">
+                <Flame className="w-3.5 h-3.5 text-accent-foreground" />
+              </div>
               <h2 className="text-base font-bold">Trending Now</h2>
             </div>
             <div className="flex gap-4 overflow-x-auto scrollbar-hide -mx-4 px-4 pb-2">
@@ -93,7 +95,9 @@ const VideoForYou = () => {
         <motion.section variants={item}>
           {activeCategory === "All" && (
             <div className="flex items-center gap-2 mb-4">
-              <TrendingUp className="w-4 h-4 text-primary" />
+              <div className="w-7 h-7 rounded-full bg-secondary flex items-center justify-center">
+                <TrendingUp className="w-3.5 h-3.5 text-foreground" />
+              </div>
               <h2 className="text-base font-bold">Recently Added</h2>
             </div>
           )}
