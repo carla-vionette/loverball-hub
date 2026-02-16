@@ -3,7 +3,7 @@ import { Search, ShoppingCart } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useCartStore } from "@/stores/cartStore";
 import NotificationBell from "@/components/NotificationBell";
-import loverballLogo from "@/assets/loverball-l-logo.png";
+import loverballLogo from "@/assets/loverball-new-l-logo.png";
 
 const MobileHeader = () => {
   const navigate = useNavigate();
