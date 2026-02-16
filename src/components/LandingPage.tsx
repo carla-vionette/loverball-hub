@@ -67,7 +67,7 @@ const LandingPage = () => {
       {/* ═══════════════════════════════════════════
           HERO — Full coral, headline + 3 polaroids
          ═══════════════════════════════════════════ */}
-      <section className="relative bg-primary py-20 lg:py-32 overflow-hidden">
+      <section className="relative bg-primary py-24 lg:py-36 overflow-hidden">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <div className="grid lg:grid-cols-2 gap-12 items-center min-h-[520px]">
             {/* Headline side */}
@@ -76,23 +76,33 @@ const LandingPage = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1, ease: "easeOut" }}
             >
-              <p className="script-accent text-white/60 mb-4">welcome to</p>
-              <h1 className="text-5xl sm:text-6xl lg:text-[4.5rem] font-display text-white leading-[0.95] mb-8">
+              <p className="script-accent text-white/50 mb-4">welcome to loverball</p>
+              <h1 className="text-5xl sm:text-6xl lg:text-[4.75rem] font-display text-white leading-[0.93] mb-8">
                 Where Her <em>Game</em><br />
                 Meets Her<br />
                 <em>Community</em>
               </h1>
-              <p className="text-lg text-white/70 font-serif leading-relaxed mb-10 max-w-md">
-                Loverball is the content and community platform built for women who live and breathe sports. Real stories, real connections, real culture.
+              <p className="text-lg text-white/75 font-serif leading-relaxed mb-12 max-w-md">
+                The content and community platform built for women who live and breathe sports. Real stories, real connections, real culture — all in one place.
               </p>
-              <Button
-                onClick={() => navigate("/following")}
-                size="lg"
-                className="rounded-full bg-white text-primary hover:bg-white/90 px-10 py-7 text-base font-sans tracking-widest uppercase shadow-2xl"
-              >
-                Join Loverball
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Button
+                  onClick={() => navigate("/following")}
+                  size="lg"
+                  className="rounded-full bg-white text-primary hover:bg-white/90 px-10 py-7 text-base font-sans tracking-widest uppercase shadow-2xl"
+                >
+                  Join Loverball
+                </Button>
+                <Button
+                  onClick={() => {
+                    document.getElementById("content")?.scrollIntoView({ behavior: "smooth" });
+                  }}
+                  size="lg"
+                  className="rounded-full bg-transparent border-2 border-white/40 text-white hover:bg-white/10 px-10 py-7 text-base font-sans tracking-widest uppercase"
+                >
+                  How It Works
+                </Button>
+              </div>
             </motion.div>
 
             {/* 3 Polaroid photos — asymmetric */}
@@ -100,26 +110,23 @@ const LandingPage = () => {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 1, delay: 0.3 }}
-              className="relative hidden lg:block h-[520px]"
+              className="relative hidden lg:block h-[540px]"
             >
-              {/* Photo 1 — top right, slight left tilt */}
-              <div className="polaroid absolute top-0 right-4 w-52 z-10">
+              <div className="polaroid absolute top-0 right-4 w-56 z-10">
                 <img src={athletesImage} alt="Athletes" className="w-full aspect-square object-cover" />
                 <p className="text-center mt-1 font-serif text-xs text-foreground/50 italic">game day ✨</p>
               </div>
-              {/* Photo 2 — mid left, right tilt */}
-              <div className="polaroid-alt absolute top-28 -left-2 w-44 z-20">
+              <div className="polaroid-alt absolute top-32 -left-4 w-48 z-20">
                 <img src={communityImage} alt="Community" className="w-full aspect-square object-cover" />
                 <p className="text-center mt-1 font-serif text-xs text-foreground/50 italic">squad goals</p>
               </div>
-              {/* Photo 3 — bottom center, slight tilt */}
-              <div className="polaroid absolute bottom-0 right-16 w-48 rotate-[4deg] z-10">
+              <div className="polaroid absolute bottom-0 right-14 w-52 rotate-[4deg] z-10">
                 <img src={heroImage} alt="Sports culture" className="w-full aspect-[3/4] object-cover object-top" />
                 <p className="text-center mt-1 font-serif text-xs text-foreground/50 italic">the culture</p>
               </div>
             </motion.div>
 
-            {/* Mobile polaroid fallback */}
+            {/* Mobile polaroid row */}
             <div className="flex gap-4 lg:hidden overflow-x-auto pb-4 -mx-2 px-2 scrollbar-hide">
               <div className="polaroid min-w-[160px]">
                 <img src={athletesImage} alt="Athletes" className="w-full aspect-square object-cover" />
