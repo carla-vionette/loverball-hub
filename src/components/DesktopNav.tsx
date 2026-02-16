@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import loverbballLogo from "@/assets/loverball-script-logo.png";
 import { useAuth } from "@/hooks/useAuth";
 import { useUnreadMessages } from "@/hooks/useUnreadMessages";
+import NotificationBell from "@/components/NotificationBell";
 
 const DesktopNav = () => {
   const location = useLocation();
@@ -55,7 +56,22 @@ const DesktopNav = () => {
         })}
       </nav>
 
-      <div className="p-4 border-t border-border/20">
+      <div className="p-4 border-t border-border/20 space-y-1">
+        <div className="flex items-center gap-4 px-6 py-2 mx-3">
+          <NotificationBell />
+          <span className="text-sm tracking-wide text-foreground/50">Notifications</span>
+        </div>
+        <Link
+          to="/settings"
+          className={`flex items-center gap-4 px-6 py-3 mx-3 rounded-2xl transition-all duration-200 ${
+            location.pathname === "/settings"
+              ? "text-accent-foreground font-semibold bg-accent"
+              : "text-foreground/50 hover:text-foreground hover:bg-secondary/50"
+          }`}
+        >
+          <Settings className="w-5 h-5" />
+          <span className="text-sm tracking-wide">Settings</span>
+        </Link>
         <Link
           to="/search"
           className="flex items-center gap-4 px-6 py-3 mx-3 rounded-2xl text-foreground/40 hover:text-foreground hover:bg-secondary/50 transition-all duration-200"
