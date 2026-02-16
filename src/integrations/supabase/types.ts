@@ -40,6 +40,51 @@ export type Database = {
           },
         ]
       }
+      community_groups: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          description: string | null
+          group_type: string
+          icon_emoji: string | null
+          id: string
+          is_official: boolean
+          member_count: number
+          name: string
+          rules: string | null
+          team_key: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          group_type?: string
+          icon_emoji?: string | null
+          id?: string
+          is_official?: boolean
+          member_count?: number
+          name: string
+          rules?: string | null
+          team_key?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          group_type?: string
+          icon_emoji?: string | null
+          id?: string
+          is_official?: boolean
+          member_count?: number
+          name?: string
+          rules?: string | null
+          team_key?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       creator_applications: {
         Row: {
           admin_notes: string | null
@@ -290,6 +335,73 @@ export type Database = {
           visibility?: string
         }
         Relationships: []
+      }
+      group_members: {
+        Row: {
+          group_id: string
+          id: string
+          joined_at: string
+          role: string
+          user_id: string
+        }
+        Insert: {
+          group_id: string
+          id?: string
+          joined_at?: string
+          role?: string
+          user_id: string
+        }
+        Update: {
+          group_id?: string
+          id?: string
+          joined_at?: string
+          role?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "group_members_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "community_groups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      group_messages: {
+        Row: {
+          content: string
+          created_at: string
+          group_id: string
+          id: string
+          is_pinned: boolean
+          sender_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          group_id: string
+          id?: string
+          is_pinned?: boolean
+          sender_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          group_id?: string
+          id?: string
+          is_pinned?: boolean
+          sender_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "group_messages_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "community_groups"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       invites: {
         Row: {
