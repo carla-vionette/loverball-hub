@@ -59,7 +59,7 @@ const Index = () => {
   const isAuthenticated = !!user;
 
   if (!authLoading && isAuthenticated) {
-    navigate("/following", { replace: true });
+    navigate("/profile", { replace: true });
     return null;
   }
 
@@ -74,7 +74,7 @@ const Index = () => {
       if (error) throw error;
       if (data.user) {
         const { data: profile } = await supabase.from("profiles").select("*").eq("id", data.user.id).maybeSingle();
-        navigate(profile ? "/following" : "/onboarding");
+        navigate(profile ? "/profile" : "/onboarding");
         toast({ title: "Welcome back!", description: "Successfully logged in." });
         setAuthModalOpen(false);
       }
