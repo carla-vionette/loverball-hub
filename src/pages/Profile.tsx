@@ -235,7 +235,7 @@ const Profile = () => {
             {/* GREETING HEADER */}
             <motion.div variants={staggerItem} className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2">
               <div>
-                <h1 className="text-2xl sm:text-3xl font-serif text-foreground">{greeting}, {userName}!</h1>
+                <h1 className="text-2xl sm:text-3xl font-sans text-foreground">{greeting}, {userName}!</h1>
                 <p className="text-sm text-muted-foreground">{formattedDate} · {formattedTime}</p>
               </div>
               <Tabs value={dateRange} onValueChange={(v) => setDateRange(v as any)} className="w-fit">
@@ -257,12 +257,12 @@ const Profile = () => {
                         {profile.profile_photo_url ? (
                           <AvatarImage src={profile.profile_photo_url} alt={profile.name} className="object-cover" />
                         ) : null}
-                        <AvatarFallback className="bg-primary text-primary-foreground text-xl md:text-2xl font-serif">{initials}</AvatarFallback>
+                        <AvatarFallback className="bg-primary text-primary-foreground text-xl md:text-2xl font-sans">{initials}</AvatarFallback>
                       </Avatar>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-start justify-between mb-2 md:mb-3">
                           <div>
-                            <h2 className="text-xl md:text-2xl font-serif font-semibold">{profile.name}</h2>
+                            <h2 className="text-xl md:text-2xl font-sans font-semibold">{profile.name}</h2>
                             {profile.pronouns && <p className="text-sm text-muted-foreground">{profile.pronouns}</p>}
                           </div>
                         </div>
@@ -300,7 +300,7 @@ const Profile = () => {
                     <Trophy className="w-4 h-4 text-primary" />
                     {combinedWinPct >= 0.5 ? <TrendingUp className="w-3.5 h-3.5 text-emerald-600" /> : <TrendingDown className="w-3.5 h-3.5 text-destructive" />}
                   </div>
-                  <p className="text-2xl font-serif font-bold text-foreground">{(combinedWinPct * 100).toFixed(0)}%</p>
+                  <p className="text-2xl font-sans font-bold text-foreground">{(combinedWinPct * 100).toFixed(0)}%</p>
                   <p className="text-xs text-muted-foreground">Team Win Rate</p>
                 </CardContent>
               </Card>
@@ -309,7 +309,7 @@ const Profile = () => {
                   <div className="flex items-center justify-between mb-1">
                     <Flame className="w-4 h-4 text-primary" />
                   </div>
-                  <p className="text-2xl font-serif font-bold text-foreground">{streakData.currentStreak}</p>
+                  <p className="text-2xl font-sans font-bold text-foreground">{streakData.currentStreak}</p>
                   <p className="text-xs text-muted-foreground">Day Streak</p>
                 </CardContent>
               </Card>
@@ -324,7 +324,7 @@ const Profile = () => {
                       <div className="text-4xl">{zodiac.symbol}</div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-1">
-                          <h3 className="font-serif text-base text-foreground">{zodiac.name}</h3>
+                          <h3 className="font-sans text-base text-foreground">{zodiac.name}</h3>
                           <Badge variant="outline" className="text-[10px] rounded-none capitalize">{zodiac.element}</Badge>
                         </div>
                         <p className="text-sm text-foreground/80 leading-relaxed line-clamp-2">{HOROSCOPE_MESSAGES[zodiac.name]}</p>
@@ -412,7 +412,7 @@ const Profile = () => {
                           <p className="text-xs text-muted-foreground">{team.nextGame}</p>
                         </div>
                         <div className="text-right">
-                          <p className="text-sm font-serif font-bold text-foreground">{team.record}</p>
+                          <p className="text-sm font-sans font-bold text-foreground">{team.record}</p>
                           {team.last5.length > 0 && (
                             <div className="flex gap-0.5 mt-1 justify-end">
                               {team.last5.map((win, i) => <div key={i} className={`w-2 h-2 rounded-full ${win ? "bg-emerald-500" : "bg-destructive/60"}`} />)}

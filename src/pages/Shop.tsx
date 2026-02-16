@@ -105,7 +105,7 @@ const Shop = () => {
           <span className="inline-block bg-accent text-accent-foreground px-4 py-2 rounded-full text-sm font-semibold tracking-wide mb-4">
             Shop
           </span>
-          <h1 className="text-4xl md:text-5xl font-serif font-normal mb-3">Boutique</h1>
+          <h1 className="text-4xl md:text-5xl font-sans font-normal mb-3">Boutique</h1>
           <p className="text-muted-foreground text-lg max-w-md">Official Loverball merchandise and gear for women who love sports</p>
         </div>
         
@@ -128,7 +128,7 @@ const Shop = () => {
             <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mb-6">
               <ShoppingBag className="h-10 w-10 text-primary" />
             </div>
-            <h2 className="text-2xl font-serif mb-3">No products found</h2>
+            <h2 className="text-2xl font-sans mb-3">No products found</h2>
             <p className="text-muted-foreground max-w-md">
               Start adding products to your store by describing what you'd like to sell in the chat!
             </p>
@@ -162,7 +162,7 @@ const Shop = () => {
                   
                   <CardContent className="pt-4 md:pt-5 px-3 md:px-6">
                     <Link to={`/product/${node.handle}`}>
-                      <h3 className="font-serif font-semibold text-sm md:text-lg mb-1 md:mb-2 hover:text-primary transition-colors line-clamp-2">
+                      <h3 className="font-sans font-semibold text-sm md:text-lg mb-1 md:mb-2 hover:text-primary transition-colors line-clamp-2">
                         {node.title}
                       </h3>
                     </Link>

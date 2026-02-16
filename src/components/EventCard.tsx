@@ -239,7 +239,7 @@ END:VCALENDAR`;
       </div>
       
       <CardHeader className="pb-2">
-        <h3 className="text-lg font-serif font-semibold text-foreground line-clamp-2 group-hover:text-primary transition-colors">
+        <h3 className="text-lg font-sans font-semibold text-foreground line-clamp-2 group-hover:text-primary transition-colors">
           {event.title}
         </h3>
       </CardHeader>

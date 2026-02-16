@@ -224,7 +224,7 @@ const Auth = () => {
             className="pl-8"
           >
             <p className="text-primary text-sm font-medium tracking-widest mb-6 uppercase">Welcome</p>
-            <h1 className="text-4xl xl:text-5xl font-serif font-normal leading-tight mb-6 text-foreground">
+            <h1 className="text-4xl xl:text-5xl font-sans font-normal leading-tight mb-6 text-foreground">
               {isResettingPassword ? "Reset Password." : isSignUp ? "Join the Movement." : "Welcome Back."}
             </h1>
             <p className="text-foreground/60 text-sm leading-relaxed max-w-md">
@@ -248,7 +248,7 @@ const Auth = () => {
             {/* Mobile Header */}
             <div className="lg:hidden mb-12">
               <p className="text-primary text-sm font-medium tracking-widest mb-4 uppercase">Welcome</p>
-              <h1 className="text-3xl font-serif font-normal leading-tight text-foreground">
+              <h1 className="text-3xl font-sans font-normal leading-tight text-foreground">
                 {isResettingPassword ? "Reset Password." : isSignUp ? "Join the Movement." : "Welcome Back."}
               </h1>
             </div>

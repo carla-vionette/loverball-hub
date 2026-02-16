@@ -269,7 +269,7 @@ const Onboarding = () => {
                 ))}
               </div>
             </div>
-            <h1 className="text-3xl sm:text-4xl font-serif font-normal text-foreground mb-4">
+            <h1 className="text-3xl sm:text-4xl font-sans font-normal text-foreground mb-4">
               {getStepTitle()}
             </h1>
             <Progress value={progress} className="h-1" />
@@ -454,13 +454,13 @@ const Onboarding = () => {
                           {profilePhotoPreview ? (
                             <AvatarImage src={profilePhotoPreview} alt="Preview" className="object-cover" />
                           ) : (
-                            <AvatarFallback className="bg-background text-lg font-serif">
+                            <AvatarFallback className="bg-background text-lg font-sans">
                               {name.charAt(0).toUpperCase()}
                             </AvatarFallback>
                           )}
                         </Avatar>
                         <div>
-                          <h3 className="font-serif text-xl">{name}</h3>
+                          <h3 className="font-sans text-xl">{name}</h3>
                           <p className="text-sm text-muted-foreground">
                             {city}{pronouns ? ` · ${pronouns}` : ""}
                           </p>
