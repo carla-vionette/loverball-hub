@@ -9,15 +9,16 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/85 active:bg-primary/75 shadow-sm hover:shadow-md",
+        default: "bg-primary text-primary-foreground hover:bg-primary/85 active:bg-primary/75 shadow-sm hover:shadow-lg hover:-translate-y-0.5",
         destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90 active:bg-destructive/80",
-        outline: "border-2 border-foreground bg-background text-foreground hover:bg-foreground hover:text-background active:bg-foreground/90",
+        outline: "border-2 border-foreground bg-transparent text-foreground hover:bg-foreground hover:text-background active:bg-foreground/90",
         secondary: "bg-secondary text-secondary-foreground hover:bg-muted active:bg-muted/80",
         ghost: "hover:bg-secondary active:bg-muted",
         link: "text-primary underline-offset-4 hover:underline",
         success: "bg-success text-success-foreground hover:bg-success/90",
         warning: "bg-warning text-warning-foreground hover:bg-warning/90",
-        accent: "bg-accent text-accent-foreground hover:bg-accent/85 active:bg-accent/75 font-black",
+        accent: "bg-accent text-accent-foreground hover:bg-accent/85 active:bg-accent/75 font-black shadow-sm hover:shadow-lg hover:-translate-y-0.5",
+        terracotta: "bg-terracotta text-terracotta-foreground hover:bg-terracotta/85 active:bg-terracotta/75 shadow-sm hover:shadow-lg hover:-translate-y-0.5",
       },
       size: {
         default: "h-10 px-5 py-2",
