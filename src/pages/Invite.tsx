@@ -80,7 +80,7 @@ const Invite = () => {
             <img 
               src={loverballLogo} 
               alt="Loverball" 
-              className="h-20 object-contain"
+              className="h-14 object-contain"
             />
           </div>
           <CardTitle className="text-2xl">Join Loverball</CardTitle>

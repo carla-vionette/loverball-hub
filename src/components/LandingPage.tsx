@@ -61,7 +61,7 @@ const LandingPage = () => {
             </div>
             
             {/* Center logo */}
-            <img src={loverballLogo} alt="Loverball" className="h-20 w-auto absolute left-1/2 -translate-x-1/2" />
+            <img src={loverballLogo} alt="Loverball" className="h-12 w-auto absolute left-1/2 -translate-x-1/2" />
             
             {/* Right nav links */}
             <div className="hidden md:flex items-center gap-3">
@@ -418,7 +418,7 @@ const LandingPage = () => {
       <footer className="py-16 bg-foreground text-background">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <div className="flex flex-col md:flex-row items-center justify-between gap-8">
-            <img src={loverballLogo} alt="Loverball" className="h-20 w-auto brightness-0 invert" />
+            <img src={loverballLogo} alt="Loverball" className="h-10 w-auto brightness-0 invert" />
             <p className="text-sm text-background/50">
               © 2025 Loverball. All rights reserved. Built by women, for women.
             </p>

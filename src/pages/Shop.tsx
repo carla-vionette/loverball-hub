@@ -100,7 +100,7 @@ const Shop = () => {
           <img 
             src={loverballLogo} 
             alt="Loverball" 
-            className="h-24 md:h-32 w-auto mb-6"
+            className="h-20 md:h-28 w-auto mb-6"
           />
           <span className="inline-block bg-accent text-accent-foreground px-4 py-2 rounded-full text-sm font-semibold tracking-wide mb-4">
             Shop
