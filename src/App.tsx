@@ -28,6 +28,9 @@ import MessagesPage from "./pages/MessagesPage";
 import Admin from "./pages/Admin";
 import AdminEventEditor from "./pages/AdminEventEditor";
 import AdminAttendeeManager from "./pages/AdminAttendeeManager";
+import Connections from "./pages/Connections";
+import DirectMessages from "./pages/DirectMessages";
+import ChatRoom from "./pages/ChatRoom";
 import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -76,7 +79,9 @@ const App = () => (
             <Route path="/invite" element={<ProtectedRoute><Invite /></ProtectedRoute>} />
             <Route path="/members" element={<ProtectedRoute><Members /></ProtectedRoute>} />
             <Route path="/members/:id" element={<ProtectedRoute><MemberProfile /></ProtectedRoute>} />
-            <Route path="/messages" element={<ProtectedRoute><MessagesPage /></ProtectedRoute>} />
+            <Route path="/connections" element={<ProtectedRoute><Connections /></ProtectedRoute>} />
+            <Route path="/dms" element={<ProtectedRoute><DirectMessages /></ProtectedRoute>} />
+            <Route path="/messages/:chatId" element={<ProtectedRoute><ChatRoom /></ProtectedRoute>} />
             <Route path="/admin" element={<ProtectedRoute requireAdmin><Admin /></ProtectedRoute>} />
             <Route path="/admin/events/:id/edit" element={<ProtectedRoute requireAdmin><AdminEventEditor /></ProtectedRoute>} />
             <Route path="/admin/events/:id/attendees" element={<ProtectedRoute requireAdmin><AdminAttendeeManager /></ProtectedRoute>} />
