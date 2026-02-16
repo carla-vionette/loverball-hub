@@ -2,6 +2,7 @@ import soraSoccer from "@/assets/sora-soccer.mp4";
 import soraTennis from "@/assets/sora-tennis.mp4";
 import soraBasketball from "@/assets/sora-basketball.mp4";
 import soraSport4 from "@/assets/sora-sport-4.mp4";
+import feedVideoNew from "@/assets/feed-video-new.mov";
 import tiktokSport1 from "@/assets/tiktok-sport-1.mov";
 import tiktokSport2 from "@/assets/tiktok-sport-2.mp4";
 import tiktokSport3 from "@/assets/tiktok-sport-3.mp4";
@@ -41,7 +42,7 @@ export const FEED_VIDEOS: FeedVideoItem[] = [
     channelId: "fan-life",
     channelName: "Fan Life",
     channelAvatar: thumbBase + "1438761681033-6461ffad8d80?w=80&h=80&fit=crop&crop=faces",
-    videoUrl: tiktokSport1,
+    videoUrl: feedVideoNew,
     thumbnail: teamSpiritThumb,
     title: "Game Day Energy — Fan Life Unfiltered",
     description: "The vibes are immaculate. This is what game day is all about.",
