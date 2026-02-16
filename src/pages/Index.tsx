@@ -10,16 +10,7 @@ import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useAuth } from "@/hooks/useAuth";
 import { motion, useInView } from "framer-motion";
 import { ArrowRight, Lock, Ticket, Users, Sparkles, Calendar, X, Menu, Mail, Play } from "lucide-react";
-import heroImage from "@/assets/hero-women-new.png";
 import loverballLogo from "@/assets/loverball-script-logo.png";
-import philosophyImage from "@/assets/philosophy-image.jpg";
-import communityImage from "@/assets/landing-community.jpg";
-import athletesImage from "@/assets/landing-athletes.jpg";
-import fansImage from "@/assets/landing-fans.jpg";
-import fieldDay from "@/assets/field-day.jpg";
-import teamSpirit from "@/assets/team-spirit.jpg";
-import pickupGame from "@/assets/pickup-game.jpg";
-import wnbaWatch from "@/assets/wnba-watch-party.jpg";
 import { z } from "zod";
 
 const signUpSchema = z.object({
@@ -331,7 +322,9 @@ const Index = () => {
               <div className="absolute top-8 right-0 w-[85%] h-[90%] bg-secondary rounded-sm" />
               {/* Main image */}
               <div className="relative aspect-[4/5] lg:aspect-[3/4] max-h-[680px] overflow-hidden rounded-sm shadow-2xl lg:ml-12">
-                <img src={heroImage} alt="Women sports fans celebrating together" className="w-full h-full object-cover object-[center_30%]" />
+                <div className="w-full h-full bg-gradient-to-br from-secondary to-secondary/70 flex items-center justify-center p-12">
+                  <img src={loverballLogo} alt="Loverball" className="w-2/3 max-w-[280px] brightness-0 invert opacity-20" />
+                </div>
               </div>
               {/* Coral accent strip */}
               <div className="absolute -bottom-4 left-0 lg:left-12 w-32 h-2 bg-accent" />
@@ -390,7 +383,9 @@ const Index = () => {
               className="lg:col-span-4"
             >
               <div className="aspect-[3/4] overflow-hidden rounded-sm">
-                <img src={philosophyImage} alt="Loverball community" className="w-full h-full object-cover object-top" />
+                <div className="w-full h-full bg-gradient-to-b from-accent/20 to-accent/5 flex items-end justify-center p-8">
+                  <span className="font-condensed text-[5rem] leading-none text-accent/20 uppercase">L</span>
+                </div>
               </div>
             </motion.div>
 
@@ -507,18 +502,18 @@ const Index = () => {
             <div className="lg:col-span-8">
               <div className="grid grid-cols-2 gap-3">
                 <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} viewport={{ once: true }} className="row-span-2">
-                  <div className="aspect-[3/4] overflow-hidden rounded-sm hover:scale-[1.02] transition-transform duration-500">
-                    <img src={communityImage} alt="Community watch party" className="w-full h-full object-cover" />
+                  <div className="aspect-[3/4] overflow-hidden rounded-sm hover:scale-[1.02] transition-transform duration-500 bg-secondary flex items-center justify-center p-8">
+                    <span className="font-condensed text-[3rem] leading-tight text-secondary-foreground/20 uppercase text-center">Community</span>
                   </div>
                 </motion.div>
                 <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1 }} viewport={{ once: true }}>
-                  <div className="aspect-[4/3] overflow-hidden rounded-sm hover:scale-[1.02] transition-transform duration-500">
-                    <img src={athletesImage} alt="Athletes" className="w-full h-full object-cover" />
+                  <div className="aspect-[4/3] overflow-hidden rounded-sm hover:scale-[1.02] transition-transform duration-500 bg-accent/15 flex items-center justify-center p-6">
+                    <span className="font-condensed text-[2rem] leading-tight text-accent/30 uppercase text-center">Athletes</span>
                   </div>
                 </motion.div>
                 <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.2 }} viewport={{ once: true }}>
-                  <div className="aspect-[4/3] overflow-hidden rounded-sm hover:scale-[1.02] transition-transform duration-500">
-                    <img src={fansImage} alt="Fans celebrating" className="w-full h-full object-cover" />
+                  <div className="aspect-[4/3] overflow-hidden rounded-sm hover:scale-[1.02] transition-transform duration-500 bg-foreground/5 flex items-center justify-center p-6">
+                    <span className="font-condensed text-[2rem] leading-tight text-foreground/10 uppercase text-center">Fans</span>
                   </div>
                 </motion.div>
               </div>
@@ -647,7 +642,9 @@ const Index = () => {
               {/* Coral block behind */}
               <div className="absolute -top-6 -right-6 w-[85%] h-[85%] bg-accent/10 rounded-sm" />
               <div className="relative aspect-[4/5] overflow-hidden rounded-sm shadow-xl">
-                <img src={wnbaWatch} alt="Loverball app experience" className="w-full h-full object-cover" />
+                <div className="w-full h-full bg-gradient-to-tr from-primary/30 to-secondary/20 flex items-center justify-center p-10">
+                  <img src={loverballLogo} alt="Loverball" className="w-1/2 max-w-[200px] opacity-15" />
+                </div>
               </div>
             </motion.div>
           </div>
