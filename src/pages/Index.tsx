@@ -647,7 +647,7 @@ const Index = () => {
               {/* Coral block behind */}
               <div className="absolute -top-6 -right-6 w-[85%] h-[85%] bg-accent/10 rounded-sm" />
               <div className="relative aspect-[4/5] overflow-hidden rounded-sm shadow-xl">
-                <img src={fieldDay} alt="Loverball app experience" className="w-full h-full object-cover" />
+                <img src={wnbaWatch} alt="Loverball app experience" className="w-full h-full object-cover" />
               </div>
             </motion.div>
           </div>
