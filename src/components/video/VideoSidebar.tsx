@@ -1,6 +1,6 @@
-import { Home, Compass, Search, Tv, ArrowLeft } from "lucide-react";
+import { Home, Compass, Search, ArrowLeft } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
-import loverbballLogo from "@/assets/loverball-logo-new.png";
+import scriptLogo from "@/assets/loverball-script-logo.png";
 
 const navItems = [
   { icon: Home, label: "For You", path: "/watch" },
@@ -15,10 +15,8 @@ const VideoSidebar = () => {
     <aside className="hidden md:flex fixed left-0 top-0 h-screen w-60 bg-card/60 backdrop-blur-sm border-r border-border/20 flex-col z-50">
       {/* Logo */}
       <div className="p-5 border-b border-border/20 flex items-center gap-3">
-        <Tv className="w-6 h-6 text-foreground" />
-        <span className="text-lg font-bold tracking-tight text-foreground">
-          LB <span className="text-foreground/60">Watch</span>
-        </span>
+        <img src={scriptLogo} alt="Loverball" className="h-7" />
+        <span className="text-sm font-medium text-foreground/50">Watch</span>
       </div>
 
       {/* Nav Items */}
