@@ -9,13 +9,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useAuth } from "@/hooks/useAuth";
 import { motion, useInView } from "framer-motion";
-import { ArrowRight, Lock, Ticket, Users, Sparkles, Calendar, X, Menu, Mail, Play, Eye, Heart } from "lucide-react";
+import { ArrowRight, Lock, Ticket, Users, Sparkles, Calendar, X, Menu, Mail, Play, Eye, Heart, Plus, Minus, Star, CheckCircle, Trophy, Tv, MessageCircle } from "lucide-react";
 import heroImage from "@/assets/hero-women-new.png";
 import loverballLogo from "@/assets/loverball-script-logo.png";
 import philosophyImage from "@/assets/philosophy-image.jpg";
 import communityImage from "@/assets/landing-community.jpg";
 import athletesImage from "@/assets/landing-athletes.jpg";
 import fansImage from "@/assets/landing-fans.jpg";
+import landingHeroImage from "@/assets/landing-hero.jpg";
 import { FEED_VIDEOS } from "@/lib/feedVideoData";
 import { z } from "zod";
 
@@ -34,6 +35,28 @@ const channels = [
   { name: "UCLA Bruins", sport: "NCAA", followers: "9.8K", image: "https://a.espncdn.com/i/teamlogos/ncaa/500/26.png" },
 ];
 
+const services = [
+  { title: "Exclusive Content & Stories", description: "Original reporting, player features, and behind-the-scenes access to women's sports that mainstream media overlooks. Our editorial team delivers the stories that matter." },
+  { title: "Live Events & Watch Parties", description: "From game-day brunches to playoff viewing parties, we host community events across Los Angeles that bring women sports fans together IRL." },
+  { title: "Community & Connections", description: "Connect with thousands of women who share your passion. Our members include athletes, creators, industry professionals, and superfans." },
+  { title: "Team Channels & Updates", description: "Follow your favorite teams — Lakers, Angel City FC, Sparks, USWNT and more. Get real-time updates, analysis, and fan commentary." },
+  { title: "Creator Platform", description: "Have a unique voice in women's sports? Launch your own channel, build an audience, and create content that reaches fans who care." },
+];
+
+const painPoints = [
+  { title: "You can't find women's sports content that matches your passion", description: "Mainstream sports media barely covers women's sports. When it does, it's surface-level. You deserve depth, analysis, and stories." },
+  { title: "You want to connect with fans who actually get it", description: "Your group chat is tired of your game-day rants. You need a community that matches your energy and obsession." },
+  { title: "You're missing out on the live sports culture in LA", description: "Watch parties, brunches, meetups — they exist, but finding them feels impossible. We bring the events to you." },
+];
+
+const testimonials = [
+  { quote: "Loverball is the community I didn't know I needed. Finally a space where women's sports fandom is celebrated, not sidelined.", name: "Maya T.", title: "WNBA Superfan", rating: 5 },
+  { quote: "The events are incredible — I've met my best friends through Loverball watch parties. This is what sports fandom should feel like.", name: "Jessica R.", title: "Angel City FC Season Ticket Holder", rating: 5 },
+  { quote: "As a sports creator, Loverball gave me an audience that actually cares about women's sports content. Game changer.", name: "Dani K.", title: "Content Creator", rating: 5 },
+];
+
+const socialLogos = ["ESPN", "BLEACHER REPORT", "THE CUT", "VOGUE SPORTS", "LA TIMES", "COMPLEX"];
+
 const howItWorks = [
   { step: "01", icon: Heart, title: "Follow Your Teams", description: "Pick the teams and sports you love. We'll curate content and events just for you." },
   { step: "02", icon: Play, title: "Watch Exclusive Content", description: "Original stories, player interviews, and behind-the-scenes access you won't find anywhere else." },
@@ -49,6 +72,7 @@ const Index = () => {
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [newsletterEmail, setNewsletterEmail] = useState("");
+  const [expandedService, setExpandedService] = useState<number | null>(null);
   const navigate = useNavigate();
   const { toast } = useToast();
   const { user, loading: authLoading } = useAuth();
@@ -139,20 +163,21 @@ const Index = () => {
   };
 
   const openAuthModal = () => setAuthModalOpen(true);
-
   const latestVideos = FEED_VIDEOS.slice(0, 4);
 
   return (
     <div className="min-h-screen bg-background">
-      {/* ── Coral Ticker ── */}
+      {/* ── Red Ticker Bar ── */}
       <div className="bg-primary py-2 overflow-hidden">
         <motion.div
-          animate={{ x: [0, -1200] }}
-          transition={{ duration: 14, repeat: Infinity, ease: "linear" }}
+          animate={{ x: [0, -1400] }}
+          transition={{ duration: 16, repeat: Infinity, ease: "linear" }}
           className="flex gap-16 whitespace-nowrap"
         >
-          {[...Array(12)].map((_, i) => (
+          {[...Array(14)].map((_, i) => (
             <span key={i} className="flex items-center gap-16 text-xs tracking-[0.4em] font-sans font-bold text-primary-foreground/90 uppercase">
+              <span>Skyrocket Your Fandom Today</span>
+              <span className="text-primary-foreground/40">♦</span>
               <span>Her Game Her Rules</span>
               <span className="text-primary-foreground/40">♦</span>
               <span>Join the Movement</span>
@@ -163,37 +188,37 @@ const Index = () => {
       </div>
 
       {/* ── Navigation ── */}
-      <nav className="sticky top-0 z-50 bg-primary">
+      <nav className="sticky top-0 z-50 bg-card border-b border-border/50">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <div className="flex items-center justify-between h-16">
-            <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="md:hidden text-primary-foreground/80 hover:text-primary-foreground transition-colors">
+            <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="md:hidden text-foreground/80 hover:text-foreground transition-colors">
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
 
-            <img src={loverballLogo} alt="Loverball" className="h-24 w-auto absolute left-1/2 -translate-x-1/2 brightness-0 invert" />
+            <img src={loverballLogo} alt="Loverball" className="h-20 w-auto absolute left-1/2 -translate-x-1/2" />
 
             <div className="hidden md:flex items-center gap-8">
-              <a href="#channels" className="text-xs font-sans tracking-widest uppercase text-primary-foreground/70 hover:text-primary-foreground transition-colors">Channels</a>
-              <a href="#about" className="text-xs font-sans tracking-widest uppercase text-primary-foreground/70 hover:text-primary-foreground transition-colors">About</a>
-              <a href="#how-it-works" className="text-xs font-sans tracking-widest uppercase text-primary-foreground/70 hover:text-primary-foreground transition-colors">How It Works</a>
+              <a href="#services" className="text-xs font-sans tracking-widest uppercase text-foreground/60 hover:text-primary transition-colors">Services</a>
+              <a href="#about" className="text-xs font-sans tracking-widest uppercase text-foreground/60 hover:text-primary transition-colors">About</a>
+              <a href="#how-it-works" className="text-xs font-sans tracking-widest uppercase text-foreground/60 hover:text-primary transition-colors">How It Works</a>
+              <a href="#channels" className="text-xs font-sans tracking-widest uppercase text-foreground/60 hover:text-primary transition-colors">Channels</a>
             </div>
 
             <Button
               onClick={openAuthModal}
-              className="rounded-full bg-white text-primary hover:bg-white/90 font-sans text-xs tracking-widest uppercase px-6"
+              className="rounded-full bg-accent text-accent-foreground hover:bg-accent/90 font-sans text-xs tracking-widest uppercase px-6"
             >
-              <Lock className="h-3.5 w-3.5 mr-1.5" />
-              Member Access
+              Join Now
             </Button>
           </div>
         </div>
 
-        {/* Mobile menu */}
         {mobileMenuOpen && (
-          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="md:hidden bg-primary border-t border-white/10 px-6 py-4 space-y-2">
-            <a href="#channels" onClick={() => setMobileMenuOpen(false)} className="block py-3 text-sm font-sans text-primary-foreground/70 tracking-widest uppercase">Channels</a>
-            <a href="#about" onClick={() => setMobileMenuOpen(false)} className="block py-3 text-sm font-sans text-primary-foreground/70 tracking-widest uppercase">About</a>
-            <a href="#how-it-works" onClick={() => setMobileMenuOpen(false)} className="block py-3 text-sm font-sans text-primary-foreground/70 tracking-widest uppercase">How It Works</a>
+          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="md:hidden bg-card border-t border-border px-6 py-4 space-y-2">
+            <a href="#services" onClick={() => setMobileMenuOpen(false)} className="block py-3 text-sm font-sans text-foreground/70 tracking-widest uppercase">Services</a>
+            <a href="#about" onClick={() => setMobileMenuOpen(false)} className="block py-3 text-sm font-sans text-foreground/70 tracking-widest uppercase">About</a>
+            <a href="#how-it-works" onClick={() => setMobileMenuOpen(false)} className="block py-3 text-sm font-sans text-foreground/70 tracking-widest uppercase">How It Works</a>
+            <a href="#channels" onClick={() => setMobileMenuOpen(false)} className="block py-3 text-sm font-sans text-foreground/70 tracking-widest uppercase">Channels</a>
           </motion.div>
         )}
       </nav>
@@ -207,7 +232,7 @@ const Index = () => {
               <img src={loverballLogo} alt="Loverball" className="h-10 w-auto" />
             </div>
             <Tabs defaultValue="login" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 bg-secondary rounded-full p-1 h-14">
+              <TabsList className="grid w-full grid-cols-2 bg-muted rounded-full p-1 h-14">
                 <TabsTrigger value="login" className="rounded-full data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-sm font-medium">Sign In</TabsTrigger>
                 <TabsTrigger value="signup" className="rounded-full data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-sm font-medium">Sign Up</TabsTrigger>
               </TabsList>
@@ -267,23 +292,36 @@ const Index = () => {
       </Dialog>
 
       {/* ═══════════════════════════════════════════════
-          1. HERO — Full coral, headline + 3 polaroids
+          1. HERO — Split layout: photo + red content block
          ═══════════════════════════════════════════════ */}
-      <section className="relative bg-primary py-24 lg:py-36 overflow-hidden">
-        <div className="max-w-7xl mx-auto px-6 lg:px-12">
-          <div className="grid lg:grid-cols-2 gap-12 items-center min-h-[520px]">
+      <section className="relative overflow-hidden">
+        <div className="grid lg:grid-cols-2 min-h-[85vh]">
+          {/* Left: Editorial photo */}
+          <div className="relative overflow-hidden bg-accent">
+            <img
+              src={heroImage}
+              alt="Women in sports culture"
+              className="w-full h-full object-cover object-top opacity-90"
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-black/30 to-transparent" />
+          </div>
+
+          {/* Right: Red content block */}
+          <div className="bg-primary flex items-center">
             <motion.div
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1, ease: "easeOut" }}
+              className="px-8 lg:px-16 py-16 lg:py-0"
             >
-              <p className="script-accent text-white/60 mb-4">welcome to loverball</p>
-              <h1 className="text-5xl sm:text-6xl lg:text-[5rem] font-display text-white leading-[0.9] mb-6">
-                Where Her <em>Game</em><br />
-                Meets Her<br />
-                <em>Community</em>
+              <p className="text-xs font-sans tracking-[0.3em] uppercase text-primary-foreground/50 mb-6">Welcome to Loverball</p>
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-display text-primary-foreground leading-[0.9] mb-8">
+                Expand Your<br />
+                <em>Influence.</em><br />
+                Amplify Your<br />
+                <em>Impact.</em>
               </h1>
-              <p className="text-lg text-white/80 font-serif leading-relaxed mb-10 max-w-md">
+              <p className="text-lg font-serif text-primary-foreground/75 leading-relaxed mb-10 max-w-lg">
                 The platform where women sports fans connect, celebrate, and elevate the game together. Original content, live events, and a community that gets it.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
@@ -295,56 +333,265 @@ const Index = () => {
                   Join Loverball
                 </Button>
                 <Button
-                  onClick={() => document.getElementById("how-it-works")?.scrollIntoView({ behavior: "smooth" })}
+                  onClick={() => document.getElementById("services")?.scrollIntoView({ behavior: "smooth" })}
                   size="lg"
-                  className="rounded-full bg-transparent border-2 border-white text-white hover:bg-white/10 px-10 py-7 text-base font-sans tracking-widest uppercase"
+                  className="rounded-full bg-transparent border-2 border-primary-foreground text-primary-foreground hover:bg-primary-foreground/10 px-10 py-7 text-base font-sans tracking-widest uppercase"
                 >
-                  How It Works
+                  Learn More
                 </Button>
               </div>
             </motion.div>
-
-            {/* 3 Polaroid photos — asymmetric (desktop) */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 1, delay: 0.3 }}
-              className="relative hidden lg:block h-[540px]"
-            >
-              <div className="polaroid absolute top-0 right-4 w-56 z-10">
-                <img src={athletesImage} alt="Athletes" className="w-full aspect-square object-cover" />
-                <p className="text-center mt-1 font-serif text-xs text-foreground/50 italic">game day ✨</p>
-              </div>
-              <div className="polaroid-alt absolute top-32 -left-4 w-48 z-20">
-                <img src={communityImage} alt="Community" className="w-full aspect-square object-cover" />
-                <p className="text-center mt-1 font-serif text-xs text-foreground/50 italic">squad goals</p>
-              </div>
-              <div className="polaroid absolute bottom-0 right-14 w-52 rotate-[4deg] z-10">
-                <img src={heroImage} alt="Sports culture" className="w-full aspect-[3/4] object-cover object-top" />
-                <p className="text-center mt-1 font-serif text-xs text-foreground/50 italic">the culture</p>
-              </div>
-            </motion.div>
-
-            {/* Mobile polaroid row */}
-            <div className="flex gap-4 lg:hidden overflow-x-auto pb-4 -mx-2 px-2 scrollbar-hide">
-              <div className="polaroid min-w-[160px]">
-                <img src={athletesImage} alt="Athletes" className="w-full aspect-square object-cover" />
-              </div>
-              <div className="polaroid-alt min-w-[160px]">
-                <img src={communityImage} alt="Community" className="w-full aspect-square object-cover" />
-              </div>
-              <div className="polaroid min-w-[160px]">
-                <img src={heroImage} alt="Culture" className="w-full aspect-[3/4] object-cover object-top" />
-              </div>
-            </div>
           </div>
         </div>
       </section>
 
       {/* ═══════════════════════════════════════════════
-          2. FEATURED CHANNELS — White bg, team cards
+          2. MISSION STATEMENT — Cream bg, centered
          ═══════════════════════════════════════════════ */}
-      <section id="channels" className="py-24 lg:py-32 bg-white">
+      <section className="py-24 lg:py-32 bg-background">
+        <div className="max-w-4xl mx-auto px-6 lg:px-12 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="font-display text-4xl sm:text-5xl md:text-6xl text-primary mb-8 leading-[0.95]">
+              We specialize in creating <span className="editorial-underline"><em>tailored</em></span> experiences
+            </h2>
+            <p className="text-lg md:text-xl font-serif text-foreground/70 leading-relaxed max-w-2xl mx-auto mb-10">
+              community connections that drive engagement, build lifelong friendships, and celebrate women's sports culture — from watch parties to original storytelling.
+            </p>
+            <Button
+              onClick={openAuthModal}
+              className="rounded-full bg-primary text-primary-foreground hover:bg-primary/90 px-10 py-6 font-sans text-sm tracking-widest uppercase shadow-lg"
+            >
+              Start Your Journey
+            </Button>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ── Red services ticker ── */}
+      <div className="bg-primary py-3 overflow-hidden">
+        <motion.div
+          animate={{ x: [0, -1600] }}
+          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+          className="flex gap-12 whitespace-nowrap"
+        >
+          {[...Array(10)].map((_, i) => (
+            <span key={i} className="flex items-center gap-12 text-sm tracking-[0.3em] font-display text-primary-foreground/90 uppercase">
+              <span>Content</span>
+              <span className="text-primary-foreground/30">✦</span>
+              <span>Events</span>
+              <span className="text-primary-foreground/30">✦</span>
+              <span>Community</span>
+              <span className="text-primary-foreground/30">✦</span>
+              <span>Channels</span>
+              <span className="text-primary-foreground/30">✦</span>
+            </span>
+          ))}
+        </motion.div>
+      </div>
+
+      {/* ═══════════════════════════════════════════════
+          3. SERVICES — Expandable accordions
+         ═══════════════════════════════════════════════ */}
+      <section id="services" className="py-24 lg:py-32 bg-card">
+        <div className="max-w-5xl mx-auto px-6 lg:px-12">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <h2 className="font-display text-5xl md:text-7xl text-primary leading-[0.9]">
+              Our <em>Services</em>
+            </h2>
+          </motion.div>
+
+          <div className="space-y-0 border-t border-border">
+            {services.map((service, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                transition={{ duration: 0.4, delay: i * 0.05 }}
+                viewport={{ once: true }}
+                className="border-b border-border"
+              >
+                <button
+                  onClick={() => setExpandedService(expandedService === i ? null : i)}
+                  className="w-full flex items-center justify-between py-6 text-left group"
+                >
+                  <h3 className="font-display text-xl md:text-2xl text-foreground group-hover:text-primary transition-colors normal-case">{service.title}</h3>
+                  {expandedService === i ? (
+                    <Minus className="w-5 h-5 text-primary flex-shrink-0" />
+                  ) : (
+                    <Plus className="w-5 h-5 text-foreground/40 group-hover:text-primary flex-shrink-0 transition-colors" />
+                  )}
+                </button>
+                {expandedService === i && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="pb-6"
+                  >
+                    <p className="font-serif text-foreground/60 leading-relaxed max-w-2xl">{service.description}</p>
+                  </motion.div>
+                )}
+              </motion.div>
+            ))}
+          </div>
+
+          <div className="text-center mt-12">
+            <Button
+              onClick={openAuthModal}
+              className="rounded-full bg-primary text-primary-foreground hover:bg-primary/90 px-10 py-6 font-sans text-sm tracking-widest uppercase"
+            >
+              Let's Make Sports Magic
+              <Sparkles className="ml-2 h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════════
+          4. ABOUT — Split layout: photo + red block
+         ═══════════════════════════════════════════════ */}
+      <section id="about" className="relative overflow-hidden">
+        <div className="grid lg:grid-cols-2 min-h-[600px]">
+          <div className="relative overflow-hidden">
+            <img src={fansImage} alt="Our community" className="w-full h-full object-cover" />
+          </div>
+          <div className="bg-primary flex items-center">
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+              className="px-8 lg:px-16 py-16"
+            >
+              <p className="text-xs font-sans tracking-[0.3em] uppercase text-primary-foreground/50 mb-4">About Us</p>
+              <h2 className="font-display text-4xl md:text-5xl text-primary-foreground mb-8 leading-[0.95]">
+                Built By <em>Fans,</em><br />For Fans
+              </h2>
+              <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-primary-foreground/30 mb-6">
+                <img src={communityImage} alt="Loverball founder" className="w-full h-full object-cover" />
+              </div>
+              <p className="text-lg font-serif text-primary-foreground/80 leading-relaxed mb-4">
+                Born in Los Angeles, Loverball was created for the millions of women who live and breathe sports but couldn't find a community that matched their energy.
+              </p>
+              <p className="text-base font-serif text-primary-foreground/60 leading-relaxed mb-8">
+                We're building the destination for the $28B women's sports market — where fandom meets culture, connection, and content.
+              </p>
+              <Button
+                onClick={openAuthModal}
+                className="rounded-full bg-transparent border-2 border-primary-foreground text-primary-foreground hover:bg-primary-foreground/10 px-8 py-5 font-sans text-xs tracking-widest uppercase"
+              >
+                Learn More
+              </Button>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════════
+          5. PAIN POINTS / PROCESS — Cream bg, cards
+         ═══════════════════════════════════════════════ */}
+      <section className="py-24 lg:py-32 bg-background">
+        <div className="max-w-6xl mx-auto px-6 lg:px-12">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <h2 className="font-display text-4xl md:text-6xl text-primary leading-[0.95]">
+              Does this sound <em>familiar?</em>
+            </h2>
+          </motion.div>
+
+          <div className="grid md:grid-cols-3 gap-6 mb-20">
+            {painPoints.map((point, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: i * 0.1 }}
+                viewport={{ once: true }}
+              >
+                <div className="bg-card border-2 border-primary/20 rounded-2xl p-8 h-full hover:border-primary hover:shadow-lg transition-all duration-300">
+                  <h3 className="font-display text-lg text-primary mb-4 normal-case leading-tight">{point.title}</h3>
+                  <p className="font-serif text-foreground/60 leading-relaxed">{point.description}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="text-center"
+          >
+            <p className="script-accent text-primary mb-4">imagine if you could...</p>
+            <h3 className="font-display text-3xl md:text-4xl text-foreground mb-6">
+              Find your <em className="text-primary">tribe,</em> watch the stories that <em className="text-primary">matter,</em> and never miss a <em className="text-primary">moment</em>
+            </h3>
+            <Button
+              onClick={openAuthModal}
+              className="rounded-full bg-primary text-primary-foreground hover:bg-primary/90 px-10 py-6 font-sans text-sm tracking-widest uppercase mt-4"
+            >
+              That's Loverball
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════════
+          6. HOW IT WORKS — White bg, 3-column
+         ═══════════════════════════════════════════════ */}
+      <section id="how-it-works" className="py-24 lg:py-32 bg-card">
+        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+          <div className="text-center mb-16">
+            <p className="text-xs font-sans tracking-[0.3em] uppercase text-foreground/50 mb-4">How It Works</p>
+            <h2 className="font-display text-5xl md:text-6xl text-foreground">
+              Getting <em className="text-primary">Started</em>
+            </h2>
+          </div>
+          <div className="grid md:grid-cols-3 gap-8">
+            {howItWorks.map((step, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: i * 0.15 }}
+                viewport={{ once: true }}
+              >
+                <div className="border-2 border-border rounded-2xl p-8 h-full hover:border-primary hover:shadow-lg transition-all duration-300">
+                  <span className="font-display text-6xl text-primary/20 leading-none block mb-6">{step.step}</span>
+                  <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mb-6">
+                    <step.icon className="w-7 h-7 text-primary" />
+                  </div>
+                  <h3 className="text-2xl font-display text-foreground mb-3 normal-case">{step.title}</h3>
+                  <p className="text-foreground/60 leading-relaxed font-serif">{step.description}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════════
+          7. FEATURED CHANNELS — Cream bg
+         ═══════════════════════════════════════════════ */}
+      <section id="channels" className="py-24 lg:py-32 bg-background">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -367,8 +614,8 @@ const Index = () => {
                 transition={{ duration: 0.5, delay: i * 0.08 }}
                 viewport={{ once: true }}
               >
-                <div className="group bg-card border border-border rounded-2xl overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer h-full">
-                  <div className="relative bg-lavender/40 p-8 flex items-center justify-center h-36">
+                <div className="group bg-card border-2 border-border rounded-2xl overflow-hidden hover:border-primary hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer h-full">
+                  <div className="relative bg-primary/5 p-8 flex items-center justify-center h-36">
                     <img
                       src={channel.image}
                       alt={channel.name}
@@ -398,55 +645,41 @@ const Index = () => {
       </section>
 
       {/* ═══════════════════════════════════════════════
-          3. COMMUNITY — Lavender bg, two-column
+          8. SIGNATURE HIGHLIGHT — Black bg for contrast
          ═══════════════════════════════════════════════ */}
-      <section id="about" className="bg-lavender py-24 lg:py-32 overflow-hidden">
+      <section className="py-24 lg:py-32 bg-accent text-accent-foreground overflow-hidden">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
             <motion.div
               initial={{ opacity: 0, x: -30 }}
               whileInView={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8 }}
               viewport={{ once: true }}
             >
-              <p className="script-accent text-primary mb-2">our community</p>
-              <h2 className="font-display text-5xl md:text-6xl text-primary mb-8 leading-[0.95]">
-                Built By <em>Fans,</em><br />
-                For Fans
+              <p className="text-xs font-sans tracking-[0.3em] uppercase text-accent-foreground/40 mb-4">Signature Experience</p>
+              <h2 className="font-display text-5xl md:text-7xl text-primary leading-[0.9] mb-8">
+                Our<br />SIGNATURE<br /><em>Experience</em>
               </h2>
-              <p className="text-lg font-serif text-lavender-foreground/80 leading-relaxed mb-6">
-                We believe every woman deserves a front-row seat — not just to the game, but to the <em className="font-bold">culture, community, and conversations</em> around it.
-              </p>
-              <p className="text-base font-serif text-lavender-foreground/60 leading-relaxed mb-6">
-                From watch parties and brunches to original stories and exclusive content, Loverball is where women fans gather, connect, and celebrate the sports they love.
-              </p>
-              <p className="text-base font-serif text-lavender-foreground/60 leading-relaxed mb-10">
-                Born in Los Angeles, built for the $28B women's sports market.
+              <p className="text-lg font-serif text-accent-foreground/70 leading-relaxed mb-8 max-w-lg">
+                Exclusive watch parties, curated content drops, and VIP community events that bring women's sports fandom to life in ways you've never experienced.
               </p>
               <Button
                 onClick={openAuthModal}
-                className="rounded-full bg-primary text-primary-foreground hover:bg-primary/90 px-8 py-5 font-sans text-xs tracking-widest uppercase"
+                className="rounded-full bg-primary text-primary-foreground hover:bg-primary/90 px-10 py-6 font-sans text-sm tracking-widest uppercase"
               >
-                Join the Community
-                <ArrowRight className="ml-2 h-4 w-4" />
+                Learn More
               </Button>
             </motion.div>
-
             <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.8, delay: 0.2 }}
               viewport={{ once: true }}
-              className="flex justify-center"
+              className="relative"
             >
-              <div className="relative">
-                <div className="polaroid-alt w-72 sm:w-80">
-                  <img src={fansImage} alt="Women sports fans" className="w-full aspect-[3/4] object-cover" />
-                  <p className="text-center mt-1 font-serif text-sm text-foreground/50 italic">our community 💛</p>
-                </div>
-                <div className="polaroid absolute -bottom-8 -left-12 w-36 z-20 hidden sm:block">
-                  <img src={communityImage} alt="Community event" className="w-full aspect-square object-cover" />
-                </div>
+              <div className="polaroid-alt">
+                <img src={athletesImage} alt="Loverball signature event" className="w-full aspect-[4/3] object-cover" />
+                <p className="text-center mt-1 font-serif text-sm text-foreground/50 italic">game day magic ✨</p>
               </div>
             </motion.div>
           </div>
@@ -454,43 +687,9 @@ const Index = () => {
       </section>
 
       {/* ═══════════════════════════════════════════════
-          4. HOW IT WORKS — White bg, 3-column
+          9. CONTENT PREVIEW — Trending videos
          ═══════════════════════════════════════════════ */}
-      <section id="how-it-works" className="py-24 lg:py-32 bg-white">
-        <div className="max-w-7xl mx-auto px-6 lg:px-12">
-          <div className="text-center mb-16">
-            <p className="script-accent text-primary mb-2">how it works</p>
-            <h2 className="font-display text-5xl md:text-6xl text-foreground">
-              Getting <em className="text-primary">Started</em>
-            </h2>
-          </div>
-          <div className="grid md:grid-cols-3 gap-8">
-            {howItWorks.map((step, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: i * 0.15 }}
-                viewport={{ once: true }}
-              >
-                <div className="border border-border rounded-2xl p-8 h-full hover:border-primary hover:shadow-lg transition-all duration-300">
-                  <span className="font-display text-6xl text-primary/20 leading-none block mb-6">{step.step}</span>
-                  <div className="w-14 h-14 rounded-full bg-lavender flex items-center justify-center mb-6">
-                    <step.icon className="w-7 h-7 text-primary" />
-                  </div>
-                  <h3 className="text-2xl font-display text-foreground mb-3 normal-case">{step.title}</h3>
-                  <p className="text-foreground/60 leading-relaxed font-serif">{step.description}</p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ═══════════════════════════════════════════════
-          5. CONTENT PREVIEW — Trending videos
-         ═══════════════════════════════════════════════ */}
-      <section className="py-24 lg:py-32 bg-background">
+      <section className="py-24 lg:py-32 bg-card">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -516,7 +715,7 @@ const Index = () => {
                 className={i === 0 ? 'sm:col-span-2 sm:row-span-2' : ''}
               >
                 <div
-                  className="group bg-card border border-border rounded-2xl overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer h-full"
+                  className="group bg-card border-2 border-border rounded-2xl overflow-hidden hover:border-primary hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer h-full"
                   onClick={openAuthModal}
                 >
                   <div className={`relative ${i === 0 ? 'aspect-[4/3]' : 'aspect-video'} bg-muted overflow-hidden`}>
@@ -552,7 +751,67 @@ const Index = () => {
       </section>
 
       {/* ═══════════════════════════════════════════════
-          6. FINAL CTA — Full coral, email signup
+          10. TESTIMONIALS — Cream bg, cards
+         ═══════════════════════════════════════════════ */}
+      <section className="py-24 lg:py-32 bg-background">
+        <div className="max-w-6xl mx-auto px-6 lg:px-12">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <h2 className="font-display text-5xl md:text-6xl text-foreground">
+              What Our <em className="text-primary">Members</em> Say
+            </h2>
+          </motion.div>
+
+          <div className="grid md:grid-cols-3 gap-6">
+            {testimonials.map((t, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: i * 0.1 }}
+                viewport={{ once: true }}
+              >
+                <div className="bg-card border-2 border-primary/15 rounded-2xl p-8 h-full">
+                  <div className="flex gap-1 mb-4">
+                    {[...Array(t.rating)].map((_, j) => (
+                      <Star key={j} className="w-4 h-4 fill-primary text-primary" />
+                    ))}
+                  </div>
+                  <p className="font-serif text-foreground/80 leading-relaxed mb-6 italic">"{t.quote}"</p>
+                  <div>
+                    <p className="font-sans font-bold text-sm text-foreground">{t.name}</p>
+                    <p className="font-sans text-xs text-muted-foreground">{t.title}</p>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════════
+          11. SOCIAL PROOF — Logo bar
+         ═══════════════════════════════════════════════ */}
+      <section className="py-16 bg-card border-y border-border">
+        <div className="max-w-6xl mx-auto px-6 lg:px-12">
+          <p className="text-center text-xs font-sans tracking-[0.3em] uppercase text-muted-foreground mb-8">As Featured In</p>
+          <div className="flex flex-wrap items-center justify-center gap-8 md:gap-14">
+            {socialLogos.map((logo) => (
+              <span key={logo} className="text-sm md:text-base font-sans font-bold tracking-widest uppercase text-foreground/25 hover:text-foreground/50 transition-colors">
+                {logo}
+              </span>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════════
+          12. FINAL CTA — Full red, email signup
          ═══════════════════════════════════════════════ */}
       <section className="py-28 lg:py-36 bg-primary">
         <div className="max-w-3xl mx-auto px-6 lg:px-12 text-center">
@@ -562,14 +821,14 @@ const Index = () => {
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
           >
-            <p className="script-accent text-white/50 mb-4">ready?</p>
-            <h2 className="text-5xl sm:text-6xl lg:text-7xl font-display text-white mb-6 leading-[0.95] italic">
-              Ready to Join<br />the <em>Movement?</em>
+            <p className="script-accent text-primary-foreground/40 mb-4">ready?</p>
+            <h2 className="text-5xl sm:text-6xl lg:text-7xl font-display text-primary-foreground mb-6 leading-[0.95]">
+              Ready to Transform<br />Your <em>Fandom?</em>
             </h2>
-            <p className="text-lg font-serif text-white/65 mb-4 max-w-xl mx-auto leading-relaxed">
+            <p className="text-lg font-serif text-primary-foreground/65 mb-4 max-w-xl mx-auto leading-relaxed">
               Sign up to get early access to events, exclusive content, and connect with women who love the game as much as you do.
             </p>
-            <p className="text-sm font-sans text-white/40 mb-10 tracking-wider uppercase">
+            <p className="text-sm font-sans text-primary-foreground/40 mb-10 tracking-wider uppercase">
               Join 10,000+ women sports fans
             </p>
 
@@ -579,58 +838,58 @@ const Index = () => {
                 value={newsletterEmail}
                 onChange={e => setNewsletterEmail(e.target.value)}
                 placeholder="Enter your email"
-                className="flex-1 px-6 py-4 rounded-full bg-white/15 border border-white/25 text-white placeholder:text-white/40 font-sans text-sm focus:outline-none focus:ring-2 focus:ring-white/50 backdrop-blur-sm"
+                className="flex-1 px-6 py-4 rounded-full bg-primary-foreground/15 border border-primary-foreground/25 text-primary-foreground placeholder:text-primary-foreground/40 font-sans text-sm focus:outline-none focus:ring-2 focus:ring-primary-foreground/50 backdrop-blur-sm"
               />
               <Button
                 onClick={openAuthModal}
                 size="lg"
                 className="rounded-full bg-white text-primary hover:bg-white/90 px-8 py-4 font-sans tracking-widest uppercase text-sm shadow-xl whitespace-nowrap"
               >
-                Join Free
+                Let's Get Started
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </div>
-            <p className="text-xs text-white/35 font-sans">Free to join. No credit card required.</p>
+            <p className="text-xs text-primary-foreground/35 font-sans">Free to join. No credit card required.</p>
           </motion.div>
         </div>
       </section>
 
       {/* ── Footer ── */}
-      <footer className="py-16" style={{ backgroundColor: "#1a1a1a" }}>
+      <footer className="py-16 bg-accent text-accent-foreground">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <div className="grid lg:grid-cols-12 gap-12 items-start mb-12">
             <div className="lg:col-span-4">
               <img src={loverballLogo} alt="Loverball" className="h-14 w-auto brightness-0 invert mb-4" />
-              <p className="text-white/50 text-sm leading-relaxed max-w-xs font-serif">
+              <p className="text-accent-foreground/50 text-sm leading-relaxed max-w-xs font-serif">
                 The community platform for women who love sports.
               </p>
             </div>
             <div className="lg:col-span-2 lg:col-start-7">
-              <p className="text-white/40 text-xs font-sans font-bold tracking-widest uppercase mb-4">Platform</p>
+              <p className="text-accent-foreground/40 text-xs font-sans font-bold tracking-widest uppercase mb-4">Platform</p>
               <nav className="space-y-3">
-                <a href="#channels" className="block text-sm text-white/60 hover:text-white transition-colors font-sans">Channels</a>
-                <a href="#about" className="block text-sm text-white/60 hover:text-white transition-colors font-sans">About</a>
-                <a href="#how-it-works" className="block text-sm text-white/60 hover:text-white transition-colors font-sans">How It Works</a>
+                <a href="#services" className="block text-sm text-accent-foreground/60 hover:text-accent-foreground transition-colors font-sans">Services</a>
+                <a href="#about" className="block text-sm text-accent-foreground/60 hover:text-accent-foreground transition-colors font-sans">About</a>
+                <a href="#how-it-works" className="block text-sm text-accent-foreground/60 hover:text-accent-foreground transition-colors font-sans">How It Works</a>
               </nav>
             </div>
             <div className="lg:col-span-2">
-              <p className="text-white/40 text-xs font-sans font-bold tracking-widest uppercase mb-4">Connect</p>
+              <p className="text-accent-foreground/40 text-xs font-sans font-bold tracking-widest uppercase mb-4">Connect</p>
               <nav className="space-y-3">
-                <a href="https://www.instagram.com/loverballclub/" target="_blank" rel="noopener noreferrer" className="block text-sm text-white/60 hover:text-white transition-colors font-sans">Instagram</a>
-                <a href="https://www.tiktok.com/@loverballclub" target="_blank" rel="noopener noreferrer" className="block text-sm text-white/60 hover:text-white transition-colors font-sans">TikTok</a>
+                <a href="https://www.instagram.com/loverballclub/" target="_blank" rel="noopener noreferrer" className="block text-sm text-accent-foreground/60 hover:text-accent-foreground transition-colors font-sans">Instagram</a>
+                <a href="https://www.tiktok.com/@loverballclub" target="_blank" rel="noopener noreferrer" className="block text-sm text-accent-foreground/60 hover:text-accent-foreground transition-colors font-sans">TikTok</a>
               </nav>
             </div>
             <div className="lg:col-span-2">
-              <p className="text-white/40 text-xs font-sans font-bold tracking-widest uppercase mb-4">Legal</p>
+              <p className="text-accent-foreground/40 text-xs font-sans font-bold tracking-widest uppercase mb-4">Legal</p>
               <nav className="space-y-3">
-                <a href="/privacy" className="block text-sm text-white/60 hover:text-white transition-colors font-sans">Privacy</a>
-                <a href="/terms" className="block text-sm text-white/60 hover:text-white transition-colors font-sans">Terms</a>
-                <a href="#" className="block text-sm text-white/60 hover:text-white transition-colors font-sans">Contact</a>
+                <a href="/privacy" className="block text-sm text-accent-foreground/60 hover:text-accent-foreground transition-colors font-sans">Privacy</a>
+                <a href="/terms" className="block text-sm text-accent-foreground/60 hover:text-accent-foreground transition-colors font-sans">Terms</a>
+                <a href="#" className="block text-sm text-accent-foreground/60 hover:text-accent-foreground transition-colors font-sans">Contact</a>
               </nav>
             </div>
           </div>
-          <div className="border-t border-white/10 pt-8">
-            <p className="text-sm text-white/40 font-sans">© 2026 Loverball. All rights reserved. Built by women, for women.</p>
+          <div className="border-t border-accent-foreground/10 pt-8">
+            <p className="text-sm text-accent-foreground/40 font-sans">© 2026 Loverball. All rights reserved. Built by women, for women.</p>
           </div>
         </div>
       </footer>
