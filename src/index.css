@@ -29,11 +29,11 @@
 @layer base {
   :root {
     /* ── Brand ── */
-    --brand: 0 100% 64%;                /* #FF4747 Vibrant Red */
+    --brand: 5 100% 64%;                /* #FF5850 Vibrant Coral */
     --brand-foreground: 0 0% 100%;
 
     /* ── Core palette ── */
-    --background: 38 30% 94%;           /* Cream #F5F1E8 */
+    --background: 40 20% 97%;           /* Off-white cream #FAF9F7 */
     --foreground: 0 0% 5%;              /* Near black */
 
     --card: 0 0% 100%;
@@ -42,17 +42,17 @@
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 5%;
 
-    /* Primary = Vibrant Red (headlines, CTAs, accent blocks) */
-    --primary: 0 100% 64%;              /* #FF4747 */
+    /* Primary = Vibrant Coral (hero sections, CTAs, accent blocks) */
+    --primary: 5 100% 64%;              /* #FF5850 */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 35 25% 88%;            /* Warm beige #E8DCC8 */
+    --secondary: 270 60% 90%;           /* Soft lavender #E5C5FF */
     --secondary-foreground: 0 0% 12%;
 
-    --muted: 35 18% 90%;
+    --muted: 35 18% 92%;
     --muted-foreground: 25 8% 45%;
 
-    /* Accent = Black (contrast CTAs, line art, graphic elements) */
+    /* Accent = Black (contrast CTAs, graphic elements) */
     --accent: 0 0% 5%;
     --accent-foreground: 0 0% 100%;
 
@@ -61,37 +61,41 @@
     --success-foreground: 0 0% 100%;
     --warning: 38 92% 50%;
     --warning-foreground: 0 0% 0%;
-    --info: 0 100% 64%;
+    --info: 5 100% 64%;
     --info-foreground: 0 0% 100%;
     --destructive: 0 84% 50%;
     --destructive-foreground: 0 0% 100%;
 
     /* ── Additional brand ── */
-    --coral: 0 100% 64%;                /* Same vibrant red */
+    --coral: 5 100% 64%;                /* Vibrant coral */
     --coral-foreground: 0 0% 100%;
-    --pale-pink: 35 22% 92%;            /* Light cream */
+    --pale-pink: 270 50% 95%;           /* Very light lavender */
     --pale-pink-foreground: 0 0% 5%;
-    --medium-blue: 0 85% 52%;           /* Deeper red */
+    --medium-blue: 270 55% 70%;         /* Medium lavender */
     --medium-blue-foreground: 0 0% 100%;
     --olive: 35 18% 38%;                /* Warm taupe */
     --olive-foreground: 0 0% 100%;
-    --light-lime: 0 100% 64%;           /* Red accent */
+    --light-lime: 5 100% 64%;           /* Coral accent */
     --light-lime-foreground: 0 0% 100%;
-    --ticker: 0 100% 64%;               /* Red ticker */
+    --ticker: 5 100% 64%;               /* Coral ticker */
     --ticker-foreground: 0 0% 100%;
 
-    /* Terracotta → warm muted red-brown */
-    --terracotta: 8 55% 48%;            /* Muted terracotta */
+    /* Lavender tones */
+    --terracotta: 270 55% 75%;          /* Soft lavender accent */
     --terracotta-foreground: 0 0% 100%;
     --warm-beige: 35 25% 88%;           /* #E8DCC8 */
     --warm-beige-foreground: 0 0% 5%;
 
-    /* ── Chrome ── */
-    --border: 35 15% 85%;
-    --input: 35 15% 85%;
-    --ring: 0 100% 64%;
+    /* ── Lavender section token ── */
+    --lavender: 270 60% 90%;
+    --lavender-foreground: 0 0% 12%;
 
-    --radius: 0.5rem;
+    /* ── Chrome ── */
+    --border: 35 15% 88%;
+    --input: 35 15% 88%;
+    --ring: 5 100% 64%;
+
+    --radius: 0.625rem;
   }
 
   .dark {
@@ -104,11 +108,11 @@
     --popover: 0 0% 10%;
     --popover-foreground: 35 15% 92%;
 
-    --primary: 0 100% 64%;
+    --primary: 5 100% 64%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 0 0% 14%;
-    --secondary-foreground: 35 10% 70%;
+    --secondary: 270 40% 20%;
+    --secondary-foreground: 270 40% 80%;
 
     --muted: 0 0% 18%;
     --muted-foreground: 25 5% 55%;
@@ -120,14 +124,17 @@
     --success-foreground: 0 0% 100%;
     --warning: 38 92% 50%;
     --warning-foreground: 0 0% 0%;
-    --info: 0 100% 64%;
+    --info: 5 100% 64%;
     --info-foreground: 0 0% 100%;
     --destructive: 0 84% 50%;
     --destructive-foreground: 0 0% 100%;
 
+    --lavender: 270 40% 20%;
+    --lavender-foreground: 270 40% 80%;
+
     --border: 0 0% 20%;
     --input: 0 0% 20%;
-    --ring: 0 100% 64%;
+    --ring: 5 100% 64%;
   }
 
   /* Video Streaming Dark Theme */
@@ -215,6 +222,20 @@
     @apply shadow-[0_12px_40px_rgb(0,0,0,0.12)] -translate-y-1;
   }
 
+  /* Polaroid photo frame */
+  .polaroid {
+    @apply bg-white p-2 pb-8 shadow-[0_4px_20px_rgba(0,0,0,0.1)] rotate-[-2deg] transition-transform duration-300;
+  }
+  .polaroid:hover {
+    @apply rotate-0 shadow-[0_8px_30px_rgba(0,0,0,0.15)];
+  }
+  .polaroid-alt {
+    @apply bg-white p-2 pb-8 shadow-[0_4px_20px_rgba(0,0,0,0.1)] rotate-[3deg] transition-transform duration-300;
+  }
+  .polaroid-alt:hover {
+    @apply rotate-0 shadow-[0_8px_30px_rgba(0,0,0,0.15)];
+  }
+
   /* Quote card */
   .quote-card {
     @apply relative p-8 sm:p-12 rounded-2xl;
@@ -224,60 +245,32 @@
     @apply absolute top-4 left-6 text-7xl leading-none opacity-20 font-display;
   }
 
-  /* Color block section */
-  .color-block-red {
-    background-color: hsl(var(--primary));
-    color: hsl(var(--primary-foreground));
-  }
-  .color-block-blue {
-    background-color: hsl(var(--primary));
-    color: hsl(var(--primary-foreground));
-  }
+  /* Color block sections */
   .color-block-coral {
     background-color: hsl(var(--primary));
     color: hsl(var(--primary-foreground));
   }
-  .color-block-terracotta {
-    background-color: hsl(var(--terracotta));
-    color: hsl(var(--terracotta-foreground));
+  .color-block-lavender {
+    background-color: hsl(var(--lavender));
+    color: hsl(var(--lavender-foreground));
   }
   .color-block-beige {
     background-color: hsl(var(--warm-beige));
     color: hsl(var(--warm-beige-foreground));
-  }
-  .color-block-sand {
-    background-color: hsl(var(--secondary));
-    color: hsl(var(--secondary-foreground));
   }
   .color-block-black {
     background-color: hsl(var(--accent));
     color: hsl(var(--accent-foreground));
   }
 
-  /* Overlapping element style */
-  .overlap-left { @apply relative lg:-ml-12 lg:z-10; }
-  .overlap-right { @apply relative lg:-mr-12 lg:z-10; }
-
-  /* Ribbon / banner */
-  .ribbon {
-    @apply bg-primary text-primary-foreground px-4 py-1 text-xs font-medium tracking-widest uppercase;
-  }
-
-  /* Annotation circle */
-  .annotation-circle { @apply relative inline-block; }
-  .annotation-circle::before {
-    content: '';
-    @apply absolute -inset-2 border-2 border-primary rounded-full;
-  }
-
-  /* Numbered section label */
-  .section-number {
-    @apply font-display text-8xl text-primary/10 leading-none;
+  /* Script overlay accent */
+  .script-accent {
+    @apply font-script text-3xl sm:text-4xl;
   }
 
   /* Category tag */
   .category-tag {
-    @apply inline-block px-3 py-1 text-xs font-bold tracking-widest uppercase rounded-sm;
+    @apply inline-block px-3 py-1 text-xs font-bold tracking-widest uppercase rounded-full;
   }
 
   /* Status toast variants */
