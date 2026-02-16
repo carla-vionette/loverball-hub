@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { CartItem, createStorefrontCheckout } from '@/lib/shopify';
+import { trackShopFunnel } from '@/lib/analytics';
 
 interface CartStore {
   items: CartItem[];
@@ -78,6 +79,7 @@ export const useCartStore = create<CartStore>()(
         try {
           const checkoutUrl = await createStorefrontCheckout(items);
           setCheckoutUrl(checkoutUrl);
+          items.forEach(item => trackShopFunnel("checkout", item.variantId, undefined, item.price?.amount));
         } catch (error) {
           console.error('Failed to create checkout:', error);
           throw error;
