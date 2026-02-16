@@ -260,7 +260,7 @@ const Index = () => {
                 <p className="text-background/60 text-sm font-medium tracking-widest mb-6 uppercase">
                   Hey Friend.
                 </p>
-                <h1 className="text-[2rem] sm:text-5xl lg:text-6xl font-serif font-normal leading-[1.1] mb-6 text-background">
+                <h1 className="text-[2rem] sm:text-5xl lg:text-6xl font-sans font-normal leading-[1.1] mb-6 text-background">
                   Her Game.<br />
                   Her Community.<br />
                   <span className="italic">Her Platform.</span>
@@ -321,7 +321,7 @@ const Index = () => {
             <span className="inline-block bg-accent text-accent-foreground px-4 py-2 rounded-full text-sm font-semibold tracking-wide mb-6">
               The Movement
             </span>
-            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-serif font-normal text-foreground mb-6">
+            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-sans font-normal text-foreground mb-6">
               Why <span className="italic">Loverball</span>?
             </h2>
           </motion.div>
@@ -340,13 +340,13 @@ const Index = () => {
             once: true
           }} className="space-y-12">
               <div className="bg-secondary p-8 rounded-3xl">
-                <span className="text-6xl sm:text-7xl font-serif font-normal text-foreground">72%</span>
+                <span className="text-6xl sm:text-7xl font-sans font-normal text-foreground">72%</span>
                 <p className="text-foreground/60 text-base mt-4 leading-relaxed">
                    of women globally identify as <span className="text-foreground font-medium">avid sports fans</span>
                 </p>
               </div>
               <div className="bg-secondary p-8 rounded-3xl">
-                <span className="text-6xl sm:text-7xl font-serif font-normal text-foreground">85%</span>
+                <span className="text-6xl sm:text-7xl font-sans font-normal text-foreground">85%</span>
                 <p className="text-foreground/60 text-base mt-4 leading-relaxed">
                   of household sports purchasing decisions are <span className="text-foreground font-medium">controlled by women</span>
                 </p>
@@ -388,7 +388,7 @@ const Index = () => {
           }} viewport={{
             once: true
           }} className="lg:pt-8">
-              <h3 className="text-2xl sm:text-3xl font-serif font-normal leading-snug mb-6 text-foreground">
+              <h3 className="text-2xl sm:text-3xl font-sans font-normal leading-snug mb-6 text-foreground">
                 Loverball is the platform where <span className="italic">female fandom</span> thrives.
               </h3>
               <p className="text-foreground/60 text-base leading-relaxed mb-6">
@@ -423,7 +423,7 @@ const Index = () => {
             <span className="inline-block bg-accent text-accent-foreground px-4 py-2 rounded-full text-sm font-semibold tracking-wide mb-6">
               Our Services
             </span>
-            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-serif font-normal text-foreground">
+            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-sans font-normal text-foreground">
               Built <span className="italic">For Her</span>
             </h2>
           </motion.div>
@@ -457,7 +457,7 @@ const Index = () => {
                   <div className="w-14 h-14 bg-accent rounded-2xl flex items-center justify-center mb-6 group-hover:bg-foreground group-hover:text-background transition-colors duration-300">
                     <feature.icon className="h-7 w-7 text-accent-foreground group-hover:text-background transition-colors duration-300" />
                   </div>
-                  <h3 className="text-xl font-serif text-foreground mb-4 transition-colors duration-300">
+                  <h3 className="text-xl font-sans text-foreground mb-4 transition-colors duration-300">
                     {feature.title}
                   </h3>
                   <p className="text-foreground/60 leading-relaxed">
@@ -488,7 +488,7 @@ const Index = () => {
               <span className="inline-block bg-accent text-accent-foreground px-4 py-2 rounded-full text-sm font-semibold tracking-wide mb-6">
                 Join Us
               </span>
-              <h2 className="text-4xl sm:text-5xl font-serif font-normal text-foreground leading-tight mb-6">
+              <h2 className="text-4xl sm:text-5xl font-sans font-normal text-foreground leading-tight mb-6">
                 Ready to be part of the <span className="italic">movement</span>?
               </h2>
               <p className="text-foreground/60 text-lg leading-relaxed mb-8 max-w-lg">
@@ -543,7 +543,7 @@ const Index = () => {
                 <span className="inline-block bg-accent text-accent-foreground px-4 py-2 rounded-full text-sm font-semibold tracking-wide mb-6">
                   Member Access
                 </span>
-                <h2 className="text-4xl sm:text-5xl font-serif font-normal text-foreground leading-tight mb-6">
+                <h2 className="text-4xl sm:text-5xl font-sans font-normal text-foreground leading-tight mb-6">
                   Sign in to access the <span className="italic">full platform</span>.
                 </h2>
                 <p className="text-foreground/60 text-lg leading-relaxed max-w-md">
@@ -656,7 +656,7 @@ const Index = () => {
         }} viewport={{
           once: true
         }}>
-            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-serif text-background mb-6">
+            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-sans text-background mb-6">
               Ready to <span className="italic">Join</span>?
             </h2>
             <p className="text-xl text-background/60 mb-10 max-w-2xl mx-auto">

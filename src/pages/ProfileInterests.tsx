@@ -71,7 +71,7 @@ const ProfileInterests = () => {
               <Button variant="ghost" size="icon" onClick={() => navigate("/profile")} className="rounded-full">
                 <ArrowLeft className="w-5 h-5" />
               </Button>
-              <h1 className="text-2xl font-serif text-foreground">My Interests</h1>
+              <h1 className="text-2xl font-sans text-foreground">My Interests</h1>
             </motion.div>
 
             {data.favorite_sports && data.favorite_sports.length > 0 && (
