@@ -534,6 +534,81 @@ export type Database = {
           },
         ]
       }
+      notification_preferences: {
+        Row: {
+          created_at: string
+          event_alerts: boolean
+          game_reminders: boolean
+          id: string
+          news_updates: boolean
+          preference_key: string
+          preference_type: string
+          sms_enabled: boolean
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          event_alerts?: boolean
+          game_reminders?: boolean
+          id?: string
+          news_updates?: boolean
+          preference_key: string
+          preference_type: string
+          sms_enabled?: boolean
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          event_alerts?: boolean
+          game_reminders?: boolean
+          id?: string
+          news_updates?: boolean
+          preference_key?: string
+          preference_type?: string
+          sms_enabled?: boolean
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      notifications: {
+        Row: {
+          body: string | null
+          created_at: string
+          id: string
+          is_read: boolean
+          link: string | null
+          metadata: Json | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          body?: string | null
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          link?: string | null
+          metadata?: Json | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          body?: string | null
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          link?: string | null
+          metadata?: Json | null
+          title?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           age_range: string | null
@@ -714,6 +789,42 @@ export type Database = {
           id?: string
           swiper_id?: string
           target_user_id?: string
+        }
+        Relationships: []
+      }
+      user_feed_preferences: {
+        Row: {
+          created_at: string
+          hidden_event_types: string[]
+          hidden_sports: string[]
+          home_neighborhood: string | null
+          home_venue: string | null
+          id: string
+          preferred_distance_miles: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          hidden_event_types?: string[]
+          hidden_sports?: string[]
+          home_neighborhood?: string | null
+          home_venue?: string | null
+          id?: string
+          preferred_distance_miles?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          hidden_event_types?: string[]
+          hidden_sports?: string[]
+          home_neighborhood?: string | null
+          home_venue?: string | null
+          id?: string
+          preferred_distance_miles?: number | null
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }

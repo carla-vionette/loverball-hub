@@ -2,6 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Search, ShoppingCart } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useCartStore } from "@/stores/cartStore";
+import NotificationBell from "@/components/NotificationBell";
 import loverballLogo from "@/assets/loverball-l-logo.png";
 
 const MobileHeader = () => {
@@ -27,6 +28,8 @@ const MobileHeader = () => {
           <Search className="w-4 h-4" />
           <span>Search...</span>
         </button>
+        
+        <NotificationBell />
         
         <button
           onClick={() => navigate('/shop')}
