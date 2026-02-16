@@ -30,7 +30,7 @@ const ProtectedRoute = ({
   }
 
   if (requireAdmin && !isAdmin) {
-    return <Navigate to="/following" replace />;
+    return <Navigate to="/watch" replace />;
   }
 
   if (requireMember && !isMember) {
