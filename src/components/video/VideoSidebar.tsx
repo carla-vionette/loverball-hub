@@ -12,12 +12,12 @@ const VideoSidebar = () => {
   const location = useLocation();
 
   return (
-    <aside className="hidden md:flex fixed left-0 top-0 h-screen w-60 bg-background border-r border-border/30 flex-col z-50">
+    <aside className="hidden md:flex fixed left-0 top-0 h-screen w-60 bg-card/60 backdrop-blur-sm border-r border-border/20 flex-col z-50">
       {/* Logo */}
-      <div className="p-5 border-b border-border/30 flex items-center gap-3">
-        <Tv className="w-6 h-6 text-primary" />
+      <div className="p-5 border-b border-border/20 flex items-center gap-3">
+        <Tv className="w-6 h-6 text-foreground" />
         <span className="text-lg font-bold tracking-tight text-foreground">
-          LB <span className="text-primary">Watch</span>
+          LB <span className="text-foreground/60">Watch</span>
         </span>
       </div>
 
@@ -31,10 +31,10 @@ const VideoSidebar = () => {
             <Link
               key={item.path}
               to={item.path}
-              className={`flex items-center gap-4 px-6 py-3 mx-3 rounded-lg transition-all duration-200 ${
+              className={`flex items-center gap-4 px-6 py-3 mx-3 rounded-2xl transition-all duration-200 ${
                 isActive
-                  ? "text-foreground font-medium bg-secondary"
-                  : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"
+                  ? "text-accent-foreground font-semibold bg-accent"
+                  : "text-foreground/50 hover:text-foreground hover:bg-secondary/50"
               }`}
             >
               <Icon className="w-5 h-5" />
@@ -45,10 +45,10 @@ const VideoSidebar = () => {
       </nav>
 
       {/* Back to main app */}
-      <div className="p-4 border-t border-border/30">
+      <div className="p-4 border-t border-border/20">
         <Link
           to="/profile"
-          className="flex items-center gap-3 px-6 py-3 mx-0 rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary/50 transition-all duration-200"
+          className="flex items-center gap-3 px-6 py-3 mx-0 rounded-2xl text-foreground/40 hover:text-foreground hover:bg-secondary/50 transition-all duration-200"
         >
           <ArrowLeft className="w-5 h-5" />
           <span className="text-sm">Back to App</span>

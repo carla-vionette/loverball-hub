@@ -45,7 +45,6 @@ const VideoFeed = () => {
   // Infinite scroll — load more when near end
   useEffect(() => {
     if (activeIndex >= videos.length - 2) {
-      // Shuffle and append more videos
       const shuffled = [...FEED_VIDEOS]
         .sort(() => Math.random() - 0.5)
         .map((v, i) => ({
@@ -69,20 +68,20 @@ const VideoFeed = () => {
   };
 
   return (
-    <div className="video-theme fixed inset-0 bg-background z-50 flex flex-col">
+    <div className="fixed inset-0 bg-foreground z-50 flex flex-col">
       {/* Top bar */}
-      <div className="absolute top-0 left-0 right-0 z-30 flex items-center justify-between px-4 py-3 bg-gradient-to-b from-background/80 to-transparent pointer-events-auto">
-        <Link to="/watch" className="w-9 h-9 rounded-full bg-foreground/10 backdrop-blur-sm flex items-center justify-center">
-          <ArrowLeft className="w-5 h-5 text-foreground" />
+      <div className="absolute top-0 left-0 right-0 z-30 flex items-center justify-between px-4 py-3 bg-gradient-to-b from-foreground/80 to-transparent pointer-events-auto">
+        <Link to="/watch" className="w-9 h-9 rounded-full bg-background/10 backdrop-blur-sm flex items-center justify-center">
+          <ArrowLeft className="w-5 h-5 text-background" />
         </Link>
-        <h1 className="text-sm font-bold text-foreground tracking-wider uppercase">Feed</h1>
+        <h1 className="text-sm font-bold text-background tracking-wider uppercase">Feed</h1>
         <button
           onClick={handleRefresh}
-          className={`w-9 h-9 rounded-full bg-foreground/10 backdrop-blur-sm flex items-center justify-center ${
+          className={`w-9 h-9 rounded-full bg-background/10 backdrop-blur-sm flex items-center justify-center ${
             isRefreshing ? "animate-spin" : ""
           }`}
         >
-          <RefreshCw className="w-4 h-4 text-foreground" />
+          <RefreshCw className="w-4 h-4 text-background" />
         </button>
       </div>
 
@@ -113,10 +112,10 @@ const VideoFeed = () => {
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="absolute top-16 left-1/2 -translate-x-1/2 z-40 bg-card px-4 py-2 rounded-full flex items-center gap-2"
+          className="absolute top-16 left-1/2 -translate-x-1/2 z-40 bg-accent text-accent-foreground px-4 py-2 rounded-full flex items-center gap-2"
         >
-          <RefreshCw className="w-3 h-3 text-primary animate-spin" />
-          <span className="text-xs text-foreground">Refreshing...</span>
+          <RefreshCw className="w-3 h-3 animate-spin" />
+          <span className="text-xs font-semibold">Refreshing...</span>
         </motion.div>
       )}
     </div>
