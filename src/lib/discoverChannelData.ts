@@ -98,14 +98,14 @@ export const COLLEGE_TEAMS: DiscoverChannel[] = [
 
 // ─── CREATOR CHANNELS ───────────────────────────────────
 export const CREATOR_CHANNELS: DiscoverChannel[] = [
-  { id: "cr-1", name: "Court Vision", logo: avatar("1494790108377-be9c29b29330"), description: "Basketball strategy & game breakdowns", followers: 83_000, sportBadge: "Basketball", category: "creator", verified: true, tags: ["Analysis", "Basketball"] },
-  { id: "cr-2", name: "Skill School", logo: avatar("1472099645785-5658abf4ff4e"), description: "Tutorials, drills, and skill breakdowns", followers: 152_000, sportBadge: "Multi-sport", category: "creator", verified: true, tags: ["Tutorials", "Training"] },
-  { id: "cr-3", name: "Inside the Game", logo: avatar("1507003211169-0a1dd7228f2d"), description: "Behind-the-scenes with pro & amateur athletes", followers: 56_000, sportBadge: "Multi-sport", category: "creator", verified: false, tags: ["BTS", "Interviews"] },
-  { id: "cr-4", name: "Fan Life", logo: avatar("1438761681033-6461ffad8d80"), description: "Vlogs from the stands, tailgates, and fan culture", followers: 31_000, sportBadge: "Fan Culture", category: "creator", verified: false, tags: ["Vlogs", "Culture"] },
-  { id: "cr-5", name: "Sports Style", logo: avatar("1535930749574-1399327ce78f"), description: "Where sports meets streetwear and fashion", followers: 124_000, sportBadge: "Fashion", category: "creator", verified: true, tags: ["Fashion", "Sneakers"] },
-  { id: "cr-6", name: "The Playbook", logo: avatar("1500648767791-00dcc994a43e"), description: "Fantasy sports tips, betting insights, and analytics", followers: 67_000, sportBadge: "Fantasy", category: "creator", verified: false, tags: ["Fantasy", "Analytics"] },
-  { id: "cr-7", name: "Fit Check", logo: avatar("1534528741775-53994a69daeb"), description: "Athlete workout routines and fitness content", followers: 210_000, sportBadge: "Fitness", category: "creator", verified: true, tags: ["Fitness", "Health"] },
-  { id: "cr-8", name: "Courtside Stories", logo: avatar("1517841905240-472988babdf9"), description: "Human stories from the world of sports", followers: 45_000, sportBadge: "Stories", category: "creator", verified: false, tags: ["Documentary", "Stories"] },
+  { id: "cr-1", name: "Court Vision w/ Jas", logo: avatar("1494790108377-be9c29b29330"), description: "Basketball strategy & game breakdowns by a former D1 point guard", followers: 83_000, sportBadge: "Basketball", category: "creator", verified: true, tags: ["Analysis", "Basketball"] },
+  { id: "cr-2", name: "She Got Game", logo: avatar("1531746020798-e6953c6e8e04"), description: "Tutorials, drills, and skill breakdowns for women athletes", followers: 152_000, sportBadge: "Multi-sport", category: "creator", verified: true, tags: ["Tutorials", "Training"] },
+  { id: "cr-3", name: "Behind the Whistle", logo: avatar("1573496359142-b8d87734a5a2"), description: "Behind-the-scenes with women in pro & amateur sports", followers: 56_000, sportBadge: "Multi-sport", category: "creator", verified: false, tags: ["BTS", "Interviews"] },
+  { id: "cr-4", name: "Fan Girl Era", logo: avatar("1438761681033-6461ffad8d80"), description: "Vlogs from the stands, tailgates, and women's fan culture", followers: 31_000, sportBadge: "Fan Culture", category: "creator", verified: false, tags: ["Vlogs", "Culture"] },
+  { id: "cr-5", name: "Sports & Stilettos", logo: avatar("1535930749574-1399327ce78f"), description: "Where women's sports meets streetwear and fashion", followers: 124_000, sportBadge: "Fashion", category: "creator", verified: true, tags: ["Fashion", "Sneakers"] },
+  { id: "cr-6", name: "Her Playbook", logo: avatar("1580489944761-15a19d654956"), description: "Fantasy sports tips, betting insights, and analytics from a woman's lens", followers: 67_000, sportBadge: "Fantasy", category: "creator", verified: false, tags: ["Fantasy", "Analytics"] },
+  { id: "cr-7", name: "Strong Girl Summer", logo: avatar("1534528741775-53994a69daeb"), description: "Women athlete workout routines and fitness content", followers: 210_000, sportBadge: "Fitness", category: "creator", verified: true, tags: ["Fitness", "Health"] },
+  { id: "cr-8", name: "Her Side of the Court", logo: avatar("1517841905240-472988babdf9"), description: "Human stories from women in the world of sports", followers: 45_000, sportBadge: "Stories", category: "creator", verified: false, tags: ["Documentary", "Stories"] },
 ];
 
 // ─── LOVERBALL NETWORK ──────────────────────────────────
