@@ -353,9 +353,8 @@ const Index = () => {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <p className="text-xs font-sans tracking-[0.3em] uppercase text-foreground/50 mb-4">Featured Channels</p>
             <h2 className="font-display text-5xl md:text-6xl text-foreground">
-              Discover Your <em className="text-primary">Teams</em>
+              Featured <em className="text-primary">Channels</em>
             </h2>
           </motion.div>
 
