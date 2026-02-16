@@ -157,20 +157,12 @@ const FeedVideoPlayer = ({ video, isActive, isMuted, onToggleMute }: FeedVideoPl
         )}
       </AnimatePresence>
 
-      {/* Top bar — Live badge, view count, mute/close */}
-      <div className="absolute top-0 left-0 right-0 z-20 flex items-center justify-between px-4 pt-4 pointer-events-auto">
-        <div className="flex items-center gap-2">
-          <div className="bg-white/15 backdrop-blur-sm px-3 py-1.5 rounded-full flex items-center gap-1.5">
-            <Play className="w-3 h-3 text-white" fill="currentColor" />
-            <span className="text-xs font-semibold text-white">{formatCount(video.views)}</span>
-          </div>
+      {/* Top bar — view count */}
+      <div className="absolute top-0 left-0 right-0 z-20 flex items-center px-4 pt-4 pointer-events-auto">
+        <div className="bg-white/15 backdrop-blur-sm px-3 py-1.5 rounded-full flex items-center gap-1.5">
+          <Play className="w-3 h-3 text-white" fill="currentColor" />
+          <span className="text-xs font-semibold text-white">{formatCount(video.views)}</span>
         </div>
-        <button
-          onClick={(e) => { e.stopPropagation(); onToggleMute(); }}
-          className="w-9 h-9 rounded-full bg-white/15 backdrop-blur-sm flex items-center justify-center"
-        >
-          {isMuted ? <VolumeX className="w-4 h-4 text-white" /> : <Volume2 className="w-4 h-4 text-white" />}
-        </button>
       </div>
 
       {/* Bottom gradient */}
@@ -223,6 +215,13 @@ const FeedVideoPlayer = ({ video, isActive, isMuted, onToggleMute }: FeedVideoPl
         <button onClick={(e) => { e.stopPropagation(); setBookmarked(!bookmarked); }} className="flex flex-col items-center gap-1">
           <div className={`w-11 h-11 rounded-full flex items-center justify-center transition-colors ${bookmarked ? "bg-accent/30" : "bg-white/10 backdrop-blur-sm"}`}>
             <Bookmark className={`w-6 h-6 ${bookmarked ? "text-accent" : "text-white"}`} fill={bookmarked ? "currentColor" : "none"} />
+          </div>
+        </button>
+
+        {/* Mute */}
+        <button onClick={(e) => { e.stopPropagation(); onToggleMute(); }} className="flex flex-col items-center gap-1">
+          <div className="w-11 h-11 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center">
+            {isMuted ? <VolumeX className="w-5 h-5 text-white" /> : <Volume2 className="w-5 h-5 text-white" />}
           </div>
         </button>
       </div>
