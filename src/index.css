@@ -29,31 +29,31 @@
 @layer base {
   :root {
     /* ── Brand ── */
-    --brand: 2 100% 61%;                /* #FF3B3B Bold Red */
+    --brand: 210 80% 55%;               /* Light Blue */
     --brand-foreground: 0 0% 100%;
 
     /* ── Core palette ── */
-    --background: 40 33% 95%;           /* Cream #F5F1E8 */
-    --foreground: 0 0% 5%;              /* Near black */
+    --background: 0 0% 100%;            /* Clean White */
+    --foreground: 220 15% 15%;          /* Dark charcoal */
 
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 5%;
+    --card: 210 20% 98%;                /* Very light blue-gray */
+    --card-foreground: 220 15% 15%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 5%;
+    --popover-foreground: 220 15% 15%;
 
-    /* Primary = Bold Red (hero sections, CTAs, accent blocks) */
-    --primary: 2 100% 61%;              /* #FF3B3B */
+    /* Primary = Light Blue (CTAs, accent blocks, highlights) */
+    --primary: 210 80% 55%;             /* #3B8BFF */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 40 33% 95%;            /* Cream background */
-    --secondary-foreground: 0 0% 12%;
+    --secondary: 210 25% 96%;           /* Very light blue */
+    --secondary-foreground: 220 15% 20%;
 
-    --muted: 35 18% 92%;
-    --muted-foreground: 25 8% 45%;
+    --muted: 210 15% 94%;
+    --muted-foreground: 210 10% 45%;
 
-    /* Accent = Black (contrast CTAs, graphic elements) */
-    --accent: 0 0% 5%;
+    /* Accent = Primary blue for interactive elements */
+    --accent: 210 80% 55%;
     --accent-foreground: 0 0% 100%;
 
     /* ── Status colors ── */
@@ -61,39 +61,39 @@
     --success-foreground: 0 0% 100%;
     --warning: 38 92% 50%;
     --warning-foreground: 0 0% 0%;
-    --info: 2 100% 61%;
+    --info: 210 80% 55%;
     --info-foreground: 0 0% 100%;
     --destructive: 0 84% 50%;
     --destructive-foreground: 0 0% 100%;
 
     /* ── Additional brand ── */
-    --coral: 2 100% 61%;                /* Bold red */
+    --coral: 210 80% 55%;
     --coral-foreground: 0 0% 100%;
-    --pale-pink: 0 60% 96%;            /* Very light pink */
-    --pale-pink-foreground: 0 0% 5%;
-    --medium-blue: 270 55% 70%;         /* Medium lavender */
+    --pale-pink: 210 30% 96%;
+    --pale-pink-foreground: 220 15% 15%;
+    --medium-blue: 210 60% 60%;
     --medium-blue-foreground: 0 0% 100%;
-    --olive: 35 18% 38%;                /* Warm taupe */
+    --olive: 210 15% 38%;
     --olive-foreground: 0 0% 100%;
-    --light-lime: 2 100% 61%;           /* Red accent */
+    --light-lime: 210 80% 55%;
     --light-lime-foreground: 0 0% 100%;
-    --ticker: 2 100% 61%;               /* Red ticker */
+    --ticker: 210 80% 55%;
     --ticker-foreground: 0 0% 100%;
 
-    /* Lavender / contrast tones */
-    --terracotta: 0 0% 5%;              /* Black accent */
+    /* Contrast tones */
+    --terracotta: 220 15% 15%;
     --terracotta-foreground: 0 0% 100%;
-    --warm-beige: 40 33% 91%;           /* Deeper cream */
-    --warm-beige-foreground: 0 0% 5%;
+    --warm-beige: 210 20% 95%;
+    --warm-beige-foreground: 220 15% 15%;
 
     /* ── Lavender section token ── */
-    --lavender: 0 60% 96%;              /* Very light pink */
-    --lavender-foreground: 0 0% 12%;
+    --lavender: 210 30% 96%;
+    --lavender-foreground: 220 15% 20%;
 
     /* ── Chrome ── */
-    --border: 35 15% 88%;
-    --input: 35 15% 88%;
-    --ring: 2 100% 61%;
+    --border: 210 15% 90%;
+    --input: 210 15% 90%;
+    --ring: 210 80% 55%;
 
     --radius: 0.625rem;
   }
