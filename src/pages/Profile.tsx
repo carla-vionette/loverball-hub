@@ -293,7 +293,7 @@ const Profile = () => {
                         <div className="flex items-center gap-2 text-sm text-muted-foreground mb-3 md:mb-4">
                           <MapPin className="w-4 h-4 text-primary/70 flex-shrink-0" />
                           <span className="truncate">{locationText}</span>
-                          {profile.age_range && (<><span>•</span><span>{profile.age_range}</span></>)}
+                          
                         </div>
                         <div className="flex items-center gap-2 md:hidden">
                           <Button variant="outline" size="sm" onClick={() => navigate("/profile/edit")} className="rounded-full"><Edit className="w-4 h-4 mr-1" />Edit</Button>
