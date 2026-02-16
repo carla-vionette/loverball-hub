@@ -1,12 +1,12 @@
 import { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { MapPin, Edit, Sparkles, LogOut, Calendar, Clock, TrendingUp, TrendingDown, Trophy, Flame, Bookmark, BookOpen, Award, ChevronRight, ArrowUpRight } from "lucide-react";
+import { MapPin, Edit, Sparkles, LogOut, Calendar, Clock, TrendingUp, TrendingDown, Trophy, Flame, Bookmark, BookOpen, Award, ChevronRight, ArrowUpRight, Share2, AlertTriangle, Ticket, Play, Eye, Lightbulb } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import MobileHeader from "@/components/MobileHeader";
 import DesktopNav from "@/components/DesktopNav";
@@ -16,7 +16,7 @@ import { format } from "date-fns";
 import { motion } from "framer-motion";
 import {
   TEAM_PERFORMANCE,
-  generateStreakData, RECENT_ACTIVITY,
+  generateStreakData, RECENT_ACTIVITY, RECOMMENDED_ARTICLES,
 } from "@/lib/mockStatsData";
 
 type ProfileData = {
@@ -133,25 +133,12 @@ const staggerItem = {
 const HEATMAP_COLORS = ["bg-border", "bg-primary/20", "bg-primary/40", "bg-primary/70", "bg-primary"];
 const DAYS_LABELS = ["S", "M", "T", "W", "T", "F", "S"];
 
-const ExpandableBio = ({ bio }: { bio: string }) => {
-  const [expanded, setExpanded] = useState(false);
-  const isLong = bio.length > 100;
-
+const FullBio = ({ bio }: { bio: string }) => {
   return (
     <div className="flex items-start gap-2 p-4 bg-primary/5 rounded-xl border border-primary/10 w-full md:flex-1">
       <Sparkles className="w-4 h-4 mt-1 text-primary flex-shrink-0" />
       <div className="flex-1 min-w-0">
-        <p className="text-sm">
-          {isLong && !expanded ? `${bio.slice(0, 100)}...` : bio}
-        </p>
-        {isLong && (
-          <button
-            onClick={() => setExpanded(!expanded)}
-            className="text-xs text-primary font-medium mt-1 hover:underline"
-          >
-            {expanded ? "Show less" : "Read more"}
-          </button>
-        )}
+        <p className="text-sm whitespace-pre-line leading-relaxed">{bio}</p>
       </div>
     </div>
   );
@@ -306,7 +293,7 @@ const Profile = () => {
                       </div>
                     </div>
                     {profile.bio && (
-                      <ExpandableBio bio={profile.bio} />
+                      <FullBio bio={profile.bio} />
                     )}
                   </div>
                 </CardContent>
@@ -423,20 +410,49 @@ const Profile = () => {
                 <CardContent className="p-0">
                   <div className="divide-y divide-border">
                     {TEAM_PERFORMANCE.map(team => (
-                      <div key={team.name} className="flex items-center gap-3 px-4 sm:px-6 py-3 hover:bg-muted/30 transition-colors">
-                        <img src={team.logo} alt={team.name} className="w-9 h-9 object-contain rounded-sm bg-white p-0.5" onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+                      <div
+                        key={team.name}
+                        className="flex items-center gap-3 px-4 sm:px-6 py-4 hover:bg-muted/30 transition-colors cursor-pointer group"
+                        onClick={() => navigate(`/team/${team.slug}`)}
+                      >
+                        <img src={team.logo} alt={team.name} className="w-10 h-10 object-contain rounded-sm bg-white p-0.5" onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} />
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2">
-                            <span className="text-sm font-medium text-foreground">{team.name}</span>
+                            <span className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">{team.name}</span>
                             <Badge variant="outline" className="text-[9px] px-1.5 py-0 rounded-sm">{team.league}</Badge>
+                            {team.injuryNote && (
+                              <span title={team.injuryNote}>
+                                <AlertTriangle className="w-3.5 h-3.5 text-amber-500" />
+                              </span>
+                            )}
                           </div>
+                          <p className="text-xs text-muted-foreground mt-0.5">{team.leadingScorer}</p>
                           <p className="text-xs text-muted-foreground">{team.nextGame}</p>
                         </div>
-                        <div className="text-right">
+                        <div className="flex flex-col items-end gap-2">
                           <p className={`text-sm font-sans font-bold ${team.winPct > 0.5 ? "text-emerald-600" : team.winPct > 0 && team.winPct < 0.5 ? "text-destructive" : "text-foreground"}`}>{team.record}</p>
                           {team.last5.length > 0 && (
-                            <div className="flex gap-0.5 mt-1 justify-end">
+                            <div className="flex gap-0.5">
                               {team.last5.map((win, i) => <div key={i} className={`w-2 h-2 rounded-full ${win ? "bg-emerald-500" : "bg-destructive/60"}`} />)}
+                            </div>
+                          )}
+                          {team.nextGame !== "Offseason" && !team.nextGame.startsWith("Season") && (
+                            <div className="flex gap-1.5">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="h-6 text-[10px] px-2 rounded-full gap-1"
+                                onClick={(e) => { e.stopPropagation(); window.open(team.ticketUrl, '_blank'); }}
+                              >
+                                <Ticket className="w-3 h-3" /> Tickets
+                              </Button>
+                              <Button
+                                size="sm"
+                                className="h-6 text-[10px] px-2 rounded-full gap-1"
+                                onClick={(e) => { e.stopPropagation(); }}
+                              >
+                                <Play className="w-3 h-3" /> Watch
+                              </Button>
                             </div>
                           )}
                         </div>
@@ -501,17 +517,66 @@ const Profile = () => {
               <Card className="border-border/50">
                 <CardHeader className="pb-2"><CardTitle className="text-sm font-medium tracking-wider uppercase text-foreground/60">Recent Activity</CardTitle></CardHeader>
                 <CardContent className="p-0">
+                  <Tabs defaultValue="all" className="w-full">
+                    <div className="px-4 sm:px-6 pt-2 pb-1">
+                      <TabsList className="h-8 w-full justify-start">
+                        <TabsTrigger value="all" className="text-xs px-3 h-7">All</TabsTrigger>
+                        <TabsTrigger value="read" className="text-xs px-3 h-7">Read</TabsTrigger>
+                        <TabsTrigger value="bookmark" className="text-xs px-3 h-7">Bookmarked</TabsTrigger>
+                        <TabsTrigger value="shared" className="text-xs px-3 h-7">Shared</TabsTrigger>
+                      </TabsList>
+                    </div>
+                    {["all", "read", "bookmark", "shared"].map(tab => (
+                      <TabsContent key={tab} value={tab} className="mt-0">
+                        <div className="divide-y divide-border">
+                          {RECENT_ACTIVITY.filter(a => tab === "all" || a.type === tab).map((activity, i) => (
+                            <div key={i} className="flex items-start gap-3 px-4 sm:px-6 py-3 hover:bg-muted/30 transition-colors cursor-pointer group">
+                              {activity.thumbnail ? (
+                                <img src={activity.thumbnail} alt="" className="w-14 h-10 object-cover rounded-md mt-0.5 flex-shrink-0" />
+                              ) : (
+                                <div className={`mt-0.5 p-1.5 rounded-full flex-shrink-0 ${activity.type === "read" ? "bg-primary/10" : activity.type === "shared" ? "bg-accent/20" : "bg-secondary"}`}>
+                                  {activity.type === "read" ? <BookOpen className="w-3 h-3 text-primary" /> : activity.type === "shared" ? <Share2 className="w-3 h-3 text-accent-foreground" /> : <Bookmark className="w-3 h-3 text-foreground/60" />}
+                                </div>
+                              )}
+                              <div className="flex-1 min-w-0">
+                                <p className="text-sm text-foreground leading-snug group-hover:text-primary transition-colors">
+                                  <span className="text-muted-foreground capitalize">{activity.type}:</span>{" "}
+                                  <span className="font-medium">{activity.title}</span>
+                                </p>
+                                <div className="flex items-center gap-3 mt-1">
+                                  <span className="text-xs text-muted-foreground">{activity.time}</span>
+                                  <span className="flex items-center gap-1 text-xs text-muted-foreground"><Eye className="w-3 h-3" />{activity.reads}</span>
+                                  <span className="flex items-center gap-1 text-xs text-muted-foreground"><Bookmark className="w-3 h-3" />{activity.bookmarks}</span>
+                                </div>
+                              </div>
+                              <ArrowUpRight className="w-3.5 h-3.5 text-foreground/20 mt-1 shrink-0 group-hover:text-primary transition-colors" />
+                            </div>
+                          ))}
+                        </div>
+                      </TabsContent>
+                    ))}
+                  </Tabs>
+                </CardContent>
+              </Card>
+            </motion.div>
+
+            {/* BECAUSE YOU READ... RECOMMENDATIONS */}
+            <motion.div variants={staggerItem}>
+              <Card className="border-border/50">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm font-medium tracking-wider uppercase text-foreground/60 flex items-center gap-2">
+                    <Lightbulb className="w-4 h-4 text-primary" /> Recommended for You
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-0">
                   <div className="divide-y divide-border">
-                    {RECENT_ACTIVITY.map((activity, i) => (
-                      <div key={i} className="flex items-start gap-3 px-4 sm:px-6 py-3">
-                        <div className={`mt-0.5 p-1.5 rounded-full ${activity.type === "read" ? "bg-primary/10" : "bg-medium-blue/10"}`}>
-                          {activity.type === "read" ? <BookOpen className="w-3 h-3 text-primary" /> : <Bookmark className="w-3 h-3 text-medium-blue" />}
+                    {RECOMMENDED_ARTICLES.map((rec, i) => (
+                      <div key={i} className="px-4 sm:px-6 py-3 hover:bg-muted/30 transition-colors cursor-pointer group">
+                        <p className="text-[10px] text-muted-foreground mb-0.5">Because you read "{rec.basedOn.length > 50 ? rec.basedOn.slice(0, 50) + '…' : rec.basedOn}"</p>
+                        <div className="flex items-center justify-between">
+                          <p className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">{rec.title}</p>
+                          <span className="flex items-center gap-1 text-xs text-muted-foreground ml-2 shrink-0"><Eye className="w-3 h-3" />{rec.reads}</span>
                         </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm text-foreground leading-snug"><span className="text-muted-foreground">{activity.type === "read" ? "Read:" : "Bookmarked:"}</span> <span className="font-medium">{activity.title}</span></p>
-                          <p className="text-xs text-muted-foreground mt-0.5">{activity.time}</p>
-                        </div>
-                        <ArrowUpRight className="w-3.5 h-3.5 text-foreground/20 mt-1 shrink-0" />
                       </div>
                     ))}
                   </div>
