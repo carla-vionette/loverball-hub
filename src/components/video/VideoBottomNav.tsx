@@ -1,10 +1,13 @@
-import { Home, Compass, Search } from "lucide-react";
+import { Home, Compass, Search, User, ShoppingBag, CalendarDays } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 
 const navItems = [
   { icon: Home, label: "For You", path: "/watch" },
   { icon: Compass, label: "Discover", path: "/watch/discover" },
   { icon: Search, label: "Search", path: "/watch/search" },
+  { icon: CalendarDays, label: "Events", path: "/events" },
+  { icon: ShoppingBag, label: "Shop", path: "/shop" },
+  { icon: User, label: "Profile", path: "/profile" },
 ];
 
 const VideoBottomNav = () => {
