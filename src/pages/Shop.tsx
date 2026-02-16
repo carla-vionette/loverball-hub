@@ -17,6 +17,7 @@ import loverballLogo from "@/assets/loverball-script-logo.png";
 import PageError from "@/components/PageError";
 import PageSkeleton from "@/components/PageSkeleton";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
+import { trackShopFunnel, trackContentView } from "@/lib/analytics";
 
 const COLLECTIONS = [
   { id: "all", label: "All" },
@@ -116,6 +117,7 @@ const Shop = () => {
       quantity: 1,
       selectedOptions: variant.selectedOptions
     });
+    trackShopFunnel("add_to_cart", product.node.id, product.node.title, variant.price.amount);
     toast.success("Added to cart", {
       description: `${product.node.title} has been added to your cart`,
     });

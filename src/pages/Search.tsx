@@ -24,6 +24,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { getProducts, type ShopifyProduct } from "@/lib/shopify";
 import { cn } from "@/lib/utils";
 import { SPORTS_OPTIONS } from "@/lib/onboardingOptions";
+import { trackSearch } from "@/lib/analytics";
 
 const RECENT_SEARCHES_KEY = "loverball-recent-searches";
 const MAX_RECENT = 8;
@@ -255,6 +256,10 @@ const Search = () => {
     setVideos((videosRes.data || []).map(v => ({ ...v, channel_name: channelMap[v.channel_id] })));
     setShopItems(shopRes);
     setIsLoading(false);
+
+    // Track search query and zero-result searches
+    const total = (membersRes.data?.length || 0) + filteredEvents.length + (videosRes.data?.length || 0) + shopRes.length;
+    trackSearch(query, total, activeTab);
   };
 
   const saveRecentSearch = (query: string) => {

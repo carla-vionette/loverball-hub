@@ -2,6 +2,7 @@ import { useRef, useEffect, useState, useCallback } from "react";
 import { Heart, MessageCircle, Share2, Volume2, VolumeX, Play, Bookmark } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { FeedVideoItem } from "@/lib/feedVideoData";
+import { trackVideoProgress, trackVideoComplete } from "@/lib/analytics";
 
 interface FeedVideoPlayerProps {
   video: FeedVideoItem;
@@ -43,13 +44,29 @@ const FeedVideoPlayer = ({ video, isActive, isMuted, onToggleMute }: FeedVideoPl
 
   useEffect(() => { if (videoRef.current) videoRef.current.muted = isMuted; }, [isMuted]);
 
+  // Track video milestones
+  const milestonesTracked = useRef(new Set<number>());
+
   useEffect(() => {
     const vid = videoRef.current;
     if (!vid) return;
-    const onTime = () => { if (vid.duration) setProgress((vid.currentTime / vid.duration) * 100); };
+    const onTime = () => {
+      if (!vid.duration) return;
+      const pct = (vid.currentTime / vid.duration) * 100;
+      setProgress(pct);
+
+      // Track 25/50/75/100% milestones
+      [25, 50, 75, 100].forEach(m => {
+        if (pct >= m && !milestonesTracked.current.has(m)) {
+          milestonesTracked.current.add(m);
+          if (m === 100) trackVideoComplete(video.id, video.tags?.[0]);
+          else trackVideoProgress(video.id, m, video.tags?.[0]);
+        }
+      });
+    };
     vid.addEventListener("timeupdate", onTime);
     return () => vid.removeEventListener("timeupdate", onTime);
-  }, []);
+  }, [video.id]);
 
   const togglePlayPause = useCallback(() => {
     const vid = videoRef.current;
