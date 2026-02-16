@@ -20,8 +20,8 @@ const DesktopNav = () => {
   ];
 
   return (
-    <aside className="hidden md:flex fixed left-0 top-0 h-screen w-64 bg-background border-r border-border/50 flex-col z-50">
-      <div className="p-6 border-b border-border/50 flex items-center justify-center">
+    <aside className="hidden md:flex fixed left-0 top-0 h-screen w-64 bg-card/60 backdrop-blur-sm border-r border-border/20 flex-col z-50">
+      <div className="p-6 border-b border-border/20 flex items-center justify-center">
         <img src={loverbballLogo} alt="Loverball" className="h-20 w-auto object-contain" />
       </div>
       
@@ -35,16 +35,16 @@ const DesktopNav = () => {
             <Link
               key={item.path}
               to={item.path}
-              className={`flex items-center gap-4 px-6 py-3.5 mx-3 rounded-xl transition-all duration-200 ${
+              className={`flex items-center gap-4 px-6 py-3.5 mx-3 rounded-2xl transition-all duration-200 ${
                 isActive 
-                  ? "text-primary font-medium bg-primary/10" 
-                  : "text-foreground/60 hover:text-foreground hover:bg-secondary/50"
+                  ? "text-accent-foreground font-semibold bg-accent" 
+                  : "text-foreground/50 hover:text-foreground hover:bg-secondary/50"
               }`}
             >
               <div className="relative">
                 <Icon className="w-5 h-5" />
                 {showBadge && (
-                  <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-primary rounded-full border-2 border-background" />
+                  <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-accent rounded-full border-2 border-card" />
                 )}
               </div>
               <span className="text-sm tracking-wide">{item.label}</span>
@@ -53,10 +53,10 @@ const DesktopNav = () => {
         })}
       </nav>
 
-      <div className="p-4 border-t border-border/50">
+      <div className="p-4 border-t border-border/20">
         <Link
           to="/search"
-          className="flex items-center gap-4 px-6 py-3 mx-3 rounded-xl text-foreground/50 hover:text-foreground hover:bg-secondary/50 transition-all duration-200"
+          className="flex items-center gap-4 px-6 py-3 mx-3 rounded-2xl text-foreground/40 hover:text-foreground hover:bg-secondary/50 transition-all duration-200"
         >
           <Search className="w-5 h-5" />
           <span className="text-sm tracking-wide">Search</span>

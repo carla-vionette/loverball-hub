@@ -16,84 +16,85 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Loverball Brand Colors - Editorial Aesthetic */
-    /* Warm light beige background */
-    --background: 40 33% 96%; /* Warm Beige #F7F4EE */
-    --foreground: 0 0% 13%; /* Near Black #222222 */
+    /* Loverball Brand Colors - Sage & Lime Aesthetic */
+    /* Soft sage green background */
+    --background: 100 12% 90%; /* Muted sage #E2E6DC */
+    --foreground: 0 0% 10%; /* Near Black #1A1A1A */
 
-    --card: 40 40% 98%;
-    --card-foreground: 0 0% 13%;
+    --card: 100 10% 96%; /* Light sage-white */
+    --card-foreground: 0 0% 10%;
 
-    --popover: 40 40% 98%;
-    --popover-foreground: 0 0% 13%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 10%;
 
-    /* Punchy Tomato Red */
-    --primary: 4 74% 49%; /* Tomato Red #DA3A2B */
+    /* Dark primary for key actions */
+    --primary: 0 0% 8%; /* Near Black #141414 */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 40 25% 90%; /* Lighter beige for sections */
-    --secondary-foreground: 0 0% 13%;
+    --secondary: 100 10% 93%; /* Lighter sage */
+    --secondary-foreground: 0 0% 10%;
 
-    --muted: 40 25% 92%;
+    --muted: 100 8% 88%;
     --muted-foreground: 0 0% 40%;
 
-    --accent: 4 74% 49%; /* Tomato Red for accents */
-    --accent-foreground: 0 0% 100%;
+    /* Neon Lime accent for highlights */
+    --accent: 72 100% 50%; /* Neon Lime #CCFF00 */
+    --accent-foreground: 0 0% 0%;
 
     /* Additional brand colors */
     --coral: 4 56% 60%;
     --coral-foreground: 0 0% 100%;
 
-    --pale-pink: 40 40% 94%; /* Warm off-white */
-    --pale-pink-foreground: 0 0% 13%;
+    --pale-pink: 100 10% 95%;
+    --pale-pink-foreground: 0 0% 10%;
 
     --medium-blue: 224 64% 45%;
     --medium-blue-foreground: 0 0% 100%;
 
-    --olive: 75 13% 52%;
+    --olive: 100 12% 52%;
     --olive-foreground: 0 0% 100%;
 
-    --light-lime: 64 70% 60%;
-    --light-lime-foreground: 0 0% 13%;
+    --light-lime: 72 100% 50%;
+    --light-lime-foreground: 0 0% 0%;
 
     --ticker: 72 100% 50%; /* Neon Lime #CCFF00 */
-    --ticker-foreground: 0 0% 0%; /* Black text for contrast */
+    --ticker-foreground: 0 0% 0%;
 
     --destructive: 0 84% 50%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 40 15% 85%;
-    --input: 40 15% 85%;
-    --ring: 4 74% 49%;
+    --border: 100 8% 84%;
+    --input: 100 8% 84%;
+    --ring: 0 0% 8%;
 
-    --radius: 0.75rem;
+    --radius: 1.25rem;
   }
 
   .dark {
-    --background: 0 0% 8%; /* Near Black */
-    --foreground: 40 33% 94%; /* Warm cream text */
+    --background: 0 0% 8%;
+    --foreground: 100 10% 92%;
 
     --card: 0 0% 12%;
-    --card-foreground: 40 33% 94%;
+    --card-foreground: 100 10% 92%;
 
     --popover: 0 0% 12%;
-    --popover-foreground: 40 33% 94%;
+    --popover-foreground: 100 10% 92%;
 
-    --primary: 4 74% 55%; /* Brighter Tomato Red */
-    --primary-foreground: 0 0% 100%;
+    --primary: 72 100% 50%; /* Neon lime in dark mode */
+    --primary-foreground: 0 0% 0%;
 
     --secondary: 0 0% 15%;
-    --secondary-foreground: 40 33% 94%;
+    --secondary-foreground: 100 10% 92%;
 
     --muted: 0 0% 18%;
-    --muted-foreground: 40 20% 70%;
+    --muted-foreground: 0 0% 60%;
 
-    --accent: 4 74% 55%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 72 100% 50%;
+    --accent-foreground: 0 0% 0%;
 
     --border: 0 0% 20%;
     --input: 0 0% 20%;
-    --ring: 4 74% 55%;
+    --ring: 72 100% 50%;
   }
 
   /* Video Streaming Dark Theme - scoped to .video-theme */

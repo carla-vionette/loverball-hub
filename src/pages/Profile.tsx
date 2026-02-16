@@ -253,7 +253,7 @@ const Profile = () => {
                 <CardContent className="pt-8 pb-6">
                   <div className="flex flex-col md:flex-row md:items-start gap-5">
                     <div className="flex items-start gap-4 md:gap-5">
-                      <Avatar className="w-20 h-20 md:w-24 md:h-24 border-4 border-primary/20 flex-shrink-0">
+                      <Avatar className="w-20 h-20 md:w-24 md:h-24 border-4 border-accent/30 flex-shrink-0">
                         {profile.profile_photo_url ? (
                           <AvatarImage src={profile.profile_photo_url} alt={profile.name} className="object-cover" />
                         ) : null}
