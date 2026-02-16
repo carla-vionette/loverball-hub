@@ -29,7 +29,7 @@ const BottomNav = () => {
   const navItems = [
     { icon: Home, label: "Home", path: "/profile" },
     { icon: CalendarDays, label: "Events", path: "/events" },
-    { icon: Play, label: "Watch", path: "/watch" },
+    { icon: Play, label: "For You", path: "/watch" },
     { icon: ShoppingBag, label: "Shop", path: "/shop" },
     ...(isMember ? [
       { icon: Users, label: "Members", path: "/members" },
