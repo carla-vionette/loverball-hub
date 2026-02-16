@@ -217,8 +217,26 @@ const Profile = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <p>Loading profile...</p>
+      <div className="min-h-screen bg-background">
+        <MobileHeader />
+        <DesktopNav />
+        <BottomNav />
+        <main className="md:ml-64 pb-20 md:pb-8 pt-[92px] md:pt-[48px]">
+          <div className="max-w-4xl mx-auto px-4 py-8 space-y-6 animate-pulse">
+            <div className="flex items-start gap-4">
+              <div className="w-20 h-20 rounded-full bg-muted" />
+              <div className="flex-1 space-y-3">
+                <div className="h-6 w-40 bg-muted rounded" />
+                <div className="h-4 w-24 bg-muted rounded" />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="h-24 bg-muted rounded-xl" />
+              <div className="h-24 bg-muted rounded-xl" />
+            </div>
+            <div className="h-32 bg-muted rounded-xl" />
+          </div>
+        </main>
       </div>
     );
   }

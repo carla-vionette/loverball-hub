@@ -7,6 +7,8 @@ import MobileHeader from "@/components/MobileHeader";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Loader2, Heart, X, Users, Sparkles, MapPin, UserPlus, Briefcase } from "lucide-react";
+import PageError from "@/components/PageError";
+import PageSkeleton from "@/components/PageSkeleton";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -290,9 +292,7 @@ const Connections = () => {
         </div>
 
         {loading ? (
-          <div className="flex items-center justify-center py-20">
-            <Loader2 className="h-8 w-8 animate-spin text-primary" />
-          </div>
+          <PageSkeleton variant="cards" count={8} />
         ) : (
           <>
             {/* Swipe card section */}
