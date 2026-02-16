@@ -39,6 +39,10 @@ export const TEAM_PERFORMANCE = [
     last5: [true, true, false, true, true],
     nextGame: "vs Celtics · Feb 16",
     league: "NBA",
+    leadingScorer: "LeBron James – 25.4 PPG",
+    injuryNote: "Anthony Davis (knee) – Questionable",
+    ticketUrl: "https://www.nba.com/lakers/tickets",
+    slug: "lakers",
   },
   {
     name: "Dodgers",
@@ -48,6 +52,10 @@ export const TEAM_PERFORMANCE = [
     last5: [],
     nextGame: "Season starts Mar 27",
     league: "MLB",
+    leadingScorer: "Mookie Betts – .307 AVG (2025)",
+    injuryNote: null,
+    ticketUrl: "https://www.mlb.com/dodgers/tickets",
+    slug: "dodgers",
   },
   {
     name: "LAFC",
@@ -57,6 +65,10 @@ export const TEAM_PERFORMANCE = [
     last5: [true, true, false],
     nextGame: "vs Galaxy · Feb 22",
     league: "MLS",
+    leadingScorer: "Denis Bouanga – 3 Goals",
+    injuryNote: null,
+    ticketUrl: "https://www.lafc.com/tickets",
+    slug: "lafc",
   },
   {
     name: "Rams",
@@ -66,6 +78,10 @@ export const TEAM_PERFORMANCE = [
     last5: [true, false, true, true, false],
     nextGame: "Offseason",
     league: "NFL",
+    leadingScorer: "Puka Nacua – 1,128 YDS",
+    injuryNote: null,
+    ticketUrl: "https://www.therams.com/tickets",
+    slug: "rams",
   },
   {
     name: "Angel City FC",
@@ -75,6 +91,10 @@ export const TEAM_PERFORMANCE = [
     last5: [true, false, false],
     nextGame: "vs Wave · Feb 20",
     league: "NWSL",
+    leadingScorer: "Christen Press – 2 Goals",
+    injuryNote: "M. Rapinoe (achilles) – Out",
+    ticketUrl: "https://www.angelcity.com/tickets",
+    slug: "angel-city-fc",
   },
 ];
 
@@ -123,14 +143,21 @@ export function generateStreakData() {
 
 // Recent activity feed
 export const RECENT_ACTIVITY = [
-  { type: "read", title: "Women's Sports Viewership Hits All-Time High in 2026", time: "12m ago" },
-  { type: "bookmark", title: "LA28 Olympics: New Venues Revealed for Basketball & Soccer", time: "1h ago" },
-  { type: "read", title: "The Rise of Community-Driven Fan Culture in Los Angeles", time: "2h ago" },
-  { type: "read", title: "How NIL Deals Are Reshaping College Athletics", time: "3h ago" },
-  { type: "bookmark", title: "Top 10 Sports Tech Startups to Watch in 2026", time: "5h ago" },
-  { type: "read", title: "WNBA Expansion Draft: What LA Fans Need to Know", time: "8h ago" },
-  { type: "read", title: "Soccer's Growing Influence on American Pop Culture", time: "1d ago" },
-  { type: "bookmark", title: "Best Sports Bars in Los Angeles: 2026 Guide", time: "1d ago" },
-  { type: "read", title: "The Science Behind Athletic Recovery Trends", time: "2d ago" },
-  { type: "read", title: "Breaking Down the NBA Trade Deadline Moves", time: "2d ago" },
+  { type: "read", title: "Women's Sports Viewership Hits All-Time High in 2026", time: "12m ago", reads: "2.3K", bookmarks: "458", thumbnail: null },
+  { type: "bookmark", title: "LA28 Olympics: New Venues Revealed for Basketball & Soccer", time: "1h ago", reads: "5.1K", bookmarks: "1.2K", thumbnail: "https://images.unsplash.com/photo-1569517282132-25d22f4573e6?w=120&h=80&fit=crop" },
+  { type: "read", title: "The Rise of Community-Driven Fan Culture in Los Angeles", time: "2h ago", reads: "1.8K", bookmarks: "312", thumbnail: null },
+  { type: "read", title: "How NIL Deals Are Reshaping College Athletics", time: "3h ago", reads: "3.4K", bookmarks: "890", thumbnail: null },
+  { type: "bookmark", title: "Top 10 Sports Tech Startups to Watch in 2026", time: "5h ago", reads: "4.7K", bookmarks: "1.5K", thumbnail: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=120&h=80&fit=crop" },
+  { type: "read", title: "WNBA Expansion Draft: What LA Fans Need to Know", time: "8h ago", reads: "2.1K", bookmarks: "567", thumbnail: null },
+  { type: "shared", title: "Soccer's Growing Influence on American Pop Culture", time: "1d ago", reads: "6.2K", bookmarks: "2.1K", thumbnail: null },
+  { type: "bookmark", title: "Best Sports Bars in Los Angeles: 2026 Guide", time: "1d ago", reads: "8.9K", bookmarks: "3.4K", thumbnail: "https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=120&h=80&fit=crop" },
+  { type: "read", title: "The Science Behind Athletic Recovery Trends", time: "2d ago", reads: "1.4K", bookmarks: "298", thumbnail: null },
+  { type: "read", title: "Breaking Down the NBA Trade Deadline Moves", time: "2d ago", reads: "7.8K", bookmarks: "1.9K", thumbnail: null },
+];
+
+// Personalized recommendations based on reading history
+export const RECOMMENDED_ARTICLES = [
+  { basedOn: "Women's Sports Viewership Hits All-Time High in 2026", title: "How Title IX Continues to Transform Women's Athletics", reads: "3.1K" },
+  { basedOn: "LA28 Olympics: New Venues Revealed for Basketball & Soccer", title: "LA28 Transportation Plan: Getting to the Games", reads: "2.8K" },
+  { basedOn: "Breaking Down the NBA Trade Deadline Moves", title: "Lakers' Championship Odds After the Trade Deadline", reads: "5.5K" },
 ];
