@@ -10,6 +10,7 @@ import { motion } from "framer-motion";
 import { ArrowRight, Ticket, ArrowLeft } from "lucide-react";
 import loverballLogo from "@/assets/loverball-logo-new.png";
 import { z } from "zod";
+import WelcomeSplash from "@/components/WelcomeSplash";
 
 const signUpSchema = z.object({
   email: z.string().trim().email("Please enter a valid email address"),
@@ -31,6 +32,8 @@ const Auth = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [inviteCode, setInviteCode] = useState("");
   const [loading, setLoading] = useState(false);
+  const [splashName, setSplashName] = useState<string | null>(null);
+  const [pendingRedirect, setPendingRedirect] = useState<string | null>(null);
   const navigate = useNavigate();
   const { toast } = useToast();
   const redirectTo = searchParams.get('redirect') || '/watch';
@@ -155,7 +158,8 @@ const Auth = () => {
           .maybeSingle();
 
         if (profile) {
-          navigate(redirectTo);
+          setSplashName(profile.name);
+          setPendingRedirect(redirectTo);
         } else {
           navigate("/onboarding");
         }
@@ -191,6 +195,13 @@ const Auth = () => {
   };
 
   return (
+    <>
+      {splashName && pendingRedirect && (
+        <WelcomeSplash
+          name={splashName}
+          onDismiss={() => navigate(pendingRedirect)}
+        />
+      )}
     <div className="min-h-screen bg-background">
       {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-background/90 backdrop-blur-sm border-b border-border">
@@ -409,6 +420,7 @@ const Auth = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 
