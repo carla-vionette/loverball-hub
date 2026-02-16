@@ -165,10 +165,6 @@ const FeedVideoPlayer = ({ video, isActive, isMuted, onToggleMute }: FeedVideoPl
       {/* Top bar — Live badge, view count, mute/close */}
       <div className="absolute top-0 left-0 right-0 z-20 flex items-center justify-between px-4 pt-4 pointer-events-auto">
         <div className="flex items-center gap-2">
-          <div className="bg-destructive px-3 py-1.5 rounded-full flex items-center gap-1.5">
-            <div className="w-2 h-2 bg-white rounded-full animate-pulse" />
-            <span className="text-xs font-bold text-white">Live</span>
-          </div>
           <div className="bg-white/15 backdrop-blur-sm px-3 py-1.5 rounded-full flex items-center gap-1.5">
             <Play className="w-3 h-3 text-white" fill="currentColor" />
             <span className="text-xs font-semibold text-white">{formatCount(video.views)}</span>
