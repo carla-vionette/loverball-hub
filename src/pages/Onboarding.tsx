@@ -23,7 +23,7 @@ import {
   CONTENT_INTERESTS_OPTIONS,
 } from "@/lib/onboardingOptions";
 import { X, Camera, Loader2, Check, ChevronRight, ChevronLeft } from "lucide-react";
-import loverballLogo from "@/assets/loverball-logo-new.png";
+import loverballLogo from "@/assets/loverball-script-logo.png";
 import { motion, AnimatePresence } from "framer-motion";
 
 const Onboarding = () => {

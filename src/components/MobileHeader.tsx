@@ -2,7 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Search, ShoppingCart } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useCartStore } from "@/stores/cartStore";
-import loverballLogo from "@/assets/loverball-logo-new.png";
+import loverballLogo from "@/assets/loverball-script-logo.png";
 
 const MobileHeader = () => {
   const navigate = useNavigate();

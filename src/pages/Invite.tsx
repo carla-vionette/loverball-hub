@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
-import loverballLogo from '@/assets/loverball-logo-new.png';
+import loverballLogo from '@/assets/loverball-script-logo.png';
 import { Loader2, Ticket } from 'lucide-react';
 
 const Invite = () => {
