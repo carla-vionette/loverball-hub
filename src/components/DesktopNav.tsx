@@ -1,4 +1,4 @@
-import { Home, Compass, MessageCircle, User, Search, Users, CalendarDays, Settings, ShoppingBag } from "lucide-react";
+import { User, Search, CalendarDays, Settings, ShoppingBag, Play } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import loverbballLogo from "@/assets/loverball-logo-new.png";
 import { useAuth } from "@/hooks/useAuth";
@@ -10,7 +10,7 @@ const DesktopNav = () => {
   const { hasUnread } = useUnreadMessages();
   
   const navItems = [
-    { icon: Home, label: "For You", path: "/profile" },
+    { icon: Play, label: "For You", path: "/watch" },
     { icon: CalendarDays, label: "Events", path: "/events" },
     { icon: ShoppingBag, label: "Shop", path: "/shop" },
     { icon: User, label: "Profile", path: "/profile" },
