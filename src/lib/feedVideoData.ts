@@ -1,7 +1,3 @@
-import soraSoccer from "@/assets/sora-soccer.mp4";
-import soraTennis from "@/assets/sora-tennis.mp4";
-import soraBasketball from "@/assets/sora-basketball.mp4";
-import soraSport4 from "@/assets/sora-sport-4.mp4";
 import feedVideoNew from "@/assets/feed-video-new.mov";
 import tiktokSport1 from "@/assets/tiktok-sport-1.mov";
 import tiktokSport2 from "@/assets/tiktok-sport-2.mp4";
@@ -10,11 +6,7 @@ import tiktokSport4 from "@/assets/tiktok-sport-4.mp4";
 
 import risingStarsThumb from "@/assets/rising-stars.jpg";
 import pickupGameThumb from "@/assets/pickup-game.jpg";
-import trainingDayThumb from "@/assets/training-day.jpg";
 import teamSpiritThumb from "@/assets/team-spirit.jpg";
-import fullCourtThumb from "@/assets/full-court-press.jpg";
-import sunsetVolleyballThumb from "@/assets/sunset-volleyball.jpg";
-import contentBasketballThumb from "@/assets/content-basketball.jpg";
 import fieldDayThumb from "@/assets/field-day.jpg";
 
 const thumbBase = "https://images.unsplash.com/photo-";
@@ -96,68 +88,5 @@ export const FEED_VIDEOS: FeedVideoItem[] = [
     views: 89000,
     uploadDate: "2026-02-16",
     tags: ["behind-the-scenes", "access", "exclusive"],
-  },
-  {
-    id: "loverball_soccer",
-    channelId: "loverball",
-    channelName: "Loverball",
-    channelAvatar: thumbBase + "1535930749574-1399327ce78f?w=80&h=80&fit=crop&crop=faces",
-    videoUrl: soraSoccer,
-    thumbnail: sunsetVolleyballThumb,
-    title: "Beautiful Game — Soccer in Slow Motion ⚽",
-    description: "The art of the pitch. Cinematic beauty meets the beautiful game.",
-    duration: 30,
-    likes: 12400,
-    views: 245000,
-    uploadDate: "2026-02-16",
-    tags: ["soccer", "cinematic"],
-    isFollowing: true,
-  },
-  {
-    id: "loverball_tennis",
-    channelId: "loverball",
-    channelName: "Loverball",
-    channelAvatar: thumbBase + "1535930749574-1399327ce78f?w=80&h=80&fit=crop&crop=faces",
-    videoUrl: soraTennis,
-    thumbnail: fullCourtThumb,
-    title: "Match Point — Tennis Reimagined 🎾",
-    description: "Every rally tells a story. Cinematic tennis like you've never seen.",
-    duration: 28,
-    likes: 9800,
-    views: 189000,
-    uploadDate: "2026-02-16",
-    tags: ["tennis", "cinematic"],
-    isFollowing: true,
-  },
-  {
-    id: "loverball_basketball",
-    channelId: "loverball",
-    channelName: "Loverball",
-    channelAvatar: thumbBase + "1535930749574-1399327ce78f?w=80&h=80&fit=crop&crop=faces",
-    videoUrl: soraBasketball,
-    thumbnail: contentBasketballThumb,
-    title: "Above the Rim — Basketball Dreams 🏀",
-    description: "Where gravity meets grace. Pure hoops cinema.",
-    duration: 32,
-    likes: 15200,
-    views: 312000,
-    uploadDate: "2026-02-16",
-    tags: ["basketball", "cinematic"],
-    isFollowing: true,
-  },
-  {
-    id: "loverball_sport_4",
-    channelId: "loverball-originals",
-    channelName: "Loverball Originals",
-    channelAvatar: thumbBase + "1535930749574-1399327ce78f?w=80&h=80&fit=crop&crop=faces",
-    videoUrl: soraSport4,
-    thumbnail: trainingDayThumb,
-    title: "In Motion — Athletes Unleashed 🔥",
-    description: "Pure athletic energy, captured frame by frame.",
-    duration: 35,
-    likes: 8700,
-    views: 156000,
-    uploadDate: "2026-02-16",
-    tags: ["athletics", "cinematic"],
   },
 ];
