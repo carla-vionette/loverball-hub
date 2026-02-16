@@ -220,6 +220,7 @@ export type Database = {
           image_url: string | null
           location_map_url: string | null
           location_type: string | null
+          price: number | null
           rsvp_deadline: string | null
           slug: string | null
           sport_tags: string[] | null
@@ -228,6 +229,7 @@ export type Database = {
           title: string
           updated_at: string
           venue_name: string | null
+          venue_type: string | null
           virtual_link: string | null
           visibility: string
         }
@@ -246,6 +248,7 @@ export type Database = {
           image_url?: string | null
           location_map_url?: string | null
           location_type?: string | null
+          price?: number | null
           rsvp_deadline?: string | null
           slug?: string | null
           sport_tags?: string[] | null
@@ -254,6 +257,7 @@ export type Database = {
           title: string
           updated_at?: string
           venue_name?: string | null
+          venue_type?: string | null
           virtual_link?: string | null
           visibility?: string
         }
@@ -272,6 +276,7 @@ export type Database = {
           image_url?: string | null
           location_map_url?: string | null
           location_type?: string | null
+          price?: number | null
           rsvp_deadline?: string | null
           slug?: string | null
           sport_tags?: string[] | null
@@ -280,6 +285,7 @@ export type Database = {
           title?: string
           updated_at?: string
           venue_name?: string | null
+          venue_type?: string | null
           virtual_link?: string | null
           visibility?: string
         }
