@@ -2,7 +2,12 @@ import type { Config } from "tailwindcss";
 
 export default {
   darkMode: ["class"],
-  content: ["./pages/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}", "./app/**/*.{ts,tsx}", "./src/**/*.{ts,tsx}"],
+  content: [
+    "./pages/**/*.{ts,tsx}",
+    "./components/**/*.{ts,tsx}",
+    "./app/**/*.{ts,tsx}",
+    "./src/**/*.{ts,tsx}",
+  ],
   prefix: "",
   theme: {
     container: {
@@ -12,10 +17,70 @@ export default {
         "2xl": "1400px",
       },
     },
+    /* ── Spacing scale (4-base) ── */
+    spacing: {
+      0: "0px",
+      px: "1px",
+      0.5: "2px",
+      1: "4px",
+      1.5: "6px",
+      2: "8px",
+      2.5: "10px",
+      3: "12px",
+      3.5: "14px",
+      4: "16px",
+      5: "20px",
+      6: "24px",
+      7: "28px",
+      8: "32px",
+      9: "36px",
+      10: "40px",
+      11: "44px",
+      12: "48px",
+      14: "56px",
+      16: "64px",
+      20: "80px",
+      24: "96px",
+      28: "112px",
+      32: "128px",
+      36: "144px",
+      40: "160px",
+      44: "176px",
+      48: "192px",
+      52: "208px",
+      56: "224px",
+      60: "240px",
+      64: "256px",
+      72: "288px",
+      80: "320px",
+      96: "384px",
+    },
+    /* ── Breakpoints ── */
+    screens: {
+      sm: "640px",
+      md: "768px",
+      lg: "1024px",
+      xl: "1280px",
+      "2xl": "1400px",
+    },
     extend: {
       fontFamily: {
-        sans: ['DM Sans', 'system-ui', 'sans-serif'],
-        serif: ['Libre Baskerville', 'Georgia', 'serif'],
+        sans: ["DM Sans", "system-ui", "sans-serif"],
+      },
+      fontSize: {
+        /* Caption / label */
+        xs: ["0.75rem", { lineHeight: "1rem" }],
+        sm: ["0.875rem", { lineHeight: "1.25rem" }],
+        /* Body */
+        base: ["1rem", { lineHeight: "1.625rem" }],
+        lg: ["1.125rem", { lineHeight: "1.75rem" }],
+        /* Headings */
+        xl: ["1.25rem", { lineHeight: "1.75rem" }],
+        "2xl": ["1.5rem", { lineHeight: "2rem" }],
+        "3xl": ["1.875rem", { lineHeight: "2.25rem" }],
+        "4xl": ["2.25rem", { lineHeight: "2.5rem" }],
+        "5xl": ["3rem", { lineHeight: "1.15" }],
+        "6xl": ["3.75rem", { lineHeight: "1.1" }],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -23,6 +88,10 @@ export default {
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
+        brand: {
+          DEFAULT: "hsl(var(--brand))",
+          foreground: "hsl(var(--brand-foreground))",
+        },
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
@@ -34,6 +103,18 @@ export default {
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
           foreground: "hsl(var(--destructive-foreground))",
+        },
+        success: {
+          DEFAULT: "hsl(var(--success))",
+          foreground: "hsl(var(--success-foreground))",
+        },
+        warning: {
+          DEFAULT: "hsl(var(--warning))",
+          foreground: "hsl(var(--warning-foreground))",
+        },
+        info: {
+          DEFAULT: "hsl(var(--info))",
+          foreground: "hsl(var(--info-foreground))",
         },
         muted: {
           DEFAULT: "hsl(var(--muted))",
@@ -81,6 +162,10 @@ export default {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
+      /* ── Grid ── */
+      gridTemplateColumns: {
+        "layout": "repeat(12, minmax(0, 1fr))",
+      },
       keyframes: {
         "accordion-down": {
           from: { height: "0" },
@@ -126,7 +211,7 @@ export default {
           "0%, 100%": { opacity: "1" },
           "50%": { opacity: "0.5" },
         },
-        "shimmer": {
+        shimmer: {
           "0%": { backgroundPosition: "-200% 0" },
           "100%": { backgroundPosition: "200% 0" },
         },
@@ -142,7 +227,7 @@ export default {
         "slide-in-right": "slide-in-right 0.3s ease-out",
         "slide-out-right": "slide-out-right 0.3s ease-out",
         "skeleton-pulse": "skeleton-pulse 2s ease-in-out infinite",
-        "shimmer": "shimmer 2s linear infinite",
+        shimmer: "shimmer 2s linear infinite",
       },
     },
   },

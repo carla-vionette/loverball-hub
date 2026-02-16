@@ -1,6 +1,3 @@
-@import "@fontsource/libre-baskerville/400.css";
-@import "@fontsource/libre-baskerville/400-italic.css";
-@import "@fontsource/libre-baskerville/700.css";
 @import "@fontsource/dm-sans/400.css";
 @import "@fontsource/dm-sans/500.css";
 @import "@fontsource/dm-sans/600.css";
@@ -10,80 +7,87 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* ============================================================
+   LOVERBALL DESIGN SYSTEM
+   All colors are HSL. Use semantic tokens everywhere.
+   ============================================================ */
 
 @layer base {
   :root {
-  /* Soft sage-green aesthetic — WCAG AA contrast compliant */
-    --background: 90 14% 89%; /* Muted sage, lightened for contrast */
-    --foreground: 0 0% 6%; /* Near Black — 13:1 contrast ratio */
+    /* ── Brand ── */
+    --brand: 72 100% 50%;            /* #CDFF00 Loverball Yellow */
+    --brand-foreground: 0 0% 0%;
 
-    --card: 90 12% 93%; /* Light sage-white */
-    --card-foreground: 0 0% 8%;
+    /* ── Core palette ── */
+    --background: 0 0% 96%;          /* #F5F5F5 Light */
+    --foreground: 0 0% 0%;           /* #000000 Primary text */
 
-    --popover: 90 10% 96%;
-    --popover-foreground: 0 0% 8%;
+    --card: 0 0% 100%;               /* #FFFFFF */
+    --card-foreground: 0 0% 0%;
 
-    /* Dark primary */
-    --primary: 0 0% 8%;
-    --primary-foreground: 0 0% 100%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 0%;
 
-    --secondary: 90 10% 90%;
-    --secondary-foreground: 0 0% 15%;
+    /* Primary = brand */
+    --primary: 72 100% 50%;
+    --primary-foreground: 0 0% 0%;
 
-    --muted: 90 8% 84%;
-    --muted-foreground: 0 0% 38%; /* Darkened for 4.5:1 contrast on light bg */
+    --secondary: 0 0% 96%;           /* #F5F5F5 */
+    --secondary-foreground: 0 0% 40%; /* #666666 Secondary text */
 
-    /* Neon Yellow accent */
-    --accent: 66 100% 60%; /* Bright neon yellow #E8FF3A */
+    --muted: 0 0% 92%;
+    --muted-foreground: 0 0% 40%;    /* #666666 */
+
+    --accent: 72 100% 50%;
     --accent-foreground: 0 0% 0%;
 
-    /* Additional brand colors */
-    --coral: 4 56% 60%;
-    --coral-foreground: 0 0% 100%;
-
-    --pale-pink: 90 10% 95%;
-    --pale-pink-foreground: 0 0% 10%;
-
-    --medium-blue: 224 64% 45%;
-    --medium-blue-foreground: 0 0% 100%;
-
-    --olive: 90 12% 52%;
-    --olive-foreground: 0 0% 100%;
-
-    --light-lime: 66 100% 60%;
-    --light-lime-foreground: 0 0% 0%;
-
-    --ticker: 66 100% 60%;
-    --ticker-foreground: 0 0% 0%;
-
-    --destructive: 0 84% 50%;
+    /* ── Status colors ── */
+    --success: 142 72% 42%;          /* Green */
+    --success-foreground: 0 0% 100%;
+    --warning: 38 92% 50%;           /* Amber */
+    --warning-foreground: 0 0% 0%;
+    --info: 210 100% 52%;            /* Blue */
+    --info-foreground: 0 0% 100%;
+    --destructive: 0 84% 50%;        /* Red */
     --destructive-foreground: 0 0% 100%;
 
-    --border: 90 8% 80%;
-    --input: 90 8% 80%;
-    --ring: 0 0% 8%;
+    /* ── Additional brand ── */
+    --coral: 4 56% 60%;
+    --coral-foreground: 0 0% 100%;
+    --pale-pink: 0 0% 97%;
+    --pale-pink-foreground: 0 0% 10%;
+    --medium-blue: 224 64% 45%;
+    --medium-blue-foreground: 0 0% 100%;
+    --olive: 90 12% 52%;
+    --olive-foreground: 0 0% 100%;
+    --light-lime: 72 100% 50%;
+    --light-lime-foreground: 0 0% 0%;
+    --ticker: 72 100% 50%;
+    --ticker-foreground: 0 0% 0%;
+
+    /* ── Chrome ── */
+    --border: 0 0% 88%;
+    --input: 0 0% 88%;
+    --ring: 72 100% 50%;
 
     --radius: 1.5rem;
   }
 
   .dark {
     --background: 0 0% 8%;
-    --foreground: 100 10% 92%;
+    --foreground: 0 0% 96%;
 
     --card: 0 0% 12%;
-    --card-foreground: 100 10% 92%;
+    --card-foreground: 0 0% 96%;
 
     --popover: 0 0% 12%;
-    --popover-foreground: 100 10% 92%;
+    --popover-foreground: 0 0% 96%;
 
-    --primary: 72 100% 50%; /* Neon lime in dark mode */
+    --primary: 72 100% 50%;
     --primary-foreground: 0 0% 0%;
 
     --secondary: 0 0% 15%;
-    --secondary-foreground: 100 10% 92%;
+    --secondary-foreground: 0 0% 70%;
 
     --muted: 0 0% 18%;
     --muted-foreground: 0 0% 60%;
@@ -91,44 +95,49 @@ All colors MUST be HSL.
     --accent: 72 100% 50%;
     --accent-foreground: 0 0% 0%;
 
+    --success: 142 72% 42%;
+    --success-foreground: 0 0% 100%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 0%;
+    --info: 210 100% 52%;
+    --info-foreground: 0 0% 100%;
+    --destructive: 0 84% 50%;
+    --destructive-foreground: 0 0% 100%;
+
     --border: 0 0% 20%;
     --input: 0 0% 20%;
     --ring: 72 100% 50%;
   }
 
-  /* Video Streaming Dark Theme - scoped to .video-theme */
+  /* Video Streaming Dark Theme */
   .video-theme {
-    --background: 0 0% 8%; /* #141414 */
-    --foreground: 0 0% 100%; /* white */
-
-    --card: 0 0% 10%; /* #1a1a1a */
+    --background: 0 0% 8%;
+    --foreground: 0 0% 100%;
+    --card: 0 0% 10%;
     --card-foreground: 0 0% 100%;
-
     --popover: 0 0% 10%;
     --popover-foreground: 0 0% 100%;
-
-    --primary: 4 90% 50%; /* #e50914 Netflix red */
+    --primary: 4 90% 50%;
     --primary-foreground: 0 0% 100%;
-
     --secondary: 0 0% 13%;
-    --secondary-foreground: 0 0% 70%; /* #b3b3b3 */
-
+    --secondary-foreground: 0 0% 70%;
     --muted: 0 0% 16%;
     --muted-foreground: 0 0% 70%;
-
     --accent: 4 90% 50%;
     --accent-foreground: 0 0% 100%;
-
     --border: 0 0% 18%;
     --input: 0 0% 18%;
     --ring: 4 90% 50%;
-
     --destructive: 0 84% 50%;
     --destructive-foreground: 0 0% 100%;
-
-    --video-hover: 0 0% 17%; /* #2a2a2a */
+    --video-hover: 0 0% 17%;
   }
 }
+
+/* ============================================================
+   TYPOGRAPHY SCALE
+   Font: DM Sans (400, 500, 600, 700)
+   ============================================================ */
 
 @layer base {
   * {
@@ -140,20 +149,31 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground font-sans antialiased;
+    @apply bg-background text-foreground font-sans antialiased text-base leading-relaxed;
   }
 
-  h1, h2, h3, h4, h5, h6 {
-    @apply font-sans;
-  }
+  /* Heading hierarchy */
+  h1 { @apply font-sans font-bold text-4xl md:text-5xl leading-tight tracking-tight; }
+  h2 { @apply font-sans font-bold text-3xl md:text-4xl leading-tight tracking-tight; }
+  h3 { @apply font-sans font-semibold text-2xl leading-snug; }
+  h4 { @apply font-sans font-semibold text-xl leading-snug; }
+  h5 { @apply font-sans font-medium text-lg leading-normal; }
+  h6 { @apply font-sans font-medium text-base leading-normal; }
+
+  /* Caption / label */
+  small, .caption { @apply text-xs leading-normal text-muted-foreground; }
+  label { @apply text-sm font-medium leading-none; }
 }
+
+/* ============================================================
+   COMPONENT LAYER
+   ============================================================ */
 
 @layer components {
   /* Editorial underline accent */
   .editorial-underline {
     @apply relative inline-block;
   }
-  
   .editorial-underline::after {
     content: '';
     @apply absolute bottom-0 left-0 w-full h-[2px] bg-primary;
@@ -166,100 +186,75 @@ All colors MUST be HSL.
 
   /* Editorial card with shadow */
   .editorial-card {
-    @apply bg-card shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-shadow duration-300;
+    @apply bg-card shadow-[0_8px_30px_rgb(0,0,0,0.06)] transition-shadow duration-300;
   }
-
   .editorial-card:hover {
-    @apply shadow-[0_12px_40px_rgb(0,0,0,0.12)];
+    @apply shadow-[0_12px_40px_rgb(0,0,0,0.10)];
   }
 
   /* Overlapping element style */
-  .overlap-left {
-    @apply relative lg:-ml-12 lg:z-10;
-  }
+  .overlap-left { @apply relative lg:-ml-12 lg:z-10; }
+  .overlap-right { @apply relative lg:-mr-12 lg:z-10; }
 
-  .overlap-right {
-    @apply relative lg:-mr-12 lg:z-10;
-  }
-
-  /* Editorial ribbon/banner */
+  /* Ribbon / banner */
   .ribbon {
     @apply bg-primary text-primary-foreground px-4 py-1 text-xs font-medium tracking-widest uppercase;
   }
 
-  /* Encircled text annotation */
-  .annotation-circle {
-    @apply relative inline-block;
-  }
-
+  /* Annotation circle */
+  .annotation-circle { @apply relative inline-block; }
   .annotation-circle::before {
     content: '';
     @apply absolute -inset-2 border-2 border-primary rounded-full;
   }
+
+  /* Status toast variants */
+  .toast-success { @apply border-success bg-success text-success-foreground; }
+  .toast-warning { @apply border-warning bg-warning text-warning-foreground; }
+  .toast-info    { @apply border-info bg-info text-info-foreground; }
 }
 
-@layer utilities {
-  /* Smooth hover transitions */
-  .hover-lift {
-    @apply transition-transform duration-300 hover:-translate-y-1;
-  }
+/* ============================================================
+   UTILITY LAYER
+   ============================================================ */
 
-  /* Text balance for better typography */
-  .text-balance {
-    text-wrap: balance;
-  }
-  
-  /* Hide scrollbar utility */
+@layer utilities {
+  .hover-lift { @apply transition-transform duration-300 hover:-translate-y-1; }
+  .text-balance { text-wrap: balance; }
+
   .scrollbar-hide {
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
-  
-  .scrollbar-hide::-webkit-scrollbar {
-    display: none;
-  }
+  .scrollbar-hide::-webkit-scrollbar { display: none; }
 
-  /* Touch-friendly tap target */
-  .tap-target {
-    @apply min-h-[44px] min-w-[44px];
-  }
+  .tap-target { @apply min-h-[44px] min-w-[44px]; }
 
-  /* Focus visible ring for keyboard navigation — high contrast */
   .focus-ring {
     @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background;
   }
 
-  /* Skip to content link for keyboard users */
   .skip-link {
     @apply sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-2 focus:bg-primary focus:text-primary-foreground focus:rounded-lg focus:text-sm focus:font-medium;
   }
 
-  /* Screen reader only live region */
-  .sr-live {
-    @apply sr-only;
-  }
+  .sr-live { @apply sr-only; }
 
-  /* Safe area padding for notched devices */
-  .safe-top { padding-top: env(safe-area-inset-top); }
+  /* Safe area */
+  .safe-top    { padding-top: env(safe-area-inset-top); }
   .safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
-  .safe-left { padding-left: env(safe-area-inset-left); }
-  .safe-right { padding-right: env(safe-area-inset-right); }
+  .safe-left   { padding-left: env(safe-area-inset-left); }
+  .safe-right  { padding-right: env(safe-area-inset-right); }
 
-  /* Micro-interaction: button press */
-  .press-scale {
-    @apply transition-transform duration-150 active:scale-95;
-  }
+  .press-scale { @apply transition-transform duration-150 active:scale-95; }
 
-  /* Smooth 60fps momentum scrolling */
   .momentum-scroll {
     -webkit-overflow-scrolling: touch;
     overscroll-behavior-y: contain;
   }
 
-  /* Reduced motion: disable animations */
   @media (prefers-reduced-motion: reduce) {
-    .hover-lift,
-    .press-scale {
+    .hover-lift, .press-scale {
       transition: none !important;
       transform: none !important;
     }
