@@ -120,7 +120,7 @@ const LandingPage = () => {
                 <p className="text-primary-foreground/80 text-sm font-medium tracking-widest mb-6 uppercase">
                   Hey Friend.
                 </p>
-                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-serif font-normal leading-[1.1] mb-6">
+                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-sans font-normal leading-[1.1] mb-6">
                   Let's Elevate<br />
                   Your Sports<br />
                   <span className="italic">Experience</span>
@@ -173,9 +173,9 @@ const LandingPage = () => {
             className="text-2xl sm:text-3xl lg:text-4xl text-foreground leading-relaxed"
           >
             We specialize in creating{" "}
-            <span className="italic font-serif text-primary border-b-2 border-primary">tailored</span>{" "}
+            <span className="italic font-sans text-primary border-b-2 border-primary">tailored</span>{" "}
             sports content and experiences that drive engagement, build brand loyalty, and{" "}
-            <span className="italic font-serif text-primary border-b-2 border-primary">inspire women.</span>
+            <span className="italic font-sans text-primary border-b-2 border-primary">inspire women.</span>
           </motion.p>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -231,7 +231,7 @@ const LandingPage = () => {
                 <span className="inline-block bg-primary-foreground/20 text-primary-foreground px-4 py-2 rounded-full text-sm font-medium tracking-wide mb-6">
                   About Loverball
                 </span>
-                <h2 className="text-3xl sm:text-4xl font-serif mb-6">About Loverball</h2>
+                <h2 className="text-3xl sm:text-4xl font-sans mb-6">About Loverball</h2>
                 <p className="text-lg leading-relaxed mb-4 text-primary-foreground/90">
                   <strong>85% of household purchasing decisions</strong> are made by women. Yet we're overlooked in sports coverage and community.
                 </p>
@@ -264,7 +264,7 @@ const LandingPage = () => {
             <span className="inline-block bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium tracking-wide mb-6">
               Our Services
             </span>
-            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-serif font-normal text-foreground">
+            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-sans font-normal text-foreground">
               Built <span className="italic">For Her</span>
             </h2>
           </motion.div>
@@ -283,7 +283,7 @@ const LandingPage = () => {
                   <div className="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-primary group-hover:text-primary-foreground transition-colors duration-300">
                     <feature.icon className="h-7 w-7 text-primary group-hover:text-primary-foreground transition-colors duration-300" />
                   </div>
-                  <h3 className="text-xl font-serif text-foreground mb-4 group-hover:text-primary transition-colors duration-300">
+                  <h3 className="text-xl font-sans text-foreground mb-4 group-hover:text-primary transition-colors duration-300">
                     {feature.title}
                   </h3>
                   <p className="text-foreground/60 leading-relaxed">
@@ -302,7 +302,7 @@ const LandingPage = () => {
                   onClick={() => setOpenAccordion(openAccordion === index ? null : index)}
                   className="w-full py-6 flex items-center justify-between text-left hover:text-primary transition-colors"
                 >
-                  <span className="text-xl font-serif text-foreground">{item.title}</span>
+                  <span className="text-xl font-sans text-foreground">{item.title}</span>
                   {openAccordion === index ? (
                     <Minus className="h-5 w-5 text-primary shrink-0" />
                   ) : (
@@ -338,7 +338,7 @@ const LandingPage = () => {
             <span className="inline-block bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium tracking-wide mb-6">
               Join Us
             </span>
-            <h2 className="text-5xl sm:text-6xl lg:text-7xl font-serif text-foreground">
+            <h2 className="text-5xl sm:text-6xl lg:text-7xl font-sans text-foreground">
               Our <span className="italic text-primary">Community</span>
             </h2>
           </motion.div>
@@ -358,7 +358,7 @@ const LandingPage = () => {
                 viewport={{ once: true }}
                 className="bg-white p-8 rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.06)] text-center border border-border/50"
               >
-                <p className="text-5xl sm:text-6xl font-serif text-primary mb-2">{stat.value}</p>
+                <p className="text-5xl sm:text-6xl font-sans text-primary mb-2">{stat.value}</p>
                 <p className="text-lg font-medium text-foreground mb-1">{stat.label}</p>
                 <p className="text-sm text-foreground/60">{stat.desc}</p>
               </motion.div>
@@ -396,7 +396,7 @@ const LandingPage = () => {
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-serif text-primary-foreground mb-6">
+            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-sans text-primary-foreground mb-6">
               Ready to <span className="italic">Join</span>?
             </h2>
             <p className="text-xl text-primary-foreground/80 mb-10 max-w-2xl mx-auto">

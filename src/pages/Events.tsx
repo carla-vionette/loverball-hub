@@ -293,7 +293,7 @@ const Events = () => {
             <span className="inline-block bg-accent text-accent-foreground px-4 py-2 rounded-full text-sm font-semibold tracking-wide mb-4">
               Community
             </span>
-            <h1 className="text-4xl font-serif font-normal mb-3">Events</h1>
+            <h1 className="text-4xl font-sans font-normal mb-3">Events</h1>
             <p className="text-muted-foreground text-lg">
               Join watch parties, brunches, picnics, field days, and more with the Loverball community.
             </p>
@@ -404,7 +404,7 @@ const Events = () => {
                   </div>
                   
                   <CardContent className="pt-5">
-                    <h3 className="font-serif font-semibold text-lg mb-3 line-clamp-2 group-hover:text-primary transition-colors">{event.title}</h3>
+                    <h3 className="font-sans font-semibold text-lg mb-3 line-clamp-2 group-hover:text-primary transition-colors">{event.title}</h3>
                     
                     <div className="space-y-2.5 mb-4">
                       <div className="flex items-center gap-2 text-sm text-muted-foreground">

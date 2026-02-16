@@ -199,7 +199,7 @@ const Following = () => {
             {/* HEADER */}
             <motion.div variants={staggerItem} className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2">
               <div>
-                <h1 className="text-2xl sm:text-3xl font-serif text-foreground">{greeting}, {userName}!</h1>
+                <h1 className="text-2xl sm:text-3xl font-sans text-foreground">{greeting}, {userName}!</h1>
                 <p className="text-sm text-muted-foreground">{formattedDate} · {formattedTime}</p>
               </div>
               <Tabs value={dateRange} onValueChange={(v) => setDateRange(v as any)} className="w-fit">
@@ -222,7 +222,7 @@ const Following = () => {
                       <TrendingUp className="w-3 h-3 mr-0.5" /> +12%
                     </span>
                   </div>
-                  <p className="text-2xl font-serif font-bold text-foreground">{totalArticles}</p>
+                  <p className="text-2xl font-sans font-bold text-foreground">{totalArticles}</p>
                   <p className="text-xs text-muted-foreground">Articles Read</p>
                   <p className="text-[10px] text-muted-foreground/60 mt-0.5">vs last week</p>
                 </CardContent>
@@ -235,7 +235,7 @@ const Following = () => {
                     <BookOpen className="w-4 h-4 text-medium-blue" />
                     <Badge variant="secondary" className="text-[10px] px-1.5 py-0 rounded-sm">{favTopic.value}%</Badge>
                   </div>
-                  <p className="text-lg font-serif font-bold text-foreground truncate">{favTopic.name}</p>
+                  <p className="text-lg font-sans font-bold text-foreground truncate">{favTopic.name}</p>
                   <p className="text-xs text-muted-foreground">Favorite Topic</p>
                 </CardContent>
               </Card>
@@ -247,7 +247,7 @@ const Following = () => {
                     <Clock className="w-4 h-4 text-olive" />
                     <span className="text-xs text-muted-foreground">{avgPerDay}m/day</span>
                   </div>
-                  <p className="text-2xl font-serif font-bold text-foreground">{totalMinutes}</p>
+                  <p className="text-2xl font-sans font-bold text-foreground">{totalMinutes}</p>
                   <p className="text-xs text-muted-foreground">Minutes Read</p>
                 </CardContent>
               </Card>
@@ -263,7 +263,7 @@ const Following = () => {
                       <TrendingDown className="w-3.5 h-3.5 text-destructive" />
                     )}
                   </div>
-                  <p className="text-2xl font-serif font-bold text-foreground">{(combinedWinPct * 100).toFixed(0)}%</p>
+                  <p className="text-2xl font-sans font-bold text-foreground">{(combinedWinPct * 100).toFixed(0)}%</p>
                   <p className="text-xs text-muted-foreground">Win Rate</p>
                 </CardContent>
               </Card>
@@ -278,7 +278,7 @@ const Following = () => {
                       <div className="text-4xl">{zodiac.symbol}</div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-1">
-                          <h3 className="font-serif text-base text-foreground">{zodiac.name}</h3>
+                          <h3 className="font-sans text-base text-foreground">{zodiac.name}</h3>
                           <Badge variant="outline" className="text-[10px] rounded-none capitalize">{zodiac.element}</Badge>
                         </div>
                         <p className="text-sm text-foreground/80 leading-relaxed line-clamp-2">{HOROSCOPE_MESSAGES[zodiac.name]}</p>
@@ -446,7 +446,7 @@ const Following = () => {
                           <p className="text-xs text-muted-foreground">{team.nextGame}</p>
                         </div>
                         <div className="text-right">
-                          <p className="text-sm font-serif font-bold text-foreground">{team.record}</p>
+                          <p className="text-sm font-sans font-bold text-foreground">{team.record}</p>
                           {team.last5.length > 0 && (
                             <div className="flex gap-0.5 mt-1 justify-end">
                               {team.last5.map((win, i) => (

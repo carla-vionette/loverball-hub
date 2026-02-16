@@ -109,7 +109,7 @@ const Horoscope = () => {
                   <div className="flex items-center gap-3">
                     <span className="text-4xl">{data.symbol}</span>
                     <div>
-                      <h1 className="text-xl font-serif font-bold text-foreground">{data.sign}</h1>
+                      <h1 className="text-xl font-sans font-bold text-foreground">{data.sign}</h1>
                       <p className="text-xs text-muted-foreground">{data.date}</p>
                     </div>
                     <Badge variant="outline" className="ml-auto text-xs capitalize">{data.element}</Badge>

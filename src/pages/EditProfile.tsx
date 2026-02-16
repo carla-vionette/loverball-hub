@@ -279,7 +279,7 @@ const EditProfile = () => {
               Back to Profile
             </Button>
             <p className="text-primary text-sm font-medium tracking-widest mb-4 uppercase">Step {step} of {totalSteps}</p>
-            <h1 className="text-3xl sm:text-4xl font-serif font-normal text-foreground mb-4">Edit your profile</h1>
+            <h1 className="text-3xl sm:text-4xl font-sans font-normal text-foreground mb-4">Edit your profile</h1>
             <Progress value={progress} className="h-1" />
           </div>
 
