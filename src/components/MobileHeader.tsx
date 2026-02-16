@@ -2,7 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Search, ShoppingCart } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useCartStore } from "@/stores/cartStore";
-import loverballLogo from "@/assets/loverball-script-logo.png";
+import loverballLogo from "@/assets/loverball-l-logo.png";
 
 const MobileHeader = () => {
   const navigate = useNavigate();
@@ -16,7 +16,7 @@ const MobileHeader = () => {
           <img 
             src={loverballLogo} 
             alt="Loverball" 
-            className="h-14 w-auto object-contain"
+            className="h-10 w-auto object-contain"
           />
         </Link>
         
