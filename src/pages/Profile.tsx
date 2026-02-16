@@ -338,36 +338,18 @@ const Profile = () => {
               </motion.div>
             )}
 
-            {/* PROFILE DETAILS */}
-            <motion.div variants={staggerItem} className="grid md:grid-cols-2 gap-6">
-              {profile.favorite_sports && profile.favorite_sports.length > 0 && (
-                <Card><CardHeader><CardTitle>Favorite Sports</CardTitle></CardHeader><CardContent><div className="flex flex-wrap gap-2">{profile.favorite_sports.map(s => <Badge key={s} variant="secondary">{s}</Badge>)}</div></CardContent></Card>
-              )}
-              {profile.favorite_teams_players && profile.favorite_teams_players.length > 0 && (
-                <Card><CardHeader><CardTitle>Favorite Teams & Players</CardTitle></CardHeader><CardContent><div className="flex flex-wrap gap-2">{profile.favorite_teams_players.map(t => <Badge key={t} variant="outline">{t}</Badge>)}</div></CardContent></Card>
-              )}
-              {profile.sports_experience_types && profile.sports_experience_types.length > 0 && (
-                <Card><CardHeader><CardTitle>How I Experience Sports</CardTitle></CardHeader><CardContent><div className="flex flex-wrap gap-2">{profile.sports_experience_types.map(t => <Badge key={t} variant="secondary">{t}</Badge>)}</div></CardContent></Card>
-              )}
-              {profile.other_interests && profile.other_interests.length > 0 && (
-                <Card><CardHeader><CardTitle>Other Interests</CardTitle></CardHeader><CardContent><div className="flex flex-wrap gap-2">{profile.other_interests.map(i => <Badge key={i} variant="outline">{i}</Badge>)}</div></CardContent></Card>
-              )}
+            {/* MY INTERESTS LINK */}
+            <motion.div variants={staggerItem}>
+              <Card className="cursor-pointer hover:border-primary transition-colors" onClick={() => navigate("/profile/interests")}>
+                <CardContent className="p-4 flex items-center justify-between">
+                  <div>
+                    <p className="font-medium text-foreground">My Interests</p>
+                    <p className="text-sm text-muted-foreground">Teams, sports, experiences & more</p>
+                  </div>
+                  <ChevronRight className="w-5 h-5 text-muted-foreground" />
+                </CardContent>
+              </Card>
             </motion.div>
-
-            {/* EVENT PREFERENCES */}
-            {(profile.event_comfort_level || (profile.participation_preferences && profile.participation_preferences.length > 0)) && (
-              <motion.div variants={staggerItem}>
-                <Card>
-                  <CardHeader><CardTitle>Event Preferences</CardTitle></CardHeader>
-                  <CardContent className="space-y-4">
-                    {profile.event_comfort_level && (<div><p className="text-sm font-medium mb-2">Comfort Level</p><Badge variant="secondary">{profile.event_comfort_level}</Badge></div>)}
-                    {profile.participation_preferences && profile.participation_preferences.length > 0 && (
-                      <div><p className="text-sm font-medium mb-2">I want to</p><div className="flex flex-wrap gap-2">{profile.participation_preferences.map(p => <Badge key={p} variant="outline">{p}</Badge>)}</div></div>
-                    )}
-                  </CardContent>
-                </Card>
-              </motion.div>
-            )}
 
 
 
