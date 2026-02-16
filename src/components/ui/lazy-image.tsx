@@ -8,11 +8,13 @@ interface LazyImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   fallback?: React.ReactNode;
   aspectRatio?: string;
   wrapperClassName?: string;
+  /** Enable WebP format with original as fallback using <picture> */
+  webpSrc?: string;
 }
 
 /**
  * Lazy-loaded image with Intersection Observer, progressive fade-in,
- * and skeleton placeholder. Accessible alt text required.
+ * skeleton placeholder, and optional WebP <picture> fallback.
  */
 const LazyImage = ({
   src,
@@ -21,6 +23,7 @@ const LazyImage = ({
   wrapperClassName,
   fallback,
   aspectRatio,
+  webpSrc,
   ...props
 }: LazyImageProps) => {
   const imgRef = useRef<HTMLDivElement>(null);
@@ -46,6 +49,28 @@ const LazyImage = ({
     return () => observer.disconnect();
   }, []);
 
+  // Generate WebP src from original if not provided
+  const inferredWebpSrc = webpSrc || (src && !src.endsWith('.svg') && !src.endsWith('.webp')
+    ? src.replace(/\.(jpg|jpeg|png)$/i, '.webp')
+    : undefined);
+
+  const imgElement = (
+    <img
+      src={src}
+      alt={alt}
+      loading="lazy"
+      decoding="async"
+      onLoad={() => setLoaded(true)}
+      onError={() => setError(true)}
+      className={cn(
+        "w-full h-full object-cover transition-opacity duration-500",
+        loaded ? "opacity-100" : "opacity-0",
+        className
+      )}
+      {...props}
+    />
+  );
+
   return (
     <div
       ref={imgRef}
@@ -57,22 +82,14 @@ const LazyImage = ({
         <Skeleton className="absolute inset-0 w-full h-full" />
       )}
 
-      {/* Actual image */}
+      {/* Actual image with WebP picture fallback */}
       {isVisible && !error && (
-        <img
-          src={src}
-          alt={alt}
-          loading="lazy"
-          decoding="async"
-          onLoad={() => setLoaded(true)}
-          onError={() => setError(true)}
-          className={cn(
-            "w-full h-full object-cover transition-opacity duration-500",
-            loaded ? "opacity-100" : "opacity-0",
-            className
-          )}
-          {...props}
-        />
+        inferredWebpSrc ? (
+          <picture>
+            <source srcSet={inferredWebpSrc} type="image/webp" />
+            {imgElement}
+          </picture>
+        ) : imgElement
       )}
 
       {/* Error fallback */}
