@@ -14,7 +14,11 @@ const VideoBottomNav = () => {
   const location = useLocation();
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden safe-area-pb px-3 pb-2">
+    <nav
+      className="fixed bottom-0 left-0 right-0 z-50 md:hidden safe-area-pb px-3 pb-2"
+      role="navigation"
+      aria-label="Video navigation"
+    >
       <div className="flex justify-around items-center h-16 bg-card/90 backdrop-blur-md rounded-[2rem] shadow-[0_4px_24px_rgba(0,0,0,0.08)] border border-border/20">
         {navItems.map((item) => {
           const Icon = item.icon;
@@ -24,7 +28,9 @@ const VideoBottomNav = () => {
             <Link
               key={item.path}
               to={item.path}
-              className={`flex flex-col items-center justify-center flex-1 h-full transition-all duration-200 rounded-2xl mx-0.5 ${
+              aria-current={isActive ? "page" : undefined}
+              aria-label={item.label}
+              className={`flex flex-col items-center justify-center flex-1 h-full transition-all duration-200 rounded-2xl mx-0.5 tap-target focus-ring ${
                 isActive ? "bg-accent text-accent-foreground" : ""
               }`}
             >
@@ -33,6 +39,7 @@ const VideoBottomNav = () => {
                   isActive ? "text-accent-foreground" : "text-foreground/40"
                 }`}
                 fill={isActive ? "currentColor" : "none"}
+                aria-hidden="true"
               />
               <span
                 className={`text-[10px] mt-1 ${
