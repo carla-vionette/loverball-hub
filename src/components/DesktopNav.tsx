@@ -13,13 +13,7 @@ const DesktopNav = () => {
     { icon: Home, label: "For You", path: "/profile" },
     { icon: CalendarDays, label: "Events", path: "/events" },
     { icon: ShoppingBag, label: "Shop", path: "/shop" },
-    ...(isMember ? [
-      { icon: Users, label: "Members", path: "/members" },
-    ] : []),
     { icon: User, label: "Profile", path: "/profile" },
-    ...(isMember ? [
-      { icon: MessageCircle, label: "Messages", path: "/messages", showBadge: true },
-    ] : []),
     ...(isAdmin ? [
       { icon: Settings, label: "Admin", path: "/admin" },
     ] : []),

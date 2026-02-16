@@ -31,12 +31,6 @@ const BottomNav = () => {
     { icon: CalendarDays, label: "Events", path: "/events" },
     { icon: Play, label: "For You", path: "/watch" },
     { icon: ShoppingBag, label: "Shop", path: "/shop" },
-    ...(isMember ? [
-      { icon: Users, label: "Members", path: "/members" },
-    ] : []),
-    ...(isMember ? [
-      { icon: MessageCircle, label: "Chat", path: "/messages", showBadge: true },
-    ] : []),
   ];
 
   return (
