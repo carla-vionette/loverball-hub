@@ -30,7 +30,7 @@ const DesktopNav = () => {
     >
       <div className="p-6 border-b border-border/20 flex items-center justify-center">
         <Link to="/" className="focus-ring rounded-lg" aria-label="Loverball home">
-          <img src={loverbballLogo} alt="Loverball logo" className="h-20 w-auto object-contain" />
+          <img src={loverbballLogo} alt="Loverball logo" className="h-32 w-auto object-contain" />
         </Link>
       </div>
       
