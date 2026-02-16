@@ -233,7 +233,7 @@ const Index = () => {
           <div className="p-8 sm:p-10">
             <DialogTitle className="sr-only">Member Access</DialogTitle>
             <div className="flex justify-center mb-6">
-              <img src={loverballLogo} alt="Loverball" className="h-10 w-auto" />
+              <img src={loverballLogo} alt="Loverball" className="h-24 w-auto" />
             </div>
             <Tabs defaultValue="login" className="w-full">
               <TabsList className="grid w-full grid-cols-2 bg-secondary rounded-full p-1 h-14">
