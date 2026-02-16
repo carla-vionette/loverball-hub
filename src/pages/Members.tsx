@@ -10,6 +10,8 @@ import { fetchProfilesByIds } from '@/lib/profileApi';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, Users, PartyPopper } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import PageError from '@/components/PageError';
+import PageSkeleton from '@/components/PageSkeleton';
 
 interface MemberProfile {
   id: string;
@@ -33,6 +35,7 @@ const Members = () => {
   const [profiles, setProfiles] = useState<MemberProfile[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState<string | null>(null);
   const [newMatch, setNewMatch] = useState<MemberProfile | null>(null);
   const { user, isMember } = useAuth();
   const { toast } = useToast();
@@ -42,14 +45,14 @@ const Members = () => {
     if (!user) return;
 
     try {
-      // Get profiles that haven't been swiped yet
+      setFetchError(null);
       const { data: swipedIds } = await supabase
         .from('swipes')
         .select('target_user_id')
         .eq('swiper_id', user.id);
 
+      // Get profiles that haven't been swiped yet
       const swipedUserIds = swipedIds?.map(s => s.target_user_id) || [];
-      swipedUserIds.push(user.id); // Exclude self
 
       // Get member user IDs
       const { data: memberRoles } = await supabase
@@ -81,8 +84,9 @@ const Members = () => {
       // Shuffle profiles for variety
       const shuffled = filteredProfiles.sort(() => Math.random() - 0.5);
       setProfiles(shuffled);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error fetching profiles:', error);
+      setFetchError(error?.message || 'Failed to load profiles');
     } finally {
       setLoading(false);
     }
@@ -146,8 +150,30 @@ const Members = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      <div className="min-h-screen bg-background">
+        <MobileHeader />
+        <DesktopNav />
+        <BottomNav />
+        <main className="md:ml-64 pt-16 md:pt-0 pb-20 md:pb-0">
+          <PageSkeleton variant="cards" count={4} />
+        </main>
+      </div>
+    );
+  }
+
+  if (fetchError) {
+    return (
+      <div className="min-h-screen bg-background">
+        <MobileHeader />
+        <DesktopNav />
+        <BottomNav />
+        <main className="md:ml-64 pt-16 md:pt-0 pb-20 md:pb-0">
+          <PageError
+            variant={!navigator.onLine ? "network" : "generic"}
+            message={fetchError}
+            onRetry={() => { setLoading(true); fetchProfiles(); }}
+          />
+        </main>
       </div>
     );
   }
@@ -172,15 +198,22 @@ const Members = () => {
               />
             </div>
           ) : (
-            <div className="text-center">
-              <Users className="w-16 h-16 mx-auto text-muted-foreground mb-4" />
+            <div className="text-center max-w-sm mx-auto">
+              <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
+                <Users className="w-8 h-8 text-muted-foreground" />
+              </div>
               <h2 className="text-2xl font-bold mb-2">You've seen everyone!</h2>
               <p className="text-muted-foreground mb-6">
                 Check back later for new members joining the community.
               </p>
-              <Button onClick={() => navigate('/messages')}>
-                View Your Matches
-              </Button>
+              <div className="flex flex-col gap-3">
+                <Button onClick={() => navigate('/messages')} className="rounded-full">
+                  View Your Matches
+                </Button>
+                <Button variant="outline" onClick={() => { setCurrentIndex(0); setLoading(true); fetchProfiles(); }} className="rounded-full">
+                  Refresh
+                </Button>
+              </div>
             </div>
           )}
         </div>
