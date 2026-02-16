@@ -170,7 +170,7 @@ const Profile = () => {
   const [suggestedEvents, setSuggestedEvents] = useState<SuggestedEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentTime, setCurrentTime] = useState(new Date());
-  const [dateRange, setDateRange] = useState<"7" | "30" | "all">("30");
+  
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -267,13 +267,6 @@ const Profile = () => {
                 <h1 className="text-2xl sm:text-3xl font-sans text-foreground">{greeting}, {userName}!</h1>
                 <p className="text-sm text-muted-foreground">{formattedDate} · {formattedTime}</p>
               </div>
-              <Tabs value={dateRange} onValueChange={(v) => setDateRange(v as any)} className="w-fit">
-                <TabsList className="h-8">
-                  <TabsTrigger value="7" className="text-xs px-3 h-7">7 Days</TabsTrigger>
-                  <TabsTrigger value="30" className="text-xs px-3 h-7">30 Days</TabsTrigger>
-                  <TabsTrigger value="all" className="text-xs px-3 h-7">All Time</TabsTrigger>
-                </TabsList>
-              </Tabs>
             </motion.div>
 
             {/* PROFILE HEADER CARD */}
