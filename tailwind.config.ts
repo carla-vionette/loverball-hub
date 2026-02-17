@@ -160,6 +160,10 @@ export default {
           DEFAULT: "hsl(var(--warm-beige))",
           foreground: "hsl(var(--warm-beige-foreground))",
         },
+        "hot-pink": {
+          DEFAULT: "hsl(var(--hot-pink))",
+          foreground: "hsl(var(--hot-pink-foreground))",
+        },
         popover: {
           DEFAULT: "hsl(var(--popover))",
           foreground: "hsl(var(--popover-foreground))",
