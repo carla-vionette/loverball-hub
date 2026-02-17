@@ -1,7 +1,7 @@
 import { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { MapPin, Edit, Sparkles, LogOut, Calendar, Clock, TrendingUp, TrendingDown, Trophy, Flame, Bookmark, BookOpen, Award, ChevronRight, ArrowUpRight, Share2, AlertTriangle, Ticket, Play, Eye, Lightbulb } from "lucide-react";
+import { MapPin, Edit, Sparkles, LogOut, Calendar, Clock, TrendingUp, TrendingDown, Trophy, Flame, Bookmark, BookOpen, Award, ChevronRight, ArrowUpRight, Share2, AlertTriangle, Ticket, Play, Eye, Lightbulb, Settings, Heart, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -77,10 +77,10 @@ const ZODIAC_SIGNS = [
 ];
 
 const ELEMENT_GRADIENTS: Record<string, string> = {
-  fire: "from-red-500/20 via-orange-400/10 to-yellow-500/5",
-  earth: "from-emerald-600/20 via-green-500/10 to-lime-400/5",
-  air: "from-sky-500/20 via-blue-400/10 to-indigo-300/5",
-  water: "from-blue-600/20 via-cyan-500/10 to-teal-400/5",
+  fire: "from-primary/20 via-primary/10 to-transparent",
+  earth: "from-accent/20 via-accent/10 to-transparent",
+  air: "from-accent/15 via-primary/10 to-transparent",
+  water: "from-accent/20 via-accent/10 to-transparent",
 };
 
 const HOROSCOPE_MESSAGES: Record<string, string> = {
@@ -132,37 +132,6 @@ const staggerItem = {
 
 const HEATMAP_COLORS = ["bg-border", "bg-primary/20", "bg-primary/40", "bg-primary/70", "bg-primary"];
 const DAYS_LABELS = ["S", "M", "T", "W", "T", "F", "S"];
-
-const FullBio = ({ bio }: { bio: string }) => {
-  return (
-    <div className="flex items-start gap-2 p-4 bg-primary/5 rounded-xl border border-primary/10 w-full md:flex-1">
-      <Sparkles className="w-4 h-4 mt-1 text-primary flex-shrink-0" />
-      <div className="flex-1 min-w-0">
-        <p className="text-sm whitespace-pre-line leading-relaxed">{bio}</p>
-      </div>
-    </div>
-  );
-};
-
-const ChartTooltip = ({ active, payload, label }: any) => {
-  if (!active || !payload?.length) return null;
-  return (
-    <div className="bg-popover border border-border px-3 py-2 shadow-lg text-xs">
-      <p className="font-medium text-foreground">{label}</p>
-      <p className="text-primary">{payload[0].value} articles</p>
-    </div>
-  );
-};
-
-const PieTooltip = ({ active, payload }: any) => {
-  if (!active || !payload?.length) return null;
-  return (
-    <div className="bg-popover border border-border px-3 py-2 shadow-lg text-xs">
-      <p className="font-medium text-foreground">{payload[0].name}</p>
-      <p className="text-primary">{payload[0].value}%</p>
-    </div>
-  );
-};
 
 const Profile = () => {
   const [profile, setProfile] = useState<ProfileData | null>(null);
@@ -220,7 +189,6 @@ const Profile = () => {
 
   const streakData = useMemo(() => generateStreakData(), []);
 
-  
   const activePerfTeams = TEAM_PERFORMANCE.filter(t => t.winPct > 0);
   const combinedWinPct = activePerfTeams.length > 0 ? activePerfTeams.reduce((s, t) => s + t.winPct, 0) / activePerfTeams.length : 0;
 
@@ -233,17 +201,12 @@ const Profile = () => {
         <main className="md:ml-64 pb-20 md:pb-8 pt-[92px] md:pt-[48px]">
           <div className="max-w-4xl mx-auto px-4 py-8 space-y-6 animate-pulse">
             <div className="flex items-start gap-4">
-              <div className="w-20 h-20 rounded-full bg-muted" />
+              <div className="w-24 h-24 rounded-full bg-muted" />
               <div className="flex-1 space-y-3">
                 <div className="h-6 w-40 bg-muted rounded" />
                 <div className="h-4 w-24 bg-muted rounded" />
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div className="h-24 bg-muted rounded-xl" />
-              <div className="h-24 bg-muted rounded-xl" />
-            </div>
-            <div className="h-32 bg-muted rounded-xl" />
           </div>
         </main>
       </div>
@@ -270,128 +233,133 @@ const Profile = () => {
         <div className="max-w-4xl mx-auto px-4">
           <motion.div variants={staggerContainer} initial="hidden" animate="show" className="space-y-6">
 
-            {/* GREETING HEADER */}
-            <motion.div variants={staggerItem} className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2">
-              <div>
-                <h1 className="text-2xl sm:text-3xl font-sans text-foreground">{greeting}, {userName}!</h1>
-                <p className="text-sm text-muted-foreground">{formattedDate} · {formattedTime}</p>
+            {/* CINEMATIC HERO SECTION */}
+            <motion.div variants={staggerItem} className="relative -mx-4 -mt-4 md:-mx-0 md:mt-0 md:rounded-2xl overflow-hidden">
+              {/* Background gradient overlay */}
+              <div className="absolute inset-0 bg-gradient-to-b from-primary/20 via-background/60 to-background z-10" />
+              <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-transparent to-accent/10 z-10" />
+              
+              {/* Hero content */}
+              <div className="relative z-20 px-6 pt-12 pb-8 md:px-10 md:pt-16 md:pb-10">
+                <div className="flex flex-col items-center text-center gap-5">
+                  {/* Avatar with glow */}
+                  <div className="relative">
+                    <div className="absolute -inset-2 rounded-full bg-gradient-to-br from-primary/40 to-accent/40 blur-lg" />
+                    <Avatar className="relative w-28 h-28 md:w-32 md:h-32 border-[3px] border-primary/50 glow-primary">
+                      {profile.profile_photo_url ? (
+                        <AvatarImage src={profile.profile_photo_url} alt={profile.name} className="object-cover" />
+                      ) : null}
+                      <AvatarFallback className="bg-primary text-primary-foreground text-3xl font-sans">{initials}</AvatarFallback>
+                    </Avatar>
+                  </div>
+
+                  {/* Name & info */}
+                  <div>
+                    <h1 className="text-3xl md:text-4xl font-display text-foreground tracking-tight">{profile.name}</h1>
+                    {profile.pronouns && <p className="text-sm text-muted-foreground mt-1">{profile.pronouns}</p>}
+                    <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground mt-2">
+                      <MapPin className="w-4 h-4 text-primary flex-shrink-0" />
+                      <span>{locationText}</span>
+                    </div>
+                  </div>
+
+                  {/* Quick actions */}
+                  <div className="flex items-center gap-3">
+                    <Button onClick={() => navigate("/profile/edit")} className="rounded-full bg-primary hover:bg-primary/90 text-primary-foreground gap-2">
+                      <Edit className="w-4 h-4" /> Edit Profile
+                    </Button>
+                    <Button variant="outline" onClick={() => navigate("/settings")} className="rounded-full border-border/40 text-foreground/70 hover:text-foreground gap-2">
+                      <Settings className="w-4 h-4" />
+                    </Button>
+                    <Button variant="outline" onClick={handleLogout} className="rounded-full border-border/40 text-destructive hover:text-destructive gap-2">
+                      <LogOut className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </div>
               </div>
             </motion.div>
 
-            {/* PROFILE HEADER CARD */}
-            <motion.div variants={staggerItem}>
-              <Card className="overflow-hidden">
-                <CardContent className="pt-8 pb-6">
-                  <div className="flex flex-col md:flex-row md:items-start gap-5">
-                    <div className="flex items-start gap-4 md:gap-5">
-                      <Avatar className="w-20 h-20 md:w-24 md:h-24 border-4 border-accent/30 flex-shrink-0">
-                        {profile.profile_photo_url ? (
-                          <AvatarImage src={profile.profile_photo_url} alt={profile.name} className="object-cover" />
-                        ) : null}
-                        <AvatarFallback className="bg-primary text-primary-foreground text-xl md:text-2xl font-sans">{initials}</AvatarFallback>
-                      </Avatar>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-start justify-between mb-2 md:mb-3">
-                          <div>
-                            <h2 className="text-xl md:text-2xl font-sans font-semibold">{profile.name}</h2>
-                            {profile.pronouns && <p className="text-sm text-muted-foreground">{profile.pronouns}</p>}
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground mb-3 md:mb-4">
-                          <MapPin className="w-4 h-4 text-primary/70 flex-shrink-0" />
-                          <span className="truncate">{locationText}</span>
-                          
-                        </div>
-                        <div className="flex items-center gap-2 md:hidden">
-                          <Button variant="outline" size="sm" onClick={() => navigate("/profile/edit")} className="rounded-full"><Edit className="w-4 h-4 mr-1" />Edit</Button>
-                          <Button variant="outline" size="sm" onClick={handleLogout} className="text-destructive hover:text-destructive rounded-full"><LogOut className="w-4 h-4" /></Button>
-                        </div>
-                      </div>
-                      <div className="hidden md:flex items-center gap-2">
-                        <Button variant="outline" size="sm" onClick={() => navigate("/profile/edit")} className="rounded-full"><Edit className="w-4 h-4 mr-2" />Edit</Button>
-                        <Button variant="outline" size="sm" onClick={handleLogout} className="text-destructive hover:text-destructive rounded-full"><LogOut className="w-4 h-4 mr-2" />Logout</Button>
-                      </div>
-                    </div>
-                    {profile.bio && (
-                      <FullBio bio={profile.bio} />
-                    )}
+            {/* BIO - Glassmorphism card */}
+            {profile.bio && (
+              <motion.div variants={staggerItem}>
+                <div className="glass-card rounded-2xl p-5">
+                  <div className="flex items-start gap-3">
+                    <Sparkles className="w-4 h-4 mt-1 text-primary flex-shrink-0" />
+                    <p className="text-sm text-foreground/80 leading-relaxed whitespace-pre-line">{profile.bio}</p>
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </motion.div>
+            )}
+
+            {/* STATS OVERVIEW - Glassmorphism */}
+            <motion.div variants={staggerItem} className="grid grid-cols-3 gap-3">
+              <div className="glass-card rounded-2xl p-4 text-center">
+                <Trophy className="w-5 h-5 text-primary mx-auto mb-2" />
+                <p className="text-2xl font-sans font-bold text-foreground">{(combinedWinPct * 100).toFixed(0)}%</p>
+                <p className="text-xs text-muted-foreground">Win Rate</p>
+              </div>
+              <div className="glass-card rounded-2xl p-4 text-center">
+                <Flame className="w-5 h-5 text-primary mx-auto mb-2" />
+                <p className="text-2xl font-sans font-bold text-foreground">{streakData.currentStreak}</p>
+                <p className="text-xs text-muted-foreground">Day Streak</p>
+              </div>
+              <div className="glass-card rounded-2xl p-4 text-center">
+                <Heart className="w-5 h-5 text-accent mx-auto mb-2" />
+                <p className="text-2xl font-sans font-bold text-foreground">{rsvpEvents.length}</p>
+                <p className="text-xs text-muted-foreground">Events</p>
+              </div>
             </motion.div>
 
-            {/* STATS OVERVIEW CARDS */}
-            <motion.div variants={staggerItem} className="grid grid-cols-2 gap-3">
-              <Card className="border-border/50">
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between mb-1">
-                    <Trophy className="w-4 h-4 text-primary" />
-                    {combinedWinPct >= 0.5 ? <TrendingUp className="w-3.5 h-3.5 text-emerald-600" /> : <TrendingDown className="w-3.5 h-3.5 text-destructive" />}
-                  </div>
-                  <p className="text-2xl font-sans font-bold text-foreground">{(combinedWinPct * 100).toFixed(0)}%</p>
-                  <p className="text-xs text-muted-foreground">Team Win Rate</p>
-                </CardContent>
-              </Card>
-              <Card className="border-border/50">
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between mb-1">
-                    <Flame className="w-4 h-4 text-primary" />
-                  </div>
-                  <p className="text-2xl font-sans font-bold text-foreground">{streakData.currentStreak}</p>
-                  <p className="text-xs text-muted-foreground">Day Streak</p>
-                </CardContent>
-              </Card>
+            {/* GREETING + DATE */}
+            <motion.div variants={staggerItem} className="glass-card rounded-2xl p-5">
+              <p className="text-lg font-sans text-foreground">{greeting}, <span className="text-primary font-semibold">{userName}</span></p>
+              <p className="text-sm text-muted-foreground mt-1">{formattedDate} · {formattedTime}</p>
             </motion.div>
 
             {/* HOROSCOPE PREVIEW */}
             {zodiac && (
               <motion.div variants={staggerItem}>
-                <Card className="overflow-hidden border-border/50">
+                <div className={`glass-card rounded-2xl overflow-hidden`}>
                   <div className={`bg-gradient-to-br ${ELEMENT_GRADIENTS[zodiac.element]} p-5`}>
                     <div className="flex items-start gap-4">
                       <div className="text-4xl">{zodiac.symbol}</div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-1">
                           <h3 className="font-sans text-base text-foreground">{zodiac.name}</h3>
-                          <Badge variant="outline" className="text-[10px] rounded-none capitalize">{zodiac.element}</Badge>
+                          <Badge variant="outline" className="text-[10px] rounded-full capitalize border-border/30">{zodiac.element}</Badge>
                         </div>
-                        <p className="text-sm text-foreground/80 leading-relaxed line-clamp-2">{HOROSCOPE_MESSAGES[zodiac.name]}</p>
+                        <p className="text-sm text-foreground/70 leading-relaxed line-clamp-2">{HOROSCOPE_MESSAGES[zodiac.name]}</p>
                         <Button variant="link" className="px-0 mt-1 text-primary h-auto text-xs gap-1" onClick={() => navigate("/horoscope")}>
                           Read Full Horoscope <ChevronRight className="w-3 h-3" />
                         </Button>
                       </div>
                     </div>
                   </div>
-                </Card>
+                </div>
               </motion.div>
             )}
 
             {/* MY INTERESTS LINK */}
             <motion.div variants={staggerItem}>
-              <Card className="cursor-pointer hover:border-primary transition-colors" onClick={() => navigate("/profile/interests")}>
-                <CardContent className="p-4 flex items-center justify-between">
-                  <div>
-                    <p className="font-medium text-foreground">My Interests</p>
-                    <p className="text-sm text-muted-foreground">Teams, sports, experiences & more</p>
-                  </div>
-                  <ChevronRight className="w-5 h-5 text-muted-foreground" />
-                </CardContent>
-              </Card>
+              <div className="glass-card rounded-2xl cursor-pointer hover:border-primary/30 transition-colors p-4 flex items-center justify-between" onClick={() => navigate("/profile/interests")}>
+                <div>
+                  <p className="font-medium text-foreground">My Interests</p>
+                  <p className="text-sm text-muted-foreground">Teams, sports, experiences & more</p>
+                </div>
+                <ChevronRight className="w-5 h-5 text-muted-foreground" />
+              </div>
             </motion.div>
-
-
-
 
             {/* ENGAGEMENT STREAK */}
             <motion.div variants={staggerItem}>
-              <Card className="border-border/50">
-                <CardHeader className="pb-2">
+              <div className="glass-card rounded-2xl overflow-hidden">
+                <div className="p-5 pb-2">
                   <div className="flex items-center justify-between">
-                    <CardTitle className="text-sm font-medium tracking-wider uppercase text-foreground/60">Engagement Streak</CardTitle>
-                    <Badge className="bg-primary/10 text-primary border-primary/20 text-[10px] gap-1 hover:bg-primary/10"><Flame className="w-3 h-3" /> {streakData.currentStreak} day streak</Badge>
+                    <span className="text-sm font-medium tracking-wider uppercase text-foreground/50">Engagement Streak</span>
+                    <Badge className="bg-primary/15 text-primary border-primary/20 text-[10px] gap-1 hover:bg-primary/15 rounded-full"><Flame className="w-3 h-3" /> {streakData.currentStreak} day streak</Badge>
                   </div>
-                </CardHeader>
-                <CardContent>
+                </div>
+                <div className="px-5 pb-5">
                   <div className="flex items-center gap-1.5 mb-2">
                     <Award className="w-3.5 h-3.5 text-primary" />
                     <span className="text-xs text-muted-foreground">Best: {streakData.bestStreak} days</span>
@@ -419,189 +387,195 @@ const Profile = () => {
                     {HEATMAP_COLORS.map((c, i) => <div key={i} className={`h-3 w-3 rounded-sm ${c}`} />)}
                     <span className="text-[9px] text-muted-foreground ml-1">More</span>
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             </motion.div>
 
             {/* FAVORITE TEAMS PERFORMANCE */}
             <motion.div variants={staggerItem}>
-              <Card className="border-border/50">
-                <CardHeader className="pb-2"><CardTitle className="text-sm font-medium tracking-wider uppercase text-foreground/60">Favorite Teams Performance</CardTitle></CardHeader>
-                <CardContent className="p-0">
-                  <div className="divide-y divide-border">
-                    {TEAM_PERFORMANCE.map(team => (
-                      <div
-                        key={team.name}
-                        className="flex items-center gap-3 px-4 sm:px-6 py-4 hover:bg-muted/30 transition-colors cursor-pointer group"
-                        onClick={() => navigate(`/team/${team.slug}`)}
-                      >
-                        <img src={team.logo} alt={team.name} className="w-10 h-10 object-contain rounded-sm bg-white p-0.5" onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} />
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2">
-                            <span className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">{team.name}</span>
-                            <Badge variant="outline" className="text-[9px] px-1.5 py-0 rounded-sm">{team.league}</Badge>
-                            {team.injuryNote && (
-                              <span title={team.injuryNote}>
-                                <AlertTriangle className="w-3.5 h-3.5 text-amber-500" />
-                              </span>
-                            )}
-                          </div>
-                          <p className="text-xs text-muted-foreground mt-0.5">{team.leadingScorer}</p>
-                          <p className="text-xs text-muted-foreground">{team.nextGame}</p>
-                        </div>
-                        <div className="flex flex-col items-end gap-2">
-                          <p className={`text-sm font-sans font-bold ${team.winPct > 0.5 ? "text-emerald-600" : team.winPct > 0 && team.winPct < 0.5 ? "text-destructive" : "text-foreground"}`}>{team.record}</p>
-                          {team.last5.length > 0 && (
-                            <div className="flex gap-0.5">
-                              {team.last5.map((win, i) => <div key={i} className={`w-2 h-2 rounded-full ${win ? "bg-emerald-500" : "bg-destructive/60"}`} />)}
-                            </div>
-                          )}
-                          {team.nextGame !== "Offseason" && !team.nextGame.startsWith("Season") && (
-                            <div className="flex gap-1.5">
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                className="h-6 text-[10px] px-2 rounded-full gap-1"
-                                onClick={(e) => { e.stopPropagation(); window.open(team.ticketUrl, '_blank'); }}
-                              >
-                                <Ticket className="w-3 h-3" /> Tickets
-                              </Button>
-                              <Button
-                                size="sm"
-                                className="h-6 text-[10px] px-2 rounded-full gap-1"
-                                onClick={(e) => { e.stopPropagation(); }}
-                              >
-                                <Play className="w-3 h-3" /> Watch
-                              </Button>
-                            </div>
+              <div className="glass-card rounded-2xl overflow-hidden">
+                <div className="p-5 pb-2">
+                  <span className="text-sm font-medium tracking-wider uppercase text-foreground/50">Favorite Teams</span>
+                </div>
+                <div className="divide-y divide-border/30">
+                  {TEAM_PERFORMANCE.map(team => (
+                    <div
+                      key={team.name}
+                      className="flex items-center gap-3 px-5 py-4 hover:bg-foreground/[0.03] transition-colors cursor-pointer group"
+                      onClick={() => navigate(`/team/${team.slug}`)}
+                    >
+                      <img src={team.logo} alt={team.name} className="w-10 h-10 object-contain rounded-lg bg-foreground/5 p-0.5" onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">{team.name}</span>
+                          <Badge variant="outline" className="text-[9px] px-1.5 py-0 rounded-full border-border/30">{team.league}</Badge>
+                          {team.injuryNote && (
+                            <span title={team.injuryNote}>
+                              <AlertTriangle className="w-3.5 h-3.5 text-amber-500" />
+                            </span>
                           )}
                         </div>
+                        <p className="text-xs text-muted-foreground mt-0.5">{team.leadingScorer}</p>
+                        <p className="text-xs text-muted-foreground">{team.nextGame}</p>
                       </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
+                      <div className="flex flex-col items-end gap-2">
+                        <p className={`text-sm font-sans font-bold ${team.winPct > 0.5 ? "text-accent" : team.winPct > 0 && team.winPct < 0.5 ? "text-destructive" : "text-foreground"}`}>{team.record}</p>
+                        {team.last5.length > 0 && (
+                          <div className="flex gap-0.5">
+                            {team.last5.map((win, i) => <div key={i} className={`w-2 h-2 rounded-full ${win ? "bg-accent" : "bg-destructive/60"}`} />)}
+                          </div>
+                        )}
+                        {team.nextGame !== "Offseason" && !team.nextGame.startsWith("Season") && (
+                          <div className="flex gap-1.5">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="h-6 text-[10px] px-2 rounded-full gap-1 border-border/30"
+                              onClick={(e) => { e.stopPropagation(); window.open(team.ticketUrl, '_blank'); }}
+                            >
+                              <Ticket className="w-3 h-3" /> Tickets
+                            </Button>
+                            <Button
+                              size="sm"
+                              className="h-6 text-[10px] px-2 rounded-full gap-1"
+                              onClick={(e) => { e.stopPropagation(); }}
+                            >
+                              <Play className="w-3 h-3" /> Watch
+                            </Button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </motion.div>
 
             {/* MY RSVPED EVENTS */}
             {rsvpEvents.length > 0 && (
               <motion.div variants={staggerItem}>
-                <Card>
-                  <CardHeader><CardTitle className="flex items-center gap-2"><Calendar className="w-5 h-5" />My Events</CardTitle></CardHeader>
-                  <CardContent>
+                <div className="glass-card rounded-2xl overflow-hidden">
+                  <div className="p-5 pb-3">
+                    <div className="flex items-center gap-2">
+                      <Calendar className="w-5 h-5 text-primary" />
+                      <span className="text-sm font-medium tracking-wider uppercase text-foreground/50">My Events</span>
+                    </div>
+                  </div>
+                  <div className="px-5 pb-5">
                     <div className="grid md:grid-cols-2 gap-4">
                       {rsvpEvents.map(rsvp => (
-                        <div key={rsvp.id} className="p-4 border rounded-lg cursor-pointer hover:border-primary transition-colors" onClick={() => navigate("/events")}>
-                          {rsvp.event.image_url ? <img src={rsvp.event.image_url} alt={rsvp.event.title} className="w-full h-32 object-cover rounded-md mb-3" /> : <div className="w-full h-32 bg-muted rounded-md mb-3 flex items-center justify-center"><Calendar className="w-8 h-8 text-muted-foreground" /></div>}
+                        <div key={rsvp.id} className="glass-card rounded-xl p-4 cursor-pointer hover:border-primary/30 transition-colors" onClick={() => navigate("/events")}>
+                          {rsvp.event.image_url ? <img src={rsvp.event.image_url} alt={rsvp.event.title} className="w-full h-32 object-cover rounded-lg mb-3" /> : <div className="w-full h-32 bg-muted rounded-lg mb-3 flex items-center justify-center"><Calendar className="w-8 h-8 text-muted-foreground" /></div>}
                           <div className="flex items-start justify-between gap-2">
                             <div>
-                              <p className="font-medium">{rsvp.event.title}</p>
+                              <p className="font-medium text-foreground">{rsvp.event.title}</p>
                               <p className="text-sm text-muted-foreground">{rsvp.event.venue_name || rsvp.event.city || "Location TBD"}</p>
                               <div className="flex items-center gap-2 mt-1 text-xs text-muted-foreground">
                                 <Calendar className="w-3 h-3" /><span>{format(new Date(rsvp.event.event_date), "MMM d, yyyy")}</span>
                                 {rsvp.event.event_time && (<><Clock className="w-3 h-3 ml-1" /><span>{rsvp.event.event_time}</span></>)}
                               </div>
                             </div>
-                            <Badge variant={rsvp.status === "confirmed" ? "default" : "secondary"} className="text-xs">{rsvp.status}</Badge>
+                            <Badge variant={rsvp.status === "confirmed" ? "default" : "secondary"} className="text-xs rounded-full">{rsvp.status}</Badge>
                           </div>
                         </div>
                       ))}
                     </div>
-                  </CardContent>
-                </Card>
+                  </div>
+                </div>
               </motion.div>
             )}
 
             {/* RECOMMENDED EVENTS */}
             {suggestedEvents.length > 0 && (
               <motion.div variants={staggerItem}>
-                <Card>
-                  <CardHeader><CardTitle>Recommended Events for You</CardTitle></CardHeader>
-                  <CardContent>
+                <div className="glass-card rounded-2xl overflow-hidden">
+                  <div className="p-5 pb-3">
+                    <span className="text-sm font-medium tracking-wider uppercase text-foreground/50">Recommended Events</span>
+                  </div>
+                  <div className="px-5 pb-5">
                     <div className="grid md:grid-cols-2 gap-4">
                       {suggestedEvents.map(event => (
-                        <div key={event.id} className="p-4 border rounded-lg cursor-pointer hover:border-primary transition-colors" onClick={() => navigate(`/event/${event.id}`)}>
-                          {event.image_url ? <img src={event.image_url} alt={event.title} className="w-full h-32 object-cover rounded-md mb-3" /> : <div className="w-full h-32 bg-muted rounded-md mb-3 flex items-center justify-center"><Calendar className="w-8 h-8 text-muted-foreground" /></div>}
-                          <p className="font-medium">{event.title}</p>
+                        <div key={event.id} className="glass-card rounded-xl p-4 cursor-pointer hover:border-primary/30 transition-colors" onClick={() => navigate(`/event/${event.id}`)}>
+                          {event.image_url ? <img src={event.image_url} alt={event.title} className="w-full h-32 object-cover rounded-lg mb-3" /> : <div className="w-full h-32 bg-muted rounded-lg mb-3 flex items-center justify-center"><Calendar className="w-8 h-8 text-muted-foreground" /></div>}
+                          <p className="font-medium text-foreground">{event.title}</p>
                           <p className="text-sm text-muted-foreground">{event.venue_name || event.city || "Location TBD"} • {format(new Date(event.event_date), "MMM d")}</p>
                         </div>
                       ))}
                     </div>
-                  </CardContent>
-                </Card>
+                  </div>
+                </div>
               </motion.div>
             )}
 
             {/* RECENT ACTIVITY FEED */}
             <motion.div variants={staggerItem}>
-              <Card className="border-border/50">
-                <CardHeader className="pb-2"><CardTitle className="text-sm font-medium tracking-wider uppercase text-foreground/60">Recent Activity</CardTitle></CardHeader>
-                <CardContent className="p-0">
-                  <Tabs defaultValue="all" className="w-full">
-                    <div className="px-4 sm:px-6 pt-2 pb-1">
-                      <TabsList className="h-8 w-full justify-start">
-                        <TabsTrigger value="all" className="text-xs px-3 h-7">All</TabsTrigger>
-                        <TabsTrigger value="read" className="text-xs px-3 h-7">Read</TabsTrigger>
-                        <TabsTrigger value="bookmark" className="text-xs px-3 h-7">Bookmarked</TabsTrigger>
-                        <TabsTrigger value="shared" className="text-xs px-3 h-7">Shared</TabsTrigger>
-                      </TabsList>
-                    </div>
-                    {["all", "read", "bookmark", "shared"].map(tab => (
-                      <TabsContent key={tab} value={tab} className="mt-0">
-                        <div className="divide-y divide-border">
-                          {RECENT_ACTIVITY.filter(a => tab === "all" || a.type === tab).map((activity, i) => (
-                            <div key={i} className="flex items-start gap-3 px-4 sm:px-6 py-3 hover:bg-muted/30 transition-colors cursor-pointer group">
-                              {activity.thumbnail ? (
-                                <img src={activity.thumbnail} alt="" className="w-14 h-10 object-cover rounded-md mt-0.5 flex-shrink-0" />
-                              ) : (
-                                <div className={`mt-0.5 p-1.5 rounded-full flex-shrink-0 ${activity.type === "read" ? "bg-primary/10" : activity.type === "shared" ? "bg-accent/20" : "bg-secondary"}`}>
-                                  {activity.type === "read" ? <BookOpen className="w-3 h-3 text-primary" /> : activity.type === "shared" ? <Share2 className="w-3 h-3 text-accent-foreground" /> : <Bookmark className="w-3 h-3 text-foreground/60" />}
-                                </div>
-                              )}
-                              <div className="flex-1 min-w-0">
-                                <p className="text-sm text-foreground leading-snug group-hover:text-primary transition-colors">
-                                  <span className="text-muted-foreground capitalize">{activity.type}:</span>{" "}
-                                  <span className="font-medium">{activity.title}</span>
-                                </p>
-                                <div className="flex items-center gap-3 mt-1">
-                                  <span className="text-xs text-muted-foreground">{activity.time}</span>
-                                  <span className="flex items-center gap-1 text-xs text-muted-foreground"><Eye className="w-3 h-3" />{activity.reads}</span>
-                                  <span className="flex items-center gap-1 text-xs text-muted-foreground"><Bookmark className="w-3 h-3" />{activity.bookmarks}</span>
-                                </div>
+              <div className="glass-card rounded-2xl overflow-hidden">
+                <div className="p-5 pb-2">
+                  <span className="text-sm font-medium tracking-wider uppercase text-foreground/50">Recent Activity</span>
+                </div>
+                <Tabs defaultValue="all" className="w-full">
+                  <div className="px-5 pt-1 pb-1">
+                    <TabsList className="h-8 w-full justify-start bg-foreground/[0.03]">
+                      <TabsTrigger value="all" className="text-xs px-3 h-7 rounded-full">All</TabsTrigger>
+                      <TabsTrigger value="read" className="text-xs px-3 h-7 rounded-full">Read</TabsTrigger>
+                      <TabsTrigger value="bookmark" className="text-xs px-3 h-7 rounded-full">Bookmarked</TabsTrigger>
+                      <TabsTrigger value="shared" className="text-xs px-3 h-7 rounded-full">Shared</TabsTrigger>
+                    </TabsList>
+                  </div>
+                  {["all", "read", "bookmark", "shared"].map(tab => (
+                    <TabsContent key={tab} value={tab} className="mt-0">
+                      <div className="divide-y divide-border/20">
+                        {RECENT_ACTIVITY.filter(a => tab === "all" || a.type === tab).map((activity, i) => (
+                          <div key={i} className="flex items-start gap-3 px-5 py-3 hover:bg-foreground/[0.03] transition-colors cursor-pointer group">
+                            {activity.thumbnail ? (
+                              <img src={activity.thumbnail} alt="" className="w-14 h-10 object-cover rounded-lg mt-0.5 flex-shrink-0" />
+                            ) : (
+                              <div className={`mt-0.5 p-1.5 rounded-full flex-shrink-0 ${activity.type === "read" ? "bg-primary/15" : activity.type === "shared" ? "bg-accent/15" : "bg-secondary"}`}>
+                                {activity.type === "read" ? <BookOpen className="w-3 h-3 text-primary" /> : activity.type === "shared" ? <Share2 className="w-3 h-3 text-accent" /> : <Bookmark className="w-3 h-3 text-foreground/60" />}
                               </div>
-                              <ArrowUpRight className="w-3.5 h-3.5 text-foreground/20 mt-1 shrink-0 group-hover:text-primary transition-colors" />
+                            )}
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm text-foreground leading-snug group-hover:text-primary transition-colors">
+                                <span className="text-muted-foreground capitalize">{activity.type}:</span>{" "}
+                                <span className="font-medium">{activity.title}</span>
+                              </p>
+                              <div className="flex items-center gap-3 mt-1">
+                                <span className="text-xs text-muted-foreground">{activity.time}</span>
+                                <span className="flex items-center gap-1 text-xs text-muted-foreground"><Eye className="w-3 h-3" />{activity.reads}</span>
+                                <span className="flex items-center gap-1 text-xs text-muted-foreground"><Bookmark className="w-3 h-3" />{activity.bookmarks}</span>
+                              </div>
                             </div>
-                          ))}
-                        </div>
-                      </TabsContent>
-                    ))}
-                  </Tabs>
-                </CardContent>
-              </Card>
+                            <ArrowUpRight className="w-3.5 h-3.5 text-foreground/20 mt-1 shrink-0 group-hover:text-primary transition-colors" />
+                          </div>
+                        ))}
+                      </div>
+                    </TabsContent>
+                  ))}
+                </Tabs>
+              </div>
             </motion.div>
 
             {/* BECAUSE YOU READ... RECOMMENDATIONS */}
             <motion.div variants={staggerItem}>
-              <Card className="border-border/50">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium tracking-wider uppercase text-foreground/60 flex items-center gap-2">
-                    <Lightbulb className="w-4 h-4 text-primary" /> Recommended for You
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="p-0">
-                  <div className="divide-y divide-border">
-                    {RECOMMENDED_ARTICLES.map((rec, i) => (
-                      <div key={i} className="px-4 sm:px-6 py-3 hover:bg-muted/30 transition-colors cursor-pointer group">
-                        <p className="text-[10px] text-muted-foreground mb-0.5">Because you read "{rec.basedOn.length > 50 ? rec.basedOn.slice(0, 50) + '…' : rec.basedOn}"</p>
-                        <div className="flex items-center justify-between">
-                          <p className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">{rec.title}</p>
-                          <span className="flex items-center gap-1 text-xs text-muted-foreground ml-2 shrink-0"><Eye className="w-3 h-3" />{rec.reads}</span>
-                        </div>
-                      </div>
-                    ))}
+              <div className="glass-card rounded-2xl overflow-hidden">
+                <div className="p-5 pb-2">
+                  <div className="flex items-center gap-2">
+                    <Lightbulb className="w-4 h-4 text-primary" />
+                    <span className="text-sm font-medium tracking-wider uppercase text-foreground/50">Recommended for You</span>
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+                <div className="divide-y divide-border/20">
+                  {RECOMMENDED_ARTICLES.map((rec, i) => (
+                    <div key={i} className="px-5 py-3 hover:bg-foreground/[0.03] transition-colors cursor-pointer group">
+                      <p className="text-[10px] text-muted-foreground mb-0.5">Because you read "{rec.basedOn.length > 50 ? rec.basedOn.slice(0, 50) + '…' : rec.basedOn}"</p>
+                      <div className="flex items-center justify-between">
+                        <p className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">{rec.title}</p>
+                        <span className="flex items-center gap-1 text-xs text-muted-foreground ml-2 shrink-0"><Eye className="w-3 h-3" />{rec.reads}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </motion.div>
 
           </motion.div>
