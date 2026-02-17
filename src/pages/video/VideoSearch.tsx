@@ -430,8 +430,8 @@ const VideoSearch = () => {
               onClick={() => setFilter(f)}
               className={`flex-shrink-0 px-4 py-1.5 rounded-full text-xs font-bold transition-all ${
                 filter === f
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-secondary text-muted-foreground hover:text-foreground hover:bg-secondary/80"
+                  ? "bg-foreground text-background"
+                  : "bg-card text-foreground border border-border/40 hover:bg-secondary"
               }`}
             >
               {f}
@@ -446,7 +446,7 @@ const VideoSearch = () => {
           <button
             onClick={() => setShowFilters(!showFilters)}
             className={`flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all ${
-              showFilters ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground hover:text-foreground"
+              showFilters ? "bg-foreground text-background" : "bg-card text-foreground border border-border/40 hover:bg-secondary"
             }`}
           >
             <SlidersHorizontal className="w-3 h-3" />
@@ -522,10 +522,10 @@ const VideoSearch = () => {
                   <button
                     key={term}
                     onClick={() => handleSearch(term)}
-                    className="group flex items-center gap-2 px-4 py-2 bg-secondary text-muted-foreground text-xs rounded-full hover:bg-primary/10 hover:text-primary transition-all"
+                    className="group flex items-center gap-2 px-4 py-2 bg-card text-foreground border border-border/40 text-xs rounded-full hover:bg-secondary hover:text-primary transition-all"
                   >
                     <Flame className="w-3 h-3 text-primary/70 group-hover:text-primary transition-colors" />
-                    <span className="text-muted-foreground/50 font-bold mr-0.5">{i + 1}</span>
+                    <span className="text-foreground/50 font-bold mr-0.5">{i + 1}</span>
                     {term}
                   </button>
                 ))}
