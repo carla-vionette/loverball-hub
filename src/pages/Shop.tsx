@@ -20,15 +20,15 @@ import { ErrorBoundary } from "@/components/ui/error-boundary";
 import { trackShopFunnel, trackContentView } from "@/lib/analytics";
 
 const COLLECTIONS = [
-  { id: "all", label: "All" },
-  { id: "game-day", label: "Game Day" },
-  { id: "athleisure", label: "Athleisure" },
-  { id: "accessories", label: "Accessories" },
-];
+{ id: "all", label: "All" },
+{ id: "game-day", label: "Game Day" },
+{ id: "athleisure", label: "Athleisure" },
+{ id: "accessories", label: "Accessories" }];
+
 
 // Simulated view counts for social proof
 const getViewCount = (productId: string) => {
-  const hash = productId.split('').reduce((a, b) => { a = ((a << 5) - a) + b.charCodeAt(0); return a & a; }, 0);
+  const hash = productId.split('').reduce((a, b) => {a = (a << 5) - a + b.charCodeAt(0);return a & a;}, 0);
   return Math.abs(hash % 40) + 12;
 };
 
@@ -41,7 +41,7 @@ const Shop = () => {
     return saved ? new Set(JSON.parse(saved)) : new Set();
   });
   const [activeCollection, setActiveCollection] = useState("all");
-  const addItem = useCartStore(state => state.addItem);
+  const addItem = useCartStore((state) => state.addItem);
 
   const [selectedVariants, setSelectedVariants] = useState<Record<string, string>>({});
 
@@ -51,16 +51,16 @@ const Shop = () => {
         setFetchError(null);
         const data = await getProducts(20);
         const seenTitles = new Set<string>();
-        const uniqueProducts = data.filter(product => {
+        const uniqueProducts = data.filter((product) => {
           const titleLower = product.node.title.toLowerCase();
           if (seenTitles.has(titleLower)) return false;
           seenTitles.add(titleLower);
           return true;
         });
         setProducts(uniqueProducts);
-        
+
         const initialVariants: Record<string, string> = {};
-        uniqueProducts.forEach(product => {
+        uniqueProducts.forEach((product) => {
           if (product.node.variants.edges.length > 0) {
             initialVariants[product.node.id] = product.node.variants.edges[0].node.id;
           }
@@ -82,7 +82,7 @@ const Shop = () => {
   }, [wishlist]);
 
   const toggleWishlist = (productId: string) => {
-    setWishlist(prev => {
+    setWishlist((prev) => {
       const next = new Set(prev);
       if (next.has(productId)) {
         next.delete(productId);
@@ -97,18 +97,18 @@ const Shop = () => {
 
   const getSelectedVariant = (product: ShopifyProduct) => {
     const selectedVariantId = selectedVariants[product.node.id];
-    return product.node.variants.edges.find(v => v.node.id === selectedVariantId)?.node 
-      || product.node.variants.edges[0]?.node;
+    return product.node.variants.edges.find((v) => v.node.id === selectedVariantId)?.node ||
+    product.node.variants.edges[0]?.node;
   };
 
   const handleVariantChange = (productId: string, variantId: string) => {
-    setSelectedVariants(prev => ({ ...prev, [productId]: variantId }));
+    setSelectedVariants((prev) => ({ ...prev, [productId]: variantId }));
   };
 
   const handleAddToCart = (product: ShopifyProduct) => {
     const variant = getSelectedVariant(product);
     if (!variant) return;
-    
+
     addItem({
       product,
       variantId: variant.id,
@@ -119,28 +119,28 @@ const Shop = () => {
     });
     trackShopFunnel("add_to_cart", product.node.id, product.node.title, variant.price.amount);
     toast.success("Added to cart", {
-      description: `${product.node.title} has been added to your cart`,
+      description: `${product.node.title} has been added to your cart`
     });
   };
 
   const hasVariants = (product: ShopifyProduct) => {
     const variants = product.node.variants.edges;
-    return variants.length > 1 || (variants.length === 1 && variants[0].node.title !== "Default Title");
+    return variants.length > 1 || variants.length === 1 && variants[0].node.title !== "Default Title";
   };
 
   // Simple collection filter based on product type/tags
-  const filteredProducts = activeCollection === "all" 
-    ? products 
-    : products.filter(p => {
-        const title = p.node.title.toLowerCase();
-        const desc = p.node.description?.toLowerCase() || '';
-        if (activeCollection === "accessories") return title.includes('hat') || title.includes('chain') || title.includes('socks') || title.includes('tote');
-        if (activeCollection === "game-day") return title.includes('jersey') || title.includes('crewneck') || title.includes('hoodie');
-        if (activeCollection === "athleisure") return title.includes('tshirt') || title.includes('hoodie') || title.includes('crewneck') || desc.includes('casual');
-        return true;
-      });
+  const filteredProducts = activeCollection === "all" ?
+  products :
+  products.filter((p) => {
+    const title = p.node.title.toLowerCase();
+    const desc = p.node.description?.toLowerCase() || '';
+    if (activeCollection === "accessories") return title.includes('hat') || title.includes('chain') || title.includes('socks') || title.includes('tote');
+    if (activeCollection === "game-day") return title.includes('jersey') || title.includes('crewneck') || title.includes('hoodie');
+    if (activeCollection === "athleisure") return title.includes('tshirt') || title.includes('hoodie') || title.includes('crewneck') || desc.includes('casual');
+    return true;
+  });
 
-  const wishlistProducts = products.filter(p => wishlist.has(p.node.id));
+  const wishlistProducts = products.filter((p) => wishlist.has(p.node.id));
 
   const isCommunityFavorite = (product: ShopifyProduct) => {
     return getViewCount(product.node.id) > 35;
@@ -155,9 +155,9 @@ const Shop = () => {
         {/* Hero Section */}
         <div className="flex flex-col items-center text-center mb-8">
           <img src={loverballLogo} alt="Loverball" className="h-28 md:h-36 w-auto mb-6" />
-          <span className="inline-block bg-accent text-accent-foreground px-4 py-2 rounded-full text-sm font-semibold tracking-wide mb-4">
-            Shop
-          </span>
+          
+
+
           <h1 className="text-4xl md:text-5xl font-sans font-normal mb-3">Boutique</h1>
           <p className="text-muted-foreground text-lg max-w-md">Official Loverball merchandise and gear for women who love sports</p>
         </div>
@@ -192,37 +192,37 @@ const Shop = () => {
         {/* Collection Tabs */}
         <Tabs value={activeCollection} onValueChange={setActiveCollection} className="mb-8">
           <TabsList className="w-full justify-start overflow-x-auto bg-transparent gap-2 h-auto p-0">
-            {COLLECTIONS.map(col => (
-              <TabsTrigger 
-                key={col.id} 
-                value={col.id}
-                className="rounded-full px-5 py-2 text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
-              >
+            {COLLECTIONS.map((col) =>
+            <TabsTrigger
+              key={col.id}
+              value={col.id}
+              className="rounded-full px-5 py-2 text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+
                 {col.label}
               </TabsTrigger>
-            ))}
-            {wishlistProducts.length > 0 && (
-              <TabsTrigger 
-                value="wishlist"
-                className="rounded-full px-5 py-2 text-sm data-[state=active]:bg-coral data-[state=active]:text-coral-foreground"
-              >
+            )}
+            {wishlistProducts.length > 0 &&
+            <TabsTrigger
+              value="wishlist"
+              className="rounded-full px-5 py-2 text-sm data-[state=active]:bg-coral data-[state=active]:text-coral-foreground">
+
                 <Heart className="h-3.5 w-3.5 mr-1.5" />
                 Saved ({wishlistProducts.length})
               </TabsTrigger>
-            )}
+            }
           </TabsList>
         </Tabs>
 
-        {loading ? (
-          <PageSkeleton variant="cards" count={8} />
-        ) : fetchError ? (
-          <PageError
-            variant={!navigator.onLine ? "network" : "generic"}
-            message={fetchError}
-            onRetry={() => { setLoading(true); setFetchError(null); window.location.reload(); }}
-          />
-        ) : products.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 text-center">
+        {loading ?
+        <PageSkeleton variant="cards" count={8} /> :
+        fetchError ?
+        <PageError
+          variant={!navigator.onLine ? "network" : "generic"}
+          message={fetchError}
+          onRetry={() => {setLoading(true);setFetchError(null);window.location.reload();}} /> :
+
+        products.length === 0 ?
+        <div className="flex flex-col items-center justify-center py-20 text-center">
             <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mb-6">
               <ShoppingBag className="h-10 w-10 text-primary" />
             </div>
@@ -233,52 +233,52 @@ const Shop = () => {
             <Button variant="outline" className="rounded-full" onClick={() => window.location.reload()}>
               Refresh
             </Button>
-          </div>
-        ) : (
-          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
+          </div> :
+
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
             {(activeCollection === "wishlist" ? wishlistProducts : filteredProducts).map((product) => {
-              const { node } = product;
-              const image = node.images.edges[0]?.node;
-              const selectedVariant = getSelectedVariant(product);
-              const price = selectedVariant?.price || node.priceRange.minVariantPrice;
-              const showVariantSelector = hasVariants(product);
-              const viewCount = getViewCount(node.id);
-              const isWishlisted = wishlist.has(node.id);
-              const isFavorite = isCommunityFavorite(product);
-              
-              return (
-                <Card key={node.id} className="overflow-hidden hover:shadow-xl transition-all duration-300 rounded-2xl border-border/50 group bg-card relative">
+            const { node } = product;
+            const image = node.images.edges[0]?.node;
+            const selectedVariant = getSelectedVariant(product);
+            const price = selectedVariant?.price || node.priceRange.minVariantPrice;
+            const showVariantSelector = hasVariants(product);
+            const viewCount = getViewCount(node.id);
+            const isWishlisted = wishlist.has(node.id);
+            const isFavorite = isCommunityFavorite(product);
+
+            return (
+              <Card key={node.id} className="overflow-hidden hover:shadow-xl transition-all duration-300 rounded-2xl border-border/50 group bg-card relative">
                   {/* Wishlist heart */}
                   <button
-                    onClick={(e) => { e.preventDefault(); toggleWishlist(node.id); }}
-                    className="absolute top-3 right-3 z-10 p-2 rounded-full bg-background/80 backdrop-blur-sm hover:bg-background transition-colors"
-                  >
+                  onClick={(e) => {e.preventDefault();toggleWishlist(node.id);}}
+                  className="absolute top-3 right-3 z-10 p-2 rounded-full bg-background/80 backdrop-blur-sm hover:bg-background transition-colors">
+
                     <Heart className={`h-4 w-4 transition-colors ${isWishlisted ? 'fill-coral text-coral' : 'text-muted-foreground'}`} />
                   </button>
 
                   {/* Community Favorites Badge */}
-                  {isFavorite && (
-                    <div className="absolute top-3 left-3 z-10">
+                  {isFavorite &&
+                <div className="absolute top-3 left-3 z-10">
                       <Badge className="bg-accent text-accent-foreground text-[10px] font-bold px-2 py-0.5 gap-1">
                         <Star className="h-3 w-3 fill-current" />
                         Community Favorite
                       </Badge>
                     </div>
-                  )}
+                }
 
                   <Link to={`/product/${node.handle}`}>
                     <div className="aspect-square overflow-hidden bg-gradient-to-br from-secondary/30 to-muted/30">
-                      {image ? (
-                        <img
-                          src={image.url}
-                          alt={image.altText || node.title}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center">
+                      {image ?
+                    <img
+                      src={image.url}
+                      alt={image.altText || node.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" /> :
+
+
+                    <div className="w-full h-full flex items-center justify-center">
                           <ShoppingBag className="h-12 w-12 md:h-16 md:w-16 text-muted-foreground/50" />
                         </div>
-                      )}
+                    }
                     </div>
                   </Link>
                   
@@ -298,45 +298,45 @@ const Shop = () => {
                       <span>{viewCount} people viewed today</span>
                     </div>
                     
-                    {showVariantSelector && (
-                      <Select
-                        value={selectedVariants[node.id] || node.variants.edges[0]?.node.id}
-                        onValueChange={(value) => handleVariantChange(node.id, value)}
-                      >
+                    {showVariantSelector &&
+                  <Select
+                    value={selectedVariants[node.id] || node.variants.edges[0]?.node.id}
+                    onValueChange={(value) => handleVariantChange(node.id, value)}>
+
                         <SelectTrigger className="w-full h-9 text-xs md:text-sm">
                           <SelectValue placeholder="Select size" />
                         </SelectTrigger>
                         <SelectContent>
-                          {node.variants.edges.map((variantEdge) => (
-                            <SelectItem 
-                              key={variantEdge.node.id} 
-                              value={variantEdge.node.id}
-                              disabled={!variantEdge.node.availableForSale}
-                            >
+                          {node.variants.edges.map((variantEdge) =>
+                      <SelectItem
+                        key={variantEdge.node.id}
+                        value={variantEdge.node.id}
+                        disabled={!variantEdge.node.availableForSale}>
+
                               {variantEdge.node.title}
                               {!variantEdge.node.availableForSale && " (Sold out)"}
                             </SelectItem>
-                          ))}
+                      )}
                         </SelectContent>
                       </Select>
-                    )}
+                  }
                   </CardContent>
                   
                   <CardFooter className="pt-0 px-3 md:px-6 pb-4 md:pb-6">
-                    <Button 
-                      onClick={() => handleAddToCart(product)}
-                      className="w-full rounded-full text-xs md:text-sm"
-                      size="sm"
-                      disabled={selectedVariant && !selectedVariant.availableForSale}
-                    >
+                    <Button
+                    onClick={() => handleAddToCart(product)}
+                    className="w-full rounded-full text-xs md:text-sm"
+                    size="sm"
+                    disabled={selectedVariant && !selectedVariant.availableForSale}>
+
                       {selectedVariant?.availableForSale === false ? 'Sold Out' : 'Add to Cart'}
                     </Button>
                   </CardFooter>
-                </Card>
-              );
-            })}
+                </Card>);
+
+          })}
           </div>
-        )}
+        }
 
         {/* Gift Card CTA */}
         <div className="mt-16 text-center py-12 px-6 bg-card rounded-2xl border border-border/50">
@@ -354,8 +354,8 @@ const Shop = () => {
       </main>
       
       <BottomNav />
-    </div>
-  );
+    </div>);
+
 };
 
 export default Shop;
