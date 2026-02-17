@@ -75,7 +75,7 @@ const FeaturedHero = () => {
 
           {/* Content overlay */}
           <div className="absolute bottom-0 left-0 right-0 p-5 md:p-8">
-            <span className="inline-block bg-primary text-primary-foreground text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded mb-3">
+            <span className="inline-block bg-secondary text-white text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded mb-3">
               Featured Channel
             </span>
             <h2 className="text-xl md:text-3xl font-bold text-foreground mb-2">{current.name}</h2>
