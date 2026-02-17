@@ -1,69 +1,12 @@
-import { useRef, useState, useEffect, useCallback } from "react";
-import { motion } from "framer-motion";
-import FeedVideoPlayer from "@/components/video/FeedVideoPlayer";
-import { FEED_VIDEOS } from "@/lib/feedVideoData";
+import { Film } from "lucide-react";
 
 const VideoForYou = () => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [isMuted, setIsMuted] = useState(true);
-  const [videos, setVideos] = useState(FEED_VIDEOS);
-  const observerRef = useRef<IntersectionObserver | null>(null);
-  const videoRefs = useRef<Map<number, HTMLDivElement>>(new Map());
-
-  useEffect(() => {
-    observerRef.current = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting && entry.intersectionRatio > 0.6) {
-            const idx = Number(entry.target.getAttribute("data-index"));
-            if (!isNaN(idx)) setActiveIndex(idx);
-          }
-        });
-      },
-      { root: containerRef.current, threshold: 0.6 }
-    );
-    return () => observerRef.current?.disconnect();
-  }, []);
-
-  const setVideoRef = useCallback((el: HTMLDivElement | null, index: number) => {
-    if (el) {
-      videoRefs.current.set(index, el);
-      observerRef.current?.observe(el);
-    }
-  }, []);
-
-  // Infinite scroll
-  useEffect(() => {
-    if (activeIndex >= videos.length - 2) {
-      const shuffled = [...FEED_VIDEOS]
-        .sort(() => Math.random() - 0.5)
-        .map((v, i) => ({ ...v, id: `${v.id}_${videos.length + i}` }));
-      setVideos((prev) => [...prev, ...shuffled]);
-    }
-  }, [activeIndex, videos.length]);
-
   return (
-    <div className="fixed inset-0 bg-black z-40 md:relative md:z-auto md:h-screen">
-      <div
-        ref={containerRef}
-        className="h-full overflow-y-scroll snap-y snap-mandatory scrollbar-hide"
-      >
-        {videos.map((video, index) => (
-          <div
-            key={video.id}
-            ref={(el) => setVideoRef(el, index)}
-            data-index={index}
-            className="h-screen w-full snap-start snap-always"
-          >
-            <FeedVideoPlayer
-              video={video}
-              isActive={index === activeIndex}
-              isMuted={isMuted}
-              onToggleMute={() => setIsMuted(!isMuted)}
-            />
-          </div>
-        ))}
+    <div className="fixed inset-0 bg-black z-40 md:relative md:z-auto md:h-screen flex items-center justify-center">
+      <div className="text-center px-8">
+        <Film className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+        <h2 className="text-lg font-bold text-white mb-2">No Videos Yet</h2>
+        <p className="text-sm text-muted-foreground">Fresh content is on the way. Check back soon.</p>
       </div>
     </div>
   );
