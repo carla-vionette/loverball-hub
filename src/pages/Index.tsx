@@ -420,7 +420,7 @@ const Index = () => {
 
 
             <button onClick={openAuthModal} className="rounded-full border border-accent-foreground text-accent-foreground bg-transparent hover:bg-accent-foreground hover:text-accent transition-colors px-7 py-3.5 text-[11px] font-sans font-bold tracking-[0.2em] uppercase w-fit flex items-center gap-3">
-              Meet Us <ArrowRight className="h-3.5 w-3.5" />
+              Join Us <ArrowRight className="h-3.5 w-3.5" />
             </button>
           </motion.div>
 
