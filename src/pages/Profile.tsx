@@ -181,16 +181,19 @@ const Profile = () => {
   };
 
   useEffect(() => {
+    let cancelled = false;
     const fetchProfile = async () => {
       try {
         const { data: { user } } = await supabase.auth.getUser();
-        if (!user) { navigate("/auth"); return; }
+        if (!user || cancelled) { if (!cancelled) navigate("/auth"); return; }
 
         const [profileResult, rsvpResult, suggestedResult] = await Promise.all([
           supabase.from("profiles").select("*").eq("id", user.id).maybeSingle(),
           supabase.from("event_rsvps").select(`id, status, event:events (id, title, event_date, event_time, venue_name, city, image_url)`).eq("user_id", user.id).order("created_at", { ascending: false }),
           supabase.from("events").select("id, title, event_date, event_time, venue_name, city, image_url").gte("event_date", new Date().toISOString().split("T")[0]).eq("status", "published").order("event_date", { ascending: true }).limit(4),
         ]);
+
+        if (cancelled) return;
 
         if (profileResult.error || !profileResult.data) { navigate("/onboarding"); return; }
 
@@ -199,10 +202,16 @@ const Profile = () => {
           setRsvpEvents(rsvpResult.data.filter(r => r.event !== null) as RSVPEvent[]);
         }
         if (suggestedResult.data) setSuggestedEvents(suggestedResult.data);
-      } catch { navigate("/onboarding"); } finally { setLoading(false); }
+      } catch (err) {
+        console.error("Profile fetch error:", err);
+        if (!cancelled) navigate("/onboarding");
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
     };
     fetchProfile();
-  }, [navigate, toast]);
+    return () => { cancelled = true; };
+  }, [navigate]);
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 60000);
