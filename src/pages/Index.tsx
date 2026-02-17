@@ -544,7 +544,7 @@ const Index = () => {
 
           <div className="grid md:grid-cols-3 gap-6">
             {[
-            { num: "01", title: "AI-Powered Stories", desc: "Personalized sports content that speaks to what you care about. Beyond stats — the stories, drama, and culture.", icon: Sparkles, bg: "bg-primary" },
+            { num: "01", title: "AI-Powered Stories", desc: "Personalized sports content that speaks to what you care about. Beyond stats — the stories, drama, and culture.", icon: Sparkles, bg: "bg-medium-blue" },
             { num: "02", title: "Community Events", desc: "Watch parties, meetups, and experiences designed for women who love sports. Find your squad.", icon: Calendar, bg: "bg-accent" },
             { num: "03", title: "Exclusive Content", desc: "Behind-the-scenes access, player interviews, and insider perspectives you won't find anywhere else.", icon: Users, bg: "bg-hot-pink" }].
             map((feature, i) =>
