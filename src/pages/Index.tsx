@@ -415,9 +415,7 @@ const Index = () => {
             <h2 className="font-condensed text-[3.5rem] lg:text-[5rem] leading-[0.85] tracking-tight text-accent-foreground uppercase mb-8">
               We specialize in creating <em className="font-display italic normal-case text-[2rem] lg:text-[3rem] leading-[1.1]">tailored</em> sports content and experiences that <em className="font-display italic normal-case text-[2rem] lg:text-[3rem] leading-[1.1]">inspire women.</em>
             </h2>
-            <p className="text-sm text-accent-foreground/70 leading-relaxed mb-6 max-w-md font-serif">Loverball is a content and community platform for women who love sports. AI-powered stories, community events, and narrative-driven coverage — all built for her.
-
-            </p>
+            <p className="text-sm text-accent-foreground/70 leading-relaxed mb-6 max-w-md font-serif">Finally, a sports community that gets YOU. Connect with women who share your fandom, discover stories that matter, and join events where you belong. No gatekeeping, no explaining yourself—just authentic sports love.</p>
 
             {/* Stats row */}
             <div className="flex gap-10 mb-10">
