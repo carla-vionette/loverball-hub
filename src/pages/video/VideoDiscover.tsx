@@ -5,7 +5,7 @@ import ChannelRow from "@/components/video/ChannelRow";
 import ChannelCard from "@/components/video/ChannelCard";
 import { FollowButton } from "@/components/video/ChannelCard";
 import { Skeleton } from "@/components/ui/skeleton";
-import loverbballLogo from "@/assets/loverball-script-logo.png";
+import loverbballLogo from "@/assets/loverball-new-l-logo.png";
 import {
   FEATURED_CHANNELS,
   PRO_TEAMS,
@@ -146,13 +146,11 @@ const VideoDiscover = () => {
   return (
     <div className="min-h-screen pb-20 md:pb-6">
       {/* Header */}
-      <header className="sticky top-0 z-40 bg-background/90 backdrop-blur-md px-4 py-3 md:px-8 md:py-4 border-b border-border/20">
-        <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center gap-2">
-            <div className="flex flex-col items-start">
-              <img src={loverbballLogo} alt="Loverball" className="h-12 w-auto" />
-              <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-widest -mt-1">Watch</span>
-            </div>
+      <header className="sticky top-0 z-40 bg-background/90 backdrop-blur-md border-b border-border/20" style={{ padding: '16px 16px 12px' }}>
+        <div className="flex items-center justify-between mb-3 md:px-4">
+          <div className="flex items-center gap-2.5">
+            <img src={loverbballLogo} alt="Loverball" className="h-8 w-auto object-contain" />
+            <span className="text-sm font-normal text-foreground uppercase tracking-widest">Watch</span>
           </div>
           <button
             onClick={() => setShowSearch(!showSearch)}
