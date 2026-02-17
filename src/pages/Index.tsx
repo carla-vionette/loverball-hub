@@ -421,7 +421,7 @@ const Index = () => {
             <div className="flex gap-10 mb-10">
               <div>
                 
-                <p className="text-xs font-serif text-accent-foreground/60 mt-1 max-w-[180px]">of women globally identify as avid sports fans</p>
+                
               </div>
               
 
