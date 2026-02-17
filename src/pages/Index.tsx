@@ -525,18 +525,6 @@ const Index = () => {
             <p className="text-base font-serif text-hot-pink-foreground/80 leading-relaxed mb-8 max-w-md">
               Connect with thousands of women who share your passion for sports. Build real friendships, discover new content, and celebrate your fandom together.
             </p>
-            <div className="grid grid-cols-3 gap-6 mb-10">
-              {[
-                { value: "10K+", label: "Members" },
-                { value: "500+", label: "Stories" },
-                { value: "50+", label: "Events" }
-              ].map((stat) => (
-                <div key={stat.label}>
-                  <p className="font-condensed text-3xl lg:text-4xl text-hot-pink-foreground">{stat.value}</p>
-                  <p className="text-[10px] font-sans font-bold tracking-[0.2em] uppercase text-hot-pink-foreground/60 mt-1">{stat.label}</p>
-                </div>
-              ))}
-            </div>
             <Button onClick={openAuthModal} className="rounded-full bg-accent text-accent-foreground hover:bg-accent/90 px-8 py-5 text-[11px] font-sans font-bold tracking-[0.2em] uppercase w-fit h-auto shadow-xl">
               View More <ArrowRight className="ml-2 h-3.5 w-3.5" />
             </Button>
