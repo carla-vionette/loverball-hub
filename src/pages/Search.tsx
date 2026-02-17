@@ -600,7 +600,7 @@ const Search = () => {
                       <button
                         key={query}
                         onClick={() => handleSearchSubmit(query)}
-                        className="px-4 py-2 rounded-full bg-secondary/60 text-sm text-foreground hover:bg-secondary transition-colors"
+                        className="px-4 py-2 rounded-full bg-primary text-sm text-primary-foreground hover:bg-primary/90 transition-colors"
                       >
                         {query}
                       </button>
