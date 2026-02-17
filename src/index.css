@@ -130,6 +130,58 @@
     --ring: 201 52% 67%;
   }
 
+  /* ── Cinematic App Dark Theme ──
+     Applied to logged-in app pages for a moody, warm aesthetic */
+  .app-cinematic {
+    --background: 0 0% 5%;              /* Near-black #0D0D0D */
+    --foreground: 30 10% 92%;           /* Warm white */
+
+    --card: 0 0% 9%;                    /* Dark card #171717 */
+    --card-foreground: 30 10% 92%;
+
+    --popover: 0 0% 10%;
+    --popover-foreground: 30 10% 92%;
+
+    /* Primary = Warm Orange */
+    --primary: 18 100% 60%;             /* #FF6B35 */
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 0 0% 14%;             /* Elevated dark surface */
+    --secondary-foreground: 0 0% 70%;
+
+    --muted: 0 0% 12%;
+    --muted-foreground: 0 0% 55%;
+
+    /* Accent = Teal */
+    --accent: 175 56% 55%;             /* #4ECDC4 */
+    --accent-foreground: 0 0% 100%;
+
+    /* Coral for highlights */
+    --coral: 18 100% 69%;              /* #FF8C61 */
+    --coral-foreground: 0 0% 100%;
+
+    --success: 142 72% 42%;
+    --success-foreground: 0 0% 100%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 0%;
+    --info: 175 56% 55%;
+    --info-foreground: 0 0% 100%;
+    --destructive: 0 84% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --terracotta: 18 100% 60%;
+    --terracotta-foreground: 0 0% 100%;
+    --warm-beige: 30 10% 18%;
+    --warm-beige-foreground: 30 10% 85%;
+
+    --border: 0 0% 15%;
+    --input: 0 0% 15%;
+    --ring: 18 100% 60%;
+
+    --glow-primary: 0 0 20px hsla(18, 100%, 60%, 0.3);
+    --glow-accent: 0 0 20px hsla(175, 56%, 55%, 0.3);
+  }
+
   /* Video Streaming Dark Theme */
   .video-theme {
     --background: 0 0% 8%;
@@ -297,6 +349,20 @@
   .scrollbar-hide::-webkit-scrollbar { display: none; }
 
   .tap-target { @apply min-h-[44px] min-w-[44px]; }
+
+  /* Cinematic glow utilities */
+  .glow-primary { box-shadow: var(--glow-primary, none); }
+  .glow-accent { box-shadow: var(--glow-accent, none); }
+  .glass-card {
+    background: hsla(0, 0%, 100%, 0.05);
+    backdrop-filter: blur(16px);
+    border: 1px solid hsla(0, 0%, 100%, 0.08);
+  }
+  .glass-card-strong {
+    background: hsla(0, 0%, 100%, 0.08);
+    backdrop-filter: blur(24px);
+    border: 1px solid hsla(0, 0%, 100%, 0.12);
+  }
 
   .focus-ring {
     @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background;
