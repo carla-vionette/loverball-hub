@@ -401,62 +401,51 @@ const Index = () => {
       {/* ══════════════════════════════════════════
               ABOUT — Coral block with asymmetric layout
              ══════════════════════════════════════════ */}
-      <section id="about" className="bg-background py-20 lg:py-28">
-        <div className="max-w-[1400px] mx-auto px-8 lg:px-12">
-          <div className="grid lg:grid-cols-[1fr_1.2fr_1.1fr] gap-8 lg:gap-12 items-center">
-            {/* Left — Label + Stats */}
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-              viewport={{ once: true }}
-              className="flex flex-col justify-start">
+      <section id="about" className="bg-accent">
+        <div className="grid lg:grid-cols-2">
+          {/* Left — Text on coral background */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="px-8 lg:px-16 py-20 lg:py-28 flex flex-col justify-center">
 
-              <span className="font-condensed text-[2.5rem] lg:text-[3.5rem] text-secondary uppercase leading-none tracking-tight mb-10">Fandom</span>
+            <span className="text-[11px] font-sans font-bold tracking-[0.3em] uppercase text-accent-foreground/60 mb-4">Fandom</span>
+            <h2 className="font-condensed text-[3.5rem] lg:text-[5rem] leading-[0.85] tracking-tight text-accent-foreground uppercase mb-8">
+              We specialize in creating <em className="font-display italic normal-case text-[2rem] lg:text-[3rem] leading-[1.1]">tailored</em> sports content and experiences that <em className="font-display italic normal-case text-[2rem] lg:text-[3rem] leading-[1.1]">inspire women.</em>
+            </h2>
+            <p className="text-sm text-accent-foreground/70 leading-relaxed mb-6 max-w-md font-serif">
+              Loverball is a content and community platform for the women's sports market. AI-powered stories, community events, and narrative-driven coverage — all built for her.
+            </p>
 
-              <div className="space-y-8">
-                <div>
-                  <span className="font-condensed text-[4rem] lg:text-[5rem] text-foreground leading-none"><AnimatedStat value={72} /></span>
-                  <p className="text-sm font-serif text-muted-foreground mt-2 max-w-[200px]">of women globally identify as avid sports fans</p>
-                </div>
-                <div>
-                  <span className="font-condensed text-[4rem] lg:text-[5rem] text-foreground leading-none">$28B</span>
-                  <p className="text-sm font-serif text-muted-foreground mt-2 max-w-[200px]">women's sports market — and growing</p>
-                </div>
+            {/* Stats row */}
+            <div className="flex gap-10 mb-10">
+              <div>
+                <span className="font-condensed text-[3rem] text-accent-foreground leading-none"><AnimatedStat value={72} /></span>
+                <p className="text-xs font-serif text-accent-foreground/60 mt-1 max-w-[180px]">of women globally identify as avid sports fans</p>
               </div>
-            </motion.div>
+              <div>
+                <span className="font-condensed text-[3rem] text-accent-foreground leading-none">$28B</span>
+                <p className="text-xs font-serif text-accent-foreground/60 mt-1 max-w-[180px]">women's sports market — and growing</p>
+              </div>
+            </div>
 
-            {/* Center — Large close-up image */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.97 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.8, delay: 0.1 }}
-              viewport={{ once: true }}
-              className="relative">
+            <button onClick={openAuthModal} className="rounded-full border border-accent-foreground text-accent-foreground bg-transparent hover:bg-accent-foreground hover:text-accent transition-colors px-7 py-3.5 text-[11px] font-sans font-bold tracking-[0.2em] uppercase w-fit flex items-center gap-3">
+              Meet Us <ArrowRight className="h-3.5 w-3.5" />
+            </button>
+          </motion.div>
 
-              <img src={philosophyImage} alt="Loverball community" className="w-full aspect-[4/5] object-cover rounded-sm" />
-            </motion.div>
+          {/* Right — Large image */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.97 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8, delay: 0.1 }}
+            viewport={{ once: true }}
+            className="relative min-h-[400px] lg:min-h-0">
 
-            {/* Right — Headline + Description + CTA */}
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              viewport={{ once: true }}
-              className="flex flex-col justify-center">
-
-              <h2 className="font-display text-[2.2rem] lg:text-[2.8rem] leading-[1.1] tracking-tight text-foreground mb-8">
-                We specialize in creating <em className="italic">tailored</em> sports content and experiences that <em className="italic">inspire women.</em>
-              </h2>
-              <p className="text-sm font-serif text-muted-foreground leading-relaxed mb-10 max-w-sm">
-                Loverball is a content and community platform for the women's sports market. AI-powered stories, community events, and narrative-driven coverage — all built for her.
-              </p>
-
-              <button onClick={openAuthModal} className="rounded-full border border-foreground text-foreground bg-transparent hover:bg-foreground hover:text-background transition-colors px-7 py-3.5 text-[11px] font-sans font-bold tracking-[0.2em] uppercase w-fit flex items-center gap-3">
-                Meet Us <ArrowRight className="h-3.5 w-3.5" />
-              </button>
-            </motion.div>
-          </div>
+            <img src={philosophyImage} alt="Loverball community" className="w-full h-full object-cover" />
+          </motion.div>
         </div>
       </section>
 
