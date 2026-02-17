@@ -166,8 +166,8 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background overflow-x-hidden">
       {/* ══════════════════════════════════════════
-                       NAV — Bold editorial masthead
-                      ══════════════════════════════════════════ */}
+                         NAV — Bold editorial masthead
+                        ══════════════════════════════════════════ */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-background/98 backdrop-blur-sm">
         <div className="max-w-[1400px] mx-auto px-6 lg:px-12">
           <div className="flex items-center justify-between h-20">
@@ -210,8 +210,8 @@ const Index = () => {
       </nav>
 
       {/* ══════════════════════════════════════════
-                       AUTH MODAL
-                      ══════════════════════════════════════════ */}
+                         AUTH MODAL
+                        ══════════════════════════════════════════ */}
       <Dialog open={authModalOpen} onOpenChange={setAuthModalOpen}>
         <DialogContent className="sm:max-w-md rounded-3xl p-0 overflow-hidden border-border/20">
           <div className="p-8 sm:p-10">
@@ -280,8 +280,8 @@ const Index = () => {
       </Dialog>
 
       {/* ══════════════════════════════════════════
-                       HERO — Bold color-block split with overlapping images
-                      ══════════════════════════════════════════ */}
+                         HERO — Bold color-block split with overlapping images
+                        ══════════════════════════════════════════ */}
       <section className="pt-28 lg:pt-24">
         <div className="grid lg:grid-cols-2 min-h-[90vh]">
           {/* Left — Sky blue block with headline */}
@@ -385,8 +385,8 @@ const Index = () => {
       </section>
 
       {/* ══════════════════════════════════════════
-                       TICKER STRIP — Sport category badges
-                      ══════════════════════════════════════════ */}
+                         TICKER STRIP — Sport category badges
+                        ══════════════════════════════════════════ */}
       <div className="bg-foreground py-4 overflow-hidden">
         <div className="flex items-center gap-12 animate-[shimmer_20s_linear_infinite] whitespace-nowrap px-8">
           {[...sportCategories, ...sportCategories, ...sportCategories].map((cat, i) =>
@@ -399,8 +399,8 @@ const Index = () => {
       </div>
 
       {/* ══════════════════════════════════════════
-                       ABOUT — Coral block with asymmetric layout
-                      ══════════════════════════════════════════ */}
+                         ABOUT — Coral block with asymmetric layout
+                        ══════════════════════════════════════════ */}
       <section id="about" className="bg-accent">
         <div className="grid lg:grid-cols-2">
           {/* Left — Text on coral background */}
@@ -438,8 +438,8 @@ const Index = () => {
       </section>
 
       {/* ══════════════════════════════════════════
-                       HOT PINK SECTION — Community collage with overlapping images
-                      ══════════════════════════════════════════ */}
+                         HOT PINK SECTION — Community collage with overlapping images
+                        ══════════════════════════════════════════ */}
       <section id="stories" className="bg-hot-pink relative overflow-hidden">
         <div className="grid lg:grid-cols-2 min-h-[80vh]">
           {/* Left — Overlapping community images */}
@@ -464,7 +464,7 @@ const Index = () => {
                 className="absolute left-4 top-12 w-[50%] z-10">
 
                 <div className="rounded-2xl overflow-hidden shadow-2xl border-4 border-card">
-                  <img src={communityImage} alt="Community watch party" className="w-full aspect-[3/4] object-cover" />
+                  <img alt="Community watch party" className="w-full aspect-[3/4] object-cover" src="/lovable-uploads/1146599d-2e17-4a36-a8ec-64fddec187a0.png" />
                 </div>
               </motion.div>
 
@@ -488,7 +488,7 @@ const Index = () => {
                 className="absolute right-4 bottom-8 w-[48%] z-10">
 
                 <div className="rounded-2xl overflow-hidden shadow-2xl border-4 border-card">
-                  <img src={pickupGame} alt="Pickup game" className="w-full aspect-[3/4] object-cover" />
+                  <img alt="Pickup game" className="w-full aspect-[3/4] object-cover" src="/lovable-uploads/08d4e8e3-8246-43ed-aba5-3a1f21621cab.jpg" />
                 </div>
               </motion.div>
             </div>
@@ -517,8 +517,8 @@ const Index = () => {
       </section>
 
       {/* ══════════════════════════════════════════
-                       QUOTE — Clean cream band
-                      ══════════════════════════════════════════ */}
+                         QUOTE — Clean cream band
+                        ══════════════════════════════════════════ */}
       <section className="bg-background py-24 lg:py-32">
         <div className="max-w-[900px] mx-auto px-8 lg:px-16 text-center">
           <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ duration: 1 }} viewport={{ once: true }}>
@@ -534,8 +534,8 @@ const Index = () => {
       </section>
 
       {/* ══════════════════════════════════════════
-                       FEATURES — Color-blocked numbered cards
-                      ══════════════════════════════════════════ */}
+                         FEATURES — Color-blocked numbered cards
+                        ══════════════════════════════════════════ */}
       <section id="features" className="bg-secondary">
         <div className="max-w-[1400px] mx-auto px-8 lg:px-16 py-24 lg:py-32">
           <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ duration: 0.8 }} viewport={{ once: true }} className="mb-16">
@@ -574,8 +574,8 @@ const Index = () => {
       </section>
 
       {/* ══════════════════════════════════════════
-                       EVENTS — Editorial schedule listing
-                      ══════════════════════════════════════════ */}
+                         EVENTS — Editorial schedule listing
+                        ══════════════════════════════════════════ */}
       <section id="events" className="py-24 lg:py-32 bg-background">
         <div className="max-w-[1400px] mx-auto px-8 lg:px-16">
           <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ duration: 0.8 }} viewport={{ once: true }} className="flex items-end justify-between mb-16">
@@ -624,8 +624,8 @@ const Index = () => {
       </section>
 
       {/* ══════════════════════════════════════════
-                       TESTIMONIALS — Sky blue block
-                      ══════════════════════════════════════════ */}
+                         TESTIMONIALS — Sky blue block
+                        ══════════════════════════════════════════ */}
       <section className="bg-primary py-20 lg:py-28">
         <div className="max-w-[1400px] mx-auto px-8 lg:px-16">
           <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ duration: 0.8 }} viewport={{ once: true }}>
@@ -647,8 +647,8 @@ const Index = () => {
       </section>
 
       {/* ══════════════════════════════════════════
-                       APP — Split layout with diagonal stripes
-                      ══════════════════════════════════════════ */}
+                         APP — Split layout with diagonal stripes
+                        ══════════════════════════════════════════ */}
       <section className="bg-background relative overflow-hidden">
         <div className="grid lg:grid-cols-2">
           <motion.div
@@ -699,8 +699,8 @@ const Index = () => {
       </section>
 
       {/* ══════════════════════════════════════════
-                       FINAL CTA — Dark block with bold typography
-                      ══════════════════════════════════════════ */}
+                         FINAL CTA — Dark block with bold typography
+                        ══════════════════════════════════════════ */}
       <section className="py-28 lg:py-36 bg-foreground relative overflow-hidden">
         {/* Decorative script */}
         <div className="absolute inset-0 flex items-center justify-center opacity-[0.04]">
@@ -722,8 +722,8 @@ const Index = () => {
       </section>
 
       {/* ══════════════════════════════════════════
-                       FOOTER
-                      ══════════════════════════════════════════ */}
+                         FOOTER
+                        ══════════════════════════════════════════ */}
       <footer className="py-16 bg-foreground border-t border-background/10">
         <div className="max-w-[1400px] mx-auto px-8 lg:px-16">
           {/* Newsletter */}
