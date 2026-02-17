@@ -4,6 +4,9 @@ import feedVideo31 from "@/assets/feed-video-31.mp4";
 import feedVideo32 from "@/assets/feed-video-32.mp4";
 import feedVideo33 from "@/assets/feed-video-33.mp4";
 import feedVideo34 from "@/assets/feed-video-34.mp4";
+import feedVideo35 from "@/assets/feed-video-35.mp4";
+import feedVideo36 from "@/assets/feed-video-36.mp4";
+import feedVideo37 from "@/assets/feed-video-37.mov";
 
 import loverballLogo from "@/assets/loverball-script-logo.png";
 
@@ -116,5 +119,51 @@ export const FEED_VIDEOS: FeedVideoItem[] = [
     uploadDate: "2026-02-17",
     tags: ["community", "lifestyle"],
     isFollowing: true,
+  },
+  {
+    id: "feed_35",
+    channelId: "loverball",
+    channelName: "Loverball",
+    channelAvatar: loverballLogo,
+    videoUrl: feedVideo35,
+    thumbnail: "",
+    title: "Pure Energy ⚡",
+    description: "When the crowd hits different. You had to be there.",
+    duration: 32,
+    likes: 7800,
+    views: 134000,
+    uploadDate: "2026-02-17",
+    tags: ["energy", "fans", "vibes"],
+    isFollowing: true,
+  },
+  {
+    id: "feed_36",
+    channelId: "court-vision",
+    channelName: "Court Vision",
+    channelAvatar: loverballLogo,
+    videoUrl: feedVideo36,
+    thumbnail: "",
+    title: "Next Up 🌟",
+    description: "Keep your eyes on this one. Star in the making.",
+    duration: 28,
+    likes: 6500,
+    views: 112000,
+    uploadDate: "2026-02-17",
+    tags: ["rising", "talent", "sports"],
+  },
+  {
+    id: "feed_37",
+    channelId: "fan-life",
+    channelName: "Fan Life",
+    channelAvatar: loverballLogo,
+    videoUrl: feedVideo37,
+    thumbnail: "",
+    title: "Sideline Stories 📖",
+    description: "The moments between the moments. That's the real game.",
+    duration: 35,
+    likes: 5400,
+    views: 89000,
+    uploadDate: "2026-02-17",
+    tags: ["stories", "lifestyle", "culture"],
   },
 ];
