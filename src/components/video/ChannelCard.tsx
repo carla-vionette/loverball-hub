@@ -104,7 +104,7 @@ const ChannelCard = ({ channel, variant = "team" }: ChannelCardProps) => {
             </div>
             {/* Trending rank */}
             {isTrending && channel.trendingRank && (
-              <div className="absolute top-2 left-2 flex items-center gap-1 bg-primary/90 text-primary-foreground text-[10px] font-bold px-2 py-0.5 rounded-full">
+              <div className="absolute top-2 left-2 flex items-center gap-1 bg-secondary text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-md">
                 <Flame className="w-3 h-3" />
                 #{channel.trendingRank}
               </div>
