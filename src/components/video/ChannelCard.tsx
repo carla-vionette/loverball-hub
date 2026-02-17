@@ -77,12 +77,14 @@ const ChannelCard = ({ channel, variant = "team" }: ChannelCardProps) => {
               <img src={channel.latestThumb} alt="" className="w-full h-full object-cover" />
             ) : (
               <div className="w-full h-full bg-secondary flex items-center justify-center">
-                <img
-                  src={logoSrc}
-                  alt={channel.name}
-                  className="w-20 h-20 max-w-[80px] max-h-[80px] object-contain"
-                  onError={(e) => { (e.target as HTMLImageElement).src = loverbballLogo; }}
-                />
+                {!isLoverball && (
+                  <img
+                    src={logoSrc}
+                    alt={channel.name}
+                    className="w-20 h-20 max-w-[80px] max-h-[80px] object-contain"
+                    onError={(e) => { (e.target as HTMLImageElement).src = loverbballLogo; }}
+                  />
+                )}
               </div>
             )}
             {/* Overlay on hover */}
