@@ -417,17 +417,7 @@ const Index = () => {
             </h2>
             <p className="text-sm text-accent-foreground/70 leading-relaxed mb-6 max-w-md font-serif">Finally, a sports community that gets YOU. Connect with women who share your fandom, discover stories that matter, and join events where you belong. No gatekeeping, no explaining yourself—just authentic sports love.</p>
 
-            {/* Stats row */}
-            <div className="flex gap-10 mb-10">
-              <div>
-                
-                
-              </div>
-              
 
-
-
-            </div>
 
             <button onClick={openAuthModal} className="rounded-full border border-accent-foreground text-accent-foreground bg-transparent hover:bg-accent-foreground hover:text-accent transition-colors px-7 py-3.5 text-[11px] font-sans font-bold tracking-[0.2em] uppercase w-fit flex items-center gap-3">
               Meet Us <ArrowRight className="h-3.5 w-3.5" />
