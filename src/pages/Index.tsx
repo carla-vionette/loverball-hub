@@ -183,7 +183,7 @@ const Index = () => {
 
             {/* Center — Masthead logo */}
             <div className="absolute left-1/2 -translate-x-1/2">
-              <img src={loverballLogo} alt="Loverball" className="h-28 w-auto" />
+              <img src={loverballLogo} alt="Loverball" className="h-40 w-auto" />
             </div>
 
             {/* Right — CTA + links */}
