@@ -64,7 +64,7 @@ const ChannelCard = ({ channel, variant = "team" }: ChannelCardProps) => {
             <img
               src={logoSrc}
               alt={channel.name}
-              className="w-16 h-16 rounded-full object-cover border-2 border-border/30"
+              className="w-20 h-20 max-w-[80px] max-h-[80px] rounded-full object-cover border-2 border-border/30"
               onError={(e) => { (e.target as HTMLImageElement).src = loverbballLogo; }}
             />
             {channel.verified && (
@@ -80,7 +80,7 @@ const ChannelCard = ({ channel, variant = "team" }: ChannelCardProps) => {
                 <img
                   src={logoSrc}
                   alt={channel.name}
-                  className="w-14 h-14 object-contain"
+                  className="w-20 h-20 max-w-[80px] max-h-[80px] object-contain"
                   onError={(e) => { (e.target as HTMLImageElement).src = loverbballLogo; }}
                 />
               </div>
@@ -96,7 +96,7 @@ const ChannelCard = ({ channel, variant = "team" }: ChannelCardProps) => {
               <img
                 src={logoSrc}
                 alt=""
-                className="w-8 h-8 rounded-full object-contain bg-background/80 p-0.5 border border-border/30"
+                className="w-9 h-9 max-w-[36px] max-h-[36px] rounded-full object-contain bg-background/80 p-0.5 border border-border/30"
                 onError={(e) => { (e.target as HTMLImageElement).src = loverbballLogo; }}
               />
             </div>
