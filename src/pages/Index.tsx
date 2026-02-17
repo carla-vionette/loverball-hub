@@ -17,7 +17,7 @@ import communityImage from "@/assets/landing-community.jpg";
 import athletesImage from "@/assets/landing-athletes.jpg";
 import fansImage from "@/assets/landing-fans.jpg";
 import fieldDay from "@/assets/field-day.jpg";
-import teamSpirit from "@/assets/team-spirit.jpg";
+import teamSpirit from "@/assets/community-women.jpg";
 import pickupGame from "@/assets/pickup-game.jpg";
 import wnbaWatch from "@/assets/landing-woman.png";
 import { z } from "zod";
