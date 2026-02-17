@@ -150,7 +150,7 @@ const VideoDiscover = () => {
         <div className="flex items-center justify-between mb-3 md:px-4">
           <div className="flex items-center gap-2.5">
             <img src={loverbballLogo} alt="Loverball" className="h-12 w-auto object-contain" />
-            <span className="text-sm font-normal text-foreground uppercase tracking-widest">Watch</span>
+            
           </div>
           <button
             onClick={() => setShowSearch(!showSearch)}
