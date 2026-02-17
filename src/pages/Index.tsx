@@ -151,23 +151,23 @@ const Index = () => {
   const openAuthModal = () => setAuthModalOpen(true);
 
   const sportCategories = [
-    { label: "WNBA" }, { label: "SOCCER" }, { label: "TENNIS" },
-    { label: "BASKETBALL" }, { label: "VOLLEYBALL" }, { label: "RUNNING" }
-  ];
+  { label: "WNBA" }, { label: "SOCCER" }, { label: "TENNIS" },
+  { label: "BASKETBALL" }, { label: "VOLLEYBALL" }, { label: "RUNNING" }];
+
 
   const upcomingEvents = [
-    { date: "MAR 22", title: "WNBA Season Opener Watch Party", venue: "The Victorian, Santa Monica", type: "Watch Party" },
-    { date: "MAR 28", title: "Loverball Run Club × Griffith Park", venue: "Griffith Observatory Trailhead", type: "Meetup" },
-    { date: "APR 05", title: "Angel City FC Home Opener", venue: "BMO Stadium, DTLA", type: "Game Day" },
-    { date: "APR 12", title: "Women in Sports Panel + Mixer", venue: "Soho House, WeHo", type: "Panel" },
-    { date: "APR 19", title: "March Madness Final Four Party", venue: "Loverball HQ, Venice", type: "Watch Party" }
-  ];
+  { date: "MAR 22", title: "WNBA Season Opener Watch Party", venue: "The Victorian, Santa Monica", type: "Watch Party" },
+  { date: "MAR 28", title: "Loverball Run Club × Griffith Park", venue: "Griffith Observatory Trailhead", type: "Meetup" },
+  { date: "APR 05", title: "Angel City FC Home Opener", venue: "BMO Stadium, DTLA", type: "Game Day" },
+  { date: "APR 12", title: "Women in Sports Panel + Mixer", venue: "Soho House, WeHo", type: "Panel" },
+  { date: "APR 19", title: "March Madness Final Four Party", venue: "Loverball HQ, Venice", type: "Watch Party" }];
+
 
   return (
     <div className="min-h-screen bg-background overflow-x-hidden">
       {/* ══════════════════════════════════════════
-           NAV — Bold editorial masthead
-          ══════════════════════════════════════════ */}
+              NAV — Bold editorial masthead
+             ══════════════════════════════════════════ */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-background/98 backdrop-blur-sm">
         <div className="max-w-[1400px] mx-auto px-6 lg:px-12">
           <div className="flex items-center justify-between h-20">
@@ -197,21 +197,21 @@ const Index = () => {
           </div>
         </div>
 
-        {mobileMenuOpen && (
-          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="lg:hidden bg-background border-t border-border/30 px-8 py-6 space-y-1">
+        {mobileMenuOpen &&
+        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="lg:hidden bg-background border-t border-border/30 px-8 py-6 space-y-1">
             <a href="#about" onClick={() => setMobileMenuOpen(false)} className="block py-3 text-[11px] font-sans font-bold tracking-[0.25em] uppercase text-foreground/60">About</a>
             <a href="#stories" onClick={() => setMobileMenuOpen(false)} className="block py-3 text-[11px] font-sans font-bold tracking-[0.25em] uppercase text-foreground/60">Stories</a>
             <a href="#events" onClick={() => setMobileMenuOpen(false)} className="block py-3 text-[11px] font-sans font-bold tracking-[0.25em] uppercase text-foreground/60">Events</a>
-            <Button onClick={() => { setMobileMenuOpen(false); openAuthModal(); }} className="w-full rounded-full mt-4 bg-accent text-accent-foreground text-[11px] tracking-[0.2em] uppercase">
+            <Button onClick={() => {setMobileMenuOpen(false);openAuthModal();}} className="w-full rounded-full mt-4 bg-accent text-accent-foreground text-[11px] tracking-[0.2em] uppercase">
               Join Loverball
             </Button>
           </motion.div>
-        )}
+        }
       </nav>
 
       {/* ══════════════════════════════════════════
-           AUTH MODAL
-          ══════════════════════════════════════════ */}
+              AUTH MODAL
+             ══════════════════════════════════════════ */}
       <Dialog open={authModalOpen} onOpenChange={setAuthModalOpen}>
         <DialogContent className="sm:max-w-md rounded-3xl p-0 overflow-hidden border-border/20">
           <div className="p-8 sm:p-10">
@@ -226,8 +226,8 @@ const Index = () => {
               </TabsList>
 
               <TabsContent value="login">
-                {showForgotPassword ? (
-                  <form onSubmit={handleForgotPassword} className="space-y-5 mt-8">
+                {showForgotPassword ?
+                <form onSubmit={handleForgotPassword} className="space-y-5 mt-8">
                     <div className="space-y-2">
                       <Label htmlFor="reset-email" className="text-foreground text-[11px] tracking-[0.1em] uppercase">Email</Label>
                       <Input id="reset-email" type="email" placeholder="Enter your email" value={email} onChange={(e) => setEmail(e.target.value)} required className="bg-background border-border text-foreground rounded-xl h-12" />
@@ -235,9 +235,9 @@ const Index = () => {
                     <p className="text-muted-foreground text-sm">We'll send you a link to reset your password.</p>
                     <Button type="submit" className="w-full rounded-full h-12 bg-accent text-accent-foreground text-[11px] font-sans tracking-[0.1em] uppercase" disabled={loading}>{loading ? "Sending..." : "Send Reset Link"}</Button>
                     <button type="button" onClick={() => setShowForgotPassword(false)} className="w-full text-sm text-accent hover:text-accent/80 transition-colors font-medium">Back to sign in</button>
-                  </form>
-                ) : (
-                  <form onSubmit={handleLogin} className="space-y-5 mt-8">
+                  </form> :
+
+                <form onSubmit={handleLogin} className="space-y-5 mt-8">
                     <div className="space-y-2">
                       <Label htmlFor="login-email" className="text-foreground text-[11px] tracking-[0.1em] uppercase">Email</Label>
                       <Input id="login-email" type="email" placeholder="Enter your email" value={email} onChange={(e) => setEmail(e.target.value)} required className="bg-background border-border text-foreground rounded-xl h-12" />
@@ -251,7 +251,7 @@ const Index = () => {
                     </div>
                     <Button type="submit" className="w-full rounded-full h-12 bg-accent text-accent-foreground text-[11px] font-sans tracking-[0.1em] uppercase" disabled={loading}>{loading ? "Signing in..." : "Sign In"}</Button>
                   </form>
-                )}
+                }
               </TabsContent>
 
               <TabsContent value="signup">
@@ -280,8 +280,8 @@ const Index = () => {
       </Dialog>
 
       {/* ══════════════════════════════════════════
-           HERO — Bold color-block split with overlapping images
-          ══════════════════════════════════════════ */}
+              HERO — Bold color-block split with overlapping images
+             ══════════════════════════════════════════ */}
       <section className="pt-28 lg:pt-24">
         <div className="grid lg:grid-cols-2 min-h-[90vh]">
           {/* Left — Sky blue block with headline */}
@@ -290,14 +290,14 @@ const Index = () => {
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.9, ease: "easeOut" }}
-              className="relative z-10 max-w-lg"
-            >
+              className="relative z-10 max-w-lg">
+
               <span className="text-[11px] font-sans font-bold tracking-[0.3em] uppercase text-primary-foreground/70 mb-6 block">Women's Sports Fandom Club</span>
               <h1 className="font-condensed text-[4.5rem] sm:text-[6rem] lg:text-[7.5rem] leading-[0.85] tracking-tight text-primary-foreground uppercase mb-8">
                 Her<br />
                 Game.<br />
                 <span className="text-foreground">Her</span><br />
-                <span className="text-foreground">Story.</span>
+                <span className="text-foreground">COMMUNITY.</span>
               </h1>
               <p className="text-base font-serif text-primary-foreground/80 leading-relaxed mb-8 max-w-sm">
                 The platform where women's sports culture meets connection, storytelling, and sisterhood. Born in Los Angeles.
@@ -323,8 +323,8 @@ const Index = () => {
             initial={{ opacity: 0, x: 40 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.9, delay: 0.2 }}
-            className="bg-background relative flex items-center justify-center py-20 lg:py-0 px-8 overflow-hidden"
-          >
+            className="bg-background relative flex items-center justify-center py-20 lg:py-0 px-8 overflow-hidden">
+
             {/* Decorative script behind images */}
             <div className="absolute inset-0 flex items-center justify-center opacity-[0.06]">
               <span className="font-script text-[12rem] lg:text-[16rem] text-foreground leading-none whitespace-nowrap rotate-[-8deg]">her game</span>
@@ -337,8 +337,8 @@ const Index = () => {
                 initial={{ opacity: 0, rotate: -8, scale: 0.9 }}
                 animate={{ opacity: 1, rotate: -6, scale: 1 }}
                 transition={{ duration: 0.8, delay: 0.4 }}
-                className="absolute left-0 bottom-12 w-[55%] z-10"
-              >
+                className="absolute left-0 bottom-12 w-[55%] z-10">
+
                 <div className="rounded-2xl overflow-hidden shadow-2xl border-4 border-card">
                   <img src={athletesImage} alt="Women athletes" className="w-full aspect-[3/4] object-cover" />
                 </div>
@@ -349,8 +349,8 @@ const Index = () => {
                 initial={{ opacity: 0, y: 30, scale: 0.9 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 transition={{ duration: 0.8, delay: 0.5 }}
-                className="absolute left-[20%] top-4 w-[60%] z-20"
-              >
+                className="absolute left-[20%] top-4 w-[60%] z-20">
+
                 <div className="rounded-2xl overflow-hidden shadow-2xl border-4 border-card">
                   <img src={heroImage} alt="Women sports fans" className="w-full aspect-[3/4] object-cover object-[center_30%]" />
                 </div>
@@ -361,8 +361,8 @@ const Index = () => {
                 initial={{ opacity: 0, rotate: 8, scale: 0.9 }}
                 animate={{ opacity: 1, rotate: 5, scale: 1 }}
                 transition={{ duration: 0.8, delay: 0.6 }}
-                className="absolute right-0 bottom-16 w-[50%] z-10"
-              >
+                className="absolute right-0 bottom-16 w-[50%] z-10">
+
                 <div className="rounded-2xl overflow-hidden shadow-2xl border-4 border-card">
                   <img src={fansImage} alt="Fans celebrating" className="w-full aspect-[3/4] object-cover" />
                 </div>
@@ -373,8 +373,8 @@ const Index = () => {
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.5, delay: 0.9 }}
-                className="absolute bottom-4 right-4 z-30"
-              >
+                className="absolute bottom-4 right-4 z-30">
+
                 <button onClick={openAuthModal} className="rounded-full bg-accent text-accent-foreground px-5 py-2.5 text-[10px] font-sans font-bold tracking-[0.2em] uppercase shadow-xl hover:scale-105 transition-transform flex items-center gap-2">
                   View More <ArrowRight className="h-3 w-3" />
                 </button>
@@ -385,22 +385,22 @@ const Index = () => {
       </section>
 
       {/* ══════════════════════════════════════════
-           TICKER STRIP — Sport category badges
-          ══════════════════════════════════════════ */}
+              TICKER STRIP — Sport category badges
+             ══════════════════════════════════════════ */}
       <div className="bg-foreground py-4 overflow-hidden">
         <div className="flex items-center gap-12 animate-[shimmer_20s_linear_infinite] whitespace-nowrap px-8">
-          {[...sportCategories, ...sportCategories, ...sportCategories].map((cat, i) => (
-            <span key={i} className="text-[11px] font-sans font-bold tracking-[0.3em] uppercase text-background/70 flex items-center gap-3">
+          {[...sportCategories, ...sportCategories, ...sportCategories].map((cat, i) =>
+          <span key={i} className="text-[11px] font-sans font-bold tracking-[0.3em] uppercase text-background/70 flex items-center gap-3">
               <span className="w-2 h-2 rounded-full bg-accent inline-block" />
               {cat.label}
             </span>
-          ))}
+          )}
         </div>
       </div>
 
       {/* ══════════════════════════════════════════
-           ABOUT — Coral block with asymmetric layout
-          ══════════════════════════════════════════ */}
+              ABOUT — Coral block with asymmetric layout
+             ══════════════════════════════════════════ */}
       <section id="about" className="bg-accent">
         <div className="grid lg:grid-cols-2">
           {/* Left — Text on coral background */}
@@ -409,8 +409,8 @@ const Index = () => {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
-            className="px-8 lg:px-16 py-20 lg:py-28 flex flex-col justify-center"
-          >
+            className="px-8 lg:px-16 py-20 lg:py-28 flex flex-col justify-center">
+
             <span className="text-[11px] font-sans font-bold tracking-[0.3em] uppercase text-accent-foreground/60 mb-4">Our Story</span>
             <h2 className="font-condensed text-[3.5rem] lg:text-[5rem] leading-[0.85] tracking-tight text-accent-foreground uppercase mb-8">
               HI! WE'RE<br />
@@ -446,16 +446,16 @@ const Index = () => {
             whileInView={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8, delay: 0.1 }}
             viewport={{ once: true }}
-            className="relative min-h-[400px] lg:min-h-0"
-          >
+            className="relative min-h-[400px] lg:min-h-0">
+
             <img src={philosophyImage} alt="Loverball community" className="w-full h-full object-cover" />
           </motion.div>
         </div>
       </section>
 
       {/* ══════════════════════════════════════════
-           HOT PINK SECTION — Community collage with overlapping images
-          ══════════════════════════════════════════ */}
+              HOT PINK SECTION — Community collage with overlapping images
+             ══════════════════════════════════════════ */}
       <section id="stories" className="bg-hot-pink relative overflow-hidden">
         <div className="grid lg:grid-cols-2 min-h-[80vh]">
           {/* Left — Overlapping community images */}
@@ -464,8 +464,8 @@ const Index = () => {
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
-            className="relative flex items-center justify-center py-20 px-8 lg:px-16"
-          >
+            className="relative flex items-center justify-center py-20 px-8 lg:px-16">
+
             {/* Script decoration behind */}
             <div className="absolute inset-0 flex items-center justify-center opacity-[0.08]">
               <span className="font-script text-[10rem] lg:text-[14rem] text-hot-pink-foreground leading-none whitespace-nowrap rotate-[-12deg]">community</span>
@@ -477,8 +477,8 @@ const Index = () => {
                 whileInView={{ opacity: 1, rotate: -4, scale: 1 }}
                 transition={{ duration: 0.6, delay: 0.2 }}
                 viewport={{ once: true }}
-                className="absolute left-4 top-12 w-[50%] z-10"
-              >
+                className="absolute left-4 top-12 w-[50%] z-10">
+
                 <div className="rounded-2xl overflow-hidden shadow-2xl border-4 border-card">
                   <img src={communityImage} alt="Community watch party" className="w-full aspect-[3/4] object-cover" />
                 </div>
@@ -489,8 +489,8 @@ const Index = () => {
                 whileInView={{ opacity: 1, y: 0, scale: 1 }}
                 transition={{ duration: 0.6, delay: 0.3 }}
                 viewport={{ once: true }}
-                className="absolute left-[25%] top-0 w-[55%] z-20"
-              >
+                className="absolute left-[25%] top-0 w-[55%] z-20">
+
                 <div className="rounded-2xl overflow-hidden shadow-2xl border-4 border-card">
                   <img src={teamSpirit} alt="Team spirit" className="w-full aspect-[3/4] object-cover" />
                 </div>
@@ -501,8 +501,8 @@ const Index = () => {
                 whileInView={{ opacity: 1, rotate: 4, scale: 1 }}
                 transition={{ duration: 0.6, delay: 0.4 }}
                 viewport={{ once: true }}
-                className="absolute right-4 bottom-8 w-[48%] z-10"
-              >
+                className="absolute right-4 bottom-8 w-[48%] z-10">
+
                 <div className="rounded-2xl overflow-hidden shadow-2xl border-4 border-card">
                   <img src={pickupGame} alt="Pickup game" className="w-full aspect-[3/4] object-cover" />
                 </div>
@@ -516,8 +516,8 @@ const Index = () => {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
             viewport={{ once: true }}
-            className="px-8 lg:px-16 py-20 lg:py-28 flex flex-col justify-center"
-          >
+            className="px-8 lg:px-16 py-20 lg:py-28 flex flex-col justify-center">
+
             <span className="text-[10px] font-sans font-bold tracking-[0.3em] uppercase text-hot-pink-foreground/60 mb-3">A Collection of Our Recent Work and Community Highlights</span>
             <h2 className="font-condensed text-[3rem] lg:text-[4rem] leading-[0.85] tracking-tight text-hot-pink-foreground uppercase mb-8">
               OUR<br />COMMUNITY
@@ -533,8 +533,8 @@ const Index = () => {
       </section>
 
       {/* ══════════════════════════════════════════
-           QUOTE — Clean cream band
-          ══════════════════════════════════════════ */}
+              QUOTE — Clean cream band
+             ══════════════════════════════════════════ */}
       <section className="bg-background py-24 lg:py-32">
         <div className="max-w-[900px] mx-auto px-8 lg:px-16 text-center">
           <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ duration: 1 }} viewport={{ once: true }}>
@@ -550,8 +550,8 @@ const Index = () => {
       </section>
 
       {/* ══════════════════════════════════════════
-           FEATURES — Color-blocked numbered cards
-          ══════════════════════════════════════════ */}
+              FEATURES — Color-blocked numbered cards
+             ══════════════════════════════════════════ */}
       <section id="features" className="bg-secondary">
         <div className="max-w-[1400px] mx-auto px-8 lg:px-16 py-24 lg:py-32">
           <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ duration: 0.8 }} viewport={{ once: true }} className="mb-16">
@@ -560,18 +560,18 @@ const Index = () => {
 
           <div className="grid md:grid-cols-3 gap-6">
             {[
-              { num: "01", title: "AI-Powered Stories", desc: "Personalized sports content that speaks to what you care about. Beyond stats — the stories, drama, and culture.", icon: Sparkles, bg: "bg-primary" },
-              { num: "02", title: "Community Events", desc: "Watch parties, meetups, and experiences designed for women who love sports. Find your squad.", icon: Calendar, bg: "bg-accent" },
-              { num: "03", title: "Exclusive Content", desc: "Behind-the-scenes access, player interviews, and insider perspectives you won't find anywhere else.", icon: Users, bg: "bg-hot-pink" }
-            ].map((feature, i) => (
-              <motion.div
-                key={feature.num}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: i * 0.12 }}
-                viewport={{ once: true }}
-                className={`${feature.bg} rounded-2xl p-8 lg:p-10 group relative overflow-hidden`}
-              >
+            { num: "01", title: "AI-Powered Stories", desc: "Personalized sports content that speaks to what you care about. Beyond stats — the stories, drama, and culture.", icon: Sparkles, bg: "bg-primary" },
+            { num: "02", title: "Community Events", desc: "Watch parties, meetups, and experiences designed for women who love sports. Find your squad.", icon: Calendar, bg: "bg-accent" },
+            { num: "03", title: "Exclusive Content", desc: "Behind-the-scenes access, player interviews, and insider perspectives you won't find anywhere else.", icon: Users, bg: "bg-hot-pink" }].
+            map((feature, i) =>
+            <motion.div
+              key={feature.num}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: i * 0.12 }}
+              viewport={{ once: true }}
+              className={`${feature.bg} rounded-2xl p-8 lg:p-10 group relative overflow-hidden`}>
+
                 {/* Large decorative number */}
                 <span className="absolute top-4 right-6 font-condensed text-[6rem] leading-none text-foreground/[0.06]">{feature.num}</span>
                 
@@ -584,14 +584,14 @@ const Index = () => {
                   <p className="text-primary-foreground/70 leading-relaxed text-[15px] font-serif">{feature.desc}</p>
                 </div>
               </motion.div>
-            ))}
+            )}
           </div>
         </div>
       </section>
 
       {/* ══════════════════════════════════════════
-           EVENTS — Editorial schedule listing
-          ══════════════════════════════════════════ */}
+              EVENTS — Editorial schedule listing
+             ══════════════════════════════════════════ */}
       <section id="events" className="py-24 lg:py-32 bg-background">
         <div className="max-w-[1400px] mx-auto px-8 lg:px-16">
           <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ duration: 0.8 }} viewport={{ once: true }} className="flex items-end justify-between mb-16">
@@ -602,16 +602,16 @@ const Index = () => {
           </motion.div>
 
           <div className="border-t-2 border-foreground/10">
-            {upcomingEvents.map((event, i) => (
-              <motion.div
-                key={event.title}
-                initial={{ opacity: 0, y: 10 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: i * 0.05 }}
-                viewport={{ once: true }}
-                onClick={openAuthModal}
-                className="grid grid-cols-12 gap-4 py-6 border-b-2 border-foreground/10 items-center cursor-pointer group hover:bg-accent/5 transition-colors px-4 -mx-4"
-              >
+            {upcomingEvents.map((event, i) =>
+            <motion.div
+              key={event.title}
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: i * 0.05 }}
+              viewport={{ once: true }}
+              onClick={openAuthModal}
+              className="grid grid-cols-12 gap-4 py-6 border-b-2 border-foreground/10 items-center cursor-pointer group hover:bg-accent/5 transition-colors px-4 -mx-4">
+
                 <div className="col-span-2 md:col-span-1">
                   <span className="font-condensed text-xl text-accent">{event.date}</span>
                 </div>
@@ -628,7 +628,7 @@ const Index = () => {
                   <ArrowRight className="h-4 w-4 text-foreground/20 group-hover:text-accent transition-colors inline" />
                 </div>
               </motion.div>
-            ))}
+            )}
           </div>
 
           <div className="mt-8 md:hidden text-center">
@@ -640,31 +640,31 @@ const Index = () => {
       </section>
 
       {/* ══════════════════════════════════════════
-           TESTIMONIALS — Sky blue block
-          ══════════════════════════════════════════ */}
+              TESTIMONIALS — Sky blue block
+             ══════════════════════════════════════════ */}
       <section className="bg-primary py-20 lg:py-28">
         <div className="max-w-[1400px] mx-auto px-8 lg:px-16">
           <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ duration: 0.8 }} viewport={{ once: true }}>
             <span className="font-condensed text-[3rem] lg:text-[4rem] leading-none tracking-tight text-primary-foreground/40 uppercase block mb-12">WHAT THEY SAY</span>
             <div className="grid md:grid-cols-3 gap-8 lg:gap-12">
               {[
-                { quote: "Finally a sports community that gets me.", name: "Alicia", detail: "Lakers fan" },
-                { quote: "I met my best friends at a Loverball watch party.", name: "Dani", detail: "WNBA superfan" },
-                { quote: "The content here actually speaks to women fans.", name: "Maria", detail: "Soccer obsessed" }
-              ].map((t, i) => (
-                <motion.div key={t.name} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: i * 0.1 }} viewport={{ once: true }} className="bg-primary-foreground/10 backdrop-blur-sm rounded-2xl p-8">
+              { quote: "Finally a sports community that gets me.", name: "Alicia", detail: "Lakers fan" },
+              { quote: "I met my best friends at a Loverball watch party.", name: "Dani", detail: "WNBA superfan" },
+              { quote: "The content here actually speaks to women fans.", name: "Maria", detail: "Soccer obsessed" }].
+              map((t, i) =>
+              <motion.div key={t.name} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: i * 0.1 }} viewport={{ once: true }} className="bg-primary-foreground/10 backdrop-blur-sm rounded-2xl p-8">
                   <p className="font-display text-xl lg:text-2xl text-primary-foreground italic leading-relaxed mb-6">"{t.quote}"</p>
                   <p className="text-[11px] font-sans font-bold tracking-[0.2em] uppercase text-primary-foreground/70">— {t.name}, {t.detail}</p>
                 </motion.div>
-              ))}
+              )}
             </div>
           </motion.div>
         </div>
       </section>
 
       {/* ══════════════════════════════════════════
-           APP — Split layout with diagonal stripes
-          ══════════════════════════════════════════ */}
+              APP — Split layout with diagonal stripes
+             ══════════════════════════════════════════ */}
       <section className="bg-background relative overflow-hidden">
         <div className="grid lg:grid-cols-2">
           <motion.div
@@ -672,24 +672,24 @@ const Index = () => {
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
-            className="px-8 lg:px-16 py-20 lg:py-28 flex flex-col justify-center relative z-10"
-          >
+            className="px-8 lg:px-16 py-20 lg:py-28 flex flex-col justify-center relative z-10">
+
             <span className="font-condensed text-[3rem] lg:text-[4.5rem] leading-none tracking-tight text-foreground uppercase block mb-8">THE APP</span>
             <h2 className="font-display text-3xl lg:text-4xl text-foreground leading-tight mb-8">
               Your fandom, <em className="text-accent">personalized.</em>
             </h2>
             <div className="space-y-5">
               {[
-                "AI-powered sports stories tailored to your interests",
-                "Community events and watch parties near you",
-                "Connect with other women fans in your city",
-                "Exclusive content and behind-the-scenes access"
-              ].map((item, i) => (
-                <div key={i} className="flex items-start gap-4">
+              "AI-powered sports stories tailored to your interests",
+              "Community events and watch parties near you",
+              "Connect with other women fans in your city",
+              "Exclusive content and behind-the-scenes access"].
+              map((item, i) =>
+              <div key={i} className="flex items-start gap-4">
                   <span className="w-2 h-2 rounded-full bg-accent mt-2 flex-shrink-0" />
                   <p className="text-base text-muted-foreground leading-relaxed">{item}</p>
                 </div>
-              ))}
+              )}
             </div>
             <div className="mt-10">
               <Button onClick={openAuthModal} className="rounded-full bg-accent text-accent-foreground hover:bg-accent/90 px-10 py-5 text-[11px] font-sans font-bold tracking-[0.2em] uppercase shadow-xl h-auto">
@@ -704,8 +704,8 @@ const Index = () => {
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
             viewport={{ once: true }}
-            className="relative min-h-[400px]"
-          >
+            className="relative min-h-[400px]">
+
             {/* Diagonal stripe accents */}
             <div className="absolute bottom-0 right-0 w-full h-40 bg-accent/20 transform -skew-y-3 origin-bottom-right z-0" />
             <div className="absolute bottom-6 right-0 w-full h-20 bg-hot-pink/20 transform -skew-y-3 origin-bottom-right z-0" />
@@ -715,8 +715,8 @@ const Index = () => {
       </section>
 
       {/* ══════════════════════════════════════════
-           FINAL CTA — Dark block with bold typography
-          ══════════════════════════════════════════ */}
+              FINAL CTA — Dark block with bold typography
+             ══════════════════════════════════════════ */}
       <section className="py-28 lg:py-36 bg-foreground relative overflow-hidden">
         {/* Decorative script */}
         <div className="absolute inset-0 flex items-center justify-center opacity-[0.04]">
@@ -738,8 +738,8 @@ const Index = () => {
       </section>
 
       {/* ══════════════════════════════════════════
-           FOOTER
-          ══════════════════════════════════════════ */}
+              FOOTER
+             ══════════════════════════════════════════ */}
       <footer className="py-16 bg-foreground border-t border-background/10">
         <div className="max-w-[1400px] mx-auto px-8 lg:px-16">
           {/* Newsletter */}
@@ -747,15 +747,15 @@ const Index = () => {
             <div className="max-w-md mx-auto text-center">
               <h3 className="font-condensed text-2xl uppercase tracking-wide text-background mb-3">Stay In The Loop</h3>
               <p className="text-background/40 text-sm mb-6">Get the latest on events, content drops, and community updates.</p>
-              <form onSubmit={(e) => { e.preventDefault(); toast({ title: "Subscribed!", description: "You'll hear from us soon." }); setNewsletterEmail(""); }} className="flex gap-2">
+              <form onSubmit={(e) => {e.preventDefault();toast({ title: "Subscribed!", description: "You'll hear from us soon." });setNewsletterEmail("");}} className="flex gap-2">
                 <Input
                   type="email"
                   placeholder="Enter your email"
                   value={newsletterEmail}
                   onChange={(e) => setNewsletterEmail(e.target.value)}
                   required
-                  className="flex-1 rounded-full bg-background/10 border-background/10 text-background placeholder:text-background/30 h-12"
-                />
+                  className="flex-1 rounded-full bg-background/10 border-background/10 text-background placeholder:text-background/30 h-12" />
+
                 <Button type="submit" className="rounded-full bg-accent text-accent-foreground hover:bg-accent/90 px-6 h-12">
                   <Mail className="h-4 w-4" />
                 </Button>
@@ -799,8 +799,8 @@ const Index = () => {
           </div>
         </div>
       </footer>
-    </div>
-  );
+    </div>);
+
 };
 
 export default Index;
