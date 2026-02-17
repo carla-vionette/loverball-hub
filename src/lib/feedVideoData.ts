@@ -10,8 +10,7 @@ import pickupGameThumb from "@/assets/pickup-game.jpg";
 import teamSpiritThumb from "@/assets/team-spirit.jpg";
 import fieldDayThumb from "@/assets/field-day.jpg";
 import trainingDayThumb from "@/assets/training-day.jpg";
-
-const thumbBase = "https://images.unsplash.com/photo-";
+import loverballLogo from "@/assets/loverball-script-logo.png";
 
 export interface FeedVideoItem {
   id: string;
@@ -35,7 +34,7 @@ export const FEED_VIDEOS: FeedVideoItem[] = [
     id: "feed_new",
     channelId: "fan-life",
     channelName: "Fan Life",
-    channelAvatar: thumbBase + "1438761681033-6461ffad8d80?w=80&h=80&fit=crop&crop=faces",
+    channelAvatar: loverballLogo,
     videoUrl: feedVideoNew,
     thumbnail: teamSpiritThumb,
     title: "Game Day Energy — Fan Life Unfiltered",
@@ -50,7 +49,7 @@ export const FEED_VIDEOS: FeedVideoItem[] = [
     id: "feed_14",
     channelId: "court-vision",
     channelName: "Court Vision",
-    channelAvatar: thumbBase + "1494790108377-be9c29b29330?w=80&h=80&fit=crop&crop=faces",
+    channelAvatar: loverballLogo,
     videoUrl: feedVideo14,
     thumbnail: pickupGameThumb,
     title: "Plays of the Week — Best Highlights 🎯",
@@ -65,7 +64,7 @@ export const FEED_VIDEOS: FeedVideoItem[] = [
     id: "feed_15",
     channelId: "skill-school",
     channelName: "Skill School",
-    channelAvatar: thumbBase + "1472099645785-5658abf4ff4e?w=80&h=80&fit=crop&crop=faces",
+    channelAvatar: loverballLogo,
     videoUrl: feedVideo15,
     thumbnail: risingStarsThumb,
     title: "Level Up — Skills That Pay the Bills 💪",
@@ -80,7 +79,7 @@ export const FEED_VIDEOS: FeedVideoItem[] = [
     id: "feed_16",
     channelId: "inside-game",
     channelName: "Inside the Game",
-    channelAvatar: thumbBase + "1507003211169-0a1dd7228f2d?w=80&h=80&fit=crop&crop=faces",
+    channelAvatar: loverballLogo,
     videoUrl: feedVideo16,
     thumbnail: fieldDayThumb,
     title: "Behind the Scenes — Inside Access 🎬",
@@ -95,7 +94,7 @@ export const FEED_VIDEOS: FeedVideoItem[] = [
     id: "feed_17",
     channelId: "loverball",
     channelName: "Loverball",
-    channelAvatar: thumbBase + "1535930749574-1399327ce78f?w=80&h=80&fit=crop&crop=faces",
+    channelAvatar: loverballLogo,
     videoUrl: feedVideo17,
     thumbnail: trainingDayThumb,
     title: "Athletes Unleashed 🔥",
@@ -111,7 +110,7 @@ export const FEED_VIDEOS: FeedVideoItem[] = [
     id: "feed_18",
     channelId: "loverball",
     channelName: "Loverball",
-    channelAvatar: thumbBase + "1535930749574-1399327ce78f?w=80&h=80&fit=crop&crop=faces",
+    channelAvatar: loverballLogo,
     videoUrl: feedVideo18,
     thumbnail: teamSpiritThumb,
     title: "Community Vibes — Together We Play",
