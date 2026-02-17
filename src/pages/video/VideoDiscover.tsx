@@ -149,7 +149,7 @@ const VideoDiscover = () => {
       <header className="sticky top-0 z-40 bg-background/90 backdrop-blur-md border-b border-border/20" style={{ padding: '16px 16px 12px' }}>
         <div className="flex items-center justify-between mb-3 md:px-4">
           <div className="flex items-center gap-2.5">
-            <img src={loverbballLogo} alt="Loverball" className="h-8 w-auto object-contain" />
+            <img src={loverbballLogo} alt="Loverball" className="h-12 w-auto object-contain" />
             <span className="text-sm font-normal text-foreground uppercase tracking-widest">Watch</span>
           </div>
           <button
