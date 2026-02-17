@@ -18,11 +18,10 @@ const VideoSidebar = () => {
       aria-label="Video navigation"
     >
       {/* Logo */}
-      <div className="p-5 border-b border-border/20 flex items-center gap-3">
+      <div className="p-5 border-b border-border/20 flex justify-center">
         <Link to="/" className="focus-ring rounded-lg" aria-label="Loverball home">
-          <img src={scriptLogo} alt="Loverball logo" className="h-20" />
+          <img src={scriptLogo} alt="Loverball logo" className="h-28" />
         </Link>
-        
       </div>
 
       {/* Nav Items */}
