@@ -20,7 +20,7 @@ const VideoSidebar = () => {
       {/* Logo */}
       <div className="p-5 border-b border-border/20 flex items-center gap-3">
         <Link to="/" className="focus-ring rounded-lg" aria-label="Loverball home">
-          <img src={scriptLogo} alt="Loverball logo" className="h-12" />
+          <img src={scriptLogo} alt="Loverball logo" className="h-20" />
         </Link>
         <span className="text-sm font-medium text-foreground/50" aria-hidden="true">Watch</span>
       </div>
