@@ -28,32 +28,32 @@
 
 @layer base {
   :root {
-    /* ── Brand ── */
-    --brand: 201 52% 67%;               /* Sky Blue #7DB6D9 */
+    /* ── Brand = Terracotta / Burnt Orange ── */
+    --brand: 16 78% 55%;                /* Terracotta #E06A3A */
     --brand-foreground: 0 0% 100%;
 
     /* ── Core palette ── */
-    --background: 30 25% 95%;           /* Off-white cream #F5F3F0 */
-    --foreground: 0 0% 13%;             /* Charcoal #222222 */
+    --background: 30 20% 97%;           /* Warm white #F9F7F5 */
+    --foreground: 0 0% 15%;             /* Charcoal #262626 */
 
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 13%;
+    --card: 0 0% 100%;                  /* Pure white */
+    --card-foreground: 0 0% 15%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 13%;
+    --popover-foreground: 0 0% 15%;
 
-    /* Primary = Sky Blue (buttons, CTAs) */
-    --primary: 201 52% 67%;             /* #7DB6D9 */
+    /* Primary = Terracotta (buttons, CTAs, active states) */
+    --primary: 16 78% 55%;              /* #E06A3A */
     --primary-foreground: 0 0% 100%;    /* White text */
 
-    --secondary: 200 46% 42%;           /* Muted teal #397A9B — section headings */
-    --secondary-foreground: 0 0% 100%;
+    --secondary: 30 15% 93%;            /* Light warm gray */
+    --secondary-foreground: 0 0% 25%;
 
-    --muted: 30 18% 88%;
-    --muted-foreground: 0 0% 35%;
+    --muted: 30 12% 92%;
+    --muted-foreground: 0 0% 45%;
 
-    /* Accent = Coral (badges, underlines, icons) */
-    --accent: 6 85% 62%;                /* Coral #F15B4B */
+    /* Accent = Terracotta (same family for consistency) */
+    --accent: 16 78% 55%;               /* #E06A3A */
     --accent-foreground: 0 0% 100%;
 
     /* ── Status colors ── */
@@ -61,153 +61,142 @@
     --success-foreground: 0 0% 100%;
     --warning: 38 92% 50%;
     --warning-foreground: 0 0% 0%;
-    --info: 201 52% 67%;
+    --info: 210 60% 55%;
     --info-foreground: 0 0% 100%;
     --destructive: 0 84% 50%;
     --destructive-foreground: 0 0% 100%;
 
     /* ── Additional brand ── */
-    --coral: 6 85% 62%;                 /* Coral #F15B4B */
+    --coral: 16 78% 55%;
     --coral-foreground: 0 0% 100%;
-    --pale-pink: 30 30% 90%;
-    --pale-pink-foreground: 0 0% 13%;
-    --medium-blue: 200 46% 42%;         /* Muted teal */
+    --pale-pink: 30 25% 94%;
+    --pale-pink-foreground: 0 0% 15%;
+    --medium-blue: 210 30% 55%;
     --medium-blue-foreground: 0 0% 100%;
-    --olive: 200 46% 35%;               /* Darker teal */
+    --olive: 210 25% 40%;
     --olive-foreground: 0 0% 100%;
-    --light-lime: 201 52% 67%;          /* Sky blue */
+    --light-lime: 16 78% 65%;
     --light-lime-foreground: 0 0% 100%;
-    --ticker: 200 46% 42%;              /* Teal ticker */
+    --ticker: 16 78% 50%;
     --ticker-foreground: 0 0% 100%;
 
-    /* Grapefruit accent */
-    --terracotta: 20 89% 60%;           /* Grapefruit #F37A3F */
+    /* Terracotta accent */
+    --terracotta: 16 78% 55%;           /* #E06A3A */
     --terracotta-foreground: 0 0% 100%;
-    --warm-beige: 30 25% 82%;           /* #D4C5B0 Sand */
-    --warm-beige-foreground: 0 0% 13%;
+    --warm-beige: 30 20% 88%;           /* #E5DDD4 */
+    --warm-beige-foreground: 0 0% 15%;
 
-    /* Hot Pink — bold color block accent */
-    --hot-pink: 330 85% 65%;            /* #F24D98 */
+    /* Hot Pink — softer warm rose */
+    --hot-pink: 350 70% 58%;
     --hot-pink-foreground: 0 0% 100%;
 
     /* ── Chrome ── */
-    --border: 30 15% 85%;
-    --input: 30 15% 85%;
-    --ring: 201 52% 67%;
+    --border: 30 10% 88%;
+    --input: 30 10% 88%;
+    --ring: 16 78% 55%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
   }
 
   .dark {
-    --background: 200 15% 8%;
+    --background: 20 10% 8%;
     --foreground: 30 15% 92%;
-
-    --card: 200 12% 12%;
+    --card: 20 8% 12%;
     --card-foreground: 30 15% 92%;
-
-    --popover: 200 12% 12%;
+    --popover: 20 8% 12%;
     --popover-foreground: 30 15% 92%;
+    --primary: 16 78% 55%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 20 8% 18%;
+    --secondary-foreground: 30 10% 70%;
+    --muted: 20 6% 20%;
+    --muted-foreground: 20 6% 55%;
+    --accent: 16 78% 55%;
+    --accent-foreground: 0 0% 100%;
+    --success: 142 72% 42%;
+    --success-foreground: 0 0% 100%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 0%;
+    --info: 210 60% 55%;
+    --info-foreground: 0 0% 100%;
+    --destructive: 0 84% 50%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 20 6% 22%;
+    --input: 20 6% 22%;
+    --ring: 16 78% 55%;
+  }
 
-    --primary: 201 52% 67%;
+  /* ── Cinematic App Theme ──
+     Applied to logged-in app pages — warm light aesthetic with terracotta */
+  .app-cinematic {
+    --background: 30 20% 97%;           /* Warm white */
+    --foreground: 0 0% 15%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 15%;
+
+    --primary: 16 78% 55%;              /* Terracotta */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 200 30% 22%;
-    --secondary-foreground: 200 30% 75%;
+    --secondary: 30 15% 93%;
+    --secondary-foreground: 0 0% 25%;
 
-    --muted: 200 12% 20%;
-    --muted-foreground: 200 8% 55%;
+    --muted: 30 12% 92%;
+    --muted-foreground: 0 0% 45%;
 
-    --accent: 6 85% 62%;
+    --accent: 16 78% 55%;
     --accent-foreground: 0 0% 100%;
+
+    --coral: 16 78% 55%;
+    --coral-foreground: 0 0% 100%;
 
     --success: 142 72% 42%;
     --success-foreground: 0 0% 100%;
     --warning: 38 92% 50%;
     --warning-foreground: 0 0% 0%;
-    --info: 201 52% 67%;
+    --info: 210 60% 55%;
     --info-foreground: 0 0% 100%;
     --destructive: 0 84% 50%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 200 10% 22%;
-    --input: 200 10% 22%;
-    --ring: 201 52% 67%;
+    --terracotta: 16 78% 55%;
+    --terracotta-foreground: 0 0% 100%;
+    --warm-beige: 30 20% 88%;
+    --warm-beige-foreground: 0 0% 15%;
+
+    --border: 30 10% 88%;
+    --input: 30 10% 88%;
+    --ring: 16 78% 55%;
+
+    --glow-primary: 0 0 20px hsla(16, 78%, 55%, 0.2);
+    --glow-accent: 0 0 20px hsla(16, 78%, 55%, 0.15);
   }
 
-  /* ── Cinematic App Dark Theme ──
-     Applied to logged-in app pages for a moody, warm aesthetic */
-  .app-cinematic {
-    --background: 0 0% 5%;              /* Near-black #0D0D0D */
-    --foreground: 40 20% 92%;           /* Warm cream white */
-
-    --card: 0 0% 9%;                    /* Dark card #171717 */
-    --card-foreground: 40 20% 92%;
-
-    --popover: 0 0% 10%;
-    --popover-foreground: 40 20% 92%;
-
-    /* Primary = Gold / Amber */
-    --primary: 42 90% 55%;              /* Rich gold #D4A017 */
-    --primary-foreground: 0 0% 5%;      /* Dark text on gold */
-
-    --secondary: 0 0% 14%;             /* Elevated dark surface */
-    --secondary-foreground: 0 0% 70%;
-
-    --muted: 0 0% 12%;
-    --muted-foreground: 40 8% 50%;
-
-    /* Accent = Warm amber */
-    --accent: 36 80% 50%;              /* Amber #D99B2B */
-    --accent-foreground: 0 0% 5%;
-
-    /* Coral for highlights */
-    --coral: 42 90% 65%;               /* Lighter gold */
-    --coral-foreground: 0 0% 5%;
-
-    --success: 142 72% 42%;
-    --success-foreground: 0 0% 100%;
-    --warning: 38 92% 50%;
-    --warning-foreground: 0 0% 0%;
-    --info: 42 90% 55%;
-    --info-foreground: 0 0% 5%;
-    --destructive: 0 84% 50%;
-    --destructive-foreground: 0 0% 100%;
-
-    --terracotta: 42 90% 55%;
-    --terracotta-foreground: 0 0% 5%;
-    --warm-beige: 40 15% 18%;
-    --warm-beige-foreground: 40 15% 85%;
-
-    --border: 40 5% 16%;
-    --input: 40 5% 16%;
-    --ring: 42 90% 55%;
-
-    --glow-primary: 0 0 20px hsla(42, 90%, 55%, 0.3);
-    --glow-accent: 0 0 20px hsla(36, 80%, 50%, 0.3);
-  }
-
-  /* Video Streaming Dark Theme */
+  /* Video Streaming Theme — light with terracotta */
   .video-theme {
-    --background: 0 0% 6%;
-    --foreground: 40 15% 95%;
-    --card: 0 0% 10%;
-    --card-foreground: 40 15% 95%;
-    --popover: 0 0% 10%;
-    --popover-foreground: 40 15% 95%;
-    --primary: 42 90% 55%;
-    --primary-foreground: 0 0% 5%;
-    --secondary: 0 0% 13%;
-    --secondary-foreground: 40 8% 70%;
-    --muted: 0 0% 16%;
-    --muted-foreground: 40 8% 60%;
-    --accent: 36 80% 50%;
-    --accent-foreground: 0 0% 5%;
-    --border: 40 5% 18%;
-    --input: 40 5% 18%;
-    --ring: 42 90% 55%;
+    --background: 30 20% 97%;
+    --foreground: 0 0% 15%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 15%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 15%;
+    --primary: 16 78% 55%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 30 15% 93%;
+    --secondary-foreground: 0 0% 25%;
+    --muted: 30 12% 92%;
+    --muted-foreground: 0 0% 45%;
+    --accent: 16 78% 55%;
+    --accent-foreground: 0 0% 100%;
+    --border: 30 10% 88%;
+    --input: 30 10% 88%;
+    --ring: 16 78% 55%;
     --destructive: 0 84% 50%;
     --destructive-foreground: 0 0% 100%;
-    --video-hover: 40 5% 17%;
+    --video-hover: 30 12% 94%;
   }
 }
 
