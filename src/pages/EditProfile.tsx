@@ -19,7 +19,6 @@ import { Checkbox } from "@/components/ui/checkbox";
 import {
   PRONOUN_OPTIONS,
   CITY_OPTIONS,
-  AGE_RANGE_OPTIONS,
   SPORTS_OPTIONS,
   EXPERIENCE_OPTIONS,
   INTERESTS_OPTIONS,
@@ -44,7 +43,7 @@ const EditProfile = () => {
   const [name, setName] = useState("");
   const [pronouns, setPronouns] = useState("");
   const [city, setCity] = useState("");
-  const [ageRange, setAgeRange] = useState("");
+  
   const [favoriteSports, setFavoriteSports] = useState<string[]>([]);
   const [teamsInput, setTeamsInput] = useState("");
   const [favTeams, setFavTeams] = useState<string[]>([]);
@@ -91,7 +90,7 @@ const EditProfile = () => {
       setName(profile.name || "");
       setPronouns(profile.pronouns || "");
       setCity(profile.city || "");
-      setAgeRange(profile.age_range || "");
+      
       setFavoriteSports(profile.favorite_sports || []);
       setFavTeams(profile.favorite_teams_players || []);
       setExperienceTypes(profile.sports_experience_types || []);
@@ -203,7 +202,7 @@ const EditProfile = () => {
         name,
         pronouns,
         city,
-        age_range: ageRange,
+        
         favorite_sports: favoriteSports,
         favorite_teams_players: favTeams,
         sports_experience_types: experienceTypes,
@@ -240,7 +239,7 @@ const EditProfile = () => {
       case 1:
         return name.trim() && city;
       case 2:
-        return ageRange && favoriteSports.length > 0;
+        return favoriteSports.length > 0;
       case 3:
         return experienceTypes.length > 0;
       case 4:
@@ -365,21 +364,6 @@ const EditProfile = () => {
             {/* Step 2: Sports */}
             {step === 2 && (
               <div className="space-y-6">
-                <div className="space-y-2">
-                  <Label className="text-xs tracking-wider uppercase text-foreground/60">Age Range *</Label>
-                  <Select value={ageRange} onValueChange={setAgeRange}>
-                    <SelectTrigger className="bg-background rounded-none h-12">
-                      <SelectValue placeholder="Select age range" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-background z-50">
-                      {AGE_RANGE_OPTIONS.map((option) => (
-                        <SelectItem key={option} value={option}>
-                          {option}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
 
                 <div className="space-y-3">
                   <Label className="text-xs tracking-wider uppercase text-foreground/60">Favorite Sports * (select all that apply)</Label>
