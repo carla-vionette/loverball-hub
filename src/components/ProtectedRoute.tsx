@@ -37,7 +37,7 @@ const ProtectedRoute = ({
     return <Navigate to="/invite" replace />;
   }
 
-  return <>{children}</>;
+  return <div className="app-cinematic">{children}</div>;
 };
 
 export default ProtectedRoute;
