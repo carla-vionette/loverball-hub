@@ -121,7 +121,7 @@ const ChannelCard = ({ channel, variant = "team" }: ChannelCardProps) => {
         </div>
 
         <div className="flex items-center gap-2 flex-wrap">
-          <span className="bg-primary/10 text-primary text-[10px] font-bold px-2 py-0.5 rounded-full">
+          <span className="bg-primary text-primary-foreground text-[10px] font-bold px-2 py-0.5 rounded-full">
             {channel.sportBadge}
           </span>
           <span className="text-[10px] text-muted-foreground">
