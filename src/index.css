@@ -138,76 +138,76 @@
      Applied to logged-in app pages for a moody, warm aesthetic */
   .app-cinematic {
     --background: 0 0% 5%;              /* Near-black #0D0D0D */
-    --foreground: 30 10% 92%;           /* Warm white */
+    --foreground: 40 20% 92%;           /* Warm cream white */
 
     --card: 0 0% 9%;                    /* Dark card #171717 */
-    --card-foreground: 30 10% 92%;
+    --card-foreground: 40 20% 92%;
 
     --popover: 0 0% 10%;
-    --popover-foreground: 30 10% 92%;
+    --popover-foreground: 40 20% 92%;
 
-    /* Primary = Warm Orange */
-    --primary: 18 100% 60%;             /* #FF6B35 */
-    --primary-foreground: 0 0% 100%;
+    /* Primary = Gold / Amber */
+    --primary: 42 90% 55%;              /* Rich gold #D4A017 */
+    --primary-foreground: 0 0% 5%;      /* Dark text on gold */
 
     --secondary: 0 0% 14%;             /* Elevated dark surface */
     --secondary-foreground: 0 0% 70%;
 
     --muted: 0 0% 12%;
-    --muted-foreground: 0 0% 55%;
+    --muted-foreground: 40 8% 50%;
 
-    /* Accent = Teal */
-    --accent: 175 56% 55%;             /* #4ECDC4 */
-    --accent-foreground: 0 0% 100%;
+    /* Accent = Warm amber */
+    --accent: 36 80% 50%;              /* Amber #D99B2B */
+    --accent-foreground: 0 0% 5%;
 
     /* Coral for highlights */
-    --coral: 18 100% 69%;              /* #FF8C61 */
-    --coral-foreground: 0 0% 100%;
+    --coral: 42 90% 65%;               /* Lighter gold */
+    --coral-foreground: 0 0% 5%;
 
     --success: 142 72% 42%;
     --success-foreground: 0 0% 100%;
     --warning: 38 92% 50%;
     --warning-foreground: 0 0% 0%;
-    --info: 175 56% 55%;
-    --info-foreground: 0 0% 100%;
+    --info: 42 90% 55%;
+    --info-foreground: 0 0% 5%;
     --destructive: 0 84% 50%;
     --destructive-foreground: 0 0% 100%;
 
-    --terracotta: 18 100% 60%;
-    --terracotta-foreground: 0 0% 100%;
-    --warm-beige: 30 10% 18%;
-    --warm-beige-foreground: 30 10% 85%;
+    --terracotta: 42 90% 55%;
+    --terracotta-foreground: 0 0% 5%;
+    --warm-beige: 40 15% 18%;
+    --warm-beige-foreground: 40 15% 85%;
 
-    --border: 0 0% 15%;
-    --input: 0 0% 15%;
-    --ring: 18 100% 60%;
+    --border: 40 5% 16%;
+    --input: 40 5% 16%;
+    --ring: 42 90% 55%;
 
-    --glow-primary: 0 0 20px hsla(18, 100%, 60%, 0.3);
-    --glow-accent: 0 0 20px hsla(175, 56%, 55%, 0.3);
+    --glow-primary: 0 0 20px hsla(42, 90%, 55%, 0.3);
+    --glow-accent: 0 0 20px hsla(36, 80%, 50%, 0.3);
   }
 
   /* Video Streaming Dark Theme */
   .video-theme {
-    --background: 0 0% 8%;
-    --foreground: 0 0% 100%;
+    --background: 0 0% 6%;
+    --foreground: 40 15% 95%;
     --card: 0 0% 10%;
-    --card-foreground: 0 0% 100%;
+    --card-foreground: 40 15% 95%;
     --popover: 0 0% 10%;
-    --popover-foreground: 0 0% 100%;
-    --primary: 5 100% 60%;
-    --primary-foreground: 0 0% 100%;
+    --popover-foreground: 40 15% 95%;
+    --primary: 42 90% 55%;
+    --primary-foreground: 0 0% 5%;
     --secondary: 0 0% 13%;
-    --secondary-foreground: 0 0% 70%;
+    --secondary-foreground: 40 8% 70%;
     --muted: 0 0% 16%;
-    --muted-foreground: 0 0% 70%;
-    --accent: 5 100% 60%;
-    --accent-foreground: 0 0% 100%;
-    --border: 0 0% 18%;
-    --input: 0 0% 18%;
-    --ring: 5 100% 60%;
+    --muted-foreground: 40 8% 60%;
+    --accent: 36 80% 50%;
+    --accent-foreground: 0 0% 5%;
+    --border: 40 5% 18%;
+    --input: 40 5% 18%;
+    --ring: 42 90% 55%;
     --destructive: 0 84% 50%;
     --destructive-foreground: 0 0% 100%;
-    --video-hover: 0 0% 17%;
+    --video-hover: 40 5% 17%;
   }
 }
 
