@@ -294,10 +294,10 @@ const Index = () => {
             >
               <span className="text-[11px] font-sans font-bold tracking-[0.3em] uppercase text-primary-foreground/70 mb-6 block">Women's Sports Fandom Club</span>
               <h1 className="font-condensed text-[4.5rem] sm:text-[6rem] lg:text-[7.5rem] leading-[0.85] tracking-tight text-primary-foreground uppercase mb-8">
-                WE SPARK<br />
-                IDEAS THAT<br />
-                <span className="text-foreground">REFUSE TO</span><br />
-                <span className="text-foreground">BE IGNORED</span>
+                Her<br />
+                Game.<br />
+                <span className="text-foreground">Her</span><br />
+                <span className="text-foreground">Story.</span>
               </h1>
               <p className="text-base font-serif text-primary-foreground/80 leading-relaxed mb-8 max-w-sm">
                 The platform where women's sports culture meets connection, storytelling, and sisterhood. Born in Los Angeles.
@@ -413,8 +413,8 @@ const Index = () => {
           >
             <span className="text-[11px] font-sans font-bold tracking-[0.3em] uppercase text-accent-foreground/60 mb-4">Our Story</span>
             <h2 className="font-condensed text-[3.5rem] lg:text-[5rem] leading-[0.85] tracking-tight text-accent-foreground uppercase mb-8">
-              PULSE<br />
-              <span className="text-foreground">STUDIO</span>
+              HI! WE'RE<br />
+              <span className="text-foreground">LOVERBALL</span>
             </h2>
             <p className="text-base font-serif text-accent-foreground/80 leading-relaxed mb-6 max-w-md">
               We specialize in creating <em className="font-bold">tailored</em> sports content and experiences that drive engagement, build brand loyalty, and <em className="font-bold">inspire women.</em>
@@ -567,7 +567,7 @@ const Index = () => {
       <section id="features" className="bg-secondary">
         <div className="max-w-[1400px] mx-auto px-8 lg:px-16 py-24 lg:py-32">
           <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ duration: 0.8 }} viewport={{ once: true }} className="mb-16">
-            <span className="font-condensed text-[3rem] lg:text-[4.5rem] leading-none tracking-tight text-secondary-foreground uppercase">OUR SERVICES</span>
+            <span className="font-condensed text-[3rem] lg:text-[4.5rem] leading-none tracking-tight text-secondary-foreground uppercase">PLATFORM</span>
           </motion.div>
 
           <div className="grid md:grid-cols-3 gap-6">
