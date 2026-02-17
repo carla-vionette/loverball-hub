@@ -86,6 +86,10 @@
     --warm-beige: 30 25% 82%;           /* #D4C5B0 Sand */
     --warm-beige-foreground: 0 0% 13%;
 
+    /* Hot Pink — bold color block accent */
+    --hot-pink: 330 85% 65%;            /* #F24D98 */
+    --hot-pink-foreground: 0 0% 100%;
+
     /* ── Chrome ── */
     --border: 30 15% 85%;
     --input: 30 15% 85%;
