@@ -189,7 +189,9 @@ const VideoDiscover = () => {
               onClick={() => setActiveFilter(filter)}
               className={`whitespace-nowrap px-4 py-1.5 rounded-full text-xs font-medium transition-colors ${
                 activeFilter === filter
-                  ? "bg-foreground text-background"
+                  ? filter === "All"
+                    ? "bg-foreground text-background"
+                    : "bg-primary text-primary-foreground"
                   : "bg-secondary text-muted-foreground hover:bg-secondary/80"
               }`}
             >
