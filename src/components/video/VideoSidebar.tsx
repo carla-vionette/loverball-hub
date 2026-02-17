@@ -22,7 +22,7 @@ const VideoSidebar = () => {
         <Link to="/" className="focus-ring rounded-lg" aria-label="Loverball home">
           <img src={scriptLogo} alt="Loverball logo" className="h-20" />
         </Link>
-        <span className="text-sm font-medium text-foreground/50" aria-hidden="true">Watch</span>
+        
       </div>
 
       {/* Nav Items */}
