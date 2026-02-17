@@ -149,8 +149,8 @@ const VideoDiscover = () => {
       <header className="sticky top-0 z-40 bg-background/90 backdrop-blur-md px-4 py-3 md:px-8 md:py-4 border-b border-border/20">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
-            <Compass className="w-5 h-5 text-primary" />
-            <h1 className="text-lg font-bold tracking-tight">Discover Channels</h1>
+            <img src={loverbballLogo} alt="Loverball" className="h-8 w-auto" />
+            <span className="text-xs font-medium text-muted-foreground uppercase tracking-widest">Watch</span>
           </div>
           <button
             onClick={() => setShowSearch(!showSearch)}
