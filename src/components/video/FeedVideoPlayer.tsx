@@ -241,7 +241,7 @@ const FeedVideoPlayer = ({ video, isActive, isMuted, onToggleMute }: FeedVideoPl
       <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/90 via-black/40 to-transparent pointer-events-none" />
 
       {/* Right sidebar — actions */}
-      <div className="absolute right-3 bottom-52 z-10 flex flex-col items-center gap-5 pointer-events-auto">
+      <div className="absolute right-3 bottom-64 z-10 flex flex-col items-center gap-5 pointer-events-auto">
         {/* Heart */}
         <button
           onClick={(e) => { e.stopPropagation(); handleLike(); }}
@@ -284,7 +284,7 @@ const FeedVideoPlayer = ({ video, isActive, isMuted, onToggleMute }: FeedVideoPl
       </div>
 
       {/* Bottom left — creator info */}
-      <div className="absolute left-4 bottom-28 z-10 max-w-[70%] pointer-events-auto">
+      <div className="absolute left-4 bottom-44 z-10 max-w-[70%] pointer-events-auto">
         {/* Creator row */}
         <div className="flex items-center gap-2.5 mb-2">
           <img
@@ -321,7 +321,7 @@ const FeedVideoPlayer = ({ video, isActive, isMuted, onToggleMute }: FeedVideoPl
       </div>
 
       {/* Bottom comment bar */}
-      <div className="absolute bottom-4 left-4 right-4 z-20 flex items-center gap-2 pointer-events-auto safe-area-pb">
+      <div className="absolute bottom-24 left-4 right-4 z-20 flex items-center gap-2 pointer-events-auto safe-area-pb">
         <button onClick={(e) => e.stopPropagation()} className="w-9 h-9 flex items-center justify-center">
           <SmilePlus className="w-5 h-5 text-white/60" />
         </button>
