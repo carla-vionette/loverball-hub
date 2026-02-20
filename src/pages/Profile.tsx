@@ -350,46 +350,6 @@ const Profile = () => {
               </div>
             </motion.div>
 
-            {/* ENGAGEMENT STREAK */}
-            <motion.div variants={staggerItem}>
-              <div className="glass-card rounded-2xl overflow-hidden">
-                <div className="p-5 pb-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium tracking-wider uppercase text-foreground/50">Engagement Streak</span>
-                    <Badge className="bg-primary/15 text-primary border-primary/20 text-[10px] gap-1 hover:bg-primary/15 rounded-full"><Flame className="w-3 h-3" /> {streakData.currentStreak} day streak</Badge>
-                  </div>
-                </div>
-                <div className="px-5 pb-5">
-                  <div className="flex items-center gap-1.5 mb-2">
-                    <Award className="w-3.5 h-3.5 text-primary" />
-                    <span className="text-xs text-muted-foreground">Best: {streakData.bestStreak} days</span>
-                  </div>
-                  <div className="overflow-x-auto">
-                    <div className="flex gap-1">
-                      <div className="flex flex-col gap-1 mr-1">
-                        {DAYS_LABELS.map((d, i) => (
-                          <div key={i} className="h-3.5 w-3 flex items-center justify-center">
-                            <span className="text-[8px] text-muted-foreground">{i % 2 === 1 ? d : ""}</span>
-                          </div>
-                        ))}
-                      </div>
-                      {streakData.weeks.map((week, wi) => (
-                        <div key={wi} className="flex flex-col gap-1">
-                          {week.map((day, di) => (
-                            <div key={di} className={`h-3.5 w-3.5 rounded-sm transition-colors ${day.level < 0 ? "bg-transparent" : HEATMAP_COLORS[day.level]}`} title={day.level >= 0 ? `${day.date}: ${day.level} activities` : ""} />
-                          ))}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-1 mt-3 justify-end">
-                    <span className="text-[9px] text-muted-foreground mr-1">Less</span>
-                    {HEATMAP_COLORS.map((c, i) => <div key={i} className={`h-3 w-3 rounded-sm ${c}`} />)}
-                    <span className="text-[9px] text-muted-foreground ml-1">More</span>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
 
             {/* FAVORITE TEAMS PERFORMANCE */}
             <motion.div variants={staggerItem}>
