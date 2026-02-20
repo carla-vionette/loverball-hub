@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { MapPin, Edit, Sparkles, LogOut, Calendar, Clock, TrendingUp, TrendingDown, Trophy, Flame, Bookmark, BookOpen, Award, ChevronRight, ArrowUpRight, Share2, AlertTriangle, Ticket, Play, Eye, Lightbulb, Settings, Heart, MessageCircle } from "lucide-react";
@@ -16,8 +16,10 @@ import { format } from "date-fns";
 import { motion } from "framer-motion";
 import {
   TEAM_PERFORMANCE,
-  generateStreakData, RECENT_ACTIVITY, RECOMMENDED_ARTICLES,
+  RECENT_ACTIVITY, RECOMMENDED_ARTICLES,
 } from "@/lib/mockStatsData";
+
+
 
 type ProfileData = {
   id: string;
@@ -130,8 +132,6 @@ const staggerItem = {
   show: { opacity: 1, y: 0, transition: { duration: 0.35, ease: [0.25, 0.1, 0.25, 1] as const } },
 };
 
-const HEATMAP_COLORS = ["bg-border", "bg-primary/20", "bg-primary/40", "bg-primary/70", "bg-primary"];
-const DAYS_LABELS = ["S", "M", "T", "W", "T", "F", "S"];
 
 const Profile = () => {
   const [profile, setProfile] = useState<ProfileData | null>(null);
@@ -187,7 +187,7 @@ const Profile = () => {
     return () => clearInterval(timer);
   }, []);
 
-  const streakData = useMemo(() => generateStreakData(), []);
+  
 
   const activePerfTeams = TEAM_PERFORMANCE.filter(t => t.winPct > 0);
   const combinedWinPct = activePerfTeams.length > 0 ? activePerfTeams.reduce((s, t) => s + t.winPct, 0) / activePerfTeams.length : 0;
@@ -300,8 +300,8 @@ const Profile = () => {
               </div>
               <div className="glass-card rounded-2xl p-4 text-center">
                 <Flame className="w-5 h-5 text-primary mx-auto mb-2" />
-                <p className="text-2xl font-sans font-bold text-foreground">{streakData.currentStreak}</p>
-                <p className="text-xs text-muted-foreground">Day Streak</p>
+                <p className="text-2xl font-sans font-bold text-foreground">{rsvpEvents.filter(r => r.status === 'confirmed').length}</p>
+                <p className="text-xs text-muted-foreground">Confirmed</p>
               </div>
               <div className="glass-card rounded-2xl p-4 text-center">
                 <Heart className="w-5 h-5 text-accent mx-auto mb-2" />
