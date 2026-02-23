@@ -52,7 +52,7 @@ const BottomNav = () => {
               to={item.path}
               aria-current={isActive ? "page" : undefined}
               aria-label={`${item.label}${showBadge ? ', new messages' : ''}`}
-              className={`flex flex-col items-center justify-center flex-1 h-full transition-all duration-200 rounded-2xl mx-0.5 tap-target focus-ring ${
+              className={`flex flex-col items-center justify-center flex-1 h-full transition-all duration-200 rounded-[2rem] mx-0.5 tap-target focus-ring ${
                 isActive ? "bg-accent text-accent-foreground" : ""
               }`}
             >
