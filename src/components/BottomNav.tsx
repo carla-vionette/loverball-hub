@@ -1,4 +1,4 @@
-import { User, CalendarDays, ShoppingBag, Play, Heart, MessageCircle } from "lucide-react";
+import { User, CalendarDays, ShoppingBag, Play, Heart, MessageCircle, Home, Compass, Newspaper } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useUnreadMessages } from "@/hooks/useUnreadMessages";
@@ -26,8 +26,8 @@ const BottomNav = () => {
   }
   
   const navItems = [
-    { icon: Play, label: "For You", path: "/watch" },
-    { icon: Heart, label: "Connect", path: "/connections" },
+    { icon: Home, label: "For You", path: "/home" },
+    { icon: Compass, label: "Connect", path: "/discover" },
     { icon: MessageCircle, label: "DMs", path: "/dms", showBadge: true },
     { icon: ShoppingBag, label: "Shop", path: "/shop" },
     { icon: CalendarDays, label: "Events", path: "/events" },
