@@ -293,7 +293,7 @@ const Index = () => {
               className="relative z-10 max-w-lg">
 
               <span className="text-[11px] font-sans font-bold tracking-[0.3em] uppercase text-primary-foreground/70 mb-6 block">Women's Sports Fandom Club</span>
-              <h1 className="font-condensed text-[4.5rem] sm:text-[6rem] lg:text-[7.5rem] leading-[0.85] tracking-tight text-primary-foreground uppercase mb-8">
+              <h1 className="font-condensed font-bold text-[4.5rem] sm:text-[6rem] lg:text-[7.5rem] leading-[0.85] tracking-tight text-primary-foreground uppercase mb-8">
                 Her<br />
                 Game.<br />
                 <span className="text-foreground">Her</span><br />
