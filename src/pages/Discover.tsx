@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { motion, useMotionValue, useTransform, AnimatePresence } from "framer-motion";
 import { Heart, X, Star, MessageCircle, MapPin, Sparkles, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
