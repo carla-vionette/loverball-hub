@@ -1,81 +1,148 @@
 import { useState, useEffect } from "react";
-import { ShoppingBag, Plus, Minus, Trash2, ExternalLink, Loader2, X } from "lucide-react";
+import { ShoppingBag, Plus, Minus, Trash2, Loader2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 import BottomNav from "@/components/BottomNav";
 import DesktopNav from "@/components/DesktopNav";
 import MobileHeader from "@/components/MobileHeader";
-import { useCartStore } from "@/stores/cartStore";
-import { getProducts } from "@/lib/shopify";
-import type { ShopifyProduct } from "@/lib/shopify";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
 
-const SAMPLE = [
-  { id: "p1", title: "Loverball Club Crewneck", price: "$65", image: "/lovable-uploads/08d4e8e3-8246-43ed-aba5-3a1f21621cab.jpg", tag: "Best Seller" },
-  { id: "p2", title: "Loverball Corduroy Hat", price: "$38", image: "/lovable-uploads/1146599d-2e17-4a36-a8ec-64fddec187a0.png", tag: "New" },
-  { id: "p3", title: "Loverball Sports Socks", price: "$18", image: "/images/all-stars-event.jpg", tag: null },
-  { id: "p4", title: "Loverball Logo Chain", price: "$45", image: "/images/la28-olympics-mixer.jpg", tag: "Limited" },
-  { id: "p5", title: "Loverball Hoodie - Pink", price: "$78", image: "/images/women-panel-event.jpg", tag: null },
-  { id: "p6", title: "Loverball Jersey", price: "$55", image: "/images/reggaeton-superbowl-party.jpg", tag: "New" },
-];
+interface Product {
+  id: string;
+  name: string;
+  description: string | null;
+  image_url: string | null;
+  price: number;
+  category: string | null;
+  in_stock: boolean | null;
+}
+
+interface CartItem {
+  id: string;
+  product_id: string;
+  quantity: number;
+  product: Product;
+}
+
+const CATEGORIES = ["All", "Apparel", "Accessories"];
 
 const ShopContent = () => {
-  const [products, setProducts] = useState<ShopifyProduct[]>([]);
+  const { user } = useAuth();
+  const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
-  const [usingSample, setUsingSample] = useState(false);
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [cartOpen, setCartOpen] = useState(false);
-
-  const { items, isLoading, addItem, updateQuantity, removeItem, checkoutUrl, createCheckout } = useCartStore();
-  const totalItems = items.reduce((s, i) => s + i.quantity, 0);
-  const totalPrice = items.reduce((s, i) => s + parseFloat(i.price.amount) * i.quantity, 0);
+  const [category, setCategory] = useState("All");
+  const [addingToCart, setAddingToCart] = useState<string | null>(null);
 
   useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      try {
-        const edges = await getProducts(20);
-        if (!cancelled) {
-          if (edges && edges.length > 0) setProducts(edges);
-          else setUsingSample(true);
-        }
-      } catch (e) {
-        console.error("Failed to fetch Shopify products:", e);
-        if (!cancelled) setUsingSample(true);
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    })();
-    return () => { cancelled = true; };
+    fetchProducts();
   }, []);
 
-  const addToCart = async (p: ShopifyProduct) => {
-    const v = p.node?.variants?.edges?.[0]?.node;
-    if (!v) return;
-    await addItem({ product: p, variantId: v.id, variantTitle: v.title, price: v.price, quantity: 1, selectedOptions: v.selectedOptions || [] });
-    toast.success("Added to cart!");
+  useEffect(() => {
+    if (user) fetchCart();
+  }, [user]);
+
+  const fetchProducts = async () => {
+    try {
+      const { data, error } = await supabase.from("products").select("*").order("created_at");
+      if (error) throw error;
+      setProducts(data || []);
+    } catch (err) {
+      console.error("Error fetching products:", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const checkout = async () => {
-    if (!checkoutUrl) await createCheckout();
-    const url = useCartStore.getState().checkoutUrl;
-    if (url) window.open(url, "_blank");
+  const fetchCart = async () => {
+    if (!user) return;
+    try {
+      const { data, error } = await supabase
+        .from("cart_items")
+        .select("id, product_id, quantity")
+        .eq("user_id", user.id);
+      if (error) throw error;
+
+      // Join with products locally
+      const items: CartItem[] = (data || []).map(ci => ({
+        ...ci,
+        product: products.find(p => p.id === ci.product_id)!,
+      })).filter(ci => ci.product);
+
+      setCartItems(items);
+    } catch (err) {
+      console.error("Error fetching cart:", err);
+    }
   };
 
-  const SkeletonGrid = () => (
-    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
-      {[...Array(8)].map((_, i) => (
-        <Card key={i} className="overflow-hidden border-border/30 animate-pulse">
-          <div className="aspect-square bg-secondary/30" />
-          <CardContent className="p-4 space-y-2">
-            <div className="h-4 bg-secondary/30 rounded w-3/4" />
-            <div className="h-4 bg-secondary/30 rounded w-1/2" />
-          </CardContent>
-        </Card>
-      ))}
-    </div>
-  );
+  // Refetch cart when products load
+  useEffect(() => {
+    if (user && products.length > 0) fetchCart();
+  }, [products, user]);
+
+  const addToCart = async (product: Product) => {
+    if (!user) { toast.error("Sign in to add items to cart"); return; }
+    setAddingToCart(product.id);
+
+    try {
+      const existing = cartItems.find(ci => ci.product_id === product.id);
+      if (existing) {
+        const { error } = await supabase
+          .from("cart_items")
+          .update({ quantity: existing.quantity + 1 })
+          .eq("id", existing.id);
+        if (error) throw error;
+      } else {
+        const { error } = await supabase
+          .from("cart_items")
+          .insert({ user_id: user.id, product_id: product.id, quantity: 1 });
+        if (error) throw error;
+      }
+      await fetchCart();
+      toast.success("Added to cart!");
+    } catch (err: any) {
+      toast.error(err.message || "Failed to add to cart");
+    } finally {
+      setAddingToCart(null);
+    }
+  };
+
+  const updateQuantity = async (itemId: string, newQty: number) => {
+    if (newQty < 1) {
+      await removeFromCart(itemId);
+      return;
+    }
+    try {
+      const { error } = await supabase.from("cart_items").update({ quantity: newQty }).eq("id", itemId);
+      if (error) throw error;
+      setCartItems(prev => prev.map(ci => ci.id === itemId ? { ...ci, quantity: newQty } : ci));
+    } catch (err) {
+      console.error("Error updating quantity:", err);
+    }
+  };
+
+  const removeFromCart = async (itemId: string) => {
+    try {
+      const { error } = await supabase.from("cart_items").delete().eq("id", itemId);
+      if (error) throw error;
+      setCartItems(prev => prev.filter(ci => ci.id !== itemId));
+      toast.success("Removed from cart");
+    } catch (err) {
+      console.error("Error removing from cart:", err);
+    }
+  };
+
+  const totalItems = cartItems.reduce((s, i) => s + i.quantity, 0);
+  const totalPrice = cartItems.reduce((s, i) => s + i.product.price * i.quantity, 0);
+
+  const filteredProducts = category === "All"
+    ? products
+    : products.filter(p => p.category === category);
 
   return (
     <div className="min-h-screen bg-background">
@@ -105,7 +172,7 @@ const ShopContent = () => {
           </div>
         </div>
 
-        {/* CART SLIDE-OVER (plain div, no Dialog/Sheet) */}
+        {/* CART SLIDE-OVER */}
         {cartOpen && (
           <div className="fixed inset-0 z-50 flex justify-end" onClick={() => setCartOpen(false)}>
             <div className="absolute inset-0 bg-black/50" />
@@ -114,11 +181,11 @@ const ShopContent = () => {
               onClick={e => e.stopPropagation()}
             >
               <div className="flex items-center justify-between p-4 border-b">
-                <h2 className="font-condensed text-xl uppercase">Your Cart</h2>
+                <h2 className="font-condensed text-xl uppercase">Your Cart ({totalItems})</h2>
                 <Button variant="ghost" size="icon" onClick={() => setCartOpen(false)}><X className="w-5 h-5" /></Button>
               </div>
               <div className="flex flex-col flex-1 p-4 min-h-0">
-                {items.length === 0 ? (
+                {cartItems.length === 0 ? (
                   <div className="flex-1 flex items-center justify-center">
                     <div className="text-center">
                       <ShoppingBag className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
@@ -128,22 +195,21 @@ const ShopContent = () => {
                 ) : (
                   <>
                     <div className="flex-1 overflow-y-auto space-y-4">
-                      {items.map(item => (
-                        <div key={item.variantId} className="flex gap-3 p-3 rounded-xl bg-secondary/30">
-                          {item.product?.node?.images?.edges?.[0]?.node && (
-                            <img src={item.product.node.images.edges[0].node.url} alt="" className="w-16 h-16 rounded-lg object-cover" />
+                      {cartItems.map(item => (
+                        <div key={item.id} className="flex gap-3 p-3 rounded-xl bg-secondary/30">
+                          {item.product.image_url && (
+                            <img src={item.product.image_url} alt={item.product.name} className="w-16 h-16 rounded-lg object-cover" />
                           )}
                           <div className="flex-1 min-w-0">
-                            <p className="font-semibold text-sm truncate font-sans">{item.product?.node?.title}</p>
-                            <p className="text-xs text-muted-foreground font-sans">{item.selectedOptions?.map(o => o.value).join(" · ")}</p>
-                            <p className="font-bold text-sm mt-1 font-sans">${parseFloat(item.price.amount).toFixed(2)}</p>
+                            <p className="font-semibold text-sm truncate font-sans">{item.product.name}</p>
+                            <p className="font-bold text-sm mt-1 font-sans">${item.product.price.toFixed(2)}</p>
                           </div>
                           <div className="flex flex-col items-end gap-2">
-                            <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => removeItem(item.variantId)}><Trash2 className="w-3 h-3" /></Button>
+                            <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => removeFromCart(item.id)}><Trash2 className="w-3 h-3" /></Button>
                             <div className="flex items-center gap-1">
-                              <Button variant="outline" size="icon" className="h-6 w-6" onClick={() => updateQuantity(item.variantId, item.quantity - 1)}><Minus className="w-3 h-3" /></Button>
+                              <Button variant="outline" size="icon" className="h-6 w-6" onClick={() => updateQuantity(item.id, item.quantity - 1)}><Minus className="w-3 h-3" /></Button>
                               <span className="w-6 text-center text-xs font-sans">{item.quantity}</span>
-                              <Button variant="outline" size="icon" className="h-6 w-6" onClick={() => updateQuantity(item.variantId, item.quantity + 1)}><Plus className="w-3 h-3" /></Button>
+                              <Button variant="outline" size="icon" className="h-6 w-6" onClick={() => updateQuantity(item.id, item.quantity + 1)}><Plus className="w-3 h-3" /></Button>
                             </div>
                           </div>
                         </div>
@@ -154,8 +220,8 @@ const ShopContent = () => {
                         <span className="font-semibold font-sans">Total</span>
                         <span className="font-bold text-lg font-sans">${totalPrice.toFixed(2)}</span>
                       </div>
-                      <Button className="w-full rounded-full" size="lg" onClick={checkout} disabled={isLoading}>
-                        {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <><ExternalLink className="w-4 h-4 mr-2" />Checkout with Shopify</>}
+                      <Button className="w-full rounded-full" size="lg" disabled>
+                        Checkout Coming Soon
                       </Button>
                     </div>
                   </>
@@ -165,44 +231,78 @@ const ShopContent = () => {
           </div>
         )}
 
+        {/* CATEGORY FILTER */}
+        <div className="max-w-6xl mx-auto px-5 md:px-10 pt-6 pb-2">
+          <div className="flex gap-2">
+            {CATEGORIES.map(c => (
+              <Badge
+                key={c}
+                variant={category === c ? "default" : "outline"}
+                className={`cursor-pointer px-5 py-2.5 text-sm rounded-full whitespace-nowrap transition-all ${category === c ? "bg-primary text-primary-foreground" : "hover:bg-secondary/50"}`}
+                onClick={() => setCategory(c)}
+              >
+                {c}
+              </Badge>
+            ))}
+          </div>
+        </div>
+
         {/* PRODUCT GRID */}
-        <div className="max-w-6xl mx-auto px-5 md:px-10 py-8">
-          {loading ? <SkeletonGrid /> : usingSample ? (
+        <div className="max-w-6xl mx-auto px-5 md:px-10 py-6">
+          {loading ? (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
-              {SAMPLE.map(p => (
-                <Card key={p.id} className="overflow-hidden group cursor-pointer hover:shadow-lg transition-all border-border/30">
-                  <div className="relative aspect-square overflow-hidden">
-                    <img src={p.image} alt={p.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                    {p.tag && <Badge className="absolute top-2 left-2 bg-primary text-primary-foreground text-[10px] font-bold rounded-sm">{p.tag}</Badge>}
-                  </div>
-                  <CardContent className="p-4">
-                    <h3 className="font-bold text-sm line-clamp-2 font-sans">{p.title}</h3>
-                    <p className="text-primary font-bold mt-1 font-sans">{p.price}</p>
-                    <Button size="sm" className="w-full rounded-full mt-3 text-xs" disabled>Coming Soon</Button>
+              {[...Array(8)].map((_, i) => (
+                <Card key={i} className="overflow-hidden border-border/30 animate-pulse">
+                  <div className="aspect-square bg-secondary/30" />
+                  <CardContent className="p-4 space-y-2">
+                    <div className="h-4 bg-secondary/30 rounded w-3/4" />
+                    <div className="h-4 bg-secondary/30 rounded w-1/2" />
                   </CardContent>
                 </Card>
               ))}
             </div>
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
-              {products.map(p => {
-                const img = p.node?.images?.edges?.[0]?.node;
-                const price = p.node?.priceRange?.minVariantPrice;
-                return (
-                  <Card key={p.node.id} className="overflow-hidden group cursor-pointer hover:shadow-lg transition-all border-border/30">
-                    <div className="relative aspect-square overflow-hidden">
-                      {img && <img src={img.url} alt={img.altText || p.node.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />}
-                    </div>
-                    <CardContent className="p-4">
-                      <h3 className="font-bold text-sm line-clamp-2 font-sans">{p.node.title}</h3>
-                      <p className="text-primary font-bold mt-1 font-sans">${parseFloat(price?.amount ?? "0").toFixed(2)}</p>
-                      <Button size="sm" className="w-full rounded-full mt-3 text-xs" onClick={e => { e.stopPropagation(); addToCart(p); }} disabled={isLoading}>
-                        {isLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : "Add to Cart"}
-                      </Button>
-                    </CardContent>
-                  </Card>
-                );
-              })}
+              {filteredProducts.map(product => (
+                <Card key={product.id} className="overflow-hidden group cursor-pointer hover:shadow-lg transition-all border-border/30">
+                  <div className="relative aspect-square overflow-hidden">
+                    {product.image_url ? (
+                      <img src={product.image_url} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
+                    ) : (
+                      <div className="w-full h-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
+                        <ShoppingBag className="w-10 h-10 text-primary/30" />
+                      </div>
+                    )}
+                    {!product.in_stock && (
+                      <Badge className="absolute top-2 left-2 bg-destructive text-destructive-foreground text-[10px] font-bold rounded-sm">Sold Out</Badge>
+                    )}
+                    {product.category && (
+                      <Badge className="absolute top-2 right-2 bg-foreground/70 text-background text-[10px] rounded-sm">{product.category}</Badge>
+                    )}
+                  </div>
+                  <CardContent className="p-4">
+                    <h3 className="font-bold text-sm line-clamp-2 font-sans">{product.name}</h3>
+                    {product.description && (
+                      <p className="text-xs text-muted-foreground line-clamp-1 mt-1 font-sans">{product.description}</p>
+                    )}
+                    <p className="text-primary font-bold mt-2 font-sans">${product.price.toFixed(2)}</p>
+                    <Button
+                      size="sm"
+                      className="w-full rounded-full mt-3 text-xs"
+                      disabled={!product.in_stock || addingToCart === product.id}
+                      onClick={e => { e.stopPropagation(); addToCart(product); }}
+                    >
+                      {addingToCart === product.id ? (
+                        <Loader2 className="w-3 h-3 animate-spin" />
+                      ) : !product.in_stock ? (
+                        "Sold Out"
+                      ) : (
+                        "Add to Cart"
+                      )}
+                    </Button>
+                  </CardContent>
+                </Card>
+              ))}
             </div>
           )}
         </div>
