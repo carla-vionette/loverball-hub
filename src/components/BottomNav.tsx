@@ -6,7 +6,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 const BottomNav = () => {
   const location = useLocation();
-  const { isMember, loading } = useAuth();
+  const auth = useAuth();
+  const loading = auth?.loading ?? false;
   const { hasUnread } = useUnreadMessages();
   
   // Show skeleton while loading

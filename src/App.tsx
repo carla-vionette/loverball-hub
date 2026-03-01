@@ -76,29 +76,29 @@ const App = () => (
             <Suspense fallback={<PageLoader />}>
               <Routes>
               <Route path="/" element={<Index />} />
-              <Route path="/home" element={<ProtectedRoute><Home /></ProtectedRoute>} />
+              <Route path="/home" element={<Home />} />
               <Route path="/auth" element={<Auth />} />
-              <Route path="/discover" element={<ProtectedRoute><Discover /></ProtectedRoute>} />
-              <Route path="/feed" element={<ProtectedRoute><Feed /></ProtectedRoute>} />
-              <Route path="/watch" element={<ProtectedRoute><Watch /></ProtectedRoute>} />
+              <Route path="/discover" element={<Discover />} />
+              <Route path="/feed" element={<Feed />} />
+              <Route path="/watch" element={<Watch />} />
               <Route path="/onboarding" element={<ProtectedRoute><Onboarding /></ProtectedRoute>} />
               <Route path="/following" element={<Navigate to="/profile" replace />} />
-              <Route path="/horoscope" element={<ProtectedRoute><Horoscope /></ProtectedRoute>} />
+              <Route path="/horoscope" element={<Horoscope />} />
               <Route path="/network" element={<Navigate to="/members" replace />} />
               <Route path="/gather" element={<Navigate to="/events" replace />} />
-              <Route path="/events" element={<ProtectedRoute><Events /></ProtectedRoute>} />
+              <Route path="/events" element={<Events />} />
               <Route path="/event/:id" element={<EventDetail />} />
-              <Route path="/community" element={<ProtectedRoute><Community /></ProtectedRoute>} />
+              <Route path="/community" element={<Community />} />
               <Route path="/community/:groupId" element={<ProtectedRoute><GroupChat /></ProtectedRoute>} />
               <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
               <Route path="/profile/edit" element={<ProtectedRoute><EditProfile /></ProtectedRoute>} />
               <Route path="/profile/interests" element={<ProtectedRoute><ProfileInterests /></ProtectedRoute>} />
-              <Route path="/search" element={<ProtectedRoute><Search /></ProtectedRoute>} />
-              <Route path="/shop" element={<ProtectedRoute><Shop /></ProtectedRoute>} />
-              <Route path="/product/:handle" element={<ProtectedRoute><ProductDetail /></ProtectedRoute>} />
+              <Route path="/search" element={<Search />} />
+              <Route path="/shop" element={<Shop />} />
+              <Route path="/product/:handle" element={<ProductDetail />} />
               <Route path="/invite" element={<ProtectedRoute><Invite /></ProtectedRoute>} />
-              <Route path="/members" element={<ProtectedRoute><Members /></ProtectedRoute>} />
-              <Route path="/members/:id" element={<ProtectedRoute><MemberProfile /></ProtectedRoute>} />
+              <Route path="/members" element={<Members />} />
+              <Route path="/members/:id" element={<MemberProfile />} />
               <Route path="/connections" element={<ProtectedRoute><Connections /></ProtectedRoute>} />
               <Route path="/dms" element={<ProtectedRoute><DirectMessages /></ProtectedRoute>} />
               <Route path="/messages" element={<ProtectedRoute><MessagesPage /></ProtectedRoute>} />
