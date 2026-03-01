@@ -46,6 +46,7 @@ const ChatRoom = lazy(() => import("./pages/ChatRoom"));
 const Terms = lazy(() => import("./pages/Terms"));
 const Privacy = lazy(() => import("./pages/Privacy"));
 const Settings = lazy(() => import("./pages/Settings"));
+const CheckoutSuccess = lazy(() => import("./pages/CheckoutSuccess"));
 
 // Video streaming pages (kept as lazy imports for sub-routes if needed later)
 const Ticker = lazy(() => import("./pages/Ticker"));
@@ -111,6 +112,7 @@ const App = () => (
               <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
               <Route path="/terms" element={<Terms />} />
               <Route path="/privacy" element={<Privacy />} />
+              <Route path="/checkout-success" element={<CheckoutSuccess />} />
 
 
               <Route path="*" element={<NotFound />} />

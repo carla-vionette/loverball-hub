@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { ShoppingBag, Plus, Minus, Trash2, Loader2, X } from "lucide-react";
+import { ShoppingBag, Plus, Minus, Trash2, Loader2, X, ExternalLink } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import BottomNav from "@/components/BottomNav";
 import DesktopNav from "@/components/DesktopNav";
@@ -38,6 +38,36 @@ const ShopContent = () => {
   const [cartOpen, setCartOpen] = useState(false);
   const [category, setCategory] = useState("All");
   const [addingToCart, setAddingToCart] = useState<string | null>(null);
+  const [checkingOut, setCheckingOut] = useState(false);
+
+  const handleCheckout = async () => {
+    if (cartItems.length === 0) return;
+    setCheckingOut(true);
+    try {
+      const items = cartItems.map(ci => ({
+        name: ci.product.name,
+        price: ci.product.price,
+        quantity: ci.quantity,
+        image_url: ci.product.image_url || undefined,
+      }));
+
+      const { data, error } = await supabase.functions.invoke("create-checkout", {
+        body: { items },
+      });
+
+      if (error) throw error;
+      if (data?.url) {
+        window.location.href = data.url;
+      } else {
+        throw new Error("No checkout URL returned");
+      }
+    } catch (err: any) {
+      console.error("Checkout error:", err);
+      toast.error(err.message || "Failed to start checkout");
+    } finally {
+      setCheckingOut(false);
+    }
+  };
 
   useEffect(() => {
     fetchProducts();
@@ -220,8 +250,23 @@ const ShopContent = () => {
                         <span className="font-semibold font-sans">Total</span>
                         <span className="font-bold text-lg font-sans">${totalPrice.toFixed(2)}</span>
                       </div>
-                      <Button className="w-full rounded-full" size="lg" disabled>
-                        Checkout Coming Soon
+                      <Button
+                        className="w-full rounded-full"
+                        size="lg"
+                        disabled={checkingOut}
+                        onClick={handleCheckout}
+                      >
+                        {checkingOut ? (
+                          <>
+                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                            Creating Checkout…
+                          </>
+                        ) : (
+                          <>
+                            <ExternalLink className="w-4 h-4 mr-2" />
+                            Checkout — ${totalPrice.toFixed(2)}
+                          </>
+                        )}
                       </Button>
                     </div>
                   </>
