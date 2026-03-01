@@ -651,6 +651,7 @@ export type Database = {
       profiles: {
         Row: {
           age_range: string | null
+          billing_period: string | null
           bio: string | null
           birthday: string | null
           city: string | null
@@ -666,6 +667,7 @@ export type Database = {
           interested_in_world_cup_la: boolean | null
           linkedin_url: string | null
           looking_for_tags: string[] | null
+          membership_tier: string | null
           name: string
           neighborhood: string | null
           other_interests: string[] | null
@@ -682,6 +684,7 @@ export type Database = {
         }
         Insert: {
           age_range?: string | null
+          billing_period?: string | null
           bio?: string | null
           birthday?: string | null
           city?: string | null
@@ -697,6 +700,7 @@ export type Database = {
           interested_in_world_cup_la?: boolean | null
           linkedin_url?: string | null
           looking_for_tags?: string[] | null
+          membership_tier?: string | null
           name: string
           neighborhood?: string | null
           other_interests?: string[] | null
@@ -713,6 +717,7 @@ export type Database = {
         }
         Update: {
           age_range?: string | null
+          billing_period?: string | null
           bio?: string | null
           birthday?: string | null
           city?: string | null
@@ -728,6 +733,7 @@ export type Database = {
           interested_in_world_cup_la?: boolean | null
           linkedin_url?: string | null
           looking_for_tags?: string[] | null
+          membership_tier?: string | null
           name?: string
           neighborhood?: string | null
           other_interests?: string[] | null

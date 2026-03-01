@@ -49,6 +49,7 @@ const Settings = lazy(() => import("./pages/Settings"));
 
 // Video streaming pages (kept as lazy imports for sub-routes if needed later)
 const Ticker = lazy(() => import("./pages/Ticker"));
+const PlanSelection = lazy(() => import("./pages/PlanSelection"));
 
 const queryClient = new QueryClient();
 
@@ -81,6 +82,7 @@ const App = () => (
               <Route path="/discover" element={<Discover />} />
               <Route path="/feed" element={<Feed />} />
               <Route path="/watch" element={<Watch />} />
+              <Route path="/plans" element={<ProtectedRoute><PlanSelection /></ProtectedRoute>} />
               <Route path="/onboarding" element={<ProtectedRoute><Onboarding /></ProtectedRoute>} />
               <Route path="/following" element={<Navigate to="/profile" replace />} />
               <Route path="/horoscope" element={<Horoscope />} />
