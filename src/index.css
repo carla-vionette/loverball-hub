@@ -104,6 +104,14 @@
     --radius: 0.75rem;
   }
 
+  /* Landing page theme — restores original sky-blue hero & editorial palette */
+  .landing-theme {
+    --primary: 200 75% 55%;               /* Sky blue (original hero color) */
+    --primary-foreground: 0 0% 100%;
+    --accent: 14 100% 59%;                /* Coral CTAs stay coral */
+    --accent-foreground: 0 0% 100%;
+  }
+
   .dark {
     --background: 20 10% 8%;
     --foreground: 30 15% 92%;
