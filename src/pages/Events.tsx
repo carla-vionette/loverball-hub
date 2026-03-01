@@ -61,7 +61,8 @@ const Events = () => {
   const [rsvpId, setRsvpId] = useState<string | null>(null);
   const [userRsvps, setUserRsvps] = useState<Record<string, string>>({});
   const [counts, setCounts] = useState<Record<string, number>>({});
-  const { user } = useAuth();
+  const auth = useAuth();
+  const user = auth?.user ?? null;
   const { toast } = useToast();
 
   useEffect(() => {

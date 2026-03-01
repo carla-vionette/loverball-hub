@@ -39,10 +39,6 @@ const Home = () => {
   const featuredRef = useRef<HTMLVideoElement>(null);
   const fullscreenRef = useRef<HTMLVideoElement>(null);
 
-  useEffect(() => {
-    if (!loading && !user) navigate("/", { replace: true });
-  }, [user, loading, navigate]);
-
   if (loading) return null;
 
   const featured = FEED_VIDEOS[0];
