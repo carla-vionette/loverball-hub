@@ -1,60 +1,57 @@
-import { useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
+/**
+ * Home Page — Video Discovery Feed
+ * 
+ * The primary logged-in landing page featuring:
+ * - Featured/hero video with autoplay
+ * - Trending reels grid (tap to play full-screen)
+ * - Category filters (For You, Basketball, Soccer, etc.)
+ * - Channel highlights row
+ */
+
+import { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
-import { motion } from "framer-motion";
-import { ArrowRight, Users, Calendar, Trophy, Play, ShoppingBag, Heart, Compass, TrendingUp } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { motion, AnimatePresence } from "framer-motion";
+import { Play, Heart, Eye, Volume2, VolumeX, X, ChevronRight, TrendingUp, Flame } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import BottomNav from "@/components/BottomNav";
 import DesktopNav from "@/components/DesktopNav";
 import MobileHeader from "@/components/MobileHeader";
+import { FEED_VIDEOS, type FeedVideoItem } from "@/lib/feedVideoData";
 
 import loverballLogo from "@/assets/loverball-script-logo.png";
-import heroImage from "@/assets/hero-women-new.png";
 
-const STATS = [
-  { label: "Members", value: "24K", icon: Users },
-  { label: "Events", value: "340", icon: Calendar },
-  { label: "Sports", value: "18", icon: Trophy },
-];
+const CATEGORIES = ["For You", "Basketball", "Soccer", "Tennis", "WNBA", "Culture", "Highlights", "Training"];
 
-const SPORTS = [
-  "BASKETBALL", "SOCCER", "TENNIS", "VOLLEYBALL", "SOFTBALL", "TRACK & FIELD",
-  "SWIMMING", "GYMNASTICS", "WNBA", "NWSL", "GOLF", "BOXING", "SURFING",
-  "SKATEBOARDING", "WRESTLING", "FENCING", "LACROSSE", "ROWING",
-];
-
-const QUICK_LINKS = [
-  { label: "Discover", desc: "Find your match", icon: Compass, path: "/discover", color: "bg-primary" },
-  { label: "Events", desc: "Join the fun", icon: Calendar, path: "/events", color: "bg-info" },
-  { label: "Watch", desc: "Trending reels", icon: Play, path: "/watch", color: "bg-hot-pink" },
-  { label: "Shop", desc: "Merch drop", icon: ShoppingBag, path: "/shop", color: "bg-foreground" },
-];
-
-const TRENDING = [
-  { id: 1, title: "Angel City FC Announces New Stadium Deal", tag: "NWSL", image: "/images/angel-city-fc-opener.jpg", time: "2h ago" },
-  { id: 2, title: "WNBA All-Star Weekend Comes to LA", tag: "WNBA", image: "/images/all-stars-event.jpg", time: "4h ago" },
-  { id: 3, title: "Women's World Cup 2026: What to Expect", tag: "FIFA", image: "/images/world-cup-la-preview.jpg", time: "6h ago" },
-];
-
-const EVENTS = [
-  { id: 1, title: "WNBA Finals Watch Party", date: "Mar 15", loc: "Downtown LA", count: 24, img: "/images/all-stars-event.jpg" },
-  { id: 2, title: "Brunch & Basketball Talk", date: "Mar 17", loc: "Silver Lake", count: 12, img: "/images/women-panel-event.jpg" },
-  { id: 3, title: "Sunset Volleyball Meetup", date: "Mar 20", loc: "Santa Monica", count: 18, img: "/images/la28-olympics-mixer.jpg" },
-  { id: 4, title: "Soccer Saturday Tailgate", date: "Mar 22", loc: "Inglewood", count: 32, img: "/images/reggaeton-superbowl-party.jpg" },
-  { id: 5, title: "Tennis Social & Clinic", date: "Mar 25", loc: "Pasadena", count: 15, img: "/images/life-basketball-sanaa.jpg" },
-];
+const formatCount = (n: number) => {
+  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
+  if (n >= 1_000) return `${(n / 1_000).toFixed(1)}K`;
+  return String(n);
+};
 
 const Home = () => {
   const navigate = useNavigate();
   const { user, loading } = useAuth();
+  const [activeCategory, setActiveCategory] = useState("For You");
+  const [featuredMuted, setFeaturedMuted] = useState(true);
+  const [fullscreenVideo, setFullscreenVideo] = useState<FeedVideoItem | null>(null);
+  const [fullscreenMuted, setFullscreenMuted] = useState(false);
+  const featuredRef = useRef<HTMLVideoElement>(null);
+  const fullscreenRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
     if (!loading && !user) navigate("/", { replace: true });
   }, [user, loading, navigate]);
 
   if (loading) return null;
+
+  const featured = FEED_VIDEOS[0];
+  const trendingVideos = FEED_VIDEOS.slice(1);
+
+  const openFullscreen = (video: FeedVideoItem) => {
+    setFullscreenVideo(video);
+    setFullscreenMuted(false);
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -63,139 +60,242 @@ const Home = () => {
       <BottomNav />
 
       <main className="md:ml-64 pt-16 md:pt-0 pb-24 md:pb-0">
-        {/* ── HERO ── */}
-        <section className="relative overflow-hidden bg-gradient-to-br from-primary via-primary/90 to-primary/70 text-primary-foreground">
-          <div className="absolute inset-0 opacity-20">
-            <img src={heroImage} alt="" className="w-full h-full object-cover" aria-hidden="true" />
-          </div>
-          <div className="relative z-10 px-5 py-14 md:px-10 md:py-20 max-w-6xl mx-auto">
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-              <img src={loverballLogo} alt="Loverball" className="h-10 w-auto mb-4 brightness-0 invert" />
-              <h1 className="font-condensed text-5xl md:text-7xl font-bold uppercase tracking-tight leading-none mb-3">
-                Her Game.<br />Her Story.
-              </h1>
-              <p className="text-primary-foreground/80 text-lg max-w-md mb-6 font-sans">
-                The #1 community for women sports fans in LA.
-              </p>
-              <Button size="lg" className="rounded-full bg-card text-primary hover:bg-card/90 font-bold px-8" onClick={() => navigate("/discover")}>
-                Start Matching <ArrowRight className="ml-2 w-4 h-4" />
-              </Button>
-            </motion.div>
-          </div>
-        </section>
-
-        {/* ── STATS ROW ── */}
-        <div className="bg-foreground text-background">
-          <div className="max-w-6xl mx-auto px-5 py-5 flex justify-around">
-            {STATS.map((s) => (
-              <div key={s.label} className="text-center">
-                <p className="font-condensed text-3xl md:text-4xl font-bold tabular-nums">{s.value}</p>
-                <p className="text-xs uppercase tracking-widest text-background/60 mt-1 font-sans">{s.label}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* ── SPORTS MARQUEE ── */}
-        <div className="bg-primary/10 py-3 overflow-hidden">
-          <motion.div
-            animate={{ x: [0, -1500] }}
-            transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-            className="flex gap-8 whitespace-nowrap"
-          >
-            {[...SPORTS, ...SPORTS].map((s, i) => (
-              <span key={i} className="flex items-center gap-8 text-xs font-condensed font-bold tracking-[0.2em] text-primary/70 uppercase">
-                <span>{s}</span>
-                <span className="text-primary/30">◆</span>
-              </span>
-            ))}
-          </motion.div>
-        </div>
-
-        {/* ── QUICK ACCESS ── */}
-        <section className="px-5 md:px-10 py-8 max-w-6xl mx-auto">
-          <h2 className="font-condensed text-2xl font-bold uppercase tracking-wide mb-5">Quick Access</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {QUICK_LINKS.map((l) => (
-              <Link key={l.path} to={l.path}>
-                <Card className="group hover:shadow-lg transition-all border-border/30 overflow-hidden">
-                  <CardContent className="p-5 flex flex-col items-start gap-3">
-                    <div className={`w-11 h-11 rounded-xl ${l.color} flex items-center justify-center`}>
-                      <l.icon className="w-5 h-5 text-primary-foreground" />
-                    </div>
-                    <div>
-                      <p className="font-condensed text-lg font-bold uppercase">{l.label}</p>
-                      <p className="text-xs text-muted-foreground font-sans">{l.desc}</p>
-                    </div>
-                  </CardContent>
-                </Card>
-              </Link>
-            ))}
-          </div>
-        </section>
-
-        {/* ── TRENDING NEWS ── */}
-        <section className="px-5 md:px-10 py-8 max-w-6xl mx-auto">
-          <h2 className="font-condensed text-2xl font-bold uppercase tracking-wide flex items-center gap-2 mb-5">
-            <TrendingUp className="w-5 h-5 text-primary" /> Trending
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-            {TRENDING.map((n) => (
-              <Card key={n.id} className="overflow-hidden group cursor-pointer hover:shadow-lg transition-all border-border/30">
-                <div className="relative h-44 overflow-hidden">
-                  <img src={n.image} alt={n.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                  <Badge className="absolute top-3 left-3 bg-primary text-primary-foreground text-[10px] font-bold tracking-wider rounded-sm">{n.tag}</Badge>
-                </div>
-                <CardContent className="p-4">
-                  <h3 className="font-bold text-sm line-clamp-2 group-hover:text-primary transition-colors font-sans">{n.title}</h3>
-                  <p className="text-xs text-muted-foreground mt-2 font-sans">{n.time}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </section>
-
-        {/* ── UPCOMING EVENTS SCROLL ── */}
-        <section className="px-5 md:px-10 py-8 max-w-6xl mx-auto">
-          <div className="flex items-center justify-between mb-5">
-            <h2 className="font-condensed text-2xl font-bold uppercase tracking-wide">Upcoming Events</h2>
-            <Link to="/events" className="text-sm text-primary font-semibold hover:underline flex items-center gap-1 font-sans">
-              View All <ArrowRight className="w-3 h-3" />
-            </Link>
-          </div>
-          <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide -mx-5 px-5">
-            {EVENTS.map((e) => (
-              <Card key={e.id} className="min-w-[260px] max-w-[260px] flex-shrink-0 overflow-hidden group cursor-pointer hover:shadow-lg transition-all border-border/30">
-                <div className="relative h-36 overflow-hidden">
-                  <img src={e.img} alt={e.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                </div>
-                <CardContent className="p-4">
-                  <h3 className="font-bold text-sm line-clamp-2 font-sans">{e.title}</h3>
-                  <div className="flex items-center gap-3 text-xs text-muted-foreground mt-2 font-sans">
-                    <span className="flex items-center gap-1"><Calendar className="w-3 h-3" />{e.date}</span>
-                    <span className="flex items-center gap-1"><Users className="w-3 h-3" />{e.count}</span>
-                  </div>
-                  <p className="text-xs text-muted-foreground mt-1 font-sans">{e.loc}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </section>
-
-        {/* ── MATCH CTA BANNER ── */}
-        <section className="px-5 md:px-10 py-8 max-w-6xl mx-auto">
-          <div className="bg-gradient-to-r from-primary to-hot-pink rounded-2xl p-8 md:p-12 text-primary-foreground flex flex-col md:flex-row items-center justify-between gap-6">
-            <div>
-              <h2 className="font-condensed text-3xl md:text-4xl font-bold uppercase mb-2">Find Your Sports Bestie</h2>
-              <p className="text-primary-foreground/80 max-w-md font-sans">Swipe, match, and connect with women who love the same teams you do.</p>
+        {/* ── FEATURED VIDEO HERO ── */}
+        <section className="relative w-full aspect-[16/9] md:aspect-[21/9] bg-black overflow-hidden group cursor-pointer" onClick={() => openFullscreen(featured)}>
+          <video
+            ref={featuredRef}
+            src={featured.videoUrl}
+            className="absolute inset-0 w-full h-full object-cover"
+            autoPlay
+            loop
+            muted={featuredMuted}
+            playsInline
+          />
+          {/* Gradient overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+          
+          {/* Content overlay */}
+          <div className="absolute bottom-0 left-0 right-0 p-5 md:p-8 z-10">
+            <div className="flex items-center gap-2 mb-3">
+              <Badge className="bg-primary text-primary-foreground text-[10px] font-bold tracking-wider rounded-sm px-2 py-0.5">
+                <Flame className="w-3 h-3 mr-1" /> FEATURED
+              </Badge>
+              <Badge variant="outline" className="text-white/80 border-white/30 text-[10px] tracking-wider rounded-sm">
+                {featured.tags[0]?.toUpperCase()}
+              </Badge>
             </div>
-            <Button size="lg" className="rounded-full bg-card text-primary hover:bg-card/90 font-bold px-8 shrink-0" onClick={() => navigate("/discover")}>
-              <Heart className="w-4 h-4 mr-2" /> Start Matching
-            </Button>
+            <h2 className="font-condensed text-3xl md:text-5xl font-bold text-white uppercase leading-none mb-2">
+              {featured.title}
+            </h2>
+            <p className="text-white/70 text-sm md:text-base max-w-lg font-sans mb-3">
+              {featured.description}
+            </p>
+            <div className="flex items-center gap-4 text-white/60 text-xs font-sans">
+              <span className="flex items-center gap-1"><Eye className="w-3.5 h-3.5" /> {formatCount(featured.views)}</span>
+              <span className="flex items-center gap-1"><Heart className="w-3.5 h-3.5" /> {formatCount(featured.likes)}</span>
+              <span className="flex items-center gap-1">
+                <img src={featured.channelAvatar} alt="" className="w-4 h-4 rounded-full object-contain" />
+                {featured.channelName}
+              </span>
+            </div>
+          </div>
+
+          {/* Play icon center */}
+          <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10 pointer-events-none">
+            <div className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
+              <Play className="w-7 h-7 text-white fill-white" />
+            </div>
+          </div>
+
+          {/* Mute toggle */}
+          <button
+            onClick={(e) => { e.stopPropagation(); setFeaturedMuted(!featuredMuted); }}
+            className="absolute top-4 right-4 z-20 w-9 h-9 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center text-white hover:bg-black/60 transition-colors"
+          >
+            {featuredMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+          </button>
+        </section>
+
+        {/* ── CATEGORY PILLS ── */}
+        <div className="px-5 md:px-8 py-4 border-b border-border/30">
+          <div className="flex gap-2 overflow-x-auto scrollbar-hide -mx-1 px-1">
+            {CATEGORIES.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setActiveCategory(cat)}
+                className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider whitespace-nowrap transition-all font-condensed ${
+                  activeCategory === cat
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-muted/50 text-muted-foreground hover:bg-muted"
+                }`}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* ── TRENDING REELS SECTION ── */}
+        <section className="px-5 md:px-8 py-6 max-w-7xl mx-auto">
+          <div className="flex items-center justify-between mb-5">
+            <h2 className="font-condensed text-2xl font-bold uppercase tracking-wide flex items-center gap-2">
+              <TrendingUp className="w-5 h-5 text-primary" /> Trending Now
+            </h2>
+            <button
+              onClick={() => navigate("/watch")}
+              className="text-sm text-primary font-semibold hover:underline flex items-center gap-1 font-sans"
+            >
+              Watch All <ChevronRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
+            {trendingVideos.map((video, idx) => (
+              <VideoCard key={video.id} video={video} index={idx} onPlay={openFullscreen} />
+            ))}
+          </div>
+        </section>
+
+        {/* ── CHANNELS ROW ── */}
+        <section className="px-5 md:px-8 py-6 max-w-7xl mx-auto border-t border-border/30">
+          <h2 className="font-condensed text-xl font-bold uppercase tracking-wide mb-4">Channels</h2>
+          <div className="flex gap-6 overflow-x-auto scrollbar-hide pb-2">
+            {Array.from(new Set(FEED_VIDEOS.map(v => v.channelName))).map((name) => {
+              const ch = FEED_VIDEOS.find(v => v.channelName === name)!;
+              return (
+                <button key={name} onClick={() => navigate("/watch")} className="flex flex-col items-center gap-2 shrink-0 group">
+                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary to-hot-pink p-[2px]">
+                    <div className="w-full h-full rounded-full bg-card flex items-center justify-center overflow-hidden">
+                      <img src={ch.channelAvatar} alt={name} className="w-10 h-10 object-contain" />
+                    </div>
+                  </div>
+                  <span className="text-[11px] font-sans font-medium text-muted-foreground group-hover:text-foreground transition-colors text-center max-w-[72px] truncate">
+                    {name}
+                  </span>
+                </button>
+              );
+            })}
           </div>
         </section>
       </main>
+
+      {/* ── FULLSCREEN VIDEO OVERLAY ── */}
+      <AnimatePresence>
+        {fullscreenVideo && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] bg-black flex items-center justify-center"
+          >
+            <video
+              ref={fullscreenRef}
+              src={fullscreenVideo.videoUrl}
+              className="w-full h-full object-contain"
+              autoPlay
+              loop
+              muted={fullscreenMuted}
+              playsInline
+              controls
+            />
+            {/* Top bar */}
+            <div className="absolute top-0 left-0 right-0 p-4 flex items-center justify-between z-10 bg-gradient-to-b from-black/60 to-transparent">
+              <div className="flex items-center gap-3">
+                <img src={fullscreenVideo.channelAvatar} alt="" className="w-8 h-8 rounded-full object-contain" />
+                <div>
+                  <p className="text-white text-sm font-bold font-sans">{fullscreenVideo.channelName}</p>
+                  <p className="text-white/50 text-xs font-sans">{fullscreenVideo.title}</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => setFullscreenMuted(!fullscreenMuted)}
+                  className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-white"
+                >
+                  {fullscreenMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+                </button>
+                <button
+                  onClick={() => setFullscreenVideo(null)}
+                  className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-white"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+
+            {/* Bottom info */}
+            <div className="absolute bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-black/70 to-transparent z-10">
+              <p className="text-white/80 text-sm font-sans mb-2">{fullscreenVideo.description}</p>
+              <div className="flex items-center gap-4 text-white/50 text-xs font-sans">
+                <span className="flex items-center gap-1"><Eye className="w-3.5 h-3.5" /> {formatCount(fullscreenVideo.views)}</span>
+                <span className="flex items-center gap-1"><Heart className="w-3.5 h-3.5" /> {formatCount(fullscreenVideo.likes)}</span>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
+  );
+};
+
+/* ── Video Thumbnail Card ── */
+const VideoCard = ({ video, index, onPlay }: { video: FeedVideoItem; index: number; onPlay: (v: FeedVideoItem) => void }) => {
+  const [hovering, setHovering] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    if (hovering && videoRef.current) {
+      videoRef.current.currentTime = 0;
+      videoRef.current.play().catch(() => {});
+    } else if (videoRef.current) {
+      videoRef.current.pause();
+    }
+  }, [hovering]);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: index * 0.05, duration: 0.3 }}
+      className="relative group cursor-pointer rounded-xl overflow-hidden bg-muted/30 aspect-[9/16]"
+      onMouseEnter={() => setHovering(true)}
+      onMouseLeave={() => setHovering(false)}
+      onClick={() => onPlay(video)}
+    >
+      <video
+        ref={videoRef}
+        src={video.videoUrl}
+        className="absolute inset-0 w-full h-full object-cover"
+        muted
+        loop
+        playsInline
+        preload="metadata"
+      />
+      
+      {/* Gradient */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+
+      {/* Play icon on hover */}
+      <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+        <div className="w-12 h-12 rounded-full bg-primary/80 backdrop-blur-sm flex items-center justify-center">
+          <Play className="w-5 h-5 text-primary-foreground fill-primary-foreground" />
+        </div>
+      </div>
+
+      {/* Bottom info */}
+      <div className="absolute bottom-0 left-0 right-0 p-3 z-10">
+        <h3 className="text-white text-xs font-bold font-sans line-clamp-2 mb-1">{video.title}</h3>
+        <div className="flex items-center gap-2 text-white/60 text-[10px] font-sans">
+          <span className="flex items-center gap-0.5"><Eye className="w-3 h-3" /> {formatCount(video.views)}</span>
+          <span className="flex items-center gap-0.5"><Heart className="w-3 h-3" /> {formatCount(video.likes)}</span>
+        </div>
+      </div>
+
+      {/* Channel avatar */}
+      <div className="absolute top-2 left-2 z-10">
+        <img src={video.channelAvatar} alt="" className="w-6 h-6 rounded-full object-contain bg-black/30 backdrop-blur-sm" />
+      </div>
+    </motion.div>
   );
 };
 
