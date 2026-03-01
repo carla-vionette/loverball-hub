@@ -4,6 +4,12 @@
 @import "@fontsource/dm-sans/700.css";
 @import "@fontsource/pacifico/400.css";
 @import "@fontsource/bebas-neue/400.css";
+@import "@fontsource/barlow-condensed/400.css";
+@import "@fontsource/barlow-condensed/500.css";
+@import "@fontsource/barlow-condensed/600.css";
+@import "@fontsource/barlow-condensed/700.css";
+@import "@fontsource/barlow-condensed/800.css";
+@import "@fontsource/barlow-condensed/900.css";
 @import "@fontsource/playfair-display/400.css";
 @import "@fontsource/playfair-display/500.css";
 @import "@fontsource/playfair-display/600.css";
@@ -28,12 +34,12 @@
 
 @layer base {
   :root {
-    /* ── Brand = Terracotta / Burnt Orange ── */
-    --brand: 16 78% 55%;                /* Terracotta #E06A3A */
+    /* ── Brand = Coral #FF5D2E ── */
+    --brand: 14 100% 59%;               /* Coral #FF5D2E */
     --brand-foreground: 0 0% 100%;
 
     /* ── Core palette ── */
-    --background: 30 20% 97%;           /* Warm white #F9F7F5 */
+    --background: 28 33% 95%;           /* Cream #F8F4F0 */
     --foreground: 0 0% 15%;             /* Charcoal #262626 */
 
     --card: 0 0% 100%;                  /* Pure white */
@@ -42,8 +48,8 @@
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 15%;
 
-    /* Primary = Terracotta (buttons, CTAs, active states) */
-    --primary: 16 78% 55%;              /* #E06A3A */
+    /* Primary = Coral (buttons, CTAs, active states) */
+    --primary: 14 100% 59%;             /* #FF5D2E */
     --primary-foreground: 0 0% 100%;    /* White text */
 
     --secondary: 30 15% 93%;            /* Light warm gray */
@@ -52,8 +58,8 @@
     --muted: 30 12% 92%;
     --muted-foreground: 0 0% 45%;
 
-    /* Accent = Terracotta (same family for consistency) */
-    --accent: 16 78% 55%;               /* #E06A3A */
+    /* Accent = Coral (same family for consistency) */
+    --accent: 14 100% 59%;              /* #FF5D2E */
     --accent-foreground: 0 0% 100%;
 
     /* ── Status colors ── */
@@ -67,7 +73,7 @@
     --destructive-foreground: 0 0% 100%;
 
     /* ── Additional brand ── */
-    --coral: 16 78% 55%;
+    --coral: 14 100% 59%;
     --coral-foreground: 0 0% 100%;
     --pale-pink: 30 25% 94%;
     --pale-pink-foreground: 0 0% 15%;
@@ -81,7 +87,7 @@
     --ticker-foreground: 0 0% 100%;
 
     /* Terracotta accent */
-    --terracotta: 16 78% 55%;           /* #E06A3A */
+    --terracotta: 14 100% 59%;           /* #FF5D2E */
     --terracotta-foreground: 0 0% 100%;
     --warm-beige: 30 20% 88%;           /* #E5DDD4 */
     --warm-beige-foreground: 0 0% 15%;
@@ -93,7 +99,7 @@
     /* ── Chrome ── */
     --border: 30 10% 88%;
     --input: 30 10% 88%;
-    --ring: 16 78% 55%;
+    --ring: 14 100% 59%;
 
     --radius: 0.75rem;
   }

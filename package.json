@@ -11,6 +11,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@fontsource/barlow-condensed": "^5.2.8",
     "@fontsource/bebas-neue": "^5.2.7",
     "@fontsource/cormorant": "^5.2.8",
     "@fontsource/dm-sans": "^5.2.8",
