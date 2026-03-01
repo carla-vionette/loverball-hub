@@ -68,7 +68,7 @@ export default {
         sans: ["DM Sans", "system-ui", "sans-serif"],
         serif: ["Cormorant", "Georgia", "serif"],
         display: ["Playfair Display", "Georgia", "serif"],
-        condensed: ["Bebas Neue", "Impact", "sans-serif"],
+        condensed: ["Barlow Condensed", "Bebas Neue", "Impact", "sans-serif"],
         script: ["Pacifico", "cursive"],
       },
       fontSize: {

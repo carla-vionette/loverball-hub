@@ -17,8 +17,10 @@ import ProtectedRoute from "./components/ProtectedRoute";
 
 // Lazy load everything else for code splitting
 const Home = lazy(() => import("./pages/Home"));
+const Discover = lazy(() => import("./pages/Discover"));
+const Feed = lazy(() => import("./pages/Feed"));
+const Watch = lazy(() => import("./pages/Watch"));
 const Onboarding = lazy(() => import("./pages/Onboarding"));
-const Ticker = lazy(() => import("./pages/Ticker"));
 const Horoscope = lazy(() => import("./pages/Horoscope"));
 const Community = lazy(() => import("./pages/Community"));
 const GroupChat = lazy(() => import("./pages/GroupChat"));
@@ -45,17 +47,8 @@ const Terms = lazy(() => import("./pages/Terms"));
 const Privacy = lazy(() => import("./pages/Privacy"));
 const Settings = lazy(() => import("./pages/Settings"));
 
-// Video streaming pages
-const VideoLayout = lazy(() => import("./components/video/VideoLayout"));
-const VideoForYou = lazy(() => import("./pages/video/VideoForYou"));
-const VideoDiscover = lazy(() => import("./pages/video/VideoDiscover"));
-const VideoSearch = lazy(() => import("./pages/video/VideoSearch"));
-const VideoFeed = lazy(() => import("./pages/video/VideoFeed"));
-const VideoChannel = lazy(() => import("./pages/video/VideoChannel"));
-const VideoUpload = lazy(() => import("./pages/video/VideoUpload"));
-const CreateChannel = lazy(() => import("./pages/video/CreateChannel"));
-const ChannelDashboard = lazy(() => import("./pages/video/ChannelDashboard"));
-const VideoWatch = lazy(() => import("./pages/video/VideoWatch"));
+// Video streaming pages (kept as lazy imports for sub-routes if needed later)
+const Ticker = lazy(() => import("./pages/Ticker"));
 
 const queryClient = new QueryClient();
 
@@ -83,9 +76,11 @@ const App = () => (
             <Suspense fallback={<PageLoader />}>
               <Routes>
               <Route path="/" element={<Index />} />
-              <Route path="/home" element={<Home />} />
+              <Route path="/home" element={<ProtectedRoute><Home /></ProtectedRoute>} />
               <Route path="/auth" element={<Auth />} />
-              <Route path="/ticker" element={<ProtectedRoute><Ticker /></ProtectedRoute>} />
+              <Route path="/discover" element={<ProtectedRoute><Discover /></ProtectedRoute>} />
+              <Route path="/feed" element={<ProtectedRoute><Feed /></ProtectedRoute>} />
+              <Route path="/watch" element={<ProtectedRoute><Watch /></ProtectedRoute>} />
               <Route path="/onboarding" element={<ProtectedRoute><Onboarding /></ProtectedRoute>} />
               <Route path="/following" element={<Navigate to="/profile" replace />} />
               <Route path="/horoscope" element={<ProtectedRoute><Horoscope /></ProtectedRoute>} />
@@ -115,18 +110,6 @@ const App = () => (
               <Route path="/terms" element={<Terms />} />
               <Route path="/privacy" element={<Privacy />} />
 
-              {/* Video Streaming Section */}
-              <Route path="/watch" element={<VideoLayout />}>
-                <Route index element={<VideoForYou />} />
-                <Route path="discover" element={<VideoDiscover />} />
-                <Route path="search" element={<VideoSearch />} />
-                <Route path="feed" element={<VideoFeed />} />
-                <Route path="channel/:id" element={<VideoChannel />} />
-                <Route path="video/:id" element={<VideoWatch />} />
-                <Route path="upload" element={<VideoUpload />} />
-                <Route path="channel/create" element={<CreateChannel />} />
-                <Route path="dashboard" element={<ChannelDashboard />} />
-              </Route>
 
               <Route path="*" element={<NotFound />} />
             </Routes>

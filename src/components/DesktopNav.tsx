@@ -1,4 +1,4 @@
-import { User, Search, CalendarDays, Settings, ShoppingBag, Play, Heart, MessageCircle } from "lucide-react";
+import { User, Search, CalendarDays, Settings, ShoppingBag, Play, Heart, MessageCircle, Home, Compass, Newspaper } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import loverbballLogo from "@/assets/loverball-script-logo.png";
 import { useAuth } from "@/hooks/useAuth";
@@ -11,10 +11,12 @@ const DesktopNav = () => {
   const { hasUnread } = useUnreadMessages();
   
   const navItems = [
-    { icon: Play, label: "For You", path: "/watch" },
-    { icon: Heart, label: "Connections", path: "/connections" },
-    { icon: MessageCircle, label: "DMs", path: "/dms", showBadge: true },
+    { icon: Home, label: "For You", path: "/home" },
+    { icon: Compass, label: "Discover", path: "/discover" },
+    { icon: Play, label: "Watch", path: "/watch" },
+    { icon: Newspaper, label: "Feed", path: "/feed" },
     { icon: CalendarDays, label: "Events", path: "/events" },
+    { icon: MessageCircle, label: "DMs", path: "/dms", showBadge: true },
     { icon: ShoppingBag, label: "Shop", path: "/shop" },
     { icon: User, label: "Profile", path: "/profile" },
     ...(isAdmin ? [
