@@ -132,9 +132,9 @@ const Auth = () => {
 
           toast({
             title: "Welcome to Loverball!",
-            description: "Your invite code has been verified. Let's set up your profile.",
+            description: "Your invite code has been verified. Let's choose your plan.",
           });
-          navigate("/onboarding");
+          navigate("/plans");
         }
       } else {
         // Validate sign in inputs
@@ -158,10 +158,16 @@ const Auth = () => {
           .maybeSingle();
 
         if (profile) {
-          setSplashName(profile.name);
-          setPendingRedirect(redirectTo);
+          // Check if user has a plan selected
+          const profileAny = profile as any;
+          if (!profileAny.membership_tier) {
+            navigate("/plans");
+          } else {
+            setSplashName(profile.name);
+            setPendingRedirect(redirectTo);
+          }
         } else {
-          navigate("/onboarding");
+          navigate("/plans");
         }
       }
     } catch (error: any) {
@@ -180,7 +186,7 @@ const Auth = () => {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/onboarding`
+          redirectTo: `${window.location.origin}/plans`
         }
       });
       
