@@ -1,27 +1,38 @@
 /**
- * Home Page — Video Discovery Feed
+ * Home Page — Content Feed
  * 
- * The primary logged-in landing page featuring:
- * - Featured/hero video with autoplay
- * - Trending reels grid (tap to play full-screen)
- * - Category filters (For You, Basketball, Soccer, etc.)
- * - Channel highlights row
+ * Pulls posts from the database with:
+ * - Category filtering
+ * - Like/Save functionality persisted to DB
+ * - Real-time post data
  */
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import { motion, AnimatePresence } from "framer-motion";
-import { Play, Heart, Eye, Volume2, VolumeX, X, ChevronRight, TrendingUp, Flame } from "lucide-react";
+import { motion } from "framer-motion";
+import { Heart, Bookmark, Eye, MessageCircle, Share2, Loader2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
 import BottomNav from "@/components/BottomNav";
 import DesktopNav from "@/components/DesktopNav";
 import MobileHeader from "@/components/MobileHeader";
-import { FEED_VIDEOS, type FeedVideoItem } from "@/lib/feedVideoData";
-
-import loverballLogo from "@/assets/loverball-script-logo.png";
 
 const CATEGORIES = ["For You", "Basketball", "Soccer", "Tennis", "WNBA", "Culture", "Highlights", "Training"];
+
+interface Post {
+  id: string;
+  title: string | null;
+  content: string | null;
+  media_url: string | null;
+  media_type: string | null;
+  category: string | null;
+  views: number | null;
+  created_at: string;
+  author_id: string;
+}
 
 const formatCount = (n: number) => {
   if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
@@ -29,25 +40,145 @@ const formatCount = (n: number) => {
   return String(n);
 };
 
+const formatTimeAgo = (dateStr: string) => {
+  const d = new Date(dateStr);
+  const now = new Date();
+  const diffMs = now.getTime() - d.getTime();
+  const diffMins = Math.floor(diffMs / 60000);
+  if (diffMins < 1) return "just now";
+  if (diffMins < 60) return `${diffMins}m ago`;
+  const diffHrs = Math.floor(diffMins / 60);
+  if (diffHrs < 24) return `${diffHrs}h ago`;
+  const diffDays = Math.floor(diffHrs / 24);
+  if (diffDays < 7) return `${diffDays}d ago`;
+  return d.toLocaleDateString();
+};
+
 const Home = () => {
   const navigate = useNavigate();
-  const { user, loading } = useAuth();
+  const { user, loading: authLoading } = useAuth();
+  const { toast } = useToast();
   const [activeCategory, setActiveCategory] = useState("For You");
-  const [featuredMuted, setFeaturedMuted] = useState(true);
-  const [fullscreenVideo, setFullscreenVideo] = useState<FeedVideoItem | null>(null);
-  const [fullscreenMuted, setFullscreenMuted] = useState(false);
-  const featuredRef = useRef<HTMLVideoElement>(null);
-  const fullscreenRef = useRef<HTMLVideoElement>(null);
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [likedPosts, setLikedPosts] = useState<Set<string>>(new Set());
+  const [savedPosts, setSavedPosts] = useState<Set<string>>(new Set());
+  const [likeCounts, setLikeCounts] = useState<Record<string, number>>({});
 
-  if (loading) return null;
+  useEffect(() => {
+    fetchPosts();
+  }, []);
 
-  const featured = FEED_VIDEOS[0];
-  const trendingVideos = FEED_VIDEOS.slice(1);
+  useEffect(() => {
+    if (user) {
+      fetchUserInteractions();
+    }
+  }, [user]);
 
-  const openFullscreen = (video: FeedVideoItem) => {
-    setFullscreenVideo(video);
-    setFullscreenMuted(false);
+  const fetchPosts = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("posts")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+      setPosts(data || []);
+
+      // Fetch like counts
+      if (data && data.length > 0) {
+        const { data: likes } = await supabase
+          .from("post_likes")
+          .select("post_id");
+
+        if (likes) {
+          const counts: Record<string, number> = {};
+          likes.forEach(l => { counts[l.post_id] = (counts[l.post_id] || 0) + 1; });
+          setLikeCounts(counts);
+        }
+      }
+    } catch (err) {
+      console.error("Error fetching posts:", err);
+    } finally {
+      setLoading(false);
+    }
   };
+
+  const fetchUserInteractions = async () => {
+    if (!user) return;
+    try {
+      const [likesRes, savesRes] = await Promise.all([
+        supabase.from("post_likes").select("post_id").eq("user_id", user.id),
+        supabase.from("post_saves").select("post_id").eq("user_id", user.id),
+      ]);
+
+      if (likesRes.data) setLikedPosts(new Set(likesRes.data.map(l => l.post_id)));
+      if (savesRes.data) setSavedPosts(new Set(savesRes.data.map(s => s.post_id)));
+    } catch (err) {
+      console.error("Error fetching interactions:", err);
+    }
+  };
+
+  const toggleLike = async (postId: string) => {
+    if (!user) { toast({ title: "Sign in to like posts", variant: "destructive" }); return; }
+
+    const isLiked = likedPosts.has(postId);
+    // Optimistic update
+    setLikedPosts(prev => {
+      const next = new Set(prev);
+      if (isLiked) next.delete(postId); else next.add(postId);
+      return next;
+    });
+    setLikeCounts(prev => ({ ...prev, [postId]: (prev[postId] || 0) + (isLiked ? -1 : 1) }));
+
+    try {
+      if (isLiked) {
+        await supabase.from("post_likes").delete().eq("post_id", postId).eq("user_id", user.id);
+      } else {
+        await supabase.from("post_likes").insert({ post_id: postId, user_id: user.id });
+      }
+    } catch (err) {
+      // Revert on error
+      setLikedPosts(prev => {
+        const next = new Set(prev);
+        if (isLiked) next.add(postId); else next.delete(postId);
+        return next;
+      });
+      setLikeCounts(prev => ({ ...prev, [postId]: (prev[postId] || 0) + (isLiked ? 1 : -1) }));
+    }
+  };
+
+  const toggleSave = async (postId: string) => {
+    if (!user) { toast({ title: "Sign in to save posts", variant: "destructive" }); return; }
+
+    const isSaved = savedPosts.has(postId);
+    setSavedPosts(prev => {
+      const next = new Set(prev);
+      if (isSaved) next.delete(postId); else next.add(postId);
+      return next;
+    });
+
+    try {
+      if (isSaved) {
+        await supabase.from("post_saves").delete().eq("post_id", postId).eq("user_id", user.id);
+      } else {
+        await supabase.from("post_saves").insert({ post_id: postId, user_id: user.id });
+      }
+      toast({ title: isSaved ? "Removed from saved" : "Saved!" });
+    } catch {
+      setSavedPosts(prev => {
+        const next = new Set(prev);
+        if (isSaved) next.add(postId); else next.delete(postId);
+        return next;
+      });
+    }
+  };
+
+  const filteredPosts = activeCategory === "For You"
+    ? posts
+    : posts.filter(p => p.category?.toLowerCase() === activeCategory.toLowerCase());
+
+  if (authLoading) return null;
 
   return (
     <div className="min-h-screen bg-background">
@@ -56,64 +187,14 @@ const Home = () => {
       <BottomNav />
 
       <main className="md:ml-64 pt-16 md:pt-0 pb-24 md:pb-0">
-        {/* ── FEATURED VIDEO HERO ── */}
-        <section className="relative w-full aspect-[16/9] md:aspect-[21/9] bg-black overflow-hidden group cursor-pointer" onClick={() => openFullscreen(featured)}>
-          <video
-            ref={featuredRef}
-            src={featured.videoUrl}
-            className="absolute inset-0 w-full h-full object-cover"
-            autoPlay
-            loop
-            muted={featuredMuted}
-            playsInline
-          />
-          {/* Gradient overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-          
-          {/* Content overlay */}
-          <div className="absolute bottom-0 left-0 right-0 p-5 md:p-8 z-10">
-            <div className="flex items-center gap-2 mb-3">
-              <Badge className="bg-primary text-primary-foreground text-[10px] font-bold tracking-wider rounded-sm px-2 py-0.5">
-                <Flame className="w-3 h-3 mr-1" /> FEATURED
-              </Badge>
-              <Badge variant="outline" className="text-white/80 border-white/30 text-[10px] tracking-wider rounded-sm">
-                {featured.tags[0]?.toUpperCase()}
-              </Badge>
-            </div>
-            <h2 className="font-condensed text-3xl md:text-5xl font-bold text-white uppercase leading-none mb-2">
-              {featured.title}
-            </h2>
-            <p className="text-white/70 text-sm md:text-base max-w-lg font-sans mb-3">
-              {featured.description}
-            </p>
-            <div className="flex items-center gap-4 text-white/60 text-xs font-sans">
-              <span className="flex items-center gap-1"><Eye className="w-3.5 h-3.5" /> {formatCount(featured.views)}</span>
-              <span className="flex items-center gap-1"><Heart className="w-3.5 h-3.5" /> {formatCount(featured.likes)}</span>
-              <span className="flex items-center gap-1">
-                <img src={featured.channelAvatar} alt="" className="w-4 h-4 rounded-full object-contain" />
-                {featured.channelName}
-              </span>
-            </div>
-          </div>
+        {/* HEADER */}
+        <div className="px-5 md:px-8 pt-6 pb-2">
+          <h1 className="font-condensed text-3xl md:text-4xl font-bold uppercase tracking-tight">Feed</h1>
+          <p className="text-muted-foreground text-sm font-sans mt-1">The latest in women's sports</p>
+        </div>
 
-          {/* Play icon center */}
-          <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10 pointer-events-none">
-            <div className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
-              <Play className="w-7 h-7 text-white fill-white" />
-            </div>
-          </div>
-
-          {/* Mute toggle */}
-          <button
-            onClick={(e) => { e.stopPropagation(); setFeaturedMuted(!featuredMuted); }}
-            className="absolute top-4 right-4 z-20 w-9 h-9 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center text-white hover:bg-black/60 transition-colors"
-          >
-            {featuredMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
-          </button>
-        </section>
-
-        {/* ── CATEGORY PILLS ── */}
-        <div className="px-5 md:px-8 py-4 border-b border-border/30">
+        {/* CATEGORY PILLS */}
+        <div className="px-5 md:px-8 py-3 border-b border-border/30">
           <div className="flex gap-2 overflow-x-auto scrollbar-hide -mx-1 px-1">
             {CATEGORIES.map((cat) => (
               <button
@@ -131,167 +212,120 @@ const Home = () => {
           </div>
         </div>
 
-        {/* ── TRENDING REELS SECTION ── */}
-        <section className="px-5 md:px-8 py-6 max-w-7xl mx-auto">
-          <div className="flex items-center justify-between mb-5">
-            <h2 className="font-condensed text-2xl font-bold uppercase tracking-wide flex items-center gap-2">
-              <TrendingUp className="w-5 h-5 text-primary" /> Trending Now
-            </h2>
-            <button
-              onClick={() => navigate("/watch")}
-              className="text-sm text-primary font-semibold hover:underline flex items-center gap-1 font-sans"
-            >
-              Watch All <ChevronRight className="w-3.5 h-3.5" />
-            </button>
-          </div>
+        {/* POSTS FEED */}
+        <div className="max-w-2xl mx-auto px-5 md:px-8 py-6 space-y-6">
+          {loading ? (
+            <div className="flex items-center justify-center py-20">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            </div>
+          ) : filteredPosts.length === 0 ? (
+            <div className="text-center py-20">
+              <p className="text-muted-foreground font-sans">No posts in this category yet.</p>
+            </div>
+          ) : (
+            filteredPosts.map((post, idx) => {
+              const isLiked = likedPosts.has(post.id);
+              const isSaved = savedPosts.has(post.id);
+              const likeCount = likeCounts[post.id] || 0;
 
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
-            {trendingVideos.map((video, idx) => (
-              <VideoCard key={video.id} video={video} index={idx} onPlay={openFullscreen} />
-            ))}
-          </div>
-        </section>
-
-        {/* ── CHANNELS ROW ── */}
-        <section className="px-5 md:px-8 py-6 max-w-7xl mx-auto border-t border-border/30">
-          <h2 className="font-condensed text-xl font-bold uppercase tracking-wide mb-4">Channels</h2>
-          <div className="flex gap-6 overflow-x-auto scrollbar-hide pb-2">
-            {Array.from(new Set(FEED_VIDEOS.map(v => v.channelName))).map((name) => {
-              const ch = FEED_VIDEOS.find(v => v.channelName === name)!;
               return (
-                <button key={name} onClick={() => navigate("/watch")} className="flex flex-col items-center gap-2 shrink-0 group">
-                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary to-hot-pink p-[2px]">
-                    <div className="w-full h-full rounded-full bg-card flex items-center justify-center overflow-hidden">
-                      <img src={ch.channelAvatar} alt={name} className="w-10 h-10 object-contain" />
+                <motion.article
+                  key={post.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: idx * 0.05, duration: 0.3 }}
+                  className="glass-card rounded-2xl overflow-hidden"
+                >
+                  {/* Post Image */}
+                  {post.media_url && (
+                    <div className="relative aspect-[16/9] overflow-hidden">
+                      <img
+                        src={post.media_url}
+                        alt={post.title || "Post image"}
+                        className="w-full h-full object-cover"
+                        loading="lazy"
+                      />
+                      {post.category && (
+                        <Badge className="absolute top-3 left-3 bg-primary text-primary-foreground text-[10px] font-bold tracking-wider rounded-sm">
+                          {post.category}
+                        </Badge>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Post Content */}
+                  <div className="p-5">
+                    {post.title && (
+                      <h2 className="font-condensed text-xl md:text-2xl font-bold uppercase leading-tight mb-2">
+                        {post.title}
+                      </h2>
+                    )}
+                    {post.content && (
+                      <p className="text-sm text-foreground/70 leading-relaxed font-sans line-clamp-3 mb-4">
+                        {post.content}
+                      </p>
+                    )}
+
+                    {/* Meta + Actions */}
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-4 text-muted-foreground text-xs font-sans">
+                        <span className="flex items-center gap-1">
+                          <Eye className="w-3.5 h-3.5" /> {formatCount(post.views || 0)}
+                        </span>
+                        <span>{formatTimeAgo(post.created_at)}</span>
+                      </div>
+
+                      <div className="flex items-center gap-1">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-9 w-9 rounded-full"
+                          onClick={() => toggleLike(post.id)}
+                        >
+                          <Heart
+                            className={`w-4.5 h-4.5 transition-colors ${
+                              isLiked ? "fill-primary text-primary" : "text-muted-foreground"
+                            }`}
+                          />
+                        </Button>
+                        <span className="text-xs text-muted-foreground font-sans min-w-[20px]">
+                          {likeCount > 0 ? formatCount(likeCount) : ""}
+                        </span>
+
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-9 w-9 rounded-full"
+                          onClick={() => toggleSave(post.id)}
+                        >
+                          <Bookmark
+                            className={`w-4.5 h-4.5 transition-colors ${
+                              isSaved ? "fill-accent text-accent" : "text-muted-foreground"
+                            }`}
+                          />
+                        </Button>
+
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-9 w-9 rounded-full"
+                          onClick={() => {
+                            navigator.share?.({ title: post.title || "Loverball", text: post.content || "", url: window.location.href })
+                              .catch(() => {});
+                          }}
+                        >
+                          <Share2 className="w-4 h-4 text-muted-foreground" />
+                        </Button>
+                      </div>
                     </div>
                   </div>
-                  <span className="text-[11px] font-sans font-medium text-muted-foreground group-hover:text-foreground transition-colors text-center max-w-[72px] truncate">
-                    {name}
-                  </span>
-                </button>
+                </motion.article>
               );
-            })}
-          </div>
-        </section>
+            })
+          )}
+        </div>
       </main>
-
-      {/* ── FULLSCREEN VIDEO OVERLAY ── */}
-      <AnimatePresence>
-        {fullscreenVideo && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] bg-black flex items-center justify-center"
-          >
-            <video
-              ref={fullscreenRef}
-              src={fullscreenVideo.videoUrl}
-              className="w-full h-full object-contain"
-              autoPlay
-              loop
-              muted={fullscreenMuted}
-              playsInline
-              controls
-            />
-            {/* Top bar */}
-            <div className="absolute top-0 left-0 right-0 p-4 flex items-center justify-between z-10 bg-gradient-to-b from-black/60 to-transparent">
-              <div className="flex items-center gap-3">
-                <img src={fullscreenVideo.channelAvatar} alt="" className="w-8 h-8 rounded-full object-contain" />
-                <div>
-                  <p className="text-white text-sm font-bold font-sans">{fullscreenVideo.channelName}</p>
-                  <p className="text-white/50 text-xs font-sans">{fullscreenVideo.title}</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <button
-                  onClick={() => setFullscreenMuted(!fullscreenMuted)}
-                  className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-white"
-                >
-                  {fullscreenMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
-                </button>
-                <button
-                  onClick={() => setFullscreenVideo(null)}
-                  className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-white"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-            </div>
-
-            {/* Bottom info */}
-            <div className="absolute bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-black/70 to-transparent z-10">
-              <p className="text-white/80 text-sm font-sans mb-2">{fullscreenVideo.description}</p>
-              <div className="flex items-center gap-4 text-white/50 text-xs font-sans">
-                <span className="flex items-center gap-1"><Eye className="w-3.5 h-3.5" /> {formatCount(fullscreenVideo.views)}</span>
-                <span className="flex items-center gap-1"><Heart className="w-3.5 h-3.5" /> {formatCount(fullscreenVideo.likes)}</span>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
-  );
-};
-
-/* ── Video Thumbnail Card ── */
-const VideoCard = ({ video, index, onPlay }: { video: FeedVideoItem; index: number; onPlay: (v: FeedVideoItem) => void }) => {
-  const [hovering, setHovering] = useState(false);
-  const videoRef = useRef<HTMLVideoElement>(null);
-
-  useEffect(() => {
-    if (hovering && videoRef.current) {
-      videoRef.current.currentTime = 0;
-      videoRef.current.play().catch(() => {});
-    } else if (videoRef.current) {
-      videoRef.current.pause();
-    }
-  }, [hovering]);
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.05, duration: 0.3 }}
-      className="relative group cursor-pointer rounded-xl overflow-hidden bg-muted/30 aspect-[9/16]"
-      onMouseEnter={() => setHovering(true)}
-      onMouseLeave={() => setHovering(false)}
-      onClick={() => onPlay(video)}
-    >
-      <video
-        ref={videoRef}
-        src={video.videoUrl}
-        className="absolute inset-0 w-full h-full object-cover"
-        muted
-        loop
-        playsInline
-        preload="metadata"
-      />
-      
-      {/* Gradient */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
-
-      {/* Play icon on hover */}
-      <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-        <div className="w-12 h-12 rounded-full bg-primary/80 backdrop-blur-sm flex items-center justify-center">
-          <Play className="w-5 h-5 text-primary-foreground fill-primary-foreground" />
-        </div>
-      </div>
-
-      {/* Bottom info */}
-      <div className="absolute bottom-0 left-0 right-0 p-3 z-10">
-        <h3 className="text-white text-xs font-bold font-sans line-clamp-2 mb-1">{video.title}</h3>
-        <div className="flex items-center gap-2 text-white/60 text-[10px] font-sans">
-          <span className="flex items-center gap-0.5"><Eye className="w-3 h-3" /> {formatCount(video.views)}</span>
-          <span className="flex items-center gap-0.5"><Heart className="w-3 h-3" /> {formatCount(video.likes)}</span>
-        </div>
-      </div>
-
-      {/* Channel avatar */}
-      <div className="absolute top-2 left-2 z-10">
-        <img src={video.channelAvatar} alt="" className="w-6 h-6 rounded-full object-contain bg-black/30 backdrop-blur-sm" />
-      </div>
-    </motion.div>
   );
 };
 
