@@ -8,7 +8,6 @@
  */
 
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { motion } from "framer-motion";
@@ -55,7 +54,6 @@ const formatTimeAgo = (dateStr: string) => {
 };
 
 const Home = () => {
-  const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
   const { toast } = useToast();
   const [activeCategory, setActiveCategory] = useState("For You");
