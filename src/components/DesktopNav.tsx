@@ -13,7 +13,7 @@ const DesktopNav = () => {
   
   const mainNavItems = [
     { icon: Home, label: "For You", path: "/home" },
-    { icon: Compass, label: "Discover", path: "/discover" },
+    { icon: Compass, label: "Connect", path: "/discover" },
     { icon: Play, label: "Watch", path: "/watch" },
     { icon: Newspaper, label: "Feed", path: "/feed" },
     { icon: CalendarDays, label: "Events", path: "/events" },
