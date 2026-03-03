@@ -398,12 +398,35 @@ const Profile = () => {
                             <Button
                               size="sm"
                               className="h-6 text-[10px] px-2 rounded-full gap-1"
-                              onClick={(e) => { e.stopPropagation(); }}
+                              onClick={(e) => { e.stopPropagation(); window.open(team.watchUrl, '_blank'); }}
                             >
                               <Play className="w-3 h-3" /> Watch
                             </Button>
                           </div>
                         )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+
+            {/* BECAUSE YOU READ... RECOMMENDATIONS */}
+            <motion.div variants={staggerItem}>
+              <div className="glass-card rounded-2xl overflow-hidden">
+                <div className="p-5 pb-2">
+                  <div className="flex items-center gap-2">
+                    <Lightbulb className="w-4 h-4 text-primary" />
+                    <span className="text-sm font-medium tracking-wider uppercase text-foreground/50">Recommended for You</span>
+                  </div>
+                </div>
+                <div className="divide-y divide-border/20">
+                  {RECOMMENDED_ARTICLES.map((rec, i) => (
+                    <div key={i} className="px-5 py-3 hover:bg-foreground/[0.03] transition-colors cursor-pointer group">
+                      <p className="text-[10px] text-muted-foreground mb-0.5">Because you read "{rec.basedOn.length > 50 ? rec.basedOn.slice(0, 50) + '…' : rec.basedOn}"</p>
+                      <div className="flex items-center justify-between">
+                        <p className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">{rec.title}</p>
+                        <span className="flex items-center gap-1 text-xs text-muted-foreground ml-2 shrink-0"><Eye className="w-3 h-3" />{rec.reads}</span>
                       </div>
                     </div>
                   ))}
@@ -512,29 +535,6 @@ const Profile = () => {
                     </TabsContent>
                   ))}
                 </Tabs>
-              </div>
-            </motion.div>
-
-            {/* BECAUSE YOU READ... RECOMMENDATIONS */}
-            <motion.div variants={staggerItem}>
-              <div className="glass-card rounded-2xl overflow-hidden">
-                <div className="p-5 pb-2">
-                  <div className="flex items-center gap-2">
-                    <Lightbulb className="w-4 h-4 text-primary" />
-                    <span className="text-sm font-medium tracking-wider uppercase text-foreground/50">Recommended for You</span>
-                  </div>
-                </div>
-                <div className="divide-y divide-border/20">
-                  {RECOMMENDED_ARTICLES.map((rec, i) => (
-                    <div key={i} className="px-5 py-3 hover:bg-foreground/[0.03] transition-colors cursor-pointer group">
-                      <p className="text-[10px] text-muted-foreground mb-0.5">Because you read "{rec.basedOn.length > 50 ? rec.basedOn.slice(0, 50) + '…' : rec.basedOn}"</p>
-                      <div className="flex items-center justify-between">
-                        <p className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">{rec.title}</p>
-                        <span className="flex items-center gap-1 text-xs text-muted-foreground ml-2 shrink-0"><Eye className="w-3 h-3" />{rec.reads}</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
               </div>
             </motion.div>
 
