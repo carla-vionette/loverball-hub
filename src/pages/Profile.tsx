@@ -139,8 +139,14 @@ const Profile = () => {
   const [suggestedEvents, setSuggestedEvents] = useState<SuggestedEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentTime, setCurrentTime] = useState(new Date());
-  const [articles, setArticles] = useState<{ title: string; description: string | null; url: string; source: string; publishedAt: string }[]>([]);
-  const [articlesLoading, setArticlesLoading] = useState(false);
+  const CURATED_ARTICLES = [
+    { title: "Caitlin Clark WNBA Season", source: "ESPN", views: "12.4K", url: "https://google.com/search?q=caitlin+clark+wnba" },
+    { title: "Angel Reese Chicago Sky", source: "The Athletic", views: "8.7K", url: "https://google.com/search?q=angel+reese+chicago+sky" },
+    { title: "NWSL Expansion 2026", source: "ESPN", views: "6.2K", url: "https://google.com/search?q=nwsl+expansion+2026" },
+    { title: "USWNT World Cup Prep", source: "Fox Sports", views: "9.1K", url: "https://google.com/search?q=uswnt+world+cup+2026" },
+    { title: "Title IX Women Athletics", source: "NYT", views: "5.5K", url: "https://google.com/search?q=title+ix+women+athletics" },
+    { title: "LA28 Olympics Women Sports", source: "NBC", views: "7.3K", url: "https://google.com/search?q=la28+olympics+women+sports" },
+  ];
   
   const goTo = (path: string) => { window.location.href = path; };
   const { toast } = useToast();
@@ -189,33 +195,6 @@ const Profile = () => {
     return () => clearInterval(timer);
   }, []);
 
-  // Fetch personalized articles based on user sports/team preferences
-  useEffect(() => {
-    if (!profile) return;
-    const fetchArticles = async () => {
-      setArticlesLoading(true);
-      try {
-        const sports = profile.favorite_sports || [];
-        const teams = profile.favorite_teams_players || [];
-        const { data, error } = await supabase.functions.invoke('news-feed', {
-          body: {
-            endpoint: 'everything',
-            sports,
-            teams,
-            pageSize: 6,
-          },
-        });
-        if (!error && data?.articles) {
-          setArticles(data.articles.slice(0, 6));
-        }
-      } catch (err) {
-        console.error('Error fetching articles:', err);
-      } finally {
-        setArticlesLoading(false);
-      }
-    };
-    fetchArticles();
-  }, [profile]);
 
 
   const activePerfTeams = TEAM_PERFORMANCE.filter(t => t.winPct > 0);
@@ -449,44 +428,27 @@ const Profile = () => {
                     <span className="text-sm font-medium tracking-wider uppercase text-foreground/50">Recommended for You</span>
                   </div>
                 </div>
-                {articlesLoading ? (
-                  <div className="flex items-center justify-center py-8">
-                    <Loader2 className="w-5 h-5 animate-spin text-primary" />
-                  </div>
-                ) : articles.length === 0 ? (
-                  <div className="px-5 pb-5 text-center text-sm text-muted-foreground py-6">
-                    No personalized articles available right now.
-                  </div>
-                ) : (
-                  <div className="divide-y divide-border/20">
-                    {articles.map((article, i) => {
-                      const viewCount = Math.floor(Math.random() * 5000 + 500);
-                      const formattedViews = viewCount >= 1000 ? `${(viewCount / 1000).toFixed(1)}K` : String(viewCount);
-                      return (
-                        <a
-                          key={i}
-                          href={article.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="block px-5 py-4 hover:bg-foreground/[0.06] transition-colors cursor-pointer group no-underline"
-                        >
-                          <div className="flex items-center gap-2 mb-1">
-                            <span className="text-[10px] font-semibold text-primary/70 uppercase tracking-wider">{article.source}</span>
-                            <span className="text-[10px] text-muted-foreground">•</span>
-                            <span className="flex items-center gap-1 text-[10px] text-muted-foreground"><Eye className="w-3 h-3" />{formattedViews}</span>
-                          </div>
-                          <p className="text-sm font-medium text-foreground group-hover:text-primary transition-colors flex items-center gap-1.5">
-                            {article.title}
-                            <ExternalLink className="w-3 h-3 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
-                          </p>
-                          {article.description && (
-                            <p className="text-xs text-muted-foreground mt-1 line-clamp-2 leading-relaxed">{article.description}</p>
-                          )}
-                        </a>
-                      );
-                    })}
-                  </div>
-                )}
+                <div className="divide-y divide-border/20">
+                  {CURATED_ARTICLES.map((article, i) => (
+                    <a
+                      key={i}
+                      href={article.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block px-5 py-4 hover:bg-foreground/[0.06] transition-colors cursor-pointer group no-underline"
+                    >
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-[10px] font-semibold text-primary/70 uppercase tracking-wider">{article.source}</span>
+                        <span className="text-[10px] text-muted-foreground">•</span>
+                        <span className="flex items-center gap-1 text-[10px] text-muted-foreground"><Eye className="w-3 h-3" />{article.views}</span>
+                      </div>
+                      <p className="text-sm font-medium text-foreground group-hover:text-primary transition-colors flex items-center gap-1.5">
+                        {article.title}
+                        <ExternalLink className="w-3 h-3 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
+                      </p>
+                    </a>
+                  ))}
+                </div>
               </div>
             </motion.div>
 
