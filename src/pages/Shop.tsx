@@ -15,11 +15,7 @@ import { ErrorBoundary } from "@/components/ui/error-boundary";
 import imgCrewneck from "@/assets/products/loverball-crewneck-back.png";
 import imgHat from "@/assets/products/loverball-corduroy-hat-colors.png";
 import imgSocks from "@/assets/products/loverball-socks-new.png";
-import imgChain from "@/assets/products/loverball-chain.png";
 import imgHoodiePink from "@/assets/products/loverball-hoodie-pink.png";
-import imgJersey from "@/assets/products/loverball-jersey.jpg";
-import imgTshirt from "@/assets/products/loverball-tshirt.jpg";
-import imgHoodieWhite from "@/assets/products/loverball-hoodie-white.png";
 import imgHatNew from "@/assets/products/loverball-hat-new.png";
 
 // Map product names to local images
@@ -27,12 +23,7 @@ const PRODUCT_IMAGE_MAP: Record<string, string> = {
   "Loverball Club Crewneck": imgCrewneck,
   "Loverball Corduroy Hat": imgHat,
   "Loverball Sports Socks": imgSocks,
-  "Loverball Logo Chain": imgChain,
   "Loverball Hoodie - Pink": imgHoodiePink,
-  "Loverball Jersey": imgJersey,
-  "Loverball Classic Tee": imgTshirt,
-  "Loverball Tote Bag": imgTshirt,
-  "Loverball Water Bottle": imgHoodieWhite,
   "Loverball Joggers": imgHatNew,
 };
 
