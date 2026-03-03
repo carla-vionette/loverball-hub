@@ -1,13 +1,16 @@
 import { useState, useMemo } from "react";
 import { Search, Users, CheckCircle, Play, Eye } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Skeleton } from "@/components/ui/skeleton";
 import BottomNav from "@/components/BottomNav";
 import DesktopNav from "@/components/DesktopNav";
 import MobileHeader from "@/components/MobileHeader";
+import { supabase } from "@/integrations/supabase/client";
 
 interface ChannelData {
   handle: string;
@@ -18,6 +21,60 @@ interface ChannelData {
   description: string;
   trending?: boolean;
 }
+
+interface FeaturedVideo {
+  id: string;
+  title: string;
+  thumbnail_url: string | null;
+  video_url: string;
+  channel_name: string;
+  avatar_url: string | null;
+  slug: string;
+  view_count: number;
+}
+
+const fetchFeaturedVideos = async (): Promise<FeaturedVideo[]> => {
+  const { data: videos, error } = await supabase
+    .from("videos")
+    .select("id, title, thumbnail_url, video_url, channel_id, created_at, creator_channels(channel_name, avatar_url, slug)")
+    .eq("is_published", true)
+    .order("published_at", { ascending: false })
+    .limit(10);
+
+  if (error) throw error;
+
+  // Get view counts
+  const videoIds = (videos || []).map(v => v.id);
+  const { data: viewData } = await supabase
+    .from("video_views")
+    .select("video_id")
+    .in("video_id", videoIds);
+
+  const viewCounts: Record<string, number> = {};
+  (viewData || []).forEach(v => {
+    viewCounts[v.video_id] = (viewCounts[v.video_id] || 0) + 1;
+  });
+
+  return (videos || []).map(v => {
+    const channel = v.creator_channels as any;
+    return {
+      id: v.id,
+      title: v.title,
+      thumbnail_url: v.thumbnail_url,
+      video_url: v.video_url,
+      channel_name: channel?.channel_name || "Unknown",
+      avatar_url: channel?.avatar_url || null,
+      slug: channel?.slug || "",
+      view_count: viewCounts[v.id] || 0,
+    };
+  });
+};
+
+const formatViews = (count: number) => {
+  if (count >= 1000000) return `${(count / 1000000).toFixed(1)}M`;
+  if (count >= 1000) return `${(count / 1000).toFixed(1)}K`;
+  return String(count);
+};
 
 const CHANNELS: ChannelData[] = [
   { handle: "@CourtSideQueens", name: "CourtSide Queens", category: "Basketball", followers: "51.3K", followerNum: 51300, description: "Courtside perspectives on women's basketball", trending: true },
@@ -33,14 +90,6 @@ const CHANNELS: ChannelData[] = [
 ];
 
 const CATEGORIES = ["All", "Basketball", "Soccer", "WNBA", "Tennis", "Culture", "Lifestyle", "Fitness"];
-
-const FEATURED_VIDEOS = [
-  { title: "WNBA Top Plays", views: "124K", color: "from-purple-600 to-pink-500" },
-  { title: "Soccer Skills Challenge", views: "89K", color: "from-emerald-600 to-teal-500" },
-  { title: "Game Day Vlog", views: "67K", color: "from-sky-600 to-blue-500" },
-  { title: "Courtside Interviews", views: "95K", color: "from-orange-600 to-amber-500" },
-  { title: "Pregame Fit Check", views: "112K", color: "from-pink-600 to-rose-500" },
-];
 
 const AVATAR_COLORS: Record<string, string> = {
   Basketball: "bg-orange-500",
@@ -109,6 +158,13 @@ const ChannelCard = ({ channel }: { channel: ChannelData }) => {
 const Explore = () => {
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState("All");
+  const navigate = useNavigate();
+
+  const { data: featuredVideos = [], isLoading: videosLoading } = useQuery({
+    queryKey: ["featured-videos"],
+    queryFn: fetchFeaturedVideos,
+    staleTime: 5 * 60 * 1000,
+  });
 
   const filtered = useMemo(() => {
     return CHANNELS.filter(ch => {
@@ -163,23 +219,40 @@ const Explore = () => {
             <section className="mb-8">
               <h2 className="font-condensed text-lg font-bold uppercase tracking-wide mb-3">🎬 Featured Videos</h2>
               <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-none">
-                {FEATURED_VIDEOS.map(video => (
-                  <div key={video.title} className="flex-shrink-0 w-[120px] cursor-pointer group">
-                    <div className={`relative w-[120px] h-[213px] rounded-xl overflow-hidden bg-gradient-to-br ${video.color}`}>
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="w-10 h-10 rounded-full bg-background/30 backdrop-blur-sm flex items-center justify-center group-hover:bg-background/50 transition-colors">
-                          <Play className="w-4 h-4 text-white ml-0.5" fill="currentColor" />
+                {videosLoading ? (
+                  Array.from({ length: 4 }).map((_, i) => (
+                    <div key={i} className="flex-shrink-0 w-[120px]">
+                      <Skeleton className="w-[120px] h-[213px] rounded-xl" />
+                      <Skeleton className="w-20 h-3 mt-1.5 rounded" />
+                    </div>
+                  ))
+                ) : featuredVideos.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">No videos yet</p>
+                ) : (
+                  featuredVideos.map(video => (
+                    <div key={video.id} className="flex-shrink-0 w-[120px] cursor-pointer group" onClick={() => navigate(`/watch?v=${video.id}`)}>
+                      <div className="relative w-[120px] h-[213px] rounded-xl overflow-hidden bg-muted">
+                        {video.thumbnail_url ? (
+                          <img src={video.thumbnail_url} alt={video.title} className="w-full h-full object-cover" />
+                        ) : (
+                          <video src={video.video_url} className="w-full h-full object-cover" muted preload="metadata" />
+                        )}
+                        <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
+                          <div className="w-10 h-10 rounded-full bg-background/30 backdrop-blur-sm flex items-center justify-center group-hover:bg-background/50 transition-colors">
+                            <Play className="w-4 h-4 text-white ml-0.5" fill="currentColor" />
+                          </div>
+                        </div>
+                        <div className="absolute bottom-2 left-2">
+                          <span className="text-[10px] text-white/80 font-medium flex items-center gap-1">
+                            <Eye className="w-3 h-3" /> {formatViews(video.view_count)}
+                          </span>
                         </div>
                       </div>
-                      <div className="absolute bottom-2 left-2">
-                        <span className="text-[10px] text-white/80 font-medium flex items-center gap-1">
-                          <Eye className="w-3 h-3" /> {video.views}
-                        </span>
-                      </div>
+                      <p className="text-[11px] font-semibold text-foreground mt-1.5 leading-tight line-clamp-2">{video.title}</p>
+                      <p className="text-[10px] text-muted-foreground truncate">{video.channel_name}</p>
                     </div>
-                    <p className="text-[11px] font-semibold text-foreground mt-1.5 leading-tight line-clamp-2">{video.title}</p>
-                  </div>
-                ))}
+                  ))
+                )}
               </div>
             </section>
           )}
