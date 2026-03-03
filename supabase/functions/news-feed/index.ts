@@ -16,7 +16,6 @@ function getCached(key: string): unknown | null {
 }
 function setCache(key: string, data: unknown) {
   cache.set(key, { data, timestamp: Date.now() });
-  // Cleanup old entries
   if (cache.size > 50) {
     const now = Date.now();
     for (const [k, v] of cache) {
@@ -25,7 +24,6 @@ function setCache(key: string, data: unknown) {
   }
 }
 
-// Fetch with timeout and retry
 async function fetchWithRetry(url: string, retries = 3, timeoutMs = 5000): Promise<Response> {
   for (let attempt = 1; attempt <= retries; attempt++) {
     try {
@@ -35,7 +33,7 @@ async function fetchWithRetry(url: string, retries = 3, timeoutMs = 5000): Promi
       clearTimeout(timeout);
       if (res.ok) return res;
       console.warn(`Attempt ${attempt} for ${url}: status ${res.status}`);
-      await res.text(); // consume body
+      await res.text();
     } catch (err) {
       console.warn(`Attempt ${attempt} for ${url}: ${err instanceof Error ? err.message : err}`);
     }
@@ -51,7 +49,7 @@ serve(async (req) => {
     const NEWS_API_KEY = Deno.env.get('NEWS_API_KEY');
     if (!NEWS_API_KEY) {
       return new Response(JSON.stringify({
-        error: 'NEWS_API_KEY is not configured. Add your NewsAPI key to enable this feature.',
+        error: 'NEWS_API_KEY is not configured.',
         articles: [],
         lastUpdated: new Date().toISOString(),
       }), {
@@ -62,7 +60,7 @@ serve(async (req) => {
 
     const body = await req.json().catch(() => ({}));
     const {
-      endpoint = 'top-headlines', // 'top-headlines' or 'everything'
+      endpoint = 'top-headlines',
       category = 'sports',
       query = '',
       page = 1,
@@ -70,9 +68,19 @@ serve(async (req) => {
       sortBy = 'publishedAt',
       language = 'en',
       country = 'us',
+      // NEW: personalized preferences
+      sports = [] as string[],
+      teams = [] as string[],
     } = body;
 
-    const cacheKey = `news:${endpoint}:${category}:${query}:${page}:${sortBy}`;
+    // Build a personalized query from user preferences
+    let personalizedQuery = query;
+    if (!query && (sports.length > 0 || teams.length > 0)) {
+      const terms = [...teams, ...sports].filter(Boolean).slice(0, 5);
+      personalizedQuery = terms.join(' OR ');
+    }
+
+    const cacheKey = `news:${endpoint}:${category}:${personalizedQuery}:${page}:${sortBy}`;
     const cached = getCached(cacheKey);
     if (cached) {
       return new Response(JSON.stringify(cached), {
@@ -81,26 +89,29 @@ serve(async (req) => {
     }
 
     let url: string;
-    if (endpoint === 'everything') {
-      url = `https://newsapi.org/v2/everything?q=${encodeURIComponent(query || 'sports')}&language=${language}&sortBy=${sortBy}&page=${page}&pageSize=${pageSize}&apiKey=${NEWS_API_KEY}`;
+    if (personalizedQuery || endpoint === 'everything') {
+      // Use 'everything' endpoint for personalized/team-specific queries
+      const q = personalizedQuery || 'sports';
+      url = `https://newsapi.org/v2/everything?q=${encodeURIComponent(q)}&language=${language}&sortBy=${sortBy}&page=${page}&pageSize=${pageSize}&apiKey=${NEWS_API_KEY}`;
     } else {
       url = `https://newsapi.org/v2/top-headlines?category=${category}&country=${country}&language=${language}&page=${page}&pageSize=${pageSize}&apiKey=${NEWS_API_KEY}`;
-      if (query) url += `&q=${encodeURIComponent(query)}`;
     }
 
     const res = await fetchWithRetry(url, 3, 5000);
     const data = await res.json();
 
     const responseData = {
-      articles: (data.articles || []).map((a: any) => ({
-        title: a.title,
-        description: a.description,
-        url: a.url,
-        urlToImage: a.urlToImage,
-        source: a.source?.name || 'Unknown',
-        publishedAt: a.publishedAt,
-        author: a.author,
-      })),
+      articles: (data.articles || [])
+        .filter((a: any) => a.title && a.title !== '[Removed]')
+        .map((a: any) => ({
+          title: a.title,
+          description: a.description,
+          url: a.url,
+          urlToImage: a.urlToImage,
+          source: a.source?.name || 'Unknown',
+          publishedAt: a.publishedAt,
+          author: a.author,
+        })),
       totalResults: data.totalResults || 0,
       page,
       pageSize,
@@ -116,7 +127,6 @@ serve(async (req) => {
     const msg = error instanceof Error ? error.message : 'Unknown error';
     console.error('news-feed error:', msg);
 
-    // Return cached data if available on error
     const fallbackKey = Array.from(cache.keys()).find(k => k.startsWith('news:'));
     const fallback = fallbackKey ? cache.get(fallbackKey) : null;
 
