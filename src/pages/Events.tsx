@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -48,7 +47,7 @@ const fmtTime = (t: string) => {
 };
 
 const Events = () => {
-  const navigate = useNavigate();
+  const goTo = (path: string) => { window.location.href = path; };
   const [events, setEvents] = useState<DbEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [category, setCategory] = useState("All");
@@ -133,7 +132,7 @@ const Events = () => {
           {/* FEATURED */}
           {featured && (
             <Card className="overflow-hidden mb-8 group cursor-pointer hover:shadow-lg transition-all border-border/30"
-              onClick={() => navigate(`/event/${featured.id}`)}>
+              onClick={() => goTo(`/event/${featured.id}`)}>
               <div className="relative h-56 md:h-72 overflow-hidden">
                 {featured.image_url ? (
                   <img src={featured.image_url} alt={featured.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
@@ -183,7 +182,7 @@ const Events = () => {
 
                 return (
                   <Card key={ev.id} className="overflow-hidden group cursor-pointer hover:shadow-lg transition-all border-border/30"
-                    onClick={() => navigate(`/event/${ev.id}`)}>
+                    onClick={() => goTo(`/event/${ev.id}`)}>
                     <div className="relative h-44 overflow-hidden">
                       {ev.image_url ? (
                         <img src={ev.image_url} alt={ev.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
