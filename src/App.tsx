@@ -18,6 +18,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 // Lazy load everything else for code splitting
 const Home = lazy(() => import("./pages/Home"));
 const Discover = lazy(() => import("./pages/Discover"));
+const Explore = lazy(() => import("./pages/Explore"));
 const Feed = lazy(() => import("./pages/Feed"));
 const Watch = lazy(() => import("./pages/Watch"));
 const Onboarding = lazy(() => import("./pages/Onboarding"));
@@ -81,6 +82,7 @@ const App = () => (
               <Route path="/home" element={<Home />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/discover" element={<Discover />} />
+              <Route path="/explore" element={<Explore />} />
               <Route path="/feed" element={<Feed />} />
               <Route path="/watch" element={<Watch />} />
               <Route path="/plans" element={<ProtectedRoute><PlanSelection /></ProtectedRoute>} />
