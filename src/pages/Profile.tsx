@@ -18,6 +18,7 @@ import {
   TEAM_PERFORMANCE,
   RECENT_ACTIVITY, RECOMMENDED_ARTICLES,
 } from "@/lib/mockStatsData";
+import { getTeamWatchUrl, getTeamTicketsUrl } from "@/lib/teamLinksMap";
 
 
 
@@ -391,14 +392,14 @@ const Profile = () => {
                               variant="outline"
                               size="sm"
                               className="h-6 text-[10px] px-2 rounded-full gap-1 border-border/30"
-                              onClick={(e) => { e.stopPropagation(); window.open(team.ticketUrl, '_blank'); }}
+                              onClick={(e) => { e.stopPropagation(); window.open(team.ticketUrl || getTeamTicketsUrl(team.name), '_blank'); }}
                             >
                               <Ticket className="w-3 h-3" /> Tickets
                             </Button>
                             <Button
                               size="sm"
                               className="h-6 text-[10px] px-2 rounded-full gap-1"
-                              onClick={(e) => { e.stopPropagation(); window.open(team.watchUrl, '_blank'); }}
+                              onClick={(e) => { e.stopPropagation(); window.open(team.watchUrl || getTeamWatchUrl(team.name), '_blank'); }}
                             >
                               <Play className="w-3 h-3" /> Watch
                             </Button>
