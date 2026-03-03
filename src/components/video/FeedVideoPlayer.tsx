@@ -241,7 +241,7 @@ const FeedVideoPlayer = ({ video, isActive, isMuted, onToggleMute }: FeedVideoPl
       <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/90 via-black/40 to-transparent pointer-events-none" />
 
       {/* Right sidebar — actions */}
-      <div className="absolute right-3 bottom-64 z-10 flex flex-col items-center gap-5 pointer-events-auto">
+      <div className="absolute right-3 top-1/2 -translate-y-1/2 z-10 flex flex-col items-center gap-6 pointer-events-auto">
         {/* Heart */}
         <button
           onClick={(e) => { e.stopPropagation(); handleLike(); }}
