@@ -9,7 +9,6 @@ import DesktopNav from "@/components/DesktopNav";
 import MobileHeader from "@/components/MobileHeader";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 const VIBE_LABELS = ["Sports Bestie", "Tailgate Queen", "Stats Nerd", "Casual Fan"];
@@ -42,7 +41,7 @@ interface MatchInfo {
 
 const Discover = () => {
   const { user } = useAuth();
-  const navigate = useNavigate();
+  const goTo = (path: string) => { window.location.href = path; };
   const [profiles, setProfiles] = useState<ProfileCard[]>([]);
   const [idx, setIdx] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -339,7 +338,7 @@ const Discover = () => {
                         {matches.map((m) => (
                           <button
                             key={m.matchId}
-                            onClick={() => navigate("/dms")}
+                            onClick={() => goTo("/dms")}
                             className="w-full flex items-center gap-3 p-2 rounded-xl hover:bg-secondary/50 cursor-pointer transition-colors"
                           >
                             <div className="w-12 h-12 rounded-full bg-secondary overflow-hidden flex-shrink-0">
@@ -383,7 +382,7 @@ const Discover = () => {
                 <Button
                   variant="secondary"
                   className="mt-6 rounded-full"
-                  onClick={() => { setShowMatch(false); navigate("/dms"); }}
+                  onClick={() => { setShowMatch(false); goTo("/dms"); }}
                 >
                   Send a Message
                 </Button>
