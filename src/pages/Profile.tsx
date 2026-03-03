@@ -567,7 +567,7 @@ const Profile = () => {
                     <TabsContent key={tab} value={tab} className="mt-0">
                       <div className="divide-y divide-border/20">
                         {RECENT_ACTIVITY.filter(a => tab === "all" || a.type === tab).map((activity, i) => (
-                          <div key={i} className="flex items-start gap-3 px-5 py-3 hover:bg-foreground/[0.03] transition-colors cursor-pointer group">
+                          <a key={i} href={activity.url} target="_blank" rel="noopener noreferrer" className="flex items-start gap-3 px-5 py-3 hover:bg-foreground/[0.03] transition-colors cursor-pointer group no-underline">
                             {activity.thumbnail ? (
                               <img src={activity.thumbnail} alt="" className="w-14 h-10 object-cover rounded-lg mt-0.5 flex-shrink-0" />
                             ) : (
@@ -586,8 +586,8 @@ const Profile = () => {
                                 <span className="flex items-center gap-1 text-xs text-muted-foreground"><Bookmark className="w-3 h-3" />{activity.bookmarks}</span>
                               </div>
                             </div>
-                            <ArrowUpRight className="w-3.5 h-3.5 text-foreground/20 mt-1 shrink-0 group-hover:text-primary transition-colors" />
-                          </div>
+                            <ExternalLink className="w-3.5 h-3.5 text-foreground/20 mt-1 shrink-0 group-hover:text-primary transition-colors" />
+                          </a>
                         ))}
                       </div>
                     </TabsContent>
