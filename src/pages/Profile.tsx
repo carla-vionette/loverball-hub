@@ -140,12 +140,12 @@ const Profile = () => {
   const [loading, setLoading] = useState(true);
   const [currentTime, setCurrentTime] = useState(new Date());
   const CURATED_ARTICLES = [
-    { title: "Caitlin Clark WNBA Season", source: "ESPN", views: "12.4K", url: "https://google.com/search?q=caitlin+clark+wnba" },
-    { title: "Angel Reese Chicago Sky", source: "The Athletic", views: "8.7K", url: "https://google.com/search?q=angel+reese+chicago+sky" },
-    { title: "NWSL Expansion 2026", source: "ESPN", views: "6.2K", url: "https://google.com/search?q=nwsl+expansion+2026" },
-    { title: "USWNT World Cup Prep", source: "Fox Sports", views: "9.1K", url: "https://google.com/search?q=uswnt+world+cup+2026" },
-    { title: "Title IX Women Athletics", source: "NYT", views: "5.5K", url: "https://google.com/search?q=title+ix+women+athletics" },
-    { title: "LA28 Olympics Women Sports", source: "NBC", views: "7.3K", url: "https://google.com/search?q=la28+olympics+women+sports" },
+    { title: "Caitlin Clark WNBA Season", source: "ESPN", views: "12.4K", url: "https://google.com/search?q=caitlin+clark+wnba", summary: "Clark shattered multiple records in her sophomore season, averaging 27 points and 8 assists per game." },
+    { title: "Angel Reese Chicago Sky", source: "The Athletic", views: "8.7K", url: "https://google.com/search?q=angel+reese+chicago+sky", summary: "Reese continues to dominate the boards and leads the Sky's push for a playoff spot this season." },
+    { title: "NWSL Expansion 2026", source: "ESPN", views: "6.2K", url: "https://google.com/search?q=nwsl+expansion+2026", summary: "Two new expansion teams join the league, bringing the NWSL to 16 clubs and expanding into new markets." },
+    { title: "USWNT World Cup Prep", source: "Fox Sports", views: "9.1K", url: "https://google.com/search?q=uswnt+world+cup+2026", summary: "The national team ramps up preparations with friendlies and training camps ahead of the 2027 World Cup cycle." },
+    { title: "Title IX Women Athletics", source: "NYT", views: "5.5K", url: "https://google.com/search?q=title+ix+women+athletics", summary: "54 years after its passage, Title IX continues to reshape college athletics and open doors for women in sports." },
+    { title: "LA28 Olympics Women Sports", source: "NBC", views: "7.3K", url: "https://google.com/search?q=la28+olympics+women+sports", summary: "With LA28 approaching, women's events are set to receive unprecedented coverage and investment." },
   ];
   
   const goTo = (path: string) => { window.location.href = path; };
@@ -275,6 +275,9 @@ const Profile = () => {
                   <div className="flex items-center gap-3">
                     <Button onClick={() => goTo("/profile/edit")} className="rounded-full bg-primary hover:bg-primary/90 text-primary-foreground gap-2">
                       <Edit className="w-4 h-4" /> Edit Profile
+                    </Button>
+                    <Button variant="outline" onClick={() => goTo("/dms")} className="rounded-full border-border/40 text-foreground/70 hover:text-foreground gap-2">
+                      <MessageCircle className="w-4 h-4" />
                     </Button>
                     <Button variant="outline" onClick={() => goTo("/settings")} className="rounded-full border-border/40 text-foreground/70 hover:text-foreground gap-2">
                       <Settings className="w-4 h-4" />
@@ -446,6 +449,7 @@ const Profile = () => {
                         {article.title}
                         <ExternalLink className="w-3 h-3 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
                       </p>
+                      <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{article.summary}</p>
                     </a>
                   ))}
                 </div>
