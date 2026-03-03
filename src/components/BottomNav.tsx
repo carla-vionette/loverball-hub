@@ -1,3 +1,4 @@
+import React from "react";
 import { User, CalendarDays, ShoppingBag, Play, Heart, MessageCircle, Compass, Newspaper } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
