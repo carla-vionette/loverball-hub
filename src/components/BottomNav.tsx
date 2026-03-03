@@ -28,7 +28,8 @@ const BottomNav = () => {
   
   const navItems = [
     { icon: Play, label: "Watch", path: "/home" },
-    { icon: Compass, label: "Connect", path: "/discover" },
+    { icon: Compass, label: "Discover", path: "/explore" },
+    { icon: Heart, label: "Connect", path: "/discover" },
     { icon: MessageCircle, label: "DMs", path: "/dms", showBadge: true },
     { icon: ShoppingBag, label: "Shop", path: "/shop" },
     { icon: CalendarDays, label: "Events", path: "/events" },
