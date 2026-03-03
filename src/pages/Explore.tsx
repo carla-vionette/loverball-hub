@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import { Search, Users, CheckCircle, Play, Eye } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
@@ -67,36 +68,43 @@ const FollowButton = () => {
   );
 };
 
-const ChannelCard = ({ channel }: { channel: ChannelData }) => (
-  <Card className="p-4 border-border/30 hover:border-primary/30 transition-colors group cursor-pointer">
-    <div className="flex items-start gap-3">
-      <Avatar className="w-12 h-12 flex-shrink-0">
-        <AvatarFallback className={`${AVATAR_COLORS[channel.category] || "bg-primary"} text-white font-bold text-sm`}>
-          {channel.name.split(" ").map(w => w[0]).join("").slice(0, 2)}
-        </AvatarFallback>
-      </Avatar>
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-1.5 mb-0.5">
-          <h3 className="font-bold text-sm text-foreground truncate">{channel.name}</h3>
-          <CheckCircle className="w-3.5 h-3.5 text-primary flex-shrink-0" />
+const ChannelCard = ({ channel }: { channel: ChannelData }) => {
+  const navigate = useNavigate();
+  const handleKey = channel.handle.replace("@", "");
+  return (
+    <Card
+      className="p-4 border-border/30 hover:border-primary/30 transition-colors group cursor-pointer"
+      onClick={() => navigate(`/channel/${handleKey}`)}
+    >
+      <div className="flex items-start gap-3">
+        <Avatar className="w-12 h-12 flex-shrink-0">
+          <AvatarFallback className={`${AVATAR_COLORS[channel.category] || "bg-primary"} text-white font-bold text-sm`}>
+            {channel.name.split(" ").map(w => w[0]).join("").slice(0, 2)}
+          </AvatarFallback>
+        </Avatar>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-1.5 mb-0.5">
+            <h3 className="font-bold text-sm text-foreground truncate">{channel.name}</h3>
+            <CheckCircle className="w-3.5 h-3.5 text-primary flex-shrink-0" />
+          </div>
+          <p className="text-xs text-muted-foreground mb-1.5">{channel.handle}</p>
+          <div className="flex items-center gap-2 mb-2">
+            <Badge className="bg-primary/10 text-primary text-[10px] font-bold border-0 rounded-full">
+              {channel.category}
+            </Badge>
+            <span className="text-[11px] text-muted-foreground flex items-center gap-1">
+              <Users className="w-3 h-3" /> {channel.followers}
+            </span>
+          </div>
+          <p className="text-xs text-muted-foreground line-clamp-2">{channel.description}</p>
         </div>
-        <p className="text-xs text-muted-foreground mb-1.5">{channel.handle}</p>
-        <div className="flex items-center gap-2 mb-2">
-          <Badge className="bg-primary/10 text-primary text-[10px] font-bold border-0 rounded-full">
-            {channel.category}
-          </Badge>
-          <span className="text-[11px] text-muted-foreground flex items-center gap-1">
-            <Users className="w-3 h-3" /> {channel.followers}
-          </span>
+        <div className="flex-shrink-0 pt-1">
+          <FollowButton />
         </div>
-        <p className="text-xs text-muted-foreground line-clamp-2">{channel.description}</p>
       </div>
-      <div className="flex-shrink-0 pt-1">
-        <FollowButton />
-      </div>
-    </div>
-  </Card>
-);
+    </Card>
+  );
+};
 
 const Explore = () => {
   const [search, setSearch] = useState("");
