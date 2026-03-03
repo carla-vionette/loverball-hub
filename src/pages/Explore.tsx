@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { Search, Users, CheckCircle } from "lucide-react";
+import { Search, Users, CheckCircle, Play, Eye } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
@@ -32,6 +32,14 @@ const CHANNELS: ChannelData[] = [
 ];
 
 const CATEGORIES = ["All", "Basketball", "Soccer", "WNBA", "Tennis", "Culture", "Lifestyle", "Fitness"];
+
+const FEATURED_VIDEOS = [
+  { title: "WNBA Top Plays", views: "124K", color: "from-purple-600 to-pink-500" },
+  { title: "Soccer Skills Challenge", views: "89K", color: "from-emerald-600 to-teal-500" },
+  { title: "Game Day Vlog", views: "67K", color: "from-sky-600 to-blue-500" },
+  { title: "Courtside Interviews", views: "95K", color: "from-orange-600 to-amber-500" },
+  { title: "Pregame Fit Check", views: "112K", color: "from-pink-600 to-rose-500" },
+];
 
 const AVATAR_COLORS: Record<string, string> = {
   Basketball: "bg-orange-500",
@@ -141,6 +149,32 @@ const Explore = () => {
               </button>
             ))}
           </div>
+
+          {/* Featured Videos */}
+          {activeCategory === "All" && !search && (
+            <section className="mb-8">
+              <h2 className="font-condensed text-lg font-bold uppercase tracking-wide mb-3">🎬 Featured Videos</h2>
+              <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-none">
+                {FEATURED_VIDEOS.map(video => (
+                  <div key={video.title} className="flex-shrink-0 w-[200px] cursor-pointer group">
+                    <div className={`relative aspect-video rounded-xl overflow-hidden bg-gradient-to-br ${video.color}`}>
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="w-12 h-12 rounded-full bg-background/30 backdrop-blur-sm flex items-center justify-center group-hover:bg-background/50 transition-colors">
+                          <Play className="w-5 h-5 text-white ml-0.5" fill="currentColor" />
+                        </div>
+                      </div>
+                      <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between">
+                        <span className="text-[10px] text-white/80 font-medium flex items-center gap-1">
+                          <Eye className="w-3 h-3" /> {video.views}
+                        </span>
+                      </div>
+                    </div>
+                    <p className="text-xs font-semibold text-foreground mt-2 truncate">{video.title}</p>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
 
           {/* Trending Channels */}
           {activeCategory === "All" && !search && (
