@@ -41,7 +41,8 @@ export const TEAM_PERFORMANCE = [
     league: "NBA",
     leadingScorer: "LeBron James – 25.4 PPG",
     injuryNote: "Anthony Davis (knee) – Questionable",
-    ticketUrl: "https://www.nba.com/lakers/tickets",
+    ticketUrl: "https://www.nba.com/lakers/schedule",
+    watchUrl: "https://www.nba.com/lakers/schedule",
     slug: "lakers",
   },
   {
@@ -54,7 +55,8 @@ export const TEAM_PERFORMANCE = [
     league: "MLB",
     leadingScorer: "Mookie Betts – .307 AVG (2025)",
     injuryNote: null,
-    ticketUrl: "https://www.mlb.com/dodgers/tickets",
+    ticketUrl: "https://www.mlb.com/dodgers/schedule",
+    watchUrl: "https://www.mlb.com/dodgers/schedule",
     slug: "dodgers",
   },
   {
@@ -67,7 +69,8 @@ export const TEAM_PERFORMANCE = [
     league: "MLS",
     leadingScorer: "Denis Bouanga – 3 Goals",
     injuryNote: null,
-    ticketUrl: "https://www.lafc.com/tickets",
+    ticketUrl: "https://www.lafc.com/schedule",
+    watchUrl: "https://www.lafc.com/schedule",
     slug: "lafc",
   },
   {
@@ -80,7 +83,8 @@ export const TEAM_PERFORMANCE = [
     league: "NFL",
     leadingScorer: "Puka Nacua – 1,128 YDS",
     injuryNote: null,
-    ticketUrl: "https://www.therams.com/tickets",
+    ticketUrl: "https://www.therams.com/schedule",
+    watchUrl: "https://www.therams.com/schedule",
     slug: "rams",
   },
   {
@@ -93,7 +97,8 @@ export const TEAM_PERFORMANCE = [
     league: "NWSL",
     leadingScorer: "Christen Press – 2 Goals",
     injuryNote: "M. Rapinoe (achilles) – Out",
-    ticketUrl: "https://www.angelcity.com/tickets",
+    ticketUrl: "https://www.angelcity.com/schedule",
+    watchUrl: "https://www.angelcity.com/schedule",
     slug: "angel-city-fc",
   },
 ];
