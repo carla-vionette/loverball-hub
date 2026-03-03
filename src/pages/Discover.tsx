@@ -208,7 +208,7 @@ const Discover = () => {
       <main className="md:ml-64 pt-16 md:pt-0 pb-24 md:pb-0">
         <div className="max-w-6xl mx-auto px-5 md:px-10 py-6">
           <div className="flex items-center justify-between mb-6">
-            <h1 className="font-condensed text-3xl font-bold uppercase tracking-wide">Discover</h1>
+            <h1 className="font-condensed text-3xl font-bold uppercase tracking-wide">Connect</h1>
             <Button variant="outline" className="rounded-full gap-2" onClick={() => setMatchesOpen(!matchesOpen)}>
               <Heart className="w-4 h-4 text-primary" fill="currentColor" />
               <span className="text-sm font-semibold font-sans">{matches.length} Matches</span>
