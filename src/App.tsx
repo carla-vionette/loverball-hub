@@ -19,6 +19,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 const Home = lazy(() => import("./pages/Home"));
 const Discover = lazy(() => import("./pages/Discover"));
 const Explore = lazy(() => import("./pages/Explore"));
+const ChannelProfile = lazy(() => import("./pages/ChannelProfile"));
 const Feed = lazy(() => import("./pages/Feed"));
 const Watch = lazy(() => import("./pages/Watch"));
 const Onboarding = lazy(() => import("./pages/Onboarding"));
@@ -83,6 +84,7 @@ const App = () => (
               <Route path="/auth" element={<Auth />} />
               <Route path="/discover" element={<Discover />} />
               <Route path="/explore" element={<Explore />} />
+              <Route path="/channel/:handle" element={<ChannelProfile />} />
               <Route path="/feed" element={<Feed />} />
               <Route path="/watch" element={<Watch />} />
               <Route path="/plans" element={<ProtectedRoute><PlanSelection /></ProtectedRoute>} />
