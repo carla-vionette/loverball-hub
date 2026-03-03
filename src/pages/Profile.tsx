@@ -423,13 +423,19 @@ const Profile = () => {
                 </div>
                 <div className="divide-y divide-border/20">
                   {RECOMMENDED_ARTICLES.map((rec, i) => (
-                    <div key={i} className="px-5 py-3 hover:bg-foreground/[0.03] transition-colors cursor-pointer group">
+                    <a
+                      key={i}
+                      href={`https://www.google.com/search?q=${encodeURIComponent(rec.title)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block px-5 py-3 hover:bg-foreground/[0.06] transition-colors cursor-pointer group no-underline"
+                    >
                       <p className="text-[10px] text-muted-foreground mb-0.5">Because you read "{rec.basedOn.length > 50 ? rec.basedOn.slice(0, 50) + '…' : rec.basedOn}"</p>
                       <div className="flex items-center justify-between">
                         <p className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">{rec.title}</p>
                         <span className="flex items-center gap-1 text-xs text-muted-foreground ml-2 shrink-0"><Eye className="w-3 h-3" />{rec.reads}</span>
                       </div>
-                    </div>
+                    </a>
                   ))}
                 </div>
               </div>
