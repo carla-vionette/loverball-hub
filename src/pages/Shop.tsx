@@ -11,6 +11,35 @@ import DesktopNav from "@/components/DesktopNav";
 import MobileHeader from "@/components/MobileHeader";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
 
+// Product image imports for proper bundling
+import imgCrewneck from "@/assets/products/loverball-crewneck-back.png";
+import imgHat from "@/assets/products/loverball-corduroy-hat-colors.png";
+import imgSocks from "@/assets/products/loverball-socks-new.png";
+import imgChain from "@/assets/products/loverball-chain.png";
+import imgHoodiePink from "@/assets/products/loverball-hoodie-pink.png";
+import imgJersey from "@/assets/products/loverball-jersey.jpg";
+import imgTshirt from "@/assets/products/loverball-tshirt.jpg";
+import imgHoodieWhite from "@/assets/products/loverball-hoodie-white.png";
+import imgHatNew from "@/assets/products/loverball-hat-new.png";
+
+// Map product names to local images
+const PRODUCT_IMAGE_MAP: Record<string, string> = {
+  "Loverball Club Crewneck": imgCrewneck,
+  "Loverball Corduroy Hat": imgHat,
+  "Loverball Sports Socks": imgSocks,
+  "Loverball Logo Chain": imgChain,
+  "Loverball Hoodie - Pink": imgHoodiePink,
+  "Loverball Jersey": imgJersey,
+  "Loverball Classic Tee": imgTshirt,
+  "Loverball Tote Bag": imgTshirt,
+  "Loverball Water Bottle": imgHoodieWhite,
+  "Loverball Joggers": imgHatNew,
+};
+
+const getProductImage = (product: Product): string | null => {
+  return PRODUCT_IMAGE_MAP[product.name] || product.image_url;
+};
+
 interface Product {
   id: string;
   name: string;
@@ -227,8 +256,8 @@ const ShopContent = () => {
                     <div className="flex-1 overflow-y-auto space-y-4">
                       {cartItems.map(item => (
                         <div key={item.id} className="flex gap-3 p-3 rounded-xl bg-secondary/30">
-                          {item.product.image_url && (
-                            <img src={item.product.image_url} alt={item.product.name} className="w-16 h-16 rounded-lg object-cover" />
+                          {getProductImage(item.product) && (
+                            <img src={getProductImage(item.product)!} alt={item.product.name} className="w-16 h-16 rounded-lg object-contain bg-secondary/10 p-1" />
                           )}
                           <div className="flex-1 min-w-0">
                             <p className="font-semibold text-sm truncate font-sans">{item.product.name}</p>
@@ -311,8 +340,8 @@ const ShopContent = () => {
               {filteredProducts.map(product => (
                 <Card key={product.id} className="overflow-hidden group cursor-pointer hover:shadow-lg transition-all border-border/30">
                   <div className="relative aspect-square overflow-hidden">
-                    {product.image_url ? (
-                      <img src={product.image_url} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
+                    {getProductImage(product) ? (
+                      <img src={getProductImage(product)!} alt={product.name} className="w-full h-full object-contain bg-secondary/10 p-4 group-hover:scale-105 transition-transform duration-500" loading="lazy" />
                     ) : (
                       <div className="w-full h-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
                         <ShoppingBag className="w-10 h-10 text-primary/30" />
