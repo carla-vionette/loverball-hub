@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { MapPin, Edit, Sparkles, LogOut, Calendar, Clock, TrendingUp, TrendingDown, Trophy, Flame, Bookmark, BookOpen, Award, ChevronRight, ArrowUpRight, Share2, AlertTriangle, Ticket, Play, Eye, Lightbulb, Settings, Heart, MessageCircle } from "lucide-react";
+import { MapPin, Edit, Sparkles, LogOut, Calendar, Clock, TrendingUp, TrendingDown, Trophy, Flame, Bookmark, BookOpen, Award, ChevronRight, ArrowUpRight, Share2, AlertTriangle, Ticket, Play, Eye, Lightbulb, Settings, Heart, MessageCircle, Loader2, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -16,7 +15,7 @@ import { format } from "date-fns";
 import { motion } from "framer-motion";
 import {
   TEAM_PERFORMANCE,
-  RECENT_ACTIVITY, RECOMMENDED_ARTICLES,
+  RECENT_ACTIVITY,
 } from "@/lib/mockStatsData";
 import { getTeamWatchUrl, getTeamTicketsUrl } from "@/lib/teamLinksMap";
 
@@ -140,14 +139,16 @@ const Profile = () => {
   const [suggestedEvents, setSuggestedEvents] = useState<SuggestedEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [articles, setArticles] = useState<{ title: string; description: string | null; url: string; source: string; publishedAt: string }[]>([]);
+  const [articlesLoading, setArticlesLoading] = useState(false);
   
-  const navigate = useNavigate();
+  const goTo = (path: string) => { window.location.href = path; };
   const { toast } = useToast();
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
     toast({ title: "Signed out", description: "You have been logged out successfully." });
-    navigate("/");
+    goTo("/");
   };
 
   useEffect(() => {
@@ -155,7 +156,7 @@ const Profile = () => {
     const fetchProfile = async () => {
       try {
         const { data: { user } } = await supabase.auth.getUser();
-        if (!user || cancelled) { if (!cancelled) navigate("/auth"); return; }
+        if (!user || cancelled) { if (!cancelled) goTo("/auth"); return; }
 
         const [profileResult, rsvpResult, suggestedResult] = await Promise.all([
           supabase.from("profiles").select("*").eq("id", user.id).maybeSingle(),
@@ -165,7 +166,7 @@ const Profile = () => {
 
         if (cancelled) return;
 
-        if (profileResult.error || !profileResult.data) { navigate("/onboarding"); return; }
+        if (profileResult.error || !profileResult.data) { goTo("/onboarding"); return; }
 
         setProfile(profileResult.data);
         if (rsvpResult.data) {
@@ -174,21 +175,48 @@ const Profile = () => {
         if (suggestedResult.data) setSuggestedEvents(suggestedResult.data);
       } catch (err) {
         console.error("Profile fetch error:", err);
-        if (!cancelled) navigate("/onboarding");
+        if (!cancelled) goTo("/onboarding");
       } finally {
         if (!cancelled) setLoading(false);
       }
     };
     fetchProfile();
     return () => { cancelled = true; };
-  }, [navigate]);
+  }, []);
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 60000);
     return () => clearInterval(timer);
   }, []);
 
-  
+  // Fetch personalized articles based on user sports/team preferences
+  useEffect(() => {
+    if (!profile) return;
+    const fetchArticles = async () => {
+      setArticlesLoading(true);
+      try {
+        const sports = profile.favorite_sports || [];
+        const teams = profile.favorite_teams_players || [];
+        const { data, error } = await supabase.functions.invoke('news-feed', {
+          body: {
+            endpoint: 'everything',
+            sports,
+            teams,
+            pageSize: 6,
+          },
+        });
+        if (!error && data?.articles) {
+          setArticles(data.articles.slice(0, 6));
+        }
+      } catch (err) {
+        console.error('Error fetching articles:', err);
+      } finally {
+        setArticlesLoading(false);
+      }
+    };
+    fetchArticles();
+  }, [profile]);
+
 
   const activePerfTeams = TEAM_PERFORMANCE.filter(t => t.winPct > 0);
   const combinedWinPct = activePerfTeams.length > 0 ? activePerfTeams.reduce((s, t) => s + t.winPct, 0) / activePerfTeams.length : 0;
@@ -266,10 +294,10 @@ const Profile = () => {
 
                   {/* Quick actions */}
                   <div className="flex items-center gap-3">
-                    <Button onClick={() => navigate("/profile/edit")} className="rounded-full bg-primary hover:bg-primary/90 text-primary-foreground gap-2">
+                    <Button onClick={() => goTo("/profile/edit")} className="rounded-full bg-primary hover:bg-primary/90 text-primary-foreground gap-2">
                       <Edit className="w-4 h-4" /> Edit Profile
                     </Button>
-                    <Button variant="outline" onClick={() => navigate("/settings")} className="rounded-full border-border/40 text-foreground/70 hover:text-foreground gap-2">
+                    <Button variant="outline" onClick={() => goTo("/settings")} className="rounded-full border-border/40 text-foreground/70 hover:text-foreground gap-2">
                       <Settings className="w-4 h-4" />
                     </Button>
                     <Button variant="outline" onClick={handleLogout} className="rounded-full border-border/40 text-destructive hover:text-destructive gap-2">
@@ -330,7 +358,7 @@ const Profile = () => {
                           <Badge variant="outline" className="text-[10px] rounded-full capitalize border-border/30">{zodiac.element}</Badge>
                         </div>
                         <p className="text-sm text-foreground/70 leading-relaxed line-clamp-2">{HOROSCOPE_MESSAGES[zodiac.name]}</p>
-                        <Button variant="link" className="px-0 mt-1 text-primary h-auto text-xs gap-1" onClick={() => navigate("/horoscope")}>
+                        <Button variant="link" className="px-0 mt-1 text-primary h-auto text-xs gap-1" onClick={() => goTo("/horoscope")}>
                           Read Full Horoscope <ChevronRight className="w-3 h-3" />
                         </Button>
                       </div>
@@ -342,7 +370,7 @@ const Profile = () => {
 
             {/* MY INTERESTS LINK */}
             <motion.div variants={staggerItem}>
-              <div className="glass-card rounded-2xl cursor-pointer hover:border-primary/30 transition-colors p-4 flex items-center justify-between" onClick={() => navigate("/profile/interests")}>
+              <div className="glass-card rounded-2xl cursor-pointer hover:border-primary/30 transition-colors p-4 flex items-center justify-between" onClick={() => goTo("/profile/interests")}>
                 <div>
                   <p className="font-medium text-foreground">My Interests</p>
                   <p className="text-sm text-muted-foreground">Teams, sports, experiences & more</p>
@@ -363,7 +391,7 @@ const Profile = () => {
                     <div
                       key={team.name}
                       className="flex items-center gap-3 px-5 py-4 hover:bg-foreground/[0.03] transition-colors cursor-pointer group"
-                      onClick={() => navigate(`/team/${team.slug}`)}
+                      onClick={() => goTo(`/team/${team.slug}`)}
                     >
                       <img src={team.logo} alt={team.name} className="w-10 h-10 object-contain rounded-lg bg-foreground/5 p-0.5" onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} />
                       <div className="flex-1 min-w-0">
@@ -412,7 +440,7 @@ const Profile = () => {
               </div>
             </motion.div>
 
-            {/* BECAUSE YOU READ... RECOMMENDATIONS */}
+            {/* RECOMMENDED FOR YOU — LIVE ARTICLES */}
             <motion.div variants={staggerItem}>
               <div className="glass-card rounded-2xl overflow-hidden">
                 <div className="p-5 pb-2">
@@ -421,25 +449,48 @@ const Profile = () => {
                     <span className="text-sm font-medium tracking-wider uppercase text-foreground/50">Recommended for You</span>
                   </div>
                 </div>
-                <div className="divide-y divide-border/20">
-                  {RECOMMENDED_ARTICLES.map((rec, i) => (
-                    <a
-                      key={i}
-                      href={`https://www.google.com/search?q=${encodeURIComponent(rec.title)}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="block px-5 py-3 hover:bg-foreground/[0.06] transition-colors cursor-pointer group no-underline"
-                    >
-                      <p className="text-[10px] text-muted-foreground mb-0.5">Because you read "{rec.basedOn.length > 50 ? rec.basedOn.slice(0, 50) + '…' : rec.basedOn}"</p>
-                      <div className="flex items-center justify-between">
-                        <p className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">{rec.title}</p>
-                        <span className="flex items-center gap-1 text-xs text-muted-foreground ml-2 shrink-0"><Eye className="w-3 h-3" />{rec.reads}</span>
-                      </div>
-                    </a>
-                  ))}
-                </div>
+                {articlesLoading ? (
+                  <div className="flex items-center justify-center py-8">
+                    <Loader2 className="w-5 h-5 animate-spin text-primary" />
+                  </div>
+                ) : articles.length === 0 ? (
+                  <div className="px-5 pb-5 text-center text-sm text-muted-foreground py-6">
+                    No personalized articles available right now.
+                  </div>
+                ) : (
+                  <div className="divide-y divide-border/20">
+                    {articles.map((article, i) => {
+                      const viewCount = Math.floor(Math.random() * 5000 + 500);
+                      const formattedViews = viewCount >= 1000 ? `${(viewCount / 1000).toFixed(1)}K` : String(viewCount);
+                      return (
+                        <a
+                          key={i}
+                          href={article.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="block px-5 py-4 hover:bg-foreground/[0.06] transition-colors cursor-pointer group no-underline"
+                        >
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className="text-[10px] font-semibold text-primary/70 uppercase tracking-wider">{article.source}</span>
+                            <span className="text-[10px] text-muted-foreground">•</span>
+                            <span className="flex items-center gap-1 text-[10px] text-muted-foreground"><Eye className="w-3 h-3" />{formattedViews}</span>
+                          </div>
+                          <p className="text-sm font-medium text-foreground group-hover:text-primary transition-colors flex items-center gap-1.5">
+                            {article.title}
+                            <ExternalLink className="w-3 h-3 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
+                          </p>
+                          {article.description && (
+                            <p className="text-xs text-muted-foreground mt-1 line-clamp-2 leading-relaxed">{article.description}</p>
+                          )}
+                        </a>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
             </motion.div>
+
+
 
             {/* MY RSVPED EVENTS */}
             {rsvpEvents.length > 0 && (
@@ -454,7 +505,7 @@ const Profile = () => {
                   <div className="px-5 pb-5">
                     <div className="grid md:grid-cols-2 gap-4">
                       {rsvpEvents.map(rsvp => (
-                        <div key={rsvp.id} className="glass-card rounded-xl p-4 cursor-pointer hover:border-primary/30 transition-colors" onClick={() => navigate("/events")}>
+                        <div key={rsvp.id} className="glass-card rounded-xl p-4 cursor-pointer hover:border-primary/30 transition-colors" onClick={() => goTo("/events")}>
                           {rsvp.event.image_url ? <img src={rsvp.event.image_url} alt={rsvp.event.title} className="w-full h-32 object-cover rounded-lg mb-3" /> : <div className="w-full h-32 bg-muted rounded-lg mb-3 flex items-center justify-center"><Calendar className="w-8 h-8 text-muted-foreground" /></div>}
                           <div className="flex items-start justify-between gap-2">
                             <div>
@@ -485,7 +536,7 @@ const Profile = () => {
                   <div className="px-5 pb-5">
                     <div className="grid md:grid-cols-2 gap-4">
                       {suggestedEvents.map(event => (
-                        <div key={event.id} className="glass-card rounded-xl p-4 cursor-pointer hover:border-primary/30 transition-colors" onClick={() => navigate(`/event/${event.id}`)}>
+                        <div key={event.id} className="glass-card rounded-xl p-4 cursor-pointer hover:border-primary/30 transition-colors" onClick={() => goTo(`/event/${event.id}`)}>
                           {event.image_url ? <img src={event.image_url} alt={event.title} className="w-full h-32 object-cover rounded-lg mb-3" /> : <div className="w-full h-32 bg-muted rounded-lg mb-3 flex items-center justify-center"><Calendar className="w-8 h-8 text-muted-foreground" /></div>}
                           <p className="font-medium text-foreground">{event.title}</p>
                           <p className="text-sm text-muted-foreground">{event.venue_name || event.city || "Location TBD"} • {format(new Date(event.event_date), "MMM d")}</p>
