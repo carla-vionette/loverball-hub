@@ -245,6 +245,25 @@ const LandingPage = () => {
         </div>
       </section>
 
+      {/* Our Goal Section */}
+      <section className="py-20 lg:py-28 bg-secondary/60">
+        <div className="max-w-3xl mx-auto px-6 lg:px-12 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="font-display text-4xl md:text-5xl lg:text-6xl text-foreground font-extrabold mb-8">
+              Our Goal
+            </h2>
+            <p className="text-xl md:text-2xl font-serif text-foreground/80 leading-relaxed font-medium">
+              Loverball exists to give women fans a home in sports — more representation, more access to live experiences, and more real friendships built around the teams they love.
+            </p>
+          </motion.div>
+        </div>
+      </section>
+
       {/* Thin yellow divider */}
       <div className="h-[2px] bg-primary" />
 
@@ -255,7 +274,7 @@ const LandingPage = () => {
             <p className="text-xs font-sans tracking-[0.3em] uppercase text-foreground/50 mb-4">
               What We Offer
             </p>
-            <h2 className="font-display text-5xl md:text-6xl text-foreground">
+            <h2 className="font-display text-5xl md:text-6xl text-foreground font-extrabold">
               Built For Her
             </h2>
           </div>
