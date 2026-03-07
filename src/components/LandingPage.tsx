@@ -192,9 +192,10 @@ const LandingPage = () => {
               </p>
               <Button
                 onClick={() => navigate("/following")}
-                className="rounded-full bg-accent text-accent-foreground hover:bg-accent/90 px-8 py-5 font-sans text-xs tracking-widest uppercase"
+                className="rounded-full bg-primary text-primary-foreground hover:bg-primary/90 px-8 py-5 font-sans text-xs tracking-widest uppercase"
               >
-                Meet Us
+                Join Loverball
+                <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </motion.div>
 
