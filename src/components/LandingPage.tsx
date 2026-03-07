@@ -177,7 +177,7 @@ const LandingPage = () => {
               <p className="text-xs font-sans tracking-[0.3em] uppercase text-foreground/50 mb-4">
                 Our Story
               </p>
-              <h2 className="font-display text-5xl md:text-6xl text-foreground mb-2">
+              <h2 className="font-display text-5xl md:text-6xl text-foreground font-extrabold mb-2">
                 Hi! We're{" "}
                 <span className="relative inline-block">
                   Loverball
