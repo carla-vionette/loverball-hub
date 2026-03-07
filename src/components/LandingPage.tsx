@@ -177,24 +177,25 @@ const LandingPage = () => {
               <p className="text-xs font-sans tracking-[0.3em] uppercase text-foreground/50 mb-4">
                 Our Story
               </p>
-              <h2 className="font-display text-5xl md:text-6xl text-foreground mb-2">
+              <h2 className="font-display text-5xl md:text-6xl text-foreground font-extrabold mb-2">
                 Hi! We're{" "}
                 <span className="relative inline-block">
                   Loverball
                   <span className="absolute -bottom-1 left-0 w-full h-[3px] bg-primary" />
                 </span>
               </h2>
-              <p className="text-xl font-serif text-foreground/80 leading-relaxed mt-8 mb-6">
+              <p className="text-xl font-serif text-foreground/80 leading-relaxed mt-8 mb-6 font-medium">
                 We specialize in creating <em className="font-bold">tailored</em> sports content and experiences that drive engagement, build brand loyalty, and <em className="font-bold">inspire women.</em>
               </p>
-              <p className="text-lg font-serif text-foreground/60 leading-relaxed mb-10">
+              <p className="text-lg font-serif text-foreground/60 leading-relaxed mb-10 font-medium">
                 Born in Los Angeles, Loverball is a content and community platform for the $28B women's sports market. AI-powered stories, community events, and narrative-driven coverage — all built for her.
               </p>
               <Button
                 onClick={() => navigate("/following")}
-                className="rounded-full bg-accent text-accent-foreground hover:bg-accent/90 px-8 py-5 font-sans text-xs tracking-widest uppercase"
+                className="rounded-full bg-primary text-primary-foreground hover:bg-primary/90 px-8 py-5 font-sans text-xs tracking-widest uppercase"
               >
-                Meet Us
+                Join Loverball
+                <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </motion.div>
 
@@ -244,6 +245,25 @@ const LandingPage = () => {
         </div>
       </section>
 
+      {/* Our Goal Section */}
+      <section className="py-20 lg:py-28 bg-secondary/60">
+        <div className="max-w-3xl mx-auto px-6 lg:px-12 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="font-display text-4xl md:text-5xl lg:text-6xl text-foreground font-extrabold mb-8">
+              Our Goal
+            </h2>
+            <p className="text-xl md:text-2xl font-serif text-foreground/80 leading-relaxed font-medium">
+              Loverball exists to give women fans a home in sports — more representation, more access to live experiences, and more real friendships built around the teams they love.
+            </p>
+          </motion.div>
+        </div>
+      </section>
+
       {/* Thin yellow divider */}
       <div className="h-[2px] bg-primary" />
 
@@ -254,7 +274,7 @@ const LandingPage = () => {
             <p className="text-xs font-sans tracking-[0.3em] uppercase text-foreground/50 mb-4">
               What We Offer
             </p>
-            <h2 className="font-display text-5xl md:text-6xl text-foreground">
+            <h2 className="font-display text-5xl md:text-6xl text-foreground font-extrabold">
               Built For Her
             </h2>
           </div>
@@ -264,7 +284,7 @@ const LandingPage = () => {
               {
                 num: "01",
                 title: "AI-Powered Stories",
-                desc: "Personalized sports content that speaks to what you care about. Beyond stats — the stories, drama, and culture.",
+                desc: "Personalized stories about women athletes, fan culture, and the sports moments everyone's talking about — made for women who love the game.",
               },
               {
                 num: "02",
@@ -292,7 +312,7 @@ const LandingPage = () => {
                   <h3 className="text-2xl font-display text-foreground mb-4 normal-case">
                     {feature.title}
                   </h3>
-                  <p className="text-foreground/60 leading-relaxed font-serif">
+                  <p className="text-foreground/60 leading-relaxed font-serif font-medium">
                     {feature.desc}
                   </p>
                 </div>
@@ -334,7 +354,7 @@ const LandingPage = () => {
               <p className="text-xs font-sans tracking-[0.3em] uppercase text-foreground/50 mb-4">
                 Join Us
               </p>
-              <h2 className="font-display text-5xl md:text-6xl text-foreground mb-8">
+              <h2 className="font-display text-5xl md:text-6xl text-foreground font-extrabold mb-8">
                 Our Community
               </h2>
 
@@ -351,14 +371,14 @@ const LandingPage = () => {
                 ))}
               </div>
 
-              <p className="text-lg font-serif text-foreground/70 leading-relaxed mb-8">
-                Connect with thousands of women who share your passion for sports. Build real friendships, discover new content, and celebrate your fandom together.
+              <p className="text-lg font-serif text-foreground/70 leading-relaxed mb-8 font-medium">
+                Connect with women who share your fandom, discover stories about women athletes, fans, and culture, and join events where you actually belong.
               </p>
               <Button
                 onClick={() => navigate("/following")}
                 className="rounded-full bg-primary text-primary-foreground hover:bg-primary/90 px-8 py-5 font-sans text-xs tracking-widest uppercase"
               >
-                Explore Community
+                Join Loverball
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </motion.div>
@@ -375,10 +395,10 @@ const LandingPage = () => {
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-5xl sm:text-6xl lg:text-7xl font-display text-primary mb-8 leading-[0.95]">
+            <h2 className="text-5xl sm:text-6xl lg:text-7xl font-display text-primary font-extrabold mb-8 leading-[0.95]">
               Ready to Join<br />the Movement?
             </h2>
-            <p className="text-lg font-serif text-background/60 mb-12 max-w-xl mx-auto leading-relaxed">
+            <p className="text-lg font-serif text-background/60 mb-12 max-w-xl mx-auto leading-relaxed font-medium">
               Be part of the community redefining women's sports fandom.
             </p>
             <Button
@@ -386,7 +406,7 @@ const LandingPage = () => {
               onClick={() => navigate("/following")}
               className="rounded-full bg-primary text-primary-foreground hover:bg-primary/90 text-base px-12 py-7 font-sans tracking-widest uppercase shadow-2xl"
             >
-              Get Started
+              Join Loverball
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
           </motion.div>
