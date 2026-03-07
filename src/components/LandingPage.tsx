@@ -395,10 +395,10 @@ const LandingPage = () => {
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-5xl sm:text-6xl lg:text-7xl font-display text-primary mb-8 leading-[0.95]">
+            <h2 className="text-5xl sm:text-6xl lg:text-7xl font-display text-primary font-extrabold mb-8 leading-[0.95]">
               Ready to Join<br />the Movement?
             </h2>
-            <p className="text-lg font-serif text-background/60 mb-12 max-w-xl mx-auto leading-relaxed">
+            <p className="text-lg font-serif text-background/60 mb-12 max-w-xl mx-auto leading-relaxed font-medium">
               Be part of the community redefining women's sports fandom.
             </p>
             <Button
@@ -406,7 +406,7 @@ const LandingPage = () => {
               onClick={() => navigate("/following")}
               className="rounded-full bg-primary text-primary-foreground hover:bg-primary/90 text-base px-12 py-7 font-sans tracking-widest uppercase shadow-2xl"
             >
-              Get Started
+              Join Loverball
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
           </motion.div>
