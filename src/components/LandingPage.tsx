@@ -284,7 +284,7 @@ const LandingPage = () => {
               {
                 num: "01",
                 title: "AI-Powered Stories",
-                desc: "Personalized sports content that speaks to what you care about. Beyond stats — the stories, drama, and culture.",
+                desc: "Personalized stories about women athletes, fan culture, and the sports moments everyone's talking about — made for women who love the game.",
               },
               {
                 num: "02",
