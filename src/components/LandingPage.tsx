@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { ArrowRight, Menu } from "lucide-react";
+import { ArrowRight, Menu, Users, Play, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import heroImage from "@/assets/hero-women.png";
@@ -65,33 +65,37 @@ const LandingPage = () => {
             transition={{ duration: 1, ease: "easeOut" }}
             className="max-w-2xl"
           >
+            <p className="text-xs font-sans tracking-[0.3em] uppercase text-background/70 mb-4">
+              A Sports Community & Content Platform for Women
+            </p>
             <h1 className="text-6xl sm:text-7xl lg:text-8xl font-display text-primary leading-[0.95] mb-8">
               Her Game.<br />
               Her Community.<br />
               <span className="italic text-background">Her Story.</span>
             </h1>
-            <p className="text-lg text-background/80 font-serif leading-relaxed mb-10 max-w-md">
-              Where women's sports culture meets connection, storytelling, and sisterhood.
+            <p className="text-lg sm:text-xl text-background/90 font-semibold font-serif leading-relaxed mb-10 max-w-lg">
+              Loverball is a community-powered sports platform where women fans find local watch parties, curated sports stories, and real friendships built around the teams they love.
             </p>
+            <div className="flex flex-wrap gap-4">
+              <Button
+                onClick={() => navigate("/following")}
+                size="lg"
+                className="rounded-full bg-primary text-primary-foreground hover:bg-primary/90 px-8 py-6 text-sm font-sans tracking-widest uppercase shadow-xl"
+              >
+                Join the Community
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+              <Button
+                onClick={() => navigate("/events")}
+                size="lg"
+                variant="outline"
+                className="rounded-full border-2 border-background text-background hover:bg-background/10 px-8 py-6 text-sm font-sans tracking-widest uppercase"
+              >
+                Explore Events & Stories
+              </Button>
+            </div>
           </motion.div>
         </div>
-
-        {/* Yellow pill CTA floating bottom right */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6, duration: 0.6 }}
-          className="absolute bottom-12 right-12 z-20 hidden md:block"
-        >
-          <Button
-            onClick={() => navigate("/following")}
-            size="lg"
-            className="rounded-full bg-primary text-primary-foreground hover:bg-primary/90 px-10 py-7 text-base font-sans tracking-widest uppercase shadow-2xl"
-          >
-            Join Loverball
-            <ArrowRight className="ml-2 h-5 w-5" />
-          </Button>
-        </motion.div>
       </section>
 
       {/* Thin yellow divider */}
