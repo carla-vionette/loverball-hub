@@ -184,10 +184,10 @@ const LandingPage = () => {
                   <span className="absolute -bottom-1 left-0 w-full h-[3px] bg-primary" />
                 </span>
               </h2>
-              <p className="text-xl font-serif text-foreground/80 leading-relaxed mt-8 mb-6">
+              <p className="text-xl font-serif text-foreground/80 leading-relaxed mt-8 mb-6 font-medium">
                 We specialize in creating <em className="font-bold">tailored</em> sports content and experiences that drive engagement, build brand loyalty, and <em className="font-bold">inspire women.</em>
               </p>
-              <p className="text-lg font-serif text-foreground/60 leading-relaxed mb-10">
+              <p className="text-lg font-serif text-foreground/60 leading-relaxed mb-10 font-medium">
                 Born in Los Angeles, Loverball is a content and community platform for the $28B women's sports market. AI-powered stories, community events, and narrative-driven coverage — all built for her.
               </p>
               <Button
