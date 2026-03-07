@@ -613,7 +613,7 @@ const Index = () => {
                   </span>
                   <feature.icon className="w-7 h-7 text-primary-foreground/80 mb-5" />
                   <h3 className="font-condensed text-2xl lg:text-3xl uppercase text-primary-foreground mb-4 tracking-wide">{feature.title}</h3>
-                  <p className="text-primary-foreground/70 leading-relaxed text-[15px] font-serif">{feature.desc}</p>
+                  <p className="text-primary-foreground/70 leading-relaxed text-[15px] font-serif font-medium">{feature.desc}</p>
                 </div>
               </motion.div>
             )}
