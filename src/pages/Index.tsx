@@ -449,12 +449,10 @@ const Index = () => {
             <h2 className="font-condensed text-[3.5rem] lg:text-[5rem] leading-[0.85] tracking-tight text-accent-foreground uppercase mb-8">
               We specialize in creating <em className="font-display italic normal-case text-[2rem] lg:text-[3rem] leading-[1.1]">tailored</em> sports content and experiences that <em className="font-display italic normal-case text-[2rem] lg:text-[3rem] leading-[1.1]">inspire women.</em>
             </h2>
-            <p className="text-sm text-accent-foreground/70 leading-relaxed mb-6 max-w-md font-serif">Finally, a sports community that gets YOU. Connect with women who share your fandom, discover stories that matter, and join events where you belong. No gatekeeping, no explaining yourself—just authentic sports love.</p>
-
-
+            <p className="text-sm text-accent-foreground/70 leading-relaxed mb-6 max-w-md font-serif font-medium">Finally, a sports community that gets YOU. Connect with women who share your fandom, discover stories about women athletes, fans, and culture, and join events where you actually belong. No gatekeeping, no explaining yourself—just authentic sports love.</p>
 
             <button onClick={openAuthModal} className="rounded-full border border-accent-foreground text-accent-foreground bg-transparent hover:bg-accent-foreground hover:text-accent transition-colors px-7 py-3.5 text-[11px] font-sans font-bold tracking-[0.2em] uppercase w-fit flex items-center gap-3">
-              Join Us <ArrowRight className="h-3.5 w-3.5" />
+              Join Loverball <ArrowRight className="h-3.5 w-3.5" />
             </button>
           </motion.div>
 
