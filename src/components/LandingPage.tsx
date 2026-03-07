@@ -354,7 +354,7 @@ const LandingPage = () => {
               <p className="text-xs font-sans tracking-[0.3em] uppercase text-foreground/50 mb-4">
                 Join Us
               </p>
-              <h2 className="font-display text-5xl md:text-6xl text-foreground mb-8">
+              <h2 className="font-display text-5xl md:text-6xl text-foreground font-extrabold mb-8">
                 Our Community
               </h2>
 
