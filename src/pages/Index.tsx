@@ -566,6 +566,22 @@ const Index = () => {
       </section>
 
       {/* ══════════════════════════════════════════
+                                                     OUR GOAL — Centered mission statement
+                                                    ══════════════════════════════════════════ */}
+      <section className="py-20 lg:py-28 bg-secondary/80">
+        <div className="max-w-[900px] mx-auto px-8 lg:px-16 text-center">
+          <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} viewport={{ once: true }}>
+            <h2 className="font-condensed text-[3rem] lg:text-[4.5rem] leading-none tracking-tight text-foreground uppercase font-extrabold mb-8">
+              Our Goal
+            </h2>
+            <p className="text-xl md:text-2xl font-serif text-foreground/80 leading-relaxed font-medium">
+              Loverball exists to give women fans a home in sports — more representation, more access to live experiences, and more real friendships built around the teams they love.
+            </p>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════
                                                      FEATURES — Color-blocked numbered cards
                                                     ══════════════════════════════════════════ */}
       <section id="features" className="bg-secondary">
