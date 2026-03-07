@@ -378,7 +378,7 @@ const LandingPage = () => {
                 onClick={() => navigate("/following")}
                 className="rounded-full bg-primary text-primary-foreground hover:bg-primary/90 px-8 py-5 font-sans text-xs tracking-widest uppercase"
               >
-                Explore Community
+                Join Loverball
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </motion.div>
