@@ -293,24 +293,24 @@ const Index = () => {
               transition={{ duration: 0.9, ease: "easeOut" }}
               className="relative z-10 max-w-lg">
 
-              <span className="text-[11px] font-sans font-bold tracking-[0.3em] uppercase text-primary-foreground/70 mb-6 block">Women's Sports Fandom Club</span>
+              <span className="text-[11px] font-sans font-bold tracking-[0.3em] uppercase text-primary-foreground/70 mb-6 block">A Sports Community & Content Platform for Women</span>
               <h1 className="font-condensed font-bold text-[4.5rem] sm:text-[6rem] lg:text-[7.5rem] leading-[0.85] tracking-tight text-primary-foreground uppercase mb-8">
                 Her<br />
                 Game.<br />
                 <span className="text-foreground">Her</span><br />
                 <span className="text-foreground">COMMUNITY.</span>
               </h1>
-              <p className="text-base font-serif text-primary-foreground/80 leading-relaxed mb-8 max-w-sm">
-                The platform where women's sports culture meets connection, storytelling, and sisterhood. Born in Los Angeles.
+              <p className="text-base font-serif font-semibold text-primary-foreground/90 leading-relaxed mb-8 max-w-sm">
+                Loverball is a community-powered sports platform where women fans find local watch parties, curated sports stories, and real friendships built around the teams they love.
               </p>
               <div className="flex flex-col sm:flex-row items-start gap-4">
                 <Button onClick={openAuthModal} className="rounded-full bg-accent text-accent-foreground hover:bg-accent/90 px-8 py-5 text-[11px] font-sans font-bold tracking-[0.2em] uppercase shadow-xl h-auto">
-                  Join Loverball
+                  Join the Community
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
-                <button onClick={() => document.getElementById("about")?.scrollIntoView({ behavior: "smooth" })} className="text-[11px] font-sans font-bold tracking-[0.2em] uppercase text-primary-foreground/60 hover:text-primary-foreground transition-colors py-4 bg-transparent border-none cursor-pointer">
-                  Learn More ↓
-                </button>
+                <Button onClick={() => document.getElementById("events")?.scrollIntoView({ behavior: "smooth" })} variant="outline" className="rounded-full border-2 border-primary-foreground text-primary-foreground bg-transparent hover:bg-primary-foreground/10 px-8 py-5 text-[11px] font-sans font-bold tracking-[0.2em] uppercase h-auto">
+                  Explore Events & Stories
+                </Button>
               </div>
             </motion.div>
             {/* Decorative script text */}
@@ -386,8 +386,41 @@ const Index = () => {
       </section>
 
       {/* ══════════════════════════════════════════
-                                                     TICKER STRIP — Sport category badges
+                                                     WHAT YOU GET — Three pillars
                                                     ══════════════════════════════════════════ */}
+      <section className="py-20 lg:py-28 bg-background">
+        <div className="max-w-[1400px] mx-auto px-8 lg:px-16">
+          <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} viewport={{ once: true }} className="text-center mb-16">
+            <h2 className="font-condensed text-[3rem] lg:text-[4.5rem] leading-none tracking-tight text-foreground uppercase font-extrabold">
+              What You Get with Loverball
+            </h2>
+          </motion.div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              { icon: Users, title: "Community", desc: "Local chapters, watch parties, and IRL meetups where women fans actually meet and become friends." },
+              { icon: Play, title: "Content", desc: "Curated and AI-powered sports stories that center women fans, culture, and the drama around the game." },
+              { icon: Sparkles, title: "Access", desc: "Early invites to events, member-only experiences, and deeper connections with the women's sports ecosystem." },
+            ].map((card, i) => (
+              <motion.div key={card.title} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: i * 0.12 }} viewport={{ once: true }}>
+                <div className="bg-card rounded-2xl p-8 lg:p-10 shadow-[0_2px_20px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.1)] transition-all duration-300 h-full text-center">
+                  <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-accent/10 mb-6">
+                    <card.icon className="w-8 h-8 text-accent" />
+                  </div>
+                  <h3 className="font-condensed text-2xl lg:text-3xl uppercase text-foreground mb-3 tracking-wide font-bold">{card.title}</h3>
+                  <p className="text-foreground/70 font-medium leading-relaxed font-serif">{card.desc}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ duration: 0.6, delay: 0.4 }} viewport={{ once: true }} className="text-center text-sm text-muted-foreground font-sans tracking-wide mt-10">
+            Start free and join events as you go. Premium membership coming soon.
+          </motion.p>
+        </div>
+      </section>
+
+      {/* TICKER STRIP — Sport category badges */}
       <div className="bg-foreground py-4 overflow-hidden">
         <div className="flex items-center gap-12 animate-[shimmer_20s_linear_infinite] whitespace-nowrap px-8">
           {[...sportCategories, ...sportCategories, ...sportCategories].map((cat, i) =>
@@ -416,12 +449,10 @@ const Index = () => {
             <h2 className="font-condensed text-[3.5rem] lg:text-[5rem] leading-[0.85] tracking-tight text-accent-foreground uppercase mb-8">
               We specialize in creating <em className="font-display italic normal-case text-[2rem] lg:text-[3rem] leading-[1.1]">tailored</em> sports content and experiences that <em className="font-display italic normal-case text-[2rem] lg:text-[3rem] leading-[1.1]">inspire women.</em>
             </h2>
-            <p className="text-sm text-accent-foreground/70 leading-relaxed mb-6 max-w-md font-serif">Finally, a sports community that gets YOU. Connect with women who share your fandom, discover stories that matter, and join events where you belong. No gatekeeping, no explaining yourself—just authentic sports love.</p>
-
-
+            <p className="text-sm text-accent-foreground/70 leading-relaxed mb-6 max-w-md font-serif font-medium">Finally, a sports community that gets YOU. Connect with women who share your fandom, discover stories about women athletes, fans, and culture, and join events where you actually belong. No gatekeeping, no explaining yourself—just authentic sports love.</p>
 
             <button onClick={openAuthModal} className="rounded-full border border-accent-foreground text-accent-foreground bg-transparent hover:bg-accent-foreground hover:text-accent transition-colors px-7 py-3.5 text-[11px] font-sans font-bold tracking-[0.2em] uppercase w-fit flex items-center gap-3">
-              Join Us <ArrowRight className="h-3.5 w-3.5" />
+              Join Loverball <ArrowRight className="h-3.5 w-3.5" />
             </button>
           </motion.div>
 
@@ -507,11 +538,11 @@ const Index = () => {
             <h2 className="font-condensed text-[3rem] lg:text-[4rem] leading-[0.85] tracking-tight text-hot-pink-foreground uppercase mb-8">
               OUR<br />COMMUNITY
             </h2>
-            <p className="text-base font-serif text-hot-pink-foreground/80 leading-relaxed mb-8 max-w-md">
-              Connect with thousands of women who share your passion for sports. Build real friendships, discover new content, and celebrate your fandom together.
+            <p className="text-base font-serif text-hot-pink-foreground/80 leading-relaxed mb-8 max-w-md font-medium">
+              Connect with women who share your fandom, discover stories about women athletes, fans, and culture, and join events where you actually belong.
             </p>
             <Button onClick={openAuthModal} className="rounded-full bg-accent text-accent-foreground hover:bg-accent/90 px-8 py-5 text-[11px] font-sans font-bold tracking-[0.2em] uppercase w-fit h-auto shadow-xl">
-              View More <ArrowRight className="ml-2 h-3.5 w-3.5" />
+              Join Loverball <ArrowRight className="ml-2 h-3.5 w-3.5" />
             </Button>
           </motion.div>
         </div>
@@ -535,6 +566,22 @@ const Index = () => {
       </section>
 
       {/* ══════════════════════════════════════════
+                                                     OUR GOAL — Centered mission statement
+                                                    ══════════════════════════════════════════ */}
+      <section className="py-20 lg:py-28 bg-secondary/80">
+        <div className="max-w-[900px] mx-auto px-8 lg:px-16 text-center">
+          <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} viewport={{ once: true }}>
+            <h2 className="font-condensed text-[3rem] lg:text-[4.5rem] leading-none tracking-tight text-foreground uppercase font-extrabold mb-8">
+              Our Goal
+            </h2>
+            <p className="text-xl md:text-2xl font-serif text-foreground/80 leading-relaxed font-medium">
+              Loverball exists to give women fans a home in sports — more representation, more access to live experiences, and more real friendships built around the teams they love.
+            </p>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════
                                                      FEATURES — Color-blocked numbered cards
                                                     ══════════════════════════════════════════ */}
       <section id="features" className="bg-secondary">
@@ -545,7 +592,7 @@ const Index = () => {
 
           <div className="grid md:grid-cols-3 gap-6">
             {[
-            { num: "01", title: "AI-Powered Stories", desc: "Personalized sports content that speaks to what you care about. Beyond stats — the stories, drama, and culture.", icon: Sparkles, bg: "bg-medium-blue" },
+            { num: "01", title: "AI-Powered Stories", desc: "Personalized stories about women athletes, fan culture, and the sports moments everyone's talking about — made for women who love the game.", icon: Sparkles, bg: "bg-medium-blue" },
             { num: "02", title: "Community Events", desc: "Watch parties, meetups, and experiences designed for women who love sports. Find your squad.", icon: Calendar, bg: "bg-accent" },
             { num: "03", title: "Exclusive Content", desc: "Behind-the-scenes access, player interviews, and insider perspectives you won't find anywhere else.", icon: Users, bg: "bg-hot-pink" }].
             map((feature, i) =>
@@ -566,7 +613,7 @@ const Index = () => {
                   </span>
                   <feature.icon className="w-7 h-7 text-primary-foreground/80 mb-5" />
                   <h3 className="font-condensed text-2xl lg:text-3xl uppercase text-primary-foreground mb-4 tracking-wide">{feature.title}</h3>
-                  <p className="text-primary-foreground/70 leading-relaxed text-[15px] font-serif">{feature.desc}</p>
+                  <p className="text-primary-foreground/70 leading-relaxed text-[15px] font-serif font-medium">{feature.desc}</p>
                 </div>
               </motion.div>
             )}
@@ -678,7 +725,7 @@ const Index = () => {
             </div>
             <div className="mt-10">
               <Button onClick={openAuthModal} className="rounded-full bg-accent text-accent-foreground hover:bg-accent/90 px-10 py-5 text-[11px] font-sans font-bold tracking-[0.2em] uppercase shadow-xl h-auto">
-                Get Started <ArrowRight className="ml-2 h-4 w-4" />
+                Join Loverball <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </div>
           </motion.div>
