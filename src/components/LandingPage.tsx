@@ -371,8 +371,8 @@ const LandingPage = () => {
                 ))}
               </div>
 
-              <p className="text-lg font-serif text-foreground/70 leading-relaxed mb-8">
-                Connect with thousands of women who share your passion for sports. Build real friendships, discover new content, and celebrate your fandom together.
+              <p className="text-lg font-serif text-foreground/70 leading-relaxed mb-8 font-medium">
+                Connect with women who share your fandom, discover stories about women athletes, fans, and culture, and join events where you actually belong.
               </p>
               <Button
                 onClick={() => navigate("/following")}
