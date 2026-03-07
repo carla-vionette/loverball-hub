@@ -725,7 +725,7 @@ const Index = () => {
             </div>
             <div className="mt-10">
               <Button onClick={openAuthModal} className="rounded-full bg-accent text-accent-foreground hover:bg-accent/90 px-10 py-5 text-[11px] font-sans font-bold tracking-[0.2em] uppercase shadow-xl h-auto">
-                Get Started <ArrowRight className="ml-2 h-4 w-4" />
+                Join Loverball <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </div>
           </motion.div>
