@@ -98,6 +98,69 @@ const LandingPage = () => {
         </div>
       </section>
 
+      {/* What You Get Section */}
+      <section className="py-20 lg:py-28 bg-background">
+        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <h2 className="font-display text-4xl md:text-5xl lg:text-6xl text-foreground font-extrabold">
+              What You Get with Loverball
+            </h2>
+          </motion.div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              {
+                icon: <Users className="w-8 h-8 text-primary" />,
+                title: "Community",
+                desc: "Local chapters, watch parties, and IRL meetups where women fans actually meet and become friends.",
+              },
+              {
+                icon: <Play className="w-8 h-8 text-primary" />,
+                title: "Content",
+                desc: "Curated and AI-powered sports stories that center women fans, culture, and the drama around the game.",
+              },
+              {
+                icon: <Star className="w-8 h-8 text-primary" />,
+                title: "Access",
+                desc: "Early invites to events, member-only experiences, and deeper connections with the women's sports ecosystem.",
+              },
+            ].map((card, i) => (
+              <motion.div
+                key={card.title}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: i * 0.12 }}
+                viewport={{ once: true }}
+              >
+                <div className="bg-card rounded-2xl p-8 shadow-[0_2px_20px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.1)] transition-all duration-300 h-full text-center">
+                  <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-6">
+                    {card.icon}
+                  </div>
+                  <h3 className="text-2xl font-display text-foreground mb-3 font-bold">{card.title}</h3>
+                  <p className="text-foreground/70 font-medium leading-relaxed font-serif">{card.desc}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          <motion.p
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            viewport={{ once: true }}
+            className="text-center text-sm text-foreground/50 font-sans tracking-wide mt-10"
+          >
+            Start free and join events as you go. Premium membership coming soon.
+          </motion.p>
+        </div>
+      </section>
+
       {/* Thin yellow divider */}
       <div className="h-[3px] bg-primary" />
 
