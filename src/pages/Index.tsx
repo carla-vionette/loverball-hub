@@ -293,7 +293,7 @@ const Index = () => {
               transition={{ duration: 0.9, ease: "easeOut" }}
               className="relative z-10 max-w-lg">
 
-              <span className="text-[11px] font-sans font-bold tracking-[0.3em] uppercase text-primary-foreground/70 mb-6 block">Women's Sports Fandom Club</span>
+              <span className="text-[11px] font-sans font-bold tracking-[0.3em] uppercase text-primary-foreground/70 mb-6 block">A Sports Community & Content Platform for Women</span>
               <h1 className="font-condensed font-bold text-[4.5rem] sm:text-[6rem] lg:text-[7.5rem] leading-[0.85] tracking-tight text-primary-foreground uppercase mb-8">
                 Her<br />
                 Game.<br />
