@@ -312,7 +312,7 @@ const LandingPage = () => {
                   <h3 className="text-2xl font-display text-foreground mb-4 normal-case">
                     {feature.title}
                   </h3>
-                  <p className="text-foreground/60 leading-relaxed font-serif">
+                  <p className="text-foreground/60 leading-relaxed font-serif font-medium">
                     {feature.desc}
                   </p>
                 </div>
