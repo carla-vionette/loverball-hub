@@ -305,12 +305,12 @@ const Index = () => {
               </p>
               <div className="flex flex-col sm:flex-row items-start gap-4">
                 <Button onClick={openAuthModal} className="rounded-full bg-accent text-accent-foreground hover:bg-accent/90 px-8 py-5 text-[11px] font-sans font-bold tracking-[0.2em] uppercase shadow-xl h-auto">
-                  Join Loverball
+                  Join the Community
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
-                <button onClick={() => document.getElementById("about")?.scrollIntoView({ behavior: "smooth" })} className="text-[11px] font-sans font-bold tracking-[0.2em] uppercase text-primary-foreground/60 hover:text-primary-foreground transition-colors py-4 bg-transparent border-none cursor-pointer">
-                  Learn More ↓
-                </button>
+                <Button onClick={() => document.getElementById("events")?.scrollIntoView({ behavior: "smooth" })} variant="outline" className="rounded-full border-2 border-primary-foreground text-primary-foreground bg-transparent hover:bg-primary-foreground/10 px-8 py-5 text-[11px] font-sans font-bold tracking-[0.2em] uppercase h-auto">
+                  Explore Events & Stories
+                </Button>
               </div>
             </motion.div>
             {/* Decorative script text */}
