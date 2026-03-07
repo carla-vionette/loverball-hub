@@ -386,8 +386,41 @@ const Index = () => {
       </section>
 
       {/* ══════════════════════════════════════════
-                                                     TICKER STRIP — Sport category badges
+                                                     WHAT YOU GET — Three pillars
                                                     ══════════════════════════════════════════ */}
+      <section className="py-20 lg:py-28 bg-background">
+        <div className="max-w-[1400px] mx-auto px-8 lg:px-16">
+          <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} viewport={{ once: true }} className="text-center mb-16">
+            <h2 className="font-condensed text-[3rem] lg:text-[4.5rem] leading-none tracking-tight text-foreground uppercase font-extrabold">
+              What You Get with Loverball
+            </h2>
+          </motion.div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              { icon: Users, title: "Community", desc: "Local chapters, watch parties, and IRL meetups where women fans actually meet and become friends." },
+              { icon: Play, title: "Content", desc: "Curated and AI-powered sports stories that center women fans, culture, and the drama around the game." },
+              { icon: Sparkles, title: "Access", desc: "Early invites to events, member-only experiences, and deeper connections with the women's sports ecosystem." },
+            ].map((card, i) => (
+              <motion.div key={card.title} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: i * 0.12 }} viewport={{ once: true }}>
+                <div className="bg-card rounded-2xl p-8 lg:p-10 shadow-[0_2px_20px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.1)] transition-all duration-300 h-full text-center">
+                  <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-accent/10 mb-6">
+                    <card.icon className="w-8 h-8 text-accent" />
+                  </div>
+                  <h3 className="font-condensed text-2xl lg:text-3xl uppercase text-foreground mb-3 tracking-wide font-bold">{card.title}</h3>
+                  <p className="text-foreground/70 font-medium leading-relaxed font-serif">{card.desc}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ duration: 0.6, delay: 0.4 }} viewport={{ once: true }} className="text-center text-sm text-muted-foreground font-sans tracking-wide mt-10">
+            Start free and join events as you go. Premium membership coming soon.
+          </motion.p>
+        </div>
+      </section>
+
+      {/* TICKER STRIP — Sport category badges */}
       <div className="bg-foreground py-4 overflow-hidden">
         <div className="flex items-center gap-12 animate-[shimmer_20s_linear_infinite] whitespace-nowrap px-8">
           {[...sportCategories, ...sportCategories, ...sportCategories].map((cat, i) =>
