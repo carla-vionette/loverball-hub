@@ -190,7 +190,26 @@ const Profile = () => {
     return () => clearInterval(timer);
   }, []);
 
+  // Personalized feed: filter by user's sports/teams, then show all remaining
+  const personalizedFeed = useMemo(() => {
+    if (!profile || feedItems.length === 0) return feedItems;
+    const userSports = (profile.favorite_sports || []).map(s => s.toLowerCase());
+    const userTeams = (profile.favorite_teams_players || []).map(t => t.toLowerCase());
+    const userLaTeams = ((profile as any).favorite_la_teams || []).map((t: string) => t.toLowerCase());
+    const allUserTags = [...userSports, ...userTeams, ...userLaTeams];
 
+    if (allUserTags.length === 0) return feedItems;
+
+    // Score each item by relevance
+    const scored = feedItems.map(item => {
+      const itemTags = [...(item.sport_tags || []), ...(item.team_tags || [])].map((t: string) => t.toLowerCase());
+      const matchCount = itemTags.filter((tag: string) => allUserTags.some(ut => tag.includes(ut) || ut.includes(tag))).length;
+      return { ...item, _score: matchCount };
+    });
+
+    // Sort: matched items first, then rest
+    return scored.sort((a, b) => b._score - a._score);
+  }, [profile, feedItems]);
 
   const activePerfTeams = TEAM_PERFORMANCE.filter(t => t.winPct > 0);
   const combinedWinPct = activePerfTeams.length > 0 ? activePerfTeams.reduce((s, t) => s + t.winPct, 0) / activePerfTeams.length : 0;
