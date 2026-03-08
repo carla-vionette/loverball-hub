@@ -271,6 +271,15 @@ async function fetchAztroHoroscope(sign: string, day: string) {
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
+  // Rate limit
+  const clientId = req.headers.get('x-forwarded-for') || req.headers.get('cf-connecting-ip') || 'unknown';
+  if (!checkRateLimit(clientId)) {
+    return new Response(
+      JSON.stringify({ error: 'Rate limit exceeded' }),
+      { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
+  }
+
   try {
     const body = await req.json().catch(() => ({}));
     const { sign = "aries", day = "today" } = body;
