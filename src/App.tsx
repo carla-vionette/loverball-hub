@@ -14,6 +14,7 @@ import { usePageTracking } from "@/hooks/usePageTracking";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import ProtectedRoute from "./components/ProtectedRoute";
+import DesktopNav from "./components/DesktopNav";
 
 // Lazy load everything else for code splitting
 const Home = lazy(() => import("./pages/Home"));
