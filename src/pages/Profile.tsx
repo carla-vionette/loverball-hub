@@ -608,53 +608,6 @@ const Profile = () => {
               </motion.div>
             )}
 
-            {/* RECENT ACTIVITY FEED */}
-            <motion.div variants={staggerItem}>
-              <div className="glass-card rounded-2xl overflow-hidden">
-                <div className="p-5 pb-2">
-                  <span className="text-sm font-medium tracking-wider uppercase text-foreground/50">Recent Activity</span>
-                </div>
-                <Tabs defaultValue="all" className="w-full">
-                  <div className="px-5 pt-1 pb-1">
-                    <TabsList className="h-8 w-full justify-start bg-foreground/[0.03]">
-                      <TabsTrigger value="all" className="text-xs px-3 h-7 rounded-full">All</TabsTrigger>
-                      <TabsTrigger value="read" className="text-xs px-3 h-7 rounded-full">Read</TabsTrigger>
-                      <TabsTrigger value="bookmark" className="text-xs px-3 h-7 rounded-full">Bookmarked</TabsTrigger>
-                      <TabsTrigger value="shared" className="text-xs px-3 h-7 rounded-full">Shared</TabsTrigger>
-                    </TabsList>
-                  </div>
-                  {["all", "read", "bookmark", "shared"].map(tab => (
-                    <TabsContent key={tab} value={tab} className="mt-0">
-                      <div className="divide-y divide-border/20">
-                        {RECENT_ACTIVITY.filter(a => tab === "all" || a.type === tab).map((activity, i) => (
-                          <a key={i} href={activity.url} target="_blank" rel="noopener noreferrer" className="flex items-start gap-3 px-5 py-3 hover:bg-foreground/[0.03] transition-colors cursor-pointer group no-underline">
-                            {activity.thumbnail ? (
-                              <img src={activity.thumbnail} alt="" className="w-14 h-10 object-cover rounded-lg mt-0.5 flex-shrink-0" />
-                            ) : (
-                              <div className={`mt-0.5 p-1.5 rounded-full flex-shrink-0 ${activity.type === "read" ? "bg-primary/15" : activity.type === "shared" ? "bg-accent/15" : "bg-secondary"}`}>
-                                {activity.type === "read" ? <BookOpen className="w-3 h-3 text-primary" /> : activity.type === "shared" ? <Share2 className="w-3 h-3 text-accent" /> : <Bookmark className="w-3 h-3 text-foreground/60" />}
-                              </div>
-                            )}
-                            <div className="flex-1 min-w-0">
-                              <p className="text-sm text-foreground leading-snug group-hover:text-primary transition-colors">
-                                <span className="text-muted-foreground capitalize">{activity.type}:</span>{" "}
-                                <span className="font-medium">{activity.title}</span>
-                              </p>
-                              <div className="flex items-center gap-3 mt-1">
-                                <span className="text-xs text-muted-foreground">{activity.time}</span>
-                                <span className="flex items-center gap-1 text-xs text-muted-foreground"><Eye className="w-3 h-3" />{activity.reads}</span>
-                                <span className="flex items-center gap-1 text-xs text-muted-foreground"><Bookmark className="w-3 h-3" />{activity.bookmarks}</span>
-                              </div>
-                            </div>
-                            <ExternalLink className="w-3.5 h-3.5 text-foreground/20 mt-1 shrink-0 group-hover:text-primary transition-colors" />
-                          </a>
-                        ))}
-                      </div>
-                    </TabsContent>
-                  ))}
-                </Tabs>
-              </div>
-            </motion.div>
 
           </motion.div>
         </div>
