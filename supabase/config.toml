@@ -35,3 +35,6 @@ verify_jwt = false
 
 [functions.create-checkout]
 verify_jwt = false
+
+[functions.fetch-sports-news]
+verify_jwt = false
