@@ -1,8 +1,9 @@
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
 interface LinkPreviewData {
@@ -14,46 +15,67 @@ interface LinkPreviewData {
   favicon: string | null;
 }
 
-// Extract meta content from HTML
+// SSRF protection: block private/internal IPs
+const BLOCKED_PATTERNS = [
+  /^https?:\/\/(localhost|127\.0\.0\.1|0\.0\.0\.0|\[::1\])/i,
+  /^https?:\/\/192\.168\./,
+  /^https?:\/\/10\./,
+  /^https?:\/\/172\.(1[6-9]|2[0-9]|3[0-1])\./,
+  /^https?:\/\/169\.254\./,
+  /^https?:\/\/100\.(6[4-9]|[7-9][0-9]|1[0-2][0-7])\./,
+  /^https?:\/\/\[?fe80:/i,
+  /^https?:\/\/\[?fd/i,
+  /^https?:\/\/\[?fc/i,
+];
+
+function isBlockedUrl(url: string): boolean {
+  return BLOCKED_PATTERNS.some(p => p.test(url));
+}
+
+// Rate limiter
+const rateLimitMap = new Map<string, { count: number; windowStart: number }>();
+const RATE_LIMIT_WINDOW = 60000;
+const RATE_LIMIT_MAX = 20;
+
+function checkRateLimit(key: string): boolean {
+  const now = Date.now();
+  const entry = rateLimitMap.get(key);
+  if (!entry || now - entry.windowStart > RATE_LIMIT_WINDOW) {
+    rateLimitMap.set(key, { count: 1, windowStart: now });
+    return true;
+  }
+  if (entry.count >= RATE_LIMIT_MAX) return false;
+  entry.count++;
+  return true;
+}
+
 function extractMeta(html: string, properties: string[]): string | null {
   for (const prop of properties) {
-    // Try property attribute
     const propMatch = html.match(new RegExp(`<meta[^>]+property=["']${prop}["'][^>]+content=["']([^"']+)["']`, 'i'));
     if (propMatch) return propMatch[1];
-    
-    // Try content before property
     const propMatch2 = html.match(new RegExp(`<meta[^>]+content=["']([^"']+)["'][^>]+property=["']${prop}["']`, 'i'));
     if (propMatch2) return propMatch2[1];
-    
-    // Try name attribute
     const nameMatch = html.match(new RegExp(`<meta[^>]+name=["']${prop}["'][^>]+content=["']([^"']+)["']`, 'i'));
     if (nameMatch) return nameMatch[1];
-    
-    // Try content before name
     const nameMatch2 = html.match(new RegExp(`<meta[^>]+content=["']([^"']+)["'][^>]+name=["']${prop}["']`, 'i'));
     if (nameMatch2) return nameMatch2[1];
   }
   return null;
 }
 
-// Extract title from HTML
 function extractTitle(html: string): string | null {
   const ogTitle = extractMeta(html, ['og:title', 'twitter:title']);
   if (ogTitle) return ogTitle;
-  
   const titleMatch = html.match(/<title[^>]*>([^<]+)<\/title>/i);
   return titleMatch ? titleMatch[1].trim() : null;
 }
 
-// Extract favicon
 function extractFavicon(html: string, baseUrl: string): string | null {
-  // Try various link rel patterns
   const patterns = [
     /<link[^>]+rel=["'](?:shortcut )?icon["'][^>]+href=["']([^"']+)["']/i,
     /<link[^>]+href=["']([^"']+)["'][^>]+rel=["'](?:shortcut )?icon["']/i,
     /<link[^>]+rel=["']apple-touch-icon["'][^>]+href=["']([^"']+)["']/i,
   ];
-  
   for (const pattern of patterns) {
     const match = html.match(pattern);
     if (match) {
@@ -67,8 +89,6 @@ function extractFavicon(html: string, baseUrl: string): string | null {
       return `${baseUrl}/${href}`;
     }
   }
-  
-  // Default favicon path
   try {
     const url = new URL(baseUrl);
     return `${url.origin}/favicon.ico`;
@@ -77,17 +97,13 @@ function extractFavicon(html: string, baseUrl: string): string | null {
   }
 }
 
-// Resolve relative URLs to absolute
 function resolveUrl(href: string | null, baseUrl: string): string | null {
   if (!href) return null;
   if (href.startsWith('http')) return href;
   if (href.startsWith('//')) return `https:${href}`;
-  
   try {
     const base = new URL(baseUrl);
-    if (href.startsWith('/')) {
-      return `${base.origin}${href}`;
-    }
+    if (href.startsWith('/')) return `${base.origin}${href}`;
     return new URL(href, baseUrl).href;
   } catch {
     return href;
@@ -95,18 +111,41 @@ function resolveUrl(href: string | null, baseUrl: string): string | null {
 }
 
 serve(async (req) => {
-  // Handle CORS preflight
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    // Require authentication to prevent SSRF abuse
+    // Require authentication
     const authHeader = req.headers.get("Authorization");
     if (!authHeader?.startsWith("Bearer ")) {
       return new Response(
         JSON.stringify({ error: "Unauthorized" }),
         { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
+    const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+      global: { headers: { Authorization: authHeader } }
+    });
+
+    const token = authHeader.replace('Bearer ', '');
+    const { data: claimsData, error: claimsError } = await supabase.auth.getClaims(token);
+    if (claimsError || !claimsData?.claims) {
+      return new Response(
+        JSON.stringify({ error: "Unauthorized" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const userId = claimsData.claims.sub as string;
+
+    if (!checkRateLimit(userId)) {
+      return new Response(
+        JSON.stringify({ error: "Rate limit exceeded" }),
+        { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
@@ -119,7 +158,7 @@ serve(async (req) => {
       );
     }
 
-    // Validate URL
+    // Validate URL format
     let parsedUrl: URL;
     try {
       parsedUrl = new URL(url);
@@ -130,7 +169,22 @@ serve(async (req) => {
       );
     }
 
-    // Fetch the URL with a timeout
+    // Only allow http/https
+    if (!['http:', 'https:'].includes(parsedUrl.protocol)) {
+      return new Response(
+        JSON.stringify({ error: "Only HTTP/HTTPS URLs are allowed" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // SSRF protection: block private/internal IPs
+    if (isBlockedUrl(url)) {
+      return new Response(
+        JSON.stringify({ error: "Blocked URL" }),
+        { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 8000);
 
@@ -154,7 +208,6 @@ serve(async (req) => {
 
     const html = await response.text();
     
-    // Extract metadata
     const preview: LinkPreviewData = {
       url: response.url || url,
       title: extractTitle(html),

@@ -1,3 +1,4 @@
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
 const corsHeaders = {
@@ -24,6 +25,23 @@ function setCache(key: string, data: unknown) {
   }
 }
 
+// Simple in-memory rate limiter
+const rateLimitMap = new Map<string, { count: number; windowStart: number }>();
+const RATE_LIMIT_WINDOW = 60000; // 1 minute
+const RATE_LIMIT_MAX = 15;
+
+function checkRateLimit(userId: string): boolean {
+  const now = Date.now();
+  const entry = rateLimitMap.get(userId);
+  if (!entry || now - entry.windowStart > RATE_LIMIT_WINDOW) {
+    rateLimitMap.set(userId, { count: 1, windowStart: now });
+    return true;
+  }
+  if (entry.count >= RATE_LIMIT_MAX) return false;
+  entry.count++;
+  return true;
+}
+
 async function fetchWithRetry(url: string, retries = 3, timeoutMs = 5000): Promise<Response> {
   for (let attempt = 1; attempt <= retries; attempt++) {
     try {
@@ -46,6 +64,39 @@ serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
   try {
+    // Require authentication
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader?.startsWith('Bearer ')) {
+      return new Response(
+        JSON.stringify({ error: 'Unauthorized' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
+    const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+      global: { headers: { Authorization: authHeader } }
+    });
+
+    const token = authHeader.replace('Bearer ', '');
+    const { data: claimsData, error: claimsError } = await supabase.auth.getClaims(token);
+    if (claimsError || !claimsData?.claims) {
+      return new Response(
+        JSON.stringify({ error: 'Unauthorized' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const userId = claimsData.claims.sub as string;
+
+    if (!checkRateLimit(userId)) {
+      return new Response(
+        JSON.stringify({ error: 'Rate limit exceeded', articles: [], lastUpdated: new Date().toISOString() }),
+        { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     const NEWS_API_KEY = Deno.env.get('NEWS_API_KEY');
     if (!NEWS_API_KEY) {
       return new Response(JSON.stringify({
@@ -68,12 +119,10 @@ serve(async (req) => {
       sortBy = 'publishedAt',
       language = 'en',
       country = 'us',
-      // NEW: personalized preferences
       sports = [] as string[],
       teams = [] as string[],
     } = body;
 
-    // Build a personalized query from user preferences
     let personalizedQuery = query;
     if (!query && (sports.length > 0 || teams.length > 0)) {
       const terms = [...teams, ...sports].filter(Boolean).slice(0, 5);
@@ -90,7 +139,6 @@ serve(async (req) => {
 
     let url: string;
     if (personalizedQuery || endpoint === 'everything') {
-      // Use 'everything' endpoint for personalized/team-specific queries
       const q = personalizedQuery || 'sports';
       url = `https://newsapi.org/v2/everything?q=${encodeURIComponent(q)}&language=${language}&sortBy=${sortBy}&page=${page}&pageSize=${pageSize}&apiKey=${NEWS_API_KEY}`;
     } else {
