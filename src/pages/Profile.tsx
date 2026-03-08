@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { MapPin, Edit, Sparkles, LogOut, Calendar, Clock, TrendingUp, TrendingDown, Trophy, Flame, Bookmark, BookOpen, Award, ChevronRight, ArrowUpRight, Share2, AlertTriangle, Ticket, Play, Eye, Lightbulb, Settings, Heart, MessageCircle, Loader2, ExternalLink } from "lucide-react";
+import { MapPin, Edit, Sparkles, LogOut, Calendar, Clock, TrendingUp, TrendingDown, Trophy, Flame, Bookmark, BookOpen, Award, ChevronRight, ArrowUpRight, Share2, AlertTriangle, Ticket, Play, Eye, Lightbulb, Settings, Heart, MessageCircle, Loader2, ExternalLink, Newspaper, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -123,6 +123,17 @@ function getGreeting(): string {
   return "Good evening";
 }
 
+function getTimeAgo(dateStr: string): string {
+  const now = Date.now();
+  const then = new Date(dateStr).getTime();
+  const diffMs = now - then;
+  const diffMins = Math.floor(diffMs / 60000);
+  if (diffMins < 60) return `${diffMins}m ago`;
+  const diffHrs = Math.floor(diffMins / 60);
+  if (diffHrs < 24) return `${diffHrs}h ago`;
+  return `${Math.floor(diffHrs / 24)}d ago`;
+}
+
 const staggerContainer = {
   hidden: { opacity: 0 },
   show: { opacity: 1, transition: { staggerChildren: 0.08 } },
@@ -137,16 +148,9 @@ const Profile = () => {
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [rsvpEvents, setRsvpEvents] = useState<RSVPEvent[]>([]);
   const [suggestedEvents, setSuggestedEvents] = useState<SuggestedEvent[]>([]);
+  const [feedItems, setFeedItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentTime, setCurrentTime] = useState(new Date());
-  const CURATED_ARTICLES = [
-    { title: "Caitlin Clark WNBA Season", source: "ESPN", views: "12.4K", url: "https://google.com/search?q=caitlin+clark+wnba", summary: "Clark shattered multiple records in her sophomore season, averaging 27 points and 8 assists per game." },
-    { title: "Angel Reese Chicago Sky", source: "The Athletic", views: "8.7K", url: "https://google.com/search?q=angel+reese+chicago+sky", summary: "Reese continues to dominate the boards and leads the Sky's push for a playoff spot this season." },
-    { title: "NWSL Expansion 2026", source: "ESPN", views: "6.2K", url: "https://google.com/search?q=nwsl+expansion+2026", summary: "Two new expansion teams join the league, bringing the NWSL to 16 clubs and expanding into new markets." },
-    { title: "USWNT World Cup Prep", source: "Fox Sports", views: "9.1K", url: "https://google.com/search?q=uswnt+world+cup+2026", summary: "The national team ramps up preparations with friendlies and training camps ahead of the 2027 World Cup cycle." },
-    { title: "Title IX Women Athletics", source: "NYT", views: "5.5K", url: "https://google.com/search?q=title+ix+women+athletics", summary: "54 years after its passage, Title IX continues to reshape college athletics and open doors for women in sports." },
-    { title: "LA28 Olympics Women Sports", source: "NBC", views: "7.3K", url: "https://google.com/search?q=la28+olympics+women+sports", summary: "With LA28 approaching, women's events are set to receive unprecedented coverage and investment." },
-  ];
   
   const goTo = (path: string) => { window.location.href = path; };
   const { toast } = useToast();
@@ -164,10 +168,11 @@ const Profile = () => {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user || cancelled) { if (!cancelled) goTo("/auth"); return; }
 
-        const [profileResult, rsvpResult, suggestedResult] = await Promise.all([
+        const [profileResult, rsvpResult, suggestedResult, feedResult] = await Promise.all([
           supabase.from("profiles").select("*").eq("id", user.id).maybeSingle(),
           supabase.from("event_rsvps").select(`id, status, event:events (id, title, event_date, event_time, venue_name, city, image_url)`).eq("user_id", user.id).order("created_at", { ascending: false }),
           supabase.from("events").select("id, title, event_date, event_time, venue_name, city, image_url").gte("event_date", new Date().toISOString().split("T")[0]).eq("status", "published").order("event_date", { ascending: true }).limit(4),
+          supabase.from("feed_items").select("*").gte("created_at", new Date(Date.now() - 36 * 60 * 60 * 1000).toISOString()).order("created_at", { ascending: false }),
         ]);
 
         if (cancelled) return;
@@ -179,6 +184,7 @@ const Profile = () => {
           setRsvpEvents(rsvpResult.data.filter(r => r.event !== null) as RSVPEvent[]);
         }
         if (suggestedResult.data) setSuggestedEvents(suggestedResult.data);
+        if (feedResult.data) setFeedItems(feedResult.data);
       } catch (err) {
         console.error("Profile fetch error:", err);
         if (!cancelled) goTo("/onboarding");
@@ -195,7 +201,26 @@ const Profile = () => {
     return () => clearInterval(timer);
   }, []);
 
+  // Personalized feed: filter by user's sports/teams, then show all remaining
+  const personalizedFeed = useMemo(() => {
+    if (!profile || feedItems.length === 0) return feedItems;
+    const userSports = (profile.favorite_sports || []).map(s => s.toLowerCase());
+    const userTeams = (profile.favorite_teams_players || []).map(t => t.toLowerCase());
+    const userLaTeams = ((profile as any).favorite_la_teams || []).map((t: string) => t.toLowerCase());
+    const allUserTags = [...userSports, ...userTeams, ...userLaTeams];
 
+    if (allUserTags.length === 0) return feedItems;
+
+    // Score each item by relevance
+    const scored = feedItems.map(item => {
+      const itemTags = [...(item.sport_tags || []), ...(item.team_tags || [])].map((t: string) => t.toLowerCase());
+      const matchCount = itemTags.filter((tag: string) => allUserTags.some(ut => tag.includes(ut) || ut.includes(tag))).length;
+      return { ...item, _score: matchCount };
+    });
+
+    // Sort: matched items first, then rest
+    return scored.sort((a, b) => b._score - a._score);
+  }, [profile, feedItems]);
 
   const activePerfTeams = TEAM_PERFORMANCE.filter(t => t.winPct > 0);
   const combinedWinPct = activePerfTeams.length > 0 ? activePerfTeams.reduce((s, t) => s + t.winPct, 0) / activePerfTeams.length : 0;
@@ -422,39 +447,64 @@ const Profile = () => {
               </div>
             </motion.div>
 
-            {/* RECOMMENDED FOR YOU — LIVE ARTICLES */}
-            <motion.div variants={staggerItem}>
-              <div className="glass-card rounded-2xl overflow-hidden">
-                <div className="p-5 pb-2">
-                  <div className="flex items-center gap-2">
-                    <Lightbulb className="w-4 h-4 text-primary" />
-                    <span className="text-sm font-medium tracking-wider uppercase text-foreground/50">Recommended for You</span>
+            {/* MY FEED — PERSONALIZED NEWS */}
+            {personalizedFeed.length > 0 && (
+              <motion.div variants={staggerItem}>
+                <div className="glass-card rounded-2xl overflow-hidden">
+                  <div className="p-5 pb-2">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Zap className="w-4 h-4 text-primary" />
+                        <span className="text-sm font-medium tracking-wider uppercase text-foreground/50">My Feed</span>
+                      </div>
+                      <Badge variant="outline" className="text-[10px] rounded-full border-border/30 text-muted-foreground">
+                        <Newspaper className="w-3 h-3 mr-1" /> {personalizedFeed.length} stories
+                      </Badge>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-1">Curated based on your teams & interests</p>
+                  </div>
+                  <div className="divide-y divide-border/20">
+                    {personalizedFeed.map((item, i) => {
+                      const timeAgo = getTimeAgo(item.created_at);
+                      const isRelevant = item._score > 0;
+                      return (
+                        <a
+                          key={item.id || i}
+                          href={item.source_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="block px-5 py-4 hover:bg-foreground/[0.06] transition-colors cursor-pointer group no-underline"
+                        >
+                          <div className="flex items-center gap-2 mb-1.5">
+                            <span className="text-[10px] font-semibold text-primary/70 uppercase tracking-wider">{item.source}</span>
+                            <span className="text-[10px] text-muted-foreground">•</span>
+                            <span className="text-[10px] text-muted-foreground">{timeAgo}</span>
+                            {isRelevant && (
+                              <>
+                                <span className="text-[10px] text-muted-foreground">•</span>
+                                <span className="text-[10px] text-primary font-semibold flex items-center gap-0.5"><Zap className="w-2.5 h-2.5" />For you</span>
+                              </>
+                            )}
+                          </div>
+                          <p className="text-sm font-medium text-foreground group-hover:text-primary transition-colors flex items-center gap-1.5">
+                            {item.title}
+                            <ExternalLink className="w-3 h-3 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
+                          </p>
+                          <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed">{item.summary}</p>
+                          {(item.sport_tags?.length > 0 || item.team_tags?.length > 0) && (
+                            <div className="flex flex-wrap gap-1 mt-2">
+                              {[...(item.sport_tags || []), ...(item.team_tags || [])].slice(0, 4).map((tag: string, ti: number) => (
+                                <Badge key={ti} variant="secondary" className="text-[9px] px-1.5 py-0 rounded-full">{tag}</Badge>
+                              ))}
+                            </div>
+                          )}
+                        </a>
+                      );
+                    })}
                   </div>
                 </div>
-                <div className="divide-y divide-border/20">
-                  {CURATED_ARTICLES.map((article, i) => (
-                    <a
-                      key={i}
-                      href={article.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="block px-5 py-4 hover:bg-foreground/[0.06] transition-colors cursor-pointer group no-underline"
-                    >
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className="text-[10px] font-semibold text-primary/70 uppercase tracking-wider">{article.source}</span>
-                        <span className="text-[10px] text-muted-foreground">•</span>
-                        <span className="flex items-center gap-1 text-[10px] text-muted-foreground"><Eye className="w-3 h-3" />{article.views}</span>
-                      </div>
-                      <p className="text-sm font-medium text-foreground group-hover:text-primary transition-colors flex items-center gap-1.5">
-                        {article.title}
-                        <ExternalLink className="w-3 h-3 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
-                      </p>
-                      <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{article.summary}</p>
-                    </a>
-                  ))}
-                </div>
-              </div>
-            </motion.div>
+              </motion.div>
+            )}
 
 
 

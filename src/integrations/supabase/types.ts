@@ -407,6 +407,45 @@ export type Database = {
         }
         Relationships: []
       }
+      feed_items: {
+        Row: {
+          category: string
+          created_at: string
+          id: string
+          image_url: string | null
+          source: string
+          source_url: string
+          sport_tags: string[]
+          summary: string
+          team_tags: string[]
+          title: string
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          source: string
+          source_url: string
+          sport_tags?: string[]
+          summary: string
+          team_tags?: string[]
+          title: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          source?: string
+          source_url?: string
+          sport_tags?: string[]
+          summary?: string
+          team_tags?: string[]
+          title?: string
+        }
+        Relationships: []
+      }
       group_members: {
         Row: {
           group_id: string
