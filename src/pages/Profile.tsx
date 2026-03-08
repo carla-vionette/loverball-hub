@@ -161,6 +161,25 @@ const Profile = () => {
     goTo("/");
   };
 
+  // Fetch feed items from real RSS via edge function
+  const refreshFeed = async () => {
+    setFeedLoading(true);
+    try {
+      // Call edge function to refresh RSS articles
+      await supabase.functions.invoke('fetch-sports-news');
+    } catch (err) {
+      console.warn('Feed refresh failed:', err);
+    }
+    // Fetch from DB (no 36h filter - show all recent articles)
+    const { data } = await supabase
+      .from("feed_items")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .limit(30);
+    if (data) setFeedItems(data);
+    setFeedLoading(false);
+  };
+
   useEffect(() => {
     let cancelled = false;
     const fetchProfile = async () => {
@@ -168,14 +187,10 @@ const Profile = () => {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user || cancelled) { if (!cancelled) goTo("/auth"); return; }
 
-        // Kick off RSS refresh in background (fire-and-forget)
-        supabase.functions.invoke('fetch-sports-news').catch(err => console.warn('Feed refresh failed:', err));
-
-        const [profileResult, rsvpResult, suggestedResult, feedResult] = await Promise.all([
+        const [profileResult, rsvpResult, suggestedResult] = await Promise.all([
           supabase.from("profiles").select("*").eq("id", user.id).maybeSingle(),
           supabase.from("event_rsvps").select(`id, status, event:events (id, title, event_date, event_time, venue_name, city, image_url)`).eq("user_id", user.id).order("created_at", { ascending: false }),
           supabase.from("events").select("id, title, event_date, event_time, venue_name, city, image_url").gte("event_date", new Date().toISOString().split("T")[0]).eq("status", "published").order("event_date", { ascending: true }).limit(4),
-          supabase.from("feed_items").select("*").gte("created_at", new Date(Date.now() - 36 * 60 * 60 * 1000).toISOString()).order("created_at", { ascending: false }),
         ]);
 
         if (cancelled) return;
@@ -187,20 +202,6 @@ const Profile = () => {
           setRsvpEvents(rsvpResult.data.filter(r => r.event !== null) as RSVPEvent[]);
         }
         if (suggestedResult.data) setSuggestedEvents(suggestedResult.data);
-        if (feedResult.data) setFeedItems(feedResult.data);
-
-        // Delayed re-fetch after RSS refresh completes
-        if (!cancelled) {
-          setTimeout(async () => {
-            if (cancelled) return;
-            const { data } = await supabase
-              .from("feed_items")
-              .select("*")
-              .gte("created_at", new Date(Date.now() - 36 * 60 * 60 * 1000).toISOString())
-              .order("created_at", { ascending: false });
-            if (data && !cancelled) setFeedItems(data);
-          }, 5000);
-        }
       } catch (err) {
         console.error("Profile fetch error:", err);
         if (!cancelled) goTo("/onboarding");
@@ -209,6 +210,7 @@ const Profile = () => {
       }
     };
     fetchProfile();
+    refreshFeed();
     return () => { cancelled = true; };
   }, []);
 
