@@ -503,125 +503,124 @@ const Profile = () => {
               </Collapsible>
             </motion.div>
 
-            {/* FOR YOU — REAL RSS NEWS FEED */}
+            {/* YOUR CURATED NEWS — REAL RSS NEWS FEED - COLLAPSIBLE */}
             <motion.div variants={staggerItem}>
-              <div className="glass-card rounded-2xl overflow-hidden">
-                <div className="p-5 pb-2">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <Zap className="w-4 h-4 text-primary" />
-                      <span className="text-sm font-medium tracking-wider uppercase text-foreground/50">For You</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      {!feedLoading && feedItems.length > 0 && (
-                        <Badge variant="outline" className="text-[10px] rounded-full border-border/30 text-muted-foreground">
-                          <Newspaper className="w-3 h-3 mr-1" /> {personalizedFeed.length} stories
-                        </Badge>
-                      )}
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-7 w-7 p-0"
-                        disabled={feedLoading}
-                        onClick={refreshFeed}
-                      >
-                        <RefreshCw className={`w-3.5 h-3.5 text-muted-foreground ${feedLoading ? 'animate-spin' : ''}`} />
-                      </Button>
-                    </div>
-                  </div>
-                  <p className="text-xs text-muted-foreground mt-1">Real articles from Just Women's Sports, BBC Sport & ESPN</p>
-                </div>
-
-                {feedLoading && feedItems.length === 0 ? (
-                  <div className="px-5 py-12 flex flex-col items-center gap-3">
-                    <Loader2 className="w-6 h-6 text-primary animate-spin" />
-                    <p className="text-sm text-muted-foreground">Loading latest sports news…</p>
-                  </div>
-                ) : personalizedFeed.length === 0 ? (
-                  <div className="px-5 py-8 text-center">
-                    <Newspaper className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
-                    <p className="text-sm text-muted-foreground">No articles available right now. Check back soon!</p>
-                  </div>
-                ) : (
-                  <div className="divide-y divide-border/20">
-                    {personalizedFeed.map((item, i) => {
-                      const timeAgo = getTimeAgo(item.created_at);
-                      const isRelevant = item._score > 0;
-                      return (
-                        <a
-                          key={item.id || i}
-                          href={item.source_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="block px-5 py-4 hover:bg-foreground/[0.06] transition-colors cursor-pointer group no-underline"
-                        >
-                          <div className="flex items-center gap-2 mb-1.5">
-                            <span className="text-[10px] font-semibold text-primary/70 uppercase tracking-wider">{item.source}</span>
-                            <span className="text-[10px] text-muted-foreground">•</span>
-                            <span className="text-[10px] text-muted-foreground">{timeAgo}</span>
-                            {isRelevant && (
-                              <>
-                                <span className="text-[10px] text-muted-foreground">•</span>
-                                <span className="text-[10px] text-primary font-semibold flex items-center gap-0.5"><Zap className="w-2.5 h-2.5" />For you</span>
-                              </>
-                            )}
-                          </div>
-                          <p className="text-sm font-medium text-foreground group-hover:text-primary transition-colors flex items-center gap-1.5">
-                            {item.title}
-                            <ExternalLink className="w-3 h-3 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
-                          </p>
-                          {item.summary && (
-                            <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed">{item.summary}</p>
-                          )}
-                          {(item.sport_tags?.length > 0 || item.team_tags?.length > 0) && (
-                            <div className="flex flex-wrap gap-1 mt-2">
-                              {[...(item.sport_tags || []), ...(item.team_tags || [])].slice(0, 4).map((tag: string, ti: number) => (
-                                <Badge key={ti} variant="secondary" className="text-[9px] px-1.5 py-0 rounded-full">{tag}</Badge>
-                              ))}
-                            </div>
-                          )}
-                        </a>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-            </motion.div>
-
-
-
-            {/* MY RSVPED EVENTS */}
-            {rsvpEvents.length > 0 && (
-              <motion.div variants={staggerItem}>
+              <Collapsible open={newsOpen} onOpenChange={setNewsOpen}>
                 <div className="glass-card rounded-2xl overflow-hidden">
-                  <div className="p-5 pb-3">
-                    <div className="flex items-center gap-2">
-                      <Calendar className="w-5 h-5 text-primary" />
-                      <span className="text-sm font-medium tracking-wider uppercase text-foreground/50">My Events</span>
+                  <div className="p-5 pb-2">
+                    <div className="flex items-center justify-between">
+                      <CollapsibleTrigger asChild>
+                        <button className="flex items-center gap-2 cursor-pointer">
+                          <Zap className="w-4 h-4 text-primary" />
+                          <span className="text-sm font-medium tracking-wider uppercase text-foreground/50">Your Curated News</span>
+                          <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform duration-200 ${newsOpen ? 'rotate-180' : ''}`} />
+                        </button>
+                      </CollapsibleTrigger>
+                      <div className="flex items-center gap-2">
+                        {!feedLoading && feedItems.length > 0 && (
+                          <Badge variant="outline" className="text-[10px] rounded-full border-border/30 text-muted-foreground">
+                            <Newspaper className="w-3 h-3 mr-1" /> {personalizedFeed.length} stories
+                          </Badge>
+                        )}
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-7 w-7 p-0"
+                          disabled={feedLoading}
+                          onClick={refreshFeed}
+                        >
+                          <RefreshCw className={`w-3.5 h-3.5 text-muted-foreground ${feedLoading ? 'animate-spin' : ''}`} />
+                        </Button>
+                      </div>
                     </div>
+                    <p className="text-xs text-muted-foreground mt-1">Real articles from Just Women's Sports, BBC Sport & ESPN</p>
                   </div>
-                  <div className="px-5 pb-5">
-                    <div className="grid md:grid-cols-2 gap-4">
-                      {rsvpEvents.map(rsvp => (
-                        <div key={rsvp.id} className="glass-card rounded-xl p-4 cursor-pointer hover:border-primary/30 transition-colors" onClick={() => goTo("/events")}>
-                          {rsvp.event.image_url ? <img src={rsvp.event.image_url} alt={rsvp.event.title} className="w-full h-32 object-cover rounded-lg mb-3" /> : <div className="w-full h-32 bg-muted rounded-lg mb-3 flex items-center justify-center"><Calendar className="w-8 h-8 text-muted-foreground" /></div>}
-                          <div className="flex items-start justify-between gap-2">
-                            <div>
-                              <p className="font-medium text-foreground">{rsvp.event.title}</p>
-                              <p className="text-sm text-muted-foreground">{rsvp.event.venue_name || rsvp.event.city || "Location TBD"}</p>
-                              <div className="flex items-center gap-2 mt-1 text-xs text-muted-foreground">
-                                <Calendar className="w-3 h-3" /><span>{format(new Date(rsvp.event.event_date), "MMM d, yyyy")}</span>
-                                {rsvp.event.event_time && (<><Clock className="w-3 h-3 ml-1" /><span>{rsvp.event.event_time}</span></>)}
+
+                  {feedLoading && feedItems.length === 0 ? (
+                    <div className="px-5 py-12 flex flex-col items-center gap-3">
+                      <Loader2 className="w-6 h-6 text-primary animate-spin" />
+                      <p className="text-sm text-muted-foreground">Loading latest sports news…</p>
+                    </div>
+                  ) : personalizedFeed.length === 0 ? (
+                    <div className="px-5 py-8 text-center">
+                      <Newspaper className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
+                      <p className="text-sm text-muted-foreground">No articles available right now. Check back soon!</p>
+                    </div>
+                  ) : (
+                    <>
+                      {/* Preview: first 3 articles always visible */}
+                      {!newsOpen && (
+                        <div className="divide-y divide-border/20">
+                          {personalizedFeed.slice(0, 3).map((item, i) => (
+                            <a
+                              key={item.id || i}
+                              href={item.source_url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="block px-5 py-3 hover:bg-foreground/[0.06] transition-colors cursor-pointer group no-underline"
+                            >
+                              <div className="flex items-center gap-2 mb-1">
+                                <span className="text-[10px] font-semibold text-primary/70 uppercase tracking-wider">{item.source}</span>
+                                <span className="text-[10px] text-muted-foreground">• {getTimeAgo(item.created_at)}</span>
                               </div>
+                              <p className="text-sm font-medium text-foreground group-hover:text-primary transition-colors line-clamp-1">{item.title}</p>
+                            </a>
+                          ))}
+                          {personalizedFeed.length > 3 && (
+                            <div className="px-5 py-2 text-center">
+                              <span className="text-xs text-muted-foreground">+{personalizedFeed.length - 3} more stories</span>
                             </div>
-                            <Badge variant={rsvp.status === "confirmed" ? "default" : "secondary"} className="text-xs rounded-full">{rsvp.status}</Badge>
-                          </div>
+                          )}
                         </div>
-                      ))}
-                    </div>
-                  </div>
+                      )}
+                      <CollapsibleContent>
+                        <div className="divide-y divide-border/20">
+                          {personalizedFeed.map((item, i) => {
+                            const timeAgo = getTimeAgo(item.created_at);
+                            const isRelevant = item._score > 0;
+                            return (
+                              <a
+                                key={item.id || i}
+                                href={item.source_url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="block px-5 py-4 hover:bg-foreground/[0.06] transition-colors cursor-pointer group no-underline"
+                              >
+                                <div className="flex items-center gap-2 mb-1.5">
+                                  <span className="text-[10px] font-semibold text-primary/70 uppercase tracking-wider">{item.source}</span>
+                                  <span className="text-[10px] text-muted-foreground">•</span>
+                                  <span className="text-[10px] text-muted-foreground">{timeAgo}</span>
+                                  {isRelevant && (
+                                    <>
+                                      <span className="text-[10px] text-muted-foreground">•</span>
+                                      <span className="text-[10px] text-primary font-semibold flex items-center gap-0.5"><Zap className="w-2.5 h-2.5" />For you</span>
+                                    </>
+                                  )}
+                                </div>
+                                <p className="text-sm font-medium text-foreground group-hover:text-primary transition-colors flex items-center gap-1.5">
+                                  {item.title}
+                                  <ExternalLink className="w-3 h-3 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
+                                </p>
+                                {item.summary && (
+                                  <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed">{item.summary}</p>
+                                )}
+                                {(item.sport_tags?.length > 0 || item.team_tags?.length > 0) && (
+                                  <div className="flex flex-wrap gap-1 mt-2">
+                                    {[...(item.sport_tags || []), ...(item.team_tags || [])].slice(0, 4).map((tag: string, ti: number) => (
+                                      <Badge key={ti} variant="secondary" className="text-[9px] px-1.5 py-0 rounded-full">{tag}</Badge>
+                                    ))}
+                                  </div>
+                                )}
+                              </a>
+                            );
+                          })}
+                        </div>
+                      </CollapsibleContent>
+                    </>
+                  )}
                 </div>
-              </motion.div>
+              </Collapsible>
+            </motion.div>
             )}
 
             {/* RECOMMENDED EVENTS */}
