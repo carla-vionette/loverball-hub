@@ -465,22 +465,46 @@ const Profile = () => {
               </div>
             </motion.div>
 
-            {/* MY FEED — PERSONALIZED NEWS */}
-            {personalizedFeed.length > 0 && (
-              <motion.div variants={staggerItem}>
-                <div className="glass-card rounded-2xl overflow-hidden">
-                  <div className="p-5 pb-2">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <Zap className="w-4 h-4 text-primary" />
-                        <span className="text-sm font-medium tracking-wider uppercase text-foreground/50">My Feed</span>
-                      </div>
-                      <Badge variant="outline" className="text-[10px] rounded-full border-border/30 text-muted-foreground">
-                        <Newspaper className="w-3 h-3 mr-1" /> {personalizedFeed.length} stories
-                      </Badge>
+            {/* FOR YOU — REAL RSS NEWS FEED */}
+            <motion.div variants={staggerItem}>
+              <div className="glass-card rounded-2xl overflow-hidden">
+                <div className="p-5 pb-2">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Zap className="w-4 h-4 text-primary" />
+                      <span className="text-sm font-medium tracking-wider uppercase text-foreground/50">For You</span>
                     </div>
-                    <p className="text-xs text-muted-foreground mt-1">Curated based on your teams & interests</p>
+                    <div className="flex items-center gap-2">
+                      {!feedLoading && feedItems.length > 0 && (
+                        <Badge variant="outline" className="text-[10px] rounded-full border-border/30 text-muted-foreground">
+                          <Newspaper className="w-3 h-3 mr-1" /> {personalizedFeed.length} stories
+                        </Badge>
+                      )}
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-7 w-7 p-0"
+                        disabled={feedLoading}
+                        onClick={refreshFeed}
+                      >
+                        <RefreshCw className={`w-3.5 h-3.5 text-muted-foreground ${feedLoading ? 'animate-spin' : ''}`} />
+                      </Button>
+                    </div>
                   </div>
+                  <p className="text-xs text-muted-foreground mt-1">Real articles from Just Women's Sports, BBC Sport & ESPN</p>
+                </div>
+
+                {feedLoading && feedItems.length === 0 ? (
+                  <div className="px-5 py-12 flex flex-col items-center gap-3">
+                    <Loader2 className="w-6 h-6 text-primary animate-spin" />
+                    <p className="text-sm text-muted-foreground">Loading latest sports news…</p>
+                  </div>
+                ) : personalizedFeed.length === 0 ? (
+                  <div className="px-5 py-8 text-center">
+                    <Newspaper className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
+                    <p className="text-sm text-muted-foreground">No articles available right now. Check back soon!</p>
+                  </div>
+                ) : (
                   <div className="divide-y divide-border/20">
                     {personalizedFeed.map((item, i) => {
                       const timeAgo = getTimeAgo(item.created_at);
@@ -508,7 +532,9 @@ const Profile = () => {
                             {item.title}
                             <ExternalLink className="w-3 h-3 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
                           </p>
-                          <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed">{item.summary}</p>
+                          {item.summary && (
+                            <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed">{item.summary}</p>
+                          )}
                           {(item.sport_tags?.length > 0 || item.team_tags?.length > 0) && (
                             <div className="flex flex-wrap gap-1 mt-2">
                               {[...(item.sport_tags || []), ...(item.team_tags || [])].slice(0, 4).map((tag: string, ti: number) => (
@@ -520,9 +546,9 @@ const Profile = () => {
                       );
                     })}
                   </div>
-                </div>
-              </motion.div>
-            )}
+                )}
+              </div>
+            </motion.div>
 
 
 
