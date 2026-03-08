@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { MapPin, Edit, Sparkles, LogOut, Calendar, Clock, TrendingUp, TrendingDown, Trophy, Flame, Bookmark, BookOpen, Award, ChevronRight, ArrowUpRight, Share2, AlertTriangle, Ticket, Play, Eye, Lightbulb, Settings, Heart, MessageCircle, Loader2, ExternalLink, Newspaper, Zap, RefreshCw } from "lucide-react";
+import { MapPin, Edit, Sparkles, LogOut, Calendar, Clock, TrendingUp, TrendingDown, Trophy, Flame, Bookmark, BookOpen, Award, ChevronRight, ChevronDown, ArrowUpRight, Share2, AlertTriangle, Ticket, Play, Eye, Lightbulb, Settings, Heart, MessageCircle, Loader2, ExternalLink, Newspaper, Zap, RefreshCw } from "lucide-react";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -144,6 +145,9 @@ const staggerItem = {
 
 
 const Profile = () => {
+  const [teamsOpen, setTeamsOpen] = useState(false);
+  const [newsOpen, setNewsOpen] = useState(false);
+  const [recEventsOpen, setRecEventsOpen] = useState(false);
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [rsvpEvents, setRsvpEvents] = useState<RSVPEvent[]>([]);
   const [suggestedEvents, setSuggestedEvents] = useState<SuggestedEvent[]>([]);
@@ -405,206 +409,266 @@ const Profile = () => {
             </motion.div>
 
 
-            {/* FAVORITE TEAMS PERFORMANCE */}
+            {/* FAVORITE TEAMS PERFORMANCE - COLLAPSIBLE */}
             <motion.div variants={staggerItem}>
-              <div className="glass-card rounded-2xl overflow-hidden">
-                <div className="p-5 pb-2">
-                  <span className="text-sm font-medium tracking-wider uppercase text-foreground/50">Favorite Teams</span>
-                </div>
-                <div className="divide-y divide-border/30">
-                  {TEAM_PERFORMANCE.map(team => (
-                    <div
-                      key={team.name}
-                      className="flex items-center gap-3 px-5 py-4 hover:bg-foreground/[0.03] transition-colors cursor-pointer group"
-                      onClick={() => goTo(`/team/${team.slug}`)}
-                    >
-                      <img src={team.logo} alt={team.name} className="w-10 h-10 object-contain rounded-lg bg-foreground/5 p-0.5" onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} />
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">{team.name}</span>
-                          <Badge variant="outline" className="text-[9px] px-1.5 py-0 rounded-full border-border/30">{team.league}</Badge>
-                          {team.injuryNote && (
-                            <span title={team.injuryNote}>
-                              <AlertTriangle className="w-3.5 h-3.5 text-amber-500" />
-                            </span>
-                          )}
-                        </div>
-                        <p className="text-xs text-muted-foreground mt-0.5">{team.leadingScorer}</p>
-                        <p className="text-xs text-muted-foreground">{team.nextGame}</p>
-                      </div>
-                      <div className="flex flex-col items-end gap-2">
-                        <p className={`text-sm font-sans font-bold ${team.winPct > 0.5 ? "text-accent" : team.winPct > 0 && team.winPct < 0.5 ? "text-destructive" : "text-foreground"}`}>{team.record}</p>
-                        {team.last5.length > 0 && (
-                          <div className="flex gap-0.5">
-                            {team.last5.map((win, i) => <div key={i} className={`w-2 h-2 rounded-full ${win ? "bg-accent" : "bg-destructive/60"}`} />)}
-                          </div>
-                        )}
-                        {team.nextGame !== "Offseason" && !team.nextGame.startsWith("Season") && (
-                          <div className="flex gap-1.5">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="h-6 text-[10px] px-2 rounded-full gap-1 border-border/30"
-                              onClick={(e) => { e.stopPropagation(); window.open(team.ticketUrl || getTeamTicketsUrl(team.name), '_blank'); }}
-                            >
-                              <Ticket className="w-3 h-3" /> Tickets
-                            </Button>
-                            <Button
-                              size="sm"
-                              className="h-6 text-[10px] px-2 rounded-full gap-1"
-                              onClick={(e) => { e.stopPropagation(); window.open(team.watchUrl || getTeamWatchUrl(team.name), '_blank'); }}
-                            >
-                              <Play className="w-3 h-3" /> Watch
-                            </Button>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </motion.div>
-
-            {/* FOR YOU — REAL RSS NEWS FEED */}
-            <motion.div variants={staggerItem}>
-              <div className="glass-card rounded-2xl overflow-hidden">
-                <div className="p-5 pb-2">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <Zap className="w-4 h-4 text-primary" />
-                      <span className="text-sm font-medium tracking-wider uppercase text-foreground/50">For You</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      {!feedLoading && feedItems.length > 0 && (
-                        <Badge variant="outline" className="text-[10px] rounded-full border-border/30 text-muted-foreground">
-                          <Newspaper className="w-3 h-3 mr-1" /> {personalizedFeed.length} stories
-                        </Badge>
-                      )}
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-7 w-7 p-0"
-                        disabled={feedLoading}
-                        onClick={refreshFeed}
-                      >
-                        <RefreshCw className={`w-3.5 h-3.5 text-muted-foreground ${feedLoading ? 'animate-spin' : ''}`} />
-                      </Button>
-                    </div>
-                  </div>
-                  <p className="text-xs text-muted-foreground mt-1">Real articles from Just Women's Sports, BBC Sport & ESPN</p>
-                </div>
-
-                {feedLoading && feedItems.length === 0 ? (
-                  <div className="px-5 py-12 flex flex-col items-center gap-3">
-                    <Loader2 className="w-6 h-6 text-primary animate-spin" />
-                    <p className="text-sm text-muted-foreground">Loading latest sports news…</p>
-                  </div>
-                ) : personalizedFeed.length === 0 ? (
-                  <div className="px-5 py-8 text-center">
-                    <Newspaper className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
-                    <p className="text-sm text-muted-foreground">No articles available right now. Check back soon!</p>
-                  </div>
-                ) : (
-                  <div className="divide-y divide-border/20">
-                    {personalizedFeed.map((item, i) => {
-                      const timeAgo = getTimeAgo(item.created_at);
-                      const isRelevant = item._score > 0;
-                      return (
-                        <a
-                          key={item.id || i}
-                          href={item.source_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="block px-5 py-4 hover:bg-foreground/[0.06] transition-colors cursor-pointer group no-underline"
+              <Collapsible open={teamsOpen} onOpenChange={setTeamsOpen}>
+                <div className="glass-card rounded-2xl overflow-hidden">
+                  <CollapsibleTrigger asChild>
+                    <button className="w-full p-5 pb-2 flex items-center justify-between cursor-pointer hover:bg-foreground/[0.03] transition-colors">
+                      <span className="text-sm font-medium tracking-wider uppercase text-foreground/50">Favorite Teams</span>
+                      <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform duration-200 ${teamsOpen ? 'rotate-180' : ''}`} />
+                    </button>
+                  </CollapsibleTrigger>
+                  {/* Preview: first 2 teams always visible */}
+                  {!teamsOpen && (
+                    <div className="divide-y divide-border/30">
+                      {TEAM_PERFORMANCE.slice(0, 2).map(team => (
+                        <div
+                          key={team.name}
+                          className="flex items-center gap-3 px-5 py-4 hover:bg-foreground/[0.03] transition-colors cursor-pointer group"
+                          onClick={() => goTo(`/team/${team.slug}`)}
                         >
-                          <div className="flex items-center gap-2 mb-1.5">
-                            <span className="text-[10px] font-semibold text-primary/70 uppercase tracking-wider">{item.source}</span>
-                            <span className="text-[10px] text-muted-foreground">•</span>
-                            <span className="text-[10px] text-muted-foreground">{timeAgo}</span>
-                            {isRelevant && (
-                              <>
-                                <span className="text-[10px] text-muted-foreground">•</span>
-                                <span className="text-[10px] text-primary font-semibold flex items-center gap-0.5"><Zap className="w-2.5 h-2.5" />For you</span>
-                              </>
+                          <img src={team.logo} alt={team.name} className="w-10 h-10 object-contain rounded-lg bg-foreground/5 p-0.5" onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2">
+                              <span className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">{team.name}</span>
+                              <Badge variant="outline" className="text-[9px] px-1.5 py-0 rounded-full border-border/30">{team.league}</Badge>
+                            </div>
+                            <p className="text-xs text-muted-foreground mt-0.5">{team.nextGame}</p>
+                          </div>
+                          <p className={`text-sm font-sans font-bold ${team.winPct > 0.5 ? "text-accent" : team.winPct > 0 && team.winPct < 0.5 ? "text-destructive" : "text-foreground"}`}>{team.record}</p>
+                        </div>
+                      ))}
+                      {TEAM_PERFORMANCE.length > 2 && (
+                        <div className="px-5 py-2 text-center">
+                          <span className="text-xs text-muted-foreground">+{TEAM_PERFORMANCE.length - 2} more teams</span>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                  <CollapsibleContent>
+                    <div className="divide-y divide-border/30">
+                      {TEAM_PERFORMANCE.map(team => (
+                        <div
+                          key={team.name}
+                          className="flex items-center gap-3 px-5 py-4 hover:bg-foreground/[0.03] transition-colors cursor-pointer group"
+                          onClick={() => goTo(`/team/${team.slug}`)}
+                        >
+                          <img src={team.logo} alt={team.name} className="w-10 h-10 object-contain rounded-lg bg-foreground/5 p-0.5" onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2">
+                              <span className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">{team.name}</span>
+                              <Badge variant="outline" className="text-[9px] px-1.5 py-0 rounded-full border-border/30">{team.league}</Badge>
+                              {team.injuryNote && (
+                                <span title={team.injuryNote}>
+                                  <AlertTriangle className="w-3.5 h-3.5 text-amber-500" />
+                                </span>
+                              )}
+                            </div>
+                            <p className="text-xs text-muted-foreground mt-0.5">{team.leadingScorer}</p>
+                            <p className="text-xs text-muted-foreground">{team.nextGame}</p>
+                          </div>
+                          <div className="flex flex-col items-end gap-2">
+                            <p className={`text-sm font-sans font-bold ${team.winPct > 0.5 ? "text-accent" : team.winPct > 0 && team.winPct < 0.5 ? "text-destructive" : "text-foreground"}`}>{team.record}</p>
+                            {team.last5.length > 0 && (
+                              <div className="flex gap-0.5">
+                                {team.last5.map((win, i) => <div key={i} className={`w-2 h-2 rounded-full ${win ? "bg-accent" : "bg-destructive/60"}`} />)}
+                              </div>
+                            )}
+                            {team.nextGame !== "Offseason" && !team.nextGame.startsWith("Season") && (
+                              <div className="flex gap-1.5">
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  className="h-6 text-[10px] px-2 rounded-full gap-1 border-border/30"
+                                  onClick={(e) => { e.stopPropagation(); window.open(team.ticketUrl || getTeamTicketsUrl(team.name), '_blank'); }}
+                                >
+                                  <Ticket className="w-3 h-3" /> Tickets
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  className="h-6 text-[10px] px-2 rounded-full gap-1"
+                                  onClick={(e) => { e.stopPropagation(); window.open(team.watchUrl || getTeamWatchUrl(team.name), '_blank'); }}
+                                >
+                                  <Play className="w-3 h-3" /> Watch
+                                </Button>
+                              </div>
                             )}
                           </div>
-                          <p className="text-sm font-medium text-foreground group-hover:text-primary transition-colors flex items-center gap-1.5">
-                            {item.title}
-                            <ExternalLink className="w-3 h-3 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
-                          </p>
-                          {item.summary && (
-                            <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed">{item.summary}</p>
-                          )}
-                          {(item.sport_tags?.length > 0 || item.team_tags?.length > 0) && (
-                            <div className="flex flex-wrap gap-1 mt-2">
-                              {[...(item.sport_tags || []), ...(item.team_tags || [])].slice(0, 4).map((tag: string, ti: number) => (
-                                <Badge key={ti} variant="secondary" className="text-[9px] px-1.5 py-0 rounded-full">{tag}</Badge>
-                              ))}
-                            </div>
-                          )}
-                        </a>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
+                        </div>
+                      ))}
+                    </div>
+                  </CollapsibleContent>
+                </div>
+              </Collapsible>
             </motion.div>
 
-
-
-            {/* MY RSVPED EVENTS */}
-            {rsvpEvents.length > 0 && (
-              <motion.div variants={staggerItem}>
+            {/* YOUR CURATED NEWS — REAL RSS NEWS FEED - COLLAPSIBLE */}
+            <motion.div variants={staggerItem}>
+              <Collapsible open={newsOpen} onOpenChange={setNewsOpen}>
                 <div className="glass-card rounded-2xl overflow-hidden">
-                  <div className="p-5 pb-3">
-                    <div className="flex items-center gap-2">
-                      <Calendar className="w-5 h-5 text-primary" />
-                      <span className="text-sm font-medium tracking-wider uppercase text-foreground/50">My Events</span>
+                  <div className="p-5 pb-2">
+                    <div className="flex items-center justify-between">
+                      <CollapsibleTrigger asChild>
+                        <button className="flex items-center gap-2 cursor-pointer">
+                          <Zap className="w-4 h-4 text-primary" />
+                          <span className="text-sm font-medium tracking-wider uppercase text-foreground/50">Your Curated News</span>
+                          <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform duration-200 ${newsOpen ? 'rotate-180' : ''}`} />
+                        </button>
+                      </CollapsibleTrigger>
+                      <div className="flex items-center gap-2">
+                        {!feedLoading && feedItems.length > 0 && (
+                          <Badge variant="outline" className="text-[10px] rounded-full border-border/30 text-muted-foreground">
+                            <Newspaper className="w-3 h-3 mr-1" /> {personalizedFeed.length} stories
+                          </Badge>
+                        )}
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-7 w-7 p-0"
+                          disabled={feedLoading}
+                          onClick={refreshFeed}
+                        >
+                          <RefreshCw className={`w-3.5 h-3.5 text-muted-foreground ${feedLoading ? 'animate-spin' : ''}`} />
+                        </Button>
+                      </div>
                     </div>
+                    <p className="text-xs text-muted-foreground mt-1">Real articles from Just Women's Sports, BBC Sport & ESPN</p>
                   </div>
-                  <div className="px-5 pb-5">
-                    <div className="grid md:grid-cols-2 gap-4">
-                      {rsvpEvents.map(rsvp => (
-                        <div key={rsvp.id} className="glass-card rounded-xl p-4 cursor-pointer hover:border-primary/30 transition-colors" onClick={() => goTo("/events")}>
-                          {rsvp.event.image_url ? <img src={rsvp.event.image_url} alt={rsvp.event.title} className="w-full h-32 object-cover rounded-lg mb-3" /> : <div className="w-full h-32 bg-muted rounded-lg mb-3 flex items-center justify-center"><Calendar className="w-8 h-8 text-muted-foreground" /></div>}
-                          <div className="flex items-start justify-between gap-2">
-                            <div>
-                              <p className="font-medium text-foreground">{rsvp.event.title}</p>
-                              <p className="text-sm text-muted-foreground">{rsvp.event.venue_name || rsvp.event.city || "Location TBD"}</p>
-                              <div className="flex items-center gap-2 mt-1 text-xs text-muted-foreground">
-                                <Calendar className="w-3 h-3" /><span>{format(new Date(rsvp.event.event_date), "MMM d, yyyy")}</span>
-                                {rsvp.event.event_time && (<><Clock className="w-3 h-3 ml-1" /><span>{rsvp.event.event_time}</span></>)}
-                              </div>
-                            </div>
-                            <Badge variant={rsvp.status === "confirmed" ? "default" : "secondary"} className="text-xs rounded-full">{rsvp.status}</Badge>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            )}
 
-            {/* RECOMMENDED EVENTS */}
+                  {feedLoading && feedItems.length === 0 ? (
+                    <div className="px-5 py-12 flex flex-col items-center gap-3">
+                      <Loader2 className="w-6 h-6 text-primary animate-spin" />
+                      <p className="text-sm text-muted-foreground">Loading latest sports news…</p>
+                    </div>
+                  ) : personalizedFeed.length === 0 ? (
+                    <div className="px-5 py-8 text-center">
+                      <Newspaper className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
+                      <p className="text-sm text-muted-foreground">No articles available right now. Check back soon!</p>
+                    </div>
+                  ) : (
+                    <>
+                      {/* Preview: first 3 articles always visible */}
+                      {!newsOpen && (
+                        <div className="divide-y divide-border/20">
+                          {personalizedFeed.slice(0, 3).map((item, i) => (
+                            <a
+                              key={item.id || i}
+                              href={item.source_url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="block px-5 py-3 hover:bg-foreground/[0.06] transition-colors cursor-pointer group no-underline"
+                            >
+                              <div className="flex items-center gap-2 mb-1">
+                                <span className="text-[10px] font-semibold text-primary/70 uppercase tracking-wider">{item.source}</span>
+                                <span className="text-[10px] text-muted-foreground">• {getTimeAgo(item.created_at)}</span>
+                              </div>
+                              <p className="text-sm font-medium text-foreground group-hover:text-primary transition-colors line-clamp-1">{item.title}</p>
+                            </a>
+                          ))}
+                          {personalizedFeed.length > 3 && (
+                            <div className="px-5 py-2 text-center">
+                              <span className="text-xs text-muted-foreground">+{personalizedFeed.length - 3} more stories</span>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                      <CollapsibleContent>
+                        <div className="divide-y divide-border/20">
+                          {personalizedFeed.map((item, i) => {
+                            const timeAgo = getTimeAgo(item.created_at);
+                            const isRelevant = item._score > 0;
+                            return (
+                              <a
+                                key={item.id || i}
+                                href={item.source_url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="block px-5 py-4 hover:bg-foreground/[0.06] transition-colors cursor-pointer group no-underline"
+                              >
+                                <div className="flex items-center gap-2 mb-1.5">
+                                  <span className="text-[10px] font-semibold text-primary/70 uppercase tracking-wider">{item.source}</span>
+                                  <span className="text-[10px] text-muted-foreground">•</span>
+                                  <span className="text-[10px] text-muted-foreground">{timeAgo}</span>
+                                  {isRelevant && (
+                                    <>
+                                      <span className="text-[10px] text-muted-foreground">•</span>
+                                      <span className="text-[10px] text-primary font-semibold flex items-center gap-0.5"><Zap className="w-2.5 h-2.5" />For you</span>
+                                    </>
+                                  )}
+                                </div>
+                                <p className="text-sm font-medium text-foreground group-hover:text-primary transition-colors flex items-center gap-1.5">
+                                  {item.title}
+                                  <ExternalLink className="w-3 h-3 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
+                                </p>
+                                {item.summary && (
+                                  <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed">{item.summary}</p>
+                                )}
+                                {(item.sport_tags?.length > 0 || item.team_tags?.length > 0) && (
+                                  <div className="flex flex-wrap gap-1 mt-2">
+                                    {[...(item.sport_tags || []), ...(item.team_tags || [])].slice(0, 4).map((tag: string, ti: number) => (
+                                      <Badge key={ti} variant="secondary" className="text-[9px] px-1.5 py-0 rounded-full">{tag}</Badge>
+                                    ))}
+                                  </div>
+                                )}
+                              </a>
+                            );
+                          })}
+                        </div>
+                      </CollapsibleContent>
+                    </>
+                  )}
+                </div>
+              </Collapsible>
+            </motion.div>
+
+            {/* RECOMMENDED EVENTS - COLLAPSIBLE */}
             {suggestedEvents.length > 0 && (
               <motion.div variants={staggerItem}>
-                <div className="glass-card rounded-2xl overflow-hidden">
-                  <div className="p-5 pb-3">
-                    <span className="text-sm font-medium tracking-wider uppercase text-foreground/50">Recommended Events</span>
-                  </div>
-                  <div className="px-5 pb-5">
-                    <div className="grid md:grid-cols-2 gap-4">
-                      {suggestedEvents.map(event => (
-                        <div key={event.id} className="glass-card rounded-xl p-4 cursor-pointer hover:border-primary/30 transition-colors" onClick={() => goTo(`/event/${event.id}`)}>
-                          {event.image_url ? <img src={event.image_url} alt={event.title} className="w-full h-32 object-cover rounded-lg mb-3" /> : <div className="w-full h-32 bg-muted rounded-lg mb-3 flex items-center justify-center"><Calendar className="w-8 h-8 text-muted-foreground" /></div>}
-                          <p className="font-medium text-foreground">{event.title}</p>
-                          <p className="text-sm text-muted-foreground">{event.venue_name || event.city || "Location TBD"} • {format(new Date(event.event_date), "MMM d")}</p>
+                <Collapsible open={recEventsOpen} onOpenChange={setRecEventsOpen}>
+                  <div className="glass-card rounded-2xl overflow-hidden">
+                    <CollapsibleTrigger asChild>
+                      <button className="w-full p-5 pb-3 flex items-center justify-between cursor-pointer hover:bg-foreground/[0.03] transition-colors">
+                        <span className="text-sm font-medium tracking-wider uppercase text-foreground/50">Recommended Events</span>
+                        <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform duration-200 ${recEventsOpen ? 'rotate-180' : ''}`} />
+                      </button>
+                    </CollapsibleTrigger>
+                    {/* Preview: first 2 events */}
+                    {!recEventsOpen && (
+                      <div className="px-5 pb-5">
+                        <div className="space-y-3">
+                          {suggestedEvents.slice(0, 2).map(event => (
+                            <div key={event.id} className="flex items-center gap-3 cursor-pointer hover:bg-foreground/[0.03] rounded-xl p-2 transition-colors" onClick={() => goTo(`/event/${event.id}`)}>
+                              {event.image_url ? <img src={event.image_url} alt={event.title} className="w-14 h-14 object-cover rounded-lg flex-shrink-0" /> : <div className="w-14 h-14 bg-muted rounded-lg flex items-center justify-center flex-shrink-0"><Calendar className="w-5 h-5 text-muted-foreground" /></div>}
+                              <div className="min-w-0">
+                                <p className="text-sm font-medium text-foreground line-clamp-1">{event.title}</p>
+                                <p className="text-xs text-muted-foreground">{event.venue_name || event.city || "Location TBD"} • {format(new Date(event.event_date), "MMM d")}</p>
+                              </div>
+                            </div>
+                          ))}
+                          {suggestedEvents.length > 2 && (
+                            <div className="text-center">
+                              <span className="text-xs text-muted-foreground">+{suggestedEvents.length - 2} more events</span>
+                            </div>
+                          )}
                         </div>
-                      ))}
-                    </div>
+                      </div>
+                    )}
+                    <CollapsibleContent>
+                      <div className="px-5 pb-5">
+                        <div className="grid md:grid-cols-2 gap-4">
+                          {suggestedEvents.map(event => (
+                            <div key={event.id} className="glass-card rounded-xl p-4 cursor-pointer hover:border-primary/30 transition-colors" onClick={() => goTo(`/event/${event.id}`)}>
+                              {event.image_url ? <img src={event.image_url} alt={event.title} className="w-full h-32 object-cover rounded-lg mb-3" /> : <div className="w-full h-32 bg-muted rounded-lg mb-3 flex items-center justify-center"><Calendar className="w-8 h-8 text-muted-foreground" /></div>}
+                              <p className="font-medium text-foreground">{event.title}</p>
+                              <p className="text-sm text-muted-foreground">{event.venue_name || event.city || "Location TBD"} • {format(new Date(event.event_date), "MMM d")}</p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </CollapsibleContent>
                   </div>
-                </div>
+                </Collapsible>
               </motion.div>
             )}
 
