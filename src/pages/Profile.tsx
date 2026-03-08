@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { MapPin, Edit, Sparkles, LogOut, Calendar, Clock, TrendingUp, TrendingDown, Trophy, Flame, Bookmark, BookOpen, Award, ChevronRight, ArrowUpRight, Share2, AlertTriangle, Ticket, Play, Eye, Lightbulb, Settings, Heart, MessageCircle, Loader2, ExternalLink, Newspaper, Zap } from "lucide-react";
+import { MapPin, Edit, Sparkles, LogOut, Calendar, Clock, TrendingUp, TrendingDown, Trophy, Flame, Bookmark, BookOpen, Award, ChevronRight, ArrowUpRight, Share2, AlertTriangle, Ticket, Play, Eye, Lightbulb, Settings, Heart, MessageCircle, Loader2, ExternalLink, Newspaper, Zap, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -15,7 +15,6 @@ import { format } from "date-fns";
 import { motion } from "framer-motion";
 import {
   TEAM_PERFORMANCE,
-  RECENT_ACTIVITY,
 } from "@/lib/mockStatsData";
 import { getTeamWatchUrl, getTeamTicketsUrl } from "@/lib/teamLinksMap";
 
@@ -149,6 +148,7 @@ const Profile = () => {
   const [rsvpEvents, setRsvpEvents] = useState<RSVPEvent[]>([]);
   const [suggestedEvents, setSuggestedEvents] = useState<SuggestedEvent[]>([]);
   const [feedItems, setFeedItems] = useState<any[]>([]);
+  const [feedLoading, setFeedLoading] = useState(true);
   const [loading, setLoading] = useState(true);
   const [currentTime, setCurrentTime] = useState(new Date());
   
@@ -161,6 +161,25 @@ const Profile = () => {
     goTo("/");
   };
 
+  // Fetch feed items from real RSS via edge function
+  const refreshFeed = async () => {
+    setFeedLoading(true);
+    try {
+      // Call edge function to refresh RSS articles
+      await supabase.functions.invoke('fetch-sports-news');
+    } catch (err) {
+      console.warn('Feed refresh failed:', err);
+    }
+    // Fetch from DB (no 36h filter - show all recent articles)
+    const { data } = await supabase
+      .from("feed_items")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .limit(30);
+    if (data) setFeedItems(data);
+    setFeedLoading(false);
+  };
+
   useEffect(() => {
     let cancelled = false;
     const fetchProfile = async () => {
@@ -168,14 +187,10 @@ const Profile = () => {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user || cancelled) { if (!cancelled) goTo("/auth"); return; }
 
-        // Kick off RSS refresh in background (fire-and-forget)
-        supabase.functions.invoke('fetch-sports-news').catch(err => console.warn('Feed refresh failed:', err));
-
-        const [profileResult, rsvpResult, suggestedResult, feedResult] = await Promise.all([
+        const [profileResult, rsvpResult, suggestedResult] = await Promise.all([
           supabase.from("profiles").select("*").eq("id", user.id).maybeSingle(),
           supabase.from("event_rsvps").select(`id, status, event:events (id, title, event_date, event_time, venue_name, city, image_url)`).eq("user_id", user.id).order("created_at", { ascending: false }),
           supabase.from("events").select("id, title, event_date, event_time, venue_name, city, image_url").gte("event_date", new Date().toISOString().split("T")[0]).eq("status", "published").order("event_date", { ascending: true }).limit(4),
-          supabase.from("feed_items").select("*").gte("created_at", new Date(Date.now() - 36 * 60 * 60 * 1000).toISOString()).order("created_at", { ascending: false }),
         ]);
 
         if (cancelled) return;
@@ -187,20 +202,6 @@ const Profile = () => {
           setRsvpEvents(rsvpResult.data.filter(r => r.event !== null) as RSVPEvent[]);
         }
         if (suggestedResult.data) setSuggestedEvents(suggestedResult.data);
-        if (feedResult.data) setFeedItems(feedResult.data);
-
-        // Delayed re-fetch after RSS refresh completes
-        if (!cancelled) {
-          setTimeout(async () => {
-            if (cancelled) return;
-            const { data } = await supabase
-              .from("feed_items")
-              .select("*")
-              .gte("created_at", new Date(Date.now() - 36 * 60 * 60 * 1000).toISOString())
-              .order("created_at", { ascending: false });
-            if (data && !cancelled) setFeedItems(data);
-          }, 5000);
-        }
       } catch (err) {
         console.error("Profile fetch error:", err);
         if (!cancelled) goTo("/onboarding");
@@ -209,6 +210,7 @@ const Profile = () => {
       }
     };
     fetchProfile();
+    refreshFeed();
     return () => { cancelled = true; };
   }, []);
 
@@ -463,22 +465,46 @@ const Profile = () => {
               </div>
             </motion.div>
 
-            {/* MY FEED — PERSONALIZED NEWS */}
-            {personalizedFeed.length > 0 && (
-              <motion.div variants={staggerItem}>
-                <div className="glass-card rounded-2xl overflow-hidden">
-                  <div className="p-5 pb-2">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <Zap className="w-4 h-4 text-primary" />
-                        <span className="text-sm font-medium tracking-wider uppercase text-foreground/50">My Feed</span>
-                      </div>
-                      <Badge variant="outline" className="text-[10px] rounded-full border-border/30 text-muted-foreground">
-                        <Newspaper className="w-3 h-3 mr-1" /> {personalizedFeed.length} stories
-                      </Badge>
+            {/* FOR YOU — REAL RSS NEWS FEED */}
+            <motion.div variants={staggerItem}>
+              <div className="glass-card rounded-2xl overflow-hidden">
+                <div className="p-5 pb-2">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Zap className="w-4 h-4 text-primary" />
+                      <span className="text-sm font-medium tracking-wider uppercase text-foreground/50">For You</span>
                     </div>
-                    <p className="text-xs text-muted-foreground mt-1">Curated based on your teams & interests</p>
+                    <div className="flex items-center gap-2">
+                      {!feedLoading && feedItems.length > 0 && (
+                        <Badge variant="outline" className="text-[10px] rounded-full border-border/30 text-muted-foreground">
+                          <Newspaper className="w-3 h-3 mr-1" /> {personalizedFeed.length} stories
+                        </Badge>
+                      )}
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-7 w-7 p-0"
+                        disabled={feedLoading}
+                        onClick={refreshFeed}
+                      >
+                        <RefreshCw className={`w-3.5 h-3.5 text-muted-foreground ${feedLoading ? 'animate-spin' : ''}`} />
+                      </Button>
+                    </div>
                   </div>
+                  <p className="text-xs text-muted-foreground mt-1">Real articles from Just Women's Sports, BBC Sport & ESPN</p>
+                </div>
+
+                {feedLoading && feedItems.length === 0 ? (
+                  <div className="px-5 py-12 flex flex-col items-center gap-3">
+                    <Loader2 className="w-6 h-6 text-primary animate-spin" />
+                    <p className="text-sm text-muted-foreground">Loading latest sports news…</p>
+                  </div>
+                ) : personalizedFeed.length === 0 ? (
+                  <div className="px-5 py-8 text-center">
+                    <Newspaper className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
+                    <p className="text-sm text-muted-foreground">No articles available right now. Check back soon!</p>
+                  </div>
+                ) : (
                   <div className="divide-y divide-border/20">
                     {personalizedFeed.map((item, i) => {
                       const timeAgo = getTimeAgo(item.created_at);
@@ -506,7 +532,9 @@ const Profile = () => {
                             {item.title}
                             <ExternalLink className="w-3 h-3 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
                           </p>
-                          <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed">{item.summary}</p>
+                          {item.summary && (
+                            <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed">{item.summary}</p>
+                          )}
                           {(item.sport_tags?.length > 0 || item.team_tags?.length > 0) && (
                             <div className="flex flex-wrap gap-1 mt-2">
                               {[...(item.sport_tags || []), ...(item.team_tags || [])].slice(0, 4).map((tag: string, ti: number) => (
@@ -518,9 +546,9 @@ const Profile = () => {
                       );
                     })}
                   </div>
-                </div>
-              </motion.div>
-            )}
+                )}
+              </div>
+            </motion.div>
 
 
 
@@ -580,53 +608,6 @@ const Profile = () => {
               </motion.div>
             )}
 
-            {/* RECENT ACTIVITY FEED */}
-            <motion.div variants={staggerItem}>
-              <div className="glass-card rounded-2xl overflow-hidden">
-                <div className="p-5 pb-2">
-                  <span className="text-sm font-medium tracking-wider uppercase text-foreground/50">Recent Activity</span>
-                </div>
-                <Tabs defaultValue="all" className="w-full">
-                  <div className="px-5 pt-1 pb-1">
-                    <TabsList className="h-8 w-full justify-start bg-foreground/[0.03]">
-                      <TabsTrigger value="all" className="text-xs px-3 h-7 rounded-full">All</TabsTrigger>
-                      <TabsTrigger value="read" className="text-xs px-3 h-7 rounded-full">Read</TabsTrigger>
-                      <TabsTrigger value="bookmark" className="text-xs px-3 h-7 rounded-full">Bookmarked</TabsTrigger>
-                      <TabsTrigger value="shared" className="text-xs px-3 h-7 rounded-full">Shared</TabsTrigger>
-                    </TabsList>
-                  </div>
-                  {["all", "read", "bookmark", "shared"].map(tab => (
-                    <TabsContent key={tab} value={tab} className="mt-0">
-                      <div className="divide-y divide-border/20">
-                        {RECENT_ACTIVITY.filter(a => tab === "all" || a.type === tab).map((activity, i) => (
-                          <a key={i} href={activity.url} target="_blank" rel="noopener noreferrer" className="flex items-start gap-3 px-5 py-3 hover:bg-foreground/[0.03] transition-colors cursor-pointer group no-underline">
-                            {activity.thumbnail ? (
-                              <img src={activity.thumbnail} alt="" className="w-14 h-10 object-cover rounded-lg mt-0.5 flex-shrink-0" />
-                            ) : (
-                              <div className={`mt-0.5 p-1.5 rounded-full flex-shrink-0 ${activity.type === "read" ? "bg-primary/15" : activity.type === "shared" ? "bg-accent/15" : "bg-secondary"}`}>
-                                {activity.type === "read" ? <BookOpen className="w-3 h-3 text-primary" /> : activity.type === "shared" ? <Share2 className="w-3 h-3 text-accent" /> : <Bookmark className="w-3 h-3 text-foreground/60" />}
-                              </div>
-                            )}
-                            <div className="flex-1 min-w-0">
-                              <p className="text-sm text-foreground leading-snug group-hover:text-primary transition-colors">
-                                <span className="text-muted-foreground capitalize">{activity.type}:</span>{" "}
-                                <span className="font-medium">{activity.title}</span>
-                              </p>
-                              <div className="flex items-center gap-3 mt-1">
-                                <span className="text-xs text-muted-foreground">{activity.time}</span>
-                                <span className="flex items-center gap-1 text-xs text-muted-foreground"><Eye className="w-3 h-3" />{activity.reads}</span>
-                                <span className="flex items-center gap-1 text-xs text-muted-foreground"><Bookmark className="w-3 h-3" />{activity.bookmarks}</span>
-                              </div>
-                            </div>
-                            <ExternalLink className="w-3.5 h-3.5 text-foreground/20 mt-1 shrink-0 group-hover:text-primary transition-colors" />
-                          </a>
-                        ))}
-                      </div>
-                    </TabsContent>
-                  ))}
-                </Tabs>
-              </div>
-            </motion.div>
 
           </motion.div>
         </div>
