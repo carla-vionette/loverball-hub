@@ -189,6 +189,15 @@ function processGames(data: any, sport: string): GameData[] {
 serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
+  // Rate limit
+  const clientId = req.headers.get('x-forwarded-for') || req.headers.get('cf-connecting-ip') || 'unknown';
+  if (!checkRateLimit(clientId)) {
+    return new Response(
+      JSON.stringify({ error: 'Rate limit exceeded', live: [], final: [], scheduled: [], totalGames: 0, updatedAt: new Date().toISOString() }),
+      { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    );
+  }
+
   try {
     const body = await req.json().catch(() => ({}));
     const { sports = 'all', dateRange = 'today' } = body;
