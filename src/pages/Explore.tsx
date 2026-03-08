@@ -70,12 +70,12 @@ const FollowButton = () => {
 };
 
 const ChannelCard = ({ channel }: { channel: ChannelData }) => {
-  const navigate = useNavigate();
   const handleKey = channel.handle.replace("@", "");
+  const goTo = (path: string) => { window.location.href = path; };
   return (
     <Card
       className="p-4 border-border/30 hover:border-primary/30 transition-colors group cursor-pointer"
-      onClick={() => navigate(`/channel/${handleKey}`)}
+      onClick={() => goTo(`/channel/${handleKey}`)}
     >
       <div className="flex items-start gap-3">
         <Avatar className="w-12 h-12 flex-shrink-0">
