@@ -157,10 +157,11 @@ const Profile = () => {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user || cancelled) { if (!cancelled) goTo("/auth"); return; }
 
-        const [profileResult, rsvpResult, suggestedResult] = await Promise.all([
+        const [profileResult, rsvpResult, suggestedResult, feedResult] = await Promise.all([
           supabase.from("profiles").select("*").eq("id", user.id).maybeSingle(),
           supabase.from("event_rsvps").select(`id, status, event:events (id, title, event_date, event_time, venue_name, city, image_url)`).eq("user_id", user.id).order("created_at", { ascending: false }),
           supabase.from("events").select("id, title, event_date, event_time, venue_name, city, image_url").gte("event_date", new Date().toISOString().split("T")[0]).eq("status", "published").order("event_date", { ascending: true }).limit(4),
+          supabase.from("feed_items").select("*").gte("created_at", new Date(Date.now() - 36 * 60 * 60 * 1000).toISOString()).order("created_at", { ascending: false }),
         ]);
 
         if (cancelled) return;
@@ -172,6 +173,7 @@ const Profile = () => {
           setRsvpEvents(rsvpResult.data.filter(r => r.event !== null) as RSVPEvent[]);
         }
         if (suggestedResult.data) setSuggestedEvents(suggestedResult.data);
+        if (feedResult.data) setFeedItems(feedResult.data);
       } catch (err) {
         console.error("Profile fetch error:", err);
         if (!cancelled) goTo("/onboarding");
