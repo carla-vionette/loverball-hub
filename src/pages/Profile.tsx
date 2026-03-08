@@ -409,64 +409,98 @@ const Profile = () => {
             </motion.div>
 
 
-            {/* FAVORITE TEAMS PERFORMANCE */}
+            {/* FAVORITE TEAMS PERFORMANCE - COLLAPSIBLE */}
             <motion.div variants={staggerItem}>
-              <div className="glass-card rounded-2xl overflow-hidden">
-                <div className="p-5 pb-2">
-                  <span className="text-sm font-medium tracking-wider uppercase text-foreground/50">Favorite Teams</span>
-                </div>
-                <div className="divide-y divide-border/30">
-                  {TEAM_PERFORMANCE.map(team => (
-                    <div
-                      key={team.name}
-                      className="flex items-center gap-3 px-5 py-4 hover:bg-foreground/[0.03] transition-colors cursor-pointer group"
-                      onClick={() => goTo(`/team/${team.slug}`)}
-                    >
-                      <img src={team.logo} alt={team.name} className="w-10 h-10 object-contain rounded-lg bg-foreground/5 p-0.5" onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} />
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">{team.name}</span>
-                          <Badge variant="outline" className="text-[9px] px-1.5 py-0 rounded-full border-border/30">{team.league}</Badge>
-                          {team.injuryNote && (
-                            <span title={team.injuryNote}>
-                              <AlertTriangle className="w-3.5 h-3.5 text-amber-500" />
-                            </span>
-                          )}
+              <Collapsible open={teamsOpen} onOpenChange={setTeamsOpen}>
+                <div className="glass-card rounded-2xl overflow-hidden">
+                  <CollapsibleTrigger asChild>
+                    <button className="w-full p-5 pb-2 flex items-center justify-between cursor-pointer hover:bg-foreground/[0.03] transition-colors">
+                      <span className="text-sm font-medium tracking-wider uppercase text-foreground/50">Favorite Teams</span>
+                      <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform duration-200 ${teamsOpen ? 'rotate-180' : ''}`} />
+                    </button>
+                  </CollapsibleTrigger>
+                  {/* Preview: first 2 teams always visible */}
+                  {!teamsOpen && (
+                    <div className="divide-y divide-border/30">
+                      {TEAM_PERFORMANCE.slice(0, 2).map(team => (
+                        <div
+                          key={team.name}
+                          className="flex items-center gap-3 px-5 py-4 hover:bg-foreground/[0.03] transition-colors cursor-pointer group"
+                          onClick={() => goTo(`/team/${team.slug}`)}
+                        >
+                          <img src={team.logo} alt={team.name} className="w-10 h-10 object-contain rounded-lg bg-foreground/5 p-0.5" onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2">
+                              <span className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">{team.name}</span>
+                              <Badge variant="outline" className="text-[9px] px-1.5 py-0 rounded-full border-border/30">{team.league}</Badge>
+                            </div>
+                            <p className="text-xs text-muted-foreground mt-0.5">{team.nextGame}</p>
+                          </div>
+                          <p className={`text-sm font-sans font-bold ${team.winPct > 0.5 ? "text-accent" : team.winPct > 0 && team.winPct < 0.5 ? "text-destructive" : "text-foreground"}`}>{team.record}</p>
                         </div>
-                        <p className="text-xs text-muted-foreground mt-0.5">{team.leadingScorer}</p>
-                        <p className="text-xs text-muted-foreground">{team.nextGame}</p>
-                      </div>
-                      <div className="flex flex-col items-end gap-2">
-                        <p className={`text-sm font-sans font-bold ${team.winPct > 0.5 ? "text-accent" : team.winPct > 0 && team.winPct < 0.5 ? "text-destructive" : "text-foreground"}`}>{team.record}</p>
-                        {team.last5.length > 0 && (
-                          <div className="flex gap-0.5">
-                            {team.last5.map((win, i) => <div key={i} className={`w-2 h-2 rounded-full ${win ? "bg-accent" : "bg-destructive/60"}`} />)}
-                          </div>
-                        )}
-                        {team.nextGame !== "Offseason" && !team.nextGame.startsWith("Season") && (
-                          <div className="flex gap-1.5">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="h-6 text-[10px] px-2 rounded-full gap-1 border-border/30"
-                              onClick={(e) => { e.stopPropagation(); window.open(team.ticketUrl || getTeamTicketsUrl(team.name), '_blank'); }}
-                            >
-                              <Ticket className="w-3 h-3" /> Tickets
-                            </Button>
-                            <Button
-                              size="sm"
-                              className="h-6 text-[10px] px-2 rounded-full gap-1"
-                              onClick={(e) => { e.stopPropagation(); window.open(team.watchUrl || getTeamWatchUrl(team.name), '_blank'); }}
-                            >
-                              <Play className="w-3 h-3" /> Watch
-                            </Button>
-                          </div>
-                        )}
-                      </div>
+                      ))}
+                      {TEAM_PERFORMANCE.length > 2 && (
+                        <div className="px-5 py-2 text-center">
+                          <span className="text-xs text-muted-foreground">+{TEAM_PERFORMANCE.length - 2} more teams</span>
+                        </div>
+                      )}
                     </div>
-                  ))}
+                  )}
+                  <CollapsibleContent>
+                    <div className="divide-y divide-border/30">
+                      {TEAM_PERFORMANCE.map(team => (
+                        <div
+                          key={team.name}
+                          className="flex items-center gap-3 px-5 py-4 hover:bg-foreground/[0.03] transition-colors cursor-pointer group"
+                          onClick={() => goTo(`/team/${team.slug}`)}
+                        >
+                          <img src={team.logo} alt={team.name} className="w-10 h-10 object-contain rounded-lg bg-foreground/5 p-0.5" onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2">
+                              <span className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">{team.name}</span>
+                              <Badge variant="outline" className="text-[9px] px-1.5 py-0 rounded-full border-border/30">{team.league}</Badge>
+                              {team.injuryNote && (
+                                <span title={team.injuryNote}>
+                                  <AlertTriangle className="w-3.5 h-3.5 text-amber-500" />
+                                </span>
+                              )}
+                            </div>
+                            <p className="text-xs text-muted-foreground mt-0.5">{team.leadingScorer}</p>
+                            <p className="text-xs text-muted-foreground">{team.nextGame}</p>
+                          </div>
+                          <div className="flex flex-col items-end gap-2">
+                            <p className={`text-sm font-sans font-bold ${team.winPct > 0.5 ? "text-accent" : team.winPct > 0 && team.winPct < 0.5 ? "text-destructive" : "text-foreground"}`}>{team.record}</p>
+                            {team.last5.length > 0 && (
+                              <div className="flex gap-0.5">
+                                {team.last5.map((win, i) => <div key={i} className={`w-2 h-2 rounded-full ${win ? "bg-accent" : "bg-destructive/60"}`} />)}
+                              </div>
+                            )}
+                            {team.nextGame !== "Offseason" && !team.nextGame.startsWith("Season") && (
+                              <div className="flex gap-1.5">
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  className="h-6 text-[10px] px-2 rounded-full gap-1 border-border/30"
+                                  onClick={(e) => { e.stopPropagation(); window.open(team.ticketUrl || getTeamTicketsUrl(team.name), '_blank'); }}
+                                >
+                                  <Ticket className="w-3 h-3" /> Tickets
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  className="h-6 text-[10px] px-2 rounded-full gap-1"
+                                  onClick={(e) => { e.stopPropagation(); window.open(team.watchUrl || getTeamWatchUrl(team.name), '_blank'); }}
+                                >
+                                  <Play className="w-3 h-3" /> Watch
+                                </Button>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </CollapsibleContent>
                 </div>
-              </div>
+              </Collapsible>
             </motion.div>
 
             {/* FOR YOU — REAL RSS NEWS FEED */}
