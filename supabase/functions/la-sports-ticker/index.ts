@@ -394,6 +394,15 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
+  // Rate limit by IP or auth token
+  const clientId = req.headers.get('x-forwarded-for') || req.headers.get('cf-connecting-ip') || 'unknown';
+  if (!checkRateLimit(clientId)) {
+    return new Response(
+      JSON.stringify({ error: 'Rate limit exceeded', items: ['Rate limit exceeded. Please try again later.'], updatedAt: new Date().toISOString() }),
+      { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    );
+  }
+
   try {
     const { category = 'both', gender = 'both' } = await req.json().catch(() => ({}));
     const cacheKey = `ticker:${category}:${gender}`;
