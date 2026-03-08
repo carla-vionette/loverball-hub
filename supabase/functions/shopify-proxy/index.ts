@@ -9,7 +9,7 @@ const SHOPIFY_API_VERSION = '2025-07';
 const SHOPIFY_STORE_PERMANENT_DOMAIN = 'loverball-hub-xfpsa.myshopify.com';
 const SHOPIFY_STOREFRONT_URL = `https://${SHOPIFY_STORE_PERMANENT_DOMAIN}/api/${SHOPIFY_API_VERSION}/graphql.json`;
 
-// Simple in-memory rate limiter
+// IP-based rate limiter (shop is public-facing)
 const rateLimitMap = new Map<string, { count: number; windowStart: number }>();
 const RATE_LIMIT_WINDOW = 60000;
 const RATE_LIMIT_MAX = 30;
@@ -23,6 +23,11 @@ function checkRateLimit(key: string): boolean {
   }
   if (entry.count >= RATE_LIMIT_MAX) return false;
   entry.count++;
+  if (rateLimitMap.size > 1000) {
+    for (const [k, v] of rateLimitMap) {
+      if (now - v.windowStart > RATE_LIMIT_WINDOW * 2) rateLimitMap.delete(k);
+    }
+  }
   return true;
 }
 
@@ -32,33 +37,9 @@ Deno.serve(async (req) => {
   }
 
   try {
-    // Require authentication
-    const authHeader = req.headers.get('Authorization');
-    if (!authHeader?.startsWith('Bearer ')) {
-      return new Response(
-        JSON.stringify({ error: 'Unauthorized' }),
-        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
-    const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-      global: { headers: { Authorization: authHeader } }
-    });
-
-    const token = authHeader.replace('Bearer ', '');
-    const { data: claimsData, error: claimsError } = await supabase.auth.getClaims(token);
-    if (claimsError || !claimsData?.claims) {
-      return new Response(
-        JSON.stringify({ error: 'Unauthorized' }),
-        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-
-    const userId = claimsData.claims.sub as string;
-
-    if (!checkRateLimit(userId)) {
+    // Rate limit by IP (shop is publicly accessible)
+    const clientId = req.headers.get('x-forwarded-for') || req.headers.get('cf-connecting-ip') || 'unknown';
+    if (!checkRateLimit(clientId)) {
       return new Response(
         JSON.stringify({ error: 'Rate limit exceeded' }),
         { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -80,6 +61,14 @@ Deno.serve(async (req) => {
     if (!query) {
       return new Response(
         JSON.stringify({ error: 'Query is required' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Validate query length to prevent abuse
+    if (query.length > 5000) {
+      return new Response(
+        JSON.stringify({ error: 'Query too large' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
