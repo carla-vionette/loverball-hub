@@ -621,7 +621,6 @@ const Profile = () => {
                 </div>
               </Collapsible>
             </motion.div>
-            )}
 
             {/* RECOMMENDED EVENTS - COLLAPSIBLE */}
             {suggestedEvents.length > 0 && (
