@@ -436,39 +436,64 @@ const Profile = () => {
               </div>
             </motion.div>
 
-            {/* RECOMMENDED FOR YOU — LIVE ARTICLES */}
-            <motion.div variants={staggerItem}>
-              <div className="glass-card rounded-2xl overflow-hidden">
-                <div className="p-5 pb-2">
-                  <div className="flex items-center gap-2">
-                    <Lightbulb className="w-4 h-4 text-primary" />
-                    <span className="text-sm font-medium tracking-wider uppercase text-foreground/50">Recommended for You</span>
+            {/* MY FEED — PERSONALIZED NEWS */}
+            {personalizedFeed.length > 0 && (
+              <motion.div variants={staggerItem}>
+                <div className="glass-card rounded-2xl overflow-hidden">
+                  <div className="p-5 pb-2">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Zap className="w-4 h-4 text-primary" />
+                        <span className="text-sm font-medium tracking-wider uppercase text-foreground/50">My Feed</span>
+                      </div>
+                      <Badge variant="outline" className="text-[10px] rounded-full border-border/30 text-muted-foreground">
+                        <Newspaper className="w-3 h-3 mr-1" /> {personalizedFeed.length} stories
+                      </Badge>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-1">Curated based on your teams & interests</p>
+                  </div>
+                  <div className="divide-y divide-border/20">
+                    {personalizedFeed.map((item, i) => {
+                      const timeAgo = getTimeAgo(item.created_at);
+                      const isRelevant = item._score > 0;
+                      return (
+                        <a
+                          key={item.id || i}
+                          href={item.source_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="block px-5 py-4 hover:bg-foreground/[0.06] transition-colors cursor-pointer group no-underline"
+                        >
+                          <div className="flex items-center gap-2 mb-1.5">
+                            <span className="text-[10px] font-semibold text-primary/70 uppercase tracking-wider">{item.source}</span>
+                            <span className="text-[10px] text-muted-foreground">•</span>
+                            <span className="text-[10px] text-muted-foreground">{timeAgo}</span>
+                            {isRelevant && (
+                              <>
+                                <span className="text-[10px] text-muted-foreground">•</span>
+                                <span className="text-[10px] text-primary font-semibold flex items-center gap-0.5"><Zap className="w-2.5 h-2.5" />For you</span>
+                              </>
+                            )}
+                          </div>
+                          <p className="text-sm font-medium text-foreground group-hover:text-primary transition-colors flex items-center gap-1.5">
+                            {item.title}
+                            <ExternalLink className="w-3 h-3 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
+                          </p>
+                          <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed">{item.summary}</p>
+                          {(item.sport_tags?.length > 0 || item.team_tags?.length > 0) && (
+                            <div className="flex flex-wrap gap-1 mt-2">
+                              {[...(item.sport_tags || []), ...(item.team_tags || [])].slice(0, 4).map((tag: string, ti: number) => (
+                                <Badge key={ti} variant="secondary" className="text-[9px] px-1.5 py-0 rounded-full">{tag}</Badge>
+                              ))}
+                            </div>
+                          )}
+                        </a>
+                      );
+                    })}
                   </div>
                 </div>
-                <div className="divide-y divide-border/20">
-                  {CURATED_ARTICLES.map((article, i) => (
-                    <a
-                      key={i}
-                      href={article.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="block px-5 py-4 hover:bg-foreground/[0.06] transition-colors cursor-pointer group no-underline"
-                    >
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className="text-[10px] font-semibold text-primary/70 uppercase tracking-wider">{article.source}</span>
-                        <span className="text-[10px] text-muted-foreground">•</span>
-                        <span className="flex items-center gap-1 text-[10px] text-muted-foreground"><Eye className="w-3 h-3" />{article.views}</span>
-                      </div>
-                      <p className="text-sm font-medium text-foreground group-hover:text-primary transition-colors flex items-center gap-1.5">
-                        {article.title}
-                        <ExternalLink className="w-3 h-3 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
-                      </p>
-                      <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{article.summary}</p>
-                    </a>
-                  ))}
-                </div>
-              </div>
-            </motion.div>
+              </motion.div>
+            )}
 
 
 
