@@ -110,7 +110,7 @@ const ChannelCard = ({ channel }: { channel: ChannelData }) => {
 const Explore = () => {
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState("All");
-  const navigate = useNavigate();
+  const goTo = (path: string) => { window.location.href = path; };
 
 
 
