@@ -44,7 +44,7 @@ const Home = () => {
   }, [activeIndex, videos.length]);
 
   return (
-    <div className="fixed inset-0 bg-black z-30">
+    <div className="fixed inset-0 md:left-64 bg-black z-30">
       {/* "Watch" label */}
       <div className="absolute top-12 left-0 right-0 z-30 flex justify-center pointer-events-none">
         <h1 className="text-white text-sm font-bold tracking-wider uppercase drop-shadow-lg">Watch</h1>
