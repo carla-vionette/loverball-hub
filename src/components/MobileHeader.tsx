@@ -1,15 +1,20 @@
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
 import { Search, ShoppingCart } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { useCartStore } from "@/stores/cartStore";
 import NotificationBell from "@/components/NotificationBell";
 import loverballLogo from "@/assets/loverball-new-l-logo.png";
 
+const goTo = (path: string) => { window.location.href = path; };
+
 const MobileHeader = () => {
-  const navigate = useNavigate();
-  const items = useCartStore(state => state.items);
-  const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
+  let totalItems = 0;
+  try {
+    const { useCartStore } = require("@/stores/cartStore");
+    const items = useCartStore.getState().items;
+    totalItems = items.reduce((sum: number, item: any) => sum + item.quantity, 0);
+  } catch {
+    totalItems = 0;
+  }
 
   return (
     <header
@@ -17,16 +22,16 @@ const MobileHeader = () => {
       role="banner"
     >
       <div className="flex items-center gap-3">
-        <Link to="/" className="flex items-center flex-shrink-0 focus-ring rounded-lg" aria-label="Loverball home">
+        <a href="/" className="flex items-center flex-shrink-0 focus-ring rounded-lg" aria-label="Loverball home">
           <img 
             src={loverballLogo} 
             alt="Loverball logo"
             className="h-10 w-auto object-contain"
           />
-        </Link>
+        </a>
         
         <button
-          onClick={() => navigate('/search')}
+          onClick={() => goTo('/search')}
           className="flex-1 flex items-center gap-2 px-4 py-2.5 bg-secondary border border-border/20 text-muted-foreground text-sm rounded-full hover:bg-muted transition-colors focus-ring tap-target"
           aria-label="Open search"
         >
@@ -37,7 +42,7 @@ const MobileHeader = () => {
         <NotificationBell />
         
         <button
-          onClick={() => navigate('/shop')}
+          onClick={() => goTo('/shop')}
           className="relative p-2.5 hover:bg-secondary rounded-full transition-colors focus-ring tap-target"
           aria-label={`Shopping cart${totalItems > 0 ? `, ${totalItems} items` : ''}`}
         >

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { Bell } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -24,7 +23,7 @@ interface Notification {
 
 const NotificationBell = () => {
   const { user } = useAuth();
-  const navigate = useNavigate();
+  const goTo = (path: string) => { window.location.href = path; };
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [open, setOpen] = useState(false);
 
@@ -81,7 +80,7 @@ const NotificationBell = () => {
     }
     if (notif.link) {
       setOpen(false);
-      navigate(notif.link);
+      goTo(notif.link);
     }
   };
 
@@ -162,7 +161,7 @@ const NotificationBell = () => {
             variant="ghost"
             size="sm"
             className="w-full text-xs"
-            onClick={() => { setOpen(false); navigate("/settings"); }}
+            onClick={() => { setOpen(false); goTo("/settings"); }}
           >
             Notification Settings
           </Button>
