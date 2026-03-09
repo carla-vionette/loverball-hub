@@ -67,10 +67,8 @@ const LiveSportsBadge = () => {
       className="inline-flex items-center gap-2 bg-accent text-accent-foreground rounded-full px-4 py-2 mb-8 shadow-lg"
     >
       <span className="relative flex h-2.5 w-2.5">
-        {isLive && (
-          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent-foreground opacity-75" />
-        )}
-        <span className={`relative inline-flex rounded-full h-2.5 w-2.5 ${isLive ? 'bg-accent-foreground' : 'bg-accent-foreground/60'}`} />
+        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent-foreground opacity-75" />
+        <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-accent-foreground" />
       </span>
       {currentItem?.sport && <span className="text-sm">{currentItem.sport}</span>}
       <span className="text-[11px] font-sans font-bold tracking-wide uppercase">
