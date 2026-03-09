@@ -1,15 +1,20 @@
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
 import { Search, ShoppingCart } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { useCartStore } from "@/stores/cartStore";
 import NotificationBell from "@/components/NotificationBell";
 import loverballLogo from "@/assets/loverball-new-l-logo.png";
 
+const goTo = (path: string) => { window.location.href = path; };
+
 const MobileHeader = () => {
-  const navigate = useNavigate();
-  const items = useCartStore(state => state.items);
-  const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
+  let totalItems = 0;
+  try {
+    const { useCartStore } = require("@/stores/cartStore");
+    const items = useCartStore.getState().items;
+    totalItems = items.reduce((sum: number, item: any) => sum + item.quantity, 0);
+  } catch {
+    totalItems = 0;
+  }
 
   return (
     <header
