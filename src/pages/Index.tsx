@@ -80,7 +80,7 @@ const LiveSportsBadge = () => {
   );
 };
 
-
+const Index = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [inviteCode, setInviteCode] = useState("");
