@@ -26,7 +26,7 @@ const signUpSchema = z.object({
   inviteCode: z.string().trim().min(1, "Invite code is required")
 });
 
-const AnimatedStat = ({ value, suffix = "" }: { value: number; suffix?: string }) => {
+const AnimatedStat = ({ value, suffix = "" }: {value: number;suffix?: string;}) => {
   const ref = useRef<HTMLSpanElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
   const [count, setCount] = useState(0);
@@ -122,7 +122,7 @@ const Index = () => {
           await supabase.auth.signOut();
           throw new Error("Invalid invite code. Please check and try again.");
         }
-        const result = inviteResult as { success: boolean; error?: string };
+        const result = inviteResult as {success: boolean;error?: string;};
         if (!result.success) {
           await supabase.auth.signOut();
           throw new Error(result.error || "Invalid invite code");
@@ -141,38 +141,38 @@ const Index = () => {
   const openAuthModal = () => setAuthModalOpen(true);
 
   const sportsTicker = [
-    { emoji: "🎾", label: "Tennis" },
-    { emoji: "🏎️", label: "Formula 1" },
-    { emoji: "⛳", label: "Golf" },
-    { emoji: "🏐", label: "Volleyball" },
-    { emoji: "🥎", label: "Softball" },
-    { emoji: "🏒", label: "Hockey" },
-    { emoji: "🏀", label: "Basketball" },
-    { emoji: "⚽", label: "Soccer" },
-    { emoji: "🏃‍♀️", label: "Running" },
-    { emoji: "🏈", label: "Football" },
-  ];
+  { emoji: "🎾", label: "Tennis" },
+  { emoji: "🏎️", label: "Formula 1" },
+  { emoji: "⛳", label: "Golf" },
+  { emoji: "🏐", label: "Volleyball" },
+  { emoji: "🥎", label: "Softball" },
+  { emoji: "🏒", label: "Hockey" },
+  { emoji: "🏀", label: "Basketball" },
+  { emoji: "⚽", label: "Soccer" },
+  { emoji: "🏃‍♀️", label: "Running" },
+  { emoji: "🏈", label: "Football" }];
+
 
   const trendingStories = [
-    { tag: "WNBA", title: "Caitlin Clark Sets New Assist Record in Fever Victory", time: "2h ago", image: athletesImage },
-    { tag: "NWSL", title: "Angel City FC Signs International Star Ahead of Season Opener", time: "4h ago", image: communityImage },
-    { tag: "TENNIS", title: "Coco Gauff Advances to Indian Wells Semifinals", time: "5h ago", image: fansImage },
-    { tag: "OLYMPICS", title: "LA28 Unveils Women's Sports Showcase Plans", time: "8h ago", image: philosophyImage },
-  ];
+  { tag: "WNBA", title: "Caitlin Clark Sets New Assist Record in Fever Victory", time: "2h ago", image: athletesImage },
+  { tag: "NWSL", title: "Angel City FC Signs International Star Ahead of Season Opener", time: "4h ago", image: communityImage },
+  { tag: "TENNIS", title: "Coco Gauff Advances to Indian Wells Semifinals", time: "5h ago", image: fansImage },
+  { tag: "OLYMPICS", title: "LA28 Unveils Women's Sports Showcase Plans", time: "8h ago", image: philosophyImage }];
+
 
   const nearbyEvents = [
-    { date: "MAR 22", time: "7:00 PM", title: "Sparks vs Aces Watch Party", venue: "The Victorian, Santa Monica", type: "Watch Party" },
-    { date: "MAR 28", time: "5:30 PM", title: "Angel City FC Tailgate", venue: "BMO Stadium, DTLA", type: "Game Day" },
-    { date: "APR 02", time: "6:00 PM", title: "Tennis & Tequila: Indian Wells", venue: "The Bungalow, Santa Monica", type: "Meetup" },
-    { date: "APR 05", time: "4:00 PM", title: "March Madness Mixer", venue: "Loverball HQ, Venice", type: "Watch Party" },
-  ];
+  { date: "MAR 22", time: "7:00 PM", title: "Sparks vs Aces Watch Party", venue: "The Victorian, Santa Monica", type: "Watch Party" },
+  { date: "MAR 28", time: "5:30 PM", title: "Angel City FC Tailgate", venue: "BMO Stadium, DTLA", type: "Game Day" },
+  { date: "APR 02", time: "6:00 PM", title: "Tennis & Tequila: Indian Wells", venue: "The Bungalow, Santa Monica", type: "Meetup" },
+  { date: "APR 05", time: "4:00 PM", title: "March Madness Mixer", venue: "Loverball HQ, Venice", type: "Watch Party" }];
+
 
   const featureCards = [
-    { icon: Heart, title: "DISCOVER FANS", desc: "Match with women who share your sports passion", color: "bg-hot-pink" },
-    { icon: Calendar, title: "FIND EVENTS", desc: "Watch parties, tailgates & meetups near you", color: "bg-primary" },
-    { icon: Play, title: "WATCH", desc: "Originals, highlights & creator content", color: "bg-accent" },
-    { icon: ShoppingBag, title: "SHOP", desc: "Apparel and gear for the ultimate fan", color: "bg-foreground" },
-  ];
+  { icon: Heart, title: "DISCOVER FANS", desc: "Match with women who share your sports passion", color: "bg-hot-pink" },
+  { icon: Calendar, title: "FIND EVENTS", desc: "Watch parties, tailgates & meetups near you", color: "bg-primary" },
+  { icon: Play, title: "WATCH", desc: "Originals, highlights & creator content", color: "bg-accent" },
+  { icon: ShoppingBag, title: "SHOP", desc: "Apparel and gear for the ultimate fan", color: "bg-foreground" }];
+
 
   return (
     <div className="min-h-screen bg-background overflow-x-hidden landing-theme">
@@ -202,16 +202,16 @@ const Index = () => {
             </div>
           </div>
         </div>
-        {mobileMenuOpen && (
-          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="lg:hidden bg-background border-t border-border/30 px-8 py-6 space-y-1">
+        {mobileMenuOpen &&
+        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="lg:hidden bg-background border-t border-border/30 px-8 py-6 space-y-1">
             <a href="#explore" onClick={() => setMobileMenuOpen(false)} className="block py-3 text-[11px] font-sans font-bold tracking-[0.25em] uppercase text-foreground/60">Explore</a>
             <a href="#trending" onClick={() => setMobileMenuOpen(false)} className="block py-3 text-[11px] font-sans font-bold tracking-[0.25em] uppercase text-foreground/60">Trending</a>
             <a href="#events" onClick={() => setMobileMenuOpen(false)} className="block py-3 text-[11px] font-sans font-bold tracking-[0.25em] uppercase text-foreground/60">Events</a>
-            <Button onClick={() => { setMobileMenuOpen(false); openAuthModal(); }} className="w-full rounded-full mt-4 bg-accent text-accent-foreground text-[11px] tracking-[0.2em] uppercase">
+            <Button onClick={() => {setMobileMenuOpen(false);openAuthModal();}} className="w-full rounded-full mt-4 bg-accent text-accent-foreground text-[11px] tracking-[0.2em] uppercase">
               Join Loverball
             </Button>
           </motion.div>
-        )}
+        }
       </nav>
 
       {/* AUTH MODAL */}
@@ -228,8 +228,8 @@ const Index = () => {
                 <TabsTrigger value="signup" className="rounded-full data-[state=active]:bg-accent data-[state=active]:text-accent-foreground text-[11px] font-sans font-bold tracking-[0.1em] uppercase">Sign Up</TabsTrigger>
               </TabsList>
               <TabsContent value="login">
-                {showForgotPassword ? (
-                  <form onSubmit={handleForgotPassword} className="space-y-5 mt-8">
+                {showForgotPassword ?
+                <form onSubmit={handleForgotPassword} className="space-y-5 mt-8">
                     <div className="space-y-2">
                       <Label htmlFor="reset-email" className="text-foreground text-[11px] tracking-[0.1em] uppercase">Email</Label>
                       <Input id="reset-email" type="email" placeholder="Enter your email" value={email} onChange={(e) => setEmail(e.target.value)} required className="bg-background border-border text-foreground rounded-xl h-12" />
@@ -237,9 +237,9 @@ const Index = () => {
                     <p className="text-muted-foreground text-sm">We'll send you a link to reset your password.</p>
                     <Button type="submit" className="w-full rounded-full h-12 bg-accent text-accent-foreground text-[11px] font-sans tracking-[0.1em] uppercase" disabled={loading}>{loading ? "Sending..." : "Send Reset Link"}</Button>
                     <button type="button" onClick={() => setShowForgotPassword(false)} className="w-full text-sm text-accent hover:text-accent/80 transition-colors font-medium">Back to sign in</button>
-                  </form>
-                ) : (
-                  <form onSubmit={handleLogin} className="space-y-5 mt-8">
+                  </form> :
+
+                <form onSubmit={handleLogin} className="space-y-5 mt-8">
                     <div className="space-y-2">
                       <Label htmlFor="login-email" className="text-foreground text-[11px] tracking-[0.1em] uppercase">Email</Label>
                       <Input id="login-email" type="email" placeholder="Enter your email" value={email} onChange={(e) => setEmail(e.target.value)} required className="bg-background border-border text-foreground rounded-xl h-12" />
@@ -253,7 +253,7 @@ const Index = () => {
                     </div>
                     <Button type="submit" className="w-full rounded-full h-12 bg-accent text-accent-foreground text-[11px] font-sans tracking-[0.1em] uppercase" disabled={loading}>{loading ? "Signing in..." : "Sign In"}</Button>
                   </form>
-                )}
+                }
               </TabsContent>
               <TabsContent value="signup">
                 <form onSubmit={handleSignup} className="space-y-5 mt-8">
@@ -289,15 +289,15 @@ const Index = () => {
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.9, ease: "easeOut" }}
-              className="relative z-10 max-w-lg"
-            >
+              className="relative z-10 max-w-lg">
+              
               {/* Live badge */}
               <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.5, delay: 0.3 }}
-                className="inline-flex items-center gap-2 bg-accent text-accent-foreground rounded-full px-4 py-2 mb-8 shadow-lg"
-              >
+                className="inline-flex items-center gap-2 bg-accent text-accent-foreground rounded-full px-4 py-2 mb-8 shadow-lg">
+                
                 <span className="relative flex h-2.5 w-2.5">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent-foreground opacity-75" />
                   <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-accent-foreground" />
@@ -313,8 +313,8 @@ const Index = () => {
                 <span className="text-foreground">Her</span><br />
                 <span className="text-foreground">Community.</span>
               </h1>
-              <p className="text-base font-sans font-medium text-primary-foreground/85 leading-relaxed mb-8 max-w-sm">
-                The social platform built for women who live and breathe sports. Connect with fans, find events, and watch exclusive content.
+              <p className="text-base font-sans font-medium text-primary-foreground/85 leading-relaxed mb-8 max-w-sm">The media platform built for women who live and breathe sports. Discover live events, connect with fans, and watch exclusive sports content made for you.
+
               </p>
               <div className="flex flex-col sm:flex-row items-start gap-4">
                 <Button onClick={openAuthModal} className="rounded-full bg-accent text-accent-foreground hover:bg-accent/90 px-8 py-5 text-[11px] font-sans font-bold tracking-[0.2em] uppercase shadow-xl h-auto">
@@ -332,8 +332,8 @@ const Index = () => {
             initial={{ opacity: 0, x: 40 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.9, delay: 0.2 }}
-            className="bg-background relative flex items-center justify-center py-20 lg:py-0 px-8 overflow-hidden"
-          >
+            className="bg-background relative flex items-center justify-center py-20 lg:py-0 px-8 overflow-hidden">
+            
             <div className="relative w-full max-w-md h-[500px] lg:h-[600px]">
               <motion.div initial={{ opacity: 0, rotate: -8, scale: 0.9 }} animate={{ opacity: 1, rotate: -6, scale: 1 }} transition={{ duration: 0.8, delay: 0.4 }} className="absolute left-0 bottom-12 w-[55%] z-10">
                 <div className="rounded-2xl overflow-hidden shadow-2xl border-4 border-card">
@@ -359,17 +359,17 @@ const Index = () => {
           <div className="max-w-[1400px] mx-auto px-8 lg:px-16">
             <div className="grid grid-cols-3 divide-x divide-background/10 py-6">
               {[
-                { value: 24, suffix: "K+", label: "Members" },
-                { value: 340, suffix: "", label: "Events This Month" },
-                { value: 18, suffix: "", label: "Sports Covered" },
-              ].map((stat) => (
-                <div key={stat.label} className="text-center px-4">
+              { value: 24, suffix: "K+", label: "Members" },
+              { value: 340, suffix: "", label: "Events This Month" },
+              { value: 18, suffix: "", label: "Sports Covered" }].
+              map((stat) =>
+              <div key={stat.label} className="text-center px-4">
                   <span className="font-condensed text-3xl lg:text-4xl text-accent font-bold">
                     <AnimatedStat value={stat.value} suffix={stat.suffix} />
                   </span>
                   <p className="text-[10px] font-sans font-bold tracking-[0.2em] uppercase text-background/50 mt-1">{stat.label}</p>
                 </div>
-              ))}
+              )}
             </div>
           </div>
         </div>
@@ -378,12 +378,12 @@ const Index = () => {
       {/* ═══════ SPORTS TICKER ═══════ */}
       <div className="bg-accent py-3.5 overflow-hidden">
         <div className="flex items-center gap-10 whitespace-nowrap animate-[shimmer_30s_linear_infinite] px-8">
-          {[...sportsTicker, ...sportsTicker, ...sportsTicker].map((sport, i) => (
-            <span key={i} className="text-[12px] font-sans font-bold tracking-[0.25em] uppercase text-accent-foreground/90 flex items-center gap-2.5">
+          {[...sportsTicker, ...sportsTicker, ...sportsTicker].map((sport, i) =>
+          <span key={i} className="text-[12px] font-sans font-bold tracking-[0.25em] uppercase text-accent-foreground/90 flex items-center gap-2.5">
               <span className="text-lg">{sport.emoji}</span>
               {sport.label}
             </span>
-          ))}
+          )}
         </div>
       </div>
 
@@ -397,16 +397,16 @@ const Index = () => {
           </motion.div>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {featureCards.map((card, i) => (
-              <motion.div
-                key={card.title}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: i * 0.1 }}
-                viewport={{ once: true }}
-                onClick={openAuthModal}
-                className="cursor-pointer group"
-              >
+            {featureCards.map((card, i) =>
+            <motion.div
+              key={card.title}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: i * 0.1 }}
+              viewport={{ once: true }}
+              onClick={openAuthModal}
+              className="cursor-pointer group">
+              
                 <div className={`${card.color} rounded-2xl p-8 h-full transition-all duration-300 hover:scale-[1.03] hover:shadow-xl`}>
                   <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-background/15 mb-6">
                     <card.icon className="w-7 h-7 text-background" />
@@ -415,7 +415,7 @@ const Index = () => {
                   <p className="text-background/75 text-sm font-medium leading-relaxed">{card.desc}</p>
                 </div>
               </motion.div>
-            ))}
+            )}
           </div>
         </div>
       </section>
@@ -429,16 +429,16 @@ const Index = () => {
           </motion.div>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {trendingStories.map((story, i) => (
-              <motion.div
-                key={story.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: i * 0.1 }}
-                viewport={{ once: true }}
-                onClick={openAuthModal}
-                className="cursor-pointer group"
-              >
+            {trendingStories.map((story, i) =>
+            <motion.div
+              key={story.title}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: i * 0.1 }}
+              viewport={{ once: true }}
+              onClick={openAuthModal}
+              className="cursor-pointer group">
+              
                 <div className="bg-card rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300">
                   <div className="aspect-[16/10] overflow-hidden">
                     <img src={story.image} alt={story.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
@@ -454,7 +454,7 @@ const Index = () => {
                   </div>
                 </div>
               </motion.div>
-            ))}
+            )}
           </div>
         </div>
       </section>
@@ -470,16 +470,16 @@ const Index = () => {
           </motion.div>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {nearbyEvents.map((event, i) => (
-              <motion.div
-                key={event.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: i * 0.08 }}
-                viewport={{ once: true }}
-                onClick={openAuthModal}
-                className="cursor-pointer group"
-              >
+            {nearbyEvents.map((event, i) =>
+            <motion.div
+              key={event.title}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: i * 0.08 }}
+              viewport={{ once: true }}
+              onClick={openAuthModal}
+              className="cursor-pointer group">
+              
                 <div className="bg-card rounded-2xl p-6 shadow-sm hover:shadow-lg transition-all duration-300 h-full border border-border/20">
                   <div className="flex items-center gap-3 mb-4">
                     <div className="bg-accent/10 rounded-xl px-3 py-2 text-center">
@@ -499,7 +499,7 @@ const Index = () => {
                   </div>
                 </div>
               </motion.div>
-            ))}
+            )}
           </div>
 
           <div className="mt-8 md:hidden text-center">
@@ -518,8 +518,8 @@ const Index = () => {
             whileInView={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
-            className="text-center"
-          >
+            className="text-center">
+            
             <div className="inline-flex items-center gap-2 bg-hot-pink-foreground/20 rounded-full px-5 py-2 mb-6">
               <Sparkles className="w-4 h-4 text-hot-pink-foreground" />
               <span className="text-[11px] font-sans font-bold tracking-[0.2em] uppercase text-hot-pink-foreground">New Match Waiting</span>
@@ -545,8 +545,8 @@ const Index = () => {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
-            className="px-8 lg:px-16 py-20 lg:py-28 flex flex-col justify-center"
-          >
+            className="px-8 lg:px-16 py-20 lg:py-28 flex flex-col justify-center">
+            
             <span className="text-[11px] font-sans font-bold tracking-[0.3em] uppercase text-accent-foreground/60 mb-4">Our Mission</span>
             <h2 className="font-condensed text-[3rem] lg:text-[4.5rem] leading-[0.85] tracking-tight text-accent-foreground uppercase mb-8 font-extrabold">
               Giving Women Fans<br />A Home in Sports
@@ -571,15 +571,15 @@ const Index = () => {
             <span className="font-condensed text-[3rem] lg:text-[4rem] leading-none tracking-tight text-primary-foreground/40 uppercase block mb-12">What They Say</span>
             <div className="grid md:grid-cols-3 gap-8 lg:gap-12">
               {[
-                { quote: "Finally a sports community that gets me.", name: "Alicia", detail: "Lakers fan" },
-                { quote: "I met my best friends at a Loverball watch party.", name: "Dani", detail: "WNBA superfan" },
-                { quote: "The content here actually speaks to women fans.", name: "Maria", detail: "Soccer obsessed" },
-              ].map((t, i) => (
-                <motion.div key={t.name} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: i * 0.1 }} viewport={{ once: true }} className="bg-primary-foreground/10 backdrop-blur-sm rounded-2xl p-8">
+              { quote: "Finally a sports community that gets me.", name: "Alicia", detail: "Lakers fan" },
+              { quote: "I met my best friends at a Loverball watch party.", name: "Dani", detail: "WNBA superfan" },
+              { quote: "The content here actually speaks to women fans.", name: "Maria", detail: "Soccer obsessed" }].
+              map((t, i) =>
+              <motion.div key={t.name} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: i * 0.1 }} viewport={{ once: true }} className="bg-primary-foreground/10 backdrop-blur-sm rounded-2xl p-8">
                   <p className="font-display text-xl lg:text-2xl text-primary-foreground italic leading-relaxed mb-6">"{t.quote}"</p>
                   <p className="text-[11px] font-sans font-bold tracking-[0.2em] uppercase text-primary-foreground/70">— {t.name}, {t.detail}</p>
                 </motion.div>
-              ))}
+              )}
             </div>
           </motion.div>
         </div>
@@ -612,7 +612,7 @@ const Index = () => {
             <div className="max-w-md mx-auto text-center">
               <h3 className="font-condensed text-2xl uppercase tracking-wide text-background mb-3">Stay In The Loop</h3>
               <p className="text-background/40 text-sm mb-6">Get the latest on events, content drops, and community updates.</p>
-              <form onSubmit={(e) => { e.preventDefault(); toast({ title: "Subscribed!", description: "You'll hear from us soon." }); setNewsletterEmail(""); }} className="flex gap-2">
+              <form onSubmit={(e) => {e.preventDefault();toast({ title: "Subscribed!", description: "You'll hear from us soon." });setNewsletterEmail("");}} className="flex gap-2">
                 <Input type="email" placeholder="Enter your email" value={newsletterEmail} onChange={(e) => setNewsletterEmail(e.target.value)} required className="flex-1 rounded-full bg-background/10 border-background/10 text-background placeholder:text-background/30 h-12" />
                 <Button type="submit" className="rounded-full bg-accent text-accent-foreground hover:bg-accent/90 px-6 h-12">
                   <Mail className="h-4 w-4" />
@@ -656,8 +656,8 @@ const Index = () => {
           </div>
         </div>
       </footer>
-    </div>
-  );
+    </div>);
+
 };
 
 export default Index;
