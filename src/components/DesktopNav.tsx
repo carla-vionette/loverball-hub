@@ -1,15 +1,9 @@
 import React from "react";
-import { User, Search, CalendarDays, Settings, ShoppingBag, Play, MessageCircle, Home, Compass, Newspaper, Heart } from "lucide-react";
-import { Link, useLocation } from "react-router-dom";
+import { User, Search, CalendarDays, Settings, ShoppingBag, Play, MessageCircle, Home, Compass, Newspaper, Heart, Bell } from "lucide-react";
 import loverbballLogo from "@/assets/loverball-script-logo.png";
-import { useAuth } from "@/hooks/useAuth";
-import { useUnreadMessages } from "@/hooks/useUnreadMessages";
-import NotificationBell from "@/components/NotificationBell";
 
 const DesktopNav = () => {
-  const location = useLocation();
-  const { isMember, isAdmin } = useAuth();
-  const { hasUnread } = useUnreadMessages();
+  const pathname = window.location.pathname;
   
   const mainNavItems = [
     { icon: Home, label: "For You", path: "/home" },
@@ -22,12 +16,11 @@ const DesktopNav = () => {
   ];
 
   const secondaryNavItems = [
-    { icon: MessageCircle, label: "DMs", path: "/dms", showBadge: true },
+    { icon: MessageCircle, label: "DMs", path: "/dms" },
     { icon: User, label: "Profile", path: "/profile" },
-    ...(isAdmin ? [{ icon: Settings, label: "Admin", path: "/admin" }] : []),
   ];
 
-  const isActive = (path: string) => location.pathname === path;
+  const isActive = (path: string) => pathname === path;
 
   return (
     <aside
@@ -36,9 +29,9 @@ const DesktopNav = () => {
       aria-label="Main navigation"
     >
       <div className="p-4 border-b border-border/20 flex items-center justify-center">
-        <Link to="/" className="focus-ring rounded-lg" aria-label="Loverball home">
+        <a href="/" className="focus-ring rounded-lg" aria-label="Loverball home">
           <img src={loverbballLogo} alt="Loverball logo" className="h-20 w-auto object-contain" />
-        </Link>
+        </a>
       </div>
       
       <nav className="flex-1 py-3 flex flex-col" aria-label="Primary">
@@ -48,9 +41,9 @@ const DesktopNav = () => {
             const active = isActive(item.path);
             
             return (
-              <Link
+              <a
                 key={item.path}
-                to={item.path}
+                href={item.path}
                 aria-current={active ? "page" : undefined}
                 className={`flex items-center gap-3 px-5 py-2.5 mx-3 rounded-xl transition-all duration-200 focus-ring ${
                   active 
@@ -60,7 +53,7 @@ const DesktopNav = () => {
               >
                 <Icon className="w-5 h-5" aria-hidden="true" />
                 <span className="text-sm">{item.label}</span>
-              </Link>
+              </a>
             );
           })}
         </div>
@@ -71,14 +64,13 @@ const DesktopNav = () => {
           {secondaryNavItems.map((item) => {
             const Icon = item.icon;
             const active = isActive(item.path);
-            const showBadge = 'showBadge' in item && item.showBadge && hasUnread;
             
             return (
-              <Link
+              <a
                 key={item.path}
-                to={item.path}
+                href={item.path}
                 aria-current={active ? "page" : undefined}
-                aria-label={`${item.label}${showBadge ? ', new messages' : ''}`}
+                aria-label={item.label}
                 className={`flex items-center gap-3 px-5 py-2.5 mx-3 rounded-xl transition-all duration-200 focus-ring ${
                   active 
                     ? "text-primary font-semibold bg-primary/10" 
@@ -87,22 +79,22 @@ const DesktopNav = () => {
               >
                 <div className="relative">
                   <Icon className="w-5 h-5" aria-hidden="true" />
-                  {showBadge && (
-                    <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-accent rounded-full border-2 border-background" aria-hidden="true" />
-                  )}
                 </div>
                 <span className="text-sm">{item.label}</span>
-              </Link>
+              </a>
             );
           })}
 
-          <div className="flex items-center gap-3 px-5 py-2 mx-3">
-            <NotificationBell />
-            <span className="text-sm text-muted-foreground" aria-hidden="true">Notifications</span>
-          </div>
+          <a
+            href="/settings"
+            className="flex items-center gap-3 px-5 py-2 mx-3 rounded-xl transition-all duration-200 focus-ring text-muted-foreground hover:text-foreground hover:bg-secondary"
+          >
+            <Bell className="w-5 h-5" aria-hidden="true" />
+            <span className="text-sm">Notifications</span>
+          </a>
 
-          <Link
-            to="/settings"
+          <a
+            href="/settings"
             aria-current={isActive("/settings") ? "page" : undefined}
             className={`flex items-center gap-3 px-5 py-2.5 mx-3 rounded-xl transition-all duration-200 focus-ring ${
               isActive("/settings")
@@ -112,9 +104,9 @@ const DesktopNav = () => {
           >
             <Settings className="w-5 h-5" aria-hidden="true" />
             <span className="text-sm">Settings</span>
-          </Link>
-          <Link
-            to="/search"
+          </a>
+          <a
+            href="/search"
             aria-label="Search"
             className={`flex items-center gap-3 px-5 py-2.5 mx-3 rounded-xl transition-all duration-200 focus-ring ${
               isActive("/search")
@@ -124,7 +116,7 @@ const DesktopNav = () => {
           >
             <Search className="w-5 h-5" aria-hidden="true" />
             <span className="text-sm">Search</span>
-          </Link>
+          </a>
         </div>
       </nav>
     </aside>
