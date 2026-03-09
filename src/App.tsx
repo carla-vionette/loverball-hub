@@ -24,9 +24,9 @@ import Feed from "./pages/Feed";
 import Watch from "./pages/Watch";
 import Search from "./pages/Search";
 import VideoDetail from "./pages/VideoDetail";
+import ChannelProfile from "./pages/ChannelProfile";
 
 // Lazy load less-visited pages
-const ChannelProfile = lazy(() => import("./pages/ChannelProfile"));
 const Onboarding = lazy(() => import("./pages/Onboarding"));
 const Horoscope = lazy(() => import("./pages/Horoscope"));
 const Community = lazy(() => import("./pages/Community"));
