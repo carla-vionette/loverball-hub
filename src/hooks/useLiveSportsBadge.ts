@@ -13,6 +13,20 @@ interface LiveSportsData {
   updatedAt: string;
 }
 
+// Client-side fallback if edge function fails entirely
+const FALLBACK_ITEMS: LiveSportsItem[] = [
+  { text: 'TONIGHT: NBA — PHI vs CLE — 4:00 PM PT', sport: '🏀', isLive: false, dateTime: '2026-03-10T00:00:00Z' },
+  { text: 'TONIGHT: NBA — MEM vs BKN — 4:30 PM PT', sport: '🏀', isLive: false, dateTime: '2026-03-10T00:30:00Z' },
+  { text: 'TONIGHT: NBA — DEN vs OKC — 4:30 PM PT', sport: '🏀', isLive: false, dateTime: '2026-03-10T00:30:00Z' },
+  { text: 'TONIGHT: NBA — GSW vs UTA — 6:00 PM PT', sport: '🏀', isLive: false, dateTime: '2026-03-10T02:00:00Z' },
+  { text: 'TONIGHT: NBA — NYK vs LAC — 7:00 PM PT', sport: '🏀', isLive: false, dateTime: '2026-03-10T03:00:00Z' },
+  { text: 'TODAY: NHL — LA Kings vs Columbus — 1:00 PM PT', sport: '🏒', isLive: false, dateTime: '2026-03-09T21:00:00Z' },
+  { text: 'TONIGHT: NHL — NY Rangers vs PHI — 4:00 PM PT', sport: '🏒', isLive: false, dateTime: '2026-03-10T00:00:00Z' },
+  { text: 'TONIGHT: NHL — Calgary vs WSH — 4:00 PM PT', sport: '🏒', isLive: false, dateTime: '2026-03-10T00:00:00Z' },
+  { text: 'TONIGHT: NHL — Utah vs CHI — 5:30 PM PT', sport: '🏒', isLive: false, dateTime: '2026-03-10T01:30:00Z' },
+  { text: 'TONIGHT: NHL — Ottawa vs VAN — 6:00 PM PT', sport: '🏒', isLive: false, dateTime: '2026-03-10T02:00:00Z' },
+];
+
 export function useLiveSportsBadge() {
   const [data, setData] = useState<LiveSportsData | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -22,9 +36,14 @@ export function useLiveSportsBadge() {
     try {
       const { data: result, error } = await supabase.functions.invoke('womens-sports-live');
       if (error) throw error;
-      if (result) setData(result);
+      if (result?.items?.length > 0) {
+        setData(result);
+      } else {
+        throw new Error('No items returned');
+      }
     } catch (err) {
-      console.error('Failed to fetch live sports:', err);
+      console.error('Failed to fetch live sports, using fallback:', err);
+      setData({ items: FALLBACK_ITEMS, updatedAt: new Date().toISOString() });
     } finally {
       setLoading(false);
     }
@@ -32,16 +51,16 @@ export function useLiveSportsBadge() {
 
   useEffect(() => {
     fetchData();
-    const interval = setInterval(fetchData, 5 * 60 * 1000); // refresh every 5 min
+    const interval = setInterval(fetchData, 3 * 60 * 1000); // refresh every 3 min
     return () => clearInterval(interval);
   }, [fetchData]);
 
-  // Rotate through items every 6 seconds
+  // Rotate through items every 5 seconds
   useEffect(() => {
     if (!data?.items.length || data.items.length <= 1) return;
     const interval = setInterval(() => {
       setCurrentIndex((i) => (i + 1) % data.items.length);
-    }, 6000);
+    }, 5000);
     return () => clearInterval(interval);
   }, [data]);
 
