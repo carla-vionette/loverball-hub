@@ -112,19 +112,25 @@ const FollowButton = ({ compact = false }: { compact?: boolean }) => {
 
 // ─── Video Card ───
 const VideoCard = ({ video }: { video: DiscoverVideo }) => (
-  <a href={`/watch/video/${video.id}`} className="flex-shrink-0 w-[130px] cursor-pointer group block">
+  <div
+    className="flex-shrink-0 w-[130px] cursor-pointer group"
+    onClick={() => { window.location.href = `/watch/video/${video.id}`; }}
+    role="link"
+    tabIndex={0}
+    onKeyDown={(e) => { if (e.key === "Enter") window.location.href = `/watch/video/${video.id}`; }}
+  >
     <div className="relative w-[130px] h-[231px] rounded-xl overflow-hidden">
       {video.thumbnail ? (
-        <img src={video.thumbnail} alt={video.title} className="w-full h-full object-cover" />
+        <img src={video.thumbnail} alt={video.title} className="w-full h-full object-cover pointer-events-none" />
       ) : (
-        <div className={`w-full h-full bg-gradient-to-br ${video.gradient}`} />
+        <div className={`w-full h-full bg-gradient-to-br ${video.gradient} pointer-events-none`} />
       )}
-      <div className="absolute inset-0 bg-foreground/10 group-hover:bg-foreground/20 transition-colors flex items-center justify-center">
+      <div className="absolute inset-0 bg-foreground/10 group-hover:bg-foreground/20 transition-colors flex items-center justify-center pointer-events-none">
         <div className="w-10 h-10 rounded-full bg-background/20 backdrop-blur-sm flex items-center justify-center group-hover:bg-background/40 transition-colors">
           <Play className="w-4 h-4 text-background ml-0.5" fill="currentColor" />
         </div>
       </div>
-      <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between">
+      <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between pointer-events-none">
         <span className="text-[10px] text-background/80 font-medium flex items-center gap-1">
           <Eye className="w-3 h-3" /> {formatViews(video.views)}
         </span>
