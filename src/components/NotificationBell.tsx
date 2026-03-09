@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Bell } from "lucide-react";
-import { Bell } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import {
   Popover,
