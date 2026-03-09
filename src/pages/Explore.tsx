@@ -139,7 +139,7 @@ const VideoCard = ({ video }: { video: DiscoverVideo }) => (
     </div>
     <p className="text-[11px] font-semibold text-foreground mt-1.5 leading-tight line-clamp-2">{video.title}</p>
     <p className="text-[10px] text-muted-foreground truncate">{video.channel}</p>
-  </a>
+  </div>
 );
 
 // ─── Channel Card ───
