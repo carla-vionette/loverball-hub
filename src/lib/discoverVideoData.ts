@@ -6,6 +6,11 @@ import feedVideo33 from "@/assets/feed-video-33.mp4";
 import feedVideo34 from "@/assets/feed-video-34.mp4";
 import feedVideo35 from "@/assets/feed-video-35.mp4";
 import feedVideo36 from "@/assets/feed-video-36.mp4";
+import feedVideo38 from "@/assets/feed-video-38.mp4";
+import feedVideo39 from "@/assets/feed-video-39.mp4";
+import feedVideo40 from "@/assets/feed-video-40.mp4";
+import feedVideo41 from "@/assets/feed-video-41.mp4";
+import feedVideo42 from "@/assets/feed-video-42.mp4";
 
 export interface DiscoverVideo {
   id: string;
@@ -52,6 +57,13 @@ export const DISCOVER_VIDEOS: DiscoverVideo[] = [
   // Fitness
   { id: "dv15", title: "Pre-Game Yoga Flow", channel: "Fit Femmes", category: "Fitness", views: 7200, likes: 800, duration: "4:30", gradient: "from-primary to-accent/60", thumbnail: "", videoUrl: feedVideo34, addedDate: "2026-03-06" },
   { id: "dv16", title: "Athlete Morning Routine", channel: "Strong Girl Summer", category: "Fitness", views: 19500, likes: 2600, duration: "3:00", gradient: "from-accent to-primary/50", thumbnail: "", addedDate: "2026-03-08", trending: true },
+
+  // New uploads
+  { id: "dv17", title: "Courtside Vibes — Game Night Energy", channel: "Loverball Originals", category: "Basketball", views: 28400, likes: 3800, duration: "0:45", gradient: "from-primary to-accent/80", thumbnail: "", videoUrl: feedVideo38, addedDate: "2026-03-09", trending: true },
+  { id: "dv18", title: "Match Day Highlights Recap", channel: "ACFC Media", category: "Soccer", views: 16200, likes: 2100, duration: "1:00", gradient: "from-accent/90 to-primary/50", thumbnail: "", videoUrl: feedVideo39, addedDate: "2026-03-09" },
+  { id: "dv19", title: "Behind the Scenes — Tunnel Walk", channel: "CourtSide Queens", category: "Culture", views: 21300, likes: 2900, duration: "0:30", gradient: "from-primary/70 to-accent/60", thumbnail: "", videoUrl: feedVideo40, addedDate: "2026-03-09", trending: true },
+  { id: "dv20", title: "Pickup Game Highlights 🏀", channel: "Court Vision", category: "Basketball", views: 13800, likes: 1700, duration: "0:55", gradient: "from-accent to-accent/40", thumbnail: "", videoUrl: feedVideo41, addedDate: "2026-03-08" },
+  { id: "dv21", title: "Stadium Fit Check 🔥", channel: "Game Day Girls", category: "Lifestyle", views: 24600, likes: 3400, duration: "0:40", gradient: "from-primary/80 to-accent/70", thumbnail: "", videoUrl: feedVideo42, addedDate: "2026-03-09", trending: true },
 ];
 
 export const DISCOVER_CATEGORIES = ["All", "Basketball", "Soccer", "WNBA", "Tennis", "Culture", "Lifestyle", "Fitness"] as const;
