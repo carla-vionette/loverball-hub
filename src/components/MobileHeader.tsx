@@ -22,16 +22,16 @@ const MobileHeader = () => {
       role="banner"
     >
       <div className="flex items-center gap-3">
-        <Link to="/" className="flex items-center flex-shrink-0 focus-ring rounded-lg" aria-label="Loverball home">
+        <a href="/" className="flex items-center flex-shrink-0 focus-ring rounded-lg" aria-label="Loverball home">
           <img 
             src={loverballLogo} 
             alt="Loverball logo"
             className="h-10 w-auto object-contain"
           />
-        </Link>
+        </a>
         
         <button
-          onClick={() => navigate('/search')}
+          onClick={() => goTo('/search')}
           className="flex-1 flex items-center gap-2 px-4 py-2.5 bg-secondary border border-border/20 text-muted-foreground text-sm rounded-full hover:bg-muted transition-colors focus-ring tap-target"
           aria-label="Open search"
         >
