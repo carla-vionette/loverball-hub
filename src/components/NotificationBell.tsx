@@ -161,7 +161,7 @@ const NotificationBell = () => {
             variant="ghost"
             size="sm"
             className="w-full text-xs"
-            onClick={() => { setOpen(false); navigate("/settings"); }}
+            onClick={() => { setOpen(false); goTo("/settings"); }}
           >
             Notification Settings
           </Button>
