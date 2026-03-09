@@ -1,5 +1,5 @@
+import React from "react";
 import { Home, Compass, Search, User, ShoppingBag, CalendarDays } from "lucide-react";
-import { Link, useLocation } from "react-router-dom";
 
 const navItems = [
   { icon: Home, label: "For You", path: "/watch" },
@@ -11,7 +11,7 @@ const navItems = [
 ];
 
 const VideoBottomNav = () => {
-  const location = useLocation();
+  const pathname = window.location.pathname;
 
   return (
     <nav
@@ -22,12 +22,12 @@ const VideoBottomNav = () => {
       <div className="flex justify-around items-center h-16">
         {navItems.map((item) => {
           const Icon = item.icon;
-          const isActive = location.pathname === item.path;
+          const isActive = pathname === item.path;
 
           return (
-            <Link
+            <a
               key={item.path}
-              to={item.path}
+              href={item.path}
               aria-current={isActive ? "page" : undefined}
               aria-label={item.label}
               className="flex flex-col items-center justify-center flex-1 h-full transition-colors duration-200 tap-target focus-ring"
@@ -46,7 +46,7 @@ const VideoBottomNav = () => {
               >
                 {item.label}
               </span>
-            </Link>
+            </a>
           );
         })}
       </div>
