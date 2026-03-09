@@ -61,11 +61,6 @@ const Index = () => {
   const { user, loading: authLoading } = useAuth();
   const isAuthenticated = !!user;
 
-  useEffect(() => {
-    if (!authLoading && isAuthenticated) {
-      navigate("/home", { replace: true });
-    }
-  }, [authLoading, isAuthenticated, navigate]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
