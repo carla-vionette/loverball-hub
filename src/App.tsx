@@ -23,6 +23,7 @@ import Profile from "./pages/Profile";
 import Feed from "./pages/Feed";
 import Watch from "./pages/Watch";
 import Search from "./pages/Search";
+import VideoDetail from "./pages/VideoDetail";
 
 // Lazy load less-visited pages
 const ChannelProfile = lazy(() => import("./pages/ChannelProfile"));
