@@ -10,12 +10,12 @@ import DesktopNav from "@/components/DesktopNav";
 import MobileHeader from "@/components/MobileHeader";
 
 const FEATURED_VIDEOS = [
-  { id: "fv1", title: "Top 10 WNBA Plays This Week", channel: "Loverball Originals", views: "24.1K", gradient: "from-purple-600 to-pink-500" },
-  { id: "fv2", title: "Angel City FC Match Highlights", channel: "ACFC Media", views: "18.3K", gradient: "from-rose-500 to-orange-400" },
-  { id: "fv3", title: "Game Day Outfit Inspo 🔥", channel: "GameDayGirls", views: "12.7K", gradient: "from-sky-500 to-indigo-500" },
-  { id: "fv4", title: "LA28 Olympic Venue Tour", channel: "OlympicDreams", views: "9.8K", gradient: "from-emerald-500 to-teal-400" },
-  { id: "fv5", title: "Pre-Game Yoga Flow", channel: "FitFemmes", views: "7.2K", gradient: "from-amber-500 to-red-500" },
-  { id: "fv6", title: "Soccer Skills Challenge", channel: "SoccerSisters", views: "15.4K", gradient: "from-fuchsia-500 to-violet-500" },
+  { id: "fv1", title: "Top 10 WNBA Plays This Week", channel: "Loverball Originals", views: "24.1K", gradient: "from-primary to-primary/70" },
+  { id: "fv2", title: "Angel City FC Match Highlights", channel: "ACFC Media", views: "18.3K", gradient: "from-accent to-accent/70" },
+  { id: "fv3", title: "Game Day Outfit Inspo 🔥", channel: "GameDayGirls", views: "12.7K", gradient: "from-primary/80 to-primary/40" },
+  { id: "fv4", title: "LA28 Olympic Venue Tour", channel: "OlympicDreams", views: "9.8K", gradient: "from-accent/80 to-primary/60" },
+  { id: "fv5", title: "Pre-Game Yoga Flow", channel: "FitFemmes", views: "7.2K", gradient: "from-primary to-accent/60" },
+  { id: "fv6", title: "Soccer Skills Challenge", channel: "SoccerSisters", views: "15.4K", gradient: "from-accent to-primary/60" },
 ];
 
 interface ChannelData {
@@ -44,13 +44,13 @@ const CHANNELS: ChannelData[] = [
 const CATEGORIES = ["All", "Basketball", "Soccer", "WNBA", "Tennis", "Culture", "Lifestyle", "Fitness"];
 
 const AVATAR_COLORS: Record<string, string> = {
-  Basketball: "bg-orange-500",
-  Soccer: "bg-emerald-500",
-  WNBA: "bg-purple-500",
-  Tennis: "bg-yellow-500",
-  Culture: "bg-pink-500",
-  Lifestyle: "bg-sky-500",
-  Fitness: "bg-red-500",
+  Basketball: "bg-accent",
+  Soccer: "bg-primary",
+  WNBA: "bg-accent",
+  Tennis: "bg-primary",
+  Culture: "bg-accent",
+  Lifestyle: "bg-primary",
+  Fitness: "bg-accent",
 };
 
 const FollowButton = () => {
@@ -58,13 +58,13 @@ const FollowButton = () => {
   return (
     <button
       onClick={(e) => { e.stopPropagation(); setFollowing(!following); }}
-      className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all duration-200 ${
+      className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 ${
         following
-          ? "bg-secondary text-muted-foreground border border-border/50 hover:bg-destructive/10 hover:text-destructive hover:border-destructive/30"
-          : "bg-primary text-primary-foreground hover:bg-primary/90"
+          ? "bg-secondary text-muted-foreground border border-border hover:bg-destructive/10 hover:text-destructive hover:border-destructive/30"
+          : "bg-accent text-accent-foreground hover:bg-accent/90"
       }`}
     >
-      {following ? "Following" : "+ Follow"}
+      {following ? "Following" : "View Profile"}
     </button>
   );
 };
@@ -74,7 +74,7 @@ const ChannelCard = ({ channel }: { channel: ChannelData }) => {
   const goTo = (path: string) => { window.location.href = path; };
   return (
     <Card
-      className="p-4 border-border/30 hover:border-primary/30 transition-colors group cursor-pointer"
+      className="p-4 hover:shadow-md transition-all group cursor-pointer"
       onClick={() => goTo(`/channel/${handleKey}`)}
     >
       <div className="flex items-start gap-3">
@@ -85,12 +85,12 @@ const ChannelCard = ({ channel }: { channel: ChannelData }) => {
         </Avatar>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-1.5 mb-0.5">
-            <h3 className="font-bold text-sm text-foreground truncate">{channel.name}</h3>
+            <h3 className="font-semibold text-sm text-foreground truncate">{channel.name}</h3>
             <CheckCircle className="w-3.5 h-3.5 text-primary flex-shrink-0" />
           </div>
           <p className="text-xs text-muted-foreground mb-1.5">{channel.handle}</p>
           <div className="flex items-center gap-2 mb-2">
-            <Badge className="bg-primary/10 text-primary text-[10px] font-bold border-0 rounded-full">
+            <Badge className="bg-accent/10 text-accent text-[10px] font-semibold border-0 rounded-full">
               {channel.category}
             </Badge>
             <span className="text-[11px] text-muted-foreground flex items-center gap-1">
@@ -112,9 +112,6 @@ const Explore = () => {
   const [activeCategory, setActiveCategory] = useState("All");
   const goTo = (path: string) => { window.location.href = path; };
 
-
-
-
   const filtered = useMemo(() => {
     return CHANNELS.filter(ch => {
       const matchesCategory = activeCategory === "All" || ch.category === activeCategory;
@@ -133,7 +130,7 @@ const Explore = () => {
 
       <main className="md:ml-64 pt-16 md:pt-0 pb-24 md:pb-0">
         <div className="max-w-3xl mx-auto px-5 md:px-10 py-6">
-          <h1 className="font-condensed text-3xl font-bold uppercase tracking-wide mb-5">Discover</h1>
+          <h1 className="font-display text-[28px] font-bold uppercase tracking-tight mb-5">Discover Elite Talent</h1>
 
           {/* Search */}
           <div className="relative mb-5">
@@ -142,7 +139,7 @@ const Explore = () => {
               placeholder="Search channels..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-10 rounded-full bg-secondary border-border/30"
+              className="pl-10 rounded-full bg-secondary border-border/20"
             />
           </div>
 
@@ -152,10 +149,10 @@ const Explore = () => {
               <button
                 key={cat}
                 onClick={() => setActiveCategory(cat)}
-                className={`px-4 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-colors ${
+                className={`px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-colors ${
                   activeCategory === cat
                     ? "bg-primary text-primary-foreground"
-                    : "bg-secondary text-muted-foreground hover:text-foreground"
+                    : "border border-foreground/20 text-foreground hover:bg-secondary"
                 }`}
               >
                 {cat}
@@ -166,14 +163,14 @@ const Explore = () => {
           {/* Featured Videos */}
           {activeCategory === "All" && !search && (
             <section className="mb-8">
-              <h2 className="font-condensed text-lg font-bold uppercase tracking-wide mb-3">🎬 Featured Videos</h2>
+              <h2 className="font-display text-lg font-semibold uppercase tracking-wide mb-3">🎬 Featured Videos</h2>
               <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-none">
                 {FEATURED_VIDEOS.map(video => (
                   <div key={video.id} className="flex-shrink-0 w-[120px] cursor-pointer group">
                     <div className="relative w-[120px] h-[213px] rounded-xl overflow-hidden">
                       <div className={`w-full h-full bg-gradient-to-br ${video.gradient}`} />
                       <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
-                        <div className="w-10 h-10 rounded-full bg-background/30 backdrop-blur-sm flex items-center justify-center group-hover:bg-background/50 transition-colors">
+                        <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center group-hover:bg-white/30 transition-colors">
                           <Play className="w-4 h-4 text-white ml-0.5" fill="currentColor" />
                         </div>
                       </div>
@@ -194,10 +191,10 @@ const Explore = () => {
           {/* Trending Channels */}
           {activeCategory === "All" && !search && (
             <section className="mb-8">
-              <h2 className="font-condensed text-lg font-bold uppercase tracking-wide mb-3">🔥 Trending Channels</h2>
+              <h2 className="font-display text-lg font-semibold uppercase tracking-wide mb-3">🔥 Trending Channels</h2>
               <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-none">
                 {trending.map(ch => (
-                  <Card key={ch.handle} className="flex-shrink-0 w-[200px] p-4 border-border/30 hover:border-primary/30 transition-colors cursor-pointer">
+                  <Card key={ch.handle} className="flex-shrink-0 w-[200px] p-4 hover:shadow-md transition-all cursor-pointer">
                     <div className="flex flex-col items-center text-center gap-2">
                       <Avatar className="w-14 h-14">
                         <AvatarFallback className={`${AVATAR_COLORS[ch.category] || "bg-primary"} text-white font-bold`}>
@@ -206,12 +203,12 @@ const Explore = () => {
                       </Avatar>
                       <div>
                         <div className="flex items-center justify-center gap-1">
-                          <h3 className="font-bold text-sm truncate">{ch.name}</h3>
+                          <h3 className="font-semibold text-sm truncate">{ch.name}</h3>
                           <CheckCircle className="w-3 h-3 text-primary" />
                         </div>
                         <p className="text-[11px] text-muted-foreground">{ch.followers} followers</p>
                       </div>
-                      <Badge className="bg-primary/10 text-primary text-[10px] font-bold border-0 rounded-full">{ch.category}</Badge>
+                      <Badge className="bg-accent/10 text-accent text-[10px] font-semibold border-0 rounded-full">{ch.category}</Badge>
                       <FollowButton />
                     </div>
                   </Card>
@@ -222,7 +219,7 @@ const Explore = () => {
 
           {/* Browse Channels */}
           <section>
-            <h2 className="font-condensed text-lg font-bold uppercase tracking-wide mb-3">Browse Channels</h2>
+            <h2 className="font-display text-lg font-semibold uppercase tracking-wide mb-3">Browse Channels</h2>
             {filtered.length === 0 ? (
               <div className="text-center py-12 text-muted-foreground">
                 <Search className="w-8 h-8 mx-auto mb-2 opacity-40" />

@@ -54,10 +54,10 @@ const Home = () => {
   }, [activeIndex, videos.length]);
 
   return (
-    <div className="fixed inset-0 bg-black z-30">
+    <div className="fixed inset-0 bg-[#0A0A0A] z-30">
       {/* "Watch" label */}
       <div className="absolute top-12 left-0 right-0 z-30 flex justify-center pointer-events-none">
-        <h1 className="text-white text-sm font-bold tracking-wider uppercase drop-shadow-lg">Watch</h1>
+        <h1 className="text-white text-sm font-display font-bold tracking-wider uppercase drop-shadow-lg">Watch</h1>
       </div>
 
       <div
@@ -84,13 +84,13 @@ const Home = () => {
       {/* Mobile: standard BottomNav */}
       <BottomNav />
 
-      {/* Desktop: always-visible bottom nav (since BottomNav is md:hidden) */}
+      {/* Desktop: always-visible bottom nav */}
       <nav
-        className="hidden md:block fixed bottom-0 left-0 right-0 z-50 px-3 pb-2"
+        className="hidden md:block fixed bottom-0 left-0 right-0 z-50 bg-[#0A0A0A] border-t border-white/10"
         role="navigation"
         aria-label="Desktop navigation"
       >
-        <div className="flex justify-around items-center h-16 bg-card/90 backdrop-blur-md rounded-[2rem] shadow-[0_4px_24px_rgba(0,0,0,0.08)] border border-border/20 max-w-2xl mx-auto">
+        <div className="flex justify-around items-center h-16 max-w-2xl mx-auto">
           {desktopNavItems.map((item) => {
             const Icon = item.icon;
             const isActive = !!item.active;
@@ -99,15 +99,13 @@ const Home = () => {
                 key={item.path}
                 href={item.path}
                 onClick={(e) => { e.preventDefault(); window.location.href = item.path; }}
-                className={`flex flex-col items-center justify-center flex-1 h-full transition-all duration-200 rounded-[2rem] mx-0.5 ${
-                  isActive ? "bg-accent text-accent-foreground" : ""
-                }`}
+                className="flex flex-col items-center justify-center flex-1 h-full transition-colors duration-200"
               >
                 <Icon
-                  className={`w-5 h-5 ${isActive ? "text-accent-foreground" : "text-foreground/40"}`}
+                  className={`w-5 h-5 ${isActive ? "text-primary" : "text-white/40"}`}
                   fill={isActive ? "currentColor" : "none"}
                 />
-                <span className={`text-[10px] tracking-wider mt-1 ${isActive ? "text-accent-foreground font-semibold" : "text-foreground/40"}`}>
+                <span className={`text-[10px] mt-1 font-medium ${isActive ? "text-primary" : "text-white/40"}`}>
                   {item.label}
                 </span>
               </a>
