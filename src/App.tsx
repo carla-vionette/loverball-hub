@@ -9,22 +9,19 @@ import { Loader2 } from "lucide-react";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
 import NetworkStatus from "@/components/NetworkStatus";
 import { usePageTracking } from "@/hooks/usePageTracking";
-
-// Eagerly load all main navigation pages to prevent dual React instance crashes
-import Index from "./pages/Index";
-import Auth from "./pages/Auth";
 import ProtectedRoute from "./components/ProtectedRoute";
-import Home from "./pages/Home";
-import Discover from "./pages/Discover";
-import Explore from "./pages/Explore";
-import Events from "./pages/Events";
-import Shop from "./pages/Shop";
-import Profile from "./pages/Profile";
-import Feed from "./pages/Feed";
-import Watch from "./pages/Watch";
-import Search from "./pages/Search";
 
-// Lazy load less-visited pages
+const Index = lazy(() => import("./pages/Index"));
+const Auth = lazy(() => import("./pages/Auth"));
+const Home = lazy(() => import("./pages/Home"));
+const Discover = lazy(() => import("./pages/Discover"));
+const Explore = lazy(() => import("./pages/Explore"));
+const Events = lazy(() => import("./pages/Events"));
+const Shop = lazy(() => import("./pages/Shop"));
+const Profile = lazy(() => import("./pages/Profile"));
+const Feed = lazy(() => import("./pages/Feed"));
+const Watch = lazy(() => import("./pages/Watch"));
+const Search = lazy(() => import("./pages/Search"));
 const ChannelProfile = lazy(() => import("./pages/ChannelProfile"));
 const Onboarding = lazy(() => import("./pages/Onboarding"));
 const Horoscope = lazy(() => import("./pages/Horoscope"));
@@ -115,8 +112,6 @@ const App = () => (
               <Route path="/terms" element={<Terms />} />
               <Route path="/privacy" element={<Privacy />} />
               <Route path="/checkout-success" element={<CheckoutSuccess />} />
-
-
               <Route path="*" element={<NotFound />} />
             </Routes>
           </Suspense>
