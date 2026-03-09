@@ -1,20 +1,28 @@
-import React from "react";
-import { Search, ShoppingCart } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Search, ShoppingCart, Bell } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import NotificationBell from "@/components/NotificationBell";
+import { useCartStore } from "@/stores/cartStore";
 import loverballLogo from "@/assets/loverball-new-l-logo.png";
 
 const goTo = (path: string) => { window.location.href = path; };
 
 const MobileHeader = () => {
-  let totalItems = 0;
-  try {
-    const { useCartStore } = require("@/stores/cartStore");
-    const items = useCartStore.getState().items;
-    totalItems = items.reduce((sum: number, item: any) => sum + item.quantity, 0);
-  } catch {
-    totalItems = 0;
-  }
+  const [totalItems, setTotalItems] = useState(0);
+
+  useEffect(() => {
+    // Read cart state non-reactively to avoid hook context issues
+    try {
+      const items = useCartStore.getState().items;
+      setTotalItems(items.reduce((sum, item) => sum + item.quantity, 0));
+    } catch {
+      setTotalItems(0);
+    }
+    // Subscribe to changes
+    const unsub = useCartStore.subscribe((state) => {
+      setTotalItems(state.items.reduce((sum, item) => sum + item.quantity, 0));
+    });
+    return unsub;
+  }, []);
 
   return (
     <header
@@ -39,7 +47,13 @@ const MobileHeader = () => {
           <span>Search...</span>
         </button>
         
-        <NotificationBell />
+        <button
+          onClick={() => goTo('/settings')}
+          className="relative p-2.5 hover:bg-secondary rounded-full transition-colors focus-ring tap-target"
+          aria-label="Notifications"
+        >
+          <Bell className="w-5 h-5" aria-hidden="true" />
+        </button>
         
         <button
           onClick={() => goTo('/shop')}
