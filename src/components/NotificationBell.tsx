@@ -80,7 +80,7 @@ const NotificationBell = () => {
     }
     if (notif.link) {
       setOpen(false);
-      navigate(notif.link);
+      goTo(notif.link);
     }
   };
 
