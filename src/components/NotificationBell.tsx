@@ -24,7 +24,7 @@ interface Notification {
 
 const NotificationBell = () => {
   const { user } = useAuth();
-  const navigate = useNavigate();
+  const goTo = (path: string) => { window.location.href = path; };
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [open, setOpen] = useState(false);
 
