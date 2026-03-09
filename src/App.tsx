@@ -1,4 +1,4 @@
-import { lazy, Suspense } from "react";
+import React, { lazy, Suspense } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -10,33 +10,33 @@ import { ErrorBoundary } from "@/components/ui/error-boundary";
 import NetworkStatus from "@/components/NetworkStatus";
 import { usePageTracking } from "@/hooks/usePageTracking";
 
-// Only eagerly load the landing page and auth (critical path)
+// Eagerly load all main navigation pages to prevent dual React instance crashes
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Home from "./pages/Home";
+import Discover from "./pages/Discover";
+import Explore from "./pages/Explore";
+import Events from "./pages/Events";
+import Shop from "./pages/Shop";
+import Profile from "./pages/Profile";
+import Feed from "./pages/Feed";
+import Watch from "./pages/Watch";
+import Search from "./pages/Search";
 
-// Lazy load everything else for code splitting
-const Home = lazy(() => import("./pages/Home"));
-const Discover = lazy(() => import("./pages/Discover"));
-const Explore = lazy(() => import("./pages/Explore"));
+// Lazy load less-visited pages
 const ChannelProfile = lazy(() => import("./pages/ChannelProfile"));
-const Feed = lazy(() => import("./pages/Feed"));
-const Watch = lazy(() => import("./pages/Watch"));
 const Onboarding = lazy(() => import("./pages/Onboarding"));
 const Horoscope = lazy(() => import("./pages/Horoscope"));
 const Community = lazy(() => import("./pages/Community"));
 const GroupChat = lazy(() => import("./pages/GroupChat"));
-const Profile = lazy(() => import("./pages/Profile"));
 const EditProfile = lazy(() => import("./pages/EditProfile"));
 const ProfileInterests = lazy(() => import("./pages/ProfileInterests"));
-const Search = lazy(() => import("./pages/Search"));
-const Shop = lazy(() => import("./pages/Shop"));
 const ProductDetail = lazy(() => import("./pages/ProductDetail"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const Invite = lazy(() => import("./pages/Invite"));
 const Members = lazy(() => import("./pages/Members"));
 const MemberProfile = lazy(() => import("./pages/MemberProfile"));
-const Events = lazy(() => import("./pages/Events"));
 const EventDetail = lazy(() => import("./pages/EventDetail"));
 const MessagesPage = lazy(() => import("./pages/MessagesPage"));
 const Admin = lazy(() => import("./pages/Admin"));
@@ -49,8 +49,6 @@ const Terms = lazy(() => import("./pages/Terms"));
 const Privacy = lazy(() => import("./pages/Privacy"));
 const Settings = lazy(() => import("./pages/Settings"));
 const CheckoutSuccess = lazy(() => import("./pages/CheckoutSuccess"));
-
-// Video streaming pages (kept as lazy imports for sub-routes if needed later)
 const Ticker = lazy(() => import("./pages/Ticker"));
 const PlanSelection = lazy(() => import("./pages/PlanSelection"));
 
