@@ -42,7 +42,7 @@ const MobileHeader = () => {
         <NotificationBell />
         
         <button
-          onClick={() => navigate('/shop')}
+          onClick={() => goTo('/shop')}
           className="relative p-2.5 hover:bg-secondary rounded-full transition-colors focus-ring tap-target"
           aria-label={`Shopping cart${totalItems > 0 ? `, ${totalItems} items` : ''}`}
         >
