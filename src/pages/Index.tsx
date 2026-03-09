@@ -313,7 +313,7 @@ const Index = () => {
                 <span className="text-foreground">Her</span><br />
                 <span className="text-foreground">Community.</span>
               </h1>
-              <p className="text-base font-sans font-medium text-primary-foreground/85 leading-relaxed mb-8 max-w-sm">The media platform built for women who live and breathe sports. Discover live events, connect with fans, and watch exclusive sports content made for you.
+              <p className="text-base font-sans font-medium text-primary-foreground/85 leading-relaxed mb-8 max-w-sm">The media platform built for women who live and breathe sports. Discover community events, connect with fans, and watch exclusive sports content made for you.
 
               </p>
               <div className="flex flex-col sm:flex-row items-start gap-4">
