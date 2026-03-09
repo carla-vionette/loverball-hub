@@ -23,6 +23,7 @@ import Profile from "./pages/Profile";
 import Feed from "./pages/Feed";
 import Watch from "./pages/Watch";
 import Search from "./pages/Search";
+import VideoDetail from "./pages/VideoDetail";
 
 // Lazy load less-visited pages
 const ChannelProfile = lazy(() => import("./pages/ChannelProfile"));
@@ -85,6 +86,7 @@ const App = () => (
               <Route path="/channel/:handle" element={<ChannelProfile />} />
               <Route path="/feed" element={<Feed />} />
               <Route path="/watch" element={<Watch />} />
+              <Route path="/watch/video/:id" element={<VideoDetail />} />
               <Route path="/plans" element={<ProtectedRoute><PlanSelection /></ProtectedRoute>} />
               <Route path="/onboarding" element={<ProtectedRoute><Onboarding /></ProtectedRoute>} />
               <Route path="/following" element={<Navigate to="/profile" replace />} />
