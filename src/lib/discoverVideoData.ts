@@ -6,6 +6,11 @@ import feedVideo33 from "@/assets/feed-video-33.mp4";
 import feedVideo34 from "@/assets/feed-video-34.mp4";
 import feedVideo35 from "@/assets/feed-video-35.mp4";
 import feedVideo36 from "@/assets/feed-video-36.mp4";
+import feedVideo38 from "@/assets/feed-video-38.mp4";
+import feedVideo39 from "@/assets/feed-video-39.mp4";
+import feedVideo40 from "@/assets/feed-video-40.mp4";
+import feedVideo41 from "@/assets/feed-video-41.mp4";
+import feedVideo42 from "@/assets/feed-video-42.mp4";
 
 export interface DiscoverVideo {
   id: string;
