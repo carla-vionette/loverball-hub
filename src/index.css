@@ -1,65 +1,47 @@
-@import "@fontsource/dm-sans/400.css";
-@import "@fontsource/dm-sans/500.css";
-@import "@fontsource/dm-sans/600.css";
-@import "@fontsource/dm-sans/700.css";
+@import "@fontsource/oswald/600.css";
+@import "@fontsource/oswald/700.css";
+@import "@fontsource/inter/400.css";
+@import "@fontsource/inter/500.css";
+@import "@fontsource/inter/600.css";
 @import "@fontsource/pacifico/400.css";
-@import "@fontsource/bebas-neue/400.css";
-@import "@fontsource/barlow-condensed/400.css";
-@import "@fontsource/barlow-condensed/500.css";
-@import "@fontsource/barlow-condensed/600.css";
-@import "@fontsource/barlow-condensed/700.css";
-@import "@fontsource/barlow-condensed/800.css";
-@import "@fontsource/barlow-condensed/900.css";
-@import "@fontsource/playfair-display/400.css";
-@import "@fontsource/playfair-display/500.css";
-@import "@fontsource/playfair-display/600.css";
-@import "@fontsource/playfair-display/700.css";
-@import "@fontsource/playfair-display/800.css";
-@import "@fontsource/playfair-display/400-italic.css";
-@import "@fontsource/playfair-display/700-italic.css";
-@import "@fontsource/cormorant/400.css";
-@import "@fontsource/cormorant/500.css";
-@import "@fontsource/cormorant/600.css";
-@import "@fontsource/cormorant/700.css";
-@import "@fontsource/cormorant/400-italic.css";
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 /* ============================================================
-   LOVERBALL DESIGN SYSTEM — Bold Editorial Sports Aesthetic
-   All colors are HSL. Use semantic tokens everywhere.
+   LOVERBALL DESIGN SYSTEM — Clean, Bold, Modern
+   Electric Blue + Orange accent on white
    ============================================================ */
 
 @layer base {
   :root {
-    /* ── Brand = Coral #FF5D2E ── */
-    --brand: 14 100% 59%;               /* Coral #FF5D2E */
+    /* ── Brand ── */
+    --brand: 187 100% 50%;              /* Electric blue #00E5FF */
     --brand-foreground: 0 0% 100%;
 
     /* ── Core palette ── */
-    --background: 28 33% 95%;           /* Cream #F8F4F0 */
-    --foreground: 0 0% 15%;             /* Charcoal #262626 */
+    --background: 0 0% 100%;            /* Pure white #FFFFFF */
+    --foreground: 0 0% 7%;              /* Near-black #111111 */
 
-    --card: 0 0% 100%;                  /* Pure white */
-    --card-foreground: 0 0% 15%;
+    --card: 0 0% 100%;                  /* White */
+    --card-foreground: 0 0% 7%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 15%;
+    --popover-foreground: 0 0% 7%;
 
-    /* Primary = Coral (buttons, CTAs, active states) */
-    --primary: 14 100% 59%;             /* #FF5D2E */
-    --primary-foreground: 0 0% 100%;    /* White text */
+    /* Primary = Electric Blue */
+    --primary: 187 100% 50%;            /* #00E5FF */
+    --primary-foreground: 0 0% 0%;      /* Black text on cyan */
 
-    --secondary: 30 15% 93%;            /* Light warm gray */
-    --secondary-foreground: 0 0% 25%;
+    --secondary: 0 0% 96%;              /* Light gray #F5F5F5 */
+    --secondary-foreground: 0 0% 20%;
 
-    --muted: 30 12% 92%;
-    --muted-foreground: 0 0% 45%;
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 40%;       /* #666666 */
 
-    /* Accent = Coral (same family for consistency) */
-    --accent: 14 100% 59%;              /* #FF5D2E */
+    /* Accent = Orange #FF4500 */
+    --accent: 16 100% 50%;              /* #FF4500 */
     --accent-foreground: 0 0% 100%;
 
     /* ── Status colors ── */
@@ -67,158 +49,97 @@
     --success-foreground: 0 0% 100%;
     --warning: 38 92% 50%;
     --warning-foreground: 0 0% 0%;
-    --info: 210 60% 55%;
-    --info-foreground: 0 0% 100%;
+    --info: 187 100% 50%;
+    --info-foreground: 0 0% 0%;
     --destructive: 0 84% 50%;
     --destructive-foreground: 0 0% 100%;
 
     /* ── Additional brand ── */
-    --coral: 14 100% 59%;
+    --coral: 16 100% 50%;
     --coral-foreground: 0 0% 100%;
-    --pale-pink: 30 25% 94%;
-    --pale-pink-foreground: 0 0% 15%;
-    --medium-blue: 210 30% 55%;
-    --medium-blue-foreground: 0 0% 100%;
-    --olive: 210 25% 40%;
+    --pale-pink: 0 0% 97%;
+    --pale-pink-foreground: 0 0% 7%;
+    --medium-blue: 187 100% 50%;
+    --medium-blue-foreground: 0 0% 0%;
+    --olive: 187 50% 35%;
     --olive-foreground: 0 0% 100%;
-    --light-lime: 16 78% 65%;
+    --light-lime: 16 100% 60%;
     --light-lime-foreground: 0 0% 100%;
-    --ticker: 16 78% 50%;
+    --ticker: 16 100% 50%;
     --ticker-foreground: 0 0% 100%;
 
-    /* Terracotta accent */
-    --terracotta: 14 100% 59%;           /* #FF5D2E */
+    /* Terracotta = Orange */
+    --terracotta: 16 100% 50%;
     --terracotta-foreground: 0 0% 100%;
-    --warm-beige: 30 20% 88%;           /* #E5DDD4 */
-    --warm-beige-foreground: 0 0% 15%;
+    --warm-beige: 0 0% 95%;
+    --warm-beige-foreground: 0 0% 7%;
 
-    /* Hot Pink — softer warm rose */
+    /* Hot Pink */
     --hot-pink: 350 70% 58%;
     --hot-pink-foreground: 0 0% 100%;
 
     /* ── Chrome ── */
-    --border: 30 10% 88%;
-    --input: 30 10% 88%;
-    --ring: 14 100% 59%;
+    --border: 0 0% 90%;
+    --input: 0 0% 90%;
+    --ring: 187 100% 50%;
 
     --radius: 0.75rem;
   }
 
-  /* Landing page theme — restores original sky-blue hero & editorial palette */
+  /* Landing page theme */
   .landing-theme {
-    --primary: 200 75% 55%;               /* Sky blue (original hero color) */
-    --primary-foreground: 0 0% 100%;
-    --accent: 14 100% 59%;                /* Coral CTAs stay coral */
+    --primary: 187 100% 50%;
+    --primary-foreground: 0 0% 0%;
+    --accent: 16 100% 50%;
     --accent-foreground: 0 0% 100%;
   }
 
   .dark {
-    --background: 20 10% 8%;
-    --foreground: 30 15% 92%;
-    --card: 20 8% 12%;
-    --card-foreground: 30 15% 92%;
-    --popover: 20 8% 12%;
-    --popover-foreground: 30 15% 92%;
-    --primary: 16 78% 55%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 20 8% 18%;
-    --secondary-foreground: 30 10% 70%;
-    --muted: 20 6% 20%;
-    --muted-foreground: 20 6% 55%;
-    --accent: 16 78% 55%;
+    --background: 0 0% 4%;              /* #0A0A0A */
+    --foreground: 0 0% 95%;
+    --card: 0 0% 8%;
+    --card-foreground: 0 0% 95%;
+    --popover: 0 0% 8%;
+    --popover-foreground: 0 0% 95%;
+    --primary: 187 100% 50%;
+    --primary-foreground: 0 0% 0%;
+    --secondary: 0 0% 12%;
+    --secondary-foreground: 0 0% 70%;
+    --muted: 0 0% 14%;
+    --muted-foreground: 0 0% 55%;
+    --accent: 16 100% 50%;
     --accent-foreground: 0 0% 100%;
     --success: 142 72% 42%;
     --success-foreground: 0 0% 100%;
     --warning: 38 92% 50%;
     --warning-foreground: 0 0% 0%;
-    --info: 210 60% 55%;
-    --info-foreground: 0 0% 100%;
+    --info: 187 100% 50%;
+    --info-foreground: 0 0% 0%;
     --destructive: 0 84% 50%;
     --destructive-foreground: 0 0% 100%;
-    --border: 20 6% 22%;
-    --input: 20 6% 22%;
-    --ring: 16 78% 55%;
+    --border: 0 0% 16%;
+    --input: 0 0% 16%;
+    --ring: 187 100% 50%;
   }
 
-  /* ── Cinematic App Theme ──
-     Applied to logged-in app pages — warm light aesthetic with terracotta */
-  .app-cinematic {
-    --background: 30 20% 97%;           /* Warm white */
-    --foreground: 0 0% 15%;
-
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 15%;
-
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 15%;
-
-    --primary: 16 78% 55%;              /* Terracotta */
-    --primary-foreground: 0 0% 100%;
-
-    --secondary: 30 15% 93%;
-    --secondary-foreground: 0 0% 25%;
-
-    --muted: 30 12% 92%;
-    --muted-foreground: 0 0% 45%;
-
-    --accent: 16 78% 55%;
-    --accent-foreground: 0 0% 100%;
-
-    --coral: 16 78% 55%;
-    --coral-foreground: 0 0% 100%;
-
-    --success: 142 72% 42%;
-    --success-foreground: 0 0% 100%;
-    --warning: 38 92% 50%;
-    --warning-foreground: 0 0% 0%;
-    --info: 210 60% 55%;
-    --info-foreground: 0 0% 100%;
-    --destructive: 0 84% 50%;
-    --destructive-foreground: 0 0% 100%;
-
-    --terracotta: 16 78% 55%;
-    --terracotta-foreground: 0 0% 100%;
-    --warm-beige: 30 20% 88%;
-    --warm-beige-foreground: 0 0% 15%;
-
-    --border: 30 10% 88%;
-    --input: 30 10% 88%;
-    --ring: 16 78% 55%;
-
-    --glow-primary: 0 0 20px hsla(16, 78%, 55%, 0.2);
-    --glow-accent: 0 0 20px hsla(16, 78%, 55%, 0.15);
-  }
-
-  /* Video Streaming Theme — light with terracotta */
-  .video-theme {
-    --background: 30 20% 97%;
-    --foreground: 0 0% 15%;
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 15%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 15%;
-    --primary: 16 78% 55%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 30 15% 93%;
-    --secondary-foreground: 0 0% 25%;
-    --muted: 30 12% 92%;
-    --muted-foreground: 0 0% 45%;
-    --accent: 16 78% 55%;
-    --accent-foreground: 0 0% 100%;
-    --border: 30 10% 88%;
-    --input: 30 10% 88%;
-    --ring: 16 78% 55%;
-    --destructive: 0 84% 50%;
-    --destructive-foreground: 0 0% 100%;
-    --video-hover: 30 12% 94%;
+  /* Watch screen dark theme */
+  .watch-dark {
+    --background: 0 0% 4%;
+    --foreground: 0 0% 95%;
+    --card: 0 0% 8%;
+    --card-foreground: 0 0% 95%;
+    --popover: 0 0% 8%;
+    --popover-foreground: 0 0% 95%;
+    --border: 0 0% 16%;
+    --input: 0 0% 16%;
   }
 }
 
 /* ============================================================
-   TYPOGRAPHY SCALE
-   Display: Playfair Display (sophisticated serif headlines)
-   Body serif: Cormorant (elegant readable body)
-   Body sans: DM Sans (clean utility text)
+   TYPOGRAPHY
+   Display: Oswald (bold uppercase headings)
+   Body: Inter (clean utility text)
+   Script: Pacifico (brand/logo)
    ============================================================ */
 
 @layer base {
@@ -231,16 +152,16 @@
   }
 
   body {
-    @apply bg-background text-foreground font-serif antialiased text-base leading-relaxed;
+    @apply bg-background text-foreground font-sans antialiased text-base leading-relaxed;
   }
 
-  /* Heading hierarchy — elegant serif display font */
-  h1 { @apply font-display text-5xl md:text-6xl lg:text-7xl leading-none tracking-tight; }
-  h2 { @apply font-display text-4xl md:text-5xl leading-none tracking-tight; }
-  h3 { @apply font-display text-2xl md:text-3xl leading-tight; }
-  h4 { @apply font-sans font-semibold text-xl leading-snug; }
-  h5 { @apply font-sans font-medium text-lg leading-normal; }
-  h6 { @apply font-sans font-medium text-base leading-normal; }
+  /* Heading hierarchy — Oswald display font */
+  h1 { @apply font-display text-[28px] md:text-[32px] font-bold uppercase leading-none tracking-tight; }
+  h2 { @apply font-display text-[22px] md:text-[24px] font-semibold uppercase leading-none tracking-tight; }
+  h3 { @apply font-display text-xl font-semibold uppercase leading-tight; }
+  h4 { @apply font-sans font-semibold text-lg leading-snug; }
+  h5 { @apply font-sans font-medium text-base leading-normal; }
+  h6 { @apply font-sans font-medium text-sm leading-normal; }
 
   /* Caption / label */
   small, .caption { @apply text-xs leading-normal text-muted-foreground; }
@@ -252,38 +173,33 @@
    ============================================================ */
 
 @layer components {
-  /* Editorial underline accent */
   .editorial-underline {
     @apply relative inline-block;
   }
   .editorial-underline::after {
     content: '';
-    @apply absolute bottom-0 left-0 w-full h-[3px] bg-accent;
+    @apply absolute bottom-0 left-0 w-full h-[3px] bg-primary;
   }
 
-  /* Pill button style */
   .pill-button {
-    @apply px-6 py-2 rounded-full text-sm font-medium tracking-wide transition-all duration-300;
+    @apply px-6 py-2 rounded-full text-sm font-semibold tracking-wide transition-all duration-200;
   }
 
-  /* Editorial card with shadow */
   .editorial-card {
-    @apply bg-card shadow-[0_8px_30px_rgb(0,0,0,0.06)] transition-all duration-300;
+    @apply bg-card rounded-xl shadow-sm transition-all duration-200;
   }
   .editorial-card:hover {
-    @apply shadow-[0_12px_40px_rgb(0,0,0,0.12)] -translate-y-1;
+    @apply shadow-md -translate-y-0.5;
   }
 
-  /* Quote card */
   .quote-card {
-    @apply relative p-8 sm:p-12 rounded-2xl;
+    @apply relative p-8 sm:p-12 rounded-xl;
   }
   .quote-card::before {
     content: '\201C';
     @apply absolute top-4 left-6 text-7xl leading-none opacity-20 font-display;
   }
 
-  /* Color block section */
   .color-block-yellow {
     background-color: hsl(var(--primary));
     color: hsl(var(--primary-foreground));
@@ -293,49 +209,43 @@
     color: hsl(var(--primary-foreground));
   }
   .color-block-coral {
-    background-color: hsl(var(--secondary));
-    color: hsl(var(--secondary-foreground));
+    background-color: hsl(var(--accent));
+    color: hsl(var(--accent-foreground));
   }
   .color-block-terracotta {
-    background-color: hsl(var(--terracotta));
-    color: hsl(var(--terracotta-foreground));
+    background-color: hsl(var(--accent));
+    color: hsl(var(--accent-foreground));
   }
   .color-block-beige {
-    background-color: hsl(var(--warm-beige));
-    color: hsl(var(--warm-beige-foreground));
+    background-color: hsl(var(--secondary));
+    color: hsl(var(--secondary-foreground));
   }
   .color-block-sand {
     background-color: hsl(var(--secondary));
     color: hsl(var(--secondary-foreground));
   }
 
-  /* Overlapping element style */
   .overlap-left { @apply relative lg:-ml-12 lg:z-10; }
   .overlap-right { @apply relative lg:-mr-12 lg:z-10; }
 
-  /* Ribbon / banner */
   .ribbon {
-    @apply bg-primary text-primary-foreground px-4 py-1 text-xs font-medium tracking-widest uppercase;
+    @apply bg-primary text-primary-foreground px-4 py-1 text-xs font-semibold tracking-widest uppercase;
   }
 
-  /* Annotation circle */
   .annotation-circle { @apply relative inline-block; }
   .annotation-circle::before {
     content: '';
-    @apply absolute -inset-2 border-2 border-accent rounded-full;
+    @apply absolute -inset-2 border-2 border-primary rounded-full;
   }
 
-  /* Numbered section label */
   .section-number {
     @apply font-display text-8xl text-primary/10 leading-none;
   }
 
-  /* Category tag */
   .category-tag {
-    @apply inline-block px-3 py-1 text-xs font-bold tracking-widest uppercase rounded-sm;
+    @apply inline-block px-3 py-1 text-xs font-bold tracking-widest uppercase rounded-full;
   }
 
-  /* Status toast variants */
   .toast-success { @apply border-success bg-success text-success-foreground; }
   .toast-warning { @apply border-warning bg-warning text-warning-foreground; }
   .toast-info    { @apply border-info bg-info text-info-foreground; }
@@ -346,7 +256,7 @@
    ============================================================ */
 
 @layer utilities {
-  .hover-lift { @apply transition-transform duration-300 hover:-translate-y-1; }
+  .hover-lift { @apply transition-transform duration-200 hover:-translate-y-0.5; }
   .text-balance { text-wrap: balance; }
 
   .scrollbar-hide {
@@ -357,18 +267,11 @@
 
   .tap-target { @apply min-h-[44px] min-w-[44px]; }
 
-  /* Cinematic glow utilities */
-  .glow-primary { box-shadow: var(--glow-primary, none); }
-  .glow-accent { box-shadow: var(--glow-accent, none); }
   .glass-card {
-    background: hsla(0, 0%, 100%, 0.05);
-    backdrop-filter: blur(16px);
-    border: 1px solid hsla(0, 0%, 100%, 0.08);
+    @apply bg-card rounded-xl shadow-sm border border-border/30;
   }
   .glass-card-strong {
-    background: hsla(0, 0%, 100%, 0.08);
-    backdrop-filter: blur(24px);
-    border: 1px solid hsla(0, 0%, 100%, 0.12);
+    @apply bg-card rounded-xl shadow-md border border-border/20;
   }
 
   .focus-ring {
@@ -381,11 +284,11 @@
 
   .sr-live { @apply sr-only; }
 
-  /* Safe area */
   .safe-top    { padding-top: env(safe-area-inset-top); }
   .safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
   .safe-left   { padding-left: env(safe-area-inset-left); }
   .safe-right  { padding-right: env(safe-area-inset-right); }
+  .safe-area-pb { padding-bottom: env(safe-area-inset-bottom); }
 
   .press-scale { @apply transition-transform duration-150 active:scale-95; }
 

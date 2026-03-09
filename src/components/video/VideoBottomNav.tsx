@@ -15,11 +15,11 @@ const VideoBottomNav = () => {
 
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-50 md:hidden safe-area-pb px-3 pb-2"
+      className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-[#0A0A0A] border-t border-white/10"
       role="navigation"
       aria-label="Video navigation"
     >
-      <div className="flex justify-around items-center h-16 bg-card/90 backdrop-blur-md rounded-[2rem] shadow-[0_4px_24px_rgba(0,0,0,0.08)] border border-border/20">
+      <div className="flex justify-around items-center h-16">
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive = location.pathname === item.path;
@@ -30,20 +30,18 @@ const VideoBottomNav = () => {
               to={item.path}
               aria-current={isActive ? "page" : undefined}
               aria-label={item.label}
-              className={`flex flex-col items-center justify-center flex-1 h-full transition-all duration-200 rounded-2xl mx-0.5 tap-target focus-ring ${
-                isActive ? "bg-accent text-accent-foreground" : ""
-              }`}
+              className="flex flex-col items-center justify-center flex-1 h-full transition-colors duration-200 tap-target focus-ring"
             >
               <Icon
                 className={`w-5 h-5 transition-colors ${
-                  isActive ? "text-accent-foreground" : "text-foreground/40"
+                  isActive ? "text-primary" : "text-white/40"
                 }`}
                 fill={isActive ? "currentColor" : "none"}
                 aria-hidden="true"
               />
               <span
-                className={`text-[10px] mt-1 ${
-                  isActive ? "text-accent-foreground font-semibold" : "text-foreground/40"
+                className={`text-[10px] mt-1 font-medium ${
+                  isActive ? "text-primary" : "text-white/40"
                 }`}
               >
                 {item.label}

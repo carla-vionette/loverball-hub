@@ -31,7 +31,7 @@ const DesktopNav = () => {
 
   return (
     <aside
-      className="hidden md:flex fixed left-0 top-0 h-screen w-64 bg-card/60 backdrop-blur-sm border-r border-border/20 flex-col z-50"
+      className="hidden md:flex fixed left-0 top-0 h-screen w-64 bg-background border-r border-border/20 flex-col z-50"
       role="navigation"
       aria-label="Main navigation"
     >
@@ -42,7 +42,6 @@ const DesktopNav = () => {
       </div>
       
       <nav className="flex-1 py-3 flex flex-col" aria-label="Primary">
-        {/* Main nav */}
         <div className="space-y-0.5">
           {mainNavItems.map((item) => {
             const Icon = item.icon;
@@ -53,23 +52,21 @@ const DesktopNav = () => {
                 key={item.path}
                 to={item.path}
                 aria-current={active ? "page" : undefined}
-                className={`flex items-center gap-3 px-5 py-2.5 mx-3 rounded-2xl transition-all duration-200 focus-ring ${
+                className={`flex items-center gap-3 px-5 py-2.5 mx-3 rounded-xl transition-all duration-200 focus-ring ${
                   active 
-                    ? "text-accent-foreground font-semibold bg-accent" 
-                    : "text-foreground/50 hover:text-foreground hover:bg-secondary/50"
+                    ? "text-primary font-semibold bg-primary/10" 
+                    : "text-muted-foreground hover:text-foreground hover:bg-secondary"
                 }`}
               >
                 <Icon className="w-5 h-5" aria-hidden="true" />
-                <span className="text-sm tracking-wide">{item.label}</span>
+                <span className="text-sm">{item.label}</span>
               </Link>
             );
           })}
         </div>
 
-        {/* Spacer */}
         <div className="flex-1" />
 
-        {/* Secondary nav */}
         <div className="space-y-0.5 border-t border-border/20 pt-3">
           {secondaryNavItems.map((item) => {
             const Icon = item.icon;
@@ -82,51 +79,51 @@ const DesktopNav = () => {
                 to={item.path}
                 aria-current={active ? "page" : undefined}
                 aria-label={`${item.label}${showBadge ? ', new messages' : ''}`}
-                className={`flex items-center gap-3 px-5 py-2.5 mx-3 rounded-2xl transition-all duration-200 focus-ring ${
+                className={`flex items-center gap-3 px-5 py-2.5 mx-3 rounded-xl transition-all duration-200 focus-ring ${
                   active 
-                    ? "text-accent-foreground font-semibold bg-accent" 
-                    : "text-foreground/50 hover:text-foreground hover:bg-secondary/50"
+                    ? "text-primary font-semibold bg-primary/10" 
+                    : "text-muted-foreground hover:text-foreground hover:bg-secondary"
                 }`}
               >
                 <div className="relative">
                   <Icon className="w-5 h-5" aria-hidden="true" />
                   {showBadge && (
-                    <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-accent rounded-full border-2 border-card" aria-hidden="true" />
+                    <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-accent rounded-full border-2 border-background" aria-hidden="true" />
                   )}
                 </div>
-                <span className="text-sm tracking-wide">{item.label}</span>
+                <span className="text-sm">{item.label}</span>
               </Link>
             );
           })}
 
           <div className="flex items-center gap-3 px-5 py-2 mx-3">
             <NotificationBell />
-            <span className="text-sm tracking-wide text-foreground/50" aria-hidden="true">Notifications</span>
+            <span className="text-sm text-muted-foreground" aria-hidden="true">Notifications</span>
           </div>
 
           <Link
             to="/settings"
             aria-current={isActive("/settings") ? "page" : undefined}
-            className={`flex items-center gap-3 px-5 py-2.5 mx-3 rounded-2xl transition-all duration-200 focus-ring ${
+            className={`flex items-center gap-3 px-5 py-2.5 mx-3 rounded-xl transition-all duration-200 focus-ring ${
               isActive("/settings")
-                ? "text-accent-foreground font-semibold bg-accent"
-                : "text-foreground/50 hover:text-foreground hover:bg-secondary/50"
+                ? "text-primary font-semibold bg-primary/10"
+                : "text-muted-foreground hover:text-foreground hover:bg-secondary"
             }`}
           >
             <Settings className="w-5 h-5" aria-hidden="true" />
-            <span className="text-sm tracking-wide">Settings</span>
+            <span className="text-sm">Settings</span>
           </Link>
           <Link
             to="/search"
             aria-label="Search"
-            className={`flex items-center gap-3 px-5 py-2.5 mx-3 rounded-2xl transition-all duration-200 focus-ring ${
+            className={`flex items-center gap-3 px-5 py-2.5 mx-3 rounded-xl transition-all duration-200 focus-ring ${
               isActive("/search")
-                ? "text-accent-foreground font-semibold bg-accent"
-                : "text-foreground/50 hover:text-foreground hover:bg-secondary/50"
+                ? "text-primary font-semibold bg-primary/10"
+                : "text-muted-foreground hover:text-foreground hover:bg-secondary"
             }`}
           >
             <Search className="w-5 h-5" aria-hidden="true" />
-            <span className="text-sm tracking-wide">Search</span>
+            <span className="text-sm">Search</span>
           </Link>
         </div>
       </nav>

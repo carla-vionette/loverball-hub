@@ -17,7 +17,6 @@ export default {
         "2xl": "1400px",
       },
     },
-    /* ── Spacing scale (4-base) ── */
     spacing: {
       0: "0px",
       px: "1px",
@@ -55,7 +54,6 @@ export default {
       80: "320px",
       96: "384px",
     },
-    /* ── Breakpoints ── */
     screens: {
       sm: "640px",
       md: "768px",
@@ -65,20 +63,17 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ["DM Sans", "system-ui", "sans-serif"],
-        serif: ["Cormorant", "Georgia", "serif"],
-        display: ["Playfair Display", "Georgia", "serif"],
-        condensed: ["Barlow Condensed", "Bebas Neue", "Impact", "sans-serif"],
+        sans: ["Inter", "system-ui", "sans-serif"],
+        display: ["Oswald", "Impact", "sans-serif"],
         script: ["Pacifico", "cursive"],
+        condensed: ["Oswald", "Impact", "sans-serif"],
+        serif: ["Inter", "system-ui", "sans-serif"],
       },
       fontSize: {
-        /* Caption / label */
         xs: ["0.75rem", { lineHeight: "1rem" }],
         sm: ["0.875rem", { lineHeight: "1.25rem" }],
-        /* Body */
         base: ["1rem", { lineHeight: "1.625rem" }],
         lg: ["1.125rem", { lineHeight: "1.75rem" }],
-        /* Headings */
         xl: ["1.25rem", { lineHeight: "1.75rem" }],
         "2xl": ["1.5rem", { lineHeight: "2rem" }],
         "3xl": ["1.875rem", { lineHeight: "2.25rem" }],
@@ -178,7 +173,6 @@ export default {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
-      /* ── Grid ── */
       gridTemplateColumns: {
         "layout": "repeat(12, minmax(0, 1fr))",
       },
