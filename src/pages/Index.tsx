@@ -9,16 +9,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useAuth } from "@/hooks/useAuth";
 import { motion, useInView } from "framer-motion";
-import { ArrowRight, Lock, Ticket, Users, Sparkles, Calendar, X, Menu, Mail, Play } from "lucide-react";
+import { ArrowRight, Lock, Ticket, Users, Sparkles, Calendar, X, Menu, Mail, Play, Heart, ShoppingBag, Clock, MapPin, Zap } from "lucide-react";
 import heroImage from "@/assets/hero-women-new.png";
 import loverballLogo from "@/assets/loverball-script-logo.png";
 import philosophyImage from "@/assets/philosophy-image.jpg";
 import communityImage from "@/assets/landing-community.jpg";
 import athletesImage from "@/assets/landing-athletes.jpg";
 import fansImage from "@/assets/landing-fans.jpg";
-import fieldDay from "@/assets/field-day.jpg";
 import teamSpirit from "@/assets/community-women.jpg";
-import pickupGame from "@/assets/pickup-game.jpg";
 import wnbaWatch from "@/assets/landing-woman.png";
 import { z } from "zod";
 
@@ -28,8 +26,7 @@ const signUpSchema = z.object({
   inviteCode: z.string().trim().min(1, "Invite code is required")
 });
 
-// Animated counter component
-const AnimatedStat = ({ value, suffix = "%" }: {value: number;suffix?: string;}) => {
+const AnimatedStat = ({ value, suffix = "" }: { value: number; suffix?: string }) => {
   const ref = useRef<HTMLSpanElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
   const [count, setCount] = useState(0);
@@ -47,7 +44,7 @@ const AnimatedStat = ({ value, suffix = "%" }: {value: number;suffix?: string;})
     requestAnimationFrame(step);
   }, [isInView, value]);
 
-  return <span ref={ref}>{count}{suffix}</span>;
+  return <span ref={ref}>{count.toLocaleString()}{suffix}</span>;
 };
 
 const Index = () => {
@@ -74,10 +71,7 @@ const Index = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const { error, data } = await supabase.auth.signInWithPassword({
-        email: email.trim(),
-        password
-      });
+      const { error, data } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
       if (error) throw error;
       if (data.user) {
         const { data: profile } = await supabase.from("profiles").select("*").eq("id", data.user.id).maybeSingle();
@@ -133,7 +127,7 @@ const Index = () => {
           await supabase.auth.signOut();
           throw new Error("Invalid invite code. Please check and try again.");
         }
-        const result = inviteResult as {success: boolean;error?: string;};
+        const result = inviteResult as { success: boolean; error?: string };
         if (!result.success) {
           await supabase.auth.signOut();
           throw new Error(result.error || "Invalid invite code");
@@ -151,37 +145,54 @@ const Index = () => {
 
   const openAuthModal = () => setAuthModalOpen(true);
 
-  const sportCategories = [
-  { label: "WNBA" }, { label: "SOCCER" }, { label: "TENNIS" },
-  { label: "BASKETBALL" }, { label: "VOLLEYBALL" }, { label: "RUNNING" }];
+  const sportsTicker = [
+    { emoji: "🎾", label: "Tennis" },
+    { emoji: "🏎️", label: "Formula 1" },
+    { emoji: "⛳", label: "Golf" },
+    { emoji: "🏐", label: "Volleyball" },
+    { emoji: "🥎", label: "Softball" },
+    { emoji: "🏒", label: "Hockey" },
+    { emoji: "🏀", label: "Basketball" },
+    { emoji: "⚽", label: "Soccer" },
+    { emoji: "🏃‍♀️", label: "Running" },
+    { emoji: "🏈", label: "Football" },
+  ];
 
+  const trendingStories = [
+    { tag: "WNBA", title: "Caitlin Clark Sets New Assist Record in Fever Victory", time: "2h ago", image: athletesImage },
+    { tag: "NWSL", title: "Angel City FC Signs International Star Ahead of Season Opener", time: "4h ago", image: communityImage },
+    { tag: "TENNIS", title: "Coco Gauff Advances to Indian Wells Semifinals", time: "5h ago", image: fansImage },
+    { tag: "OLYMPICS", title: "LA28 Unveils Women's Sports Showcase Plans", time: "8h ago", image: philosophyImage },
+  ];
 
-  const upcomingEvents = [
-  { date: "MAR 22", title: "WNBA Season Opener Watch Party", venue: "The Victorian, Santa Monica", type: "Watch Party" },
-  { date: "MAR 28", title: "Loverball Run Club × Griffith Park", venue: "Griffith Observatory Trailhead", type: "Meetup" },
-  { date: "APR 05", title: "Angel City FC Home Opener", venue: "BMO Stadium, DTLA", type: "Game Day" },
-  { date: "APR 12", title: "Women in Sports Panel + Mixer", venue: "Soho House, WeHo", type: "Panel" },
-  { date: "APR 19", title: "March Madness Final Four Party", venue: "Loverball HQ, Venice", type: "Watch Party" }];
+  const nearbyEvents = [
+    { date: "MAR 22", time: "7:00 PM", title: "Sparks vs Aces Watch Party", venue: "The Victorian, Santa Monica", type: "Watch Party" },
+    { date: "MAR 28", time: "5:30 PM", title: "Angel City FC Tailgate", venue: "BMO Stadium, DTLA", type: "Game Day" },
+    { date: "APR 02", time: "6:00 PM", title: "Tennis & Tequila: Indian Wells", venue: "The Bungalow, Santa Monica", type: "Meetup" },
+    { date: "APR 05", time: "4:00 PM", title: "March Madness Mixer", venue: "Loverball HQ, Venice", type: "Watch Party" },
+  ];
 
+  const featureCards = [
+    { icon: Heart, title: "DISCOVER FANS", desc: "Match with women who share your sports passion", color: "bg-hot-pink" },
+    { icon: Calendar, title: "FIND EVENTS", desc: "Watch parties, tailgates & meetups near you", color: "bg-primary" },
+    { icon: Play, title: "WATCH", desc: "Originals, highlights & creator content", color: "bg-accent" },
+    { icon: ShoppingBag, title: "SHOP", desc: "Apparel and gear for the ultimate fan", color: "bg-foreground" },
+  ];
 
   return (
     <div className="min-h-screen bg-background overflow-x-hidden landing-theme">
-      {/* ══════════════════════════════════════════
-                                                     NAV — Bold editorial masthead
-                                                    ══════════════════════════════════════════ */}
+      {/* NAV */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-background/98 backdrop-blur-sm">
         <div className="max-w-[1400px] mx-auto px-6 lg:px-12">
           <div className="flex items-center justify-between h-20">
             <div className="hidden lg:flex items-center gap-10">
-              <a href="#about" className="text-[11px] font-sans font-bold tracking-[0.25em] uppercase text-foreground/50 hover:text-foreground transition-colors">About</a>
-              <a href="#stories" className="text-[11px] font-sans font-bold tracking-[0.25em] uppercase text-foreground/50 hover:text-foreground transition-colors">Stories</a>
+              <a href="#explore" className="text-[11px] font-sans font-bold tracking-[0.25em] uppercase text-foreground/50 hover:text-foreground transition-colors">Explore</a>
+              <a href="#trending" className="text-[11px] font-sans font-bold tracking-[0.25em] uppercase text-foreground/50 hover:text-foreground transition-colors">Trending</a>
               <a href="#events" className="text-[11px] font-sans font-bold tracking-[0.25em] uppercase text-foreground/50 hover:text-foreground transition-colors">Events</a>
             </div>
-
             <div className="absolute left-1/2 -translate-x-1/2">
               <img src={loverballLogo} alt="Loverball" className="h-56 w-auto" />
             </div>
-
             <div className="hidden lg:flex items-center gap-10">
               <button onClick={() => isAuthenticated ? navigate("/shop") : openAuthModal()} className="text-[11px] font-sans font-bold tracking-[0.25em] uppercase text-foreground/50 hover:text-foreground transition-colors bg-transparent border-none cursor-pointer">Shop</button>
               <button onClick={() => isAuthenticated ? navigate("/watch") : openAuthModal()} className="text-[11px] font-sans font-bold tracking-[0.25em] uppercase text-foreground/50 hover:text-foreground transition-colors bg-transparent border-none cursor-pointer">Watch</button>
@@ -189,7 +200,6 @@ const Index = () => {
                 Join Loverball
               </Button>
             </div>
-
             <div className="lg:hidden ml-auto">
               <Button variant="ghost" size="icon" onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="rounded-full">
                 {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -197,22 +207,19 @@ const Index = () => {
             </div>
           </div>
         </div>
-
-        {mobileMenuOpen &&
-        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="lg:hidden bg-background border-t border-border/30 px-8 py-6 space-y-1">
-            <a href="#about" onClick={() => setMobileMenuOpen(false)} className="block py-3 text-[11px] font-sans font-bold tracking-[0.25em] uppercase text-foreground/60">About</a>
-            <a href="#stories" onClick={() => setMobileMenuOpen(false)} className="block py-3 text-[11px] font-sans font-bold tracking-[0.25em] uppercase text-foreground/60">Stories</a>
+        {mobileMenuOpen && (
+          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="lg:hidden bg-background border-t border-border/30 px-8 py-6 space-y-1">
+            <a href="#explore" onClick={() => setMobileMenuOpen(false)} className="block py-3 text-[11px] font-sans font-bold tracking-[0.25em] uppercase text-foreground/60">Explore</a>
+            <a href="#trending" onClick={() => setMobileMenuOpen(false)} className="block py-3 text-[11px] font-sans font-bold tracking-[0.25em] uppercase text-foreground/60">Trending</a>
             <a href="#events" onClick={() => setMobileMenuOpen(false)} className="block py-3 text-[11px] font-sans font-bold tracking-[0.25em] uppercase text-foreground/60">Events</a>
-            <Button onClick={() => {setMobileMenuOpen(false);openAuthModal();}} className="w-full rounded-full mt-4 bg-accent text-accent-foreground text-[11px] tracking-[0.2em] uppercase">
+            <Button onClick={() => { setMobileMenuOpen(false); openAuthModal(); }} className="w-full rounded-full mt-4 bg-accent text-accent-foreground text-[11px] tracking-[0.2em] uppercase">
               Join Loverball
             </Button>
           </motion.div>
-        }
+        )}
       </nav>
 
-      {/* ══════════════════════════════════════════
-                                                     AUTH MODAL
-                                                    ══════════════════════════════════════════ */}
+      {/* AUTH MODAL */}
       <Dialog open={authModalOpen} onOpenChange={setAuthModalOpen}>
         <DialogContent className="sm:max-w-md rounded-3xl p-0 overflow-hidden border-border/20">
           <div className="p-8 sm:p-10">
@@ -225,10 +232,9 @@ const Index = () => {
                 <TabsTrigger value="login" className="rounded-full data-[state=active]:bg-accent data-[state=active]:text-accent-foreground text-[11px] font-sans font-bold tracking-[0.1em] uppercase">Sign In</TabsTrigger>
                 <TabsTrigger value="signup" className="rounded-full data-[state=active]:bg-accent data-[state=active]:text-accent-foreground text-[11px] font-sans font-bold tracking-[0.1em] uppercase">Sign Up</TabsTrigger>
               </TabsList>
-
               <TabsContent value="login">
-                {showForgotPassword ?
-                <form onSubmit={handleForgotPassword} className="space-y-5 mt-8">
+                {showForgotPassword ? (
+                  <form onSubmit={handleForgotPassword} className="space-y-5 mt-8">
                     <div className="space-y-2">
                       <Label htmlFor="reset-email" className="text-foreground text-[11px] tracking-[0.1em] uppercase">Email</Label>
                       <Input id="reset-email" type="email" placeholder="Enter your email" value={email} onChange={(e) => setEmail(e.target.value)} required className="bg-background border-border text-foreground rounded-xl h-12" />
@@ -236,9 +242,9 @@ const Index = () => {
                     <p className="text-muted-foreground text-sm">We'll send you a link to reset your password.</p>
                     <Button type="submit" className="w-full rounded-full h-12 bg-accent text-accent-foreground text-[11px] font-sans tracking-[0.1em] uppercase" disabled={loading}>{loading ? "Sending..." : "Send Reset Link"}</Button>
                     <button type="button" onClick={() => setShowForgotPassword(false)} className="w-full text-sm text-accent hover:text-accent/80 transition-colors font-medium">Back to sign in</button>
-                  </form> :
-
-                <form onSubmit={handleLogin} className="space-y-5 mt-8">
+                  </form>
+                ) : (
+                  <form onSubmit={handleLogin} className="space-y-5 mt-8">
                     <div className="space-y-2">
                       <Label htmlFor="login-email" className="text-foreground text-[11px] tracking-[0.1em] uppercase">Email</Label>
                       <Input id="login-email" type="email" placeholder="Enter your email" value={email} onChange={(e) => setEmail(e.target.value)} required className="bg-background border-border text-foreground rounded-xl h-12" />
@@ -252,9 +258,8 @@ const Index = () => {
                     </div>
                     <Button type="submit" className="w-full rounded-full h-12 bg-accent text-accent-foreground text-[11px] font-sans tracking-[0.1em] uppercase" disabled={loading}>{loading ? "Signing in..." : "Sign In"}</Button>
                   </form>
-                }
+                )}
               </TabsContent>
-
               <TabsContent value="signup">
                 <form onSubmit={handleSignup} className="space-y-5 mt-8">
                   <div className="space-y-2">
@@ -280,387 +285,226 @@ const Index = () => {
         </DialogContent>
       </Dialog>
 
-      {/* ══════════════════════════════════════════
-                                                     HERO — Bold color-block split with overlapping images
-                                                    ══════════════════════════════════════════ */}
+      {/* ═══════ HERO ═══════ */}
       <section className="pt-28 lg:pt-24">
         <div className="grid lg:grid-cols-2 min-h-[90vh]">
-          {/* Left — Sky blue block with headline */}
+          {/* Left */}
           <div className="bg-primary relative flex items-center px-8 lg:px-16 py-20 lg:py-0">
             <motion.div
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.9, ease: "easeOut" }}
-              className="relative z-10 max-w-lg">
+              className="relative z-10 max-w-lg"
+            >
+              {/* Live badge */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+                className="inline-flex items-center gap-2 bg-accent text-accent-foreground rounded-full px-4 py-2 mb-8 shadow-lg"
+              >
+                <span className="relative flex h-2.5 w-2.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent-foreground opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-accent-foreground" />
+                </span>
+                <span className="text-[11px] font-sans font-bold tracking-wide uppercase">Live: WNBA Season Opens Tonight</span>
+              </motion.div>
 
-              <span className="text-[11px] font-sans font-bold tracking-[0.3em] uppercase text-primary-foreground/70 mb-6 block">A Sports Community & Content Platform for Women</span>
-              <h1 className="font-condensed font-bold text-[4.5rem] sm:text-[6rem] lg:text-[7.5rem] leading-[0.85] tracking-tight text-primary-foreground uppercase mb-8">
-                Her<br />
-                Game.<br />
+              <span className="text-[11px] font-sans font-bold tracking-[0.3em] uppercase text-primary-foreground/70 mb-6 block">
+                A Sports Community & Content Platform for Women
+              </span>
+              <h1 className="font-condensed font-bold text-[4.5rem] sm:text-[6rem] lg:text-[7.5rem] leading-[0.85] tracking-tight text-primary-foreground uppercase mb-6">
+                Her<br />Game.<br />
                 <span className="text-foreground">Her</span><br />
-                <span className="text-foreground">COMMUNITY.</span>
+                <span className="text-foreground">Community.</span>
               </h1>
-              <p className="text-base font-serif font-semibold text-primary-foreground/90 leading-relaxed mb-8 max-w-sm">
-                Loverball is a community-powered sports platform where women fans find local watch parties, curated sports stories, and real friendships built around the teams they love.
+              <p className="text-base font-sans font-medium text-primary-foreground/85 leading-relaxed mb-8 max-w-sm">
+                The social platform built for women who live and breathe sports. Connect with fans, find events, and watch exclusive content.
               </p>
               <div className="flex flex-col sm:flex-row items-start gap-4">
                 <Button onClick={openAuthModal} className="rounded-full bg-accent text-accent-foreground hover:bg-accent/90 px-8 py-5 text-[11px] font-sans font-bold tracking-[0.2em] uppercase shadow-xl h-auto">
-                  Join the Community
-                  <ArrowRight className="ml-2 h-4 w-4" />
+                  Join Loverball <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
                 <Button onClick={() => document.getElementById("events")?.scrollIntoView({ behavior: "smooth" })} variant="outline" className="rounded-full border-2 border-primary-foreground text-primary-foreground bg-transparent hover:bg-primary-foreground/10 px-8 py-5 text-[11px] font-sans font-bold tracking-[0.2em] uppercase h-auto">
-                  Explore Events & Stories
+                  Find Events
                 </Button>
               </div>
             </motion.div>
-            {/* Decorative script text */}
-            <div className="absolute bottom-8 left-8 lg:left-16 opacity-10">
-              <span className="font-script text-[6rem] lg:text-[8rem] text-primary-foreground leading-none"></span>
-            </div>
           </div>
 
-          {/* Right — Cream block with overlapping rotated images */}
+          {/* Right — Images */}
           <motion.div
             initial={{ opacity: 0, x: 40 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.9, delay: 0.2 }}
-            className="bg-background relative flex items-center justify-center py-20 lg:py-0 px-8 overflow-hidden">
-
-            {/* Decorative script behind images */}
-            <div className="absolute inset-0 flex items-center justify-center opacity-[0.06]">
-              <span className="font-script text-[12rem] lg:text-[16rem] text-foreground leading-none whitespace-nowrap rotate-[-8deg]">
-              </span>
-            </div>
-
-            {/* Overlapping rotated photos */}
+            className="bg-background relative flex items-center justify-center py-20 lg:py-0 px-8 overflow-hidden"
+          >
             <div className="relative w-full max-w-md h-[500px] lg:h-[600px]">
-              {/* Back image — rotated left */}
-              <motion.div initial={{ opacity: 0, rotate: -8, scale: 0.9 }}
-              animate={{ opacity: 1, rotate: -6, scale: 1 }}
-              transition={{ duration: 0.8, delay: 0.4 }}
-              className="absolute left-0 bottom-12 w-[55%] z-10">
-
+              <motion.div initial={{ opacity: 0, rotate: -8, scale: 0.9 }} animate={{ opacity: 1, rotate: -6, scale: 1 }} transition={{ duration: 0.8, delay: 0.4 }} className="absolute left-0 bottom-12 w-[55%] z-10">
                 <div className="rounded-2xl overflow-hidden shadow-2xl border-4 border-card">
                   <img src={athletesImage} alt="Women athletes" className="w-full aspect-[3/4] object-cover" />
                 </div>
               </motion.div>
-
-              {/* Center image — main focus */}
-              <motion.div
-                initial={{ opacity: 0, y: 30, scale: 0.9 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                transition={{ duration: 0.8, delay: 0.5 }}
-                className="absolute left-[20%] top-4 w-[60%] z-20">
-
+              <motion.div initial={{ opacity: 0, y: 30, scale: 0.9 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ duration: 0.8, delay: 0.5 }} className="absolute left-[20%] top-4 w-[60%] z-20">
                 <div className="rounded-2xl overflow-hidden shadow-2xl border-4 border-card">
                   <img src={heroImage} alt="Women sports fans" className="w-full aspect-[3/4] object-cover object-[center_30%]" />
                 </div>
               </motion.div>
-
-              {/* Right image — rotated right */}
-              <motion.div
-                initial={{ opacity: 0, rotate: 8, scale: 0.9 }}
-                animate={{ opacity: 1, rotate: 5, scale: 1 }}
-                transition={{ duration: 0.8, delay: 0.6 }}
-                className="absolute right-0 bottom-16 w-[50%] z-10">
-
+              <motion.div initial={{ opacity: 0, rotate: 8, scale: 0.9 }} animate={{ opacity: 1, rotate: 5, scale: 1 }} transition={{ duration: 0.8, delay: 0.6 }} className="absolute right-0 bottom-16 w-[50%] z-10">
                 <div className="rounded-2xl overflow-hidden shadow-2xl border-4 border-card">
                   <img src={fansImage} alt="Fans celebrating" className="w-full aspect-[3/4] object-cover" />
                 </div>
               </motion.div>
-
-              {/* Floating CTA pill */}
-              <motion.div
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5, delay: 0.9 }}
-                className="absolute bottom-4 right-4 z-30">
-
-                <button onClick={openAuthModal} className="rounded-full bg-accent text-accent-foreground px-5 py-2.5 text-[10px] font-sans font-bold tracking-[0.2em] uppercase shadow-xl hover:scale-105 transition-transform flex items-center gap-2">
-                  View More <ArrowRight className="h-3 w-3" />
-                </button>
-              </motion.div>
             </div>
           </motion.div>
         </div>
+
+        {/* Stats bar */}
+        <div className="bg-foreground">
+          <div className="max-w-[1400px] mx-auto px-8 lg:px-16">
+            <div className="grid grid-cols-3 divide-x divide-background/10 py-6">
+              {[
+                { value: 24, suffix: "K+", label: "Members" },
+                { value: 340, suffix: "", label: "Events This Month" },
+                { value: 18, suffix: "", label: "Sports Covered" },
+              ].map((stat) => (
+                <div key={stat.label} className="text-center px-4">
+                  <span className="font-condensed text-3xl lg:text-4xl text-accent font-bold">
+                    <AnimatedStat value={stat.value} suffix={stat.suffix} />
+                  </span>
+                  <p className="text-[10px] font-sans font-bold tracking-[0.2em] uppercase text-background/50 mt-1">{stat.label}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
       </section>
 
-      {/* ══════════════════════════════════════════
-                                                     WHAT YOU GET — Three pillars
-                                                    ══════════════════════════════════════════ */}
-      <section className="py-20 lg:py-28 bg-background">
+      {/* ═══════ SPORTS TICKER ═══════ */}
+      <div className="bg-accent py-3.5 overflow-hidden">
+        <div className="flex items-center gap-10 whitespace-nowrap animate-[shimmer_30s_linear_infinite] px-8">
+          {[...sportsTicker, ...sportsTicker, ...sportsTicker].map((sport, i) => (
+            <span key={i} className="text-[12px] font-sans font-bold tracking-[0.25em] uppercase text-accent-foreground/90 flex items-center gap-2.5">
+              <span className="text-lg">{sport.emoji}</span>
+              {sport.label}
+            </span>
+          ))}
+        </div>
+      </div>
+
+      {/* ═══════ EXPLORE LOVERBALL ═══════ */}
+      <section id="explore" className="py-20 lg:py-28 bg-background">
         <div className="max-w-[1400px] mx-auto px-8 lg:px-16">
           <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} viewport={{ once: true }} className="text-center mb-16">
             <h2 className="font-condensed text-[3rem] lg:text-[4.5rem] leading-none tracking-tight text-foreground uppercase font-extrabold">
-              What You Get with Loverball
+              Explore Loverball
             </h2>
           </motion.div>
 
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              { icon: Users, title: "Community", desc: "Local chapters, watch parties, and IRL meetups where women fans actually meet and become friends." },
-              { icon: Play, title: "Content", desc: "Curated and AI-powered sports stories that center women fans, culture, and the drama around the game." },
-              { icon: Sparkles, title: "Access", desc: "Early invites to events, member-only experiences, and deeper connections with the women's sports ecosystem." },
-            ].map((card, i) => (
-              <motion.div key={card.title} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: i * 0.12 }} viewport={{ once: true }}>
-                <div className="bg-card rounded-2xl p-8 lg:p-10 shadow-[0_2px_20px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.1)] transition-all duration-300 h-full text-center">
-                  <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-accent/10 mb-6">
-                    <card.icon className="w-8 h-8 text-accent" />
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {featureCards.map((card, i) => (
+              <motion.div
+                key={card.title}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: i * 0.1 }}
+                viewport={{ once: true }}
+                onClick={openAuthModal}
+                className="cursor-pointer group"
+              >
+                <div className={`${card.color} rounded-2xl p-8 h-full transition-all duration-300 hover:scale-[1.03] hover:shadow-xl`}>
+                  <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-background/15 mb-6">
+                    <card.icon className="w-7 h-7 text-background" />
                   </div>
-                  <h3 className="font-condensed text-2xl lg:text-3xl uppercase text-foreground mb-3 tracking-wide font-bold">{card.title}</h3>
-                  <p className="text-foreground/70 font-medium leading-relaxed font-serif">{card.desc}</p>
+                  <h3 className="font-condensed text-xl uppercase text-background mb-3 tracking-wide font-bold">{card.title}</h3>
+                  <p className="text-background/75 text-sm font-medium leading-relaxed">{card.desc}</p>
                 </div>
               </motion.div>
             ))}
           </div>
-
-          <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ duration: 0.6, delay: 0.4 }} viewport={{ once: true }} className="text-center text-sm text-muted-foreground font-sans tracking-wide mt-10">
-            Start free and join events as you go. Premium membership coming soon.
-          </motion.p>
         </div>
       </section>
 
-      {/* TICKER STRIP — Sport category badges */}
-      <div className="bg-foreground py-4 overflow-hidden">
-        <div className="flex items-center gap-12 animate-[shimmer_20s_linear_infinite] whitespace-nowrap px-8">
-          {[...sportCategories, ...sportCategories, ...sportCategories].map((cat, i) =>
-          <span key={i} className="text-[11px] font-sans font-bold tracking-[0.3em] uppercase text-background/70 flex items-center gap-3">
-              <span className="w-2 h-2 rounded-full bg-accent inline-block" />
-              {cat.label}
-            </span>
-          )}
-        </div>
-      </div>
-
-      {/* ══════════════════════════════════════════
-                                                     ABOUT — Coral block with asymmetric layout
-                                                    ══════════════════════════════════════════ */}
-      <section id="about" className="bg-accent">
-        <div className="grid lg:grid-cols-2">
-          {/* Left — Text on coral background */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="px-8 lg:px-16 py-20 lg:py-28 flex flex-col justify-center">
-
-            <span className="text-[11px] font-sans font-bold tracking-[0.3em] uppercase text-accent-foreground/60 mb-4">Fandom</span>
-            <h2 className="font-condensed text-[3.5rem] lg:text-[5rem] leading-[0.85] tracking-tight text-accent-foreground uppercase mb-8">
-              We specialize in creating <em className="font-display italic normal-case text-[2rem] lg:text-[3rem] leading-[1.1]">tailored</em> sports content and experiences that <em className="font-display italic normal-case text-[2rem] lg:text-[3rem] leading-[1.1]">inspire women.</em>
-            </h2>
-            <p className="text-sm text-accent-foreground/70 leading-relaxed mb-6 max-w-md font-serif font-medium">Finally, a sports community that gets YOU. Connect with women who share your fandom, discover stories about women athletes, fans, and culture, and join events where you actually belong. No gatekeeping, no explaining yourself—just authentic sports love.</p>
-
-            <button onClick={openAuthModal} className="rounded-full border border-accent-foreground text-accent-foreground bg-transparent hover:bg-accent-foreground hover:text-accent transition-colors px-7 py-3.5 text-[11px] font-sans font-bold tracking-[0.2em] uppercase w-fit flex items-center gap-3">
-              Join Loverball <ArrowRight className="h-3.5 w-3.5" />
-            </button>
+      {/* ═══════ TRENDING NOW ═══════ */}
+      <section id="trending" className="py-20 lg:py-28 bg-secondary/80">
+        <div className="max-w-[1400px] mx-auto px-8 lg:px-16">
+          <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ duration: 0.8 }} viewport={{ once: true }} className="flex items-end justify-between mb-12">
+            <h2 className="font-condensed text-[3rem] lg:text-[4.5rem] leading-none tracking-tight text-foreground uppercase font-extrabold">Trending Now</h2>
+            <Zap className="w-8 h-8 text-accent hidden md:block" />
           </motion.div>
 
-          {/* Right — Large image */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.97 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, delay: 0.1 }}
-            viewport={{ once: true }}
-            className="relative min-h-[400px] lg:min-h-0">
-
-            <img src={philosophyImage} alt="Loverball community" className="w-full h-full object-cover" />
-          </motion.div>
-        </div>
-      </section>
-
-      {/* ══════════════════════════════════════════
-                                                     HOT PINK SECTION — Community collage with overlapping images
-                                                    ══════════════════════════════════════════ */}
-      <section id="stories" className="bg-hot-pink relative overflow-hidden">
-        <div className="grid lg:grid-cols-2 min-h-[80vh]">
-          {/* Left — Overlapping community images */}
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="relative flex items-center justify-center py-20 px-8 lg:px-16">
-
-            {/* Script decoration behind */}
-            <div className="absolute inset-0 flex items-center justify-center opacity-[0.08]">
-              <span className="font-script text-[10rem] lg:text-[14rem] text-hot-pink-foreground leading-none whitespace-nowrap rotate-[-12deg]">
-              </span>
-            </div>
-
-            <div className="relative w-full max-w-md h-[450px] lg:h-[550px]">
-              <motion.div initial={{ opacity: 0, rotate: -5, scale: 0.9 }}
-              whileInView={{ opacity: 1, rotate: -4, scale: 1 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              viewport={{ once: true }}
-              className="absolute left-4 top-12 w-[50%] z-10">
-
-                <div className="rounded-2xl overflow-hidden shadow-2xl border-4 border-card">
-                  <img alt="Community watch party" className="w-full aspect-[3/4] object-cover" src="/lovable-uploads/1146599d-2e17-4a36-a8ec-64fddec187a0.png" />
-                </div>
-              </motion.div>
-
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {trendingStories.map((story, i) => (
               <motion.div
-                initial={{ opacity: 0, y: 20, scale: 0.9 }}
-                whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                transition={{ duration: 0.6, delay: 0.3 }}
+                key={story.title}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: i * 0.1 }}
                 viewport={{ once: true }}
-                className="absolute left-[25%] top-0 w-[55%] z-20">
-
-                <div className="rounded-2xl overflow-hidden shadow-2xl border-4 border-card">
-                  <img src={teamSpirit} alt="Team spirit" className="w-full aspect-[3/4] object-cover" />
+                onClick={openAuthModal}
+                className="cursor-pointer group"
+              >
+                <div className="bg-card rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300">
+                  <div className="aspect-[16/10] overflow-hidden">
+                    <img src={story.image} alt={story.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  </div>
+                  <div className="p-5">
+                    <div className="flex items-center gap-3 mb-3">
+                      <span className="text-[10px] font-sans font-bold tracking-[0.2em] uppercase text-accent-foreground bg-accent px-2.5 py-1 rounded-full">{story.tag}</span>
+                      <span className="text-[11px] text-muted-foreground flex items-center gap-1">
+                        <Clock className="w-3 h-3" /> {story.time}
+                      </span>
+                    </div>
+                    <h3 className="font-sans font-bold text-foreground text-sm leading-snug group-hover:text-accent transition-colors">{story.title}</h3>
+                  </div>
                 </div>
               </motion.div>
-
-              <motion.div
-                initial={{ opacity: 0, rotate: 6, scale: 0.9 }}
-                whileInView={{ opacity: 1, rotate: 4, scale: 1 }}
-                transition={{ duration: 0.6, delay: 0.4 }}
-                viewport={{ once: true }}
-                className="absolute right-4 bottom-8 w-[48%] z-10">
-
-                <div className="rounded-2xl overflow-hidden shadow-2xl border-4 border-card">
-                  <img alt="Pickup game" className="w-full aspect-[3/4] object-cover" src="/lovable-uploads/08d4e8e3-8246-43ed-aba5-3a1f21621cab.jpg" />
-                </div>
-              </motion.div>
-            </div>
-          </motion.div>
-
-          {/* Right — Text content */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            viewport={{ once: true }}
-            className="px-8 lg:px-16 py-20 lg:py-28 flex flex-col justify-center">
-
-            <span className="text-[10px] font-sans font-bold tracking-[0.3em] uppercase text-hot-pink-foreground/60 mb-3">SEE WHAT HAPPENS WHEN WOMEN OWN THEIR FANDOM</span>
-            <h2 className="font-condensed text-[3rem] lg:text-[4rem] leading-[0.85] tracking-tight text-hot-pink-foreground uppercase mb-8">
-              OUR<br />COMMUNITY
-            </h2>
-            <p className="text-base font-serif text-hot-pink-foreground/80 leading-relaxed mb-8 max-w-md font-medium">
-              Connect with women who share your fandom, discover stories about women athletes, fans, and culture, and join events where you actually belong.
-            </p>
-            <Button onClick={openAuthModal} className="rounded-full bg-accent text-accent-foreground hover:bg-accent/90 px-8 py-5 text-[11px] font-sans font-bold tracking-[0.2em] uppercase w-fit h-auto shadow-xl">
-              Join Loverball <ArrowRight className="ml-2 h-3.5 w-3.5" />
-            </Button>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* ══════════════════════════════════════════
-                                                     QUOTE — Clean cream band
-                                                    ══════════════════════════════════════════ */}
-      <section className="bg-background py-24 lg:py-32">
-        <div className="max-w-[900px] mx-auto px-8 lg:px-16 text-center">
-          <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ duration: 1 }} viewport={{ once: true }}>
-            <span className="font-display text-7xl text-accent/30 leading-none block mb-2">"</span>
-            <p className="font-display text-2xl sm:text-3xl lg:text-4xl text-foreground leading-[1.3] -mt-6 italic">
-              Sports aren't just games — they're culture, community, and connection.
-            </p>
-            <span className="block mt-8 text-[11px] font-sans font-bold tracking-[0.3em] uppercase text-muted-foreground">
-              — The Loverball Philosophy
-            </span>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* ══════════════════════════════════════════
-                                                     OUR GOAL — Centered mission statement
-                                                    ══════════════════════════════════════════ */}
-      <section className="py-20 lg:py-28 bg-secondary/80">
-        <div className="max-w-[900px] mx-auto px-8 lg:px-16 text-center">
-          <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} viewport={{ once: true }}>
-            <h2 className="font-condensed text-[3rem] lg:text-[4.5rem] leading-none tracking-tight text-foreground uppercase font-extrabold mb-8">
-              Our Goal
-            </h2>
-            <p className="text-xl md:text-2xl font-serif text-foreground/80 leading-relaxed font-medium">
-              Loverball exists to give women fans a home in sports — more representation, more access to live experiences, and more real friendships built around the teams they love.
-            </p>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* ══════════════════════════════════════════
-                                                     FEATURES — Color-blocked numbered cards
-                                                    ══════════════════════════════════════════ */}
-      <section id="features" className="bg-secondary">
-        <div className="max-w-[1400px] mx-auto px-8 lg:px-16 py-24 lg:py-32">
-          <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ duration: 0.8 }} viewport={{ once: true }} className="mb-16">
-            <span className="font-condensed text-[3rem] lg:text-[4.5rem] leading-none tracking-tight text-secondary-foreground uppercase">PLATFORM</span>
-          </motion.div>
-
-          <div className="grid md:grid-cols-3 gap-6">
-            {[
-            { num: "01", title: "AI-Powered Stories", desc: "Personalized stories about women athletes, fan culture, and the sports moments everyone's talking about — made for women who love the game.", icon: Sparkles, bg: "bg-medium-blue" },
-            { num: "02", title: "Community Events", desc: "Watch parties, meetups, and experiences designed for women who love sports. Find your squad.", icon: Calendar, bg: "bg-accent" },
-            { num: "03", title: "Exclusive Content", desc: "Behind-the-scenes access, player interviews, and insider perspectives you won't find anywhere else.", icon: Users, bg: "bg-hot-pink" }].
-            map((feature, i) =>
-            <motion.div
-              key={feature.num}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: i * 0.12 }}
-              viewport={{ once: true }}
-              className={`${feature.bg} rounded-2xl p-8 lg:p-10 group relative overflow-hidden`}>
-
-                {/* Large decorative number */}
-                <span className="absolute top-4 right-6 font-condensed text-[6rem] leading-none text-foreground/[0.06]">{feature.num}</span>
-                
-                <div className="relative z-10">
-                  <span className="text-[10px] font-sans font-bold tracking-[0.3em] uppercase text-primary-foreground/60 mb-2 block">
-                    {feature.num === "01" ? "Content" : feature.num === "02" ? "Events" : "Exclusive"}
-                  </span>
-                  <feature.icon className="w-7 h-7 text-primary-foreground/80 mb-5" />
-                  <h3 className="font-condensed text-2xl lg:text-3xl uppercase text-primary-foreground mb-4 tracking-wide">{feature.title}</h3>
-                  <p className="text-primary-foreground/70 leading-relaxed text-[15px] font-serif font-medium">{feature.desc}</p>
-                </div>
-              </motion.div>
-            )}
+            ))}
           </div>
         </div>
       </section>
 
-      {/* ══════════════════════════════════════════
-                                                     EVENTS — Editorial schedule listing
-                                                    ══════════════════════════════════════════ */}
-      <section id="events" className="py-24 lg:py-32 bg-background">
+      {/* ═══════ EVENTS NEAR YOU ═══════ */}
+      <section id="events" className="py-20 lg:py-28 bg-background">
         <div className="max-w-[1400px] mx-auto px-8 lg:px-16">
-          <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ duration: 0.8 }} viewport={{ once: true }} className="flex items-end justify-between mb-16">
-            <span className="font-condensed text-[3rem] lg:text-[4.5rem] leading-none tracking-tight text-foreground uppercase">EVENTS</span>
+          <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ duration: 0.8 }} viewport={{ once: true }} className="flex items-end justify-between mb-12">
+            <h2 className="font-condensed text-[3rem] lg:text-[4.5rem] leading-none tracking-tight text-foreground uppercase font-extrabold">Events Near You</h2>
             <Button onClick={openAuthModal} className="hidden md:flex rounded-full bg-accent text-accent-foreground hover:bg-accent/90 px-6 py-2.5 text-[11px] font-sans font-bold tracking-[0.2em] uppercase h-auto shadow-lg">
-              View All Events <ArrowRight className="ml-2 h-3.5 w-3.5" />
+              View All <ArrowRight className="ml-2 h-3.5 w-3.5" />
             </Button>
           </motion.div>
 
-          <div className="border-t-2 border-foreground/10">
-            {upcomingEvents.map((event, i) =>
-            <motion.div
-              key={event.title}
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: i * 0.05 }}
-              viewport={{ once: true }}
-              onClick={openAuthModal}
-              className="grid grid-cols-12 gap-4 py-6 border-b-2 border-foreground/10 items-center cursor-pointer group hover:bg-accent/5 transition-colors px-4 -mx-4">
-
-                <div className="col-span-2 md:col-span-1">
-                  <span className="font-condensed text-xl text-accent">{event.date}</span>
-                </div>
-                <div className="col-span-7 md:col-span-5">
-                  <p className="font-sans font-bold text-foreground group-hover:text-accent transition-colors">{event.title}</p>
-                </div>
-                <div className="hidden md:block col-span-3">
-                  <p className="text-sm text-muted-foreground">{event.venue}</p>
-                </div>
-                <div className="col-span-3 md:col-span-2 text-right">
-                  <span className="text-[10px] font-sans font-bold tracking-[0.2em] uppercase text-accent bg-accent/10 px-3 py-1.5 rounded-full">{event.type}</span>
-                </div>
-                <div className="hidden md:block col-span-1 text-right">
-                  <ArrowRight className="h-4 w-4 text-foreground/20 group-hover:text-accent transition-colors inline" />
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {nearbyEvents.map((event, i) => (
+              <motion.div
+                key={event.title}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: i * 0.08 }}
+                viewport={{ once: true }}
+                onClick={openAuthModal}
+                className="cursor-pointer group"
+              >
+                <div className="bg-card rounded-2xl p-6 shadow-sm hover:shadow-lg transition-all duration-300 h-full border border-border/20">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="bg-accent/10 rounded-xl px-3 py-2 text-center">
+                      <span className="font-condensed text-lg text-accent font-bold block leading-none">{event.date.split(" ")[0]}</span>
+                      <span className="font-condensed text-2xl text-accent font-bold block leading-none">{event.date.split(" ")[1]}</span>
+                    </div>
+                    <span className="text-[10px] font-sans font-bold tracking-[0.15em] uppercase text-accent bg-accent/10 px-2.5 py-1 rounded-full">{event.type}</span>
+                  </div>
+                  <h3 className="font-sans font-bold text-foreground text-base mb-3 group-hover:text-accent transition-colors leading-snug">{event.title}</h3>
+                  <div className="space-y-1.5">
+                    <p className="text-sm text-muted-foreground flex items-center gap-1.5">
+                      <Clock className="w-3.5 h-3.5 text-accent/60" /> {event.time}
+                    </p>
+                    <p className="text-sm text-muted-foreground flex items-center gap-1.5">
+                      <MapPin className="w-3.5 h-3.5 text-accent/60" /> {event.venue}
+                    </p>
+                  </div>
                 </div>
               </motion.div>
-            )}
+            ))}
           </div>
 
           <div className="mt-8 md:hidden text-center">
@@ -671,95 +515,92 @@ const Index = () => {
         </div>
       </section>
 
-      {/* ══════════════════════════════════════════
-                                                     TESTIMONIALS — Sky blue block
-                                                    ══════════════════════════════════════════ */}
+      {/* ═══════ MATCH / SOCIAL CTA ═══════ */}
+      <section className="py-16 lg:py-20 bg-hot-pink">
+        <div className="max-w-[900px] mx-auto px-8 lg:px-16">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.97 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+            className="text-center"
+          >
+            <div className="inline-flex items-center gap-2 bg-hot-pink-foreground/20 rounded-full px-5 py-2 mb-6">
+              <Sparkles className="w-4 h-4 text-hot-pink-foreground" />
+              <span className="text-[11px] font-sans font-bold tracking-[0.2em] uppercase text-hot-pink-foreground">New Match Waiting</span>
+            </div>
+            <h2 className="font-condensed text-[2.5rem] lg:text-[4rem] leading-[0.9] tracking-tight text-hot-pink-foreground uppercase font-extrabold mb-4">
+              Someone Just Liked<br />Your Profile!
+            </h2>
+            <p className="text-base font-sans text-hot-pink-foreground/80 leading-relaxed mb-8 max-w-md mx-auto">
+              3 new fans match your sports vibe. See who's out there.
+            </p>
+            <Button onClick={openAuthModal} className="rounded-full bg-background text-foreground hover:bg-background/90 px-10 py-5 text-[11px] font-sans font-bold tracking-[0.2em] uppercase shadow-xl h-auto">
+              Discover Matches <Heart className="ml-2 h-4 w-4" />
+            </Button>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ═══════ ABOUT SECTION ═══════ */}
+      <section className="bg-accent">
+        <div className="grid lg:grid-cols-2">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="px-8 lg:px-16 py-20 lg:py-28 flex flex-col justify-center"
+          >
+            <span className="text-[11px] font-sans font-bold tracking-[0.3em] uppercase text-accent-foreground/60 mb-4">Our Mission</span>
+            <h2 className="font-condensed text-[3rem] lg:text-[4.5rem] leading-[0.85] tracking-tight text-accent-foreground uppercase mb-8 font-extrabold">
+              Giving Women Fans<br />A Home in Sports
+            </h2>
+            <p className="text-base text-accent-foreground/80 leading-relaxed mb-8 max-w-md font-medium">
+              Loverball exists to give women fans a home in sports — more representation, more access to live experiences, and more real friendships built around the teams they love.
+            </p>
+            <button onClick={openAuthModal} className="rounded-full border border-accent-foreground text-accent-foreground bg-transparent hover:bg-accent-foreground hover:text-accent transition-colors px-7 py-3.5 text-[11px] font-sans font-bold tracking-[0.2em] uppercase w-fit flex items-center gap-3">
+              Join Loverball <ArrowRight className="h-3.5 w-3.5" />
+            </button>
+          </motion.div>
+          <motion.div initial={{ opacity: 0, scale: 0.97 }} whileInView={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8, delay: 0.1 }} viewport={{ once: true }} className="relative min-h-[400px] lg:min-h-0">
+            <img src={philosophyImage} alt="Loverball community" className="w-full h-full object-cover" />
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ═══════ TESTIMONIALS ═══════ */}
       <section className="bg-primary py-20 lg:py-28">
         <div className="max-w-[1400px] mx-auto px-8 lg:px-16">
           <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ duration: 0.8 }} viewport={{ once: true }}>
-            <span className="font-condensed text-[3rem] lg:text-[4rem] leading-none tracking-tight text-primary-foreground/40 uppercase block mb-12">WHAT THEY SAY</span>
+            <span className="font-condensed text-[3rem] lg:text-[4rem] leading-none tracking-tight text-primary-foreground/40 uppercase block mb-12">What They Say</span>
             <div className="grid md:grid-cols-3 gap-8 lg:gap-12">
               {[
-              { quote: "Finally a sports community that gets me.", name: "Alicia", detail: "Lakers fan" },
-              { quote: "I met my best friends at a Loverball watch party.", name: "Dani", detail: "WNBA superfan" },
-              { quote: "The content here actually speaks to women fans.", name: "Maria", detail: "Soccer obsessed" }].
-              map((t, i) =>
-              <motion.div key={t.name} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: i * 0.1 }} viewport={{ once: true }} className="bg-primary-foreground/10 backdrop-blur-sm rounded-2xl p-8">
+                { quote: "Finally a sports community that gets me.", name: "Alicia", detail: "Lakers fan" },
+                { quote: "I met my best friends at a Loverball watch party.", name: "Dani", detail: "WNBA superfan" },
+                { quote: "The content here actually speaks to women fans.", name: "Maria", detail: "Soccer obsessed" },
+              ].map((t, i) => (
+                <motion.div key={t.name} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: i * 0.1 }} viewport={{ once: true }} className="bg-primary-foreground/10 backdrop-blur-sm rounded-2xl p-8">
                   <p className="font-display text-xl lg:text-2xl text-primary-foreground italic leading-relaxed mb-6">"{t.quote}"</p>
                   <p className="text-[11px] font-sans font-bold tracking-[0.2em] uppercase text-primary-foreground/70">— {t.name}, {t.detail}</p>
                 </motion.div>
-              )}
+              ))}
             </div>
           </motion.div>
         </div>
       </section>
 
-      {/* ══════════════════════════════════════════
-                                                     APP — Split layout with diagonal stripes
-                                                    ══════════════════════════════════════════ */}
-      <section className="bg-background relative overflow-hidden">
-        <div className="grid lg:grid-cols-2">
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="px-8 lg:px-16 py-20 lg:py-28 flex flex-col justify-center relative z-10">
-
-            <span className="font-condensed text-[3rem] lg:text-[4.5rem] leading-none tracking-tight text-foreground uppercase block mb-8">THE APP</span>
-            <h2 className="font-display text-3xl lg:text-4xl text-foreground leading-tight mb-8">
-              Your fandom, <em className="text-accent">personalized.</em>
-            </h2>
-            <div className="space-y-5">
-              {[
-              "AI-powered sports stories tailored to your interests",
-              "Community events and watch parties near you",
-              "Connect with other women fans in your city",
-              "Exclusive content and behind-the-scenes access"].
-              map((item, i) =>
-              <div key={i} className="flex items-start gap-4">
-                  <span className="w-2 h-2 rounded-full bg-accent mt-2 flex-shrink-0" />
-                  <p className="text-base text-muted-foreground leading-relaxed">{item}</p>
-                </div>
-              )}
-            </div>
-            <div className="mt-10">
-              <Button onClick={openAuthModal} className="rounded-full bg-accent text-accent-foreground hover:bg-accent/90 px-10 py-5 text-[11px] font-sans font-bold tracking-[0.2em] uppercase shadow-xl h-auto">
-                Join Loverball <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </div>
-          </motion.div>
-
-          {/* Right — Image with diagonal accent stripes */}
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            viewport={{ once: true }}
-            className="relative min-h-[400px]">
-
-            {/* Diagonal stripe accents */}
-            <div className="absolute bottom-0 right-0 w-full h-40 bg-accent/20 transform -skew-y-3 origin-bottom-right z-0" />
-            <div className="absolute bottom-6 right-0 w-full h-20 bg-hot-pink/20 transform -skew-y-3 origin-bottom-right z-0" />
-            <img src={wnbaWatch} alt="Loverball app experience" className="w-full h-full object-cover relative z-10" />
-          </motion.div>
-        </div>
-      </section>
-
-      {/* ══════════════════════════════════════════
-                                                     FINAL CTA — Dark block with bold typography
-                                                    ══════════════════════════════════════════ */}
+      {/* ═══════ FINAL CTA ═══════ */}
       <section className="py-28 lg:py-36 bg-foreground relative overflow-hidden">
-        {/* Decorative script */}
         <div className="absolute inset-0 flex items-center justify-center opacity-[0.04]">
           <span className="font-script text-[14rem] lg:text-[20rem] text-background leading-none whitespace-nowrap">join us</span>
         </div>
         <div className="max-w-[900px] mx-auto px-8 lg:px-16 text-center relative z-10">
           <motion.div initial={{ opacity: 0, scale: 0.97 }} whileInView={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8 }} viewport={{ once: true }}>
             <span className="font-condensed text-[4rem] sm:text-[5rem] lg:text-[7rem] leading-[0.85] tracking-tight text-accent uppercase block mb-6">
-              READY TO<br />JOIN?
+              Ready To<br />Join?
             </span>
-            <p className="text-lg font-serif text-background/50 mb-12 max-w-lg mx-auto leading-relaxed">
+            <p className="text-lg font-sans text-background/50 mb-12 max-w-lg mx-auto leading-relaxed">
               Be part of the community redefining women's sports fandom. Your game. Your community. Your story.
             </p>
             <Button size="lg" onClick={openAuthModal} className="rounded-full bg-accent text-accent-foreground hover:bg-accent/90 text-[11px] font-sans font-bold tracking-[0.2em] uppercase px-12 py-7 shadow-2xl h-auto">
@@ -769,32 +610,21 @@ const Index = () => {
         </div>
       </section>
 
-      {/* ══════════════════════════════════════════
-                                                     FOOTER
-                                                    ══════════════════════════════════════════ */}
+      {/* ═══════ FOOTER ═══════ */}
       <footer className="py-16 bg-foreground border-t border-background/10">
         <div className="max-w-[1400px] mx-auto px-8 lg:px-16">
-          {/* Newsletter */}
           <div className="mb-16 pb-12 border-b border-background/10">
             <div className="max-w-md mx-auto text-center">
               <h3 className="font-condensed text-2xl uppercase tracking-wide text-background mb-3">Stay In The Loop</h3>
               <p className="text-background/40 text-sm mb-6">Get the latest on events, content drops, and community updates.</p>
-              <form onSubmit={(e) => {e.preventDefault();toast({ title: "Subscribed!", description: "You'll hear from us soon." });setNewsletterEmail("");}} className="flex gap-2">
-                <Input
-                  type="email"
-                  placeholder="Enter your email"
-                  value={newsletterEmail}
-                  onChange={(e) => setNewsletterEmail(e.target.value)}
-                  required
-                  className="flex-1 rounded-full bg-background/10 border-background/10 text-background placeholder:text-background/30 h-12" />
-
+              <form onSubmit={(e) => { e.preventDefault(); toast({ title: "Subscribed!", description: "You'll hear from us soon." }); setNewsletterEmail(""); }} className="flex gap-2">
+                <Input type="email" placeholder="Enter your email" value={newsletterEmail} onChange={(e) => setNewsletterEmail(e.target.value)} required className="flex-1 rounded-full bg-background/10 border-background/10 text-background placeholder:text-background/30 h-12" />
                 <Button type="submit" className="rounded-full bg-accent text-accent-foreground hover:bg-accent/90 px-6 h-12">
                   <Mail className="h-4 w-4" />
                 </Button>
               </form>
             </div>
           </div>
-
           <div className="grid lg:grid-cols-12 gap-12 items-start mb-12">
             <div className="lg:col-span-4">
               <img src={loverballLogo} alt="Loverball" className="h-12 w-auto brightness-0 invert mb-4" />
@@ -805,9 +635,9 @@ const Index = () => {
             <div className="lg:col-span-2 lg:col-start-7">
               <p className="text-background/30 text-[11px] font-sans font-bold tracking-[0.2em] uppercase mb-4">Platform</p>
               <nav className="space-y-3">
-                <a href="#about" className="block text-sm text-background/60 hover:text-background transition-colors">About</a>
-                <a href="#features" className="block text-sm text-background/60 hover:text-background transition-colors">Features</a>
-                <a href="#stories" className="block text-sm text-background/60 hover:text-background transition-colors">Community</a>
+                <a href="#explore" className="block text-sm text-background/60 hover:text-background transition-colors">Explore</a>
+                <a href="#trending" className="block text-sm text-background/60 hover:text-background transition-colors">Trending</a>
+                <a href="#events" className="block text-sm text-background/60 hover:text-background transition-colors">Events</a>
               </nav>
             </div>
             <div className="lg:col-span-2">
@@ -831,8 +661,8 @@ const Index = () => {
           </div>
         </div>
       </footer>
-    </div>);
-
+    </div>
+  );
 };
 
 export default Index;
