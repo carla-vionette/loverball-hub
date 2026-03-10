@@ -287,7 +287,7 @@ const EventDetail = () => {
 
     setRsvping(true);
     try {
-      const dbStatus = status === 'yes' ? 'attending' : status;
+      const dbStatus = status === 'yes' ? 'attending' : status === 'maybe' ? 'waitlisted' : 'canceled';
       
       const { error } = await supabase
         .from('event_rsvps')
