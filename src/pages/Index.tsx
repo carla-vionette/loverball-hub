@@ -353,25 +353,6 @@ const Index = () => {
           </motion.div>
         </div>
 
-        {/* Stats bar */}
-        <div className="bg-foreground">
-          <div className="max-w-[1400px] mx-auto px-8 lg:px-16">
-            <div className="grid grid-cols-3 divide-x divide-background/10 py-6">
-              {[
-              { value: 24, suffix: "K+", label: "Members" },
-              { value: 340, suffix: "", label: "Events This Month" },
-              { value: 18, suffix: "", label: "Sports Covered" }].
-              map((stat) =>
-              <div key={stat.label} className="text-center px-4">
-                  <span className="font-condensed text-3xl lg:text-4xl text-accent font-bold">
-                    <AnimatedStat value={stat.value} suffix={stat.suffix} />
-                  </span>
-                  <p className="text-[10px] font-sans font-bold tracking-[0.2em] uppercase text-background/50 mt-1">{stat.label}</p>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
       </section>
 
       {/* ═══════ SPORTS TICKER ═══════ */}
