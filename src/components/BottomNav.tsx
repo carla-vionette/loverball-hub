@@ -12,6 +12,7 @@ const BottomNav = () => {
     { icon: ShoppingBag, label: "Shop", path: "/shop" },
     { icon: CalendarDays, label: "Events", path: "/events" },
     { icon: Users, label: "Friends", path: "/friends" },
+    { icon: MessageCircle, label: "Inbox", path: "/inbox" },
     { icon: User, label: "Profile", path: "/profile" },
   ];
 
