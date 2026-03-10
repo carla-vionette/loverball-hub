@@ -148,7 +148,19 @@ const AttendeeProfileDrawer = ({ profile, open, onOpenChange }: Props) => {
           </Avatar>
 
           <div className="text-center">
-            <h3 className="text-xl font-bold text-foreground">{profile.name}</h3>
+            <div className="flex items-center justify-center gap-2">
+              <h3 className="text-xl font-bold text-foreground">{profile.name}</h3>
+              {user && !isOwnProfile && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-7 w-7 text-muted-foreground hover:text-primary"
+                  onClick={() => setShowCompose(true)}
+                >
+                  <MessageCircle className="w-4 h-4" />
+                </Button>
+              )}
+            </div>
             {profile.primary_role && (
               <p className="text-sm text-muted-foreground">{profile.primary_role}</p>
             )}
