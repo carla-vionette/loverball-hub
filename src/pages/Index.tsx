@@ -9,7 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useAuth } from "@/hooks/useAuth";
 import { motion, useInView } from "framer-motion";
-import { ArrowRight, Lock, Ticket, Users, Sparkles, Calendar, X, Menu, Mail, Play, Heart, ShoppingBag, Clock, MapPin, Zap } from "lucide-react";
+import { ArrowRight, Lock, Users, Sparkles, Calendar, X, Menu, Mail, Play, Heart, ShoppingBag, Clock, MapPin, Zap } from "lucide-react";
 import heroImage from "@/assets/hero-women-new.png";
 import { useLiveSportsBadge } from "@/hooks/useLiveSportsBadge";
 import loverballLogo from "@/assets/loverball-script-logo.png";
@@ -24,7 +24,6 @@ import { z } from "zod";
 const signUpSchema = z.object({
   email: z.string().trim().email("Please enter a valid email address"),
   password: z.string().min(6, "Password must be at least 6 characters"),
-  inviteCode: z.string().trim().min(1, "Invite code is required")
 });
 
 const AnimatedStat = ({ value, suffix = "" }: {value: number;suffix?: string;}) => {
@@ -81,7 +80,6 @@ const LiveSportsBadge = () => {
 const Index = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [inviteCode, setInviteCode] = useState("");
   const [loading, setLoading] = useState(false);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [authModalOpen, setAuthModalOpen] = useState(false);
@@ -137,7 +135,7 @@ const Index = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const validation = signUpSchema.safeParse({ email, password, inviteCode });
+      const validation = signUpSchema.safeParse({ email, password });
       if (!validation.success) throw new Error(validation.error.errors[0].message);
       const { error, data } = await supabase.auth.signUp({
         email: validation.data.email,
@@ -146,19 +144,7 @@ const Index = () => {
       });
       if (error) throw error;
       if (data.user) {
-        const { data: inviteResult, error: inviteError } = await supabase.rpc("validate_and_use_invite", {
-          invite_code: validation.data.inviteCode
-        });
-        if (inviteError) {
-          await supabase.auth.signOut();
-          throw new Error("Invalid invite code. Please check and try again.");
-        }
-        const result = inviteResult as {success: boolean;error?: string;};
-        if (!result.success) {
-          await supabase.auth.signOut();
-          throw new Error(result.error || "Invalid invite code");
-        }
-        toast({ title: "Welcome to Loverball!", description: "Your invite code has been verified. Let's set up your profile." });
+        toast({ title: "Welcome to Loverball!", description: "Let's set up your profile." });
         setAuthModalOpen(false);
         navigate("/onboarding");
       }
@@ -295,13 +281,6 @@ const Index = () => {
                   <div className="space-y-2">
                     <Label htmlFor="signup-password" className="text-foreground text-[11px] tracking-[0.1em] uppercase">Password</Label>
                     <Input id="signup-password" type="password" placeholder="Create a password (min 6)" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} className="bg-background border-border text-foreground rounded-xl h-12" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="signup-invite" className="text-foreground text-[11px] tracking-[0.1em] uppercase flex items-center gap-2">
-                      <Ticket className="w-3.5 h-3.5" /> Invite Code
-                    </Label>
-                    <Input id="signup-invite" type="text" placeholder="Enter invite code" value={inviteCode} onChange={(e) => setInviteCode(e.target.value.toUpperCase())} required className="bg-background border-border text-foreground rounded-xl h-12 uppercase tracking-widest" />
-                    <p className="text-xs text-muted-foreground">Need a code? Request one from an existing member.</p>
                   </div>
                   <Button type="submit" className="w-full rounded-full h-12 bg-accent text-accent-foreground text-[11px] font-sans tracking-[0.1em] uppercase" disabled={loading}>{loading ? "Creating account..." : "Create Account"}</Button>
                 </form>
