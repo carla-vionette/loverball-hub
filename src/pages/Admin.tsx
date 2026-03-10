@@ -374,68 +374,6 @@ const Admin = () => {
           </section>
         )}
 
-        {/* ── INVITES TAB ── */}
-        {activeTab === 'invites' && (
-          <section>
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="font-display text-xl font-bold uppercase">Invite Codes</h2>
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button><Plus className="w-4 h-4 mr-2" /> Create Invite</Button>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader><DialogTitle>Create Invite Code</DialogTitle></DialogHeader>
-                  <div className="space-y-4">
-                    <div>
-                      <Label>Code</Label>
-                      <div className="flex gap-2">
-                        <Input value={newInviteCode} onChange={(e) => setNewInviteCode(e.target.value.toUpperCase())} placeholder="LOVERBALL24" />
-                        <Button variant="outline" onClick={generateInviteCode}>Generate</Button>
-                      </div>
-                    </div>
-                    <div>
-                      <Label>Max Uses</Label>
-                      <Input type="number" value={newInviteMaxUses} onChange={(e) => setNewInviteMaxUses(e.target.value)} />
-                    </div>
-                    <Button onClick={createInvite} disabled={creatingInvite} className="w-full">
-                      {creatingInvite ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Create'}
-                    </Button>
-                  </div>
-                </DialogContent>
-              </Dialog>
-            </div>
-            <div className="bg-card border border-border rounded-xl overflow-hidden">
-              {invites.length > 0 ? (
-                <Table>
-                  <TableHeader>
-                    <TableRow className="bg-secondary">
-                      <TableHead className="text-xs uppercase tracking-widest text-muted-foreground">Code</TableHead>
-                      <TableHead className="text-xs uppercase tracking-widest text-muted-foreground">Uses</TableHead>
-                      <TableHead className="text-xs uppercase tracking-widest text-muted-foreground">Created</TableHead>
-                      <TableHead className="text-xs uppercase tracking-widest text-muted-foreground">Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {invites.map((invite) => (
-                      <TableRow key={invite.id} className="hover:bg-secondary/50 transition-colors">
-                        <TableCell className="font-mono font-bold">{invite.code}</TableCell>
-                        <TableCell>{invite.used_count} / {invite.max_uses}</TableCell>
-                        <TableCell className="text-sm">{format(new Date(invite.created_at), 'MMM d, yyyy')}</TableCell>
-                        <TableCell>
-                          <Button size="sm" variant="outline" onClick={() => copyToClipboard(invite.code)}>
-                            <Copy className="w-4 h-4" />
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              ) : (
-                <p className="text-muted-foreground text-center py-12">No invites created yet</p>
-              )}
-            </div>
-          </section>
-        )}
 
         {/* ── EVENTS TAB ── */}
         {activeTab === 'events' && (
