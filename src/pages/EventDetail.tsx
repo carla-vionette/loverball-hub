@@ -668,6 +668,9 @@ const EventDetail = () => {
                 </div>
               )}
 
+              {/* Who's Going Section */}
+              {id && <WhosGoing eventId={id} refreshKey={guestRefreshKey} />}
+
               {/* Map Embed */}
               {event.location_map_url && (
                 <div className="mb-6 rounded-lg overflow-hidden border">
