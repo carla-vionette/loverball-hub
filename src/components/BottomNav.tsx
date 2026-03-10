@@ -1,5 +1,5 @@
 import React from "react";
-import { User, CalendarDays, ShoppingBag, Play, Heart, Compass, Users } from "lucide-react";
+import { User, CalendarDays, ShoppingBag, Play, Heart, Compass, Users, MessageCircle } from "lucide-react";
 
 const BottomNav = () => {
   const pathname = window.location.pathname;
@@ -12,6 +12,7 @@ const BottomNav = () => {
     { icon: ShoppingBag, label: "Shop", path: "/shop" },
     { icon: CalendarDays, label: "Events", path: "/events" },
     { icon: Users, label: "Friends", path: "/friends" },
+    { icon: MessageCircle, label: "Inbox", path: "/inbox" },
     { icon: User, label: "Profile", path: "/profile" },
   ];
 
