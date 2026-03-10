@@ -81,17 +81,14 @@ const Admin = () => {
 
   const fetchData = async () => {
     try {
-      const [invitesRes, applicationsRes, eventsRes] = await Promise.all([
-        supabase.from('invites').select('*').order('created_at', { ascending: false }),
+      const [applicationsRes, eventsRes] = await Promise.all([
         supabase.from('member_applications').select('*').order('created_at', { ascending: false }),
         supabase.from('events').select('id, title, event_date, event_type, visibility').order('event_date', { ascending: false }).limit(20),
       ]);
 
-      if (invitesRes.error) throw invitesRes.error;
       if (applicationsRes.error) throw applicationsRes.error;
       if (eventsRes.error) throw eventsRes.error;
 
-      setInvites(invitesRes.data || []);
       setApplications(applicationsRes.data || []);
       setEvents(eventsRes.data || []);
       fetchMembers();
