@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Users } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Users, MessageCircle } from "lucide-react";
 import AttendeeProfileDrawer from "./AttendeeProfileDrawer";
 
 interface GuestProfile {
