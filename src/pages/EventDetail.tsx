@@ -309,8 +309,26 @@ const EventDetail = () => {
 
       if (error) throw error;
 
+      // Also upsert into event_guests table for the "Who's Going" feature
+      if (status === 'yes') {
+        await supabase
+          .from('event_guests')
+          .upsert(
+            { event_id: event.id, user_id: user.id, status: 'going' },
+            { onConflict: 'event_id,user_id' }
+          );
+      } else {
+        // Remove from event_guests if not going
+        await supabase
+          .from('event_guests')
+          .delete()
+          .eq('event_id', event.id)
+          .eq('user_id', user.id);
+      }
+
       setRsvpStatus(dbStatus);
       fetchAttendees();
+      setGuestRefreshKey((k) => k + 1);
       trackEventRSVP(event.id, dbStatus, event.title);
 
       if (status === 'yes') {
