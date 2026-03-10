@@ -12,7 +12,8 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { UserPlus, Check, Clock, Loader2 } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
+import { UserPlus, Check, Clock, Loader2, MessageCircle, Send, X } from "lucide-react";
 
 interface AttendeeProfile {
   id: string;
@@ -37,12 +38,17 @@ const AttendeeProfileDrawer = ({ profile, open, onOpenChange }: Props) => {
   const { toast } = useToast();
   const [friendState, setFriendState] = useState<FriendshipState>("loading");
   const [acting, setActing] = useState(false);
+  const [showCompose, setShowCompose] = useState(false);
+  const [messageText, setMessageText] = useState("");
+  const [sending, setSending] = useState(false);
 
   useEffect(() => {
     if (open && profile && user && profile.id !== user.id) {
       fetchFriendship();
     } else if (!open) {
       setFriendState("loading");
+      setShowCompose(false);
+      setMessageText("");
     }
   }, [open, profile?.id, user?.id]);
 
@@ -104,6 +110,24 @@ const AttendeeProfileDrawer = ({ profile, open, onOpenChange }: Props) => {
     setActing(false);
   };
 
+  const handleSendMessage = async () => {
+    if (!user || !profile || !messageText.trim()) return;
+    setSending(true);
+    const { error } = await supabase.from("direct_messages" as any).insert({
+      sender_id: user.id,
+      receiver_id: profile.id,
+      message: messageText.trim(),
+    } as any);
+    if (error) {
+      toast({ title: "Error", description: "Could not send message.", variant: "destructive" });
+    } else {
+      toast({ title: "Message sent!", description: `Your message was sent to ${profile.name}.` });
+      setMessageText("");
+      setShowCompose(false);
+    }
+    setSending(false);
+  };
+
   if (!profile) return null;
 
   const isOwnProfile = user?.id === profile.id;
@@ -147,9 +171,10 @@ const AttendeeProfileDrawer = ({ profile, open, onOpenChange }: Props) => {
             </div>
           )}
 
-          {/* Friend action button */}
+          {/* Action buttons */}
           {user && !isOwnProfile && (
-            <div className="mt-2 w-full max-w-xs">
+            <div className="mt-2 w-full max-w-xs space-y-2">
+              {/* Friend action button */}
               {friendState === "loading" && (
                 <Button disabled className="w-full" variant="outline">
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
@@ -169,7 +194,7 @@ const AttendeeProfileDrawer = ({ profile, open, onOpenChange }: Props) => {
                 </Button>
               )}
               {friendState === "pending_received" && (
-                <Button onClick={handleAccept} disabled={acting} variant="accent" className="w-full">
+                <Button onClick={handleAccept} disabled={acting} className="w-full">
                   {acting ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Check className="w-4 h-4 mr-2" />}
                   Accept Request
                 </Button>
@@ -179,6 +204,48 @@ const AttendeeProfileDrawer = ({ profile, open, onOpenChange }: Props) => {
                   <Check className="w-4 h-4 mr-1" />
                   Friends
                 </Badge>
+              )}
+
+              {/* Send Message button */}
+              {!showCompose ? (
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  onClick={() => setShowCompose(true)}
+                >
+                  <MessageCircle className="w-4 h-4 mr-2" />
+                  Send Message
+                </Button>
+              ) : (
+                <div className="w-full space-y-2 rounded-lg border border-border p-3 bg-muted/30">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium text-foreground">Message {profile.name}</span>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-6 w-6"
+                      onClick={() => { setShowCompose(false); setMessageText(""); }}
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </Button>
+                  </div>
+                  <Textarea
+                    placeholder="Type your message…"
+                    value={messageText}
+                    onChange={(e) => setMessageText(e.target.value)}
+                    className="min-h-[80px] resize-none text-sm"
+                    maxLength={1000}
+                  />
+                  <Button
+                    className="w-full"
+                    size="sm"
+                    disabled={!messageText.trim() || sending}
+                    onClick={handleSendMessage}
+                  >
+                    {sending ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Send className="w-4 h-4 mr-2" />}
+                    Send
+                  </Button>
+                </div>
               )}
             </div>
           )}
