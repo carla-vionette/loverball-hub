@@ -201,6 +201,9 @@ const Index = () => {
         </div>
         {mobileMenuOpen &&
         <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="lg:hidden bg-background border-t border-border/30 px-8 py-6 space-y-1">
+            <div className="flex justify-center mb-6">
+              <img src={loverballLogo} alt="Loverball" className="h-14 w-auto" />
+            </div>
             <a href="#explore" onClick={() => setMobileMenuOpen(false)} className="block py-3 text-[11px] font-sans font-bold tracking-[0.25em] uppercase text-foreground/60">Explore</a>
             <a href="#trending" onClick={() => setMobileMenuOpen(false)} className="block py-3 text-[11px] font-sans font-bold tracking-[0.25em] uppercase text-foreground/60">Trending</a>
             <a href="#events" onClick={() => setMobileMenuOpen(false)} className="block py-3 text-[11px] font-sans font-bold tracking-[0.25em] uppercase text-foreground/60">Events</a>
