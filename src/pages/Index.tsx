@@ -26,26 +26,6 @@ const signUpSchema = z.object({
   password: z.string().min(6, "Password must be at least 6 characters"),
 });
 
-const AnimatedStat = ({ value, suffix = "" }: {value: number;suffix?: string;}) => {
-  const ref = useRef<HTMLSpanElement>(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
-  const [count, setCount] = useState(0);
-
-  useEffect(() => {
-    if (!isInView) return;
-    let start = 0;
-    const duration = 1500;
-    const step = (timestamp: number) => {
-      if (!start) start = timestamp;
-      const progress = Math.min((timestamp - start) / duration, 1);
-      setCount(Math.floor(progress * value));
-      if (progress < 1) requestAnimationFrame(step);
-    };
-    requestAnimationFrame(step);
-  }, [isInView, value]);
-
-  return <span ref={ref}>{count.toLocaleString()}{suffix}</span>;
-};
 
 const LiveSportsBadge = () => {
   const { currentItem, loading: badgeLoading } = useLiveSportsBadge();
