@@ -1,5 +1,5 @@
 import React from "react";
-import { User, CalendarDays, ShoppingBag, Play, Heart, Compass } from "lucide-react";
+import { User, CalendarDays, ShoppingBag, Play, Heart, Compass, Users } from "lucide-react";
 
 const BottomNav = () => {
   const pathname = window.location.pathname;
