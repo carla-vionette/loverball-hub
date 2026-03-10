@@ -81,6 +81,7 @@ const EventDetail = () => {
   const [countdown, setCountdown] = useState({ days: 0, hours: 0, minutes: 0 });
   const [showConfetti, setShowConfetti] = useState(false);
   const [showShareDialog, setShowShareDialog] = useState(false);
+  const [guestRefreshKey, setGuestRefreshKey] = useState(0);
 
   // No longer redirect - allow guests to view event details
   // They will see "Sign in to RSVP" button at bottom
