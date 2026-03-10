@@ -64,9 +64,7 @@ const Admin = () => {
   const [members, setMembers] = useState<MemberProfile[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadingMembers, setLoadingMembers] = useState(false);
-  const [newInviteCode, setNewInviteCode] = useState('');
-  const [newInviteMaxUses, setNewInviteMaxUses] = useState('10');
-  const [creatingInvite, setCreatingInvite] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('members');
 
   const { user, isAdmin } = useAuth();
