@@ -58,7 +58,7 @@ interface MemberProfile {
 }
 
 const Admin = () => {
-  const [invites, setInvites] = useState<Invite[]>([]);
+  const [applications, setApplications] = useState<Application[]>([]);
   const [applications, setApplications] = useState<Application[]>([]);
   const [events, setEvents] = useState<Event[]>([]);
   const [members, setMembers] = useState<MemberProfile[]>([]);
