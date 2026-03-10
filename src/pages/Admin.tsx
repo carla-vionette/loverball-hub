@@ -138,30 +138,6 @@ const Admin = () => {
     toast({ title: 'Members CSV downloaded!' });
   };
 
-  const generateInviteCode = () => {
-    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-    let code = '';
-    for (let i = 0; i < 8; i++) code += chars.charAt(Math.floor(Math.random() * chars.length));
-    setNewInviteCode(code);
-  };
-
-  const createInvite = async () => {
-    if (!newInviteCode.trim()) { toast({ title: 'Enter a code', variant: 'destructive' }); return; }
-    setCreatingInvite(true);
-    try {
-      const { error } = await supabase.from('invites').insert({
-        code: newInviteCode.toUpperCase(),
-        max_uses: parseInt(newInviteMaxUses) || 10,
-        created_by_user_id: user?.id,
-      });
-      if (error) throw error;
-      toast({ title: 'Invite created!' });
-      setNewInviteCode('');
-      fetchData();
-    } catch (error: any) {
-      toast({ title: 'Error', description: error.message.includes('duplicate') ? 'Code already exists' : error.message, variant: 'destructive' });
-    } finally { setCreatingInvite(false); }
-  };
 
   const handleApplicationAction = async (applicationId: string, action: 'approved' | 'rejected', userId?: string | null) => {
     try {
