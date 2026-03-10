@@ -282,13 +282,6 @@ const Index = () => {
                     <Label htmlFor="signup-password" className="text-foreground text-[11px] tracking-[0.1em] uppercase">Password</Label>
                     <Input id="signup-password" type="password" placeholder="Create a password (min 6)" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} className="bg-background border-border text-foreground rounded-xl h-12" />
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="signup-invite" className="text-foreground text-[11px] tracking-[0.1em] uppercase flex items-center gap-2">
-                      <Ticket className="w-3.5 h-3.5" /> Invite Code
-                    </Label>
-                    <Input id="signup-invite" type="text" placeholder="Enter invite code" value={inviteCode} onChange={(e) => setInviteCode(e.target.value.toUpperCase())} required className="bg-background border-border text-foreground rounded-xl h-12 uppercase tracking-widest" />
-                    <p className="text-xs text-muted-foreground">Need a code? Request one from an existing member.</p>
-                  </div>
                   <Button type="submit" className="w-full rounded-full h-12 bg-accent text-accent-foreground text-[11px] font-sans tracking-[0.1em] uppercase" disabled={loading}>{loading ? "Creating account..." : "Create Account"}</Button>
                 </form>
               </TabsContent>
