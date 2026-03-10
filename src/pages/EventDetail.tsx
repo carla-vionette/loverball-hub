@@ -13,6 +13,7 @@ import { format, differenceInDays, differenceInHours, differenceInMinutes, isPas
 import { motion, AnimatePresence } from "framer-motion";
 import loverballLogo from "@/assets/loverball-script-logo.png";
 import SharePreview from "@/components/SharePreview";
+import WhosGoing from "@/components/WhosGoing";
 import { trackEventRSVP, trackContentView } from "@/lib/analytics";
 
 interface Event {
@@ -80,6 +81,7 @@ const EventDetail = () => {
   const [countdown, setCountdown] = useState({ days: 0, hours: 0, minutes: 0 });
   const [showConfetti, setShowConfetti] = useState(false);
   const [showShareDialog, setShowShareDialog] = useState(false);
+  const [guestRefreshKey, setGuestRefreshKey] = useState(0);
 
   // No longer redirect - allow guests to view event details
   // They will see "Sign in to RSVP" button at bottom
@@ -307,8 +309,26 @@ const EventDetail = () => {
 
       if (error) throw error;
 
+      // Also upsert into event_guests table for the "Who's Going" feature
+      if (status === 'yes') {
+        await supabase
+          .from('event_guests')
+          .upsert(
+            { event_id: event.id, user_id: user.id, status: 'going' },
+            { onConflict: 'event_id,user_id' }
+          );
+      } else {
+        // Remove from event_guests if not going
+        await supabase
+          .from('event_guests')
+          .delete()
+          .eq('event_id', event.id)
+          .eq('user_id', user.id);
+      }
+
       setRsvpStatus(dbStatus);
       fetchAttendees();
+      setGuestRefreshKey((k) => k + 1);
       trackEventRSVP(event.id, dbStatus, event.title);
 
       if (status === 'yes') {
@@ -647,6 +667,9 @@ const EventDetail = () => {
                   <p className="text-muted-foreground whitespace-pre-wrap">{event.description}</p>
                 </div>
               )}
+
+              {/* Who's Going Section */}
+              {id && <WhosGoing eventId={id} refreshKey={guestRefreshKey} />}
 
               {/* Map Embed */}
               {event.location_map_url && (
