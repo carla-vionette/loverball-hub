@@ -35,7 +35,7 @@ const EditProfile = lazy(() => import("./pages/EditProfile"));
 const ProfileInterests = lazy(() => import("./pages/ProfileInterests"));
 const ProductDetail = lazy(() => import("./pages/ProductDetail"));
 const NotFound = lazy(() => import("./pages/NotFound"));
-const Invite = lazy(() => import("./pages/Invite"));
+
 const Members = lazy(() => import("./pages/Members"));
 const MemberProfile = lazy(() => import("./pages/MemberProfile"));
 const EventDetail = lazy(() => import("./pages/EventDetail"));
