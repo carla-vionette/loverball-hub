@@ -27,7 +27,7 @@ const LandingPage = () => {
               <Menu className="w-5 h-5" />
             </button>
 
-            <img src={loverballLogo} alt="Loverball" className="h-40 w-auto absolute left-1/2 -translate-x-1/2" />
+            <img src={loverballLogo} alt="Loverball" className="h-14 w-auto absolute left-1/2 -translate-x-1/2" />
 
             <div className="hidden md:flex items-center gap-8">
               <a href="#about" className="text-sm font-sans tracking-widest uppercase text-foreground/60 hover:text-foreground transition-colors">About</a>

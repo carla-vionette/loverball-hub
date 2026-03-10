@@ -28,9 +28,9 @@ const DesktopNav = () => {
       role="navigation"
       aria-label="Main navigation"
     >
-      <div className="p-4 border-b border-border/20 flex items-center justify-center">
+      <div className="px-4 py-6 border-b border-border/20 flex items-center justify-center">
         <a href="/" className="focus-ring rounded-lg" aria-label="Loverball home">
-          <img src={loverbballLogo} alt="Loverball logo" className="h-20 w-auto object-contain" />
+          <img src={loverbballLogo} alt="Loverball logo" className="w-[140px] h-auto object-contain" />
         </a>
       </div>
       

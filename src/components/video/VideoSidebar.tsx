@@ -18,9 +18,9 @@ const VideoSidebar = () => {
       aria-label="Video navigation"
     >
       {/* Logo */}
-      <div className="p-5 border-b border-border/20 flex justify-center">
+      <div className="px-5 py-6 border-b border-border/20 flex justify-center">
         <Link to="/" className="focus-ring rounded-lg" aria-label="Loverball home">
-          <img src={scriptLogo} alt="Loverball logo" className="h-28" />
+          <img src={scriptLogo} alt="Loverball logo" className="w-[140px] h-auto" />
         </Link>
       </div>
 
