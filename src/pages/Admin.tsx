@@ -11,7 +11,7 @@ import { Label } from '@/components/ui/label';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Plus, Check, X, Copy, Users, Calendar, Ticket, RefreshCw, Phone, Instagram, Linkedin, Globe, Download, Pencil } from 'lucide-react';
+import { Loader2, Plus, Check, X, Copy, Users, Calendar, RefreshCw, Phone, Instagram, Linkedin, Globe, Download, Pencil } from 'lucide-react';
 import { format } from 'date-fns';
 
 interface Invite {
