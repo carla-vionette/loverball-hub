@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { 
-  LayoutDashboard, Users, Ticket, Calendar, BarChart3, 
+  LayoutDashboard, Users, Calendar, 
   LogOut, Settings
 } from 'lucide-react';
 import loverballLogo from '@/assets/loverball-logo.png';
