@@ -204,7 +204,6 @@ const Admin = () => {
           <h1 className="font-display text-3xl md:text-4xl font-black uppercase tracking-tight">
             {activeTab === 'members' && 'Members'}
             {activeTab === 'applications' && 'Applications'}
-            {activeTab === 'invites' && 'Invite Codes'}
             {activeTab === 'events' && 'Events'}
           </h1>
           <Button variant="outline" size="sm" onClick={fetchData}>
