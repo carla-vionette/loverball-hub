@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Users } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Users, MessageCircle } from "lucide-react";
 import AttendeeProfileDrawer from "./AttendeeProfileDrawer";
 
 interface GuestProfile {
@@ -27,6 +29,7 @@ interface Props {
 }
 
 const WhosGoing = ({ eventId, refreshKey }: Props) => {
+  const { user } = useAuth();
   const [guests, setGuests] = useState<EventGuest[]>([]);
   const [selectedProfile, setSelectedProfile] = useState<GuestProfile | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -85,6 +88,17 @@ const WhosGoing = ({ eventId, refreshKey }: Props) => {
     setDrawerOpen(true);
   };
 
+  const handleDmClick = (e: React.MouseEvent, profile: GuestProfile) => {
+    e.stopPropagation();
+    setSelectedProfile(profile);
+    setDrawerOpen(true);
+    // Small delay to let drawer open, then trigger compose
+    setTimeout(() => {
+      const btn = document.querySelector('[data-compose-trigger]');
+      if (btn instanceof HTMLElement) btn.click();
+    }, 300);
+  };
+
   if (guests.length === 0) return null;
 
   return (
@@ -109,9 +123,21 @@ const WhosGoing = ({ eventId, refreshKey }: Props) => {
                   {guest.profile?.name?.charAt(0).toUpperCase() || "?"}
                 </AvatarFallback>
               </Avatar>
-              <span className="text-xs font-medium text-foreground truncate w-full text-center">
-                {guest.profile?.name?.split(" ")[0] || "Guest"}
-              </span>
+              <div className="flex items-center gap-0.5 w-full justify-center">
+                <span className="text-xs font-medium text-foreground truncate">
+                  {guest.profile?.name?.split(" ")[0] || "Guest"}
+                </span>
+                {user && guest.profile && guest.profile.id !== user.id && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-5 w-5 shrink-0 text-muted-foreground hover:text-primary"
+                    onClick={(e) => guest.profile && handleDmClick(e, guest.profile)}
+                  >
+                    <MessageCircle className="w-3 h-3" />
+                  </Button>
+                )}
+              </div>
             </button>
           ))}
         </div>
