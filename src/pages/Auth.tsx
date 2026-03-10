@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Separator } from "@/components/ui/separator";
 import { motion } from "framer-motion";
-import { ArrowRight, Ticket, ArrowLeft } from "lucide-react";
+import { ArrowRight, ArrowLeft } from "lucide-react";
 import loverballLogo from "@/assets/loverball-script-logo.png";
 import { z } from "zod";
 import WelcomeSplash from "@/components/WelcomeSplash";
@@ -15,7 +15,6 @@ import WelcomeSplash from "@/components/WelcomeSplash";
 const signUpSchema = z.object({
   email: z.string().trim().email("Please enter a valid email address"),
   password: z.string().min(6, "Password must be at least 6 characters"),
-  inviteCode: z.string().trim().min(1, "Invite code is required"),
 });
 
 const signInSchema = z.object({
@@ -30,7 +29,7 @@ const Auth = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [inviteCode, setInviteCode] = useState("");
+  
   const [loading, setLoading] = useState(false);
   const [splashName, setSplashName] = useState<string | null>(null);
   const [pendingRedirect, setPendingRedirect] = useState<string | null>(null);
@@ -97,12 +96,12 @@ const Auth = () => {
     try {
       if (isSignUp) {
         // Validate inputs
-        const validation = signUpSchema.safeParse({ email, password, inviteCode });
+        const validation = signUpSchema.safeParse({ email, password });
         if (!validation.success) {
           throw new Error(validation.error.errors[0].message);
         }
 
-        // First, sign up the user
+        // Sign up the user
         const { error, data } = await supabase.auth.signUp({
           email: validation.data.email,
           password: validation.data.password,
@@ -114,25 +113,9 @@ const Auth = () => {
         if (error) throw error;
         
         if (data.user) {
-          // Validate and use the invite code
-          const { data: inviteResult, error: inviteError } = await supabase
-            .rpc('validate_and_use_invite', { invite_code: validation.data.inviteCode });
-          
-          if (inviteError) {
-            // If invite validation fails, sign out and delete the user
-            await supabase.auth.signOut();
-            throw new Error("Invalid invite code. Please check and try again.");
-          }
-          
-          const result = inviteResult as { success: boolean; error?: string };
-          if (!result.success) {
-            await supabase.auth.signOut();
-            throw new Error(result.error || "Invalid invite code");
-          }
-
           toast({
             title: "Welcome to Loverball!",
-            description: "Your invite code has been verified. Let's choose your plan.",
+            description: "Let's choose your plan.",
           });
           navigate("/plans");
         }
@@ -378,26 +361,6 @@ const Auth = () => {
                   />
                 </div>
 
-                {isSignUp && (
-                  <div className="space-y-2">
-                    <Label htmlFor="inviteCode" className="text-xs tracking-wider uppercase text-foreground/60 flex items-center gap-2">
-                      <Ticket className="w-3 h-3" />
-                      Invite Code
-                    </Label>
-                    <Input
-                      id="inviteCode"
-                      type="text"
-                      placeholder="Enter your invite code"
-                      value={inviteCode}
-                      onChange={(e) => setInviteCode(e.target.value.toUpperCase())}
-                      required
-                      className="rounded-none h-12 border-border bg-background placeholder:text-foreground/30 uppercase tracking-widest"
-                    />
-                    <p className="text-xs text-foreground/40">
-                      Need a code? Request one from an existing member.
-                    </p>
-                  </div>
-                )}
 
                 <Button 
                   type="submit" 
