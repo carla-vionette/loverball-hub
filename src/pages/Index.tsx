@@ -201,6 +201,9 @@ const Index = () => {
         </div>
         {mobileMenuOpen &&
         <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="lg:hidden bg-background border-t border-border/30 px-8 py-6 space-y-1">
+            <div className="flex justify-center mb-6">
+              <img src={loverballLogo} alt="Loverball" className="h-14 w-auto" />
+            </div>
             <a href="#explore" onClick={() => setMobileMenuOpen(false)} className="block py-3 text-[11px] font-sans font-bold tracking-[0.25em] uppercase text-foreground/60">Explore</a>
             <a href="#trending" onClick={() => setMobileMenuOpen(false)} className="block py-3 text-[11px] font-sans font-bold tracking-[0.25em] uppercase text-foreground/60">Trending</a>
             <a href="#events" onClick={() => setMobileMenuOpen(false)} className="block py-3 text-[11px] font-sans font-bold tracking-[0.25em] uppercase text-foreground/60">Events</a>
@@ -216,8 +219,8 @@ const Index = () => {
         <DialogContent className="sm:max-w-md rounded-3xl p-0 overflow-hidden border-border/20">
           <div className="p-8 sm:p-10">
             <DialogTitle className="sr-only">Member Access</DialogTitle>
-            <div className="flex justify-center mb-6">
-              <img src={loverballLogo} alt="Loverball" className="h-16 w-auto" />
+            <div className="flex justify-center mb-8">
+              <img src={loverballLogo} alt="Loverball" className="h-20 w-auto" />
             </div>
             <Tabs defaultValue="login" className="w-full">
               <TabsList className="grid w-full grid-cols-2 bg-muted rounded-full p-1 h-12">
@@ -582,7 +585,7 @@ const Index = () => {
           </div>
           <div className="grid lg:grid-cols-12 gap-12 items-start mb-12">
             <div className="lg:col-span-4">
-              <img src={loverballLogo} alt="Loverball" className="h-12 w-auto brightness-0 invert mb-4" />
+              <img src={loverballLogo} alt="Loverball" className="w-[120px] h-auto brightness-0 invert mb-6" />
               <p className="text-background/40 text-sm leading-relaxed max-w-xs">
                 A community platform for women who love sports. Born in Los Angeles.
               </p>
