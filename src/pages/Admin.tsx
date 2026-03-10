@@ -182,7 +182,7 @@ const Admin = () => {
       <main className="flex-1 overflow-y-auto p-6 md:p-8">
         {/* Mobile tab bar */}
         <div className="flex md:hidden gap-2 overflow-x-auto pb-4 mb-4 scrollbar-hide">
-          {['members', 'applications', 'invites', 'events'].map(tab => (
+          {['members', 'applications', 'events'].map(tab => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
