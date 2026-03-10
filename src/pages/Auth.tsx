@@ -96,12 +96,12 @@ const Auth = () => {
     try {
       if (isSignUp) {
         // Validate inputs
-        const validation = signUpSchema.safeParse({ email, password, inviteCode });
+        const validation = signUpSchema.safeParse({ email, password });
         if (!validation.success) {
           throw new Error(validation.error.errors[0].message);
         }
 
-        // First, sign up the user
+        // Sign up the user
         const { error, data } = await supabase.auth.signUp({
           email: validation.data.email,
           password: validation.data.password,
@@ -113,25 +113,9 @@ const Auth = () => {
         if (error) throw error;
         
         if (data.user) {
-          // Validate and use the invite code
-          const { data: inviteResult, error: inviteError } = await supabase
-            .rpc('validate_and_use_invite', { invite_code: validation.data.inviteCode });
-          
-          if (inviteError) {
-            // If invite validation fails, sign out and delete the user
-            await supabase.auth.signOut();
-            throw new Error("Invalid invite code. Please check and try again.");
-          }
-          
-          const result = inviteResult as { success: boolean; error?: string };
-          if (!result.success) {
-            await supabase.auth.signOut();
-            throw new Error(result.error || "Invalid invite code");
-          }
-
           toast({
             title: "Welcome to Loverball!",
-            description: "Your invite code has been verified. Let's choose your plan.",
+            description: "Let's choose your plan.",
           });
           navigate("/plans");
         }
