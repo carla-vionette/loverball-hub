@@ -135,7 +135,7 @@ const Index = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const validation = signUpSchema.safeParse({ email, password, inviteCode });
+      const validation = signUpSchema.safeParse({ email, password });
       if (!validation.success) throw new Error(validation.error.errors[0].message);
       const { error, data } = await supabase.auth.signUp({
         email: validation.data.email,
@@ -144,19 +144,7 @@ const Index = () => {
       });
       if (error) throw error;
       if (data.user) {
-        const { data: inviteResult, error: inviteError } = await supabase.rpc("validate_and_use_invite", {
-          invite_code: validation.data.inviteCode
-        });
-        if (inviteError) {
-          await supabase.auth.signOut();
-          throw new Error("Invalid invite code. Please check and try again.");
-        }
-        const result = inviteResult as {success: boolean;error?: string;};
-        if (!result.success) {
-          await supabase.auth.signOut();
-          throw new Error(result.error || "Invalid invite code");
-        }
-        toast({ title: "Welcome to Loverball!", description: "Your invite code has been verified. Let's set up your profile." });
+        toast({ title: "Welcome to Loverball!", description: "Let's set up your profile." });
         setAuthModalOpen(false);
         navigate("/onboarding");
       }
