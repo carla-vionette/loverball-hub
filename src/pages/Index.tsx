@@ -9,7 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useAuth } from "@/hooks/useAuth";
 import { motion, useInView } from "framer-motion";
-import { ArrowRight, Lock, Ticket, Users, Sparkles, Calendar, X, Menu, Mail, Play, Heart, ShoppingBag, Clock, MapPin, Zap } from "lucide-react";
+import { ArrowRight, Lock, Users, Sparkles, Calendar, X, Menu, Mail, Play, Heart, ShoppingBag, Clock, MapPin, Zap } from "lucide-react";
 import heroImage from "@/assets/hero-women-new.png";
 import { useLiveSportsBadge } from "@/hooks/useLiveSportsBadge";
 import loverballLogo from "@/assets/loverball-script-logo.png";
