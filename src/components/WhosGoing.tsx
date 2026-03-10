@@ -88,6 +88,17 @@ const WhosGoing = ({ eventId, refreshKey }: Props) => {
     setDrawerOpen(true);
   };
 
+  const handleDmClick = (e: React.MouseEvent, profile: GuestProfile) => {
+    e.stopPropagation();
+    setSelectedProfile(profile);
+    setDrawerOpen(true);
+    // Small delay to let drawer open, then trigger compose
+    setTimeout(() => {
+      const btn = document.querySelector('[data-compose-trigger]');
+      if (btn instanceof HTMLElement) btn.click();
+    }, 300);
+  };
+
   if (guests.length === 0) return null;
 
   return (
