@@ -215,7 +215,6 @@ const Admin = () => {
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           <KpiCard label="Members" value={members.length} icon={Users} />
           <KpiCard label="Pending" value={pendingApplications.length} icon={Users} />
-          <KpiCard label="Invites" value={invites.length} icon={Ticket} />
           <KpiCard label="Events" value={events.length} icon={Calendar} />
         </div>
 
