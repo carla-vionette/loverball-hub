@@ -59,12 +59,10 @@ interface MemberProfile {
 
 const Admin = () => {
   const [applications, setApplications] = useState<Application[]>([]);
-  const [applications, setApplications] = useState<Application[]>([]);
   const [events, setEvents] = useState<Event[]>([]);
   const [members, setMembers] = useState<MemberProfile[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadingMembers, setLoadingMembers] = useState(false);
-  const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('members');
 
   const { user, isAdmin } = useAuth();
