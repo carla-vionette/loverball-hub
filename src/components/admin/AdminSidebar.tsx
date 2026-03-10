@@ -14,7 +14,6 @@ interface AdminSidebarProps {
 const navItems = [
   { id: 'members', label: 'Members', icon: Users },
   { id: 'applications', label: 'Applications', icon: LayoutDashboard },
-  { id: 'invites', label: 'Invite Codes', icon: Ticket },
   { id: 'events', label: 'Events', icon: Calendar },
 ];
 
