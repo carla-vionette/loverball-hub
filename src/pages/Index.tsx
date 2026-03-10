@@ -219,8 +219,8 @@ const Index = () => {
         <DialogContent className="sm:max-w-md rounded-3xl p-0 overflow-hidden border-border/20">
           <div className="p-8 sm:p-10">
             <DialogTitle className="sr-only">Member Access</DialogTitle>
-            <div className="flex justify-center mb-6">
-              <img src={loverballLogo} alt="Loverball" className="h-16 w-auto" />
+            <div className="flex justify-center mb-8">
+              <img src={loverballLogo} alt="Loverball" className="h-20 w-auto" />
             </div>
             <Tabs defaultValue="login" className="w-full">
               <TabsList className="grid w-full grid-cols-2 bg-muted rounded-full p-1 h-12">
