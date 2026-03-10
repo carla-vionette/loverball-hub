@@ -361,26 +361,6 @@ const Auth = () => {
                   />
                 </div>
 
-                {isSignUp && (
-                  <div className="space-y-2">
-                    <Label htmlFor="inviteCode" className="text-xs tracking-wider uppercase text-foreground/60 flex items-center gap-2">
-                      <Ticket className="w-3 h-3" />
-                      Invite Code
-                    </Label>
-                    <Input
-                      id="inviteCode"
-                      type="text"
-                      placeholder="Enter your invite code"
-                      value={inviteCode}
-                      onChange={(e) => setInviteCode(e.target.value.toUpperCase())}
-                      required
-                      className="rounded-none h-12 border-border bg-background placeholder:text-foreground/30 uppercase tracking-widest"
-                    />
-                    <p className="text-xs text-foreground/40">
-                      Need a code? Request one from an existing member.
-                    </p>
-                  </div>
-                )}
 
                 <Button 
                   type="submit" 
