@@ -123,9 +123,21 @@ const WhosGoing = ({ eventId, refreshKey }: Props) => {
                   {guest.profile?.name?.charAt(0).toUpperCase() || "?"}
                 </AvatarFallback>
               </Avatar>
-              <span className="text-xs font-medium text-foreground truncate w-full text-center">
-                {guest.profile?.name?.split(" ")[0] || "Guest"}
-              </span>
+              <div className="flex items-center gap-0.5 w-full justify-center">
+                <span className="text-xs font-medium text-foreground truncate">
+                  {guest.profile?.name?.split(" ")[0] || "Guest"}
+                </span>
+                {user && guest.profile && guest.profile.id !== user.id && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-5 w-5 shrink-0 text-muted-foreground hover:text-primary"
+                    onClick={(e) => guest.profile && handleDmClick(e, guest.profile)}
+                  >
+                    <MessageCircle className="w-3 h-3" />
+                  </Button>
+                )}
+              </div>
             </button>
           ))}
         </div>
