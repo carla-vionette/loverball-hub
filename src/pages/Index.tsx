@@ -24,7 +24,6 @@ import { z } from "zod";
 const signUpSchema = z.object({
   email: z.string().trim().email("Please enter a valid email address"),
   password: z.string().min(6, "Password must be at least 6 characters"),
-  inviteCode: z.string().trim().min(1, "Invite code is required")
 });
 
 const AnimatedStat = ({ value, suffix = "" }: {value: number;suffix?: string;}) => {
