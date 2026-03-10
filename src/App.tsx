@@ -53,6 +53,7 @@ const Settings = lazy(() => import("./pages/Settings"));
 const CheckoutSuccess = lazy(() => import("./pages/CheckoutSuccess"));
 const Ticker = lazy(() => import("./pages/Ticker"));
 const PlanSelection = lazy(() => import("./pages/PlanSelection"));
+const Inbox = lazy(() => import("./pages/Inbox"));
 
 const queryClient = new QueryClient();
 
