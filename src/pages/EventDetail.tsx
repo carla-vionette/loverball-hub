@@ -206,8 +206,9 @@ const EventDetail = () => {
     if (!id) return;
     
     try {
+      // Use event_guests table which has a proper FK to profiles
       const { data, error } = await supabase
-        .from('event_rsvps')
+        .from('event_guests')
         .select(`
           id,
           user_id,
@@ -218,31 +219,23 @@ const EventDetail = () => {
           )
         `)
         .eq('event_id', id)
-        .in('status', ['attending', 'yes', 'maybe'])
+        .eq('status', 'going')
         .limit(20);
 
       if (error) throw error;
       
-      const transformedData = (data || []).map(item => ({
+      const transformedData = (data || []).map((item: any) => ({
         id: item.id,
         user_id: item.user_id,
         status: item.status,
         profile: item.profile ? {
-          name: (item.profile as any).name,
-          profile_photo_url: (item.profile as any).profile_photo_url,
+          name: item.profile.name,
+          profile_photo_url: item.profile.profile_photo_url,
         } : null
       }));
       
       setAttendees(transformedData);
-      
-      // Count by status
-      const counts = { yes: 0, maybe: 0, no: 0 };
-      transformedData.forEach(a => {
-        if (a.status === 'attending' || a.status === 'yes') counts.yes++;
-        else if (a.status === 'maybe') counts.maybe++;
-        else if (a.status === 'no') counts.no++;
-      });
-      setAttendeeCounts(counts);
+      setAttendeeCounts({ yes: transformedData.length, maybe: 0, no: 0 });
     } catch (error) {
       console.error('Error fetching attendees:', error);
     }
