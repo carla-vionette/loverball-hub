@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -8,7 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useAuth } from "@/hooks/useAuth";
-import { motion, useInView } from "framer-motion";
+import { motion } from "framer-motion";
 import { ArrowRight, Lock, Users, Sparkles, Calendar, X, Menu, Mail, Play, Heart, ShoppingBag, Clock, MapPin, Zap } from "lucide-react";
 import heroImage from "@/assets/hero-women-new.png";
 import { useLiveSportsBadge } from "@/hooks/useLiveSportsBadge";
@@ -26,26 +26,6 @@ const signUpSchema = z.object({
   password: z.string().min(6, "Password must be at least 6 characters"),
 });
 
-const AnimatedStat = ({ value, suffix = "" }: {value: number;suffix?: string;}) => {
-  const ref = useRef<HTMLSpanElement>(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
-  const [count, setCount] = useState(0);
-
-  useEffect(() => {
-    if (!isInView) return;
-    let start = 0;
-    const duration = 1500;
-    const step = (timestamp: number) => {
-      if (!start) start = timestamp;
-      const progress = Math.min((timestamp - start) / duration, 1);
-      setCount(Math.floor(progress * value));
-      if (progress < 1) requestAnimationFrame(step);
-    };
-    requestAnimationFrame(step);
-  }, [isInView, value]);
-
-  return <span ref={ref}>{count.toLocaleString()}{suffix}</span>;
-};
 
 const LiveSportsBadge = () => {
   const { currentItem, loading: badgeLoading } = useLiveSportsBadge();
@@ -353,25 +333,6 @@ const Index = () => {
           </motion.div>
         </div>
 
-        {/* Stats bar */}
-        <div className="bg-foreground">
-          <div className="max-w-[1400px] mx-auto px-8 lg:px-16">
-            <div className="grid grid-cols-3 divide-x divide-background/10 py-6">
-              {[
-              { value: 24, suffix: "K+", label: "Members" },
-              { value: 340, suffix: "", label: "Events This Month" },
-              { value: 18, suffix: "", label: "Sports Covered" }].
-              map((stat) =>
-              <div key={stat.label} className="text-center px-4">
-                  <span className="font-condensed text-3xl lg:text-4xl text-accent font-bold">
-                    <AnimatedStat value={stat.value} suffix={stat.suffix} />
-                  </span>
-                  <p className="text-[10px] font-sans font-bold tracking-[0.2em] uppercase text-background/50 mt-1">{stat.label}</p>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
       </section>
 
       {/* ═══════ SPORTS TICKER ═══════ */}
