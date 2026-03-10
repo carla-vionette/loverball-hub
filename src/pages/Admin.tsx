@@ -14,14 +14,6 @@ import { useToast } from '@/hooks/use-toast';
 import { Loader2, Plus, Check, X, Copy, Users, Calendar, RefreshCw, Phone, Instagram, Linkedin, Globe, Download, Pencil } from 'lucide-react';
 import { format } from 'date-fns';
 
-interface Invite {
-  id: string;
-  code: string;
-  max_uses: number;
-  used_count: number;
-  expires_at?: string | null;
-  created_at: string;
-}
 
 interface Application {
   id: string;
