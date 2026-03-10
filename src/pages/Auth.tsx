@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Separator } from "@/components/ui/separator";
 import { motion } from "framer-motion";
-import { ArrowRight, Ticket, ArrowLeft } from "lucide-react";
+import { ArrowRight, ArrowLeft } from "lucide-react";
 import loverballLogo from "@/assets/loverball-script-logo.png";
 import { z } from "zod";
 import WelcomeSplash from "@/components/WelcomeSplash";
