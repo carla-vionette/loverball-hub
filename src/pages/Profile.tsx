@@ -220,6 +220,20 @@ const Profile = () => {
     return () => { cancelled = true; };
   }, []);
 
+  // Fetch live daily horoscope
+  useEffect(() => {
+    if (!profile?.birthday) return;
+    const zodiacSign = getZodiacSign(profile.birthday);
+    if (!zodiacSign) return;
+    setHoroscopeLoading(true);
+    supabase.functions.invoke("horoscope", {
+      body: { sign: zodiacSign.name.toLowerCase(), period: "daily" },
+    }).then(({ data: resp }) => {
+      const reading = resp?.data?.horoscope || resp?.horoscope || resp?.reading;
+      if (reading) setLiveHoroscope(reading);
+    }).catch(() => {}).finally(() => setHoroscopeLoading(false));
+  }, [profile?.birthday]);
+
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 60000);
     return () => clearInterval(timer);
