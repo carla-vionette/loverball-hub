@@ -44,8 +44,6 @@ export const TEAM_PERFORMANCE = [
     ticketUrl: getTeamTicketsUrl("Lakers"),
     watchUrl: getTeamWatchUrl("Lakers"),
     slug: "lakers",
-    ticketPrice: "From $89",
-    broadcastChannels: ["ESPN", "Spectrum SportsNet", "League Pass"],
   },
   {
     name: "Dodgers",
@@ -60,8 +58,6 @@ export const TEAM_PERFORMANCE = [
     ticketUrl: getTeamTicketsUrl("Dodgers"),
     watchUrl: getTeamWatchUrl("Dodgers"),
     slug: "dodgers",
-    ticketPrice: "From $32",
-    broadcastChannels: ["SportsNet LA", "ESPN", "MLB.TV"],
   },
   {
     name: "LAFC",
@@ -76,8 +72,6 @@ export const TEAM_PERFORMANCE = [
     ticketUrl: getTeamTicketsUrl("LAFC"),
     watchUrl: getTeamWatchUrl("LAFC"),
     slug: "lafc",
-    ticketPrice: "From $28",
-    broadcastChannels: ["Apple TV", "MLS Season Pass", "FS1"],
   },
   {
     name: "Rams",
@@ -92,8 +86,6 @@ export const TEAM_PERFORMANCE = [
     ticketUrl: getTeamTicketsUrl("Rams"),
     watchUrl: getTeamWatchUrl("Rams"),
     slug: "rams",
-    ticketPrice: "From $65",
-    broadcastChannels: ["FOX", "Amazon Prime", "NFL+"],
   },
   {
     name: "Angel City FC",
@@ -108,8 +100,6 @@ export const TEAM_PERFORMANCE = [
     ticketUrl: getTeamTicketsUrl("Angel City FC"),
     watchUrl: getTeamWatchUrl("Angel City FC"),
     slug: "angel-city-fc",
-    ticketPrice: "From $22",
-    broadcastChannels: ["CBS Sports", "Paramount+", "NWSL+"],
   },
 ];
 
