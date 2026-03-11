@@ -167,6 +167,8 @@ const Onboarding = () => {
         bio,
         profile_photo_url: photoUrl,
         birthday: birthday || null,
+        phone_number: phoneNumber.trim() || null,
+        sms_notifications_enabled: smsOptIn,
       });
 
       if (error) throw error;
