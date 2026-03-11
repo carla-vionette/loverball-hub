@@ -39,6 +39,8 @@ const Onboarding = () => {
   const [pronouns, setPronouns] = useState("");
   const [city, setCity] = useState("");
   const [birthday, setBirthday] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [smsOptIn, setSmsOptIn] = useState(false);
   const [profilePhoto, setProfilePhoto] = useState<File | null>(null);
   const [profilePhotoPreview, setProfilePhotoPreview] = useState<string | null>(null);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
