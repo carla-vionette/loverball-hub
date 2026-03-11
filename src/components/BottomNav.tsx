@@ -1,18 +1,19 @@
-import React from "react";
+import { Link, useLocation } from "react-router-dom";
 import { User, CalendarDays, ShoppingBag, Play, Compass, Users } from "lucide-react";
 
+const navItems = [
+  { icon: Play, label: "Watch", path: "/home" },
+  { icon: Compass, label: "Discover", path: "/explore" },
+  { icon: ShoppingBag, label: "Shop", path: "/shop" },
+  { icon: CalendarDays, label: "Events", path: "/events" },
+  { icon: Users, label: "Friends", path: "/friends" },
+  { icon: User, label: "Profile", path: "/profile" },
+];
+
 const BottomNav = () => {
-  const pathname = window.location.pathname;
+  const location = useLocation();
+  const pathname = location.pathname;
   const isWatchScreen = pathname === "/home";
-  
-  const navItems = [
-    { icon: Play, label: "Watch", path: "/home" },
-    { icon: Compass, label: "Discover", path: "/explore" },
-    { icon: ShoppingBag, label: "Shop", path: "/shop" },
-    { icon: CalendarDays, label: "Events", path: "/events" },
-    { icon: Users, label: "Friends", path: "/friends" },
-    { icon: User, label: "Profile", path: "/profile" },
-  ];
 
   return (
     <nav
@@ -26,20 +27,19 @@ const BottomNav = () => {
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive = pathname === item.path;
-          
           return (
-            <a
+            <Link
               key={item.path}
-              href={item.path}
+              to={item.path}
               aria-current={isActive ? "page" : undefined}
               aria-label={item.label}
               className="flex flex-col items-center justify-center flex-1 h-full transition-colors duration-200 tap-target focus-ring"
             >
               <div className="relative">
-                <Icon 
+                <Icon
                   className={`w-5 h-5 ${
-                    isActive 
-                      ? "text-primary" 
+                    isActive
+                      ? "text-primary"
                       : isWatchScreen ? "text-white/40" : "text-muted-foreground"
                   }`}
                   fill={isActive ? "currentColor" : "none"}
@@ -47,13 +47,13 @@ const BottomNav = () => {
                 />
               </div>
               <span className={`text-[10px] mt-1 font-medium ${
-                isActive 
-                  ? "text-primary" 
+                isActive
+                  ? "text-primary"
                   : isWatchScreen ? "text-white/40" : "text-muted-foreground"
               }`}>
                 {item.label}
               </span>
-            </a>
+            </Link>
           );
         })}
       </div>

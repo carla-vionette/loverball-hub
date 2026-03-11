@@ -1,25 +1,26 @@
-import React from "react";
-import { User, Search, CalendarDays, Settings, ShoppingBag, Play, MessageCircle, Home, Compass, Newspaper, Bell } from "lucide-react";
-import loverbballLogo from "@/assets/loverball-script-logo.png";
+import { Link, useLocation } from "react-router-dom";
+import { User, Search, CalendarDays, Settings, ShoppingBag, Play, MessageCircle, Home, Compass, Newspaper, Shield } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import loverballLogo from "@/assets/loverball-script-logo.png";
+
+const mainNavItems = [
+  { icon: Home, label: "For You", path: "/home" },
+  { icon: Compass, label: "Discover", path: "/explore" },
+  { icon: Play, label: "Watch", path: "/watch" },
+  { icon: Newspaper, label: "Feed", path: "/feed" },
+  { icon: CalendarDays, label: "Events", path: "/events" },
+  { icon: ShoppingBag, label: "Shop", path: "/shop" },
+];
+
+const secondaryNavItems = [
+  { icon: MessageCircle, label: "DMs", path: "/dms" },
+  { icon: User, label: "Profile", path: "/profile" },
+];
 
 const DesktopNav = () => {
-  const pathname = window.location.pathname;
-  
-  const mainNavItems = [
-    { icon: Home, label: "For You", path: "/home" },
-    { icon: Compass, label: "Discover", path: "/explore" },
-    { icon: Play, label: "Watch", path: "/watch" },
-    { icon: Newspaper, label: "Feed", path: "/feed" },
-    { icon: CalendarDays, label: "Events", path: "/events" },
-    { icon: ShoppingBag, label: "Shop", path: "/shop" },
-  ];
-
-  const secondaryNavItems = [
-    { icon: MessageCircle, label: "DMs", path: "/dms" },
-    { icon: User, label: "Profile", path: "/profile" },
-  ];
-
-  const isActive = (path: string) => pathname === path;
+  const location = useLocation();
+  const { isAdmin } = useAuth();
+  const isActive = (path: string) => location.pathname === path;
 
   return (
     <aside
@@ -28,31 +29,30 @@ const DesktopNav = () => {
       aria-label="Main navigation"
     >
       <div className="px-4 py-6 border-b border-border/20 flex items-center justify-center">
-        <a href="/" className="focus-ring rounded-lg" aria-label="Loverball home">
-          <img src={loverbballLogo} alt="Loverball logo" className="w-[140px] h-auto object-contain" />
-        </a>
+        <Link to="/" className="focus-ring rounded-lg" aria-label="Loverball home">
+          <img src={loverballLogo} alt="Loverball logo" className="w-[140px] h-auto object-contain" />
+        </Link>
       </div>
-      
+
       <nav className="flex-1 py-3 flex flex-col" aria-label="Primary">
         <div className="space-y-0.5">
           {mainNavItems.map((item) => {
             const Icon = item.icon;
             const active = isActive(item.path);
-            
             return (
-              <a
+              <Link
                 key={item.path}
-                href={item.path}
+                to={item.path}
                 aria-current={active ? "page" : undefined}
                 className={`flex items-center gap-3 px-5 py-2.5 mx-3 rounded-xl transition-all duration-200 focus-ring ${
-                  active 
-                    ? "text-primary font-semibold bg-primary/10" 
+                  active
+                    ? "text-primary font-semibold bg-primary/10"
                     : "text-muted-foreground hover:text-foreground hover:bg-secondary"
                 }`}
               >
                 <Icon className="w-5 h-5" aria-hidden="true" />
                 <span className="text-sm">{item.label}</span>
-              </a>
+              </Link>
             );
           })}
         </div>
@@ -63,38 +63,25 @@ const DesktopNav = () => {
           {secondaryNavItems.map((item) => {
             const Icon = item.icon;
             const active = isActive(item.path);
-            
             return (
-              <a
+              <Link
                 key={item.path}
-                href={item.path}
+                to={item.path}
                 aria-current={active ? "page" : undefined}
-                aria-label={item.label}
                 className={`flex items-center gap-3 px-5 py-2.5 mx-3 rounded-xl transition-all duration-200 focus-ring ${
-                  active 
-                    ? "text-primary font-semibold bg-primary/10" 
+                  active
+                    ? "text-primary font-semibold bg-primary/10"
                     : "text-muted-foreground hover:text-foreground hover:bg-secondary"
                 }`}
               >
-                <div className="relative">
-                  <Icon className="w-5 h-5" aria-hidden="true" />
-                </div>
+                <Icon className="w-5 h-5" aria-hidden="true" />
                 <span className="text-sm">{item.label}</span>
-              </a>
+              </Link>
             );
           })}
 
-          <a
-            href="/settings"
-            className="flex items-center gap-3 px-5 py-2 mx-3 rounded-xl transition-all duration-200 focus-ring text-muted-foreground hover:text-foreground hover:bg-secondary"
-          >
-            <Bell className="w-5 h-5" aria-hidden="true" />
-            <span className="text-sm">Notifications</span>
-          </a>
-
-          <a
-            href="/settings"
-            aria-current={isActive("/settings") ? "page" : undefined}
+          <Link
+            to="/settings"
             className={`flex items-center gap-3 px-5 py-2.5 mx-3 rounded-xl transition-all duration-200 focus-ring ${
               isActive("/settings")
                 ? "text-primary font-semibold bg-primary/10"
@@ -103,10 +90,10 @@ const DesktopNav = () => {
           >
             <Settings className="w-5 h-5" aria-hidden="true" />
             <span className="text-sm">Settings</span>
-          </a>
-          <a
-            href="/search"
-            aria-label="Search"
+          </Link>
+
+          <Link
+            to="/search"
             className={`flex items-center gap-3 px-5 py-2.5 mx-3 rounded-xl transition-all duration-200 focus-ring ${
               isActive("/search")
                 ? "text-primary font-semibold bg-primary/10"
@@ -115,7 +102,21 @@ const DesktopNav = () => {
           >
             <Search className="w-5 h-5" aria-hidden="true" />
             <span className="text-sm">Search</span>
-          </a>
+          </Link>
+
+          {isAdmin && (
+            <Link
+              to="/admin"
+              className={`flex items-center gap-3 px-5 py-2.5 mx-3 rounded-xl transition-all duration-200 focus-ring ${
+                isActive("/admin")
+                  ? "text-primary font-semibold bg-primary/10"
+                  : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+              }`}
+            >
+              <Shield className="w-5 h-5" aria-hidden="true" />
+              <span className="text-sm">Admin</span>
+            </Link>
+          )}
         </div>
       </nav>
     </aside>

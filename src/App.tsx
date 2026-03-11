@@ -10,12 +10,11 @@ import { ErrorBoundary } from "@/components/ui/error-boundary";
 import NetworkStatus from "@/components/NetworkStatus";
 import { usePageTracking } from "@/hooks/usePageTracking";
 
-// Eagerly load all main navigation pages to prevent dual React instance crashes
+// Eagerly load core navigation pages
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Home from "./pages/Home";
-
 import Explore from "./pages/Explore";
 import Events from "./pages/Events";
 import Shop from "./pages/Shop";
@@ -27,6 +26,7 @@ import VideoDetail from "./pages/VideoDetail";
 import ChannelProfile from "./pages/ChannelProfile";
 
 // Lazy load less-visited pages
+const MemberDashboard = lazy(() => import("./pages/MemberDashboard"));
 const Onboarding = lazy(() => import("./pages/Onboarding"));
 const Horoscope = lazy(() => import("./pages/Horoscope"));
 const Community = lazy(() => import("./pages/Community"));
@@ -35,14 +35,10 @@ const EditProfile = lazy(() => import("./pages/EditProfile"));
 const ProfileInterests = lazy(() => import("./pages/ProfileInterests"));
 const ProductDetail = lazy(() => import("./pages/ProductDetail"));
 const NotFound = lazy(() => import("./pages/NotFound"));
-
 const Members = lazy(() => import("./pages/Members"));
 const MemberProfile = lazy(() => import("./pages/MemberProfile"));
 const EventDetail = lazy(() => import("./pages/EventDetail"));
 const MessagesPage = lazy(() => import("./pages/MessagesPage"));
-const Admin = lazy(() => import("./pages/Admin"));
-const AdminEventEditor = lazy(() => import("./pages/AdminEventEditor"));
-const AdminAttendeeManager = lazy(() => import("./pages/AdminAttendeeManager"));
 const Connections = lazy(() => import("./pages/Connections"));
 const DirectMessages = lazy(() => import("./pages/DirectMessages"));
 const ChatRoom = lazy(() => import("./pages/ChatRoom"));
@@ -54,6 +50,11 @@ const CheckoutSuccess = lazy(() => import("./pages/CheckoutSuccess"));
 const Ticker = lazy(() => import("./pages/Ticker"));
 const PlanSelection = lazy(() => import("./pages/PlanSelection"));
 const Inbox = lazy(() => import("./pages/Inbox"));
+
+// Admin pages (lazy loaded)
+const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
+const AdminEventEditor = lazy(() => import("./pages/AdminEventEditor"));
+const AdminAttendeeManager = lazy(() => import("./pages/AdminAttendeeManager"));
 
 const queryClient = new QueryClient();
 
@@ -80,57 +81,63 @@ const App = () => (
             <PageTracker />
             <Suspense fallback={<PageLoader />}>
               <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/index" element={<Index />} />
-              <Route path="/home" element={<Home />} />
-              <Route path="/auth" element={<Auth />} />
-              <Route path="/discover" element={<Navigate to="/explore" replace />} />
-              <Route path="/explore" element={<Explore />} />
-              <Route path="/channel/:handle" element={<ChannelProfile />} />
-              <Route path="/feed" element={<Feed />} />
-              <Route path="/watch" element={<Watch />} />
-              <Route path="/watch/video/:id" element={<VideoDetail />} />
-              <Route path="/plans" element={<ProtectedRoute><PlanSelection /></ProtectedRoute>} />
-              <Route path="/onboarding" element={<ProtectedRoute><Onboarding /></ProtectedRoute>} />
-              <Route path="/following" element={<Navigate to="/profile" replace />} />
-              <Route path="/horoscope" element={<Horoscope />} />
-              <Route path="/network" element={<Navigate to="/members" replace />} />
-              <Route path="/gather" element={<Navigate to="/events" replace />} />
-              <Route path="/events" element={<Events />} />
-              <Route path="/event/:id" element={<EventDetail />} />
-              <Route path="/community" element={<Community />} />
-              <Route path="/community/:groupId" element={<ProtectedRoute><GroupChat /></ProtectedRoute>} />
-              <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-              <Route path="/profile/edit" element={<ProtectedRoute><EditProfile /></ProtectedRoute>} />
-              <Route path="/profile/interests" element={<ProtectedRoute><ProfileInterests /></ProtectedRoute>} />
-              <Route path="/search" element={<Search />} />
-              <Route path="/shop" element={<Shop />} />
-              <Route path="/product/:handle" element={<ProductDetail />} />
-              
-              <Route path="/members" element={<Members />} />
-              <Route path="/members/:id" element={<MemberProfile />} />
-              <Route path="/connections" element={<ProtectedRoute><Connections /></ProtectedRoute>} />
-              <Route path="/dms" element={<ProtectedRoute><DirectMessages /></ProtectedRoute>} />
-              <Route path="/messages" element={<ProtectedRoute><MessagesPage /></ProtectedRoute>} />
-              <Route path="/messages/:chatId" element={<ProtectedRoute><ChatRoom /></ProtectedRoute>} />
-              <Route path="/admin" element={<ProtectedRoute requireAdmin><Admin /></ProtectedRoute>} />
-              <Route path="/admin/events/:id/edit" element={<ProtectedRoute requireAdmin><AdminEventEditor /></ProtectedRoute>} />
-              <Route path="/admin/events/:id/attendees" element={<ProtectedRoute requireAdmin><AdminAttendeeManager /></ProtectedRoute>} />
-              <Route path="/friends" element={<ProtectedRoute><Friends /></ProtectedRoute>} />
-              <Route path="/inbox" element={<ProtectedRoute><Inbox /></ProtectedRoute>} />
-              <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
-              <Route path="/terms" element={<Terms />} />
-              <Route path="/privacy" element={<Privacy />} />
-              <Route path="/checkout-success" element={<CheckoutSuccess />} />
+                {/* Public routes */}
+                <Route path="/" element={<Index />} />
+                <Route path="/auth" element={<Auth />} />
+                <Route path="/home" element={<Home />} />
+                <Route path="/explore" element={<Explore />} />
+                <Route path="/discover" element={<Navigate to="/explore" replace />} />
+                <Route path="/channel/:handle" element={<ChannelProfile />} />
+                <Route path="/feed" element={<Feed />} />
+                <Route path="/watch" element={<Watch />} />
+                <Route path="/watch/video/:id" element={<VideoDetail />} />
+                <Route path="/horoscope" element={<Horoscope />} />
+                <Route path="/events" element={<Events />} />
+                <Route path="/event/:id" element={<EventDetail />} />
+                <Route path="/community" element={<Community />} />
+                <Route path="/search" element={<Search />} />
+                <Route path="/shop" element={<Shop />} />
+                <Route path="/product/:handle" element={<ProductDetail />} />
+                <Route path="/members" element={<Members />} />
+                <Route path="/members/:id" element={<MemberProfile />} />
+                <Route path="/terms" element={<Terms />} />
+                <Route path="/privacy" element={<Privacy />} />
+                <Route path="/checkout-success" element={<CheckoutSuccess />} />
 
+                {/* Redirects */}
+                <Route path="/index" element={<Navigate to="/" replace />} />
+                <Route path="/following" element={<Navigate to="/profile" replace />} />
+                <Route path="/network" element={<Navigate to="/members" replace />} />
+                <Route path="/gather" element={<Navigate to="/events" replace />} />
 
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </Suspense>
-        </BrowserRouter>
-      </TooltipProvider>
-    </AuthProvider>
-  </QueryClientProvider>
+                {/* Protected member routes */}
+                <Route path="/dashboard" element={<ProtectedRoute><MemberDashboard /></ProtectedRoute>} />
+                <Route path="/plans" element={<ProtectedRoute><PlanSelection /></ProtectedRoute>} />
+                <Route path="/onboarding" element={<ProtectedRoute><Onboarding /></ProtectedRoute>} />
+                <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+                <Route path="/profile/edit" element={<ProtectedRoute><EditProfile /></ProtectedRoute>} />
+                <Route path="/profile/interests" element={<ProtectedRoute><ProfileInterests /></ProtectedRoute>} />
+                <Route path="/community/:groupId" element={<ProtectedRoute><GroupChat /></ProtectedRoute>} />
+                <Route path="/connections" element={<ProtectedRoute><Connections /></ProtectedRoute>} />
+                <Route path="/dms" element={<ProtectedRoute><DirectMessages /></ProtectedRoute>} />
+                <Route path="/messages" element={<ProtectedRoute><MessagesPage /></ProtectedRoute>} />
+                <Route path="/messages/:chatId" element={<ProtectedRoute><ChatRoom /></ProtectedRoute>} />
+                <Route path="/friends" element={<ProtectedRoute><Friends /></ProtectedRoute>} />
+                <Route path="/inbox" element={<ProtectedRoute><Inbox /></ProtectedRoute>} />
+                <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+
+                {/* Admin routes */}
+                <Route path="/admin" element={<ProtectedRoute requireAdmin><AdminDashboard /></ProtectedRoute>} />
+                <Route path="/admin/events/:id/edit" element={<ProtectedRoute requireAdmin><AdminEventEditor /></ProtectedRoute>} />
+                <Route path="/admin/events/:id/attendees" element={<ProtectedRoute requireAdmin><AdminAttendeeManager /></ProtectedRoute>} />
+
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </Suspense>
+          </BrowserRouter>
+        </TooltipProvider>
+      </AuthProvider>
+    </QueryClientProvider>
   </ErrorBoundary>
 );
 
