@@ -144,7 +144,7 @@ const staggerItem = {
 };
 
 
-const Profile = () => {
+function Profile() {
   const [teamsOpen, setTeamsOpen] = useState(false);
   const [newsOpen, setNewsOpen] = useState(false);
   const [recEventsOpen, setRecEventsOpen] = useState(false);
