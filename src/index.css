@@ -263,6 +263,35 @@
   .toast-success { @apply border-success bg-success text-success-foreground; }
   .toast-warning { @apply border-warning bg-warning text-warning-foreground; }
   .toast-info    { @apply border-info bg-info text-info-foreground; }
+
+  /* Tier badges */
+  .tier-badge-pro {
+    @apply bg-primary/10 text-primary border border-primary/20;
+  }
+  .tier-badge-premium {
+    @apply bg-accent/10 text-accent border border-accent/20;
+  }
+
+  /* Consistent card hover */
+  .interactive-card {
+    @apply bg-card rounded-xl border border-border/30 shadow-sm transition-all duration-200;
+  }
+  .interactive-card:hover {
+    @apply shadow-md border-border/50 -translate-y-0.5;
+  }
+
+  /* Page container */
+  .page-container {
+    @apply container mx-auto px-4 py-8 max-w-6xl;
+  }
+  .page-container-narrow {
+    @apply container mx-auto px-4 py-8 max-w-3xl;
+  }
+
+  /* Section header */
+  .section-header {
+    @apply font-display text-xl font-bold uppercase tracking-tight;
+  }
 }
 
 /* ============================================================
