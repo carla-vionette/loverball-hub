@@ -390,23 +390,24 @@ const Profile = () => {
               <p className="text-sm text-muted-foreground mt-1">{formattedDate} · {formattedTime}</p>
             </motion.div>
 
-            {/* HOROSCOPE PREVIEW */}
+            {/* DAILY HOROSCOPE SNIPPET */}
             {zodiac && (
               <motion.div variants={staggerItem}>
-                <div className={`glass-card rounded-2xl overflow-hidden`}>
-                  <div className={`bg-gradient-to-br ${ELEMENT_GRADIENTS[zodiac.element]} p-5`}>
-                    <div className="flex items-start gap-4">
-                      <div className="text-4xl">{zodiac.symbol}</div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1">
-                          <h3 className="font-sans text-base text-foreground">{zodiac.name}</h3>
-                          <Badge variant="outline" className="text-[10px] rounded-full capitalize border-border/30">{zodiac.element}</Badge>
-                        </div>
-                        <p className="text-sm text-foreground/70 leading-relaxed line-clamp-2">{HOROSCOPE_MESSAGES[zodiac.name]}</p>
-                        <Button variant="link" className="px-0 mt-1 text-primary h-auto text-xs gap-1" onClick={() => goTo("/horoscope")}>
-                          Read Full Horoscope <ChevronRight className="w-3 h-3" />
-                        </Button>
-                      </div>
+                <div className="glass-card rounded-2xl p-4">
+                  <div className="flex items-start gap-3">
+                    <span className="text-3xl mt-0.5">{zodiac.symbol}</span>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-semibold text-foreground">{zodiac.name}</p>
+                      {horoscopeLoading ? (
+                        <p className="text-xs text-muted-foreground mt-1 animate-pulse">Loading your forecast…</p>
+                      ) : (
+                        <p className="text-xs text-foreground/70 leading-relaxed mt-1 line-clamp-3">
+                          {liveHoroscope || HOROSCOPE_MESSAGES[zodiac.name]}
+                        </p>
+                      )}
+                      <Button variant="link" className="px-0 mt-1 text-primary h-auto text-xs gap-1" onClick={() => goTo("/horoscope")}>
+                        Full Horoscope <ChevronRight className="w-3 h-3" />
+                      </Button>
                     </div>
                   </div>
                 </div>
