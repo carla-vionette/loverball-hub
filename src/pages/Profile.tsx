@@ -457,6 +457,8 @@ const Profile = () => {
                               <Badge variant="outline" className="text-[9px] px-1.5 py-0 rounded-full border-border/30">{team.league}</Badge>
                             </div>
                             <p className="text-xs text-muted-foreground mt-0.5">{team.nextGame}</p>
+                            <p className="text-[10px] text-accent mt-0.5 cursor-pointer hover:underline">🎟 Get Tickets · From $28</p>
+                            <p className="text-[10px] text-muted-foreground">📺 Watch: ESPN, League Pass</p>
                           </div>
                           <p className={`text-sm font-sans font-bold ${team.winPct > 0.5 ? "text-accent" : team.winPct > 0 && team.winPct < 0.5 ? "text-destructive" : "text-foreground"}`}>{team.record}</p>
                         </div>
