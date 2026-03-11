@@ -109,10 +109,11 @@ const Horoscope = () => {
         body: { sign: sign.toLowerCase(), period: p },
       });
       if (fnError) throw fnError;
-      const reading = resp?.data?.horoscope || resp?.horoscope;
+      // Handle both new API format { data: { horoscope } } and legacy format { reading }
+      const reading = resp?.data?.horoscope || resp?.horoscope || resp?.reading;
       if (!reading) throw new Error("No horoscope data returned");
       setHoroscope(reading);
-      setHoroscopeDate(resp?.data?.date || null);
+      setHoroscopeDate(resp?.data?.date || resp?.date || null);
       sessionCache.set(cacheKey, { data: { horoscope: reading, date: resp?.data?.date }, ts: Date.now() });
     } catch (e: any) {
       console.error("Horoscope fetch error:", e);
