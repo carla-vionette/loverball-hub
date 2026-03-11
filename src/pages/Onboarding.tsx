@@ -361,6 +361,35 @@ const Onboarding = () => {
                       </Select>
                     </div>
 
+                    <div className="space-y-2">
+                      <Label htmlFor="phone" className="text-xs tracking-wider uppercase text-foreground/60">Phone Number *</Label>
+                      <Input
+                        id="phone"
+                        type="tel"
+                        value={phoneNumber}
+                        onChange={(e) => setPhoneNumber(e.target.value)}
+                        placeholder="(555) 123-4567"
+                        className="rounded-none h-12 border-border bg-background"
+                      />
+                      {phoneNumber.trim() && phoneNumber.trim().length < 10 && (
+                        <p className="text-xs text-destructive">Enter a valid phone number</p>
+                      )}
+                    </div>
+
+                    {phoneNumber.trim().length >= 10 && (
+                      <div className="flex items-start gap-3 p-4 border border-border bg-background">
+                        <Checkbox
+                          id="sms-opt-in"
+                          checked={smsOptIn}
+                          onCheckedChange={(checked) => setSmsOptIn(checked === true)}
+                          className="mt-0.5"
+                        />
+                        <label htmlFor="sms-opt-in" className="text-sm text-foreground/80 leading-relaxed cursor-pointer">
+                          I'd like to receive text updates from Loverball (event reminders, match alerts & more)
+                        </label>
+                      </div>
+                    )}
+
                   </div>
                 )}
 
