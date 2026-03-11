@@ -1,10 +1,12 @@
-import { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { MapPin, Edit, Sparkles, LogOut, Calendar, Clock, TrendingUp, TrendingDown, Trophy, Flame, Bookmark, BookOpen, Award, ChevronRight, ChevronDown, ArrowUpRight, Share2, AlertTriangle, Ticket, Play, Eye, Lightbulb, Settings, Heart, MessageCircle, Loader2, ExternalLink, Newspaper, Zap, RefreshCw } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import MobileHeader from "@/components/MobileHeader";
 import DesktopNav from "@/components/DesktopNav";
@@ -142,7 +144,7 @@ const staggerItem = {
 };
 
 
-function Profile() {
+const Profile = () => {
   const [teamsOpen, setTeamsOpen] = useState(false);
   const [newsOpen, setNewsOpen] = useState(false);
   const [recEventsOpen, setRecEventsOpen] = useState(false);
@@ -443,40 +445,20 @@ function Profile() {
                   {!teamsOpen && (
                     <div className="divide-y divide-border/30">
                       {TEAM_PERFORMANCE.slice(0, 2).map(team => (
-                        <div key={team.name} className="px-5 py-4 hover:bg-foreground/[0.03] transition-colors">
-                          <div
-                            className="flex items-center gap-3 cursor-pointer group"
-                            onClick={() => goTo(`/team/${team.slug}`)}
-                          >
-                            <img src={team.logo} alt={team.name} className="w-10 h-10 object-contain rounded-lg bg-foreground/5 p-0.5" onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} />
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-2">
-                                <span className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">{team.name}</span>
-                                <Badge variant="outline" className="text-[9px] px-1.5 py-0 rounded-full border-border/30">{team.league}</Badge>
-                              </div>
-                              <p className="text-xs text-muted-foreground mt-0.5">{team.nextGame}</p>
-                            </div>
-                            <p className={`text-sm font-sans font-bold ${team.winPct > 0.5 ? "text-accent" : team.winPct > 0 && team.winPct < 0.5 ? "text-destructive" : "text-foreground"}`}>{team.record}</p>
-                          </div>
-                          {/* Ticket + Watch row */}
-                          <div className="mt-2.5 ml-[52px] flex flex-col gap-1.5">
+                        <div
+                          key={team.name}
+                          className="flex items-center gap-3 px-5 py-4 hover:bg-foreground/[0.03] transition-colors cursor-pointer group"
+                          onClick={() => goTo(`/team/${team.slug}`)}
+                        >
+                          <img src={team.logo} alt={team.name} className="w-10 h-10 object-contain rounded-lg bg-foreground/5 p-0.5" onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+                          <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2">
-                              <Button
-                                size="sm"
-                                className="h-7 text-[11px] px-3 rounded-full gap-1.5 bg-primary text-primary-foreground hover:bg-primary/90"
-                                onClick={(e) => { e.stopPropagation(); window.open(team.ticketUrl || getTeamTicketsUrl(team.name), '_blank'); }}
-                              >
-                                <Ticket className="w-3 h-3" /> Get Tickets
-                              </Button>
-                              <span className="text-[11px] text-muted-foreground font-medium">{team.ticketPrice}</span>
+                              <span className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">{team.name}</span>
+                              <Badge variant="outline" className="text-[9px] px-1.5 py-0 rounded-full border-border/30">{team.league}</Badge>
                             </div>
-                            <div className="flex items-center gap-1.5 flex-wrap">
-                              <span className="text-[10px] text-muted-foreground">Watch on:</span>
-                              {team.broadcastChannels.map(ch => (
-                                <Badge key={ch} variant="secondary" className="text-[10px] px-1.5 py-0 rounded-full font-medium">{ch}</Badge>
-                              ))}
-                            </div>
+                            <p className="text-xs text-muted-foreground mt-0.5">{team.nextGame}</p>
                           </div>
+                          <p className={`text-sm font-sans font-bold ${team.winPct > 0.5 ? "text-accent" : team.winPct > 0 && team.winPct < 0.5 ? "text-destructive" : "text-foreground"}`}>{team.record}</p>
                         </div>
                       ))}
                       {TEAM_PERFORMANCE.length > 2 && (
@@ -489,52 +471,51 @@ function Profile() {
                   <CollapsibleContent>
                     <div className="divide-y divide-border/30">
                       {TEAM_PERFORMANCE.map(team => (
-                        <div key={team.name} className="px-5 py-4 hover:bg-foreground/[0.03] transition-colors">
-                          <div
-                            className="flex items-center gap-3 cursor-pointer group"
-                            onClick={() => goTo(`/team/${team.slug}`)}
-                          >
-                            <img src={team.logo} alt={team.name} className="w-10 h-10 object-contain rounded-lg bg-foreground/5 p-0.5" onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} />
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-2">
-                                <span className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">{team.name}</span>
-                                <Badge variant="outline" className="text-[9px] px-1.5 py-0 rounded-full border-border/30">{team.league}</Badge>
-                                {team.injuryNote && (
-                                  <span title={team.injuryNote}>
-                                    <AlertTriangle className="w-3.5 h-3.5 text-warning" />
-                                  </span>
-                                )}
-                              </div>
-                              <p className="text-xs text-muted-foreground mt-0.5">{team.leadingScorer}</p>
-                              <p className="text-xs text-muted-foreground">{team.nextGame}</p>
-                            </div>
-                            <div className="flex flex-col items-end gap-2">
-                              <p className={`text-sm font-sans font-bold ${team.winPct > 0.5 ? "text-accent" : team.winPct > 0 && team.winPct < 0.5 ? "text-destructive" : "text-foreground"}`}>{team.record}</p>
-                              {team.last5.length > 0 && (
-                                <div className="flex gap-0.5">
-                                  {team.last5.map((win, i) => <div key={i} className={`w-2 h-2 rounded-full ${win ? "bg-accent" : "bg-destructive/60"}`} />)}
-                                </div>
+                        <div
+                          key={team.name}
+                          className="flex items-center gap-3 px-5 py-4 hover:bg-foreground/[0.03] transition-colors cursor-pointer group"
+                          onClick={() => goTo(`/team/${team.slug}`)}
+                        >
+                          <img src={team.logo} alt={team.name} className="w-10 h-10 object-contain rounded-lg bg-foreground/5 p-0.5" onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2">
+                              <span className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">{team.name}</span>
+                              <Badge variant="outline" className="text-[9px] px-1.5 py-0 rounded-full border-border/30">{team.league}</Badge>
+                              {team.injuryNote && (
+                                <span title={team.injuryNote}>
+                                  <AlertTriangle className="w-3.5 h-3.5 text-amber-500" />
+                                </span>
                               )}
                             </div>
+                            <p className="text-xs text-muted-foreground mt-0.5">{team.leadingScorer}</p>
+                            <p className="text-xs text-muted-foreground">{team.nextGame}</p>
                           </div>
-                          {/* Ticket + Watch row */}
-                          <div className="mt-2.5 ml-[52px] flex flex-col gap-1.5">
-                            <div className="flex items-center gap-2">
-                              <Button
-                                size="sm"
-                                className="h-7 text-[11px] px-3 rounded-full gap-1.5 bg-primary text-primary-foreground hover:bg-primary/90"
-                                onClick={(e) => { e.stopPropagation(); window.open(team.ticketUrl || getTeamTicketsUrl(team.name), '_blank'); }}
-                              >
-                                <Ticket className="w-3 h-3" /> Get Tickets
-                              </Button>
-                              <span className="text-[11px] text-muted-foreground font-medium">{team.ticketPrice}</span>
-                            </div>
-                            <div className="flex items-center gap-1.5 flex-wrap">
-                              <span className="text-[10px] text-muted-foreground">Watch on:</span>
-                              {team.broadcastChannels.map(ch => (
-                                <Badge key={ch} variant="secondary" className="text-[10px] px-1.5 py-0 rounded-full font-medium">{ch}</Badge>
-                              ))}
-                            </div>
+                          <div className="flex flex-col items-end gap-2">
+                            <p className={`text-sm font-sans font-bold ${team.winPct > 0.5 ? "text-accent" : team.winPct > 0 && team.winPct < 0.5 ? "text-destructive" : "text-foreground"}`}>{team.record}</p>
+                            {team.last5.length > 0 && (
+                              <div className="flex gap-0.5">
+                                {team.last5.map((win, i) => <div key={i} className={`w-2 h-2 rounded-full ${win ? "bg-accent" : "bg-destructive/60"}`} />)}
+                              </div>
+                            )}
+                            {team.nextGame !== "Offseason" && !team.nextGame.startsWith("Season") && (
+                              <div className="flex gap-1.5">
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  className="h-6 text-[10px] px-2 rounded-full gap-1 border-border/30"
+                                  onClick={(e) => { e.stopPropagation(); window.open(team.ticketUrl || getTeamTicketsUrl(team.name), '_blank'); }}
+                                >
+                                  <Ticket className="w-3 h-3" /> Tickets
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  className="h-6 text-[10px] px-2 rounded-full gap-1"
+                                  onClick={(e) => { e.stopPropagation(); window.open(team.watchUrl || getTeamWatchUrl(team.name), '_blank'); }}
+                                >
+                                  <Play className="w-3 h-3" /> Watch
+                                </Button>
+                              </div>
+                            )}
                           </div>
                         </div>
                       ))}
@@ -719,6 +700,6 @@ function Profile() {
       </main>
     </div>
   );
-}
+};
 
 export default Profile;
