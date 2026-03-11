@@ -14,11 +14,23 @@ export default defineConfig(({ mode }) => ({
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
-    dedupe: ["react", "react-dom", "react/jsx-runtime", "react-router-dom", "zustand", "@radix-ui/react-avatar", "@radix-ui/react-popover", "@tanstack/react-query"],
+    dedupe: [
+      "react",
+      "react-dom",
+      "react/jsx-runtime",
+      "react/jsx-dev-runtime",
+      "react-router-dom",
+      "zustand",
+      "@radix-ui/react-avatar",
+      "@radix-ui/react-popover",
+      "@radix-ui/react-checkbox",
+      "@tanstack/react-query",
+      "framer-motion",
+    ],
   },
   optimizeDeps: {
-    // Force re-bundling to clear stale dep cache causing dual React instances
     force: true,
+    include: ["react", "react-dom", "react/jsx-runtime", "@tanstack/react-query"],
   },
   build: {
     target: 'es2020',
