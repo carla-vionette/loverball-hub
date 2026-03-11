@@ -1,21 +1,54 @@
 import { useState, useEffect } from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Loader2 } from 'lucide-react';
-import { fetchAllSubscriptions } from '@/services/subscriptionService';
+import { useToast } from '@/hooks/use-toast';
+import { fetchAllSubscriptions, updateSubscriptionPlan, cancelSubscription } from '@/services/subscriptionService';
+import type { SubscriptionWithUser, SubscriptionPlan } from '@/types';
 import { format } from 'date-fns';
-import type { Subscription } from '@/types';
 
 const AdminSubscriptionsTab = () => {
-  const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
+  const { toast } = useToast();
+  const [subs, setSubs] = useState<SubscriptionWithUser[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchAllSubscriptions()
-      .then(setSubscriptions)
-      .catch(console.error)
-      .finally(() => setLoading(false));
-  }, []);
+  const load = async () => {
+    setLoading(true);
+    try {
+      const data = await fetchAllSubscriptions();
+      setSubs(data);
+    } catch (error) {
+      console.error('Error fetching subscriptions:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => { load(); }, []);
+
+  const handlePlanChange = async (subId: string, plan: SubscriptionPlan) => {
+    try {
+      await updateSubscriptionPlan(subId, plan);
+      toast({ title: `Plan updated to ${plan}` });
+      load();
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Failed to update';
+      toast({ title: 'Error', description: message, variant: 'destructive' });
+    }
+  };
+
+  const handleCancel = async (subId: string) => {
+    try {
+      await cancelSubscription(subId);
+      toast({ title: 'Subscription canceled' });
+      load();
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Failed to cancel';
+      toast({ title: 'Error', description: message, variant: 'destructive' });
+    }
+  };
 
   if (loading) {
     return (
@@ -25,60 +58,65 @@ const AdminSubscriptionsTab = () => {
     );
   }
 
-  const statusColor = (status: string) => {
-    switch (status) {
-      case 'active': return 'bg-green-500/10 text-green-600';
-      case 'past_due': return 'bg-yellow-500/10 text-yellow-600';
-      case 'canceled': return 'bg-red-500/10 text-red-600';
-      default: return 'bg-secondary text-muted-foreground';
-    }
-  };
-
-  const planColor = (plan: string) => {
-    switch (plan) {
-      case 'premium': return 'bg-purple-500/10 text-purple-600';
-      case 'pro': return 'bg-primary/10 text-primary';
-      default: return 'bg-secondary text-muted-foreground';
-    }
-  };
-
   return (
     <section>
-      <h2 className="font-display text-xl font-bold uppercase mb-4">
-        Subscriptions ({subscriptions.length})
-      </h2>
+      <h2 className="font-display text-xl font-bold uppercase mb-4">Subscriptions ({subs.length})</h2>
       <div className="bg-card border border-border rounded-xl overflow-hidden">
-        {subscriptions.length > 0 ? (
+        {subs.length > 0 ? (
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow className="bg-secondary">
-                  <TableHead className="text-xs uppercase tracking-widest text-muted-foreground">User ID</TableHead>
+                  <TableHead className="text-xs uppercase tracking-widest text-muted-foreground">User</TableHead>
                   <TableHead className="text-xs uppercase tracking-widest text-muted-foreground">Plan</TableHead>
                   <TableHead className="text-xs uppercase tracking-widest text-muted-foreground">Status</TableHead>
                   <TableHead className="text-xs uppercase tracking-widest text-muted-foreground">Period End</TableHead>
-                  <TableHead className="text-xs uppercase tracking-widest text-muted-foreground">Created</TableHead>
+                  <TableHead className="text-xs uppercase tracking-widest text-muted-foreground">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {subscriptions.map((sub) => (
+                {subs.map((sub) => (
                   <TableRow key={sub.id} className="hover:bg-secondary/50 transition-colors">
-                    <TableCell className="text-sm font-mono text-muted-foreground max-w-[150px] truncate">
-                      {sub.user_id.slice(0, 8)}...
+                    <TableCell className="font-semibold">{sub.user_name || 'Unknown'}</TableCell>
+                    <TableCell>
+                      <Select
+                        value={sub.plan}
+                        onValueChange={(v) => handlePlanChange(sub.id, v as SubscriptionPlan)}
+                      >
+                        <SelectTrigger className="w-28 h-8 text-xs">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="free">Free</SelectItem>
+                          <SelectItem value="pro">Pro</SelectItem>
+                          <SelectItem value="premium">Premium</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </TableCell>
                     <TableCell>
-                      <Badge className={planColor(sub.plan)}>{sub.plan}</Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Badge className={statusColor(sub.status)}>{sub.status}</Badge>
+                      <Badge
+                        variant={sub.status === 'active' ? 'default' : 'secondary'}
+                        className="capitalize text-xs"
+                      >
+                        {sub.status}
+                      </Badge>
                     </TableCell>
                     <TableCell className="text-sm text-muted-foreground">
                       {sub.current_period_end
                         ? format(new Date(sub.current_period_end), 'MMM d, yyyy')
                         : '-'}
                     </TableCell>
-                    <TableCell className="text-sm text-muted-foreground">
-                      {format(new Date(sub.created_at), 'MMM d, yyyy')}
+                    <TableCell>
+                      {sub.status === 'active' && sub.plan !== 'free' && (
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="text-destructive text-xs"
+                          onClick={() => handleCancel(sub.id)}
+                        >
+                          Cancel
+                        </Button>
+                      )}
                     </TableCell>
                   </TableRow>
                 ))}

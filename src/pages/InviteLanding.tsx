@@ -7,11 +7,11 @@ const InviteLanding = () => {
 
   useEffect(() => {
     if (code) {
-      // Store invite code in sessionStorage for use after signup
-      sessionStorage.setItem('invite_code', code);
+      // Store invite code in localStorage for use after signup
+      localStorage.setItem('loverball_invite_code', code);
     }
-    // Redirect to auth with invite context
-    navigate(`/auth?invite=${code || ''}`, { replace: true });
+    // Redirect to auth page
+    navigate('/auth', { replace: true });
   }, [code, navigate]);
 
   return null;

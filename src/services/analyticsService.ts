@@ -5,24 +5,24 @@ export interface DashboardStats {
   totalVideos: number;
   totalEvents: number;
   activeSubscriptions: number;
-  newSignups7d: number;
+  recentSignups: number;
 }
 
 export async function fetchDashboardStats(): Promise<DashboardStats> {
-  const [members, videos, events, activeSubs, recentSignups] = await Promise.all([
-    supabase.from('profiles').select('*', { count: 'exact', head: true }),
-    supabase.from('videos').select('*', { count: 'exact', head: true }),
-    supabase.from('events').select('*', { count: 'exact', head: true }),
-    supabase.from('subscriptions').select('*', { count: 'exact', head: true }).eq('status', 'active').neq('plan', 'free'),
-    supabase.from('profiles').select('*', { count: 'exact', head: true }).gte('created_at', new Date(Date.now() - 7 * 86400000).toISOString()),
+  const [members, videos, events, subscriptions, recentProfiles] = await Promise.all([
+    supabase.from('profiles').select('id', { count: 'exact', head: true }),
+    supabase.from('videos').select('id', { count: 'exact', head: true }),
+    supabase.from('events').select('id', { count: 'exact', head: true }),
+    supabase.from('subscriptions').select('id', { count: 'exact', head: true }).eq('status', 'active').neq('plan', 'free'),
+    supabase.from('profiles').select('id', { count: 'exact', head: true }).gte('created_at', new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()),
   ]);
 
   return {
     totalMembers: members.count || 0,
     totalVideos: videos.count || 0,
     totalEvents: events.count || 0,
-    activeSubscriptions: activeSubs.count || 0,
-    newSignups7d: recentSignups.count || 0,
+    activeSubscriptions: subscriptions.count || 0,
+    recentSignups: recentProfiles.count || 0,
   };
 }
 
@@ -31,28 +31,31 @@ export interface SignupDataPoint {
   count: number;
 }
 
-export async function fetchSignupsOverTime(days: number = 30): Promise<SignupDataPoint[]> {
-  const startDate = new Date(Date.now() - days * 86400000);
+export async function fetchSignupTrend(days: number = 30): Promise<SignupDataPoint[]> {
+  const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
   const { data, error } = await supabase
     .from('profiles')
     .select('created_at')
-    .gte('created_at', startDate.toISOString())
+    .gte('created_at', since)
     .order('created_at', { ascending: true });
 
   if (error) throw error;
 
   // Group by date
-  const grouped: Record<string, number> = {};
-  for (let i = 0; i < days; i++) {
-    const d = new Date(Date.now() - (days - 1 - i) * 86400000);
-    grouped[d.toISOString().split('T')[0]] = 0;
-  }
-  (data || []).forEach((row) => {
+  const counts = new Map<string, number>();
+  (data || []).forEach(row => {
     const date = new Date(row.created_at).toISOString().split('T')[0];
-    if (grouped[date] !== undefined) grouped[date]++;
+    counts.set(date, (counts.get(date) || 0) + 1);
   });
 
-  return Object.entries(grouped).map(([date, count]) => ({ date, count }));
+  // Fill in all days
+  const result: SignupDataPoint[] = [];
+  for (let i = days - 1; i >= 0; i--) {
+    const d = new Date(Date.now() - i * 24 * 60 * 60 * 1000);
+    const key = d.toISOString().split('T')[0];
+    result.push({ date: key, count: counts.get(key) || 0 });
+  }
+  return result;
 }
 
 export interface PlanDistribution {
@@ -63,14 +66,15 @@ export interface PlanDistribution {
 export async function fetchPlanDistribution(): Promise<PlanDistribution[]> {
   const { data, error } = await supabase
     .from('subscriptions')
-    .select('plan');
+    .select('plan')
+    .eq('status', 'active');
+
   if (error) throw error;
 
-  const counts: Record<string, number> = { free: 0, pro: 0, premium: 0 };
-  (data || []).forEach((row) => {
-    const plan = (row as { plan: string }).plan || 'free';
-    counts[plan] = (counts[plan] || 0) + 1;
+  const counts = new Map<string, number>();
+  (data || []).forEach(row => {
+    counts.set(row.plan, (counts.get(row.plan) || 0) + 1);
   });
 
-  return Object.entries(counts).map(([plan, count]) => ({ plan, count }));
+  return Array.from(counts.entries()).map(([plan, count]) => ({ plan, count }));
 }

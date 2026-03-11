@@ -1,6 +1,6 @@
-import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { MapPin, ExternalLink } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { MapPin, ExternalLink, Play } from 'lucide-react';
 import type { EventLayout, EventSection } from '@/types';
 
 interface EventRendererProps {
@@ -8,19 +8,23 @@ interface EventRendererProps {
 }
 
 const EventRenderer = ({ layout }: EventRendererProps) => {
+  if (!layout?.sections || layout.sections.length === 0) return null;
+
+  const sorted = [...layout.sections].sort((a, b) => a.order - b.order);
+
   return (
     <div className="space-y-8">
-      {layout.sections.map((section) => (
-        <SectionBlock key={section.id} section={section} />
+      {sorted.map((section) => (
+        <RenderSection key={section.id} section={section} />
       ))}
     </div>
   );
 };
 
-function SectionBlock({ section }: { section: EventSection }) {
-  const data = section.data;
+const RenderSection = ({ section }: { section: EventSection }) => {
+  const { type, data } = section;
 
-  switch (section.type) {
+  switch (type) {
     case 'title':
       return (
         <h1 className="font-display text-3xl md:text-4xl font-black uppercase tracking-tight">
@@ -30,142 +34,118 @@ function SectionBlock({ section }: { section: EventSection }) {
 
     case 'description':
       return (
-        <div className="prose prose-sm max-w-none">
-          <p className="text-muted-foreground whitespace-pre-wrap leading-relaxed">
+        <div className="prose prose-neutral max-w-none">
+          <p className="text-muted-foreground leading-relaxed whitespace-pre-line">
             {(data.text as string) || ''}
           </p>
         </div>
       );
 
-    case 'speakers': {
-      const items = (data.items as string[]) || [];
-      if (items.length === 0) return null;
+    case 'speakers':
       return (
-        <div>
+        <section>
           <h2 className="font-display text-xl font-bold uppercase mb-4">Speakers</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {items.map((item, i) => {
-              const [name, ...rest] = item.split(' - ');
-              return (
-                <Card key={i}>
-                  <CardContent className="p-4">
-                    <p className="font-semibold">{name?.trim()}</p>
-                    {rest.length > 0 && (
-                      <p className="text-sm text-muted-foreground">{rest.join(' - ').trim()}</p>
-                    )}
-                  </CardContent>
-                </Card>
-              );
-            })}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {((data.speakers as Array<{ name: string; role: string; image: string }>) || []).map((speaker, i) => (
+              <Card key={i} className="overflow-hidden">
+                {speaker.image && (
+                  <div className="aspect-square bg-secondary">
+                    <img src={speaker.image} alt={speaker.name} className="w-full h-full object-cover" loading="lazy" />
+                  </div>
+                )}
+                <CardContent className="p-4">
+                  <p className="font-semibold">{speaker.name}</p>
+                  {speaker.role && <p className="text-sm text-muted-foreground">{speaker.role}</p>}
+                </CardContent>
+              </Card>
+            ))}
           </div>
-        </div>
+        </section>
       );
-    }
 
-    case 'schedule': {
-      const items = (data.items as string[]) || [];
-      if (items.length === 0) return null;
+    case 'schedule':
       return (
-        <div>
+        <section>
           <h2 className="font-display text-xl font-bold uppercase mb-4">Schedule</h2>
-          <div className="space-y-2">
-            {items.map((item, i) => {
-              const [time, ...rest] = item.split(' - ');
-              return (
-                <div key={i} className="flex gap-4 items-start p-3 rounded-lg bg-secondary/50">
-                  <span className="font-bold text-sm text-primary whitespace-nowrap min-w-[80px]">
-                    {time?.trim()}
-                  </span>
-                  <span className="text-sm">{rest.join(' - ').trim()}</span>
+          <div className="space-y-3">
+            {((data.items as Array<{ time: string; title: string; description: string }>) || []).map((item, i) => (
+              <div key={i} className="flex gap-4 p-4 bg-card border border-border rounded-lg">
+                <div className="text-primary font-semibold text-sm whitespace-nowrap min-w-[80px]">
+                  {item.time}
                 </div>
-              );
-            })}
-          </div>
-        </div>
-      );
-    }
-
-    case 'gallery': {
-      const images = (data.images as string[]) || [];
-      if (images.length === 0) return null;
-      return (
-        <div>
-          <h2 className="font-display text-xl font-bold uppercase mb-4">Gallery</h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-            {images.map((img, i) => (
-              <div key={i} className="aspect-square rounded-lg overflow-hidden bg-secondary">
-                <img src={img} alt="" className="w-full h-full object-cover" loading="lazy" />
+                <div>
+                  <p className="font-semibold">{item.title}</p>
+                  {item.description && (
+                    <p className="text-sm text-muted-foreground mt-1">{item.description}</p>
+                  )}
+                </div>
               </div>
             ))}
           </div>
-        </div>
+        </section>
       );
-    }
 
-    case 'video': {
-      const url = (data.url as string) || '';
-      if (!url) return null;
+    case 'gallery':
       return (
-        <div>
-          <h2 className="font-display text-xl font-bold uppercase mb-4">Video</h2>
-          <div className="aspect-video bg-black rounded-xl overflow-hidden">
-            <video src={url} controls className="w-full h-full" preload="metadata" />
+        <section>
+          <h2 className="font-display text-xl font-bold uppercase mb-4">Gallery</h2>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+            {((data.images as string[]) || []).filter(Boolean).map((img, i) => (
+              <div key={i} className="aspect-square rounded-lg overflow-hidden bg-secondary">
+                <img src={img} alt={`Gallery ${i + 1}`} className="w-full h-full object-cover" loading="lazy" />
+              </div>
+            ))}
           </div>
-        </div>
+        </section>
       );
-    }
 
-    case 'location': {
-      const address = (data.address as string) || '';
-      const mapUrl = (data.mapUrl as string) || '';
-      if (!address && !mapUrl) return null;
+    case 'video':
       return (
-        <div>
+        <section>
+          <h2 className="font-display text-xl font-bold uppercase mb-4">Video</h2>
+          <div className="aspect-video rounded-xl overflow-hidden bg-black">
+            <video src={(data.url as string) || ''} controls className="w-full h-full" preload="metadata" />
+          </div>
+        </section>
+      );
+
+    case 'location':
+      return (
+        <section>
           <h2 className="font-display text-xl font-bold uppercase mb-4">Location</h2>
-          {address && (
-            <div className="flex items-center gap-2 mb-3 text-muted-foreground">
-              <MapPin className="w-4 h-4" />
-              <span>{address}</span>
+          <div className="flex items-start gap-3 p-4 bg-card border border-border rounded-lg">
+            <MapPin className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="font-medium">{(data.address as string) || ''}</p>
+              {(data.mapUrl as string) && (
+                <a
+                  href={data.mapUrl as string}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-primary hover:underline flex items-center gap-1 mt-1"
+                >
+                  View on map <ExternalLink className="w-3 h-3" />
+                </a>
+              )}
             </div>
-          )}
-          {mapUrl && (
-            <div className="rounded-lg overflow-hidden border">
-              <iframe
-                src={mapUrl}
-                width="100%"
-                height="300"
-                style={{ border: 0 }}
-                allowFullScreen
-                loading="lazy"
-              />
-            </div>
-          )}
-        </div>
+          </div>
+        </section>
       );
-    }
 
-    case 'registration': {
-      const buttonText = (data.buttonText as string) || 'Register Now';
-      const url = (data.url as string) || '';
+    case 'registration':
       return (
-        <div className="text-center py-6">
-          {url ? (
-            <a href={url} target="_blank" rel="noopener noreferrer">
-              <Button size="lg" className="px-8">
-                {buttonText}
-                <ExternalLink className="w-4 h-4 ml-2" />
-              </Button>
-            </a>
-          ) : (
-            <Button size="lg" className="px-8">{buttonText}</Button>
-          )}
-        </div>
+        <section className="text-center py-6">
+          <a href={(data.url as string) || '#'} target="_blank" rel="noopener noreferrer">
+            <Button size="lg" className="px-8">
+              {(data.buttonText as string) || 'Register Now'}
+            </Button>
+          </a>
+        </section>
       );
-    }
 
     default:
       return null;
   }
-}
+};
 
 export default EventRenderer;
