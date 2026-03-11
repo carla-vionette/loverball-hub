@@ -1,6 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { User, Search, CalendarDays, Settings, ShoppingBag, Play, MessageCircle, Home, Compass, Newspaper, Shield } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import GlobalSearch from "@/components/GlobalSearch";
 import loverballLogo from "@/assets/loverball-script-logo.png";
 
 const mainNavItems = [
@@ -32,6 +33,10 @@ const DesktopNav = () => {
         <Link to="/" className="focus-ring rounded-lg" aria-label="Loverball home">
           <img src={loverballLogo} alt="Loverball logo" className="w-[140px] h-auto object-contain" />
         </Link>
+      </div>
+
+      <div className="px-4 py-3">
+        <GlobalSearch />
       </div>
 
       <nav className="flex-1 py-3 flex flex-col" aria-label="Primary">

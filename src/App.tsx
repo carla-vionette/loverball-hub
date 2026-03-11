@@ -51,10 +51,19 @@ const Ticker = lazy(() => import("./pages/Ticker"));
 const PlanSelection = lazy(() => import("./pages/PlanSelection"));
 const Inbox = lazy(() => import("./pages/Inbox"));
 
+// SaaS pages (lazy loaded)
+const PricingPage = lazy(() => import("./pages/PricingPage"));
+const BillingPage = lazy(() => import("./pages/BillingPage"));
+const InvitesPage = lazy(() => import("./pages/InvitesPage"));
+const InviteLanding = lazy(() => import("./pages/InviteLanding"));
+const VideoLibrary = lazy(() => import("./pages/VideoLibrary"));
+const VideoPlayerPage = lazy(() => import("./pages/VideoPlayerPage"));
+
 // Admin pages (lazy loaded)
 const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
 const AdminEventEditor = lazy(() => import("./pages/AdminEventEditor"));
 const AdminAttendeeManager = lazy(() => import("./pages/AdminAttendeeManager"));
+const EventBuilder = lazy(() => import("./pages/admin/EventBuilder"));
 
 const queryClient = new QueryClient();
 
@@ -103,6 +112,8 @@ const App = () => (
                 <Route path="/terms" element={<Terms />} />
                 <Route path="/privacy" element={<Privacy />} />
                 <Route path="/checkout-success" element={<CheckoutSuccess />} />
+                <Route path="/pricing" element={<PricingPage />} />
+                <Route path="/invite/:code" element={<InviteLanding />} />
 
                 {/* Redirects */}
                 <Route path="/index" element={<Navigate to="/" replace />} />
@@ -125,11 +136,16 @@ const App = () => (
                 <Route path="/friends" element={<ProtectedRoute><Friends /></ProtectedRoute>} />
                 <Route path="/inbox" element={<ProtectedRoute><Inbox /></ProtectedRoute>} />
                 <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+                <Route path="/billing" element={<ProtectedRoute><BillingPage /></ProtectedRoute>} />
+                <Route path="/invites" element={<ProtectedRoute><InvitesPage /></ProtectedRoute>} />
+                <Route path="/videos" element={<ProtectedRoute><VideoLibrary /></ProtectedRoute>} />
+                <Route path="/videos/:id" element={<ProtectedRoute><VideoPlayerPage /></ProtectedRoute>} />
 
                 {/* Admin routes */}
                 <Route path="/admin" element={<ProtectedRoute requireAdmin><AdminDashboard /></ProtectedRoute>} />
                 <Route path="/admin/events/:id/edit" element={<ProtectedRoute requireAdmin><AdminEventEditor /></ProtectedRoute>} />
                 <Route path="/admin/events/:id/attendees" element={<ProtectedRoute requireAdmin><AdminAttendeeManager /></ProtectedRoute>} />
+                <Route path="/admin/events/:id/builder" element={<ProtectedRoute requireAdmin><EventBuilder /></ProtectedRoute>} />
 
                 <Route path="*" element={<NotFound />} />
               </Routes>
