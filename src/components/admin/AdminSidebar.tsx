@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import {
   LayoutDashboard, Users, Calendar, Video,
-  LogOut, Settings, CreditCard, BarChart3
+  LogOut, Settings, CreditCard, BarChart3, FileText
 } from 'lucide-react';
 import loverballLogo from '@/assets/loverball-logo.png';
 
@@ -14,7 +14,7 @@ interface AdminSidebarProps {
 const navItems = [
   { id: 'overview', label: 'Overview', icon: LayoutDashboard },
   { id: 'members', label: 'Members', icon: Users },
-  { id: 'applications', label: 'Applications', icon: Users },
+  { id: 'applications', label: 'Applications', icon: FileText },
   { id: 'videos', label: 'Videos', icon: Video },
   { id: 'events', label: 'Events', icon: Calendar },
   { id: 'subscriptions', label: 'Subscriptions', icon: CreditCard },
@@ -45,8 +45,8 @@ const AdminSidebar = ({ activeTab, onTabChange }: AdminSidebarProps) => {
               key={item.id}
               onClick={() => onTabChange(item.id)}
               className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium w-full text-left transition-colors duration-200
-                ${isActive
-                  ? 'bg-primary/10 text-primary font-semibold'
+                ${isActive 
+                  ? 'bg-primary/10 text-primary font-semibold' 
                   : 'text-muted-foreground hover:bg-secondary hover:text-foreground'
                 }`}
             >

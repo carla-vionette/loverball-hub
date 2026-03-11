@@ -1,10 +1,5 @@
-import { useState, useRef } from 'react';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+import { useState } from 'react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -12,78 +7,70 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Progress } from '@/components/ui/progress';
 import { Upload, Loader2 } from 'lucide-react';
-import { uploadVideoFile, uploadThumbnail, VIDEO_CATEGORIES } from '@/services/videoService';
+import { uploadVideoFile, uploadThumbnail } from '@/services/videoService';
 import { createVideo } from '@/services/adminService';
-import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
-import type { ContentTier } from '@/types';
+import { useToast } from '@/hooks/use-toast';
+import { VIDEO_CATEGORIES, type ContentTier } from '@/types';
 
-interface VideoUploadDialogProps {
+interface Props {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSuccess: () => void;
+  onUploaded: () => void;
 }
 
-const VideoUploadDialog = ({ open, onOpenChange, onSuccess }: VideoUploadDialogProps) => {
+const VideoUploadDialog = ({ open, onOpenChange, onUploaded }: Props) => {
   const { user } = useAuth();
   const { toast } = useToast();
-  const videoInputRef = useRef<HTMLInputElement>(null);
-  const thumbInputRef = useRef<HTMLInputElement>(null);
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [category, setCategory] = useState('');
+  const [tier, setTier] = useState<ContentTier>('free');
+  const [videoFile, setVideoFile] = useState<File | null>(null);
+  const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
-  const [form, setForm] = useState({
-    title: '',
-    description: '',
-    category: '',
-    tier: 'free' as ContentTier,
-    duration: '',
-  });
-  const [videoFile, setVideoFile] = useState<File | null>(null);
-  const [thumbFile, setThumbFile] = useState<File | null>(null);
-
-  const reset = () => {
-    setForm({ title: '', description: '', category: '', tier: 'free', duration: '' });
-    setVideoFile(null);
-    setThumbFile(null);
-    setProgress(0);
-  };
 
   const handleSubmit = async () => {
-    if (!form.title) {
-      toast({ title: 'Title is required', variant: 'destructive' });
+    if (!title || !videoFile) {
+      toast({ title: 'Title and video file are required', variant: 'destructive' });
       return;
     }
-    if (!videoFile) {
-      toast({ title: 'Video file is required', variant: 'destructive' });
-      return;
-    }
-
     setUploading(true);
-    setProgress(10);
+    setProgress(0);
     try {
-      // Upload video file
+      // Upload video
+      setProgress(10);
       const videoUrl = await uploadVideoFile(videoFile, setProgress);
 
       // Upload thumbnail if provided
       let thumbnailUrl: string | null = null;
-      if (thumbFile) {
-        thumbnailUrl = await uploadThumbnail(thumbFile);
+      if (thumbnailFile) {
+        thumbnailUrl = await uploadThumbnail(thumbnailFile);
       }
 
       // Create video record
       await createVideo({
-        title: form.title,
-        description: form.description || null,
+        title,
+        description: description || null,
         video_url: videoUrl,
         thumbnail: thumbnailUrl,
-        category: form.category || null,
+        category: category || null,
         uploaded_by: user?.id || null,
       });
 
       toast({ title: 'Video uploaded successfully' });
-      reset();
       onOpenChange(false);
-      onSuccess();
+      onUploaded();
+
+      // Reset form
+      setTitle('');
+      setDescription('');
+      setCategory('');
+      setTier('free');
+      setVideoFile(null);
+      setThumbnailFile(null);
+      setProgress(0);
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : 'Upload failed';
       toast({ title: 'Error', description: message, variant: 'destructive' });
@@ -93,37 +80,43 @@ const VideoUploadDialog = ({ open, onOpenChange, onSuccess }: VideoUploadDialogP
   };
 
   return (
-    <Dialog open={open} onOpenChange={(v) => { if (!uploading) { onOpenChange(v); if (!v) reset(); } }}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Upload className="w-5 h-5 text-primary" />
+            <Upload className="w-5 h-5" />
             Upload Video
           </DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
           <div>
             <Label>Title *</Label>
-            <Input
-              value={form.title}
-              onChange={(e) => setForm({ ...form, title: e.target.value })}
-              placeholder="Video title"
-              disabled={uploading}
-            />
+            <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Video title" />
           </div>
           <div>
             <Label>Description</Label>
-            <Textarea
-              value={form.description}
-              onChange={(e) => setForm({ ...form, description: e.target.value })}
-              placeholder="Brief description"
-              disabled={uploading}
+            <Textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Brief description" />
+          </div>
+          <div>
+            <Label>Video File *</Label>
+            <Input
+              type="file"
+              accept="video/*"
+              onChange={(e) => setVideoFile(e.target.files?.[0] || null)}
+            />
+          </div>
+          <div>
+            <Label>Thumbnail</Label>
+            <Input
+              type="file"
+              accept="image/*"
+              onChange={(e) => setThumbnailFile(e.target.files?.[0] || null)}
             />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
               <Label>Category</Label>
-              <Select value={form.category} onValueChange={(v) => setForm({ ...form, category: v })} disabled={uploading}>
+              <Select value={category} onValueChange={setCategory}>
                 <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
                 <SelectContent>
                   {VIDEO_CATEGORIES.map(c => (
@@ -134,7 +127,7 @@ const VideoUploadDialog = ({ open, onOpenChange, onSuccess }: VideoUploadDialogP
             </div>
             <div>
               <Label>Tier</Label>
-              <Select value={form.tier} onValueChange={(v) => setForm({ ...form, tier: v as ContentTier })} disabled={uploading}>
+              <Select value={tier} onValueChange={(v) => setTier(v as ContentTier)}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="free">Free</SelectItem>
@@ -144,65 +137,18 @@ const VideoUploadDialog = ({ open, onOpenChange, onSuccess }: VideoUploadDialogP
               </Select>
             </div>
           </div>
-          <div>
-            <Label>Duration</Label>
-            <Input
-              value={form.duration}
-              onChange={(e) => setForm({ ...form, duration: e.target.value })}
-              placeholder="e.g. 12:34"
-              disabled={uploading}
-            />
-          </div>
-          <div>
-            <Label>Video File *</Label>
-            <input
-              ref={videoInputRef}
-              type="file"
-              accept="video/*"
-              className="hidden"
-              onChange={(e) => setVideoFile(e.target.files?.[0] || null)}
-            />
-            <Button
-              variant="outline"
-              className="w-full justify-start"
-              onClick={() => videoInputRef.current?.click()}
-              disabled={uploading}
-            >
-              {videoFile ? videoFile.name : 'Choose video file...'}
-            </Button>
-          </div>
-          <div>
-            <Label>Thumbnail Image</Label>
-            <input
-              ref={thumbInputRef}
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={(e) => setThumbFile(e.target.files?.[0] || null)}
-            />
-            <Button
-              variant="outline"
-              className="w-full justify-start"
-              onClick={() => thumbInputRef.current?.click()}
-              disabled={uploading}
-            >
-              {thumbFile ? thumbFile.name : 'Choose thumbnail...'}
-            </Button>
-          </div>
-
           {uploading && (
-            <div>
+            <div className="space-y-1">
               <Progress value={progress} className="h-2" />
-              <p className="text-xs text-muted-foreground mt-1">Uploading... {progress}%</p>
+              <p className="text-xs text-muted-foreground text-center">{progress}% uploaded</p>
             </div>
           )}
-
           <div className="flex justify-end gap-2 pt-2">
-            <Button variant="outline" onClick={() => { onOpenChange(false); reset(); }} disabled={uploading}>
+            <Button variant="outline" onClick={() => onOpenChange(false)} disabled={uploading}>
               Cancel
             </Button>
             <Button onClick={handleSubmit} disabled={uploading}>
-              {uploading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+              {uploading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Upload className="w-4 h-4 mr-2" />}
               {uploading ? 'Uploading...' : 'Upload'}
             </Button>
           </div>

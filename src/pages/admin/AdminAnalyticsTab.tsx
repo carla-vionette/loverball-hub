@@ -1,25 +1,25 @@
 import { useState, useEffect } from 'react';
 import { Loader2 } from 'lucide-react';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
-import {
-  fetchSignupTrend,
-  fetchPlanDistribution,
-  type SignupDataPoint,
-  type PlanDistribution,
-} from '@/services/analyticsService';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import { fetchSignupsOverTime, fetchPlanDistribution, type SignupDataPoint, type PlanDistribution } from '@/services/analyticsService';
 
-const COLORS = ['hsl(var(--muted))', 'hsl(var(--primary))', 'hsl(var(--accent))'];
+const PLAN_COLORS: Record<string, string> = {
+  free: '#94a3b8',
+  pro: '#00E5FF',
+  premium: '#a855f7',
+};
 
 const AdminAnalyticsTab = () => {
-  const [signupData, setSignupData] = useState<SignupDataPoint[]>([]);
-  const [planData, setPlanData] = useState<PlanDistribution[]>([]);
+  const [signups, setSignups] = useState<SignupDataPoint[]>([]);
+  const [planDist, setPlanDist] = useState<PlanDistribution[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    Promise.all([fetchSignupTrend(30), fetchPlanDistribution()])
-      .then(([signups, plans]) => {
-        setSignupData(signups);
-        setPlanData(plans);
+    Promise.all([fetchSignupsOverTime(30), fetchPlanDistribution()])
+      .then(([s, p]) => {
+        setSignups(s);
+        setPlanDist(p);
       })
       .catch(console.error)
       .finally(() => setLoading(false));
@@ -34,69 +34,84 @@ const AdminAnalyticsTab = () => {
   }
 
   return (
-    <section className="space-y-8">
-      <div>
-        <h2 className="font-display text-xl font-bold uppercase mb-4">Signups (Last 30 Days)</h2>
-        <div className="bg-card border border-border rounded-xl p-4 h-[300px]">
-          <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={signupData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-              <XAxis
-                dataKey="date"
-                tick={{ fontSize: 11 }}
-                tickFormatter={(val) => {
-                  const d = new Date(val);
-                  return `${d.getMonth() + 1}/${d.getDate()}`;
-                }}
-              />
-              <YAxis tick={{ fontSize: 11 }} allowDecimals={false} />
-              <Tooltip
-                contentStyle={{
-                  background: 'hsl(var(--card))',
-                  border: '1px solid hsl(var(--border))',
-                  borderRadius: '8px',
-                  fontSize: 12,
-                }}
-              />
-              <Area
-                type="monotone"
-                dataKey="count"
-                stroke="hsl(var(--primary))"
-                fill="hsl(var(--primary))"
-                fillOpacity={0.15}
-                strokeWidth={2}
-              />
-            </AreaChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
+    <section className="space-y-6">
+      <h2 className="font-display text-xl font-bold uppercase">Analytics</h2>
 
-      <div>
-        <h2 className="font-display text-xl font-bold uppercase mb-4">Subscription Distribution</h2>
-        <div className="bg-card border border-border rounded-xl p-4 h-[300px] flex items-center justify-center">
-          {planData.length > 0 ? (
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={planData}
-                  dataKey="count"
-                  nameKey="plan"
-                  cx="50%"
-                  cy="50%"
-                  outerRadius={100}
-                  label={({ plan, count }) => `${plan}: ${count}`}
-                >
-                  {planData.map((_entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip />
-              </PieChart>
-            </ResponsiveContainer>
-          ) : (
-            <p className="text-muted-foreground text-sm">No subscription data yet.</p>
-          )}
-        </div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Signups over time */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-sm font-semibold">Signups (Last 30 Days)</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="h-64">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={signups}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                  <XAxis
+                    dataKey="date"
+                    tick={{ fontSize: 10 }}
+                    tickFormatter={(d: string) => d.slice(5)}
+                  />
+                  <YAxis tick={{ fontSize: 10 }} allowDecimals={false} />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: 'hsl(var(--card))',
+                      border: '1px solid hsl(var(--border))',
+                      borderRadius: 8,
+                      fontSize: 12,
+                    }}
+                  />
+                  <Bar dataKey="count" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Plan distribution */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-sm font-semibold">Subscription Distribution</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="h-64 flex items-center justify-center">
+              {planDist.length > 0 ? (
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={planDist}
+                      dataKey="count"
+                      nameKey="plan"
+                      cx="50%"
+                      cy="50%"
+                      outerRadius={80}
+                      label={({ plan, count }: { plan: string; count: number }) => `${plan}: ${count}`}
+                    >
+                      {planDist.map((entry) => (
+                        <Cell key={entry.plan} fill={PLAN_COLORS[entry.plan] || '#94a3b8'} />
+                      ))}
+                    </Pie>
+                    <Tooltip />
+                  </PieChart>
+                </ResponsiveContainer>
+              ) : (
+                <p className="text-muted-foreground text-sm">No subscription data yet</p>
+              )}
+            </div>
+            <div className="flex justify-center gap-4 mt-2">
+              {planDist.map((entry) => (
+                <div key={entry.plan} className="flex items-center gap-1.5 text-xs">
+                  <div
+                    className="w-3 h-3 rounded-full"
+                    style={{ backgroundColor: PLAN_COLORS[entry.plan] || '#94a3b8' }}
+                  />
+                  <span className="capitalize">{entry.plan}</span>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </section>
   );

@@ -1,7 +1,7 @@
 import { supabase } from '@/integrations/supabase/client';
-import type { Subscription, SubscriptionPlan, SubscriptionWithUser } from '@/types';
+import type { Subscription, SubscriptionPlan } from '@/types';
 
-export async function getUserSubscription(userId: string): Promise<Subscription | null> {
+export async function fetchUserSubscription(userId: string): Promise<Subscription | null> {
   const { data, error } = await supabase
     .from('subscriptions')
     .select('*')
@@ -12,51 +12,23 @@ export async function getUserSubscription(userId: string): Promise<Subscription 
 }
 
 export async function getUserTier(userId: string): Promise<SubscriptionPlan> {
-  const sub = await getUserSubscription(userId);
+  const sub = await fetchUserSubscription(userId);
   if (!sub || sub.status !== 'active') return 'free';
   return sub.plan;
 }
 
-export async function fetchAllSubscriptions(): Promise<SubscriptionWithUser[]> {
+export function canAccessTier(userTier: SubscriptionPlan, requiredTier: SubscriptionPlan): boolean {
+  const tierOrder: Record<SubscriptionPlan, number> = { free: 0, pro: 1, premium: 2 };
+  return tierOrder[userTier] >= tierOrder[requiredTier];
+}
+
+export async function fetchAllSubscriptions(): Promise<Subscription[]> {
   const { data, error } = await supabase
     .from('subscriptions')
     .select('*')
     .order('created_at', { ascending: false });
   if (error) throw error;
-
-  // Fetch profile names for each subscription
-  const subs = (data || []) as Subscription[];
-  const userIds = subs.map(s => s.user_id);
-  const { data: profiles } = await supabase
-    .from('profiles')
-    .select('id, name')
-    .in('id', userIds);
-
-  const profileMap = new Map((profiles || []).map(p => [p.id, p.name]));
-
-  return subs.map(s => ({
-    ...s,
-    user_name: profileMap.get(s.user_id) || 'Unknown',
-  }));
-}
-
-export async function updateSubscriptionPlan(
-  subscriptionId: string,
-  plan: SubscriptionPlan
-): Promise<void> {
-  const { error } = await supabase
-    .from('subscriptions')
-    .update({ plan })
-    .eq('id', subscriptionId);
-  if (error) throw error;
-}
-
-export async function cancelSubscription(subscriptionId: string): Promise<void> {
-  const { error } = await supabase
-    .from('subscriptions')
-    .update({ status: 'canceled' })
-    .eq('id', subscriptionId);
-  if (error) throw error;
+  return (data || []) as Subscription[];
 }
 
 export async function createCheckoutSession(plan: SubscriptionPlan): Promise<string> {
@@ -83,8 +55,12 @@ export async function createCheckoutSession(plan: SubscriptionPlan): Promise<str
   return data.url;
 }
 
-export function canAccessTier(userTier: SubscriptionPlan, contentTier: string | null): boolean {
-  if (!contentTier || contentTier === 'free') return true;
-  const tierRank: Record<string, number> = { free: 0, pro: 1, premium: 2 };
-  return (tierRank[userTier] || 0) >= (tierRank[contentTier] || 0);
+export async function getActiveSubscriptionCount(): Promise<number> {
+  const { count, error } = await supabase
+    .from('subscriptions')
+    .select('*', { count: 'exact', head: true })
+    .eq('status', 'active')
+    .neq('plan', 'free');
+  if (error) throw error;
+  return count || 0;
 }

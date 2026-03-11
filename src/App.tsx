@@ -139,13 +139,14 @@ const App = () => (
                 <Route path="/billing" element={<ProtectedRoute><BillingPage /></ProtectedRoute>} />
                 <Route path="/invites" element={<ProtectedRoute><InvitesPage /></ProtectedRoute>} />
                 <Route path="/videos" element={<ProtectedRoute><VideoLibrary /></ProtectedRoute>} />
-                <Route path="/videos/:id" element={<ProtectedRoute><VideoPlayerPage /></ProtectedRoute>} />
+                <Route path="/watch/:id" element={<ProtectedRoute><VideoPlayerPage /></ProtectedRoute>} />
 
                 {/* Admin routes */}
                 <Route path="/admin" element={<ProtectedRoute requireAdmin><AdminDashboard /></ProtectedRoute>} />
                 <Route path="/admin/events/:id/edit" element={<ProtectedRoute requireAdmin><AdminEventEditor /></ProtectedRoute>} />
                 <Route path="/admin/events/:id/attendees" element={<ProtectedRoute requireAdmin><AdminAttendeeManager /></ProtectedRoute>} />
-                <Route path="/admin/events/:id/builder" element={<ProtectedRoute requireAdmin><EventBuilder /></ProtectedRoute>} />
+                <Route path="/admin/events/builder" element={<ProtectedRoute requireAdmin><EventBuilder /></ProtectedRoute>} />
+                <Route path="/admin/events/builder/:id" element={<ProtectedRoute requireAdmin><EventBuilder /></ProtectedRoute>} />
 
                 <Route path="*" element={<NotFound />} />
               </Routes>

@@ -2,12 +2,11 @@ import { useState, useEffect, ReactNode } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { getUserTier, canAccessTier } from '@/services/subscriptionService';
 import UpgradeModal from '@/components/UpgradeModal';
-import { Lock } from 'lucide-react';
-import type { SubscriptionPlan } from '@/types';
+import type { ContentTier, SubscriptionPlan } from '@/types';
 
 interface GatedContentProps {
   children: ReactNode;
-  requiredTier: string;
+  requiredTier: ContentTier;
   fallback?: ReactNode;
 }
 
@@ -18,53 +17,48 @@ const GatedContent = ({ children, requiredTier, fallback }: GatedContentProps) =
   const [showUpgrade, setShowUpgrade] = useState(false);
 
   useEffect(() => {
-    if (!user) {
+    if (user) {
+      getUserTier(user.id).then((tier) => {
+        setUserTier(tier);
+        setLoading(false);
+      }).catch(() => setLoading(false));
+    } else {
       setLoading(false);
-      return;
     }
-    getUserTier(user.id)
-      .then(setUserTier)
-      .catch(() => setUserTier('free'))
-      .finally(() => setLoading(false));
   }, [user]);
 
   if (loading) return null;
 
-  if (canAccessTier(userTier, requiredTier)) {
-    return <>{children}</>;
-  }
-
-  if (fallback) {
+  if (!canAccessTier(userTier, requiredTier)) {
     return (
       <>
-        {fallback}
+        {fallback || (
+          <div
+            className="relative cursor-pointer"
+            onClick={() => setShowUpgrade(true)}
+          >
+            <div className="absolute inset-0 bg-background/80 backdrop-blur-sm z-10 flex items-center justify-center rounded-lg">
+              <div className="text-center p-6">
+                <p className="font-display text-lg font-bold uppercase mb-2">
+                  {requiredTier === 'premium' ? 'Premium' : 'Pro'} Content
+                </p>
+                <p className="text-sm text-muted-foreground mb-3">
+                  Upgrade to access this content
+                </p>
+                <span className="inline-flex items-center px-4 py-2 bg-primary text-primary-foreground rounded-full text-sm font-semibold">
+                  Upgrade Now
+                </span>
+              </div>
+            </div>
+            <div className="opacity-30 pointer-events-none">{children}</div>
+          </div>
+        )}
         <UpgradeModal open={showUpgrade} onOpenChange={setShowUpgrade} requiredTier={requiredTier} />
       </>
     );
   }
 
-  return (
-    <>
-      <div
-        className="relative cursor-pointer group"
-        onClick={() => setShowUpgrade(true)}
-      >
-        <div className="absolute inset-0 bg-background/80 backdrop-blur-sm rounded-lg flex items-center justify-center z-10">
-          <div className="text-center">
-            <Lock className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
-            <p className="text-sm font-semibold text-muted-foreground">
-              {requiredTier === 'premium' ? 'Premium' : 'Pro'} Content
-            </p>
-            <p className="text-xs text-muted-foreground mt-1 group-hover:text-primary transition-colors">
-              Click to upgrade
-            </p>
-          </div>
-        </div>
-        <div className="opacity-30 pointer-events-none">{children}</div>
-      </div>
-      <UpgradeModal open={showUpgrade} onOpenChange={setShowUpgrade} requiredTier={requiredTier} />
-    </>
-  );
+  return <>{children}</>;
 };
 
 export default GatedContent;
