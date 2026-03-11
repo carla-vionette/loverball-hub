@@ -15,7 +15,7 @@ import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Home from "./pages/Home";
-import Discover from "./pages/Discover";
+
 import Explore from "./pages/Explore";
 import Events from "./pages/Events";
 import Shop from "./pages/Shop";
@@ -84,7 +84,7 @@ const App = () => (
               <Route path="/index" element={<Index />} />
               <Route path="/home" element={<Home />} />
               <Route path="/auth" element={<Auth />} />
-              <Route path="/discover" element={<Discover />} />
+              <Route path="/discover" element={<Navigate to="/explore" replace />} />
               <Route path="/explore" element={<Explore />} />
               <Route path="/channel/:handle" element={<ChannelProfile />} />
               <Route path="/feed" element={<Feed />} />
