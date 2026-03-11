@@ -14,7 +14,7 @@ export default defineConfig(({ mode }) => ({
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
-    dedupe: ["react", "react-dom", "react/jsx-runtime", "react-router-dom", "zustand", "@radix-ui/react-avatar", "@radix-ui/react-popover"],
+    dedupe: ["react", "react-dom", "react/jsx-runtime", "react-router-dom", "zustand", "@radix-ui/react-avatar", "@radix-ui/react-popover", "@tanstack/react-query"],
   },
   optimizeDeps: {
     // Force re-bundling to clear stale dep cache causing dual React instances
