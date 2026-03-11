@@ -503,7 +503,7 @@ const Profile = () => {
                                 <Badge variant="outline" className="text-[9px] px-1.5 py-0 rounded-full border-border/30">{team.league}</Badge>
                                 {team.injuryNote && (
                                   <span title={team.injuryNote}>
-                                    <AlertTriangle className="w-3.5 h-3.5 text-amber-500" />
+                                    <AlertTriangle className="w-3.5 h-3.5 text-warning" />
                                   </span>
                                 )}
                               </div>
