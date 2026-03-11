@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
-import { 
-  LayoutDashboard, Users, Calendar, 
+import {
+  LayoutDashboard, Users, Calendar, Video,
   LogOut, Settings
 } from 'lucide-react';
 import loverballLogo from '@/assets/loverball-logo.png';
@@ -14,6 +14,7 @@ interface AdminSidebarProps {
 const navItems = [
   { id: 'members', label: 'Members', icon: Users },
   { id: 'applications', label: 'Applications', icon: LayoutDashboard },
+  { id: 'videos', label: 'Videos', icon: Video },
   { id: 'events', label: 'Events', icon: Calendar },
 ];
 
