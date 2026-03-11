@@ -39,6 +39,8 @@ const Onboarding = () => {
   const [pronouns, setPronouns] = useState("");
   const [city, setCity] = useState("");
   const [birthday, setBirthday] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [smsOptIn, setSmsOptIn] = useState(false);
   const [profilePhoto, setProfilePhoto] = useState<File | null>(null);
   const [profilePhotoPreview, setProfilePhotoPreview] = useState<string | null>(null);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
@@ -165,9 +167,19 @@ const Onboarding = () => {
         bio,
         profile_photo_url: photoUrl,
         birthday: birthday || null,
+        phone_number: phoneNumber.trim() || null,
+        sms_notifications_enabled: smsOptIn,
       });
 
       if (error) throw error;
+
+      // Send welcome email (fire-and-forget)
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user?.email) {
+        supabase.functions.invoke("send-welcome-email", {
+          body: { email: user.email, name },
+        }).catch((err) => console.warn("Welcome email failed:", err));
+      }
 
       toast({
         title: "Profile created!",
@@ -349,6 +361,35 @@ const Onboarding = () => {
                       </Select>
                     </div>
 
+                    <div className="space-y-2">
+                      <Label htmlFor="phone" className="text-xs tracking-wider uppercase text-foreground/60">Phone Number *</Label>
+                      <Input
+                        id="phone"
+                        type="tel"
+                        value={phoneNumber}
+                        onChange={(e) => setPhoneNumber(e.target.value)}
+                        placeholder="(555) 123-4567"
+                        className="rounded-none h-12 border-border bg-background"
+                      />
+                      {phoneNumber.trim() && phoneNumber.trim().length < 10 && (
+                        <p className="text-xs text-destructive">Enter a valid phone number</p>
+                      )}
+                    </div>
+
+                    {phoneNumber.trim().length >= 10 && (
+                      <div className="flex items-start gap-3 p-4 border border-border bg-background">
+                        <Checkbox
+                          id="sms-opt-in"
+                          checked={smsOptIn}
+                          onCheckedChange={(checked) => setSmsOptIn(checked === true)}
+                          className="mt-0.5"
+                        />
+                        <label htmlFor="sms-opt-in" className="text-sm text-foreground/80 leading-relaxed cursor-pointer">
+                          I'd like to receive text updates from Loverball (event reminders, match alerts & more)
+                        </label>
+                      </div>
+                    )}
+
                   </div>
                 )}
 
@@ -464,6 +505,9 @@ const Onboarding = () => {
                           <p className="text-sm text-muted-foreground">
                             {city}{pronouns ? ` · ${pronouns}` : ""}
                           </p>
+                          {phoneNumber && (
+                            <p className="text-xs text-muted-foreground mt-1">📱 {phoneNumber}{smsOptIn ? " · SMS updates ON" : ""}</p>
+                          )}
                         </div>
                       </div>
 
