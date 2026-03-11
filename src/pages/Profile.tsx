@@ -365,24 +365,6 @@ const Profile = () => {
               </motion.div>
             )}
 
-            {/* STATS OVERVIEW - Glassmorphism */}
-            <motion.div variants={staggerItem} className="grid grid-cols-3 gap-3">
-              <div className="glass-card rounded-2xl p-4 text-center">
-                <Trophy className="w-5 h-5 text-primary mx-auto mb-2" />
-                <p className="text-2xl font-sans font-bold text-foreground">{(combinedWinPct * 100).toFixed(0)}%</p>
-                <p className="text-xs text-muted-foreground">Win Rate</p>
-              </div>
-              <div className="glass-card rounded-2xl p-4 text-center">
-                <Flame className="w-5 h-5 text-primary mx-auto mb-2" />
-                <p className="text-2xl font-sans font-bold text-foreground">{rsvpEvents.filter(r => r.status === 'confirmed').length}</p>
-                <p className="text-xs text-muted-foreground">Confirmed</p>
-              </div>
-              <div className="glass-card rounded-2xl p-4 text-center">
-                <Heart className="w-5 h-5 text-accent mx-auto mb-2" />
-                <p className="text-2xl font-sans font-bold text-foreground">{rsvpEvents.length}</p>
-                <p className="text-xs text-muted-foreground">Events</p>
-              </div>
-            </motion.div>
 
             {/* GREETING + DATE */}
             <motion.div variants={staggerItem} className="glass-card rounded-2xl p-5">
