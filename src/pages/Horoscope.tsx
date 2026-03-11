@@ -6,37 +6,32 @@ import MobileHeader from "@/components/MobileHeader";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
-import { Share2, RefreshCw, Loader2 } from "lucide-react";
+import { Share2, RefreshCw, Loader2, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 
-const SIGNS = [
-  { name: "Aries", symbol: "♈", element: "fire" },
-  { name: "Taurus", symbol: "♉", element: "earth" },
-  { name: "Gemini", symbol: "♊", element: "air" },
-  { name: "Cancer", symbol: "♋", element: "water" },
-  { name: "Leo", symbol: "♌", element: "fire" },
-  { name: "Virgo", symbol: "♍", element: "earth" },
-  { name: "Libra", symbol: "♎", element: "air" },
-  { name: "Scorpio", symbol: "♏", element: "water" },
-  { name: "Sagittarius", symbol: "♐", element: "fire" },
-  { name: "Capricorn", symbol: "♑", element: "earth" },
-  { name: "Aquarius", symbol: "♒", element: "air" },
-  { name: "Pisces", symbol: "♓", element: "water" },
-];
-
-const ELEMENT_COLORS: Record<string, string> = {
-  fire: "border-accent/40 bg-accent/5",
-  earth: "border-emerald-500/40 bg-emerald-500/5",
-  air: "border-primary/40 bg-primary/5",
-  water: "border-blue-500/40 bg-blue-500/5",
+const SIGNS: Record<string, { symbol: string; element: string; dates: string }> = {
+  Aries: { symbol: "♈", element: "fire", dates: "Mar 21 – Apr 19" },
+  Taurus: { symbol: "♉", element: "earth", dates: "Apr 20 – May 20" },
+  Gemini: { symbol: "♊", element: "air", dates: "May 21 – Jun 20" },
+  Cancer: { symbol: "♋", element: "water", dates: "Jun 21 – Jul 22" },
+  Leo: { symbol: "♌", element: "fire", dates: "Jul 23 – Aug 22" },
+  Virgo: { symbol: "♍", element: "earth", dates: "Aug 23 – Sep 22" },
+  Libra: { symbol: "♎", element: "air", dates: "Sep 23 – Oct 22" },
+  Scorpio: { symbol: "♏", element: "water", dates: "Oct 23 – Nov 21" },
+  Sagittarius: { symbol: "♐", element: "fire", dates: "Nov 22 – Dec 21" },
+  Capricorn: { symbol: "♑", element: "earth", dates: "Dec 22 – Jan 19" },
+  Aquarius: { symbol: "♒", element: "air", dates: "Jan 20 – Feb 18" },
+  Pisces: { symbol: "♓", element: "water", dates: "Feb 19 – Mar 20" },
 };
 
-const ELEMENT_SELECTED: Record<string, string> = {
-  fire: "border-accent bg-accent/20 ring-2 ring-accent/30",
-  earth: "border-emerald-500 bg-emerald-500/20 ring-2 ring-emerald-500/30",
-  air: "border-primary bg-primary/20 ring-2 ring-primary/30",
-  water: "border-blue-500 bg-blue-500/20 ring-2 ring-blue-500/30",
+const ELEMENT_BORDER: Record<string, string> = {
+  fire: "border-accent/30",
+  earth: "border-emerald-500/30",
+  air: "border-primary/30",
+  water: "border-blue-500/30",
 };
 
 function getZodiacFromBirthday(birthday: string | null): string | null {
@@ -58,14 +53,14 @@ function getZodiacFromBirthday(birthday: string | null): string | null {
   return "Capricorn";
 }
 
-// Session cache for API responses
 const sessionCache = new Map<string, { data: any; ts: number }>();
 const SESSION_TTL = 3_600_000;
 
 type Period = "daily" | "weekly" | "monthly";
 
 const Horoscope = () => {
-  const [selectedSign, setSelectedSign] = useState<string | null>(null);
+  const navigate = useNavigate();
+  const [userSign, setUserSign] = useState<string | null>(null);
   const [period, setPeriod] = useState<Period>("daily");
   const [horoscope, setHoroscope] = useState<string | null>(null);
   const [horoscopeDate, setHoroscopeDate] = useState<string | null>(null);
@@ -73,7 +68,6 @@ const Horoscope = () => {
   const [error, setError] = useState<string | null>(null);
   const [profileLoading, setProfileLoading] = useState(true);
 
-  // Auto-detect sign from profile
   useEffect(() => {
     const fetchProfile = async () => {
       try {
@@ -82,7 +76,7 @@ const Horoscope = () => {
           const { data: profile } = await supabase.from("profiles").select("birthday").eq("id", user.id).single();
           if (profile?.birthday) {
             const sign = getZodiacFromBirthday(profile.birthday);
-            if (sign) setSelectedSign(sign);
+            if (sign) setUserSign(sign);
           }
         }
       } finally {
@@ -109,12 +103,11 @@ const Horoscope = () => {
         body: { sign: sign.toLowerCase(), period: p },
       });
       if (fnError) throw fnError;
-      // Handle both new API format { data: { horoscope } } and legacy format { reading }
       const reading = resp?.data?.horoscope || resp?.horoscope || resp?.reading;
       if (!reading) throw new Error("No horoscope data returned");
       setHoroscope(reading);
       setHoroscopeDate(resp?.data?.date || resp?.date || null);
-      sessionCache.set(cacheKey, { data: { horoscope: reading, date: resp?.data?.date }, ts: Date.now() });
+      sessionCache.set(cacheKey, { data: { horoscope: reading, date: resp?.data?.date || resp?.date }, ts: Date.now() });
     } catch (e: any) {
       console.error("Horoscope fetch error:", e);
       setError("Couldn't load your forecast. Tap retry.");
@@ -124,30 +117,29 @@ const Horoscope = () => {
     }
   }, []);
 
-  // Fetch when sign or period changes
   useEffect(() => {
-    if (selectedSign) fetchHoroscope(selectedSign, period);
-  }, [selectedSign, period, fetchHoroscope]);
+    if (userSign) fetchHoroscope(userSign, period);
+  }, [userSign, period, fetchHoroscope]);
 
   const handleShare = async () => {
-    if (!horoscope || !selectedSign) return;
-    const signData = SIGNS.find(s => s.name === selectedSign);
-    const text = `${signData?.symbol} ${selectedSign} (${period}) – ${horoscope}`;
+    if (!horoscope || !userSign) return;
+    const signData = SIGNS[userSign];
+    const text = `${signData?.symbol} ${userSign} (${period}) – ${horoscope}`;
     if (navigator.share) {
-      await navigator.share({ title: `${selectedSign} Horoscope`, text });
+      await navigator.share({ title: `${userSign} Horoscope`, text });
     } else {
       await navigator.clipboard.writeText(text);
     }
   };
 
   const handleRetry = () => {
-    if (selectedSign) {
-      sessionCache.delete(`${selectedSign.toLowerCase()}:${period}`);
-      fetchHoroscope(selectedSign, period);
+    if (userSign) {
+      sessionCache.delete(`${userSign.toLowerCase()}:${period}`);
+      fetchHoroscope(userSign, period);
     }
   };
 
-  const selectedSignData = SIGNS.find(s => s.name === selectedSign);
+  const signData = userSign ? SIGNS[userSign] : null;
 
   return (
     <div className="min-h-screen bg-background">
@@ -164,33 +156,53 @@ const Horoscope = () => {
               🏀 Your Game Day Forecast
             </h1>
             <p className="text-sm text-muted-foreground">
-              Select your sign and check your cosmic playbook
+              Your cosmic playbook, based on your birthdate
             </p>
           </div>
 
-          {/* Zodiac Grid */}
-          <div className="grid grid-cols-4 gap-2">
-            {SIGNS.map((sign) => {
-              const isSelected = selectedSign === sign.name;
-              return (
-                <button
-                  key={sign.name}
-                  onClick={() => setSelectedSign(sign.name)}
-                  className={`flex flex-col items-center gap-1 p-3 rounded-xl border-2 transition-all duration-200 ${
-                    isSelected ? ELEMENT_SELECTED[sign.element] : ELEMENT_COLORS[sign.element]
-                  } hover:scale-105 active:scale-95`}
-                >
-                  <span className="text-2xl">{sign.symbol}</span>
-                  <span className={`text-[10px] font-medium ${isSelected ? "text-foreground" : "text-muted-foreground"}`}>
-                    {sign.name}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
+          {/* Loading */}
+          {profileLoading && (
+            <Card><CardContent className="p-6 space-y-3">
+              <Skeleton className="h-10 w-40 mx-auto" />
+              <Skeleton className="h-4 w-24 mx-auto" />
+              <Skeleton className="h-20 w-full" />
+            </CardContent></Card>
+          )}
+
+          {/* No birthday set */}
+          {!profileLoading && !userSign && (
+            <Card className="border-2 border-dashed border-muted-foreground/20">
+              <CardContent className="p-8 text-center space-y-4">
+                <Calendar className="w-10 h-10 text-muted-foreground mx-auto" />
+                <div className="space-y-1">
+                  <p className="text-sm font-medium text-foreground">No birthdate found</p>
+                  <p className="text-xs text-muted-foreground">
+                    Add your birthday to your profile and we'll automatically determine your zodiac sign.
+                  </p>
+                </div>
+                <Button variant="outline" size="sm" onClick={() => navigate("/edit-profile")}>
+                  Edit Profile
+                </Button>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Sign badge (read-only) */}
+          {userSign && signData && (
+            <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
+              <div className={`flex items-center justify-center gap-3 p-4 rounded-2xl border-2 ${ELEMENT_BORDER[signData.element]} bg-card`}>
+                <span className="text-5xl">{signData.symbol}</span>
+                <div className="text-left">
+                  <h2 className="text-xl font-sans font-bold text-foreground">{userSign}</h2>
+                  <p className="text-xs text-muted-foreground">{signData.dates}</p>
+                  <Badge variant="outline" className="mt-1 text-[10px] capitalize">{signData.element}</Badge>
+                </div>
+              </div>
+            </motion.div>
+          )}
 
           {/* Period Tabs */}
-          {selectedSign && (
+          {userSign && (
             <Tabs value={period} onValueChange={(v) => setPeriod(v as Period)} className="w-full">
               <TabsList className="w-full bg-muted">
                 <TabsTrigger value="daily" className="flex-1 text-xs font-semibold">Daily</TabsTrigger>
@@ -201,8 +213,8 @@ const Horoscope = () => {
           )}
 
           {/* Reading Card */}
-          {selectedSign && (
-            <motion.div key={`${selectedSign}-${period}`} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
+          {userSign && (
+            <motion.div key={`${userSign}-${period}`} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
               <Card className="overflow-hidden border-2 border-primary/20">
                 <CardContent className="p-5 space-y-4">
                   {isLoading ? (
@@ -219,18 +231,10 @@ const Horoscope = () => {
                     </div>
                   ) : horoscope ? (
                     <>
-                      <div className="flex items-center gap-3">
-                        <span className="text-4xl">{selectedSignData?.symbol}</span>
-                        <div>
-                          <h2 className="text-lg font-sans font-bold text-foreground">{selectedSign}</h2>
-                          <p className="text-xs text-muted-foreground capitalize">
-                            {period} forecast{horoscopeDate ? ` · ${horoscopeDate}` : ""}
-                          </p>
-                        </div>
-                      </div>
-
+                      <p className="text-xs text-muted-foreground capitalize">
+                        {period} forecast{horoscopeDate ? ` · ${horoscopeDate}` : ""}
+                      </p>
                       <p className="text-foreground leading-relaxed text-sm">{horoscope}</p>
-
                       <Button variant="ghost" size="sm" onClick={handleShare} className="gap-1.5 text-xs text-muted-foreground px-0">
                         <Share2 className="w-3.5 h-3.5" /> Share
                       </Button>
@@ -239,22 +243,6 @@ const Horoscope = () => {
                 </CardContent>
               </Card>
             </motion.div>
-          )}
-
-          {/* Empty state */}
-          {!selectedSign && !profileLoading && (
-            <Card>
-              <CardContent className="p-6 text-center text-sm text-muted-foreground">
-                Tap a zodiac sign above to see your forecast.
-              </CardContent>
-            </Card>
-          )}
-
-          {profileLoading && !selectedSign && (
-            <Card><CardContent className="p-6 space-y-3">
-              <Skeleton className="h-8 w-32 mx-auto" />
-              <Skeleton className="h-20 w-full" />
-            </CardContent></Card>
           )}
         </div>
       </main>
