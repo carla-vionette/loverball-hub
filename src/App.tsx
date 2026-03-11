@@ -19,7 +19,7 @@ import Home from "./pages/Home";
 import Explore from "./pages/Explore";
 import Events from "./pages/Events";
 import Shop from "./pages/Shop";
-import Profile from "./pages/Profile";
+const Profile = lazy(() => import("./pages/Profile"));
 import Feed from "./pages/Feed";
 import Watch from "./pages/Watch";
 import Search from "./pages/Search";
