@@ -15,7 +15,7 @@ import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Home from "./pages/Home";
-import Discover from "./pages/Discover";
+
 import Explore from "./pages/Explore";
 import Events from "./pages/Events";
 import Shop from "./pages/Shop";
