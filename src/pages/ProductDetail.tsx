@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import Navigation from "@/components/Navigation";
+import DesktopNav from "@/components/DesktopNav";
+import MobileHeader from "@/components/MobileHeader";
+import BottomNav from "@/components/BottomNav";
 import { CartDrawer } from "@/components/CartDrawer";
 import { getProducts, getProductByHandle, ShopifyProduct } from "@/lib/shopify";
 import { Button } from "@/components/ui/button";
@@ -158,7 +160,7 @@ const ProductDetail = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-background">
-        <Navigation />
+        <><MobileHeader /><DesktopNav /><BottomNav /></>
         <div className="flex items-center justify-center py-20">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
@@ -169,7 +171,7 @@ const ProductDetail = () => {
   if (!product) {
     return (
       <div className="min-h-screen bg-background">
-        <Navigation />
+        <><MobileHeader /><DesktopNav /><BottomNav /></>
         <div className="container mx-auto px-4 pt-24 text-center">
           <h1 className="text-2xl font-bold mb-4">Product not found</h1>
           <Link to="/shop">
@@ -187,7 +189,7 @@ const ProductDetail = () => {
 
   return (
     <div className="min-h-screen bg-background pb-20 md:pb-0">
-      <Navigation />
+      <><MobileHeader /><DesktopNav /><BottomNav /></>
       
       <main className="container mx-auto px-4 pt-24 md:pt-28">
         <div className="flex justify-between items-center mb-8">
