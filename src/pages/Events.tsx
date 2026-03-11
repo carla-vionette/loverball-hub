@@ -110,7 +110,14 @@ const Events = () => {
   };
 
   const filtered = category === "All" ? events : events.filter(e => e.event_type === category);
-  const featured = events[0];
+  const now = new Date();
+  const featured = events.length
+    ? events.reduce((closest, ev) => {
+        const diff = Math.abs(new Date(ev.event_date).getTime() - now.getTime());
+        const closestDiff = Math.abs(new Date(closest.event_date).getTime() - now.getTime());
+        return diff < closestDiff ? ev : closest;
+      })
+    : null;
 
   if (loading) {
     return (
