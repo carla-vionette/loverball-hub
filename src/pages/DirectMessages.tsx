@@ -184,7 +184,7 @@ const DirectMessages = () => {
             </div>
             <h2 className="text-lg font-sans font-semibold mb-1">No messages yet</h2>
             <p className="text-muted-foreground text-sm max-w-xs">
-              Head to <Link to="/connections" className="text-primary underline">Connections</Link> to find your people!
+              Match with members through events and your profile to start chatting!
             </p>
           </div>
         ) : (
