@@ -505,6 +505,9 @@ const Onboarding = () => {
                           <p className="text-sm text-muted-foreground">
                             {city}{pronouns ? ` · ${pronouns}` : ""}
                           </p>
+                          {phoneNumber && (
+                            <p className="text-xs text-muted-foreground mt-1">📱 {phoneNumber}{smsOptIn ? " · SMS updates ON" : ""}</p>
+                          )}
                         </div>
                       </div>
 
