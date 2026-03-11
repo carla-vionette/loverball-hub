@@ -721,6 +721,6 @@ function Profile() {
       </main>
     </div>
   );
-};
+}
 
 export default Profile;
