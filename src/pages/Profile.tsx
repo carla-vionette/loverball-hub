@@ -155,6 +155,8 @@ const Profile = () => {
   const [feedLoading, setFeedLoading] = useState(true);
   const [loading, setLoading] = useState(true);
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [liveHoroscope, setLiveHoroscope] = useState<string | null>(null);
+  const [horoscopeLoading, setHoroscopeLoading] = useState(false);
   
   const goTo = (path: string) => { window.location.href = path; };
   const { toast } = useToast();
