@@ -391,9 +391,9 @@ const Profile = () => {
             </motion.div>
 
             {/* DAILY HOROSCOPE SNIPPET */}
-            {zodiac && (
-              <motion.div variants={staggerItem}>
-                <div className="glass-card rounded-2xl p-4">
+            <motion.div variants={staggerItem}>
+              <div className="rounded-2xl p-4 border-2 border-primary/30 bg-primary/5">
+                {zodiac ? (
                   <div className="flex items-start gap-3">
                     <span className="text-3xl mt-0.5">{zodiac.symbol}</span>
                     <div className="flex-1 min-w-0">
@@ -410,9 +410,14 @@ const Profile = () => {
                       </Button>
                     </div>
                   </div>
-                </div>
-              </motion.div>
-            )}
+                ) : (
+                  <div className="flex items-center gap-3">
+                    <span className="text-2xl">✨</span>
+                    <p className="text-xs text-muted-foreground">Add your birthday in <button className="text-primary underline" onClick={() => goTo("/profile/edit")}>Edit Profile</button> to see your daily horoscope.</p>
+                  </div>
+                )}
+              </div>
+            </motion.div>
 
             {/* MY INTERESTS LINK */}
             <motion.div variants={staggerItem}>
