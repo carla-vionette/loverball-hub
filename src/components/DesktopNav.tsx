@@ -1,5 +1,5 @@
 import React from "react";
-import { User, Search, CalendarDays, Settings, ShoppingBag, Play, MessageCircle, Home, Compass, Newspaper, Heart, Bell } from "lucide-react";
+import { User, Search, CalendarDays, Settings, ShoppingBag, Play, MessageCircle, Home, Compass, Newspaper, Bell } from "lucide-react";
 import loverbballLogo from "@/assets/loverball-script-logo.png";
 
 const DesktopNav = () => {
@@ -8,7 +8,6 @@ const DesktopNav = () => {
   const mainNavItems = [
     { icon: Home, label: "For You", path: "/home" },
     { icon: Compass, label: "Discover", path: "/explore" },
-    { icon: Heart, label: "Connect", path: "/discover" },
     { icon: Play, label: "Watch", path: "/watch" },
     { icon: Newspaper, label: "Feed", path: "/feed" },
     { icon: CalendarDays, label: "Events", path: "/events" },
