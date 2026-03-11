@@ -173,6 +173,14 @@ const Onboarding = () => {
 
       if (error) throw error;
 
+      // Send welcome email (fire-and-forget)
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user?.email) {
+        supabase.functions.invoke("send-welcome-email", {
+          body: { email: user.email, name },
+        }).catch((err) => console.warn("Welcome email failed:", err));
+      }
+
       toast({
         title: "Profile created!",
         description: "Welcome to Loverball! 🏀",
