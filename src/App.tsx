@@ -84,7 +84,7 @@ const App = () => (
               <Route path="/index" element={<Index />} />
               <Route path="/home" element={<Home />} />
               <Route path="/auth" element={<Auth />} />
-              <Route path="/discover" element={<Discover />} />
+              <Route path="/discover" element={<Navigate to="/explore" replace />} />
               <Route path="/explore" element={<Explore />} />
               <Route path="/channel/:handle" element={<ChannelProfile />} />
               <Route path="/feed" element={<Feed />} />
