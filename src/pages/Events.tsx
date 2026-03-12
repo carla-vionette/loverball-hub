@@ -144,7 +144,23 @@ const Events = () => {
 
       <main className="md:ml-64 pt-16 md:pt-0 pb-24 md:pb-0">
         <div className="max-w-6xl mx-auto px-5 md:px-10 py-6">
-          <h1 className="font-display text-[28px] font-bold uppercase tracking-tight mb-6">Events</h1>
+          <h1 className="font-display text-[28px] font-bold uppercase tracking-tight mb-4">Events</h1>
+
+          {/* TABS */}
+          <div className="flex gap-1 mb-6 bg-secondary rounded-full p-1 w-fit">
+            <button
+              onClick={() => setTab("upcoming")}
+              className={`px-5 py-2 rounded-full text-sm font-semibold transition-all ${tab === "upcoming" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+            >
+              Upcoming
+            </button>
+            <button
+              onClick={() => setTab("past")}
+              className={`px-5 py-2 rounded-full text-sm font-semibold transition-all ${tab === "past" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+            >
+              Past Events
+            </button>
+          </div>
 
           {/* FEATURED */}
           {featured && (
