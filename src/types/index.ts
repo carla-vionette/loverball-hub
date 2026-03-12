@@ -1,7 +1,7 @@
 export type AppRole = 'pending' | 'member' | 'admin';
-export type SubscriptionPlan = 'free' | 'pro' | 'premium';
+export type SubscriptionPlan = 'free' | 'digital' | 'local';
 export type SubscriptionStatus = 'active' | 'canceled' | 'past_due' | 'trialing';
-export type ContentTier = 'free' | 'pro' | 'premium';
+export type ContentTier = 'free' | 'digital' | 'local';
 
 export interface UserProfile {
   id: string;

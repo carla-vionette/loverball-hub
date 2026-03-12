@@ -53,7 +53,7 @@ const GatedContent = ({ children, requiredTier, fallback }: GatedContentProps) =
           <div className="text-center">
             <Lock className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
             <p className="text-sm font-semibold text-muted-foreground">
-              {requiredTier === 'premium' ? 'Premium' : 'Pro'} Content
+              {requiredTier === 'local' ? 'The Club' : 'All Access'} Content
             </p>
             <p className="text-xs text-muted-foreground mt-1 group-hover:text-primary transition-colors">
               Click to upgrade

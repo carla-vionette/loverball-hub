@@ -20,7 +20,7 @@ interface UpgradeModalProps {
   requiredTier?: string;
 }
 
-const UpgradeModal = ({ open, onOpenChange, requiredTier = 'pro' }: UpgradeModalProps) => {
+const UpgradeModal = ({ open, onOpenChange, requiredTier = 'digital' }: UpgradeModalProps) => {
   const { user } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -53,19 +53,19 @@ const UpgradeModal = ({ open, onOpenChange, requiredTier = 'pro' }: UpgradeModal
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-3 mt-4">
-          {requiredTier !== 'premium' && (
+          {requiredTier !== 'local' && (
             <div className="border rounded-lg p-4">
               <div className="flex items-center justify-between mb-2">
                 <div>
-                  <p className="font-semibold">Pro Plan</p>
-                  <p className="text-sm text-muted-foreground">$9.99/month</p>
+                  <p className="font-semibold">All Access</p>
+                  <p className="text-sm text-muted-foreground">$15/month</p>
                 </div>
-                <Button size="sm" onClick={() => handleUpgrade('pro')} disabled={!!loading}>
-                  {loading === 'pro' ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Upgrade'}
+                <Button size="sm" onClick={() => handleUpgrade('digital')} disabled={!!loading}>
+                  {loading === 'digital' ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Upgrade'}
                 </Button>
               </div>
               <ul className="space-y-1">
-                {['Full video library', 'All events', 'Member dashboard'].map((f) => (
+                {['No ads', 'Full content library', 'Full digital community'].map((f) => (
                   <li key={f} className="text-xs text-muted-foreground flex items-center gap-1.5">
                     <Check className="w-3 h-3 text-primary" /> {f}
                   </li>
@@ -76,15 +76,15 @@ const UpgradeModal = ({ open, onOpenChange, requiredTier = 'pro' }: UpgradeModal
           <div className="border rounded-lg p-4 border-primary/30 bg-primary/5">
             <div className="flex items-center justify-between mb-2">
               <div>
-                <p className="font-semibold">Premium Plan</p>
-                <p className="text-sm text-muted-foreground">$19.99/month</p>
+                <p className="font-semibold">The Club</p>
+                <p className="text-sm text-muted-foreground">$35/month</p>
               </div>
-              <Button size="sm" onClick={() => handleUpgrade('premium')} disabled={!!loading}>
-                {loading === 'premium' ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Upgrade'}
+              <Button size="sm" onClick={() => handleUpgrade('local')} disabled={!!loading}>
+                {loading === 'local' ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Upgrade'}
               </Button>
             </div>
             <ul className="space-y-1">
-              {['Everything in Pro', 'Exclusive events', 'Early access', 'VIP features'].map((f) => (
+              {['Everything in All Access', 'IRL events access', 'Local networking', 'Exclusive perks'].map((f) => (
                 <li key={f} className="text-xs text-muted-foreground flex items-center gap-1.5">
                   <Check className="w-3 h-3 text-primary" /> {f}
                 </li>
