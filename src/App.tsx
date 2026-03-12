@@ -9,23 +9,21 @@ import { Loader2 } from "lucide-react";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
 import NetworkStatus from "@/components/NetworkStatus";
 import { usePageTracking } from "@/hooks/usePageTracking";
-
-// Eagerly load core navigation pages
-import Index from "./pages/Index";
-import Auth from "./pages/Auth";
 import ProtectedRoute from "./components/ProtectedRoute";
-import Home from "./pages/Home";
-import Explore from "./pages/Explore";
-import Events from "./pages/Events";
-import Shop from "./pages/Shop";
-import Profile from "./pages/Profile";
-import Feed from "./pages/Feed";
-import Watch from "./pages/Watch";
-import Search from "./pages/Search";
-import VideoDetail from "./pages/VideoDetail";
-import ChannelProfile from "./pages/ChannelProfile";
 
-// Lazy load less-visited pages
+// ── Every page is lazy-loaded for minimal initial bundle ──
+const Index = lazy(() => import("./pages/Index"));
+const Auth = lazy(() => import("./pages/Auth"));
+const Home = lazy(() => import("./pages/Home"));
+const Explore = lazy(() => import("./pages/Explore"));
+const Events = lazy(() => import("./pages/Events"));
+const Shop = lazy(() => import("./pages/Shop"));
+const Profile = lazy(() => import("./pages/Profile"));
+const Feed = lazy(() => import("./pages/Feed"));
+const Watch = lazy(() => import("./pages/Watch"));
+const Search = lazy(() => import("./pages/Search"));
+const VideoDetail = lazy(() => import("./pages/VideoDetail"));
+const ChannelProfile = lazy(() => import("./pages/ChannelProfile"));
 const MemberDashboard = lazy(() => import("./pages/MemberDashboard"));
 const Onboarding = lazy(() => import("./pages/Onboarding"));
 const Horoscope = lazy(() => import("./pages/Horoscope"));
@@ -51,7 +49,7 @@ const Ticker = lazy(() => import("./pages/Ticker"));
 const PlanSelection = lazy(() => import("./pages/PlanSelection"));
 const Inbox = lazy(() => import("./pages/Inbox"));
 
-// SaaS pages (lazy loaded)
+// SaaS pages
 const PricingPage = lazy(() => import("./pages/PricingPage"));
 const BillingPage = lazy(() => import("./pages/BillingPage"));
 const InvitesPage = lazy(() => import("./pages/InvitesPage"));
@@ -59,13 +57,25 @@ const InviteLanding = lazy(() => import("./pages/InviteLanding"));
 const VideoLibrary = lazy(() => import("./pages/VideoLibrary"));
 const VideoPlayerPage = lazy(() => import("./pages/VideoPlayerPage"));
 
-// Admin pages (lazy loaded)
+// Admin pages
 const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
 const AdminEventEditor = lazy(() => import("./pages/AdminEventEditor"));
 const AdminAttendeeManager = lazy(() => import("./pages/AdminAttendeeManager"));
 const EventBuilder = lazy(() => import("./pages/admin/EventBuilder"));
 
-const queryClient = new QueryClient();
+// ── Stale-while-revalidate query config for slow connections ──
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000,       // 5 min — don't refetch if data is fresh
+      gcTime: 30 * 60 * 1000,          // 30 min — keep in cache
+      retry: 2,                         // Retry failed requests twice
+      retryDelay: (attempt) => Math.min(1000 * 2 ** attempt, 10000),
+      refetchOnWindowFocus: false,      // Don't refetch when tab regains focus
+      refetchOnReconnect: 'always',     // But do refetch when connection restores
+    },
+  },
+});
 
 const PageLoader = () => (
   <div className="min-h-screen flex items-center justify-center bg-background">

@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { cn } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -10,11 +10,16 @@ interface LazyImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   wrapperClassName?: string;
   /** Enable WebP format with original as fallback using <picture> */
   webpSrc?: string;
+  /** Desired display width — used for srcSet sizing on Supabase Storage images */
+  displayWidth?: number;
 }
 
 /**
  * Lazy-loaded image with Intersection Observer, progressive fade-in,
- * skeleton placeholder, and optional WebP <picture> fallback.
+ * skeleton placeholder, connection-aware loading, and optional WebP fallback.
+ *
+ * For Supabase Storage URLs, automatically requests resized versions
+ * via the /render/image transform API when displayWidth is set.
  */
 const LazyImage = ({
   src,
@@ -24,6 +29,7 @@ const LazyImage = ({
   fallback,
   aspectRatio,
   webpSrc,
+  displayWidth,
   ...props
 }: LazyImageProps) => {
   const imgRef = useRef<HTMLDivElement>(null);
@@ -49,17 +55,43 @@ const LazyImage = ({
     return () => observer.disconnect();
   }, []);
 
+  // Generate optimized src: use Supabase image transform if applicable
+  const optimizedSrc = useMemo(() => {
+    if (!src) return src;
+    // Supabase Storage URLs can be resized via render/image endpoint
+    if (displayWidth && src.includes('supabase') && src.includes('/storage/')) {
+      const separator = src.includes('?') ? '&' : '?';
+      return `${src}${separator}width=${displayWidth}&quality=75`;
+    }
+    return src;
+  }, [src, displayWidth]);
+
   // Generate WebP src from original if not provided
   const inferredWebpSrc = webpSrc || (src && !src.endsWith('.svg') && !src.endsWith('.webp')
     ? src.replace(/\.(jpg|jpeg|png)$/i, '.webp')
     : undefined);
 
+  // Build responsive srcSet for common screen widths
+  const srcSet = useMemo(() => {
+    if (!displayWidth || !optimizedSrc.includes('supabase')) return undefined;
+    const widths = [displayWidth, Math.round(displayWidth * 1.5), displayWidth * 2];
+    return widths
+      .map(w => {
+        const sep = optimizedSrc.includes('?') ? '&' : '?';
+        return `${optimizedSrc.split('?')[0]}${sep}width=${w}&quality=75 ${w}w`;
+      })
+      .join(', ');
+  }, [optimizedSrc, displayWidth]);
+
   const imgElement = (
     <img
-      src={src}
+      src={optimizedSrc}
+      srcSet={srcSet}
+      sizes={displayWidth ? `${displayWidth}px` : undefined}
       alt={alt}
       loading="lazy"
       decoding="async"
+      fetchPriority={props.fetchPriority || "low"}
       onLoad={() => setLoaded(true)}
       onError={() => setError(true)}
       className={cn(
