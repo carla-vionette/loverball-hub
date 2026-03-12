@@ -404,17 +404,21 @@ export type Database = {
       events: {
         Row: {
           allow_plus_ones: boolean | null
+          banner_image: string | null
           capacity: number | null
           city: string | null
           created_at: string
           description: string | null
           end_time: string | null
           event_date: string
+          event_link: string | null
           event_time: string | null
           event_type: string | null
           host_user_id: string | null
           id: string
           image_url: string | null
+          layout_json: Json | null
+          location: string | null
           location_map_url: string | null
           location_type: string | null
           price: number | null
@@ -423,6 +427,7 @@ export type Database = {
           sport_tags: string[] | null
           status: string | null
           theme: string | null
+          tier: string | null
           title: string
           updated_at: string
           venue_name: string | null
@@ -432,17 +437,21 @@ export type Database = {
         }
         Insert: {
           allow_plus_ones?: boolean | null
+          banner_image?: string | null
           capacity?: number | null
           city?: string | null
           created_at?: string
           description?: string | null
           end_time?: string | null
           event_date: string
+          event_link?: string | null
           event_time?: string | null
           event_type?: string | null
           host_user_id?: string | null
           id?: string
           image_url?: string | null
+          layout_json?: Json | null
+          location?: string | null
           location_map_url?: string | null
           location_type?: string | null
           price?: number | null
@@ -451,6 +460,7 @@ export type Database = {
           sport_tags?: string[] | null
           status?: string | null
           theme?: string | null
+          tier?: string | null
           title: string
           updated_at?: string
           venue_name?: string | null
@@ -460,17 +470,21 @@ export type Database = {
         }
         Update: {
           allow_plus_ones?: boolean | null
+          banner_image?: string | null
           capacity?: number | null
           city?: string | null
           created_at?: string
           description?: string | null
           end_time?: string | null
           event_date?: string
+          event_link?: string | null
           event_time?: string | null
           event_type?: string | null
           host_user_id?: string | null
           id?: string
           image_url?: string | null
+          layout_json?: Json | null
+          location?: string | null
           location_map_url?: string | null
           location_type?: string | null
           price?: number | null
@@ -479,6 +493,7 @@ export type Database = {
           sport_tags?: string[] | null
           status?: string | null
           theme?: string | null
+          tier?: string | null
           title?: string
           updated_at?: string
           venue_name?: string | null
@@ -635,31 +650,25 @@ export type Database = {
       }
       invites: {
         Row: {
-          code: string
-          created_at: string
-          created_by_user_id: string | null
-          expires_at: string | null
+          created_at: string | null
           id: string
-          max_uses: number | null
-          used_count: number | null
+          invite_code: string
+          inviter_id: string | null
+          signup_count: number | null
         }
         Insert: {
-          code: string
-          created_at?: string
-          created_by_user_id?: string | null
-          expires_at?: string | null
+          created_at?: string | null
           id?: string
-          max_uses?: number | null
-          used_count?: number | null
+          invite_code: string
+          inviter_id?: string | null
+          signup_count?: number | null
         }
         Update: {
-          code?: string
-          created_at?: string
-          created_by_user_id?: string | null
-          expires_at?: string | null
+          created_at?: string | null
           id?: string
-          max_uses?: number | null
-          used_count?: number | null
+          invite_code?: string
+          inviter_id?: string | null
+          signup_count?: number | null
         }
         Relationships: []
       }
@@ -728,6 +737,35 @@ export type Database = {
           why_join?: string | null
         }
         Relationships: []
+      }
+      members: {
+        Row: {
+          created_at: string
+          id: string
+          profile_id: string
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          profile_id: string
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          profile_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "members_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       messages: {
         Row: {
@@ -1000,6 +1038,7 @@ export type Database = {
           primary_role: string | null
           profile_photo_url: string | null
           pronouns: string | null
+          role: string | null
           sms_notifications_enabled: boolean | null
           sports_experience_types: string[] | null
           tiktok_url: string | null
@@ -1033,6 +1072,7 @@ export type Database = {
           primary_role?: string | null
           profile_photo_url?: string | null
           pronouns?: string | null
+          role?: string | null
           sms_notifications_enabled?: boolean | null
           sports_experience_types?: string[] | null
           tiktok_url?: string | null
@@ -1066,6 +1106,7 @@ export type Database = {
           primary_role?: string | null
           profile_photo_url?: string | null
           pronouns?: string | null
+          role?: string | null
           sms_notifications_enabled?: boolean | null
           sports_experience_types?: string[] | null
           tiktok_url?: string | null
@@ -1134,6 +1175,39 @@ export type Database = {
           starts_at?: string | null
           tag?: string | null
           title?: string
+        }
+        Relationships: []
+      }
+      subscriptions: {
+        Row: {
+          created_at: string | null
+          current_period_end: string | null
+          id: string
+          plan: string | null
+          status: string | null
+          stripe_customer_id: string | null
+          stripe_subscription_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          current_period_end?: string | null
+          id?: string
+          plan?: string | null
+          status?: string | null
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          current_period_end?: string | null
+          id?: string
+          plan?: string | null
+          status?: string | null
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -1278,42 +1352,57 @@ export type Database = {
       }
       videos: {
         Row: {
+          category: string | null
           channel_id: string
           created_at: string
           description: string | null
+          duration: string | null
           duration_seconds: number | null
           id: string
           is_published: boolean
           published_at: string | null
           tags: string[] | null
+          thumbnail: string | null
           thumbnail_url: string | null
+          tier: string | null
           title: string
+          uploaded_by: string | null
           video_url: string
         }
         Insert: {
+          category?: string | null
           channel_id: string
           created_at?: string
           description?: string | null
+          duration?: string | null
           duration_seconds?: number | null
           id?: string
           is_published?: boolean
           published_at?: string | null
           tags?: string[] | null
+          thumbnail?: string | null
           thumbnail_url?: string | null
+          tier?: string | null
           title: string
+          uploaded_by?: string | null
           video_url: string
         }
         Update: {
+          category?: string | null
           channel_id?: string
           created_at?: string
           description?: string | null
+          duration?: string | null
           duration_seconds?: number | null
           id?: string
           is_published?: boolean
           published_at?: string | null
           tags?: string[] | null
+          thumbnail?: string | null
           thumbnail_url?: string | null
+          tier?: string | null
           title?: string
+          uploaded_by?: string | null
           video_url?: string
         }
         Relationships: [
