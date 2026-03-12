@@ -84,7 +84,7 @@ const VideoPlayerPage = () => {
             />
           </div>
         ) : (
-          <GatedContent requiredTier={video.tier || 'pro'}>
+          <GatedContent requiredTier={video.tier || 'digital'}>
             <div className="aspect-video bg-black rounded-xl overflow-hidden mb-6">
               <video
                 src={video.video_url}

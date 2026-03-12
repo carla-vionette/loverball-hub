@@ -64,8 +64,8 @@ export async function createCheckoutSession(plan: SubscriptionPlan): Promise<str
   if (!session) throw new Error('Not authenticated');
 
   const priceMap: Record<string, number> = {
-    pro: 9.99,
-    premium: 19.99,
+    digital: 15,
+    local: 35,
   };
 
   const price = priceMap[plan];
@@ -73,7 +73,7 @@ export async function createCheckoutSession(plan: SubscriptionPlan): Promise<str
 
   const { data, error } = await supabase.functions.invoke('create-checkout', {
     body: {
-      items: [{ name: `Loverball ${plan.charAt(0).toUpperCase() + plan.slice(1)} Plan`, price, quantity: 1 }],
+      items: [{ name: `Loverball ${plan === 'digital' ? 'All Access' : 'The Club'} Plan`, price, quantity: 1 }],
       success_url: `${window.location.origin}/billing?success=true`,
       cancel_url: `${window.location.origin}/pricing`,
     },
@@ -85,6 +85,6 @@ export async function createCheckoutSession(plan: SubscriptionPlan): Promise<str
 
 export function canAccessTier(userTier: SubscriptionPlan, contentTier: string | null): boolean {
   if (!contentTier || contentTier === 'free') return true;
-  const tierRank: Record<string, number> = { free: 0, pro: 1, premium: 2 };
+  const tierRank: Record<string, number> = { free: 0, digital: 1, local: 2 };
   return (tierRank[userTier] || 0) >= (tierRank[contentTier] || 0);
 }

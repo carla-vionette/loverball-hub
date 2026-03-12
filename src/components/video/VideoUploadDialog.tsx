@@ -138,8 +138,8 @@ const VideoUploadDialog = ({ open, onOpenChange, onSuccess }: VideoUploadDialogP
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="free">Free</SelectItem>
-                  <SelectItem value="pro">Pro</SelectItem>
-                  <SelectItem value="premium">Premium</SelectItem>
+                  <SelectItem value="digital">All Access</SelectItem>
+                  <SelectItem value="local">The Club</SelectItem>
                 </SelectContent>
               </Select>
             </div>

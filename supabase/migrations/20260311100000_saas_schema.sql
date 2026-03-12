@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS public.subscriptions (
   user_id uuid REFERENCES auth.users(id) ON DELETE CASCADE,
   stripe_customer_id text,
   stripe_subscription_id text,
-  plan text DEFAULT 'free' CHECK (plan IN ('free', 'pro', 'premium')),
+  plan text DEFAULT 'free' CHECK (plan IN ('free', 'digital', 'local')),
   status text DEFAULT 'active' CHECK (status IN ('active', 'canceled', 'past_due', 'trialing')),
   current_period_end timestamptz,
   created_at timestamptz DEFAULT now()
@@ -24,12 +24,12 @@ CREATE TABLE IF NOT EXISTS public.invites (
 );
 
 -- 3. Add tier column to videos table
-ALTER TABLE public.videos ADD COLUMN IF NOT EXISTS tier text DEFAULT 'free' CHECK (tier IN ('free', 'pro', 'premium'));
+ALTER TABLE public.videos ADD COLUMN IF NOT EXISTS tier text DEFAULT 'free' CHECK (tier IN ('free', 'digital', 'local'));
 ALTER TABLE public.videos ADD COLUMN IF NOT EXISTS category text;
 ALTER TABLE public.videos ADD COLUMN IF NOT EXISTS duration text;
 
 -- 4. Add tier, layout_json, banner_image columns to events table
-ALTER TABLE public.events ADD COLUMN IF NOT EXISTS tier text DEFAULT 'free' CHECK (tier IN ('free', 'pro', 'premium'));
+ALTER TABLE public.events ADD COLUMN IF NOT EXISTS tier text DEFAULT 'free' CHECK (tier IN ('free', 'digital', 'local'));
 ALTER TABLE public.events ADD COLUMN IF NOT EXISTS layout_json jsonb;
 ALTER TABLE public.events ADD COLUMN IF NOT EXISTS banner_image text;
 
