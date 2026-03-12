@@ -393,17 +393,23 @@
 
     "@svta/cml-608": ["@svta/cml-608@1.0.1", "", {}, "sha512-Y/Ier9VPUSOBnf0bJqdDyTlPrt4dDB+jk5mYHa1bnD2kcRl8qn7KkW3PRuj4w1aVN+BS2eHmsLxodt7P2hylUg=="],
 
-    "@svta/cml-cmcd": ["@svta/cml-cmcd@1.0.1", "", {}, "sha512-eox305g+QUJgXqOLVrbgxeQHCgl90ewwQ9O2bIoo7m+hanR8Xswu5CknFnT5qqIbLOHfw80ug+raycoAFHTQ+w=="],
+    "@svta/cml-cmcd": ["@svta/cml-cmcd@1.0.1", "", { "peerDependencies": { "@svta/cml-cta": "1.0.1", "@svta/cml-structured-field-values": "1.0.1", "@svta/cml-utils": "1.0.1" } }, "sha512-eox305g+QUJgXqOLVrbgxeQHCgl90ewwQ9O2bIoo7m+hanR8Xswu5CknFnT5qqIbLOHfw80ug+raycoAFHTQ+w=="],
 
-    "@svta/cml-cmsd": ["@svta/cml-cmsd@1.0.1", "", {}, "sha512-+nIB8PuSfb/qw+xGaArPhNqPm84tBJUbe3H1DnPL5QUsjSUI7mUIUQwAtRV1ZdEu0+80g9i0op79woB0OIwr/g=="],
+    "@svta/cml-cmsd": ["@svta/cml-cmsd@1.0.1", "", { "peerDependencies": { "@svta/cml-cta": "1.0.1", "@svta/cml-structured-field-values": "1.0.1", "@svta/cml-utils": "1.0.1" } }, "sha512-+nIB8PuSfb/qw+xGaArPhNqPm84tBJUbe3H1DnPL5QUsjSUI7mUIUQwAtRV1ZdEu0+80g9i0op79woB0OIwr/g=="],
 
-    "@svta/cml-dash": ["@svta/cml-dash@1.0.1", "", {}, "sha512-lYnD1I7FUbbQND+xICI+kcRaRXuT+whKk27R8m8me5VMVu2sMsAMc7Yui6l9sxw2cBKt8pSETPYRm/1+n4LZkw=="],
+    "@svta/cml-cta": ["@svta/cml-cta@1.0.1", "", { "peerDependencies": { "@svta/cml-structured-field-values": "1.0.1", "@svta/cml-utils": "1.0.1" } }, "sha512-jcXqNIPv26bmFxIOFh8/c3+6WLH4qBjKpq9qTQcggDPoHuV1YBydMsJLOnYPDeK8rNMKcAkFLbnDRvyJthu5yw=="],
 
-    "@svta/cml-id3": ["@svta/cml-id3@1.0.1", "", {}, "sha512-90fGlL1qRI88CcaB89k6NG6cC3kky4Eu2jwqU4HefqK+S5k2OASUxf8JXkGz+DsdaiY7sh51vGPYdolfBZS7ug=="],
+    "@svta/cml-dash": ["@svta/cml-dash@1.0.1", "", { "peerDependencies": { "@svta/cml-utils": "1.0.1" } }, "sha512-lYnD1I7FUbbQND+xICI+kcRaRXuT+whKk27R8m8me5VMVu2sMsAMc7Yui6l9sxw2cBKt8pSETPYRm/1+n4LZkw=="],
 
-    "@svta/cml-request": ["@svta/cml-request@1.0.1", "", { "peerDependencies": { "@svta/cml-xml": "1.0.1" } }, "sha512-enL19BuXUjFkDDDF9jdNwUclMNPRsagnjGAetVC7xcmpDMpEx+ZLgsDip6BFNg5p6izSEk/OyujTWW1r8bDNiA=="],
+    "@svta/cml-id3": ["@svta/cml-id3@1.0.1", "", { "peerDependencies": { "@svta/cml-utils": "1.0.1" } }, "sha512-90fGlL1qRI88CcaB89k6NG6cC3kky4Eu2jwqU4HefqK+S5k2OASUxf8JXkGz+DsdaiY7sh51vGPYdolfBZS7ug=="],
 
-    "@svta/cml-xml": ["@svta/cml-xml@1.0.1", "", {}, "sha512-11LkJa5kDEcsRMWkVI1ABH3KLCxGoiSVe4kQ293ItVj8ncTTQ7htmCGiJDjS+Cmy35UgF3e/vc0ysJIiWRTx2g=="],
+    "@svta/cml-request": ["@svta/cml-request@1.0.1", "", { "peerDependencies": { "@svta/cml-utils": "1.0.1", "@svta/cml-xml": "1.0.1" } }, "sha512-enL19BuXUjFkDDDF9jdNwUclMNPRsagnjGAetVC7xcmpDMpEx+ZLgsDip6BFNg5p6izSEk/OyujTWW1r8bDNiA=="],
+
+    "@svta/cml-structured-field-values": ["@svta/cml-structured-field-values@1.0.1", "", { "peerDependencies": { "@svta/cml-utils": "1.0.1" } }, "sha512-Kibciki59Pon3Pn/sl5uyrbJcSpZQDKqdCfDrokBvOdLoqqcd0oFrkEPsZBiuuIODX1CB80612xe8hopeFDyBA=="],
+
+    "@svta/cml-utils": ["@svta/cml-utils@1.0.1", "", {}, "sha512-kso3curTJfp00I1mKFoBliBApjn4aPE+wF8cPucf7TrSDVWZDeLLuF14ASmUE9m7rnrqTTK4878VvmXaXcCCfQ=="],
+
+    "@svta/cml-xml": ["@svta/cml-xml@1.0.1", "", { "peerDependencies": { "@svta/cml-utils": "1.0.1" } }, "sha512-11LkJa5kDEcsRMWkVI1ABH3KLCxGoiSVe4kQ293ItVj8ncTTQ7htmCGiJDjS+Cmy35UgF3e/vc0ysJIiWRTx2g=="],
 
     "@swc/core": ["@swc/core@1.13.2", "", { "dependencies": { "@swc/counter": "^0.1.3", "@swc/types": "^0.1.23" }, "optionalDependencies": { "@swc/core-darwin-arm64": "1.13.2", "@swc/core-darwin-x64": "1.13.2", "@swc/core-linux-arm-gnueabihf": "1.13.2", "@swc/core-linux-arm64-gnu": "1.13.2", "@swc/core-linux-arm64-musl": "1.13.2", "@swc/core-linux-x64-gnu": "1.13.2", "@swc/core-linux-x64-musl": "1.13.2", "@swc/core-win32-arm64-msvc": "1.13.2", "@swc/core-win32-ia32-msvc": "1.13.2", "@swc/core-win32-x64-msvc": "1.13.2" }, "peerDependencies": { "@swc/helpers": ">=0.5.17" }, "optionalPeers": ["@swc/helpers"] }, "sha512-YWqn+0IKXDhqVLKoac4v2tV6hJqB/wOh8/Br8zjqeqBkKa77Qb0Kw2i7LOFzjFNZbZaPH6AlMGlBwNrxaauaAg=="],
 
