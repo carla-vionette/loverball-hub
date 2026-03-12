@@ -109,10 +109,18 @@ const Events = () => {
     setRsvpId(null);
   };
 
-  const filtered = category === "All" ? events : events.filter(e => e.event_type === category);
+  const [tab, setTab] = useState<"upcoming" | "past">("upcoming");
   const now = new Date();
-  const featured = events.length
-    ? events.reduce((closest, ev) => {
+  const todayStr = now.toISOString().split("T")[0];
+
+  const upcomingEvents = events.filter(e => e.event_date >= todayStr);
+  const pastEvents = events.filter(e => e.event_date < todayStr).reverse();
+
+  const baseEvents = tab === "upcoming" ? upcomingEvents : pastEvents;
+  const filtered = category === "All" ? baseEvents : baseEvents.filter(e => e.event_type === category);
+
+  const featured = tab === "upcoming" && upcomingEvents.length
+    ? upcomingEvents.reduce((closest, ev) => {
         const diff = Math.abs(new Date(ev.event_date).getTime() - now.getTime());
         const closestDiff = Math.abs(new Date(closest.event_date).getTime() - now.getTime());
         return diff < closestDiff ? ev : closest;
