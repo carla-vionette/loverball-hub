@@ -117,7 +117,7 @@ const DirectMessages = () => {
 
       setConversations(convos);
     } catch (err) {
-      console.error("Error fetching conversations:", err);
+      // Conversation fetch error handled silently
     } finally {
       setLoading(false);
     }
