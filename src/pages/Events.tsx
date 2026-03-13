@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Calendar, MapPin, Users, Clock, Loader2 } from "lucide-react";
+import EventTagBadges from "@/components/EventTagBadges";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
@@ -37,6 +38,7 @@ interface DbEvent {
   visibility: string;
   capacity?: number | null;
   price?: number | null;
+  event_tags?: string[] | null;
 }
 
 const fmtTime = (t: string) => {
@@ -242,6 +244,12 @@ const Events = () => {
                       </div>
                       {(ev.venue_name || ev.city) && (
                         <p className="text-xs text-muted-foreground flex items-center gap-1"><MapPin className="w-3 h-3 text-accent" />{ev.venue_name}{ev.venue_name && ev.city ? ", " : ""}{ev.city}</p>
+                      )}
+                      {/* Event Tags */}
+                      {ev.event_tags && ev.event_tags.length > 0 && (
+                        <div className="pt-1" onClick={(e) => e.stopPropagation()}>
+                          <EventTagBadges tags={ev.event_tags} size="sm" />
+                        </div>
                       )}
                       <div className="flex items-center justify-between pt-2">
                         <span className="text-xs text-muted-foreground flex items-center gap-1">

@@ -1,13 +1,16 @@
 import React, { useState, useMemo, useRef, useCallback, useEffect } from "react";
-import { Search, Users, CheckCircle, Play, Eye, ChevronLeft, ChevronRight, TrendingUp, Clock, Star, Heart } from "lucide-react";
+import { Search, Users, CheckCircle, Play, Eye, ChevronLeft, ChevronRight, TrendingUp, Clock, Star, Heart, Calendar, MapPin } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import BottomNav from "@/components/BottomNav";
 import DesktopNav from "@/components/DesktopNav";
 import MobileHeader from "@/components/MobileHeader";
 import { DISCOVER_VIDEOS, DISCOVER_CATEGORIES, type DiscoverVideo } from "@/lib/discoverVideoData";
+import TeamFollowSection from "@/components/TeamFollowSection";
+import { supabase } from "@/integrations/supabase/client";
+import { format } from "date-fns";
 
 const formatViews = (n: number) => {
   if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
@@ -200,6 +203,38 @@ const CreatorCard = ({ channel }: { channel: ChannelData }) => (
 const Explore = () => {
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState("All");
+  const [searchEvents, setSearchEvents] = useState<any[]>([]);
+  const [searchUsers, setSearchUsers] = useState<any[]>([]);
+  const [searchLoading, setSearchLoading] = useState(false);
+
+  // Search across events, users, and teams when query changes
+  useEffect(() => {
+    if (!search || search.length < 2) {
+      setSearchEvents([]);
+      setSearchUsers([]);
+      return;
+    }
+    const timer = setTimeout(async () => {
+      setSearchLoading(true);
+      const [eventsRes, usersRes] = await Promise.all([
+        supabase
+          .from("events")
+          .select("id, title, event_date, event_time, city, event_type, sport_tags, image_url")
+          .eq("status", "published")
+          .or(`title.ilike.%${search}%,city.ilike.%${search}%`)
+          .limit(5),
+        supabase
+          .from("profiles")
+          .select("id, name, profile_photo_url, city")
+          .ilike("name", `%${search}%`)
+          .limit(5),
+      ]);
+      setSearchEvents(eventsRes.data || []);
+      setSearchUsers(usersRes.data || []);
+      setSearchLoading(false);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [search]);
 
   const filteredVideos = useMemo(() => {
     return DISCOVER_VIDEOS.filter(v => {
@@ -222,6 +257,7 @@ const Explore = () => {
   const popularCreators = CHANNELS.filter(ch => ch.trending).sort((a, b) => b.followerNum - a.followerNum);
 
   const isFiltering = search || activeCategory !== "All";
+  const hasUnifiedResults = search && search.length >= 2;
 
   return (
     <div className="min-h-screen bg-background">
@@ -233,11 +269,11 @@ const Explore = () => {
         <div className="max-w-3xl mx-auto px-5 md:px-10 py-6">
           <h1 className="font-display text-2xl md:text-[28px] font-bold uppercase tracking-tight mb-5">Discover</h1>
 
-          {/* Search */}
+          {/* Unified Search */}
           <div className="relative mb-5">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
-              placeholder="Search videos & channels..."
+              placeholder="Search events, teams, people, videos..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="pl-10 rounded-full bg-secondary border-border/20"
@@ -264,6 +300,73 @@ const Explore = () => {
             ))}
           </div>
 
+          {/* Unified search results (events + users) */}
+          {hasUnifiedResults && (
+            <>
+              {/* Event results */}
+              {searchEvents.length > 0 && (
+                <section className="mb-6">
+                  <h2 className="font-display text-sm font-semibold uppercase tracking-wide mb-2 flex items-center gap-2 text-muted-foreground">
+                    <Calendar className="w-3.5 h-3.5" /> Events
+                  </h2>
+                  <div className="space-y-2">
+                    {searchEvents.map((ev: any) => (
+                      <a key={ev.id} href={`/event/${ev.id}`} className="block">
+                        <Card className="p-3 hover:shadow-md transition-all cursor-pointer">
+                          <div className="flex items-center gap-3">
+                            {ev.image_url ? (
+                              <img src={ev.image_url} alt={ev.title} className="w-12 h-12 rounded-lg object-cover shrink-0" />
+                            ) : (
+                              <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                                <Calendar className="w-5 h-5 text-primary" />
+                              </div>
+                            )}
+                            <div className="flex-1 min-w-0">
+                              <p className="font-semibold text-sm text-foreground truncate">{ev.title}</p>
+                              <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                                <span>{format(new Date(ev.event_date), "MMM d")}</span>
+                                {ev.city && <span className="flex items-center gap-0.5"><MapPin className="w-3 h-3" />{ev.city}</span>}
+                              </div>
+                            </div>
+                          </div>
+                        </Card>
+                      </a>
+                    ))}
+                  </div>
+                </section>
+              )}
+
+              {/* User results */}
+              {searchUsers.length > 0 && (
+                <section className="mb-6">
+                  <h2 className="font-display text-sm font-semibold uppercase tracking-wide mb-2 flex items-center gap-2 text-muted-foreground">
+                    <Users className="w-3.5 h-3.5" /> People
+                  </h2>
+                  <div className="space-y-2">
+                    {searchUsers.map((u: any) => (
+                      <a key={u.id} href={`/member/${u.id}`} className="block">
+                        <Card className="p-3 hover:shadow-md transition-all cursor-pointer">
+                          <div className="flex items-center gap-3">
+                            <Avatar className="w-10 h-10">
+                              <AvatarImage src={u.profile_photo_url || undefined} />
+                              <AvatarFallback className="bg-primary/10 text-primary text-sm font-semibold">
+                                {u.name?.charAt(0).toUpperCase()}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div className="flex-1 min-w-0">
+                              <p className="font-semibold text-sm text-foreground truncate">{u.name}</p>
+                              {u.city && <p className="text-xs text-muted-foreground flex items-center gap-0.5"><MapPin className="w-3 h-3" />{u.city}</p>}
+                            </div>
+                          </div>
+                        </Card>
+                      </a>
+                    ))}
+                  </div>
+                </section>
+              )}
+            </>
+          )}
+
           {/* Filtered Results */}
           {isFiltering ? (
             <>
@@ -289,7 +392,7 @@ const Explore = () => {
                 </section>
               )}
 
-              {filteredVideos.length === 0 && filteredChannels.length === 0 && (
+              {filteredVideos.length === 0 && filteredChannels.length === 0 && !hasUnifiedResults && (
                 <div className="text-center py-12 text-muted-foreground">
                   <Search className="w-8 h-8 mx-auto mb-2 opacity-40" />
                   <p className="text-sm">No results found</p>
@@ -298,6 +401,9 @@ const Explore = () => {
             </>
           ) : (
             <>
+              {/* Teams Section */}
+              <TeamFollowSection />
+
               {/* Featured Videos */}
               <section className="mb-8">
                 <h2 className="font-display text-lg font-semibold uppercase tracking-wide mb-3 flex items-center gap-2">
