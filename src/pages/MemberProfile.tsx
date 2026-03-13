@@ -188,6 +188,7 @@ const MemberProfile = () => {
             <CardContent className="p-6">
               <div className="flex items-center gap-2 mb-2">
                 <h1 className="text-2xl font-bold">{profile.name}</h1>
+                <MemberBadge tier={profile.membership_tier || null} size="md" />
                 {profile.pronouns && (
                   <span className="text-muted-foreground">({profile.pronouns})</span>
                 )}
