@@ -618,6 +618,17 @@ const EventDetail = () => {
                 )}
               </div>
 
+              {/* Check-In Button */}
+              {user && (rsvpStatus === 'attending' || rsvpStatus === 'yes') && (
+                <div className="mb-6">
+                  <EventCheckIn
+                    eventId={event.id}
+                    eventDate={event.event_date}
+                    eventCity={event.city}
+                  />
+                </div>
+              )}
+
               {/* Attendee Avatars */}
               {attendees.length > 0 && (
                 <div className="mb-6">
