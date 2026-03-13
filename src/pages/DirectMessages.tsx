@@ -147,7 +147,7 @@ const DirectMessages = () => {
       if (error) throw error;
       setMessageText("");
     } catch (err) {
-      console.error("Error sending message:", err);
+      // Send error handled silently
     } finally {
       setSending(false);
     }

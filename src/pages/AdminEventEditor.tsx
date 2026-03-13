@@ -238,7 +238,6 @@ const AdminEventEditor = () => {
       toast({ title: 'Event deleted' });
       navigate('/admin');
     } catch (error: any) {
-      console.error('Error deleting event:', error);
       toast({
         title: 'Error deleting event',
         description: error.message,
