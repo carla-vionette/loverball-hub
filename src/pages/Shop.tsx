@@ -105,7 +105,7 @@ const ShopContent = () => {
       if (error) throw error;
       const items: CartItem[] = (data || []).map((ci) => ({ ...ci, product: products.find((p) => p.id === ci.product_id)! })).filter((ci) => ci.product);
       setCartItems(items);
-    } catch (err) { console.error("Error fetching cart:", err); }
+    } catch (err) { /* cart fetch error */ }
   };
 
   useEffect(() => { if (user && products.length > 0) fetchCart(); }, [products, user]);
