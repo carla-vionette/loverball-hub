@@ -927,6 +927,41 @@ export type Database = {
         }
         Relationships: []
       }
+      point_transactions: {
+        Row: {
+          created_at: string
+          event_id: string | null
+          id: string
+          points: number
+          reason: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          event_id?: string | null
+          id?: string
+          points: number
+          reason: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          event_id?: string | null
+          id?: string
+          points?: number
+          reason?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "point_transactions_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       post_likes: {
         Row: {
           created_at: string
@@ -1068,6 +1103,7 @@ export type Database = {
           birthday: string | null
           city: string | null
           created_at: string
+          current_streak: number
           event_comfort_level: string | null
           favorite_la_teams: string[] | null
           favorite_sports: string[] | null
@@ -1077,7 +1113,9 @@ export type Database = {
           instagram_url: string | null
           interested_in_la28: boolean | null
           interested_in_world_cup_la: boolean | null
+          last_streak_week: string | null
           linkedin_url: string | null
+          longest_streak: number
           looking_for_tags: string[] | null
           membership_tier: string | null
           name: string
@@ -1092,6 +1130,7 @@ export type Database = {
           sms_notifications_enabled: boolean | null
           sports_experience_types: string[] | null
           tiktok_url: string | null
+          total_points: number
           updated_at: string
           website_url: string | null
         }
@@ -1102,6 +1141,7 @@ export type Database = {
           birthday?: string | null
           city?: string | null
           created_at?: string
+          current_streak?: number
           event_comfort_level?: string | null
           favorite_la_teams?: string[] | null
           favorite_sports?: string[] | null
@@ -1111,7 +1151,9 @@ export type Database = {
           instagram_url?: string | null
           interested_in_la28?: boolean | null
           interested_in_world_cup_la?: boolean | null
+          last_streak_week?: string | null
           linkedin_url?: string | null
+          longest_streak?: number
           looking_for_tags?: string[] | null
           membership_tier?: string | null
           name: string
@@ -1126,6 +1168,7 @@ export type Database = {
           sms_notifications_enabled?: boolean | null
           sports_experience_types?: string[] | null
           tiktok_url?: string | null
+          total_points?: number
           updated_at?: string
           website_url?: string | null
         }
@@ -1136,6 +1179,7 @@ export type Database = {
           birthday?: string | null
           city?: string | null
           created_at?: string
+          current_streak?: number
           event_comfort_level?: string | null
           favorite_la_teams?: string[] | null
           favorite_sports?: string[] | null
@@ -1145,7 +1189,9 @@ export type Database = {
           instagram_url?: string | null
           interested_in_la28?: boolean | null
           interested_in_world_cup_la?: boolean | null
+          last_streak_week?: string | null
           linkedin_url?: string | null
+          longest_streak?: number
           looking_for_tags?: string[] | null
           membership_tier?: string | null
           name?: string
@@ -1160,6 +1206,7 @@ export type Database = {
           sms_notifications_enabled?: boolean | null
           sports_experience_types?: string[] | null
           tiktok_url?: string | null
+          total_points?: number
           updated_at?: string
           website_url?: string | null
         }
