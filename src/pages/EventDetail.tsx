@@ -539,7 +539,7 @@ const EventDetail = () => {
                   <p className="text-xs text-white/70">hrs</p>
                 </div>
                 <div className="text-center">
-                  <p className="text-2xl font-bold">{countdown.minutes}</p>
+                  <p className="text-xl font-bold">{countdown.minutes}</p>
                   <p className="text-xs text-white/70">min</p>
                 </div>
               </div>
