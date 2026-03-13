@@ -126,12 +126,19 @@ const WhosGoing = ({ eventId, refreshKey }: Props) => {
               onClick={() => guest.profile && handleProfileClick(guest.profile)}
               className="flex flex-col items-center gap-1.5 p-2 rounded-xl hover:bg-secondary transition-colors"
             >
-              <Avatar className="w-14 h-14 border-2 border-primary/20">
-                <AvatarImage src={guest.profile?.profile_photo_url || undefined} />
-                <AvatarFallback className="bg-primary/10 text-primary font-semibold">
-                  {guest.profile?.name?.charAt(0).toUpperCase() || "?"}
-                </AvatarFallback>
-              </Avatar>
+              <div className="relative">
+                <Avatar className="w-14 h-14 border-2 border-primary/20">
+                  <AvatarImage src={guest.profile?.profile_photo_url || undefined} />
+                  <AvatarFallback className="bg-primary/10 text-primary font-semibold">
+                    {guest.profile?.name?.charAt(0).toUpperCase() || "?"}
+                  </AvatarFallback>
+                </Avatar>
+                {guest.going_solo && (
+                  <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-warning flex items-center justify-center text-[10px]" title="Going solo">
+                    👋
+                  </div>
+                )}
+              </div>
               <div className="flex items-center gap-0.5 w-full justify-center">
                 <span className="text-xs font-medium text-foreground truncate">
                   {guest.profile?.name?.split(" ")[0] || "Guest"}
