@@ -100,7 +100,6 @@ const AdminAttendeeManager = () => {
       // Fetch attendees with profiles
       await fetchAttendees();
     } catch (error) {
-      console.error('Error fetching data:', error);
       toast({ title: 'Error loading event', variant: 'destructive' });
       navigate('/admin');
     } finally {
