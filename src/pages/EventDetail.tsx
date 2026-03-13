@@ -639,6 +639,16 @@ const EventDetail = () => {
                 )}
               </div>
 
+              {/* Early Access Banner */}
+              {user && (
+                <EarlyAccessBanner
+                  userTier={userTier}
+                  eventDate={event.event_date}
+                  eventTime={event.event_time}
+                  isExclusive={event.visibility === 'members_only'}
+                />
+              )}
+
               {/* Check-In Button */}
               {user && (rsvpStatus === 'attending' || rsvpStatus === 'yes') && (
                 <div className="mb-6">
