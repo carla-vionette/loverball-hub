@@ -230,7 +230,6 @@ const Connections = () => {
         setSwiping(false);
       }, 300);
     } catch (err) {
-      console.error("Error swiping:", err);
       setSwiping(false);
       setSwipeDirection(null);
     }
