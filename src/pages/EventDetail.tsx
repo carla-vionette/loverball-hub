@@ -19,6 +19,9 @@ import EventCheckIn from "@/components/EventCheckIn";
 import AttendeeListModal from "@/components/AttendeeListModal";
 import GoingSoloToggle from "@/components/GoingSoloToggle";
 import YouveMetCard from "@/components/YouveMetCard";
+import WhereToWatch from "@/components/WhereToWatch";
+import WhereToSit from "@/components/WhereToSit";
+import EventTagBadges from "@/components/EventTagBadges";
 
 interface Event {
   id: string;
