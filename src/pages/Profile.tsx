@@ -147,6 +147,16 @@ const staggerItem = {
 };
 
 
+const ProfileFollowCounts = ({ userId }: { userId: string }) => {
+  const { followerCount, followingCount } = useFollow(userId);
+  return (
+    <div className="flex items-center gap-4 text-sm">
+      <span><strong>{followerCount}</strong> <span className="text-muted-foreground">followers</span></span>
+      <span><strong>{followingCount}</strong> <span className="text-muted-foreground">following</span></span>
+    </div>
+  );
+};
+
 const Profile = () => {
   const [teamsOpen, setTeamsOpen] = useState(false);
   const [newsOpen, setNewsOpen] = useState(false);
