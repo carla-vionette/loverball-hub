@@ -128,6 +128,7 @@ const App = () => (
                 <Route path="/checkout-success" element={<CheckoutSuccess />} />
                 <Route path="/pricing" element={<PricingPage />} />
                 <Route path="/invite/:code" element={<InviteLanding />} />
+                <Route path="/membership" element={<Membership />} />
 
                 {/* Redirects */}
                 <Route path="/index" element={<Navigate to="/" replace />} />
