@@ -170,6 +170,9 @@ const MemberProfile = () => {
                 )}
               </div>
 
+              {/* Follower/Following Counts + Follow/DM buttons */}
+              <FollowStats profileId={id!} />
+
               <div className="flex flex-wrap items-center gap-4 mb-4 text-muted-foreground">
                 {profile.city && (
                   <span className="flex items-center gap-1">
