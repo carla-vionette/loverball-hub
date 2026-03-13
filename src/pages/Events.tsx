@@ -38,6 +38,7 @@ interface DbEvent {
   visibility: string;
   capacity?: number | null;
   price?: number | null;
+  event_tags?: string[] | null;
 }
 
 const fmtTime = (t: string) => {
