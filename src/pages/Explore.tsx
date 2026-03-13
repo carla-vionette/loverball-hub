@@ -300,6 +300,73 @@ const Explore = () => {
             ))}
           </div>
 
+          {/* Unified search results (events + users) */}
+          {hasUnifiedResults && (
+            <>
+              {/* Event results */}
+              {searchEvents.length > 0 && (
+                <section className="mb-6">
+                  <h2 className="font-display text-sm font-semibold uppercase tracking-wide mb-2 flex items-center gap-2 text-muted-foreground">
+                    <Calendar className="w-3.5 h-3.5" /> Events
+                  </h2>
+                  <div className="space-y-2">
+                    {searchEvents.map((ev: any) => (
+                      <a key={ev.id} href={`/event/${ev.id}`} className="block">
+                        <Card className="p-3 hover:shadow-md transition-all cursor-pointer">
+                          <div className="flex items-center gap-3">
+                            {ev.image_url ? (
+                              <img src={ev.image_url} alt={ev.title} className="w-12 h-12 rounded-lg object-cover shrink-0" />
+                            ) : (
+                              <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                                <Calendar className="w-5 h-5 text-primary" />
+                              </div>
+                            )}
+                            <div className="flex-1 min-w-0">
+                              <p className="font-semibold text-sm text-foreground truncate">{ev.title}</p>
+                              <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                                <span>{format(new Date(ev.event_date), "MMM d")}</span>
+                                {ev.city && <span className="flex items-center gap-0.5"><MapPin className="w-3 h-3" />{ev.city}</span>}
+                              </div>
+                            </div>
+                          </div>
+                        </Card>
+                      </a>
+                    ))}
+                  </div>
+                </section>
+              )}
+
+              {/* User results */}
+              {searchUsers.length > 0 && (
+                <section className="mb-6">
+                  <h2 className="font-display text-sm font-semibold uppercase tracking-wide mb-2 flex items-center gap-2 text-muted-foreground">
+                    <Users className="w-3.5 h-3.5" /> People
+                  </h2>
+                  <div className="space-y-2">
+                    {searchUsers.map((u: any) => (
+                      <a key={u.id} href={`/member/${u.id}`} className="block">
+                        <Card className="p-3 hover:shadow-md transition-all cursor-pointer">
+                          <div className="flex items-center gap-3">
+                            <Avatar className="w-10 h-10">
+                              <AvatarImage src={u.profile_photo_url || undefined} />
+                              <AvatarFallback className="bg-primary/10 text-primary text-sm font-semibold">
+                                {u.name?.charAt(0).toUpperCase()}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div className="flex-1 min-w-0">
+                              <p className="font-semibold text-sm text-foreground truncate">{u.name}</p>
+                              {u.city && <p className="text-xs text-muted-foreground flex items-center gap-0.5"><MapPin className="w-3 h-3" />{u.city}</p>}
+                            </div>
+                          </div>
+                        </Card>
+                      </a>
+                    ))}
+                  </div>
+                </section>
+              )}
+            </>
+          )}
+
           {/* Filtered Results */}
           {isFiltering ? (
             <>
@@ -325,7 +392,7 @@ const Explore = () => {
                 </section>
               )}
 
-              {filteredVideos.length === 0 && filteredChannels.length === 0 && (
+              {filteredVideos.length === 0 && filteredChannels.length === 0 && !hasUnifiedResults && (
                 <div className="text-center py-12 text-muted-foreground">
                   <Search className="w-8 h-8 mx-auto mb-2 opacity-40" />
                   <p className="text-sm">No results found</p>
@@ -334,6 +401,9 @@ const Explore = () => {
             </>
           ) : (
             <>
+              {/* Teams Section */}
+              <TeamFollowSection />
+
               {/* Featured Videos */}
               <section className="mb-8">
                 <h2 className="font-display text-lg font-semibold uppercase tracking-wide mb-3 flex items-center gap-2">
