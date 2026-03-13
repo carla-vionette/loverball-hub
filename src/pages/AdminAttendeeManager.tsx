@@ -162,10 +162,10 @@ const AdminAttendeeManager = () => {
       });
       
       if (error) {
-        console.error('Notification error:', error);
+        // Notification error - non-critical
       }
     } catch (err) {
-      console.error('Failed to send notification:', err);
+      // Failed to send notification - non-critical
     }
   };
 
