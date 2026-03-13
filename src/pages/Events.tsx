@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Calendar, MapPin, Users, Clock, Loader2 } from "lucide-react";
 import EventTagBadges from "@/components/EventTagBadges";
+import SponsorCard from "@/components/SponsorCard";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
@@ -213,59 +214,63 @@ const Events = () => {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-              {filtered.map(ev => {
+              {filtered.map((ev, idx) => {
                 const ct = counts[ev.id] || 0;
                 const rsvp = userRsvps[ev.id];
                 const spotsLeft = ev.capacity ? ev.capacity - ct : null;
+                const cardIndex = idx + 1;
+                const sponsorSlot = cardIndex > 0 && cardIndex % 5 === 0;
 
                 return (
-                  <Card key={ev.id} className="overflow-hidden group cursor-pointer hover:shadow-lg transition-all"
-                    onClick={() => goTo(`/event/${ev.id}`)}>
-                    <div className="relative h-44 overflow-hidden">
-                      {ev.image_url ? (
-                        <img src={ev.image_url} alt={ev.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                      ) : (
-                        <div className="w-full h-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
-                          <Calendar className="w-10 h-10 text-primary/30" />
-                        </div>
-                      )}
-                      {ev.event_type && <Badge className="absolute top-3 left-3 bg-accent text-accent-foreground text-[10px] font-semibold tracking-wider rounded-full">{CATEGORY_LABELS[ev.event_type] || ev.event_type}</Badge>}
-                      {ev.price === 0 && <Badge className="absolute top-3 right-3 bg-primary text-primary-foreground text-[10px] font-semibold rounded-full">Free</Badge>}
-                      {/* Large date number */}
-                      <div className="absolute bottom-3 right-3">
-                        <span className="font-display text-4xl font-bold text-white drop-shadow-lg">{format(new Date(ev.event_date), "d")}</span>
-                      </div>
-                    </div>
-                    <CardContent className="p-4 space-y-2">
-                      <h3 className="font-semibold text-sm line-clamp-2 group-hover:text-primary transition-colors">{ev.title}</h3>
-                      <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                        <span className="flex items-center gap-1"><Calendar className="w-3 h-3" />{format(new Date(ev.event_date), "MMM d")}</span>
-                        {ev.event_time && <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{fmtTime(ev.event_time)}</span>}
-                      </div>
-                      {(ev.venue_name || ev.city) && (
-                        <p className="text-xs text-muted-foreground flex items-center gap-1"><MapPin className="w-3 h-3 text-accent" />{ev.venue_name}{ev.venue_name && ev.city ? ", " : ""}{ev.city}</p>
-                      )}
-                      {/* Event Tags */}
-                      {ev.event_tags && ev.event_tags.length > 0 && (
-                        <div className="pt-1" onClick={(e) => e.stopPropagation()}>
-                          <EventTagBadges tags={ev.event_tags} size="sm" />
-                        </div>
-                      )}
-                      <div className="flex items-center justify-between pt-2">
-                        <span className="text-xs text-muted-foreground flex items-center gap-1">
-                          <Users className="w-3 h-3" />{ct}{ev.capacity ? `/${ev.capacity}` : ""}
-                          {spotsLeft !== null && spotsLeft > 0 && spotsLeft <= 5 && (
-                            <span className="text-destructive ml-1">({spotsLeft} left!)</span>
-                          )}
-                        </span>
-                        {rsvp ? (
-                          <Badge variant="outline" className="text-[10px] rounded-full capitalize text-muted-foreground">{rsvp}</Badge>
+                  <React.Fragment key={ev.id}>
+                    <Card className="overflow-hidden group cursor-pointer hover:shadow-lg transition-all"
+                      onClick={() => goTo(`/event/${ev.id}`)}>
+                      <div className="relative h-44 overflow-hidden">
+                        {ev.image_url ? (
+                          <img src={ev.image_url} alt={ev.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                         ) : (
-                          <Button size="sm" className="rounded-full text-xs h-8 px-4 bg-primary text-primary-foreground" onClick={e => { e.stopPropagation(); setRsvpId(ev.id); }}>RSVP</Button>
+                          <div className="w-full h-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
+                            <Calendar className="w-10 h-10 text-primary/30" />
+                          </div>
                         )}
+                        {ev.event_type && <Badge className="absolute top-3 left-3 bg-accent text-accent-foreground text-[10px] font-semibold tracking-wider rounded-full">{CATEGORY_LABELS[ev.event_type] || ev.event_type}</Badge>}
+                        {ev.price === 0 && <Badge className="absolute top-3 right-3 bg-primary text-primary-foreground text-[10px] font-semibold rounded-full">Free</Badge>}
+                        <div className="absolute bottom-3 right-3">
+                          <span className="font-display text-4xl font-bold text-white drop-shadow-lg">{format(new Date(ev.event_date), "d")}</span>
+                        </div>
                       </div>
-                    </CardContent>
-                  </Card>
+                      <CardContent className="p-4 space-y-2">
+                        <h3 className="font-semibold text-sm line-clamp-2 group-hover:text-primary transition-colors">{ev.title}</h3>
+                        <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                          <span className="flex items-center gap-1"><Calendar className="w-3 h-3" />{format(new Date(ev.event_date), "MMM d")}</span>
+                          {ev.event_time && <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{fmtTime(ev.event_time)}</span>}
+                        </div>
+                        {(ev.venue_name || ev.city) && (
+                          <p className="text-xs text-muted-foreground flex items-center gap-1"><MapPin className="w-3 h-3 text-accent" />{ev.venue_name}{ev.venue_name && ev.city ? ", " : ""}{ev.city}</p>
+                        )}
+                        {ev.event_tags && ev.event_tags.length > 0 && (
+                          <div className="pt-1" onClick={(e) => e.stopPropagation()}>
+                            <EventTagBadges tags={ev.event_tags} size="sm" />
+                          </div>
+                        )}
+                        <div className="flex items-center justify-between pt-2">
+                          <span className="text-xs text-muted-foreground flex items-center gap-1">
+                            <Users className="w-3 h-3" />{ct}{ev.capacity ? `/${ev.capacity}` : ""}
+                            {spotsLeft !== null && spotsLeft > 0 && spotsLeft <= 5 && (
+                              <span className="text-destructive ml-1">({spotsLeft} left!)</span>
+                            )}
+                          </span>
+                          {rsvp ? (
+                            <Badge variant="outline" className="text-[10px] rounded-full capitalize text-muted-foreground">{rsvp}</Badge>
+                          ) : (
+                            <Button size="sm" className="rounded-full text-xs h-8 px-4 bg-primary text-primary-foreground" onClick={e => { e.stopPropagation(); setRsvpId(ev.id); }}>RSVP</Button>
+                          )}
+                        </div>
+                      </CardContent>
+                    </Card>
+                    {/* Sponsor slot every 5th card */}
+                    {sponsorSlot && <SponsorCard index={Math.floor(cardIndex / 5) - 1} />}
+                  </React.Fragment>
                 );
               })}
             </div>

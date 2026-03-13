@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { MapPin, Edit, Sparkles, LogOut, Calendar, Clock, TrendingUp, TrendingDown, Trophy, Flame, Bookmark, BookOpen, Award, ChevronRight, ChevronDown, ArrowUpRight, Share2, AlertTriangle, Ticket, Play, Eye, Lightbulb, Settings, Heart, MessageCircle, Loader2, ExternalLink, Newspaper, Zap, RefreshCw, Users } from "lucide-react";
+import MemberBadge from "@/components/MemberBadge";
 import { useFollow } from "@/hooks/useFollow";
 import BadgeShelf from "@/components/BadgeShelf";
 import PointsStreakCard from "@/components/PointsStreakCard";
@@ -39,6 +40,7 @@ type ProfileData = {
   bio: string | null;
   profile_photo_url: string | null;
   birthday: string | null;
+  membership_tier: string | null;
 };
 
 type RSVPEvent = {
@@ -338,7 +340,10 @@ const Profile = () => {
 
                   {/* Name & info */}
                   <div>
-                    <h1 className="text-2xl md:text-4xl font-display text-foreground tracking-tight">{profile.name}</h1>
+                    <h1 className="text-2xl md:text-4xl font-display text-foreground tracking-tight flex items-center gap-2">
+                      {profile.name}
+                      <MemberBadge tier={profile.membership_tier} size="lg" />
+                    </h1>
                     {profile.pronouns && <p className="text-sm text-muted-foreground mt-1">{profile.pronouns}</p>}
                     <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground mt-2">
                       <MapPin className="w-4 h-4 text-primary flex-shrink-0" />

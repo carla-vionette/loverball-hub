@@ -22,6 +22,9 @@ import YouveMetCard from "@/components/YouveMetCard";
 import WhereToWatch from "@/components/WhereToWatch";
 import WhereToSit from "@/components/WhereToSit";
 import EventTagBadges from "@/components/EventTagBadges";
+import EarlyAccessBanner from "@/components/EarlyAccessBanner";
+import LockedFeature from "@/components/LockedFeature";
+import { getUserTier } from "@/services/subscriptionService";
 
 interface Event {
   id: string;
@@ -91,6 +94,16 @@ const EventDetail = () => {
   const [showShareDialog, setShowShareDialog] = useState(false);
   const [guestRefreshKey, setGuestRefreshKey] = useState(0);
   const [showAttendeeList, setShowAttendeeList] = useState(false);
+  const [userTier, setUserTier] = useState<string | null>(null);
+
+  // Fetch user subscription tier
+  useEffect(() => {
+    if (user) {
+      getUserTier(user.id).then(t => setUserTier(t)).catch(() => setUserTier('free'));
+    } else {
+      setUserTier('free');
+    }
+  }, [user]);
 
   // No longer redirect - allow guests to view event details
   // They will see "Sign in to RSVP" button at bottom
@@ -626,6 +639,16 @@ const EventDetail = () => {
                 )}
               </div>
 
+              {/* Early Access Banner */}
+              {user && (
+                <EarlyAccessBanner
+                  userTier={userTier}
+                  eventDate={event.event_date}
+                  eventTime={event.event_time}
+                  isExclusive={event.visibility === 'members_only'}
+                />
+              )}
+
               {/* Check-In Button */}
               {user && (rsvpStatus === 'attending' || rsvpStatus === 'yes') && (
                 <div className="mb-6">
@@ -644,14 +667,15 @@ const EventDetail = () => {
                 </div>
               )}
 
-              {/* Attendee Avatars - clickable to open full list */}
+              {/* Attendee Avatars - locked for free users */}
               {attendees.length > 0 && (
                 <div className="mb-6">
                   <p className="text-sm text-muted-foreground mb-2">
                     {attendeeCounts.yes} going{attendeeCounts.maybe > 0 ? ` · ${attendeeCounts.maybe} maybe` : ''}
                   </p>
+                  {/* Show first 3 avatars for free, full list locked */}
                   <button onClick={() => setShowAttendeeList(true)} className="flex -space-x-2 hover:opacity-80 transition-opacity">
-                    {attendees.slice(0, 8).map((attendee) => (
+                    {attendees.slice(0, userTier === 'free' ? 3 : 8).map((attendee) => (
                       <Avatar key={attendee.id} className="w-10 h-10 border-2 border-background">
                         <AvatarImage src={attendee.profile?.profile_photo_url || undefined} />
                         <AvatarFallback className="bg-primary/10 text-primary text-sm">
@@ -659,15 +683,21 @@ const EventDetail = () => {
                         </AvatarFallback>
                       </Avatar>
                     ))}
-                    {attendees.length > 8 && (
+                    {attendees.length > (userTier === 'free' ? 3 : 8) && (
                       <div className="w-10 h-10 rounded-full bg-muted border-2 border-background flex items-center justify-center text-sm font-medium">
-                        +{attendees.length - 8}
+                        +{attendees.length - (userTier === 'free' ? 3 : 8)}
                       </div>
                     )}
                   </button>
-                  <p className="text-xs text-primary mt-1 cursor-pointer" onClick={() => setShowAttendeeList(true)}>
-                    View all attendees →
-                  </p>
+                  {userTier === 'free' ? (
+                    <LockedFeature requiredTier="community" userTier={userTier} message="Unlock with Community — $15/mo">
+                      <p className="text-xs text-primary mt-1">View all attendees →</p>
+                    </LockedFeature>
+                  ) : (
+                    <p className="text-xs text-primary mt-1 cursor-pointer" onClick={() => setShowAttendeeList(true)}>
+                      View all attendees →
+                    </p>
+                  )}
                 </div>
               )}
 
