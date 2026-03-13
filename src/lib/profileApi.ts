@@ -71,7 +71,6 @@ export async function fetchProfiles<T = any>(
     return { data: result.data, error: null };
 
   } catch (error) {
-    console.error("Profile API error:", error);
     return { data: null, error: "Network error fetching profiles" };
   }
 }

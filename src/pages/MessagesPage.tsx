@@ -220,7 +220,7 @@ const MessagesPage = () => {
       if (error) throw error;
       setNewMessage('');
     } catch (error) {
-      console.error('Error sending message:', error);
+      // Send error handled silently
     } finally {
       setSendingMessage(false);
     }

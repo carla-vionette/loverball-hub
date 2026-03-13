@@ -59,7 +59,6 @@ const WhosGoing = ({ eventId, refreshKey }: Props) => {
       .eq("status", "going");
 
     if (error) {
-      console.error("Error fetching guests:", error);
       return;
     }
 

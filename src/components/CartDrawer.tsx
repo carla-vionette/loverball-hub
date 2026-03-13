@@ -35,7 +35,6 @@ export const CartDrawer = () => {
         setIsOpen(false);
       }
     } catch (error) {
-      console.error('Checkout failed:', error);
       toast.error("Failed to create checkout. Please try again.");
     }
   };

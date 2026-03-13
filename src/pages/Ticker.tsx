@@ -254,7 +254,6 @@ const Ticker = () => {
         setLastRefresh(new Date());
       }
     } catch (e) {
-      console.error("Scoreboard fetch error:", e);
       setError("Unable to load scores. Please try again.");
     } finally {
       setIsLoading(false);
