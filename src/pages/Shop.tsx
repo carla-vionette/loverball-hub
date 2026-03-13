@@ -234,7 +234,7 @@ const ShopContent = () => {
 
         {/* CATEGORY FILTER */}
         <div className="max-w-6xl mx-auto px-5 md:px-10 pt-6 pb-2">
-          <div className="flex gap-2">
+          <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-1">
             {CATEGORIES.map((c) =>
               <button
                 key={c}
