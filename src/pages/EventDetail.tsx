@@ -42,6 +42,7 @@ interface Event {
   location_map_url?: string | null;
   rsvp_deadline?: string | null;
   theme?: string | null;
+  event_tags?: string[] | null;
 }
 
 interface Attendee {
