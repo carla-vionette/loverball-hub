@@ -193,7 +193,6 @@ const AdminAttendeeManager = () => {
         toast({ title: 'Status updated' });
       }
     } catch (error: any) {
-      console.error('Error updating status:', error);
       toast({ title: 'Error updating status', variant: 'destructive' });
     }
   };
