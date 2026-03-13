@@ -159,7 +159,7 @@ const ShopContent = () => {
         <div className="bg-primary text-primary-foreground px-5 md:px-10 py-12 md:py-16">
           <div className="max-w-6xl mx-auto flex items-center justify-between">
             <div>
-              <h1 className="font-display text-4xl md:text-5xl font-bold uppercase tracking-tight mb-2">Shop</h1>
+              <h1 className="font-display text-3xl md:text-5xl font-bold uppercase tracking-tight mb-2">Shop</h1>
               <p className="text-primary-foreground/70 max-w-md text-sm">New Season Collection — Rep the movement.</p>
             </div>
             <Button
@@ -234,7 +234,7 @@ const ShopContent = () => {
 
         {/* CATEGORY FILTER */}
         <div className="max-w-6xl mx-auto px-5 md:px-10 pt-6 pb-2">
-          <div className="flex gap-2">
+          <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-1">
             {CATEGORIES.map((c) =>
               <button
                 key={c}

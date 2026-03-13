@@ -143,8 +143,8 @@ const Events = () => {
       <MobileHeader /><DesktopNav /><BottomNav />
 
       <main className="md:ml-64 pt-16 md:pt-0 pb-24 md:pb-0">
-        <div className="max-w-6xl mx-auto px-5 md:px-10 py-6">
-          <h1 className="font-display text-[28px] font-bold uppercase tracking-tight mb-4">Events</h1>
+        <div className="max-w-6xl mx-auto px-4 md:px-10 py-6">
+          <h1 className="font-display text-2xl md:text-[28px] font-bold uppercase tracking-tight mb-4">Events</h1>
 
           {/* TABS */}
           <div className="flex gap-1 mb-6 bg-secondary rounded-full p-1 w-fit">
@@ -173,13 +173,13 @@ const Events = () => {
                   <div className="w-full h-full bg-gradient-to-br from-primary/20 to-accent/20" />
                 )}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
-                <div className="absolute bottom-0 left-0 right-0 p-6">
+                <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6">
                   <Badge className="bg-primary text-primary-foreground text-[10px] font-semibold tracking-wider rounded-full mb-2">Featured Event</Badge>
-                  <h2 className="text-white font-display text-3xl font-bold uppercase">{featured.title}</h2>
-                  <div className="flex items-center gap-4 text-white/70 text-sm mt-2">
+                  <h2 className="text-white font-display text-2xl md:text-3xl font-bold uppercase">{featured.title}</h2>
+                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-white/70 text-xs sm:text-sm mt-2">
                     <span className="flex items-center gap-1"><Calendar className="w-3.5 h-3.5" />{format(new Date(featured.event_date), "MMM d, yyyy")}</span>
                     {featured.event_time && <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5" />{fmtTime(featured.event_time)}</span>}
-                    {(featured.venue_name || featured.city) && <span className="flex items-center gap-1"><MapPin className="w-3.5 h-3.5 text-accent" />{featured.venue_name || featured.city}</span>}
+                    {(featured.venue_name || featured.city) && <span className="flex items-center gap-1 truncate max-w-[180px]"><MapPin className="w-3.5 h-3.5 text-accent flex-shrink-0" />{featured.venue_name || featured.city}</span>}
                   </div>
                   <Button className="rounded-full mt-4 bg-primary text-primary-foreground" onClick={e => { e.stopPropagation(); setRsvpId(featured.id); }}>RSVP Now</Button>
                 </div>
