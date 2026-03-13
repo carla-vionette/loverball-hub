@@ -264,7 +264,6 @@ export async function createStorefrontCheckout(items: CartItem[]): Promise<strin
     url.searchParams.set('channel', 'online_store');
     return url.toString();
   } catch (error) {
-    console.error('Error creating storefront checkout:', error);
     throw error;
   }
 }

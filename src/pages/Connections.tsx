@@ -258,7 +258,7 @@ const Connections = () => {
 
       setConnectedIds(prev => new Set([...prev, targetId]));
     } catch (err) {
-      console.error("Error connecting:", err);
+      // Connection error handled silently
     }
   };
 
