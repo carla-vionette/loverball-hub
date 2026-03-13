@@ -80,7 +80,6 @@ const ShopContent = () => {
         throw new Error("No checkout URL returned");
       }
     } catch (err: any) {
-      console.error("Checkout error:", err);
       toast.error(err.message || "Failed to start checkout");
     } finally {
       setCheckingOut(false);
