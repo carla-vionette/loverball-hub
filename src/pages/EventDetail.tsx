@@ -253,7 +253,7 @@ const EventDetail = () => {
 
       setRsvpStatus(data?.status || null);
     } catch (error) {
-      console.error('Error fetching RSVP status:', error);
+      // Silently handle RSVP status fetch errors
     }
   };
 
