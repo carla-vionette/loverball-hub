@@ -15,47 +15,46 @@
 @tailwind utilities;
 
 /* ============================================================
-   LOVERBALL DESIGN SYSTEM — Warm Feminine Sports Energy
-   Deep Plum + Coral Pink + Warm Cream + Gold
-   Partiful meets Instagram Stories
+   LOVERBALL DESIGN SYSTEM — Teal Sports Energy
+   Teal + Coral + Clean White
    ============================================================ */
 
 @layer base {
   :root {
     /* ── Brand ── */
-    --brand: 271 50% 24%;                /* Deep plum #3D1F5C */
+    --brand: 174 72% 35%;                /* Teal #16A085 */
     --brand-foreground: 0 0% 100%;
 
     /* ── Core palette ── */
-    --background: 30 100% 97%;           /* Warm cream #FFF8F0 */
-    --foreground: 271 50% 18%;           /* Dark plum */
+    --background: 0 0% 100%;             /* Clean white */
+    --foreground: 210 20% 18%;             /* Dark charcoal */
 
     --card: 0 0% 100%;                   /* White */
-    --card-foreground: 271 50% 18%;
+    --card-foreground: 210 20% 18%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 271 50% 18%;
+    --popover-foreground: 210 20% 18%;
 
-    /* Primary = Deep Plum */
-    --primary: 271 50% 24%;              /* #3D1F5C */
+    /* Primary = Teal */
+    --primary: 174 72% 35%;              /* #16A085 */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 30 60% 94%;             /* Warm cream-tan */
-    --secondary-foreground: 271 50% 20%;
+    --secondary: 210 20% 96%;             /* Light gray */
+    --secondary-foreground: 210 20% 18%;
 
-    --muted: 30 30% 93%;
-    --muted-foreground: 271 20% 45%;
+    --muted: 210 15% 94%;
+    --muted-foreground: 210 15% 45%;
 
-    /* Accent = Coral Pink #FF6B6B */
+    /* Accent = Coral #FF6B6B */
     --accent: 0 100% 70%;               /* #FF6B6B */
     --accent-foreground: 0 0% 100%;
 
     /* ── Status colors ── */
     --success: 142 72% 42%;
     --success-foreground: 0 0% 100%;
-    --warning: 45 100% 50%;              /* Gold #FFD700 */
+    --warning: 45 100% 50%;              /* Gold */
     --warning-foreground: 0 0% 0%;
-    --info: 271 50% 40%;
+    --info: 174 72% 40%;
     --info-foreground: 0 0% 100%;
     --destructive: 0 84% 50%;
     --destructive-foreground: 0 0% 100%;
@@ -64,12 +63,12 @@
     --coral: 0 100% 70%;                 /* #FF6B6B */
     --coral-foreground: 0 0% 100%;
     --pale-pink: 350 60% 95%;
-    --pale-pink-foreground: 271 50% 18%;
-    --medium-blue: 271 40% 50%;          /* Medium plum */
+    --pale-pink-foreground: 210 20% 18%;
+    --medium-blue: 210 40% 50%;
     --medium-blue-foreground: 0 0% 100%;
-    --olive: 271 30% 35%;
+    --olive: 174 30% 30%;
     --olive-foreground: 0 0% 100%;
-    --light-lime: 0 90% 75%;             /* Light coral */
+    --light-lime: 0 90% 75%;
     --light-lime-foreground: 0 0% 100%;
     --ticker: 45 100% 50%;               /* Gold */
     --ticker-foreground: 0 0% 0%;
@@ -79,17 +78,17 @@
     /* Terracotta → Coral */
     --terracotta: 0 100% 70%;
     --terracotta-foreground: 0 0% 100%;
-    --warm-beige: 30 60% 94%;
-    --warm-beige-foreground: 271 50% 18%;
+    --warm-beige: 210 20% 96%;
+    --warm-beige-foreground: 210 20% 18%;
 
     /* Hot Pink → Coral variant */
     --hot-pink: 350 80% 62%;
     --hot-pink-foreground: 0 0% 100%;
 
     /* ── Chrome ── */
-    --border: 30 20% 88%;
-    --input: 30 20% 88%;
-    --ring: 271 50% 24%;
+    --border: 210 15% 88%;
+    --input: 210 15% 88%;
+    --ring: 174 72% 35%;
 
     --radius: 1rem;
 
@@ -99,9 +98,9 @@
     --radius-lg: 1.25rem;
     --radius-xl: 1.75rem;
 
-    --shadow-sm: 0 1px 3px 0 rgb(61 31 92 / 0.06);
-    --shadow-md: 0 4px 12px -2px rgb(61 31 92 / 0.1);
-    --shadow-lg: 0 12px 24px -4px rgb(61 31 92 / 0.12);
+    --shadow-sm: 0 1px 3px 0 rgb(22 160 133 / 0.06);
+    --shadow-md: 0 4px 12px -2px rgb(22 160 133 / 0.1);
+    --shadow-lg: 0 12px 24px -4px rgb(22 160 133 / 0.12);
     --shadow-glow: 0 0 20px rgb(255 107 107 / 0.2);
 
     --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
@@ -109,57 +108,57 @@
     --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
 
     /* Gradients */
-    --gradient-warm: linear-gradient(135deg, hsl(271 50% 24%), hsl(0 100% 70%));
+    --gradient-warm: linear-gradient(135deg, hsl(174 72% 35%), hsl(0 100% 70%));
     --gradient-sunset: linear-gradient(135deg, hsl(0 100% 70%), hsl(45 100% 50%));
-    --gradient-cream: linear-gradient(180deg, hsl(30 100% 97%), hsl(30 60% 94%));
+    --gradient-cream: linear-gradient(180deg, hsl(0 0% 100%), hsl(210 20% 96%));
   }
 
   /* Landing page theme */
   .landing-theme {
-    --primary: 271 50% 24%;
+    --primary: 174 72% 35%;
     --primary-foreground: 0 0% 100%;
     --accent: 0 100% 70%;
     --accent-foreground: 0 0% 100%;
   }
 
   .dark {
-    --background: 271 40% 6%;            /* Very dark plum */
-    --foreground: 30 60% 93%;
-    --card: 271 35% 10%;
-    --card-foreground: 30 60% 93%;
-    --popover: 271 35% 10%;
-    --popover-foreground: 30 60% 93%;
-    --primary: 0 100% 70%;               /* Coral as primary in dark */
+    --background: 210 30% 8%;            /* Dark charcoal */
+    --foreground: 210 20% 93%;
+    --card: 210 25% 12%;
+    --card-foreground: 210 20% 93%;
+    --popover: 210 25% 12%;
+    --popover-foreground: 210 20% 93%;
+    --primary: 174 72% 45%;               /* Brighter teal in dark */
     --primary-foreground: 0 0% 100%;
-    --secondary: 271 30% 14%;
-    --secondary-foreground: 30 30% 70%;
-    --muted: 271 25% 16%;
-    --muted-foreground: 30 20% 55%;
+    --secondary: 210 25% 16%;
+    --secondary-foreground: 210 30% 70%;
+    --muted: 210 20% 18%;
+    --muted-foreground: 210 20% 55%;
     --accent: 45 100% 50%;               /* Gold accent in dark */
     --accent-foreground: 0 0% 0%;
     --success: 142 72% 42%;
     --success-foreground: 0 0% 100%;
     --warning: 45 100% 50%;
     --warning-foreground: 0 0% 0%;
-    --info: 271 50% 60%;
+    --info: 174 72% 60%;
     --info-foreground: 0 0% 100%;
     --destructive: 0 84% 50%;
     --destructive-foreground: 0 0% 100%;
-    --border: 271 25% 18%;
-    --input: 271 25% 18%;
+    --border: 210 25% 18%;
+    --input: 210 25% 18%;
     --ring: 0 100% 70%;
   }
 
   /* Watch screen dark theme */
   .watch-dark {
-    --background: 271 40% 5%;
-    --foreground: 30 60% 93%;
-    --card: 271 35% 9%;
-    --card-foreground: 30 60% 93%;
-    --popover: 271 35% 9%;
-    --popover-foreground: 30 60% 93%;
-    --border: 271 25% 16%;
-    --input: 271 25% 16%;
+    --background: 210 30% 6%;
+    --foreground: 210 20% 93%;
+    --card: 210 25% 10%;
+    --card-foreground: 210 20% 93%;
+    --popover: 210 25% 10%;
+    --popover-foreground: 210 20% 93%;
+    --border: 210 25% 16%;
+    --input: 210 25% 16%;
   }
 }
 
