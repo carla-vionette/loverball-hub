@@ -76,7 +76,6 @@ const EditProfile = () => {
         .maybeSingle();
       
       if (error) {
-        console.error("Error fetching profile:", error);
         navigate("/onboarding");
         return;
       }

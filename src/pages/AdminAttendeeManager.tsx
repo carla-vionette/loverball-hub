@@ -258,7 +258,6 @@ const AdminAttendeeManager = () => {
         toast({ title: 'Promoted from waitlist!' });
       }
     } catch (error: any) {
-      console.error('Error promoting attendee:', error);
       toast({ title: 'Error promoting attendee', variant: 'destructive' });
     }
   };

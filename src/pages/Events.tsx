@@ -81,7 +81,7 @@ const Events = () => {
           }
         }
       } catch (err) {
-        console.error("Error fetching events:", err);
+        // Events fetch error handled silently
       }
       setLoading(false);
     })();
