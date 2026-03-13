@@ -90,6 +90,6 @@ export async function createCheckoutSession(plan: SubscriptionPlan): Promise<str
 
 export function canAccessTier(userTier: SubscriptionPlan, contentTier: string | null): boolean {
   if (!contentTier || contentTier === 'free') return true;
-  const tierRank: Record<string, number> = { free: 0, pro: 1, premium: 2 };
+  const tierRank: Record<string, number> = { free: 0, community: 1, allaccess: 2 };
   return (tierRank[userTier] || 0) >= (tierRank[contentTier] || 0);
 }

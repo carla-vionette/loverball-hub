@@ -71,9 +71,9 @@ const BillingPage = () => {
                 <p className="text-muted-foreground text-sm mt-1">
                   {plan === 'free'
                     ? 'Limited access — upgrade for more'
-                    : plan === 'pro'
-                    ? '$9.99/month — Full video & event access'
-                    : '$19.99/month — Premium experience'}
+                    : plan === 'community'
+                    ? '$15/month — Full platform access'
+                    : '$35/month — All Access experience'}
                 </p>
                 {periodEnd && (
                   <p className="text-xs text-muted-foreground mt-2">
