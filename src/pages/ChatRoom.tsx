@@ -5,6 +5,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ArrowLeft, Send, Loader2 } from "lucide-react";
+import ChatIcebreaker from "@/components/ChatIcebreaker";
 
 interface Message {
   id: string;
@@ -125,6 +126,9 @@ const ChatRoom = () => {
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3">
+        {messages.length === 0 && !loading && (
+          <ChatIcebreaker onSelect={(prompt) => setNewMessage(prompt)} />
+        )}
         {loading ? (
           <div className="flex items-center justify-center py-20">
             <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
