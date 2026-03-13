@@ -877,6 +877,15 @@ const EventDetail = () => {
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Attendee List Modal */}
+      {id && (
+        <AttendeeListModal
+          eventId={id}
+          open={showAttendeeList}
+          onOpenChange={setShowAttendeeList}
+        />
+      )}
     </div>
   );
 };
