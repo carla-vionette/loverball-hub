@@ -229,7 +229,6 @@ const AdminAttendeeManager = () => {
       setNewAttendeeStatus('attending');
       fetchAttendees();
     } catch (error: any) {
-      console.error('Error adding attendee:', error);
       toast({ title: 'Error adding attendee', description: error.message, variant: 'destructive' });
     } finally {
       setAddingAttendee(false);
