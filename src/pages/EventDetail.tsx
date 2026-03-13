@@ -191,7 +191,6 @@ const EventDetail = () => {
       setEvent(data);
       if (data) trackContentView("event", data.id, data.title);
     } catch (error) {
-      console.error('Error fetching event:', error);
       toast({
         title: "Event not found",
         description: "This event may have been removed.",
