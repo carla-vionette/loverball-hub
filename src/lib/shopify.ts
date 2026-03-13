@@ -191,7 +191,6 @@ export async function storefrontApiRequest(query: string, variables: any = {}) {
   });
 
   if (error) {
-    console.error('Shopify proxy error:', error);
     throw new Error(error.message || 'Failed to connect to Shopify');
   }
 
