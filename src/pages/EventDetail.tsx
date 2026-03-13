@@ -530,7 +530,7 @@ const EventDetail = () => {
               <div className="bg-black/70 backdrop-blur-sm rounded-lg px-3 py-2 text-white flex gap-3">
                 {countdown.days > 0 && (
                   <div className="text-center">
-                    <p className="text-2xl font-bold">{countdown.days}</p>
+                    <p className="text-xl font-bold">{countdown.days}</p>
                     <p className="text-xs text-white/70">days</p>
                   </div>
                 )}
