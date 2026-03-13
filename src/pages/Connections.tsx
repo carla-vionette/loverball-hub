@@ -123,7 +123,6 @@ const Connections = () => {
       if (error) throw error;
       setProfiles(data || []);
     } catch (err) {
-      console.error("Error fetching profiles:", err);
       toast.error("Failed to load profiles");
     } finally {
       setLoading(false);

@@ -52,7 +52,7 @@ const AdminDashboard = () => {
       setVideos(videosData);
       setStats(statsData);
     } catch (error) {
-      console.error('Error fetching admin data:', error);
+      // Admin data fetch error handled silently
     } finally {
       setLoading(false);
     }

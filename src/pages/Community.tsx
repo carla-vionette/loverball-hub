@@ -73,7 +73,7 @@ const Community = () => {
         setMyGroupIds(new Set(memberships?.map(m => m.group_id) || []));
       }
     } catch (err) {
-      console.error('Error fetching groups:', err);
+      // Groups fetch error handled silently
     } finally {
       setLoading(false);
     }

@@ -179,7 +179,6 @@ const GroupChat = () => {
         setMembers(enrichedMembers);
       }
     } catch (err) {
-      console.error('Error fetching group:', err);
       toast.error("Failed to load group");
     } finally {
       setLoading(false);

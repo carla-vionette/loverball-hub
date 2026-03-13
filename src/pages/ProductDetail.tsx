@@ -90,7 +90,6 @@ const ProductDetail = () => {
         }).slice(0, 4);
         setRelatedProducts(related);
       } catch (error) {
-        console.error('Error fetching product:', error);
         toast.error("Failed to load product");
       } finally {
         setLoading(false);

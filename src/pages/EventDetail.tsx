@@ -333,7 +333,6 @@ const EventDetail = () => {
         description: status === 'yes' ? "We'll see you there!" : undefined,
       });
     } catch (error: any) {
-      console.error('Error submitting RSVP:', error);
       toast({
         title: 'Error',
         description: 'Failed to submit RSVP. Please try again.',
