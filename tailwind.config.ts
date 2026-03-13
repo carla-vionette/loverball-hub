@@ -63,11 +63,11 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ["Inter", "system-ui", "sans-serif"],
-        display: ["Oswald", "Impact", "sans-serif"],
+        sans: ["Poppins", "system-ui", "sans-serif"],
+        display: ["Poppins", "system-ui", "sans-serif"],
         script: ["Pacifico", "cursive"],
         condensed: ["Oswald", "Impact", "sans-serif"],
-        serif: ["Inter", "system-ui", "sans-serif"],
+        serif: ["Poppins", "system-ui", "sans-serif"],
       },
       fontSize: {
         xs: ["0.75rem", { lineHeight: "1rem" }],
@@ -126,6 +126,10 @@ export default {
         coral: {
           DEFAULT: "hsl(var(--coral))",
           foreground: "hsl(var(--coral-foreground))",
+        },
+        gold: {
+          DEFAULT: "hsl(var(--gold))",
+          foreground: "hsl(var(--gold-foreground))",
         },
         "pale-pink": {
           DEFAULT: "hsl(var(--pale-pink))",
@@ -225,6 +229,10 @@ export default {
           "0%": { backgroundPosition: "-200% 0" },
           "100%": { backgroundPosition: "200% 0" },
         },
+        float: {
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-6px)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -238,6 +246,7 @@ export default {
         "slide-out-right": "slide-out-right 0.3s ease-out",
         "skeleton-pulse": "skeleton-pulse 2s ease-in-out infinite",
         shimmer: "shimmer 2s linear infinite",
+        float: "float 3s ease-in-out infinite",
       },
     },
   },
