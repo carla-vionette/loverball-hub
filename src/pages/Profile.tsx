@@ -412,6 +412,11 @@ const Profile = () => {
               </div>
             </motion.div>
 
+            {/* BADGE SHELF */}
+            <motion.div variants={staggerItem}>
+              <BadgeShelf />
+            </motion.div>
+
 
             {/* FAVORITE TEAMS PERFORMANCE - COLLAPSIBLE */}
             <motion.div variants={staggerItem}>
