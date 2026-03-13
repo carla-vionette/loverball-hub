@@ -465,6 +465,7 @@ export type Database = {
           end_time: string | null
           event_date: string
           event_link: string | null
+          event_tags: string[] | null
           event_time: string | null
           event_type: string | null
           host_user_id: string | null
@@ -498,6 +499,7 @@ export type Database = {
           end_time?: string | null
           event_date: string
           event_link?: string | null
+          event_tags?: string[] | null
           event_time?: string | null
           event_type?: string | null
           host_user_id?: string | null
@@ -531,6 +533,7 @@ export type Database = {
           end_time?: string | null
           event_date?: string
           event_link?: string | null
+          event_tags?: string[] | null
           event_time?: string | null
           event_type?: string | null
           host_user_id?: string | null
@@ -1353,6 +1356,27 @@ export type Database = {
           id?: string
           swiper_id?: string
           target_user_id?: string
+        }
+        Relationships: []
+      }
+      team_follows: {
+        Row: {
+          created_at: string
+          id: string
+          team_key: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          team_key: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          team_key?: string
+          user_id?: string
         }
         Relationships: []
       }
