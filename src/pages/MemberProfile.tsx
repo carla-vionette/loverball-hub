@@ -9,7 +9,9 @@ import { Card, CardContent } from '@/components/ui/card';
 import { fetchProfileById } from '@/lib/profileApi';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, MapPin, Briefcase, Instagram, Linkedin, Globe, ArrowLeft } from 'lucide-react';
+import { useFollow } from '@/hooks/useFollow';
+import FollowButton from '@/components/FollowButton';
+import { Loader2, MapPin, Briefcase, Instagram, Linkedin, Globe, ArrowLeft, MessageCircle } from 'lucide-react';
 
 interface MemberProfileData {
   id: string;
