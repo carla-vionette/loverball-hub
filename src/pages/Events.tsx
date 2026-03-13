@@ -144,7 +144,7 @@ const Events = () => {
 
       <main className="md:ml-64 pt-16 md:pt-0 pb-24 md:pb-0">
         <div className="max-w-6xl mx-auto px-5 md:px-10 py-6">
-          <h1 className="font-display text-[28px] font-bold uppercase tracking-tight mb-4">Events</h1>
+          <h1 className="font-display text-2xl md:text-[28px] font-bold uppercase tracking-tight mb-4">Events</h1>
 
           {/* TABS */}
           <div className="flex gap-1 mb-6 bg-secondary rounded-full p-1 w-fit">
