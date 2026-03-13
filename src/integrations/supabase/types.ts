@@ -375,6 +375,7 @@ export type Database = {
         Row: {
           created_at: string
           event_id: string
+          going_solo: boolean
           id: string
           status: string
           user_id: string
@@ -382,6 +383,7 @@ export type Database = {
         Insert: {
           created_at?: string
           event_id: string
+          going_solo?: boolean
           id?: string
           status?: string
           user_id: string
@@ -389,6 +391,7 @@ export type Database = {
         Update: {
           created_at?: string
           event_id?: string
+          going_solo?: boolean
           id?: string
           status?: string
           user_id?: string
@@ -589,6 +592,27 @@ export type Database = {
           summary?: string
           team_tags?: string[]
           title?: string
+        }
+        Relationships: []
+      }
+      follows: {
+        Row: {
+          created_at: string
+          follower_id: string
+          following_id: string
+          id: string
+        }
+        Insert: {
+          created_at?: string
+          follower_id: string
+          following_id: string
+          id?: string
+        }
+        Update: {
+          created_at?: string
+          follower_id?: string
+          following_id?: string
+          id?: string
         }
         Relationships: []
       }
