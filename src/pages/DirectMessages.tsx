@@ -131,7 +131,7 @@ const DirectMessages = () => {
       if (error) throw error;
       setMessages(data || []);
     } catch (err) {
-      console.error("Error fetching messages:", err);
+      // Message fetch error handled silently
     } finally {
       setMessagesLoading(false);
     }
