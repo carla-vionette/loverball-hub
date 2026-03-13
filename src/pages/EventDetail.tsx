@@ -94,6 +94,16 @@ const EventDetail = () => {
   const [showShareDialog, setShowShareDialog] = useState(false);
   const [guestRefreshKey, setGuestRefreshKey] = useState(0);
   const [showAttendeeList, setShowAttendeeList] = useState(false);
+  const [userTier, setUserTier] = useState<string | null>(null);
+
+  // Fetch user subscription tier
+  useEffect(() => {
+    if (user) {
+      getUserTier(user.id).then(t => setUserTier(t)).catch(() => setUserTier('free'));
+    } else {
+      setUserTier('free');
+    }
+  }, [user]);
 
   // No longer redirect - allow guests to view event details
   // They will see "Sign in to RSVP" button at bottom
