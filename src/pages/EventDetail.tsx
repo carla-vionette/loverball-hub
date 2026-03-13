@@ -535,7 +535,7 @@ const EventDetail = () => {
                   </div>
                 )}
                 <div className="text-center">
-                  <p className="text-2xl font-bold">{countdown.hours}</p>
+                  <p className="text-xl font-bold">{countdown.hours}</p>
                   <p className="text-xs text-white/70">hrs</p>
                 </div>
                 <div className="text-center">
