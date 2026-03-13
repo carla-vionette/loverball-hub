@@ -86,7 +86,6 @@ const Members = () => {
       const shuffled = filteredProfiles.sort(() => Math.random() - 0.5);
       setProfiles(shuffled);
     } catch (error: any) {
-      console.error('Error fetching profiles:', error);
       setFetchError(error?.message || 'Failed to load profiles');
     } finally {
       setLoading(false);
