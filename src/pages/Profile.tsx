@@ -334,18 +334,18 @@ const Profile = () => {
                   </div>
 
                   {/* Quick actions */}
-                  <div className="flex items-center gap-3">
-                    <Button onClick={() => goTo("/profile/edit")} className="rounded-full bg-primary hover:bg-primary/90 text-primary-foreground gap-2">
-                      <Edit className="w-4 h-4" /> Edit Profile
+                  <div className="flex items-center gap-2 flex-wrap justify-center">
+                    <Button onClick={() => goTo("/profile/edit")} size="sm" className="rounded-full bg-primary hover:bg-primary/90 text-primary-foreground gap-1.5 text-xs">
+                      <Edit className="w-3.5 h-3.5" /> Edit Profile
                     </Button>
-                    <Button variant="outline" onClick={() => goTo("/dms")} className="rounded-full border-border/40 text-foreground/70 hover:text-foreground gap-2">
-                      <MessageCircle className="w-4 h-4" />
+                    <Button variant="outline" size="icon" onClick={() => goTo("/dms")} className="rounded-full border-border/40 text-foreground/70 hover:text-foreground h-8 w-8">
+                      <MessageCircle className="w-3.5 h-3.5" />
                     </Button>
-                    <Button variant="outline" onClick={() => goTo("/settings")} className="rounded-full border-border/40 text-foreground/70 hover:text-foreground gap-2">
-                      <Settings className="w-4 h-4" />
+                    <Button variant="outline" size="icon" onClick={() => goTo("/settings")} className="rounded-full border-border/40 text-foreground/70 hover:text-foreground h-8 w-8">
+                      <Settings className="w-3.5 h-3.5" />
                     </Button>
-                    <Button variant="outline" onClick={handleLogout} className="rounded-full border-border/40 text-destructive hover:text-destructive gap-2">
-                      <LogOut className="w-4 h-4" />
+                    <Button variant="outline" size="icon" onClick={handleLogout} className="rounded-full border-border/40 text-destructive hover:text-destructive h-8 w-8">
+                      <LogOut className="w-3.5 h-3.5" />
                     </Button>
                   </div>
                 </div>
