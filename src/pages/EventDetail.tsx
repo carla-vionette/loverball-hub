@@ -15,6 +15,7 @@ import loverballLogo from "@/assets/loverball-script-logo.png";
 import SharePreview from "@/components/SharePreview";
 import WhosGoing from "@/components/WhosGoing";
 import { trackEventRSVP, trackContentView } from "@/lib/analytics";
+import EventCheckIn from "@/components/EventCheckIn";
 
 interface Event {
   id: string;
@@ -616,6 +617,17 @@ const EventDetail = () => {
                   </div>
                 )}
               </div>
+
+              {/* Check-In Button */}
+              {user && (rsvpStatus === 'attending' || rsvpStatus === 'yes') && (
+                <div className="mb-6">
+                  <EventCheckIn
+                    eventId={event.id}
+                    eventDate={event.event_date}
+                    eventCity={event.city}
+                  />
+                </div>
+              )}
 
               {/* Attendee Avatars */}
               {attendees.length > 0 && (

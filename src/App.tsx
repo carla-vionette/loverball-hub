@@ -49,6 +49,7 @@ const CheckoutSuccess = lazy(() => import("./pages/CheckoutSuccess"));
 const Ticker = lazy(() => import("./pages/Ticker"));
 const PlanSelection = lazy(() => import("./pages/PlanSelection"));
 const Inbox = lazy(() => import("./pages/Inbox"));
+const Leaderboard = lazy(() => import("./pages/Leaderboard"));
 
 // SaaS pages
 const PricingPage = lazy(() => import("./pages/PricingPage"));
@@ -148,6 +149,7 @@ const App = () => (
                 <Route path="/friends" element={<ProtectedRoute><Friends /></ProtectedRoute>} />
                 <Route path="/inbox" element={<ProtectedRoute><Inbox /></ProtectedRoute>} />
                 <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+                <Route path="/leaderboard" element={<ProtectedRoute><Leaderboard /></ProtectedRoute>} />
                 <Route path="/billing" element={<ProtectedRoute><BillingPage /></ProtectedRoute>} />
                 <Route path="/invites" element={<ProtectedRoute><InvitesPage /></ProtectedRoute>} />
                 <Route path="/videos" element={<ProtectedRoute><VideoLibrary /></ProtectedRoute>} />
