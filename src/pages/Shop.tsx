@@ -80,7 +80,6 @@ const ShopContent = () => {
         throw new Error("No checkout URL returned");
       }
     } catch (err: any) {
-      console.error("Checkout error:", err);
       toast.error(err.message || "Failed to start checkout");
     } finally {
       setCheckingOut(false);
@@ -95,7 +94,7 @@ const ShopContent = () => {
       const { data, error } = await supabase.from("products").select("*").order("created_at");
       if (error) throw error;
       setProducts(data || []);
-    } catch (err) { console.error("Error fetching products:", err); }
+    } catch (err) { /* product fetch error */ }
     finally { setLoading(false); }
   };
 
@@ -106,7 +105,7 @@ const ShopContent = () => {
       if (error) throw error;
       const items: CartItem[] = (data || []).map((ci) => ({ ...ci, product: products.find((p) => p.id === ci.product_id)! })).filter((ci) => ci.product);
       setCartItems(items);
-    } catch (err) { console.error("Error fetching cart:", err); }
+    } catch (err) { /* cart fetch error */ }
   };
 
   useEffect(() => { if (user && products.length > 0) fetchCart(); }, [products, user]);
@@ -135,7 +134,7 @@ const ShopContent = () => {
       const { error } = await supabase.from("cart_items").update({ quantity: newQty }).eq("id", itemId);
       if (error) throw error;
       setCartItems((prev) => prev.map((ci) => ci.id === itemId ? { ...ci, quantity: newQty } : ci));
-    } catch (err) { console.error("Error updating quantity:", err); }
+    } catch (err) { /* quantity update error */ }
   };
 
   const removeFromCart = async (itemId: string) => {
@@ -144,7 +143,7 @@ const ShopContent = () => {
       if (error) throw error;
       setCartItems((prev) => prev.filter((ci) => ci.id !== itemId));
       toast.success("Removed from cart");
-    } catch (err) { console.error("Error removing from cart:", err); }
+    } catch (err) { /* remove error */ }
   };
 
   const totalItems = cartItems.reduce((s, i) => s + i.quantity, 0);

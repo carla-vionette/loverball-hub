@@ -54,7 +54,6 @@ const EventPreviewCard = ({ eventId }: EventPreviewCardProps) => {
           setEvent(data);
         }
       } catch (err) {
-        console.error('Error fetching event preview:', err);
         setError(true);
       } finally {
         setLoading(false);

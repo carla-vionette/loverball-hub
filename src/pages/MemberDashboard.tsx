@@ -41,7 +41,7 @@ const MemberDashboard = () => {
           setInvite(results[3] as Invite | null);
         }
       } catch (error) {
-        console.error('Error loading dashboard:', error);
+        // Dashboard load error handled silently
       } finally {
         setLoading(false);
       }

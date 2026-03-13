@@ -191,7 +191,6 @@ export async function storefrontApiRequest(query: string, variables: any = {}) {
   });
 
   if (error) {
-    console.error('Shopify proxy error:', error);
     throw new Error(error.message || 'Failed to connect to Shopify');
   }
 
@@ -265,7 +264,6 @@ export async function createStorefrontCheckout(items: CartItem[]): Promise<strin
     url.searchParams.set('channel', 'online_store');
     return url.toString();
   } catch (error) {
-    console.error('Error creating storefront checkout:', error);
     throw error;
   }
 }

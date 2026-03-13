@@ -21,7 +21,7 @@ const AdminAnalyticsTab = () => {
         setSignupData(signups);
         setPlanData(plans);
       })
-      .catch(console.error)
+      .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
 

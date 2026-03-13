@@ -18,7 +18,7 @@ const BillingPage = () => {
     if (!user) return;
     getUserSubscription(user.id)
       .then(setSubscription)
-      .catch(console.error)
+      .catch(() => {})
       .finally(() => setLoading(false));
   }, [user]);
 

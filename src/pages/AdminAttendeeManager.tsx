@@ -100,7 +100,6 @@ const AdminAttendeeManager = () => {
       // Fetch attendees with profiles
       await fetchAttendees();
     } catch (error) {
-      console.error('Error fetching data:', error);
       toast({ title: 'Error loading event', variant: 'destructive' });
       navigate('/admin');
     } finally {
@@ -152,7 +151,7 @@ const AdminAttendeeManager = () => {
 
       setAttendees(transformedData);
     } catch (error) {
-      console.error('Error fetching attendees:', error);
+      // Silently handle attendee fetch errors
     }
   };
 
@@ -163,10 +162,10 @@ const AdminAttendeeManager = () => {
       });
       
       if (error) {
-        console.error('Notification error:', error);
+        // Notification error - non-critical
       }
     } catch (err) {
-      console.error('Failed to send notification:', err);
+      // Failed to send notification - non-critical
     }
   };
 
@@ -194,7 +193,6 @@ const AdminAttendeeManager = () => {
         toast({ title: 'Status updated' });
       }
     } catch (error: any) {
-      console.error('Error updating status:', error);
       toast({ title: 'Error updating status', variant: 'destructive' });
     }
   };
@@ -231,7 +229,6 @@ const AdminAttendeeManager = () => {
       setNewAttendeeStatus('attending');
       fetchAttendees();
     } catch (error: any) {
-      console.error('Error adding attendee:', error);
       toast({ title: 'Error adding attendee', description: error.message, variant: 'destructive' });
     } finally {
       setAddingAttendee(false);
@@ -261,7 +258,6 @@ const AdminAttendeeManager = () => {
         toast({ title: 'Promoted from waitlist!' });
       }
     } catch (error: any) {
-      console.error('Error promoting attendee:', error);
       toast({ title: 'Error promoting attendee', variant: 'destructive' });
     }
   };

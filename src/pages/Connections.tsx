@@ -123,7 +123,6 @@ const Connections = () => {
       if (error) throw error;
       setProfiles(data || []);
     } catch (err) {
-      console.error("Error fetching profiles:", err);
       toast.error("Failed to load profiles");
     } finally {
       setLoading(false);
@@ -231,7 +230,6 @@ const Connections = () => {
         setSwiping(false);
       }, 300);
     } catch (err) {
-      console.error("Error swiping:", err);
       setSwiping(false);
       setSwipeDirection(null);
     }
@@ -260,7 +258,7 @@ const Connections = () => {
 
       setConnectedIds(prev => new Set([...prev, targetId]));
     } catch (err) {
-      console.error("Error connecting:", err);
+      // Connection error handled silently
     }
   };
 

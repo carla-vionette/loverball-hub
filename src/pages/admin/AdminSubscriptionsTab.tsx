@@ -20,7 +20,7 @@ const AdminSubscriptionsTab = () => {
       const data = await fetchAllSubscriptions();
       setSubs(data);
     } catch (error) {
-      console.error('Error fetching subscriptions:', error);
+      // Subscription fetch error handled silently
     } finally {
       setLoading(false);
     }

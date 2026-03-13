@@ -26,7 +26,7 @@ const VideoLibrary = () => {
   useEffect(() => {
     fetchVideos()
       .then(setVideos)
-      .catch(console.error)
+      .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
 

@@ -223,7 +223,6 @@ const PlanSelection = () => {
 
       navigate("/onboarding");
     } catch (error: any) {
-      console.error("Error saving plan:", error);
       // Still navigate even if save fails — we can retry later
       navigate("/onboarding");
     } finally {

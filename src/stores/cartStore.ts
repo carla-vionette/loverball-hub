@@ -81,7 +81,6 @@ export const useCartStore = create<CartStore>()(
           setCheckoutUrl(checkoutUrl);
           items.forEach(item => trackShopFunnel("checkout", item.variantId, undefined, item.price?.amount));
         } catch (error) {
-          console.error('Failed to create checkout:', error);
           throw error;
         } finally {
           setLoading(false);
