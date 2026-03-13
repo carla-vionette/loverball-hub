@@ -16,6 +16,9 @@ import SharePreview from "@/components/SharePreview";
 import WhosGoing from "@/components/WhosGoing";
 import { trackEventRSVP, trackContentView } from "@/lib/analytics";
 import EventCheckIn from "@/components/EventCheckIn";
+import AttendeeListModal from "@/components/AttendeeListModal";
+import GoingSoloToggle from "@/components/GoingSoloToggle";
+import YouveMetCard from "@/components/YouveMetCard";
 
 interface Event {
   id: string;
@@ -83,6 +86,7 @@ const EventDetail = () => {
   const [showConfetti, setShowConfetti] = useState(false);
   const [showShareDialog, setShowShareDialog] = useState(false);
   const [guestRefreshKey, setGuestRefreshKey] = useState(0);
+  const [showAttendeeList, setShowAttendeeList] = useState(false);
 
   // No longer redirect - allow guests to view event details
   // They will see "Sign in to RSVP" button at bottom
@@ -629,13 +633,20 @@ const EventDetail = () => {
                 </div>
               )}
 
-              {/* Attendee Avatars */}
+              {/* Going Solo Toggle */}
+              {user && (rsvpStatus === 'attending' || rsvpStatus === 'yes') && event && (
+                <div className="mb-6">
+                  <GoingSoloToggle eventId={event.id} />
+                </div>
+              )}
+
+              {/* Attendee Avatars - clickable to open full list */}
               {attendees.length > 0 && (
                 <div className="mb-6">
                   <p className="text-sm text-muted-foreground mb-2">
                     {attendeeCounts.yes} going{attendeeCounts.maybe > 0 ? ` · ${attendeeCounts.maybe} maybe` : ''}
                   </p>
-                  <div className="flex -space-x-2">
+                  <button onClick={() => setShowAttendeeList(true)} className="flex -space-x-2 hover:opacity-80 transition-opacity">
                     {attendees.slice(0, 8).map((attendee) => (
                       <Avatar key={attendee.id} className="w-10 h-10 border-2 border-background">
                         <AvatarImage src={attendee.profile?.profile_photo_url || undefined} />
@@ -649,7 +660,10 @@ const EventDetail = () => {
                         +{attendees.length - 8}
                       </div>
                     )}
-                  </div>
+                  </button>
+                  <p className="text-xs text-primary mt-1 cursor-pointer" onClick={() => setShowAttendeeList(true)}>
+                    View all attendees →
+                  </p>
                 </div>
               )}
 
@@ -673,6 +687,13 @@ const EventDetail = () => {
 
               {/* Who's Going Section */}
               {id && <WhosGoing eventId={id} refreshKey={guestRefreshKey} />}
+
+              {/* You've Met Suggestions */}
+              {user && (
+                <div className="mt-6">
+                  <YouveMetCard />
+                </div>
+              )}
 
               {/* Map Embed */}
               {event.location_map_url && (
@@ -856,6 +877,15 @@ const EventDetail = () => {
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Attendee List Modal */}
+      {id && (
+        <AttendeeListModal
+          eventId={id}
+          open={showAttendeeList}
+          onOpenChange={setShowAttendeeList}
+        />
+      )}
     </div>
   );
 };

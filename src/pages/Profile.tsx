@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { MapPin, Edit, Sparkles, LogOut, Calendar, Clock, TrendingUp, TrendingDown, Trophy, Flame, Bookmark, BookOpen, Award, ChevronRight, ChevronDown, ArrowUpRight, Share2, AlertTriangle, Ticket, Play, Eye, Lightbulb, Settings, Heart, MessageCircle, Loader2, ExternalLink, Newspaper, Zap, RefreshCw } from "lucide-react";
+import { MapPin, Edit, Sparkles, LogOut, Calendar, Clock, TrendingUp, TrendingDown, Trophy, Flame, Bookmark, BookOpen, Award, ChevronRight, ChevronDown, ArrowUpRight, Share2, AlertTriangle, Ticket, Play, Eye, Lightbulb, Settings, Heart, MessageCircle, Loader2, ExternalLink, Newspaper, Zap, RefreshCw, Users } from "lucide-react";
+import { useFollow } from "@/hooks/useFollow";
 import BadgeShelf from "@/components/BadgeShelf";
 import PointsStreakCard from "@/components/PointsStreakCard";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
@@ -145,6 +146,16 @@ const staggerItem = {
   show: { opacity: 1, y: 0, transition: { duration: 0.35, ease: [0.25, 0.1, 0.25, 1] as const } },
 };
 
+
+const ProfileFollowCounts = ({ userId }: { userId: string }) => {
+  const { followerCount, followingCount } = useFollow(userId);
+  return (
+    <div className="flex items-center gap-4 text-sm">
+      <span><strong>{followerCount}</strong> <span className="text-muted-foreground">followers</span></span>
+      <span><strong>{followingCount}</strong> <span className="text-muted-foreground">following</span></span>
+    </div>
+  );
+};
 
 const Profile = () => {
   const [teamsOpen, setTeamsOpen] = useState(false);
@@ -333,7 +344,10 @@ const Profile = () => {
                       <MapPin className="w-4 h-4 text-primary flex-shrink-0" />
                       <span>{locationText}</span>
                     </div>
-                  </div>
+                   </div>
+
+                  {/* Follower/Following counts */}
+                  <ProfileFollowCounts userId={profile.id} />
 
                   {/* Quick actions */}
                   <div className="flex items-center gap-2 flex-wrap justify-center">

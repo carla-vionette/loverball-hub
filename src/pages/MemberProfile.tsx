@@ -9,7 +9,9 @@ import { Card, CardContent } from '@/components/ui/card';
 import { fetchProfileById } from '@/lib/profileApi';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, MapPin, Briefcase, Instagram, Linkedin, Globe, ArrowLeft } from 'lucide-react';
+import { useFollow } from '@/hooks/useFollow';
+import FollowButton from '@/components/FollowButton';
+import { Loader2, MapPin, Briefcase, Instagram, Linkedin, Globe, ArrowLeft, MessageCircle } from 'lucide-react';
 
 interface MemberProfileData {
   id: string;
@@ -28,6 +30,27 @@ interface MemberProfileData {
   linkedin_url?: string | null;
   website_url?: string | null;
 }
+
+const FollowStats = ({ profileId }: { profileId: string }) => {
+  const { followerCount, followingCount } = useFollow(profileId);
+  const navigate = useNavigate();
+
+  return (
+    <div className="flex items-center gap-4 mb-4">
+      <div className="flex gap-3 text-sm">
+        <span><strong>{followerCount}</strong> <span className="text-muted-foreground">followers</span></span>
+        <span><strong>{followingCount}</strong> <span className="text-muted-foreground">following</span></span>
+      </div>
+      <div className="flex gap-2 ml-auto">
+        <FollowButton targetUserId={profileId} />
+        <Button variant="outline" size="sm" onClick={() => navigate(`/inbox`)}>
+          <MessageCircle className="w-4 h-4 mr-1" />
+          Message
+        </Button>
+      </div>
+    </div>
+  );
+};
 
 const MemberProfile = () => {
   const { id } = useParams<{ id: string }>();
@@ -167,6 +190,9 @@ const MemberProfile = () => {
                   <span className="text-muted-foreground">({profile.pronouns})</span>
                 )}
               </div>
+
+              {/* Follower/Following Counts + Follow/DM buttons */}
+              <FollowStats profileId={id!} />
 
               <div className="flex flex-wrap items-center gap-4 mb-4 text-muted-foreground">
                 {profile.city && (
