@@ -5,14 +5,12 @@ import { motion } from "framer-motion";
 import { Award } from "lucide-react";
 
 const BADGE_CONFIG: Record<string, { label: string; emoji: string; description: string }> = {
-  first_game: { label: "First Game", emoji: "🎉", description: "Attended your first event" },
-  solo_queen: { label: "Solo Queen", emoji: "👑", description: "Went solo to 3 events" },
-  five_peat: { label: "5-Peat", emoji: "🔥", description: "Attended 5 events" },
-  social_butterfly: { label: "Social Butterfly", emoji: "🦋", description: "Made 5 friends" },
-  watch_party_host: { label: "Party Host", emoji: "📺", description: "Hosted a watch party" },
-  early_bird: { label: "Early Bird", emoji: "🐦", description: "RSVP'd first to an event" },
-  streak_3: { label: "3-Week Streak", emoji: "⚡", description: "3 events in 3 weeks" },
-  mvp: { label: "MVP", emoji: "🏆", description: "Community MVP" },
+  first_checkin: { label: "First Check-In", emoji: "🏟️", description: "Checked in to your first event" },
+  solo_queen: { label: "Solo Queen", emoji: "👑", description: "Attended alone 3 times" },
+  streak_3: { label: "3-Game Streak", emoji: "🔥", description: "3 events in 3 weeks" },
+  watch_party_host: { label: "Watch Party Host", emoji: "🎉", description: "Hosted a watch party" },
+  new_fan: { label: "New Fan", emoji: "⭐", description: "First game of a new sport" },
+  road_tripper: { label: "Road Tripper", emoji: "✈️", description: "Attended in a new city" },
 };
 
 interface BadgeShelfProps {
@@ -47,7 +45,7 @@ export default function BadgeShelf({ userId }: BadgeShelfProps) {
         </span>
       </div>
 
-      <div className="grid grid-cols-4 gap-3">
+      <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
         {allBadges.map(([key, config], i) => {
           const earned = earnedBadges.includes(key);
           return (
@@ -56,12 +54,12 @@ export default function BadgeShelf({ userId }: BadgeShelfProps) {
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: i * 0.05 }}
-              className="flex flex-col items-center text-center gap-1"
+              className="flex flex-col items-center text-center gap-1.5"
             >
               <div
-                className={`w-12 h-12 rounded-2xl flex items-center justify-center text-xl transition-all ${
+                className={`w-14 h-14 rounded-2xl flex items-center justify-center text-2xl transition-all ${
                   earned
-                    ? "bg-accent/15 shadow-sm"
+                    ? "bg-accent/15 shadow-sm ring-2 ring-accent/20"
                     : "bg-muted/50 opacity-40 grayscale"
                 }`}
               >
