@@ -137,10 +137,13 @@ export async function fetchAdminEvents(): Promise<EventItem[]> {
     event_date: e.event_date,
     location: e.location,
     event_link: e.event_link,
-    image: e.cover_image_url || e.image || null,
+    image: e.cover_image_url || e.image_url || null,
     event_type: e.event_type,
     visibility: e.visibility || 'public',
     created_at: e.created_at,
+    tier: e.tier || null,
+    layout_json: e.layout_json || null,
+    banner_image: e.banner_image || null,
   }));
 }
 
