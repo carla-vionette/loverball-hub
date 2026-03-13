@@ -474,7 +474,7 @@ const EventDetail = () => {
           >
             <ArrowLeft className="w-5 h-5" />
           </Button>
-          <img src={loverballLogo} alt="Loverball" className="h-14" />
+          <img src={loverballLogo} alt="Loverball" className="h-10 md:h-14" />
           <Button 
             variant="ghost" 
             size="icon"
@@ -527,19 +527,19 @@ const EventDetail = () => {
           {/* Countdown Timer */}
           {!isEventPast && (countdown.days > 0 || countdown.hours > 0 || countdown.minutes > 0) && (
             <div className="absolute bottom-4 right-4">
-              <div className="bg-black/70 backdrop-blur-sm rounded-lg px-4 py-2 text-white flex gap-4">
+              <div className="bg-black/70 backdrop-blur-sm rounded-lg px-3 py-2 text-white flex gap-3">
                 {countdown.days > 0 && (
                   <div className="text-center">
-                    <p className="text-2xl font-bold">{countdown.days}</p>
+                    <p className="text-xl font-bold">{countdown.days}</p>
                     <p className="text-xs text-white/70">days</p>
                   </div>
                 )}
                 <div className="text-center">
-                  <p className="text-2xl font-bold">{countdown.hours}</p>
+                  <p className="text-xl font-bold">{countdown.hours}</p>
                   <p className="text-xs text-white/70">hrs</p>
                 </div>
                 <div className="text-center">
-                  <p className="text-2xl font-bold">{countdown.minutes}</p>
+                  <p className="text-xl font-bold">{countdown.minutes}</p>
                   <p className="text-xs text-white/70">min</p>
                 </div>
               </div>
