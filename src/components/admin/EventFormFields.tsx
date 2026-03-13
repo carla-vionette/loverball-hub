@@ -93,7 +93,6 @@ export const EventFormFields = ({ formData, onChange }: EventFormFieldsProps) =>
       onChange('image_url', publicUrl);
       toast({ title: 'Image uploaded!' });
     } catch (error: any) {
-      console.error('Error uploading image:', error);
       toast({
         title: 'Upload failed',
         description: error.message,

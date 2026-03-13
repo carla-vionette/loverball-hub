@@ -109,7 +109,6 @@ const Horoscope = () => {
       setHoroscopeDate(resp?.data?.date || resp?.date || null);
       sessionCache.set(cacheKey, { data: { horoscope: reading, date: resp?.data?.date || resp?.date }, ts: Date.now() });
     } catch (e: any) {
-      console.error("Horoscope fetch error:", e);
       setError("Couldn't load your forecast. Tap retry.");
       setHoroscope(null);
     } finally {

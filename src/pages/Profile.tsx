@@ -174,7 +174,7 @@ const Profile = () => {
       // Call edge function to refresh RSS articles
       await supabase.functions.invoke('fetch-sports-news');
     } catch (err) {
-      console.warn('Feed refresh failed:', err);
+      // Feed refresh is non-critical
     }
     // Fetch from DB (no 36h filter - show all recent articles)
     const { data } = await supabase
@@ -209,7 +209,6 @@ const Profile = () => {
         }
         if (suggestedResult.data) setSuggestedEvents(suggestedResult.data);
       } catch (err) {
-        console.error("Profile fetch error:", err);
         if (!cancelled) goTo("/onboarding");
       } finally {
         if (!cancelled) setLoading(false);

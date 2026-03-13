@@ -122,7 +122,6 @@ const AdminEventEditor = () => {
         });
       }
     } catch (error) {
-      console.error('Error fetching event:', error);
       toast({
         title: 'Error loading event',
         variant: 'destructive',
@@ -214,7 +213,6 @@ const AdminEventEditor = () => {
         }
       }
     } catch (error: any) {
-      console.error('Error saving event:', error);
       toast({
         title: 'Error saving event',
         description: error.message,
@@ -240,7 +238,6 @@ const AdminEventEditor = () => {
       toast({ title: 'Event deleted' });
       navigate('/admin');
     } catch (error: any) {
-      console.error('Error deleting event:', error);
       toast({
         title: 'Error deleting event',
         description: error.message,

@@ -117,7 +117,7 @@ const DirectMessages = () => {
 
       setConversations(convos);
     } catch (err) {
-      console.error("Error fetching conversations:", err);
+      // Conversation fetch error handled silently
     } finally {
       setLoading(false);
     }
@@ -131,7 +131,7 @@ const DirectMessages = () => {
       if (error) throw error;
       setMessages(data || []);
     } catch (err) {
-      console.error("Error fetching messages:", err);
+      // Message fetch error handled silently
     } finally {
       setMessagesLoading(false);
     }
@@ -147,7 +147,7 @@ const DirectMessages = () => {
       if (error) throw error;
       setMessageText("");
     } catch (err) {
-      console.error("Error sending message:", err);
+      // Send error handled silently
     } finally {
       setSending(false);
     }

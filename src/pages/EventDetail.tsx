@@ -191,7 +191,6 @@ const EventDetail = () => {
       setEvent(data);
       if (data) trackContentView("event", data.id, data.title);
     } catch (error) {
-      console.error('Error fetching event:', error);
       toast({
         title: "Event not found",
         description: "This event may have been removed.",
@@ -237,7 +236,7 @@ const EventDetail = () => {
       setAttendees(transformedData);
       setAttendeeCounts({ yes: transformedData.length, maybe: 0, no: 0 });
     } catch (error) {
-      console.error('Error fetching attendees:', error);
+      // Silently handle attendee fetch errors
     }
   };
 
@@ -254,7 +253,7 @@ const EventDetail = () => {
 
       setRsvpStatus(data?.status || null);
     } catch (error) {
-      console.error('Error fetching RSVP status:', error);
+      // Silently handle RSVP status fetch errors
     }
   };
 
@@ -334,7 +333,6 @@ const EventDetail = () => {
         description: status === 'yes' ? "We'll see you there!" : undefined,
       });
     } catch (error: any) {
-      console.error('Error submitting RSVP:', error);
       toast({
         title: 'Error',
         description: 'Failed to submit RSVP. Please try again.',

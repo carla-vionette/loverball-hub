@@ -34,7 +34,7 @@ const VideoPlayerPage = () => {
           fetchRelatedVideos(vid.id, vid.category).then(setRelated);
         }
       })
-      .catch(console.error)
+      .catch(() => {})
       .finally(() => setLoading(false));
   }, [id, user]);
 

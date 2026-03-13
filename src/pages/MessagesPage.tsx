@@ -135,7 +135,7 @@ const MessagesPage = () => {
 
       setMatches(matchesWithDetails);
     } catch (error) {
-      console.error('Error fetching matches:', error);
+      // Match fetch error handled silently
     } finally {
       setLoading(false);
     }
@@ -152,7 +152,7 @@ const MessagesPage = () => {
       if (error) throw error;
       setMessages(data || []);
     } catch (error) {
-      console.error('Error fetching messages:', error);
+      // Message fetch error handled silently
     }
   }, []);
 
@@ -220,7 +220,7 @@ const MessagesPage = () => {
       if (error) throw error;
       setNewMessage('');
     } catch (error) {
-      console.error('Error sending message:', error);
+      // Send error handled silently
     } finally {
       setSendingMessage(false);
     }

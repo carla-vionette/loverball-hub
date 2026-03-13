@@ -49,7 +49,6 @@ const LinkPreviewCard = ({ url }: LinkPreviewCardProps) => {
           setPreview(data);
         }
       } catch (err) {
-        console.error('Error fetching link preview:', err);
         previewCache.set(url, null);
         setError(true);
       } finally {

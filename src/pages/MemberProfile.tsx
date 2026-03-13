@@ -61,7 +61,7 @@ const MemberProfile = () => {
         }
         setProfile(data);
       } catch (error) {
-        console.error('Error fetching profile:', error);
+        // Profile fetch error handled silently
       } finally {
         setLoading(false);
       }

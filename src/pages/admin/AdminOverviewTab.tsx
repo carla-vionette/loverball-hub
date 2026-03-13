@@ -11,7 +11,7 @@ const AdminOverviewTab = () => {
   useEffect(() => {
     fetchDashboardStats()
       .then(setStats)
-      .catch(console.error)
+      .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
 

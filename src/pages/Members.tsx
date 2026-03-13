@@ -86,7 +86,6 @@ const Members = () => {
       const shuffled = filteredProfiles.sort(() => Math.random() - 0.5);
       setProfiles(shuffled);
     } catch (error: any) {
-      console.error('Error fetching profiles:', error);
       setFetchError(error?.message || 'Failed to load profiles');
     } finally {
       setLoading(false);
@@ -137,7 +136,6 @@ const Members = () => {
       // Move to next profile
       setCurrentIndex(prev => prev + 1);
     } catch (error: any) {
-      console.error('Error recording swipe:', error);
       toast({
         title: 'Error',
         description: 'Failed to record swipe. Please try again.',

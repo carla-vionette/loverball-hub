@@ -108,7 +108,7 @@ const Settings = () => {
 
       setUserTeams(profile?.favorite_la_teams || []);
     } catch (err) {
-      console.error("Error loading preferences:", err);
+      // Preferences load error handled silently
     } finally {
       setLoading(false);
     }
@@ -191,7 +191,6 @@ const Settings = () => {
       if (fError) throw fError;
       toast.success("Preferences saved!");
     } catch (err) {
-      console.error("Save error:", err);
       toast.error("Failed to save preferences");
     } finally {
       setSaving(false);

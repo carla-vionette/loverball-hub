@@ -47,7 +47,7 @@ const EventBuilder = () => {
       if (event?.layout_json?.sections) {
         setSections(event.layout_json.sections);
       }
-    }).catch(console.error);
+    }).catch(() => {});
   }, [eventId]);
 
   const addSection = (type: EventSectionType) => {
