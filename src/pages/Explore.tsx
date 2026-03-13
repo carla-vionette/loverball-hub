@@ -203,6 +203,38 @@ const CreatorCard = ({ channel }: { channel: ChannelData }) => (
 const Explore = () => {
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState("All");
+  const [searchEvents, setSearchEvents] = useState<any[]>([]);
+  const [searchUsers, setSearchUsers] = useState<any[]>([]);
+  const [searchLoading, setSearchLoading] = useState(false);
+
+  // Search across events, users, and teams when query changes
+  useEffect(() => {
+    if (!search || search.length < 2) {
+      setSearchEvents([]);
+      setSearchUsers([]);
+      return;
+    }
+    const timer = setTimeout(async () => {
+      setSearchLoading(true);
+      const [eventsRes, usersRes] = await Promise.all([
+        supabase
+          .from("events")
+          .select("id, title, event_date, event_time, city, event_type, sport_tags, image_url")
+          .eq("status", "published")
+          .or(`title.ilike.%${search}%,city.ilike.%${search}%`)
+          .limit(5),
+        supabase
+          .from("profiles")
+          .select("id, name, profile_photo_url, city")
+          .ilike("name", `%${search}%`)
+          .limit(5),
+      ]);
+      setSearchEvents(eventsRes.data || []);
+      setSearchUsers(usersRes.data || []);
+      setSearchLoading(false);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [search]);
 
   const filteredVideos = useMemo(() => {
     return DISCOVER_VIDEOS.filter(v => {
@@ -225,6 +257,7 @@ const Explore = () => {
   const popularCreators = CHANNELS.filter(ch => ch.trending).sort((a, b) => b.followerNum - a.followerNum);
 
   const isFiltering = search || activeCategory !== "All";
+  const hasUnifiedResults = search && search.length >= 2;
 
   return (
     <div className="min-h-screen bg-background">
@@ -236,11 +269,11 @@ const Explore = () => {
         <div className="max-w-3xl mx-auto px-5 md:px-10 py-6">
           <h1 className="font-display text-2xl md:text-[28px] font-bold uppercase tracking-tight mb-5">Discover</h1>
 
-          {/* Search */}
+          {/* Unified Search */}
           <div className="relative mb-5">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
-              placeholder="Search videos & channels..."
+              placeholder="Search events, teams, people, videos..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="pl-10 rounded-full bg-secondary border-border/20"
