@@ -191,7 +191,6 @@ const Settings = () => {
       if (fError) throw fError;
       toast.success("Preferences saved!");
     } catch (err) {
-      console.error("Save error:", err);
       toast.error("Failed to save preferences");
     } finally {
       setSaving(false);

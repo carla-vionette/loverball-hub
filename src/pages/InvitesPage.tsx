@@ -29,7 +29,7 @@ const InvitesPage = () => {
         setInvite(inv);
         setLeaderboard(lb);
       })
-      .catch(console.error)
+      .catch(() => {})
       .finally(() => setLoading(false));
   }, [user]);
 

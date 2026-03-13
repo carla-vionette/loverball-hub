@@ -136,7 +136,6 @@ const Members = () => {
       // Move to next profile
       setCurrentIndex(prev => prev + 1);
     } catch (error: any) {
-      console.error('Error recording swipe:', error);
       toast({
         title: 'Error',
         description: 'Failed to record swipe. Please try again.',

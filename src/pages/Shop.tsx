@@ -143,7 +143,7 @@ const ShopContent = () => {
       if (error) throw error;
       setCartItems((prev) => prev.filter((ci) => ci.id !== itemId));
       toast.success("Removed from cart");
-    } catch (err) { console.error("Error removing from cart:", err); }
+    } catch (err) { /* remove error */ }
   };
 
   const totalItems = cartItems.reduce((s, i) => s + i.quantity, 0);
