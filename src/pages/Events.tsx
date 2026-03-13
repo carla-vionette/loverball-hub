@@ -173,7 +173,7 @@ const Events = () => {
                   <div className="w-full h-full bg-gradient-to-br from-primary/20 to-accent/20" />
                 )}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
-                <div className="absolute bottom-0 left-0 right-0 p-6">
+                <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6">
                   <Badge className="bg-primary text-primary-foreground text-[10px] font-semibold tracking-wider rounded-full mb-2">Featured Event</Badge>
                   <h2 className="text-white font-display text-2xl md:text-3xl font-bold uppercase">{featured.title}</h2>
                   <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-white/70 text-xs sm:text-sm mt-2">
