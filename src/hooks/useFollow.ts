@@ -26,7 +26,6 @@ export function useFollow(targetUserId: string | undefined) {
     }
     setFollowerCount(followers.count ?? 0);
     setFollowingCount(following.count ?? 0);
-    if (isFollowingRes) setIsFollowing(!!isFollowingRes.data);
     setLoading(false);
   }, [targetUserId, user?.id]);
 
