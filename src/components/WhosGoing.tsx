@@ -75,6 +75,7 @@ const WhosGoing = ({ eventId, refreshKey }: Props) => {
       id: item.id,
       user_id: item.user_id,
       status: item.status,
+      going_solo: item.going_solo || false,
       profile: item.profile
         ? {
             id: item.profile.id,
