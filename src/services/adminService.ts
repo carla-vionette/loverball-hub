@@ -75,10 +75,31 @@ export async function fetchAdminVideos(): Promise<VideoItem[]> {
   return (data || []) as VideoItem[];
 }
 
-export async function createVideo(video: Omit<VideoItem, 'id' | 'created_at'>): Promise<VideoItem> {
+export async function createVideo(video: {
+  title: string;
+  description?: string | null;
+  video_url: string;
+  thumbnail?: string | null;
+  category?: string | null;
+  uploaded_by?: string | null;
+  tier?: string | null;
+  duration?: string | null;
+  channel_id?: string;
+}): Promise<VideoItem> {
+  const insertPayload = {
+    title: video.title,
+    description: video.description ?? null,
+    video_url: video.video_url,
+    thumbnail: video.thumbnail ?? null,
+    category: video.category ?? null,
+    uploaded_by: video.uploaded_by ?? null,
+    tier: video.tier ?? 'free',
+    duration: video.duration ?? null,
+    channel_id: video.channel_id ?? 'default',
+  };
   const { data, error } = await supabase
     .from('videos')
-    .insert(video)
+    .insert(insertPayload)
     .select()
     .single();
   if (error) throw error;
@@ -116,10 +137,13 @@ export async function fetchAdminEvents(): Promise<EventItem[]> {
     event_date: e.event_date,
     location: e.location,
     event_link: e.event_link,
-    image: e.cover_image_url || e.image || null,
+    image: e.cover_image_url || e.image_url || null,
     event_type: e.event_type,
     visibility: e.visibility || 'public',
     created_at: e.created_at,
+    tier: e.tier || null,
+    layout_json: e.layout_json || null,
+    banner_image: e.banner_image || null,
   }));
 }
 
