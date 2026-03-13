@@ -126,6 +126,9 @@ const ChatRoom = () => {
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3">
+        {messages.length === 0 && !loading && (
+          <ChatIcebreaker onSelect={(prompt) => setNewMessage(prompt)} />
+        )}
         {loading ? (
           <div className="flex items-center justify-center py-20">
             <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
