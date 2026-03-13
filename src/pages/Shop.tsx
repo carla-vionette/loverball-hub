@@ -134,7 +134,7 @@ const ShopContent = () => {
       const { error } = await supabase.from("cart_items").update({ quantity: newQty }).eq("id", itemId);
       if (error) throw error;
       setCartItems((prev) => prev.map((ci) => ci.id === itemId ? { ...ci, quantity: newQty } : ci));
-    } catch (err) { console.error("Error updating quantity:", err); }
+    } catch (err) { /* quantity update error */ }
   };
 
   const removeFromCart = async (itemId: string) => {
