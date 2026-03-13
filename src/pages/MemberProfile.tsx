@@ -31,6 +31,27 @@ interface MemberProfileData {
   website_url?: string | null;
 }
 
+const FollowStats = ({ profileId }: { profileId: string }) => {
+  const { followerCount, followingCount } = useFollow(profileId);
+  const navigate = useNavigate();
+
+  return (
+    <div className="flex items-center gap-4 mb-4">
+      <div className="flex gap-3 text-sm">
+        <span><strong>{followerCount}</strong> <span className="text-muted-foreground">followers</span></span>
+        <span><strong>{followingCount}</strong> <span className="text-muted-foreground">following</span></span>
+      </div>
+      <div className="flex gap-2 ml-auto">
+        <FollowButton targetUserId={profileId} />
+        <Button variant="outline" size="sm" onClick={() => navigate(`/inbox`)}>
+          <MessageCircle className="w-4 h-4 mr-1" />
+          Message
+        </Button>
+      </div>
+    </div>
+  );
+};
+
 const MemberProfile = () => {
   const { id } = useParams<{ id: string }>();
   const [profile, setProfile] = useState<MemberProfileData | null>(null);
