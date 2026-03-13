@@ -527,7 +527,7 @@ const EventDetail = () => {
           {/* Countdown Timer */}
           {!isEventPast && (countdown.days > 0 || countdown.hours > 0 || countdown.minutes > 0) && (
             <div className="absolute bottom-4 right-4">
-              <div className="bg-black/70 backdrop-blur-sm rounded-lg px-4 py-2 text-white flex gap-4">
+              <div className="bg-black/70 backdrop-blur-sm rounded-lg px-3 py-2 text-white flex gap-3">
                 {countdown.days > 0 && (
                   <div className="text-center">
                     <p className="text-2xl font-bold">{countdown.days}</p>
