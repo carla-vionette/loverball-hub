@@ -1,13 +1,16 @@
 import React, { useState, useMemo, useRef, useCallback, useEffect } from "react";
-import { Search, Users, CheckCircle, Play, Eye, ChevronLeft, ChevronRight, TrendingUp, Clock, Star, Heart } from "lucide-react";
+import { Search, Users, CheckCircle, Play, Eye, ChevronLeft, ChevronRight, TrendingUp, Clock, Star, Heart, Calendar, MapPin } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import BottomNav from "@/components/BottomNav";
 import DesktopNav from "@/components/DesktopNav";
 import MobileHeader from "@/components/MobileHeader";
 import { DISCOVER_VIDEOS, DISCOVER_CATEGORIES, type DiscoverVideo } from "@/lib/discoverVideoData";
+import TeamFollowSection from "@/components/TeamFollowSection";
+import { supabase } from "@/integrations/supabase/client";
+import { format } from "date-fns";
 
 const formatViews = (n: number) => {
   if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
