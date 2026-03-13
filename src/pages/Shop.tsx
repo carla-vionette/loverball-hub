@@ -94,7 +94,7 @@ const ShopContent = () => {
       const { data, error } = await supabase.from("products").select("*").order("created_at");
       if (error) throw error;
       setProducts(data || []);
-    } catch (err) { console.error("Error fetching products:", err); }
+    } catch (err) { /* product fetch error */ }
     finally { setLoading(false); }
   };
 
