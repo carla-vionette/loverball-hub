@@ -50,6 +50,7 @@ const Ticker = lazy(() => import("./pages/Ticker"));
 const PlanSelection = lazy(() => import("./pages/PlanSelection"));
 const Inbox = lazy(() => import("./pages/Inbox"));
 const Leaderboard = lazy(() => import("./pages/Leaderboard"));
+const Membership = lazy(() => import("./pages/Membership"));
 
 // SaaS pages
 const PricingPage = lazy(() => import("./pages/PricingPage"));
