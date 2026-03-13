@@ -135,7 +135,7 @@ const MessagesPage = () => {
 
       setMatches(matchesWithDetails);
     } catch (error) {
-      console.error('Error fetching matches:', error);
+      // Match fetch error handled silently
     } finally {
       setLoading(false);
     }
