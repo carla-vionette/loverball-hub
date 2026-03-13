@@ -30,6 +30,7 @@ interface MemberProfileData {
   instagram_url?: string | null;
   linkedin_url?: string | null;
   website_url?: string | null;
+  membership_tier?: string | null;
 }
 
 const FollowStats = ({ profileId }: { profileId: string }) => {
