@@ -16,6 +16,9 @@ import SharePreview from "@/components/SharePreview";
 import WhosGoing from "@/components/WhosGoing";
 import { trackEventRSVP, trackContentView } from "@/lib/analytics";
 import EventCheckIn from "@/components/EventCheckIn";
+import AttendeeListModal from "@/components/AttendeeListModal";
+import GoingSoloToggle from "@/components/GoingSoloToggle";
+import YouveMetCard from "@/components/YouveMetCard";
 
 interface Event {
   id: string;
