@@ -122,7 +122,6 @@ const AdminEventEditor = () => {
         });
       }
     } catch (error) {
-      console.error('Error fetching event:', error);
       toast({
         title: 'Error loading event',
         variant: 'destructive',
