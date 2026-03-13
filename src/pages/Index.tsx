@@ -295,8 +295,7 @@ const Index = () => {
                 <span className="text-foreground">Her</span><br />
                 <span className="text-foreground">Community.</span>
               </h1>
-              <p className="text-base font-sans font-medium text-primary-foreground/85 leading-relaxed mb-8 max-w-sm">The media platform built for women who live and breathe sports. Discover community events, connect with fans, and watch exclusive sports content made for you.
-
+              <p className="text-base font-sans font-medium text-primary-foreground/85 leading-relaxed mb-8 max-w-sm">The media platform built for women who live and breathe sports. Discover community events, connect with fans, and watch exclusive sports content curated for you.
               </p>
               <div className="flex flex-col sm:flex-row items-start gap-4">
                 <Button onClick={openAuthModal} className="rounded-full bg-accent text-accent-foreground hover:bg-accent/90 px-8 py-5 text-[11px] font-sans font-bold tracking-[0.2em] uppercase shadow-xl h-auto">
