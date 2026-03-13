@@ -11,6 +11,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { useFollow } from '@/hooks/useFollow';
 import FollowButton from '@/components/FollowButton';
+import MemberBadge from '@/components/MemberBadge';
 import { Loader2, MapPin, Briefcase, Instagram, Linkedin, Globe, ArrowLeft, MessageCircle } from 'lucide-react';
 
 interface MemberProfileData {
