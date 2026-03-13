@@ -78,6 +78,8 @@ const VideoUploadDialog = ({ open, onOpenChange, onSuccess }: VideoUploadDialogP
         thumbnail: thumbnailUrl,
         category: form.category || null,
         uploaded_by: user?.id || null,
+        tier: form.tier || 'free',
+        duration: form.duration || null,
       });
 
       toast({ title: 'Video uploaded successfully' });

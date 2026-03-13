@@ -43,7 +43,7 @@ export async function fetchEventById(id: string): Promise<EventItem | null> {
 export async function saveEventLayout(eventId: string, layout: EventLayout): Promise<void> {
   const { error } = await supabase
     .from('events')
-    .update({ layout_json: layout as unknown as Record<string, unknown> })
+    .update({ layout_json: layout as unknown as import('@/integrations/supabase/types').Json })
     .eq('id', eventId);
   if (error) throw error;
 }

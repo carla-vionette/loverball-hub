@@ -83,6 +83,8 @@ const AdminVideosTab = ({ videos, onRefresh }: Props) => {
           thumbnail: form.thumbnail || null,
           category: form.category || null,
           uploaded_by: user?.id || null,
+          tier: 'free',
+          duration: null,
         });
         toast({ title: 'Video created' });
       }
