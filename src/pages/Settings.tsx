@@ -108,7 +108,7 @@ const Settings = () => {
 
       setUserTeams(profile?.favorite_la_teams || []);
     } catch (err) {
-      console.error("Error loading preferences:", err);
+      // Preferences load error handled silently
     } finally {
       setLoading(false);
     }
