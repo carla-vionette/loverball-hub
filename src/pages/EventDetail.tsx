@@ -682,12 +682,25 @@ const EventDetail = () => {
                 </div>
               )}
 
+              {/* Event Tags (Solo Friendly, 21+, etc.) */}
+              {event.event_tags && event.event_tags.length > 0 && (
+                <div className="mb-6">
+                  <EventTagBadges tags={event.event_tags} />
+                </div>
+              )}
+
               {/* Description */}
               {event.description && (
                 <div className="prose prose-sm max-w-none mb-6">
                   <p className="text-muted-foreground whitespace-pre-wrap">{event.description}</p>
                 </div>
               )}
+
+              {/* Where to Watch */}
+              <WhereToWatch eventCity={event.city} eventType={event.event_type} />
+
+              {/* Where to Sit */}
+              <WhereToSit venueName={event.venue_name} eventType={event.event_type} />
 
               {/* Who's Going Section */}
               {id && <WhosGoing eventId={id} refreshKey={guestRefreshKey} />}
