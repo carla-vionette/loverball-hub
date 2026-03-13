@@ -152,7 +152,7 @@ const MessagesPage = () => {
       if (error) throw error;
       setMessages(data || []);
     } catch (error) {
-      console.error('Error fetching messages:', error);
+      // Message fetch error handled silently
     }
   }, []);
 
