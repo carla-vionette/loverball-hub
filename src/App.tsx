@@ -97,6 +97,7 @@ const App = () => (
           <Toaster />
           <Sonner />
           <NetworkStatus />
+          <InstallPrompt />
           <BrowserRouter>
             <PageTracker />
             <Suspense fallback={<PageLoader />}>
