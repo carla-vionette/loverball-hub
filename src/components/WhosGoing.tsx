@@ -53,6 +53,7 @@ const WhosGoing = ({ eventId, refreshKey }: Props) => {
         id,
         user_id,
         status,
+        going_solo,
         profile:profiles!inner (
           id,
           name,
