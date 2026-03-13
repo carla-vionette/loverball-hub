@@ -22,6 +22,9 @@ import YouveMetCard from "@/components/YouveMetCard";
 import WhereToWatch from "@/components/WhereToWatch";
 import WhereToSit from "@/components/WhereToSit";
 import EventTagBadges from "@/components/EventTagBadges";
+import EarlyAccessBanner from "@/components/EarlyAccessBanner";
+import LockedFeature from "@/components/LockedFeature";
+import { getUserTier } from "@/services/subscriptionService";
 
 interface Event {
   id: string;
