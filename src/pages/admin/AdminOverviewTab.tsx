@@ -35,9 +35,9 @@ const AdminOverviewTab = () => {
         <KpiCard label="Paid Subs" value={stats.activeSubscriptions} icon={CreditCard} />
         <KpiCard
           label="New (7d)"
-          value={stats.newSignups7d}
+          value={stats.recentSignups}
           icon={UserPlus}
-          trend={stats.newSignups7d > 0 ? { direction: 'up', text: `+${stats.newSignups7d} this week` } : undefined}
+          trend={stats.recentSignups > 0 ? { direction: 'up', text: `+${stats.recentSignups} this week` } : undefined}
         />
       </div>
     </section>
