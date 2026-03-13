@@ -40,6 +40,7 @@ type ProfileData = {
   bio: string | null;
   profile_photo_url: string | null;
   birthday: string | null;
+  membership_tier: string | null;
 };
 
 type RSVPEvent = {
