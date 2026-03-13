@@ -178,7 +178,7 @@ const Onboarding = () => {
       if (user?.email) {
         supabase.functions.invoke("send-welcome-email", {
           body: { email: user.email, name },
-        }).catch((err) => console.warn("Welcome email failed:", err));
+        }).catch(() => {});
       }
 
       toast({

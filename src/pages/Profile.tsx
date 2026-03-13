@@ -209,7 +209,6 @@ const Profile = () => {
         }
         if (suggestedResult.data) setSuggestedEvents(suggestedResult.data);
       } catch (err) {
-        console.error("Profile fetch error:", err);
         if (!cancelled) goTo("/onboarding");
       } finally {
         if (!cancelled) setLoading(false);
