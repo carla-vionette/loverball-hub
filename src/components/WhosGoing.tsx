@@ -20,6 +20,14 @@ interface EventGuest {
   id: string;
   user_id: string;
   status: string;
+  going_solo: boolean;
+  profile: GuestProfile | null;
+}
+
+interface EventGuest {
+  id: string;
+  user_id: string;
+  status: string;
   profile: GuestProfile | null;
 }
 
