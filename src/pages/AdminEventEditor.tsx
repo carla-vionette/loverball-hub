@@ -213,7 +213,6 @@ const AdminEventEditor = () => {
         }
       }
     } catch (error: any) {
-      console.error('Error saving event:', error);
       toast({
         title: 'Error saving event',
         description: error.message,
