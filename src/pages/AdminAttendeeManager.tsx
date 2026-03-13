@@ -151,7 +151,7 @@ const AdminAttendeeManager = () => {
 
       setAttendees(transformedData);
     } catch (error) {
-      console.error('Error fetching attendees:', error);
+      // Silently handle attendee fetch errors
     }
   };
 
