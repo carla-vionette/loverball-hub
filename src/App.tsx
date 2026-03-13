@@ -8,6 +8,7 @@ import { AuthProvider } from "@/hooks/useAuth";
 import { Loader2 } from "lucide-react";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
 import NetworkStatus from "@/components/NetworkStatus";
+import InstallPrompt from "@/components/InstallPrompt";
 import { usePageTracking } from "@/hooks/usePageTracking";
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -96,6 +97,7 @@ const App = () => (
           <Toaster />
           <Sonner />
           <NetworkStatus />
+          <InstallPrompt />
           <BrowserRouter>
             <PageTracker />
             <Suspense fallback={<PageLoader />}>
