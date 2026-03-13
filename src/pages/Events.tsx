@@ -245,6 +245,12 @@ const Events = () => {
                       {(ev.venue_name || ev.city) && (
                         <p className="text-xs text-muted-foreground flex items-center gap-1"><MapPin className="w-3 h-3 text-accent" />{ev.venue_name}{ev.venue_name && ev.city ? ", " : ""}{ev.city}</p>
                       )}
+                      {/* Event Tags */}
+                      {ev.event_tags && ev.event_tags.length > 0 && (
+                        <div className="pt-1" onClick={(e) => e.stopPropagation()}>
+                          <EventTagBadges tags={ev.event_tags} size="sm" />
+                        </div>
+                      )}
                       <div className="flex items-center justify-between pt-2">
                         <span className="text-xs text-muted-foreground flex items-center gap-1">
                           <Users className="w-3 h-3" />{ct}{ev.capacity ? `/${ev.capacity}` : ""}
