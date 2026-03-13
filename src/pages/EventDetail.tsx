@@ -236,7 +236,7 @@ const EventDetail = () => {
       setAttendees(transformedData);
       setAttendeeCounts({ yes: transformedData.length, maybe: 0, no: 0 });
     } catch (error) {
-      console.error('Error fetching attendees:', error);
+      // Silently handle attendee fetch errors
     }
   };
 
