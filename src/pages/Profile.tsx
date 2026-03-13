@@ -334,7 +334,10 @@ const Profile = () => {
                       <MapPin className="w-4 h-4 text-primary flex-shrink-0" />
                       <span>{locationText}</span>
                     </div>
-                  </div>
+                   </div>
+
+                  {/* Follower/Following counts */}
+                  <ProfileFollowCounts userId={profile.id} />
 
                   {/* Quick actions */}
                   <div className="flex items-center gap-2 flex-wrap justify-center">
