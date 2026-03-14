@@ -94,17 +94,23 @@ const Auth = () => {
     }
   };
 
+  const handleVerifyInvite = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (inviteCode.trim() === ACCESS_CODE) {
+      setInviteVerified(true);
+      setInviteError(false);
+    } else {
+      setInviteError(true);
+      setInviteCode("");
+    }
+  };
+
   const handleEmailAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
       if (isSignUp) {
-        // Validate invite code
-        if (accessCode.trim() !== ACCESS_CODE) {
-          throw new Error("Invalid invite code. Please enter a valid invite code to sign up.");
-        }
-
         // Validate inputs
         const validation = signUpSchema.safeParse({ email, password });
         if (!validation.success) {
