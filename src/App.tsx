@@ -131,6 +131,7 @@ const App = () => (
                 <Route path="/pricing" element={<PricingPage />} />
                 <Route path="/invite/:code" element={<InviteLanding />} />
                 <Route path="/membership" element={<Membership />} />
+                <Route path="/scores" element={<Scores />} />
 
                 {/* Redirects */}
                 <Route path="/index" element={<Navigate to="/" replace />} />

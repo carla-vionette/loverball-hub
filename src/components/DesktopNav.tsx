@@ -10,6 +10,7 @@ const mainNavItems = [
   { icon: Play, label: "Watch", path: "/watch" },
   { icon: Newspaper, label: "Feed", path: "/feed" },
   { icon: CalendarDays, label: "Events", path: "/events" },
+  { icon: Trophy, label: "Scores", path: "/scores" },
   { icon: ShoppingBag, label: "Shop", path: "/shop" },
 ];
 
