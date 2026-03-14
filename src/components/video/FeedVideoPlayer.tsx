@@ -1,6 +1,6 @@
 import { useRef, useEffect, useState, useCallback } from "react";
 import { toast } from "sonner";
-import { Heart, MessageCircle, Share2, Volume2, VolumeX, Play, Bookmark, ChevronLeft, Camera, Music, Send, SmilePlus } from "lucide-react";
+import { Heart, MessageCircle, Share2, Volume2, VolumeX, Play, Bookmark, ChevronLeft, Camera, Music, Send, SmilePlus, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { FeedVideoItem } from "@/lib/feedVideoData";
 import { trackVideoProgress, trackVideoComplete } from "@/lib/analytics";
