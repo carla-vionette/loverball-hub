@@ -128,7 +128,7 @@ const Watch = () => {
               </Card>
             ))}
           </div>
-        </div>
+          )}
       </main>
 
       {/* FULL-SCREEN VIEWER */}
