@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { UserPlus, Check, Clock, Loader2, MessageCircle, Send, X } from "lucide-react";
+import FollowButton from "@/components/FollowButton";
 
 interface AttendeeProfile {
   id: string;
