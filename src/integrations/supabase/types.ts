@@ -387,10 +387,24 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "direct_messages_receiver_id_fkey"
+            columns: ["receiver_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "direct_messages_sender_id_fkey"
             columns: ["sender_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "direct_messages_sender_id_fkey"
+            columns: ["sender_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
             referencedColumns: ["id"]
           },
         ]
@@ -433,6 +447,13 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_guests_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
             referencedColumns: ["id"]
           },
         ]
@@ -674,10 +695,24 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "friendships_addressee_id_fkey"
+            columns: ["addressee_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "friendships_requester_id_fkey"
             columns: ["requester_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "friendships_requester_id_fkey"
+            columns: ["requester_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_public"
             referencedColumns: ["id"]
           },
         ]
@@ -864,6 +899,13 @@ export type Database = {
             columns: ["profile_id"]
             isOneToOne: true
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "members_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: true
+            referencedRelation: "profiles_public"
             referencedColumns: ["id"]
           },
         ]
@@ -1586,7 +1628,93 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      profiles_public: {
+        Row: {
+          age_range: string | null
+          bio: string | null
+          city: string | null
+          created_at: string | null
+          current_streak: number | null
+          event_comfort_level: string | null
+          favorite_la_teams: string[] | null
+          favorite_sports: string[] | null
+          favorite_teams_players: string[] | null
+          id: string | null
+          industries: string[] | null
+          interested_in_la28: boolean | null
+          interested_in_world_cup_la: boolean | null
+          longest_streak: number | null
+          looking_for_tags: string[] | null
+          membership_tier: string | null
+          name: string | null
+          neighborhood: string | null
+          other_interests: string[] | null
+          participation_preferences: string[] | null
+          primary_role: string | null
+          profile_photo_url: string | null
+          pronouns: string | null
+          sports_experience_types: string[] | null
+          total_points: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          age_range?: string | null
+          bio?: string | null
+          city?: string | null
+          created_at?: string | null
+          current_streak?: number | null
+          event_comfort_level?: string | null
+          favorite_la_teams?: string[] | null
+          favorite_sports?: string[] | null
+          favorite_teams_players?: string[] | null
+          id?: string | null
+          industries?: string[] | null
+          interested_in_la28?: boolean | null
+          interested_in_world_cup_la?: boolean | null
+          longest_streak?: number | null
+          looking_for_tags?: string[] | null
+          membership_tier?: string | null
+          name?: string | null
+          neighborhood?: string | null
+          other_interests?: string[] | null
+          participation_preferences?: string[] | null
+          primary_role?: string | null
+          profile_photo_url?: string | null
+          pronouns?: string | null
+          sports_experience_types?: string[] | null
+          total_points?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          age_range?: string | null
+          bio?: string | null
+          city?: string | null
+          created_at?: string | null
+          current_streak?: number | null
+          event_comfort_level?: string | null
+          favorite_la_teams?: string[] | null
+          favorite_sports?: string[] | null
+          favorite_teams_players?: string[] | null
+          id?: string | null
+          industries?: string[] | null
+          interested_in_la28?: boolean | null
+          interested_in_world_cup_la?: boolean | null
+          longest_streak?: number | null
+          looking_for_tags?: string[] | null
+          membership_tier?: string | null
+          name?: string | null
+          neighborhood?: string | null
+          other_interests?: string[] | null
+          participation_preferences?: string[] | null
+          primary_role?: string | null
+          profile_photo_url?: string | null
+          pronouns?: string | null
+          sports_experience_types?: string[] | null
+          total_points?: number | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       check_rate_limit: {
