@@ -11,6 +11,27 @@ const getSessionId = (): string => {
 };
 
 // Track event with automatic user/session context
+// Input validation for analytics data
+const sanitizeString = (val: string, maxLen = 200): string =>
+  typeof val === 'string' ? val.slice(0, maxLen).replace(/[<>]/g, '') : '';
+
+const sanitizeProperties = (props: Record<string, any>): Record<string, any> => {
+  const clean: Record<string, any> = {};
+  const keys = Object.keys(props).slice(0, 20); // max 20 properties
+  for (const key of keys) {
+    const k = sanitizeString(key, 50);
+    const v = props[key];
+    if (typeof v === 'string') clean[k] = sanitizeString(v, 500);
+    else if (typeof v === 'number') clean[k] = Number.isFinite(v) ? v : 0;
+    else if (typeof v === 'boolean') clean[k] = v;
+    else if (Array.isArray(v)) clean[k] = v.slice(0, 10).map(i => typeof i === 'string' ? sanitizeString(i, 100) : i);
+    // skip other types
+  }
+  return clean;
+};
+
+const VALID_EVENT_TYPES = ['page_view', 'user_behavior', 'engagement', 'content'];
+
 export const trackEvent = async (
   eventType: string,
   eventName: string,
@@ -18,17 +39,26 @@ export const trackEvent = async (
   durationMs?: number
 ) => {
   try {
+    // Validate event type and name
+    const safeType = VALID_EVENT_TYPES.includes(eventType) ? eventType : 'user_behavior';
+    const safeName = sanitizeString(eventName, 100);
+    if (!safeName) return;
+
+    const safeProps = sanitizeProperties(properties);
+    const safeDuration = typeof durationMs === 'number' && Number.isFinite(durationMs) && durationMs >= 0
+      ? Math.min(durationMs, 86400000) : null;
+
     const { data: { user } } = await supabase.auth.getUser();
     
     await supabase.from("analytics_events").insert({
       user_id: user?.id || null,
       session_id: getSessionId(),
-      event_type: eventType,
-      event_name: eventName,
-      properties,
-      page_path: window.location.pathname,
-      referrer_path: document.referrer ? new URL(document.referrer).pathname : null,
-      duration_ms: durationMs ?? null,
+      event_type: safeType,
+      event_name: safeName,
+      properties: safeProps,
+      page_path: sanitizeString(window.location.pathname, 500),
+      referrer_path: document.referrer ? sanitizeString(new URL(document.referrer).pathname, 500) : null,
+      duration_ms: safeDuration,
     });
   } catch (e) {
     // Silent fail — analytics should never break the app
