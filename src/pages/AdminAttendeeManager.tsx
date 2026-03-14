@@ -141,7 +141,6 @@ const AdminAttendeeManager = () => {
         created_at: item.created_at,
         profile: item.profile ? {
           name: (item.profile as any).name,
-          phone_number: (item.profile as any).phone_number,
           city: (item.profile as any).city,
           profile_photo_url: (item.profile as any).profile_photo_url,
           instagram_url: (item.profile as any).instagram_url,
