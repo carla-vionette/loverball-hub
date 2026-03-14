@@ -38,3 +38,9 @@ verify_jwt = false
 
 [functions.fetch-sports-news]
 verify_jwt = false
+
+[functions.send-welcome-email]
+verify_jwt = false
+
+[functions.womens-sports-live]
+verify_jwt = false
