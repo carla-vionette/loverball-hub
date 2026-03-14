@@ -1,6 +1,6 @@
 import { useRef, useEffect, useState, useCallback } from "react";
 import { toast } from "sonner";
-import { Heart, MessageCircle, Share2, Volume2, VolumeX, Play, Bookmark, ChevronLeft, Camera, Music, Send, SmilePlus, X } from "lucide-react";
+import { Heart, MessageCircle, Share2, Volume2, VolumeX, Play, Bookmark, Music, Send, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { FeedVideoItem } from "@/lib/feedVideoData";
 import { trackVideoProgress, trackVideoComplete } from "@/lib/analytics";
@@ -28,12 +28,9 @@ const FeedVideoPlayer = ({ video, isActive, isMuted, onToggleMute }: FeedVideoPl
   const [bookmarked, setBookmarked] = useState(false);
   const [following, setFollowing] = useState(video.isFollowing ?? false);
   const [likeCount, setLikeCount] = useState(video.likes);
-  
-  const [doubleTapSide, setDoubleTapSide] = useState<"left" | "right" | null>(null);
-  const lastTapRef = useRef<{ time: number; x: number }>({ time: 0, x: 0 });
-  const playPauseTimeout = useRef<ReturnType<typeof setTimeout>>();
 
-  const touchStartRef = useRef<{ x: number; y: number; time: number } | null>(null);
+  const lastTapRef = useRef<number>(0);
+  const playPauseTimeout = useRef<ReturnType<typeof setTimeout>>();
 
   useEffect(() => {
     const vid = videoRef.current;
@@ -79,53 +76,22 @@ const FeedVideoPlayer = ({ video, isActive, isMuted, onToggleMute }: FeedVideoPl
     (e: React.MouseEvent | React.TouchEvent) => {
       const target = e.target as HTMLElement;
       if (target.closest("button") || target.closest("input") || target.closest("a")) return;
-
       const now = Date.now();
-      const rect = containerRef.current?.getBoundingClientRect();
-      if (!rect) return;
-      const clientX = "touches" in e ? e.changedTouches[0].clientX : e.clientX;
-      const relX = clientX - rect.left;
-      const isLeft = relX < rect.width / 3;
-      const isRight = relX > (rect.width * 2) / 3;
-
-      if (now - lastTapRef.current.time < 300) {
-        const vid = videoRef.current;
-        if (!vid) return;
-        if (isLeft) { vid.currentTime = Math.max(0, vid.currentTime - 10); setDoubleTapSide("left"); }
-        else if (isRight) { vid.currentTime = Math.min(vid.duration || 0, vid.currentTime + 10); setDoubleTapSide("right"); }
-        setTimeout(() => setDoubleTapSide(null), 600);
-        lastTapRef.current = { time: 0, x: 0 };
+      if (now - lastTapRef.current < 300) {
+        // double tap = like
+        if (!liked) { setLiked(true); setLikeCount(c => c + 1); }
+        lastTapRef.current = 0;
       } else {
-        lastTapRef.current = { time: now, x: relX };
-        setTimeout(() => { if (lastTapRef.current.time === now) togglePlayPause(); }, 300);
+        lastTapRef.current = now;
+        setTimeout(() => { if (lastTapRef.current === now) togglePlayPause(); }, 300);
       }
     },
-    [togglePlayPause]
+    [togglePlayPause, liked]
   );
 
-  const handleTouchStart = useCallback((e: React.TouchEvent) => {
-    const target = e.target as HTMLElement;
-    if (target.closest("button")) return;
-    touchStartRef.current = { x: e.touches[0].clientX, y: e.touches[0].clientY, time: Date.now() };
-  }, []);
-
-  const handleTouchEnd = useCallback((e: React.TouchEvent) => {
-    if (!touchStartRef.current || !videoRef.current) return;
-    const dx = e.changedTouches[0].clientX - touchStartRef.current.x;
-    const dy = e.changedTouches[0].clientY - touchStartRef.current.y;
-    const elapsed = Date.now() - touchStartRef.current.time;
-    if (elapsed < 400 && Math.abs(dx) > 80 && Math.abs(dy) < 60) {
-      const vid = videoRef.current;
-      if (dx > 0) { vid.currentTime = Math.max(0, vid.currentTime - 10); setDoubleTapSide("left"); }
-      else { vid.currentTime = Math.min(vid.duration || 0, vid.currentTime + 10); setDoubleTapSide("right"); }
-      setTimeout(() => setDoubleTapSide(null), 600);
-    }
-    touchStartRef.current = null;
-  }, []);
-
   const handleLike = () => {
-    if (liked) { setLiked(false); setLikeCount((c) => c - 1); }
-    else { setLiked(true); setLikeCount((c) => c + 1); }
+    if (liked) { setLiked(false); setLikeCount(c => c - 1); }
+    else { setLiked(true); setLikeCount(c => c + 1); }
   };
 
   const [commentText, setCommentText] = useState("");
@@ -157,8 +123,6 @@ const FeedVideoPlayer = ({ video, isActive, isMuted, onToggleMute }: FeedVideoPl
       if (!vid) return;
       switch (e.key) {
         case ' ': case 'k': e.preventDefault(); togglePlayPause(); break;
-        case 'ArrowLeft': e.preventDefault(); vid.currentTime = Math.max(0, vid.currentTime - 10); break;
-        case 'ArrowRight': e.preventDefault(); vid.currentTime = Math.min(vid.duration || 0, vid.currentTime + 10); break;
         case 'm': e.preventDefault(); onToggleMute(); break;
         case 'l': e.preventDefault(); handleLike(); break;
       }
@@ -171,17 +135,17 @@ const FeedVideoPlayer = ({ video, isActive, isMuted, onToggleMute }: FeedVideoPl
   const shareCount = Math.floor(video.views * 0.012);
   const bookmarkCount = Math.floor(video.views * 0.008);
 
+  const handle = `@${video.channelName.toLowerCase().replace(/\s+/g, '')}`;
+
   return (
     <div
       ref={containerRef}
       className="relative w-full h-full bg-black overflow-hidden select-none"
       onClick={handleTap}
-      onTouchStart={handleTouchStart}
-      onTouchEnd={handleTouchEnd}
       role="region"
       aria-label={`Video: ${video.title} by ${video.channelName}`}
     >
-      {/* Video */}
+      {/* Video — full bleed */}
       <video
         ref={videoRef}
         src={video.videoUrl}
@@ -190,28 +154,12 @@ const FeedVideoPlayer = ({ video, isActive, isMuted, onToggleMute }: FeedVideoPl
         playsInline
         muted={isMuted}
         preload="metadata"
-        className="absolute inset-0 w-full h-full object-cover bg-black"
+        className="absolute inset-0 w-full h-full object-cover"
       />
 
       <div className="sr-only" aria-live="polite" aria-atomic="true">
         {isPlaying ? 'Playing' : 'Paused'}: {video.title} by {video.channelName}.
       </div>
-
-      {/* Double-tap indicators */}
-      <AnimatePresence>
-        {doubleTapSide && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.5 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.5 }}
-            className={`absolute top-1/2 -translate-y-1/2 z-20 ${doubleTapSide === "left" ? "left-12" : "right-12"}`}
-          >
-            <div className="bg-white/20 backdrop-blur-sm rounded-full px-4 py-2 text-white text-sm font-medium">
-              {doubleTapSide === "left" ? "−10s" : "+10s"}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       {/* Center play/pause overlay */}
       <AnimatePresence>
@@ -222,118 +170,114 @@ const FeedVideoPlayer = ({ video, isActive, isMuted, onToggleMute }: FeedVideoPl
             exit={{ opacity: 0 }}
             className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none"
           >
-            <div className="w-20 h-20 rounded-full bg-black/30 backdrop-blur-md flex items-center justify-center">
+            <div className="w-16 h-16 rounded-full bg-black/30 backdrop-blur-md flex items-center justify-center">
               {isPlaying ? (
-                <div className="flex gap-1.5">
-                  <div className="w-2 h-7 bg-white rounded-full" />
-                  <div className="w-2 h-7 bg-white rounded-full" />
+                <div className="flex gap-1">
+                  <div className="w-1.5 h-6 bg-white rounded-full" />
+                  <div className="w-1.5 h-6 bg-white rounded-full" />
                 </div>
               ) : (
-                <Play className="w-8 h-8 text-white ml-1" fill="currentColor" />
+                <Play className="w-7 h-7 text-white ml-0.5" fill="currentColor" />
               )}
             </div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Top bar — back + mute/camera */}
-      <div className="absolute top-0 left-0 right-0 z-20 flex items-center justify-between px-4 pt-12 pointer-events-auto">
-        <button
-          onClick={(e) => { e.stopPropagation(); window.history.back(); }}
-          className="w-10 h-10 rounded-full bg-black/30 backdrop-blur-sm flex items-center justify-center"
-          aria-label="Go back"
-        >
-          <ChevronLeft className="w-5 h-5 text-white" />
-        </button>
+      {/* Mute button — top right, minimal */}
+      <div className="absolute top-14 right-3 z-20 pointer-events-auto">
         <button
           onClick={(e) => { e.stopPropagation(); onToggleMute(); }}
-          className="w-10 h-10 rounded-full bg-black/30 backdrop-blur-sm flex items-center justify-center"
+          className="w-8 h-8 rounded-full bg-black/40 flex items-center justify-center"
           aria-label={isMuted ? "Unmute" : "Mute"}
         >
-          {isMuted ? <VolumeX className="w-4.5 h-4.5 text-white" /> : <Volume2 className="w-4.5 h-4.5 text-white" />}
+          {isMuted ? <VolumeX className="w-4 h-4 text-white" /> : <Volume2 className="w-4 h-4 text-white" />}
         </button>
       </div>
 
-      {/* Bottom gradient */}
-      <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/90 via-black/40 to-transparent pointer-events-none" />
+      {/* Bottom gradient for text legibility */}
+      <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/80 via-black/30 to-transparent pointer-events-none" />
 
-      {/* Right sidebar — actions */}
-      <div className="absolute right-3 top-1/2 -translate-y-1/2 z-10 flex flex-col items-center gap-6 pointer-events-auto">
+      {/* Right sidebar — TikTok action buttons */}
+      <div className="absolute right-2.5 bottom-36 z-10 flex flex-col items-center gap-5 pointer-events-auto">
+        {/* Profile avatar */}
+        <button
+          onClick={(e) => { e.stopPropagation(); if (!following) setFollowing(true); }}
+          className="relative mb-2"
+          aria-label={following ? video.channelName : `Follow ${video.channelName}`}
+        >
+          <img
+            src={video.channelAvatar}
+            alt={video.channelName}
+            className="w-11 h-11 rounded-full object-cover border-2 border-white"
+          />
+          {!following && (
+            <span className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-5 h-5 rounded-full bg-primary flex items-center justify-center text-white text-xs font-bold leading-none">+</span>
+          )}
+        </button>
+
         {/* Heart */}
         <button
           onClick={(e) => { e.stopPropagation(); handleLike(); }}
-          className="flex flex-col items-center gap-1"
+          className="flex flex-col items-center gap-0.5"
           aria-label={liked ? "Unlike" : "Like"}
         >
-          <Heart className={`w-7 h-7 drop-shadow-lg ${liked ? "text-red-500" : "text-white"}`} fill={liked ? "currentColor" : "none"} />
-          <span className={`text-[11px] font-bold ${liked ? "text-red-400" : "text-white"}`}>{formatCount(likeCount)}</span>
+          <Heart
+            className={`w-7 h-7 drop-shadow-[0_1px_3px_rgba(0,0,0,0.5)] ${liked ? "text-red-500" : "text-white"}`}
+            fill={liked ? "currentColor" : "none"}
+            strokeWidth={2}
+          />
+          <span className="text-[11px] font-semibold text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]">{formatCount(likeCount)}</span>
         </button>
 
         {/* Comment */}
         <button
           onClick={(e) => { e.stopPropagation(); setShowComments(!showComments); }}
-          className="flex flex-col items-center gap-1"
+          className="flex flex-col items-center gap-0.5"
           aria-label="Comments"
         >
-          <MessageCircle className="w-7 h-7 text-white drop-shadow-lg" />
-          <span className="text-[11px] font-bold text-white">{formatCount(commentCount + comments.length)}</span>
+          <MessageCircle className="w-7 h-7 text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.5)]" strokeWidth={2} />
+          <span className="text-[11px] font-semibold text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]">{formatCount(commentCount + comments.length)}</span>
         </button>
 
         {/* Bookmark */}
         <button
           onClick={(e) => { e.stopPropagation(); setBookmarked(!bookmarked); }}
-          className="flex flex-col items-center gap-1"
+          className="flex flex-col items-center gap-0.5"
           aria-label={bookmarked ? "Remove bookmark" : "Bookmark"}
         >
-          <Bookmark className={`w-7 h-7 drop-shadow-lg ${bookmarked ? "text-accent" : "text-white"}`} fill={bookmarked ? "currentColor" : "none"} />
-          <span className="text-[11px] font-bold text-white">{formatCount(bookmarkCount)}</span>
+          <Bookmark
+            className={`w-7 h-7 drop-shadow-[0_1px_3px_rgba(0,0,0,0.5)] ${bookmarked ? "text-yellow-400" : "text-white"}`}
+            fill={bookmarked ? "currentColor" : "none"}
+            strokeWidth={2}
+          />
+          <span className="text-[11px] font-semibold text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]">{formatCount(bookmarkCount)}</span>
         </button>
 
         {/* Share */}
         <button
           onClick={(e) => { e.stopPropagation(); handleShare(); }}
-          className="flex flex-col items-center gap-1"
+          className="flex flex-col items-center gap-0.5"
           aria-label="Share"
         >
-          <Share2 className="w-7 h-7 text-white drop-shadow-lg" />
-          <span className="text-[11px] font-bold text-white">{formatCount(shareCount)}</span>
+          <Share2 className="w-7 h-7 text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.5)]" strokeWidth={2} />
+          <span className="text-[11px] font-semibold text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]">{formatCount(shareCount)}</span>
         </button>
       </div>
 
-      {/* Bottom left — creator info */}
-      <div className="absolute left-4 bottom-44 z-10 max-w-[70%] pointer-events-auto">
-        {/* Creator row */}
-        <div className="flex items-center gap-2.5 mb-2">
-          <img
-            src={video.channelAvatar}
-            alt={video.channelName}
-            className="w-10 h-10 rounded-full object-cover border-2 border-white/50"
-          />
-          <div className="flex items-center gap-2">
-            <span className="text-white font-bold text-sm">@{video.channelName.toLowerCase().replace(/\s+/g, '_')}</span>
-            <span className="w-4 h-4 rounded-full bg-blue-500 flex items-center justify-center">
-              <svg className="w-2.5 h-2.5 text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
-            </span>
-          </div>
-          {!following && (
-            <button
-              onClick={(e) => { e.stopPropagation(); setFollowing(true); }}
-              className="px-3 py-1 rounded-md bg-white/20 backdrop-blur-sm text-white text-xs font-semibold border border-white/30"
-            >
-              Follow
-            </button>
-          )}
-        </div>
-
-        {/* Description */}
-        <p className="text-white/90 text-[13px] leading-snug mb-3 line-clamp-2">
+      {/* Bottom left — creator info + caption */}
+      <div className="absolute left-3 bottom-24 z-10 max-w-[75%] pointer-events-auto">
+        <p className="text-white font-bold text-[15px] drop-shadow-[0_1px_3px_rgba(0,0,0,0.6)] mb-0.5">
+          {video.channelName}
+        </p>
+        <p className="text-white/90 text-[13px] leading-snug drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)] line-clamp-2 mb-2.5">
           {video.description}
         </p>
-
-        {/* Music pill */}
-        <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-3 py-1.5 w-fit">
-          <Music className="w-3.5 h-3.5 text-white/70" />
-          <span className="text-white/80 text-[11px] font-medium">Loop Mode (instrumental)</span>
+        <div className="flex items-center gap-1.5 overflow-hidden">
+          <Music className="w-3 h-3 text-white/70 flex-shrink-0" />
+          <p className="text-white/70 text-[11px] font-medium truncate">
+            Original sound – {handle}
+          </p>
         </div>
       </div>
 
@@ -345,11 +289,11 @@ const FeedVideoPlayer = ({ video, isActive, isMuted, onToggleMute }: FeedVideoPl
             animate={{ y: 0 }}
             exit={{ y: "100%" }}
             transition={{ type: "spring", damping: 25 }}
-            className="absolute bottom-20 left-0 right-0 z-30 bg-black/90 backdrop-blur-md rounded-t-2xl max-h-[50vh] flex flex-col pointer-events-auto"
+            className="absolute bottom-16 left-0 right-0 z-30 bg-black/95 backdrop-blur-md rounded-t-2xl max-h-[55vh] flex flex-col pointer-events-auto"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between px-4 py-3 border-b border-white/10">
-              <span className="text-white font-semibold text-sm">Comments ({commentCount + comments.length})</span>
+              <span className="text-white font-semibold text-sm">Comments ({formatCount(commentCount + comments.length)})</span>
               <button onClick={() => setShowComments(false)}><X className="w-5 h-5 text-white/60" /></button>
             </div>
             <div className="flex-1 overflow-y-auto px-4 py-2 space-y-3 min-h-[100px]">
@@ -358,7 +302,7 @@ const FeedVideoPlayer = ({ video, isActive, isMuted, onToggleMute }: FeedVideoPl
               )}
               {comments.map(c => (
                 <div key={c.id} className="flex gap-2">
-                  <div className="w-7 h-7 rounded-full bg-primary/40 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">Y</div>
+                  <div className="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">Y</div>
                   <div>
                     <span className="text-white/80 text-xs font-semibold">{c.user}</span>
                     <p className="text-white/70 text-sm">{c.text}</p>
@@ -366,34 +310,27 @@ const FeedVideoPlayer = ({ video, isActive, isMuted, onToggleMute }: FeedVideoPl
                 </div>
               ))}
             </div>
+            <div className="px-4 py-3 border-t border-white/10 flex items-center gap-2">
+              <input
+                type="text"
+                placeholder="Add a comment..."
+                value={commentText}
+                onChange={(e) => setCommentText(e.target.value)}
+                onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); handleSubmitComment(); } }}
+                className="flex-1 bg-white/10 rounded-full px-4 py-2 text-white text-sm placeholder:text-white/40 outline-none"
+                onClick={(e) => e.stopPropagation()}
+              />
+              <button onClick={(e) => { e.stopPropagation(); handleSubmitComment(); }}>
+                <Send className={`w-5 h-5 ${commentText.trim() ? "text-primary" : "text-white/30"}`} />
+              </button>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Bottom comment bar */}
-      <div className="absolute bottom-24 left-4 right-4 z-20 flex items-center gap-2 pointer-events-auto safe-area-pb">
-        <button onClick={(e) => e.stopPropagation()} className="w-9 h-9 flex items-center justify-center">
-          <SmilePlus className="w-5 h-5 text-white/60" />
-        </button>
-        <div className="flex-1 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2.5 flex items-center">
-          <input
-            type="text"
-            placeholder="Add a comment..."
-            value={commentText}
-            onChange={(e) => setCommentText(e.target.value)}
-            onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); handleSubmitComment(); } }}
-            className="bg-transparent text-white text-sm placeholder:text-white/40 outline-none w-full"
-            onClick={(e) => e.stopPropagation()}
-          />
-        </div>
-        <button onClick={(e) => { e.stopPropagation(); handleSubmitComment(); }} className="w-9 h-9 flex items-center justify-center">
-          <Send className={`w-5 h-5 ${commentText.trim() ? "text-primary" : "text-white/60"}`} />
-        </button>
-      </div>
-
-      {/* Progress bar */}
-      <div className="absolute bottom-0 left-0 right-0 z-30 h-0.5 bg-white/10">
-        <div className="h-full bg-white/70 transition-[width] duration-100" style={{ width: `${progress}%` }} />
+      {/* Progress bar — very thin at bottom */}
+      <div className="absolute bottom-0 left-0 right-0 z-40 h-[2px] bg-white/10">
+        <div className="h-full bg-white/80 transition-[width] duration-100" style={{ width: `${progress}%` }} />
       </div>
     </div>
   );
