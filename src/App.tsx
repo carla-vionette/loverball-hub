@@ -94,6 +94,7 @@ const PageTracker = () => {
 
 const App = () => (
   <ErrorBoundary>
+    <SiteAccessGate>
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <TooltipProvider>
