@@ -269,6 +269,35 @@ export type Database = {
         }
         Relationships: []
       }
+      creator_channel_emails: {
+        Row: {
+          channel_id: string
+          contact_email: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          channel_id: string
+          contact_email?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          channel_id?: string
+          contact_email?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "creator_channel_emails_channel_id_fkey"
+            columns: ["channel_id"]
+            isOneToOne: true
+            referencedRelation: "creator_channels"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       creator_channels: {
         Row: {
           avatar_url: string | null
@@ -276,7 +305,6 @@ export type Database = {
           brand_colors: Json | null
           channel_name: string
           channel_type: string
-          contact_email: string | null
           content_language: string | null
           created_at: string
           description: string | null
@@ -303,7 +331,6 @@ export type Database = {
           brand_colors?: Json | null
           channel_name: string
           channel_type?: string
-          contact_email?: string | null
           content_language?: string | null
           created_at?: string
           description?: string | null
@@ -330,7 +357,6 @@ export type Database = {
           brand_colors?: Json | null
           channel_name?: string
           channel_type?: string
-          contact_email?: string | null
           content_language?: string | null
           created_at?: string
           description?: string | null
