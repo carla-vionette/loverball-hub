@@ -369,8 +369,24 @@ const Auth = () => {
                   />
                 </div>
 
+                {isSignUp && (
+                  <div className="space-y-2">
+                    <Label htmlFor="accessCode" className="text-xs tracking-wider uppercase text-foreground/60">Access Code</Label>
+                    <Input
+                      id="accessCode"
+                      type="text"
+                      inputMode="numeric"
+                      maxLength={4}
+                      placeholder="Enter 4-digit code"
+                      value={accessCode}
+                      onChange={(e) => setAccessCode(e.target.value)}
+                      required
+                      className="rounded-none h-12 border-border bg-background placeholder:text-foreground/30"
+                    />
+                  </div>
+                )}
 
-                <Button 
+                <Button
                   type="submit" 
                   className="w-full rounded-none h-12 text-sm tracking-wider group" 
                   disabled={loading}
