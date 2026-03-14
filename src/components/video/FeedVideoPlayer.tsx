@@ -181,7 +181,7 @@ const FeedVideoPlayer = ({ video, isActive, isMuted, onToggleMute }: FeedVideoPl
           </div>
           <span className="text-white/70 text-xs font-medium">Tap to play • Slow connection</span>
         </button>
-      )
+      )}
 
       <div className="sr-only" aria-live="polite" aria-atomic="true">
         {isPlaying ? 'Playing' : 'Paused'}: {video.title} by {video.channelName}.
