@@ -173,7 +173,6 @@ const App = () => (
         </TooltipProvider>
       </AuthProvider>
     </QueryClientProvider>
-    </SiteAccessGate>
   </ErrorBoundary>
 );
 
