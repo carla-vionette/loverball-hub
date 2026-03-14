@@ -368,6 +368,13 @@ const Events = () => {
             </div>
           </DialogContent>
         </Dialog>
+
+        {/* Attendee Profile Drawer */}
+        <AttendeeProfileDrawer
+          profile={selectedProfile}
+          open={drawerOpen}
+          onOpenChange={setDrawerOpen}
+        />
       </main>
     </div>
   );
