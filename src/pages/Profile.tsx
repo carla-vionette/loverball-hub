@@ -227,8 +227,8 @@ const Profile = () => {
 
   // Fetch live daily horoscope
   useEffect(() => {
-    if (!profile?.birthday) return;
-    const zodiacSign = getZodiacSign(profile.birthday);
+    if (!birthday) return;
+    const zodiacSign = getZodiacSign(birthday);
     if (!zodiacSign) return;
     setHoroscopeLoading(true);
     supabase.functions.invoke("horoscope", {
@@ -237,7 +237,7 @@ const Profile = () => {
       const reading = resp?.data?.horoscope || resp?.horoscope || resp?.reading;
       if (reading) setLiveHoroscope(reading);
     }).catch(() => {}).finally(() => setHoroscopeLoading(false));
-  }, [profile?.birthday]);
+  }, [birthday]);
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 60000);
