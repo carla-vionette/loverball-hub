@@ -96,7 +96,9 @@ const EditProfile = () => {
       setInterests(profile.other_interests || []);
       setComfortLevel(profile.event_comfort_level || "");
       setParticipation(profile.participation_preferences || []);
-      setPhoneNumber(profile.phone_number || "");
+      // Fetch sensitive data separately
+      const { data: sensitive } = await supabase.from("profiles_sensitive" as any).select("phone_number").eq("id", (await supabase.auth.getUser()).data.user?.id).maybeSingle();
+      setPhoneNumber((sensitive as any)?.phone_number || "");
       setSmsNotifications(profile.sms_notifications_enabled ?? true);
       setProfilePhotoPreview(profile.profile_photo_url || null);
       
