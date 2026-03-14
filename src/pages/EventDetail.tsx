@@ -944,6 +944,17 @@ const EventDetail = () => {
           onOpenChange={setShowAttendeeList}
         />
       )}
+
+      {/* Floating back button — mobile only */}
+      {isMobileDevice && (
+        <button
+          onClick={goBack}
+          aria-label="Go back"
+          className="fixed bottom-24 left-4 z-50 md:hidden flex items-center justify-center w-12 h-12 rounded-full bg-primary text-primary-foreground shadow-lg active:scale-95 transition-transform"
+        >
+          <ArrowLeft className="w-5 h-5" />
+        </button>
+      )}
     </div>
   );
 };
