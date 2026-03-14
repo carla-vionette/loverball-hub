@@ -739,6 +739,38 @@ const Profile = () => {
           </motion.div>
         </div>
       </main>
+
+      {/* Logout Confirmation Dialog */}
+      <AlertDialog open={showLogoutConfirm} onOpenChange={setShowLogoutConfirm}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Log out?</AlertDialogTitle>
+            <AlertDialogDescription>Are you sure you want to log out of your account?</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmLogout} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">Log Out</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Followers/Following Sheet */}
+      <Sheet open={!!showFollowersModal} onOpenChange={() => setShowFollowersModal(null)}>
+        <SheetContent>
+          <SheetHeader>
+            <SheetTitle>{showFollowersModal === 'followers' ? 'Followers' : 'Following'}</SheetTitle>
+          </SheetHeader>
+          <div className="py-8 text-center">
+            <Users className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
+            <p className="text-muted-foreground text-sm">
+              {showFollowersModal === 'followers' ? 'No followers yet' : 'Not following anyone yet'}
+            </p>
+            <p className="text-muted-foreground text-xs mt-1">
+              Connect with others at events to grow your network!
+            </p>
+          </div>
+        </SheetContent>
+      </Sheet>
     </div>
   );
 };
