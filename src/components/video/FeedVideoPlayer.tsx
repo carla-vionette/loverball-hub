@@ -139,7 +139,7 @@ const FeedVideoPlayer = ({ video, isActive, isMuted, onToggleMute }: FeedVideoPl
     } else {
       try {
         await navigator.clipboard.writeText(shareUrl);
-        // Show a brief visual indicator
+        toast.success("Link copied to clipboard!");
       } catch {}
     }
   };
