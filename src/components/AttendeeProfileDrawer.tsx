@@ -187,6 +187,8 @@ const AttendeeProfileDrawer = ({ profile, open, onOpenChange }: Props) => {
           {/* Action buttons */}
           {user && !isOwnProfile && (
             <div className="mt-2 w-full max-w-xs space-y-2">
+              {/* Follow button */}
+              <FollowButton targetUserId={profile.id} size="default" className="w-full" />
               {/* Friend action button */}
               {friendState === "loading" && (
                 <Button disabled className="w-full" variant="outline">
