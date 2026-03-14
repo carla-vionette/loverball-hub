@@ -474,7 +474,7 @@ const EventDetail = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div ref={gestureRef} className="min-h-screen bg-background">
       {/* Confetti Animation */}
       <AnimatePresence>
         {showConfetti && (
