@@ -189,10 +189,10 @@ Deno.serve(async (req) => {
 
           if (!twilioResponse.ok) {
             const errorText = await twilioResponse.text();
-            console.error(`Twilio error for ${rsvp.profiles.phone_number}:`, errorText);
+            console.error(`Twilio error for ${phoneNumber}:`, errorText);
             errors.push(`Failed to send to ${rsvp.user_id}: ${errorText}`);
           } else {
-            console.log(`SMS sent to ${rsvp.profiles.phone_number}`);
+            console.log(`SMS sent to ${phoneNumber}`);
             totalSent++;
           }
         } catch (smsError) {
