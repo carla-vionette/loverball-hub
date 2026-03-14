@@ -22,6 +22,8 @@ const signInSchema = z.object({
   password: z.string().min(1, "Password is required"),
 });
 
+const ACCESS_CODE = '7988';
+
 const Auth = () => {
   const [searchParams] = useSearchParams();
   const [isSignUp, setIsSignUp] = useState(false);
@@ -29,6 +31,7 @@ const Auth = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [accessCode, setAccessCode] = useState("");
   
   const [loading, setLoading] = useState(false);
   const [splashName, setSplashName] = useState<string | null>(null);
@@ -95,6 +98,11 @@ const Auth = () => {
 
     try {
       if (isSignUp) {
+        // Validate access code
+        if (accessCode.trim() !== ACCESS_CODE) {
+          throw new Error("Invalid access code. Please enter a valid code to sign up.");
+        }
+
         // Validate inputs
         const validation = signUpSchema.safeParse({ email, password });
         if (!validation.success) {
@@ -361,8 +369,24 @@ const Auth = () => {
                   />
                 </div>
 
+                {isSignUp && (
+                  <div className="space-y-2">
+                    <Label htmlFor="accessCode" className="text-xs tracking-wider uppercase text-foreground/60">Access Code</Label>
+                    <Input
+                      id="accessCode"
+                      type="text"
+                      inputMode="numeric"
+                      maxLength={4}
+                      placeholder="Enter 4-digit code"
+                      value={accessCode}
+                      onChange={(e) => setAccessCode(e.target.value)}
+                      required
+                      className="rounded-none h-12 border-border bg-background placeholder:text-foreground/30"
+                    />
+                  </div>
+                )}
 
-                <Button 
+                <Button
                   type="submit" 
                   className="w-full rounded-none h-12 text-sm tracking-wider group" 
                   disabled={loading}
