@@ -151,17 +151,17 @@ const Index = () => {
 
 
   const trendingStories = [
-  { tag: "TENNIS", title: "Coco Gauff Retires from Indian Wells with Arm Injury", time: "Mar 9" },
-  { tag: "NWSL", title: "Angel City FC Signs Brazilian Star Ary Borges to Three-Year Deal", time: "Jan 2026" },
-  { tag: "TENNIS", title: "Top Seeds Advance to 2026 Indian Wells Quarterfinals", time: "Mar 12" },
-  { tag: "NWSL", title: "Angel City FC Signs Forward Rajanah Reed as Replacement Player", time: "Feb 2026" }];
+  { tag: "TENNIS", title: "Coco Gauff Leads USA Fed Cup Charge in April Showdown", time: "Mar 14", image: "/images/all-stars-event.jpg" },
+  { tag: "NWSL", title: "Angel City FC Signs Brazilian Star Ary Borges to Three-Year Deal", time: "Apr 2", image: "/images/angel-city-fc-opener.jpg" },
+  { tag: "OLYMPICS", title: "LA28 Women's Sports Preview: New Events & Venues Announced", time: "Jun 10", image: "/images/la28-olympics-mixer.jpg" },
+  { tag: "SOCCER", title: "World Cup LA 2026: Women's Watch Party Guide Drops This Spring", time: "Apr 18", image: "/images/world-cup-la-preview.jpg" }];
 
 
   const nearbyEvents = [
   { date: "MAR 22", time: "7:00 PM", title: "Sparks vs Aces Watch Party", venue: "The Victorian, Santa Monica", type: "Watch Party" },
-  { date: "MAR 28", time: "5:30 PM", title: "Angel City FC Tailgate", venue: "BMO Stadium, DTLA", type: "Game Day" },
-  { date: "APR 02", time: "6:00 PM", title: "Tennis & Tequila: Indian Wells", venue: "The Bungalow, Santa Monica", type: "Meetup" },
-  { date: "APR 05", time: "4:00 PM", title: "March Madness Mixer", venue: "Loverball HQ, Venice", type: "Watch Party" }];
+  { date: "APR 05", time: "5:30 PM", title: "Angel City FC Tailgate", venue: "BMO Stadium, DTLA", type: "Game Day" },
+  { date: "APR 19", time: "6:00 PM", title: "Tennis & Tequila: Spring Edition", venue: "The Bungalow, Santa Monica", type: "Meetup" },
+  { date: "JUN 14", time: "4:00 PM", title: "World Cup Kickoff Mixer", venue: "Loverball HQ, Venice", type: "Watch Party" }];
 
 
   const featureCards = [
@@ -402,9 +402,12 @@ const Index = () => {
               className="cursor-pointer group">
               
                 <div className="bg-card rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 h-full border border-border/20">
-                  <div className="p-6 flex flex-col justify-between h-full">
+                  <div className="h-36 overflow-hidden">
+                    <img src={story.image} alt={story.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  </div>
+                  <div className="p-5 flex flex-col justify-between">
                     <div>
-                      <div className="flex items-center gap-3 mb-4">
+                      <div className="flex items-center gap-3 mb-3">
                         <span className="text-[10px] font-sans font-bold tracking-[0.2em] uppercase text-accent-foreground bg-accent px-2.5 py-1 rounded-full">{story.tag}</span>
                         <span className="text-[11px] text-muted-foreground flex items-center gap-1">
                           <Clock className="w-3 h-3" /> {story.time}
