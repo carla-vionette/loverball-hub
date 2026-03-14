@@ -127,10 +127,26 @@ const FeedVideoPlayer = ({ video, isActive, isMuted, onToggleMute }: FeedVideoPl
     else { setLiked(true); setLikeCount((c) => c + 1); }
   };
 
+  const [commentText, setCommentText] = useState("");
+  const [comments, setComments] = useState<{ id: string; text: string; user: string; time: string }[]>([]);
+  const [showComments, setShowComments] = useState(false);
+
   const handleShare = async () => {
+    const shareUrl = `${window.location.origin}/home`;
     if (navigator.share) {
-      try { await navigator.share({ title: video.title, url: window.location.href }); } catch {}
+      try { await navigator.share({ title: video.title, url: shareUrl }); } catch {}
+    } else {
+      try {
+        await navigator.clipboard.writeText(shareUrl);
+        // Show a brief visual indicator
+      } catch {}
     }
+  };
+
+  const handleSubmitComment = () => {
+    if (!commentText.trim()) return;
+    setComments(prev => [...prev, { id: Date.now().toString(), text: commentText.trim(), user: "You", time: "now" }]);
+    setCommentText("");
   };
 
   useEffect(() => {
