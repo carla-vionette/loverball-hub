@@ -52,6 +52,7 @@ const PlanSelection = lazy(() => import("./pages/PlanSelection"));
 const Inbox = lazy(() => import("./pages/Inbox"));
 
 const Membership = lazy(() => import("./pages/Membership"));
+const Scores = lazy(() => import("./pages/Scores"));
 
 // SaaS pages
 const PricingPage = lazy(() => import("./pages/PricingPage"));
