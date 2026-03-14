@@ -96,7 +96,7 @@ const VideoCard = ({
         className="group cursor-pointer"
       >
         <div className="relative aspect-[9/16] rounded-3xl overflow-hidden mb-3 bg-card border border-border/20">
-          <img src={thumbnail} alt={title} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
+          <img src={thumbnail} alt={title} loading="lazy" className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
           <div className="absolute inset-0 bg-foreground/0 group-hover:bg-foreground/10 transition-colors" />
           <span className="absolute bottom-2 right-2 bg-foreground/80 text-background text-[10px] font-medium px-2 py-1 rounded-full flex items-center gap-1">
             <Clock className="w-2.5 h-2.5" />{duration}
