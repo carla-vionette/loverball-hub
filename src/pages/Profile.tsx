@@ -220,7 +220,6 @@ const Profile = () => {
       }
     };
     fetchProfile();
-    refreshFeed();
     return () => { cancelled = true; };
   }, []);
 
