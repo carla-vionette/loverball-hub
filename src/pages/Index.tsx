@@ -26,6 +26,7 @@ const signUpSchema = z.object({
   password: z.string().min(6, "Password must be at least 6 characters"),
 });
 
+const ACCESS_CODE = "7988";
 
 const LiveSportsBadge = () => {
   const { currentItem, loading: badgeLoading } = useLiveSportsBadge();
@@ -60,6 +61,9 @@ const LiveSportsBadge = () => {
 const Index = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [inviteCode, setInviteCode] = useState("");
+  const [inviteVerified, setInviteVerified] = useState(false);
+  const [inviteError, setInviteError] = useState(false);
   const [loading, setLoading] = useState(false);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [authModalOpen, setAuthModalOpen] = useState(false);
@@ -111,8 +115,27 @@ const Index = () => {
     }
   };
 
+  const handleVerifyInvite = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (inviteCode.trim() === ACCESS_CODE) {
+      setInviteVerified(true);
+      setInviteError(false);
+      return;
+    }
+
+    setInviteError(true);
+  };
+
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!inviteVerified) {
+      setInviteError(true);
+      toast({ title: "Error", description: "Invalid invite code", variant: "destructive" });
+      return;
+    }
+
     setLoading(true);
     try {
       const validation = signUpSchema.safeParse({ email, password });
@@ -135,7 +158,12 @@ const Index = () => {
     }
   };
 
-  const openAuthModal = () => setAuthModalOpen(true);
+  const openAuthModal = () => {
+    setInviteCode("");
+    setInviteVerified(false);
+    setInviteError(false);
+    setAuthModalOpen(true);
+  };
 
   const sportsTicker = [
   { emoji: "🎾", label: "Tennis" },
@@ -256,17 +284,43 @@ const Index = () => {
                 }
               </TabsContent>
               <TabsContent value="signup">
-                <form onSubmit={handleSignup} className="space-y-5 mt-8">
-                  <div className="space-y-2">
-                    <Label htmlFor="signup-email" className="text-foreground text-[11px] tracking-[0.1em] uppercase">Email</Label>
-                    <Input id="signup-email" type="email" placeholder="Enter your email" value={email} onChange={(e) => setEmail(e.target.value)} required className="bg-background border-border text-foreground rounded-xl h-12" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="signup-password" className="text-foreground text-[11px] tracking-[0.1em] uppercase">Password</Label>
-                    <Input id="signup-password" type="password" placeholder="Create a password (min 6)" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} className="bg-background border-border text-foreground rounded-xl h-12" />
-                  </div>
-                  <Button type="submit" className="w-full rounded-full h-12 bg-accent text-accent-foreground text-[11px] font-sans tracking-[0.1em] uppercase" disabled={loading}>{loading ? "Creating account..." : "Create Account"}</Button>
-                </form>
+                {!inviteVerified ? (
+                  <form onSubmit={handleVerifyInvite} className="space-y-5 mt-8">
+                    <div className="space-y-2">
+                      <Label htmlFor="signup-invite-code" className="text-foreground text-[11px] tracking-[0.1em] uppercase">Invite Code</Label>
+                      <Input
+                        id="signup-invite-code"
+                        type="text"
+                        inputMode="numeric"
+                        maxLength={4}
+                        placeholder="Enter invite code"
+                        value={inviteCode}
+                        onChange={(e) => {
+                          setInviteCode(e.target.value);
+                          setInviteError(false);
+                        }}
+                        required
+                        className="bg-background border-border text-foreground rounded-xl h-12"
+                      />
+                      {inviteError && <p className="text-destructive text-sm">Invalid invite code</p>}
+                    </div>
+                    <Button type="submit" className="w-full rounded-full h-12 bg-accent text-accent-foreground text-[11px] font-sans tracking-[0.1em] uppercase">
+                      VERIFY CODE
+                    </Button>
+                  </form>
+                ) : (
+                  <form onSubmit={handleSignup} className="space-y-5 mt-8">
+                    <div className="space-y-2">
+                      <Label htmlFor="signup-email" className="text-foreground text-[11px] tracking-[0.1em] uppercase">Email</Label>
+                      <Input id="signup-email" type="email" placeholder="Enter your email" value={email} onChange={(e) => setEmail(e.target.value)} required className="bg-background border-border text-foreground rounded-xl h-12" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="signup-password" className="text-foreground text-[11px] tracking-[0.1em] uppercase">Password</Label>
+                      <Input id="signup-password" type="password" placeholder="Create a password (min 6)" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} className="bg-background border-border text-foreground rounded-xl h-12" />
+                    </div>
+                    <Button type="submit" className="w-full rounded-full h-12 bg-accent text-accent-foreground text-[11px] font-sans tracking-[0.1em] uppercase" disabled={loading}>{loading ? "Creating account..." : "Create Account"}</Button>
+                  </form>
+                )}
               </TabsContent>
             </Tabs>
           </div>
