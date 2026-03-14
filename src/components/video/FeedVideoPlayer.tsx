@@ -153,7 +153,7 @@ const FeedVideoPlayer = ({ video, isActive, isMuted, onToggleMute }: FeedVideoPl
         loop
         playsInline
         muted={isMuted}
-        preload="metadata"
+        preload={isActive ? "metadata" : "none"}
         className="absolute inset-0 w-full h-full object-cover"
       />
 
@@ -209,6 +209,7 @@ const FeedVideoPlayer = ({ video, isActive, isMuted, onToggleMute }: FeedVideoPl
           <img
             src={video.channelAvatar}
             alt={video.channelName}
+            loading="lazy"
             className="w-11 h-11 rounded-full object-cover border-2 border-white"
           />
           {!following && (

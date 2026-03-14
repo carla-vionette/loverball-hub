@@ -5,7 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
-import { Loader2 } from "lucide-react";
+
 import { ErrorBoundary } from "@/components/ui/error-boundary";
 import NetworkStatus from "@/components/NetworkStatus";
 import InstallPrompt from "@/components/InstallPrompt";
@@ -82,9 +82,23 @@ const queryClient = new QueryClient({
   },
 });
 
-const PageLoader = () => (
-  <div className="min-h-screen flex items-center justify-center bg-background">
-    <Loader2 className="h-8 w-8 animate-spin text-primary" />
+const PageLoader = lazy(() => import("./components/PageSkeleton").then(m => ({ default: m.default })));
+
+const PageFallback = () => (
+  <div className="min-h-screen bg-background animate-pulse">
+    <div className="h-16 bg-muted/30" />
+    <div className="max-w-6xl mx-auto px-4 py-6 space-y-4">
+      <div className="h-8 w-48 bg-muted rounded" />
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {[1,2,3,4,5,6].map(i => (
+          <div key={i} className="space-y-3">
+            <div className="aspect-video bg-muted rounded-xl" />
+            <div className="h-4 w-3/4 bg-muted rounded" />
+            <div className="h-3 w-1/2 bg-muted rounded" />
+          </div>
+        ))}
+      </div>
+    </div>
   </div>
 );
 
@@ -104,7 +118,7 @@ const App = () => (
           <InstallPrompt />
           <BrowserRouter>
             <PageTracker />
-            <Suspense fallback={<PageLoader />}>
+            <Suspense fallback={<PageFallback />}>
               <Routes>
                 {/* Public routes */}
                 <Route path="/" element={<Index />} />

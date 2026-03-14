@@ -39,7 +39,7 @@ const VideoCard = ({
       >
         <Link to={`/watch/video/${id}`}>
           <div className="aspect-[9/16] relative">
-            <img src={thumbnail} alt={title} className="w-full h-full object-cover" />
+            <img src={thumbnail} alt={title} loading="lazy" className="w-full h-full object-cover" />
             <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-foreground/20 to-transparent" />
             <div className="absolute bottom-0 left-0 right-0 p-6">
               <span className="inline-block bg-accent text-accent-foreground text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-full mb-3">
@@ -70,7 +70,7 @@ const VideoCard = ({
           className="flex gap-3 p-2 rounded-2xl transition-colors group cursor-pointer"
         >
           <div className="relative w-28 aspect-[9/16] rounded-2xl overflow-hidden flex-shrink-0">
-            <img src={thumbnail} alt={title} className="w-full h-full object-cover" />
+            <img src={thumbnail} alt={title} loading="lazy" className="w-full h-full object-cover" />
             <span className="absolute bottom-1 right-1 bg-foreground/80 text-background text-[10px] font-medium px-1.5 py-0.5 rounded-full">
               {duration}
             </span>
@@ -96,7 +96,7 @@ const VideoCard = ({
         className="group cursor-pointer"
       >
         <div className="relative aspect-[9/16] rounded-3xl overflow-hidden mb-3 bg-card border border-border/20">
-          <img src={thumbnail} alt={title} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
+          <img src={thumbnail} alt={title} loading="lazy" className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
           <div className="absolute inset-0 bg-foreground/0 group-hover:bg-foreground/10 transition-colors" />
           <span className="absolute bottom-2 right-2 bg-foreground/80 text-background text-[10px] font-medium px-2 py-1 rounded-full flex items-center gap-1">
             <Clock className="w-2.5 h-2.5" />{duration}
@@ -109,7 +109,7 @@ const VideoCard = ({
         </div>
         <div className="flex gap-3">
           {channelAvatar && (
-            <img src={channelAvatar} alt={channelName} className="w-8 h-8 rounded-full object-cover flex-shrink-0 mt-0.5 border border-border/20" />
+            <img src={channelAvatar} alt={channelName} loading="lazy" className="w-8 h-8 rounded-full object-cover flex-shrink-0 mt-0.5 border border-border/20" />
           )}
           <div className="min-w-0">
             <h3 className="text-sm font-medium text-foreground line-clamp-2 mb-1">{title}</h3>
