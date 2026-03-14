@@ -168,7 +168,11 @@ const Watch = () => {
                 <MessageCircle className="w-7 h-7 text-card" />
                 <span className="text-card text-xs font-bold font-sans">{viewing.comments}</span>
               </button>
-              <button className="flex flex-col items-center gap-1">
+              <button className="flex flex-col items-center gap-1" onClick={async () => {
+                const url = `${window.location.origin}/watch`;
+                if (navigator.share) { try { await navigator.share({ title: viewing.title, url }); } catch {} }
+                else { await navigator.clipboard.writeText(url); toast.success("Link copied!"); }
+              }}>
                 <Share2 className="w-7 h-7 text-card" />
                 <span className="text-card text-xs font-bold font-sans">Share</span>
               </button>
