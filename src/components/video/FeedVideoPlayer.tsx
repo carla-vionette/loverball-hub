@@ -4,6 +4,7 @@ import { Heart, MessageCircle, Share2, Volume2, VolumeX, Play, Bookmark, Music, 
 import { motion, AnimatePresence } from "framer-motion";
 import type { FeedVideoItem } from "@/lib/feedVideoData";
 import { trackVideoProgress, trackVideoComplete } from "@/lib/analytics";
+import { useConnectionQuality } from "@/hooks/useConnectionQuality";
 
 interface FeedVideoPlayerProps {
   video: FeedVideoItem;
