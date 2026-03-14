@@ -84,7 +84,8 @@ export async function createCheckoutSession(plan: SubscriptionPlan): Promise<str
     },
   });
 
-  if (error) throw error;
+  if (error) throw new Error('Checkout is temporarily unavailable. Please try again later.');
+  if (!data?.url) throw new Error('Checkout is temporarily unavailable. Please try again later.');
   return data.url;
 }
 

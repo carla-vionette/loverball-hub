@@ -151,10 +151,10 @@ const Index = () => {
 
 
   const trendingStories = [
-  { tag: "WNBA", title: "Caitlin Clark Sets New Assist Record in Fever Victory", time: "2h ago", image: athletesImage },
-  { tag: "NWSL", title: "Angel City FC Signs International Star Ahead of Season Opener", time: "4h ago", image: communityImage },
-  { tag: "TENNIS", title: "Coco Gauff Advances to Indian Wells Semifinals", time: "5h ago", image: fansImage },
-  { tag: "OLYMPICS", title: "LA28 Unveils Women's Sports Showcase Plans", time: "8h ago", image: philosophyImage }];
+  { tag: "TENNIS", title: "Coco Gauff Retires from Indian Wells with Arm Injury", time: "Mar 9", image: fansImage },
+  { tag: "NWSL", title: "Angel City FC Signs Brazilian Star Ary Borges to Three-Year Deal", time: "Jan 2026", image: communityImage },
+  { tag: "TENNIS", title: "Top Seeds Advance to 2026 Indian Wells Quarterfinals", time: "Mar 12", image: athletesImage },
+  { tag: "NWSL", title: "Angel City FC Signs Forward Rajanah Reed as Replacement Player", time: "Feb 2026", image: philosophyImage }];
 
 
   const nearbyEvents = [
@@ -584,7 +584,7 @@ const Index = () => {
           </div>
           <div className="grid lg:grid-cols-12 gap-12 items-start mb-12">
             <div className="lg:col-span-4">
-              <img src={loverballLogo} alt="Loverball" className="w-[120px] h-auto brightness-0 invert mb-6" />
+              <img src={loverballLogo} alt="Loverball" className="w-[130px] h-auto brightness-0 invert mb-6" />
               <p className="text-background/40 text-sm leading-relaxed max-w-xs">
                 A community platform for women who love sports. Born in Los Angeles.
               </p>
