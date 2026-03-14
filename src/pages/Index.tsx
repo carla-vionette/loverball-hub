@@ -10,6 +10,7 @@ import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useAuth } from "@/hooks/useAuth";
 import { motion } from "framer-motion";
 import { ArrowRight, Lock, Users, Sparkles, Calendar, X, Menu, Mail, Play, Heart, ShoppingBag, Clock, MapPin, Zap } from "lucide-react";
+import TrendingNews from "@/components/TrendingNews";
 import heroImage from "@/assets/hero-women-new.png";
 import { useLiveSportsBadge } from "@/hooks/useLiveSportsBadge";
 import loverballLogo from "@/assets/loverball-script-logo.png";
@@ -441,39 +442,10 @@ const Index = () => {
         <div className="max-w-[1400px] mx-auto px-8 lg:px-16">
           <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ duration: 0.8 }} viewport={{ once: true }} className="flex items-end justify-between mb-12">
             <h2 className="font-condensed text-[3rem] lg:text-[4.5rem] leading-none tracking-tight text-foreground uppercase font-extrabold">Trending Now</h2>
-            <Zap className="w-8 h-8 text-accent hidden md:block" />
+            <Zap className="w-8 h-8 text-[#FF5D2E] hidden md:block" />
           </motion.div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {trendingStories.map((story, i) =>
-            <motion.div
-              key={story.title}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: i * 0.1 }}
-              viewport={{ once: true }}
-              onClick={openAuthModal}
-              className="cursor-pointer group">
-              
-                <div className="bg-card rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 h-full border border-border/20">
-                  <div className="h-36 overflow-hidden">
-                    <img src={story.image} alt={story.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                  </div>
-                  <div className="p-5 flex flex-col justify-between">
-                    <div>
-                      <div className="flex items-center gap-3 mb-3">
-                        <span className="text-[10px] font-sans font-bold tracking-[0.2em] uppercase text-accent-foreground bg-accent px-2.5 py-1 rounded-full">{story.tag}</span>
-                        <span className="text-[11px] text-muted-foreground flex items-center gap-1">
-                          <Clock className="w-3 h-3" /> {story.time}
-                        </span>
-                      </div>
-                      <h3 className="font-sans font-bold text-foreground text-base leading-snug group-hover:text-accent transition-colors">{story.title}</h3>
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            )}
-          </div>
+          <TrendingNews onAuthRequired={openAuthModal} fallbackStories={trendingStories} />
         </div>
       </section>
 
