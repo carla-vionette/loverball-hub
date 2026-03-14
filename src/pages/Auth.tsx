@@ -254,7 +254,7 @@ const Auth = () => {
             <div className="lg:hidden mb-12">
               <p className="text-primary text-sm font-medium tracking-widest mb-4 uppercase">Welcome</p>
               <h1 className="text-3xl font-sans font-normal leading-tight text-foreground">
-                {isResettingPassword ? "Reset Password." : isSignUp ? "Join the Movement." : "Welcome Back."}
+                {isResettingPassword ? "Reset Password." : isSignUp ? (inviteVerified ? "Join the Movement." : "Enter Invite Code.") : "Welcome Back."}
               </h1>
             </div>
 
