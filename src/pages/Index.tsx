@@ -158,7 +158,12 @@ const Index = () => {
     }
   };
 
-  const openAuthModal = () => setAuthModalOpen(true);
+  const openAuthModal = () => {
+    setInviteCode("");
+    setInviteVerified(false);
+    setInviteError(false);
+    setAuthModalOpen(true);
+  };
 
   const sportsTicker = [
   { emoji: "🎾", label: "Tennis" },
