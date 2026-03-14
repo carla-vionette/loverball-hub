@@ -157,17 +157,31 @@ const FeedVideoPlayer = ({ video, isActive, isMuted, onToggleMute }: FeedVideoPl
       role="region"
       aria-label={`Video: ${video.title} by ${video.channelName}`}
     >
-      {/* Video — full bleed */}
+      {/* Video — full bleed; on slow connections, don't load video src until manual play */}
       <video
         ref={videoRef}
-        src={video.videoUrl}
-        poster={video.thumbnail}
+        src={isSlowNetwork && !manualPlay ? undefined : video.videoUrl}
+        poster={video.thumbnail || undefined}
         loop
         playsInline
         muted={isMuted}
-        preload={isActive ? "metadata" : "none"}
+        preload={isActive && (shouldAutoplay || manualPlay) ? "metadata" : "none"}
         className="absolute inset-0 w-full h-full object-cover"
       />
+
+      {/* Slow connection: show large play button overlay instead of autoplaying */}
+      {isActive && isSlowNetwork && !manualPlay && (
+        <button
+          onClick={(e) => { e.stopPropagation(); setManualPlay(true); }}
+          className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-black/60 gap-3"
+          aria-label="Tap to play video"
+        >
+          <div className="w-20 h-20 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center border-2 border-white/40">
+            <Play className="w-10 h-10 text-white ml-1" fill="currentColor" />
+          </div>
+          <span className="text-white/70 text-xs font-medium">Tap to play • Slow connection</span>
+        </button>
+      )
 
       <div className="sr-only" aria-live="polite" aria-atomic="true">
         {isPlaying ? 'Playing' : 'Paused'}: {video.title} by {video.channelName}.
