@@ -149,12 +149,12 @@ const staggerItem = {
 };
 
 
-const ProfileFollowCounts = ({ userId }: { userId: string }) => {
+const ProfileFollowCounts = ({ userId, onClickFollowers, onClickFollowing }: { userId: string; onClickFollowers: () => void; onClickFollowing: () => void }) => {
   const { followerCount, followingCount } = useFollow(userId);
   return (
     <div className="flex items-center gap-4 text-sm">
-      <span><strong>{followerCount}</strong> <span className="text-muted-foreground">followers</span></span>
-      <span><strong>{followingCount}</strong> <span className="text-muted-foreground">following</span></span>
+      <button onClick={onClickFollowers} className="hover:text-primary transition-colors cursor-pointer"><strong>{followerCount}</strong> <span className="text-muted-foreground">followers</span></button>
+      <button onClick={onClickFollowing} className="hover:text-primary transition-colors cursor-pointer"><strong>{followingCount}</strong> <span className="text-muted-foreground">following</span></button>
     </div>
   );
 };
