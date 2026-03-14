@@ -174,7 +174,7 @@ Deno.serve(async (req) => {
           const authHeader = btoa(`${twilioAccountSid}:${twilioAuthToken}`);
 
           const formData = new URLSearchParams();
-          formData.append('To', rsvp.profiles.phone_number);
+          formData.append('To', phoneNumber);
           formData.append('From', twilioPhoneNumber);
           formData.append('Body', message);
 
