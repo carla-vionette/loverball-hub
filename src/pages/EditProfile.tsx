@@ -212,9 +212,14 @@ const EditProfile = () => {
         participation_preferences: participation,
         bio,
         profile_photo_url: photoUrl,
-        phone_number: phoneNumber || null,
         sms_notifications_enabled: smsNotifications,
       }).eq("id", userId);
+
+      // Update sensitive data separately
+      await supabase.from("profiles_sensitive" as any).upsert({
+        id: userId,
+        phone_number: phoneNumber || null,
+      } as any);
 
       if (error) throw error;
 

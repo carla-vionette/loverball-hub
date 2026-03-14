@@ -166,12 +166,17 @@ const Onboarding = () => {
         other_interests: contentInterests,
         bio,
         profile_photo_url: photoUrl,
-        birthday: birthday || null,
-        phone_number: phoneNumber.trim() || null,
         sms_notifications_enabled: smsOptIn,
       });
 
       if (error) throw error;
+
+      // Store sensitive data separately
+      await supabase.from("profiles_sensitive" as any).upsert({
+        id: userId,
+        birthday: birthday || null,
+        phone_number: phoneNumber.trim() || null,
+      } as any);
 
       // Send welcome email (fire-and-forget)
       const { data: { user } } = await supabase.auth.getUser();

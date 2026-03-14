@@ -42,7 +42,6 @@ type ProfileData = {
   participation_preferences: string[] | null;
   bio: string | null;
   profile_photo_url: string | null;
-  birthday: string | null;
   membership_tier: string | null;
 };
 
