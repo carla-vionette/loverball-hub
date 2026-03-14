@@ -89,8 +89,8 @@ const Membership = () => {
       const url = await createCheckoutSession(plan);
       window.location.href = url;
     } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : 'Failed to start checkout';
-      toast({ title: 'Checkout unavailable', description: 'We couldn\'t start the payment process. Please try again later or contact support.', variant: 'destructive' });
+      const message = error instanceof Error ? error.message : 'Checkout is temporarily unavailable. Please try again later.';
+      toast({ title: 'Checkout unavailable', description: message, variant: 'destructive' });
     } finally {
       setLoadingPlan(null);
     }

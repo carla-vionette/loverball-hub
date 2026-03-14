@@ -584,7 +584,7 @@ const Index = () => {
           </div>
           <div className="grid lg:grid-cols-12 gap-12 items-start mb-12">
             <div className="lg:col-span-4">
-              <img src={loverballLogo} alt="Loverball" className="w-[120px] h-auto brightness-0 invert mb-6" />
+              <img src={loverballLogo} alt="Loverball" className="w-[130px] h-auto brightness-0 invert mb-6" />
               <p className="text-background/40 text-sm leading-relaxed max-w-xs">
                 A community platform for women who love sports. Born in Los Angeles.
               </p>
