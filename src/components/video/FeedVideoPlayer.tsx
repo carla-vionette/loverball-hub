@@ -271,12 +271,12 @@ const FeedVideoPlayer = ({ video, isActive, isMuted, onToggleMute }: FeedVideoPl
 
         {/* Comment */}
         <button
-          onClick={(e) => e.stopPropagation()}
+          onClick={(e) => { e.stopPropagation(); setShowComments(!showComments); }}
           className="flex flex-col items-center gap-1"
           aria-label="Comments"
         >
           <MessageCircle className="w-7 h-7 text-white drop-shadow-lg" />
-          <span className="text-[11px] font-bold text-white">{formatCount(commentCount)}</span>
+          <span className="text-[11px] font-bold text-white">{formatCount(commentCount + comments.length)}</span>
         </button>
 
         {/* Bookmark */}
