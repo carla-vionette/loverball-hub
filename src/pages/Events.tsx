@@ -87,15 +87,50 @@ const Events = () => {
         setEvents(data || []);
 
         if (data?.length) {
+          const eventIds = data.map(e => e.id);
           const { data: rsvps } = await supabase
             .from("event_rsvps")
             .select("event_id")
-            .in("event_id", data.map(e => e.id))
+            .in("event_id", eventIds)
             .in("status", ["attending", "confirmed"]);
           if (rsvps) {
             const c: Record<string, number> = {};
             rsvps.forEach(r => { c[r.event_id] = (c[r.event_id] || 0) + 1; });
             setCounts(c);
+          }
+
+          // Fetch attendee avatars for each event (up to 4 per event)
+          const { data: guests } = await supabase
+            .from("event_guests")
+            .select(`
+              event_id,
+              user_id,
+              profile:profiles!inner (
+                id, name, profile_photo_url, bio, favorite_sports, primary_role, city
+              )
+            `)
+            .in("event_id", eventIds)
+            .eq("status", "going")
+            .limit(200);
+
+          if (guests) {
+            const byEvent: Record<string, AttendeeProfile[]> = {};
+            (guests as any[]).forEach((g) => {
+              if (!g.profile) return;
+              if (!byEvent[g.event_id]) byEvent[g.event_id] = [];
+              if (byEvent[g.event_id].length < 4) {
+                byEvent[g.event_id].push({
+                  id: g.profile.id,
+                  name: g.profile.name,
+                  profile_photo_url: g.profile.profile_photo_url,
+                  bio: g.profile.bio,
+                  favorite_sports: g.profile.favorite_sports,
+                  primary_role: g.profile.primary_role,
+                  city: g.profile.city,
+                });
+              }
+            });
+            setEventAttendees(byEvent);
           }
         }
       } catch (err) {
