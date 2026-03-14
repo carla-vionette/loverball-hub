@@ -44,3 +44,6 @@ verify_jwt = false
 
 [functions.womens-sports-live]
 verify_jwt = false
+
+[functions.homepage-data]
+verify_jwt = false
