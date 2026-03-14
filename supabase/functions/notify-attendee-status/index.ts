@@ -202,7 +202,7 @@ Deno.serve(async (req) => {
     const results = { sms: false, email: false, errors: [] as string[] };
 
     // Send SMS if enabled and configured
-    if (smsMessage && profile.phone_number && profile.sms_notifications_enabled !== false && twilioAccountSid && twilioAuthToken && twilioPhoneNumber) {
+    if (smsMessage && userPhone && profile.sms_notifications_enabled !== false && twilioAccountSid && twilioAuthToken && twilioPhoneNumber) {
       try {
         const twilioUrl = `https://api.twilio.com/2010-04-01/Accounts/${twilioAccountSid}/Messages.json`;
         const authHeader = btoa(`${twilioAccountSid}:${twilioAuthToken}`);
