@@ -28,10 +28,12 @@ const Auth = () => {
   const [searchParams] = useSearchParams();
   const [isSignUp, setIsSignUp] = useState(false);
   const [isResettingPassword, setIsResettingPassword] = useState(false);
+  const [inviteVerified, setInviteVerified] = useState(false);
+  const [inviteCode, setInviteCode] = useState("");
+  const [inviteError, setInviteError] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [accessCode, setAccessCode] = useState("");
   
   const [loading, setLoading] = useState(false);
   const [splashName, setSplashName] = useState<string | null>(null);
