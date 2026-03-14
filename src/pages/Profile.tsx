@@ -273,7 +273,7 @@ const Profile = () => {
 
   const initials = profile.name.split(" ").map(n => n[0]).join("").toUpperCase();
   const locationText = profile.city || "Location not set";
-  const zodiac = getZodiacSign(profile.birthday);
+  const zodiac = getZodiacSign(birthday);
   const greeting = getGreeting();
   const userName = profile.name?.split(" ")[0] || "there";
   const formattedDate = currentTime.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" });
