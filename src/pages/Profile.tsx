@@ -171,6 +171,7 @@ const Profile = () => {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [liveHoroscope, setLiveHoroscope] = useState<string | null>(null);
   const [horoscopeLoading, setHoroscopeLoading] = useState(false);
+  const [birthday, setBirthday] = useState<string | null>(null);
   
   const goTo = (path: string) => { window.location.href = path; };
   const { toast } = useToast();
