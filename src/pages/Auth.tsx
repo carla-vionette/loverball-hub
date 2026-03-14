@@ -98,6 +98,11 @@ const Auth = () => {
 
     try {
       if (isSignUp) {
+        // Validate access code
+        if (accessCode.trim() !== ACCESS_CODE) {
+          throw new Error("Invalid access code. Please enter a valid code to sign up.");
+        }
+
         // Validate inputs
         const validation = signUpSchema.safeParse({ email, password });
         if (!validation.success) {
