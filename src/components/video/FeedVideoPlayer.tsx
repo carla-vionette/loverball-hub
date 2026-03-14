@@ -51,6 +51,11 @@ const FeedVideoPlayer = ({ video, isActive, isMuted, onToggleMute }: FeedVideoPl
     }
   }, [isActive, shouldAutoplay, manualPlay]);
 
+  // Reset manual play when scrolling away
+  useEffect(() => {
+    if (!isActive) setManualPlay(false);
+  }, [isActive]);
+
   useEffect(() => { if (videoRef.current) videoRef.current.muted = isMuted; }, [isMuted]);
 
   const milestonesTracked = useRef(new Set<number>());
