@@ -8,7 +8,6 @@ import { useAuth } from '@/hooks/useAuth';
 import { createCheckoutSession } from '@/services/subscriptionService';
 import { useToast } from '@/hooks/use-toast';
 import type { SubscriptionPlan } from '@/types';
-import loverballLogo from '@/assets/loverball-script-logo.png';
 import MobileHeader from '@/components/MobileHeader';
 import DesktopNav from '@/components/DesktopNav';
 import BottomNav from '@/components/BottomNav';
@@ -90,8 +89,8 @@ const Membership = () => {
       const url = await createCheckoutSession(plan);
       window.location.href = url;
     } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : 'Failed to start checkout';
-      toast({ title: 'Checkout unavailable', description: 'We couldn\'t start the payment process. Please try again later or contact support.', variant: 'destructive' });
+      const message = error instanceof Error ? error.message : 'Checkout is temporarily unavailable. Please try again later.';
+      toast({ title: 'Checkout unavailable', description: message, variant: 'destructive' });
     } finally {
       setLoadingPlan(null);
     }
@@ -111,7 +110,7 @@ const Membership = () => {
             animate={{ opacity: 1, y: 0 }}
             className="text-center mb-12"
           >
-            <img src={loverballLogo} alt="Loverball" className="h-16 mx-auto mb-6" />
+            
             <h1 className="font-display text-3xl md:text-5xl uppercase tracking-tight text-foreground mb-3">
               Go Member
             </h1>
