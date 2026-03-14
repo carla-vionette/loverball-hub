@@ -68,9 +68,17 @@ Deno.serve(async (req) => {
     // Fetch user profile
     const { data: profile, error: profileError } = await supabase
       .from('profiles')
-      .select('name, phone_number, sms_notifications_enabled')
+      .select('name, sms_notifications_enabled')
       .eq('id', userId)
       .single();
+
+    // Fetch phone from sensitive table
+    const { data: sensitive } = await supabase
+      .from('profiles_sensitive')
+      .select('phone_number')
+      .eq('id', userId)
+      .single();
+    const userPhone = sensitive?.phone_number;
 
     if (profileError || !profile) {
       console.error('Error fetching profile:', profileError);
