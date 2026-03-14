@@ -98,9 +98,9 @@ const Auth = () => {
 
     try {
       if (isSignUp) {
-        // Validate access code
+        // Validate invite code
         if (accessCode.trim() !== ACCESS_CODE) {
-          throw new Error("Invalid access code. Please enter a valid code to sign up.");
+          throw new Error("Invalid invite code. Please enter a valid invite code to sign up.");
         }
 
         // Validate inputs
