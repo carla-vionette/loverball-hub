@@ -21,14 +21,15 @@ Deno.serve(async (req) => {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
+
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_ANON_KEY")!,
       { global: { headers: { Authorization: authHeader } } }
     );
-    const token = authHeader.replace("Bearer ", "");
-    const { data: claimsData, error: claimsError } = await supabase.auth.getClaims(token);
-    if (claimsError || !claimsData?.claims) {
+
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    if (userError || !user) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -37,7 +38,7 @@ Deno.serve(async (req) => {
 
     const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
     if (!stripeKey) {
-      return new Response(JSON.stringify({ error: "Stripe not configured" }), {
+      return new Response(JSON.stringify({ error: "Payment processing is not configured. Please contact support." }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
@@ -72,6 +73,8 @@ Deno.serve(async (req) => {
       mode: "payment",
       success_url: success_url || `${req.headers.get("origin")}/checkout-success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: cancel_url || `${req.headers.get("origin")}/shop`,
+      customer_email: user.email,
+      metadata: { user_id: user.id },
     });
 
     return new Response(JSON.stringify({ url: session.url, sessionId: session.id }), {
@@ -79,7 +82,8 @@ Deno.serve(async (req) => {
     });
   } catch (error) {
     console.error("Stripe checkout error:", error);
-    return new Response(JSON.stringify({ error: error.message }), {
+    const message = error instanceof Error ? error.message : "An unexpected error occurred";
+    return new Response(JSON.stringify({ error: message }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
