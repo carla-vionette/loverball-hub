@@ -135,6 +135,8 @@ const App = () => (
                 <Route path="/following" element={<Navigate to="/profile" replace />} />
                 <Route path="/network" element={<Navigate to="/members" replace />} />
                 <Route path="/gather" element={<Navigate to="/events" replace />} />
+                <Route path="/connect" element={<Navigate to="/friends" replace />} />
+                <Route path="/trending" element={<Navigate to="/#trending" replace />} />
 
                 {/* Protected member routes */}
                 <Route path="/dashboard" element={<ProtectedRoute><MemberDashboard /></ProtectedRoute>} />

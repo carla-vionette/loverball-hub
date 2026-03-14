@@ -609,7 +609,7 @@ const Index = () => {
               <nav className="space-y-3">
                 <a href="/privacy" className="block text-sm text-background/60 hover:text-background transition-colors">Privacy</a>
                 <a href="/terms" className="block text-sm text-background/60 hover:text-background transition-colors">Terms</a>
-                <a href="#" className="block text-sm text-background/60 hover:text-background transition-colors">Contact</a>
+                <a href="mailto:hello@loverball.com" className="block text-sm text-background/60 hover:text-background transition-colors">Contact</a>
               </nav>
             </div>
           </div>

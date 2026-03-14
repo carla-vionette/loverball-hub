@@ -32,7 +32,15 @@ const Watch = () => {
   const [saved, setSaved] = useState<Set<string>>(new Set());
   const [muted, setMuted] = useState(false);
 
-  const filtered = REELS.filter(r => type === "All" || r.type === type);
+  const filtered = REELS.filter(r => {
+    const typeMatch = type === "All" || r.type === type;
+    if (cat === "For You") return typeMatch;
+    if (cat === "Originals") return typeMatch && r.creator.toLowerCase().includes("loverball");
+    if (cat === "Creators") return typeMatch && !r.creator.toLowerCase().includes("loverball") && !r.live;
+    if (cat === "Teams") return typeMatch && (r.title.toLowerCase().includes("lakers") || r.title.toLowerCase().includes("dodgers") || r.title.toLowerCase().includes("angel city") || r.title.toLowerCase().includes("fc") || r.title.toLowerCase().includes("wnba"));
+    if (cat === "Live") return typeMatch && r.live;
+    return typeMatch;
+  });
 
   const openReel = (r: typeof REELS[0]) => {
     setViewing(r);

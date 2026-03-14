@@ -359,7 +359,7 @@ const Profile = () => {
                    </div>
 
                   {/* Follower/Following counts */}
-                  <ProfileFollowCounts userId={profile.id} />
+                  <ProfileFollowCounts userId={profile.id} onClickFollowers={() => setShowFollowersModal('followers')} onClickFollowing={() => setShowFollowersModal('following')} />
 
                   {/* Quick actions */}
                   <div className="flex items-center gap-2 flex-wrap justify-center">
