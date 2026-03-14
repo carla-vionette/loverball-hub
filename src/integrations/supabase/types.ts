@@ -1151,7 +1151,6 @@ export type Database = {
           age_range: string | null
           billing_period: string | null
           bio: string | null
-          birthday: string | null
           city: string | null
           created_at: string
           current_streak: number
@@ -1173,7 +1172,6 @@ export type Database = {
           neighborhood: string | null
           other_interests: string[] | null
           participation_preferences: string[] | null
-          phone_number: string | null
           primary_role: string | null
           profile_photo_url: string | null
           pronouns: string | null
@@ -1189,7 +1187,6 @@ export type Database = {
           age_range?: string | null
           billing_period?: string | null
           bio?: string | null
-          birthday?: string | null
           city?: string | null
           created_at?: string
           current_streak?: number
@@ -1211,7 +1208,6 @@ export type Database = {
           neighborhood?: string | null
           other_interests?: string[] | null
           participation_preferences?: string[] | null
-          phone_number?: string | null
           primary_role?: string | null
           profile_photo_url?: string | null
           pronouns?: string | null
@@ -1227,7 +1223,6 @@ export type Database = {
           age_range?: string | null
           billing_period?: string | null
           bio?: string | null
-          birthday?: string | null
           city?: string | null
           created_at?: string
           current_streak?: number
@@ -1249,7 +1244,6 @@ export type Database = {
           neighborhood?: string | null
           other_interests?: string[] | null
           participation_preferences?: string[] | null
-          phone_number?: string | null
           primary_role?: string | null
           profile_photo_url?: string | null
           pronouns?: string | null
@@ -1260,6 +1254,30 @@ export type Database = {
           total_points?: number
           updated_at?: string
           website_url?: string | null
+        }
+        Relationships: []
+      }
+      profiles_sensitive: {
+        Row: {
+          birthday: string | null
+          created_at: string
+          id: string
+          phone_number: string | null
+          updated_at: string
+        }
+        Insert: {
+          birthday?: string | null
+          created_at?: string
+          id: string
+          phone_number?: string | null
+          updated_at?: string
+        }
+        Update: {
+          birthday?: string | null
+          created_at?: string
+          id?: string
+          phone_number?: string | null
+          updated_at?: string
         }
         Relationships: []
       }
@@ -1598,6 +1616,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      get_public_profile_columns: { Args: { target_id: string }; Returns: Json }
       get_safe_profile: { Args: { profile_id: string }; Returns: Json }
       has_role: {
         Args: {

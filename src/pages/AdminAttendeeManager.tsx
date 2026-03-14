@@ -36,7 +36,7 @@ interface Attendee {
   created_at: string;
   profile: {
     name: string;
-    phone_number: string | null;
+    phone_number?: string | null;
     city: string | null;
     profile_photo_url: string | null;
     instagram_url: string | null;
@@ -121,7 +121,6 @@ const AdminAttendeeManager = () => {
           created_at,
           profile:profiles (
             name,
-            phone_number,
             city,
             profile_photo_url,
             instagram_url
@@ -142,7 +141,6 @@ const AdminAttendeeManager = () => {
         created_at: item.created_at,
         profile: item.profile ? {
           name: (item.profile as any).name,
-          phone_number: (item.profile as any).phone_number,
           city: (item.profile as any).city,
           profile_photo_url: (item.profile as any).profile_photo_url,
           instagram_url: (item.profile as any).instagram_url,

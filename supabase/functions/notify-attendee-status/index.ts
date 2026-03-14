@@ -68,9 +68,17 @@ Deno.serve(async (req) => {
     // Fetch user profile
     const { data: profile, error: profileError } = await supabase
       .from('profiles')
-      .select('name, phone_number, sms_notifications_enabled')
+      .select('name, sms_notifications_enabled')
       .eq('id', userId)
       .single();
+
+    // Fetch phone from sensitive table
+    const { data: sensitive } = await supabase
+      .from('profiles_sensitive')
+      .select('phone_number')
+      .eq('id', userId)
+      .single();
+    const userPhone = sensitive?.phone_number;
 
     if (profileError || !profile) {
       console.error('Error fetching profile:', profileError);
@@ -194,13 +202,13 @@ Deno.serve(async (req) => {
     const results = { sms: false, email: false, errors: [] as string[] };
 
     // Send SMS if enabled and configured
-    if (smsMessage && profile.phone_number && profile.sms_notifications_enabled !== false && twilioAccountSid && twilioAuthToken && twilioPhoneNumber) {
+    if (smsMessage && userPhone && profile.sms_notifications_enabled !== false && twilioAccountSid && twilioAuthToken && twilioPhoneNumber) {
       try {
         const twilioUrl = `https://api.twilio.com/2010-04-01/Accounts/${twilioAccountSid}/Messages.json`;
         const authHeader = btoa(`${twilioAccountSid}:${twilioAuthToken}`);
 
         const formData = new URLSearchParams();
-        formData.append('To', profile.phone_number);
+        formData.append('To', userPhone);
         formData.append('From', twilioPhoneNumber);
         formData.append('Body', smsMessage);
 
@@ -214,7 +222,7 @@ Deno.serve(async (req) => {
         });
 
         if (twilioResponse.ok) {
-          console.log(`SMS sent to ${profile.phone_number}`);
+          console.log(`SMS sent to ${userPhone}`);
           results.sms = true;
         } else {
           const errorText = await twilioResponse.text();

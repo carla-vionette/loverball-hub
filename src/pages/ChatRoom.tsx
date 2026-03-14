@@ -82,8 +82,9 @@ const ChatRoom = () => {
     const { data: match } = await supabase.from("matches").select("user_a_id, user_b_id").eq("id", chat.match_id).maybeSingle();
     if (!match) return;
     const otherId = match.user_a_id === user.id ? match.user_b_id : match.user_a_id;
-    const { data: profile } = await supabase.from("profiles").select("name, profile_photo_url").eq("id", otherId).maybeSingle();
-    if (profile) {
+    const { data: profileData } = await supabase.rpc("get_safe_profile", { profile_id: otherId });
+    if (profileData) {
+      const profile = typeof profileData === 'string' ? JSON.parse(profileData) : profileData;
       setOtherUserName(profile.name);
       setOtherUserPhoto(profile.profile_photo_url);
     }
