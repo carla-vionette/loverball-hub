@@ -221,7 +221,7 @@ const Events = () => {
               onClick={() => goTo(`/event/${featured.id}`)}>
               <div className="relative h-56 md:h-72 overflow-hidden">
                 {featured.image_url ? (
-                  <img src={featured.image_url} alt={featured.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <img src={featured.image_url} alt={featured.title} loading="eager" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                 ) : (
                   <div className="w-full h-full bg-gradient-to-br from-primary/20 to-accent/20" />
                 )}
