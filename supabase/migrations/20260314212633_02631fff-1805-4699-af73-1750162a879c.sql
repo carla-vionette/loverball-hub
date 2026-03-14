@@ -1,0 +1,24 @@
+
+UPDATE events SET event_date = CASE id
+  WHEN '425f2be4-d74b-469c-938c-65ab018aae9a' THEN '2026-03-28'::date
+  WHEN '006cf13f-f78c-4e80-9051-885f802c7b1f' THEN '2026-04-04'::date
+  WHEN '82f08a42-34e0-4e07-ab17-1dc80533391c' THEN '2026-04-11'::date
+  WHEN '6bd6a8fc-4821-4774-a371-cd35945b2329' THEN '2026-04-18'::date
+  WHEN '947566f8-cf66-4e28-9df3-09b24d408325' THEN '2026-04-25'::date
+  WHEN '389022ab-c873-4177-80a5-7d4a5da62b50' THEN '2026-05-02'::date
+  WHEN '32836f6d-a7e3-4167-b231-f102b832ecb2' THEN '2026-05-09'::date
+  WHEN '0eb39ffc-a88e-4364-a92b-0087696ffd96' THEN '2026-05-16'::date
+  WHEN '64228951-30ca-4aba-a2ad-4d655c33bf5f' THEN '2026-05-16'::date
+  WHEN '290e29f1-53bf-40be-9aaa-915bae80a02a' THEN '2026-05-23'::date
+  WHEN 'ff3fb34a-48fe-49ea-898b-728da6fa978e' THEN '2026-05-23'::date
+  WHEN '76498dcb-fce8-4e7b-85f9-2baf26b534a2' THEN '2026-05-30'::date
+  WHEN 'dd2ccc99-2ace-4544-9b70-92f51e783815' THEN '2026-06-06'::date
+  WHEN '46014baf-a5e8-49e7-b936-185175a5df21' THEN '2026-06-06'::date
+  WHEN '39079111-2025-4d72-a960-fcfc4c904c5a' THEN '2026-06-13'::date
+  WHEN '448bc1a8-7627-40c4-b2bf-b7ed0df9ff5b' THEN '2026-06-20'::date
+  WHEN 'a8b951bd-11b1-4c82-ab9b-c96c1ae28fac' THEN '2026-06-20'::date
+  WHEN '5506c03c-83c9-4a61-bb72-18ba1ff2c492' THEN '2026-06-27'::date
+  WHEN '2bdd0aa9-da7f-443a-80f7-6d7de5e14fa1' THEN '2026-06-27'::date
+  WHEN '5ae58943-0393-49a8-bdc2-e50fa8ef31ae' THEN '2026-07-04'::date
+  ELSE event_date
+END;
