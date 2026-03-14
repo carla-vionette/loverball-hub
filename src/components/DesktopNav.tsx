@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { User, Search, CalendarDays, Settings, ShoppingBag, Play, MessageCircle, Home, Compass, Newspaper, Shield } from "lucide-react";
+import { User, Search, CalendarDays, Settings, ShoppingBag, Play, MessageCircle, Home, Compass, Newspaper, Shield, Trophy } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import GlobalSearch from "@/components/GlobalSearch";
 import loverballLogo from "@/assets/loverball-script-logo.png";
