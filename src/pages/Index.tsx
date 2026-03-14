@@ -61,6 +61,9 @@ const LiveSportsBadge = () => {
 const Index = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [inviteCode, setInviteCode] = useState("");
+  const [inviteVerified, setInviteVerified] = useState(false);
+  const [inviteError, setInviteError] = useState(false);
   const [loading, setLoading] = useState(false);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [authModalOpen, setAuthModalOpen] = useState(false);
