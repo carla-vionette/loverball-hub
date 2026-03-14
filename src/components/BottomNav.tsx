@@ -18,7 +18,7 @@ const BottomNav = () => {
   return (
     <nav
       className={`fixed bottom-0 left-0 right-0 z-50 md:hidden safe-area-pb ${
-        isWatchScreen ? "bg-[#0A0A0A] border-t border-white/10" : "bg-background border-t border-border/30"
+        isWatchScreen ? "bg-black/70 backdrop-blur-md border-t border-white/5" : "bg-background border-t border-border/30"
       }`}
       role="navigation"
       aria-label="Main navigation"
