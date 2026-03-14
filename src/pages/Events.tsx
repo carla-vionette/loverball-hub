@@ -277,7 +277,7 @@ const Events = () => {
                       onClick={() => goTo(`/event/${ev.id}`)}>
                       <div className="relative h-44 overflow-hidden">
                         {ev.image_url ? (
-                          <img src={ev.image_url} alt={ev.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                          <img src={ev.image_url} alt={ev.title} loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                         ) : (
                           <div className="w-full h-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
                             <Calendar className="w-10 h-10 text-primary/30" />

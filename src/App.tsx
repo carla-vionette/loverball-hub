@@ -118,7 +118,7 @@ const App = () => (
           <InstallPrompt />
           <BrowserRouter>
             <PageTracker />
-            <Suspense fallback={<PageLoader />}>
+            <Suspense fallback={<PageFallback />}>
               <Routes>
                 {/* Public routes */}
                 <Route path="/" element={<Index />} />

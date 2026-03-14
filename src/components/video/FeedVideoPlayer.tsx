@@ -153,7 +153,7 @@ const FeedVideoPlayer = ({ video, isActive, isMuted, onToggleMute }: FeedVideoPl
         loop
         playsInline
         muted={isMuted}
-        preload="metadata"
+        preload={isActive ? "metadata" : "none"}
         className="absolute inset-0 w-full h-full object-cover"
       />
 
