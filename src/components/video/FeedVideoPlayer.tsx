@@ -29,6 +29,12 @@ const FeedVideoPlayer = ({ video, isActive, isMuted, onToggleMute }: FeedVideoPl
   const [bookmarked, setBookmarked] = useState(false);
   const [following, setFollowing] = useState(video.isFollowing ?? false);
   const [likeCount, setLikeCount] = useState(video.likes);
+  const [manualPlay, setManualPlay] = useState(false);
+
+  const connectionQuality = useConnectionQuality();
+  const isSlowNetwork = connectionQuality === "slow" || connectionQuality === "offline";
+  // On slow networks, don't autoplay — require manual tap
+  const shouldAutoplay = isActive && !isSlowNetwork;
 
   const lastTapRef = useRef<number>(0);
   const playPauseTimeout = useRef<ReturnType<typeof setTimeout>>();
@@ -36,9 +42,14 @@ const FeedVideoPlayer = ({ video, isActive, isMuted, onToggleMute }: FeedVideoPl
   useEffect(() => {
     const vid = videoRef.current;
     if (!vid) return;
-    if (isActive) { vid.play().catch(() => {}); setIsPlaying(true); }
-    else { vid.pause(); setIsPlaying(false); }
-  }, [isActive]);
+    if (isActive && (shouldAutoplay || manualPlay)) {
+      vid.play().catch(() => {});
+      setIsPlaying(true);
+    } else {
+      vid.pause();
+      setIsPlaying(false);
+    }
+  }, [isActive, shouldAutoplay, manualPlay]);
 
   useEffect(() => { if (videoRef.current) videoRef.current.muted = isMuted; }, [isMuted]);
 
