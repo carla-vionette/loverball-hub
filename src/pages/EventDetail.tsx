@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -9,6 +9,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Calendar, Clock, MapPin, Users, Lock, Share2, ArrowLeft, Loader2, Check, X, HelpCircle, Video, ExternalLink, Copy, Link2 } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { useGestures } from "@/hooks/useGestures";
 import { format, differenceInDays, differenceInHours, differenceInMinutes, isPast } from "date-fns";
 import { motion, AnimatePresence } from "framer-motion";
 import loverballLogo from "@/assets/loverball-script-logo.png";
@@ -95,6 +97,14 @@ const EventDetail = () => {
   const [guestRefreshKey, setGuestRefreshKey] = useState(0);
   const [showAttendeeList, setShowAttendeeList] = useState(false);
   const [userTier, setUserTier] = useState<string | null>(null);
+  const isMobileDevice = useIsMobile();
+
+  const goBack = useCallback(() => navigate(-1), [navigate]);
+
+  // Swipe-right to go back on mobile
+  const gestureRef = useGestures<HTMLDivElement>({
+    onSwipeRight: goBack,
+  }, { swipeThreshold: 60 });
 
   // Fetch user subscription tier
   useEffect(() => {
@@ -464,7 +474,7 @@ const EventDetail = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div ref={gestureRef} className="min-h-screen bg-background">
       {/* Confetti Animation */}
       <AnimatePresence>
         {showConfetti && (
@@ -933,6 +943,17 @@ const EventDetail = () => {
           open={showAttendeeList}
           onOpenChange={setShowAttendeeList}
         />
+      )}
+
+      {/* Floating back button — mobile only */}
+      {isMobileDevice && (
+        <button
+          onClick={goBack}
+          aria-label="Go back"
+          className="fixed bottom-24 left-4 z-50 md:hidden flex items-center justify-center w-12 h-12 rounded-full bg-primary text-primary-foreground shadow-lg active:scale-95 transition-transform"
+        >
+          <ArrowLeft className="w-5 h-5" />
+        </button>
       )}
     </div>
   );
