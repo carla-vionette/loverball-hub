@@ -26,6 +26,7 @@ const signUpSchema = z.object({
   password: z.string().min(6, "Password must be at least 6 characters"),
 });
 
+const ACCESS_CODE = "7988";
 
 const LiveSportsBadge = () => {
   const { currentItem, loading: badgeLoading } = useLiveSportsBadge();
