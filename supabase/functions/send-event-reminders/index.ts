@@ -18,9 +18,9 @@ interface RSVPWithProfile {
   user_id: string;
   profiles: {
     name: string;
-    phone_number: string | null;
     sms_notifications_enabled: boolean | null;
   } | null;
+  phone_number?: string | null;
 }
 
 Deno.serve(async (req) => {
@@ -114,7 +114,6 @@ Deno.serve(async (req) => {
           user_id,
           profiles!inner (
             name,
-            phone_number,
             sms_notifications_enabled
           )
         `)
@@ -132,10 +131,22 @@ Deno.serve(async (req) => {
         continue;
       }
 
-      // Filter to users with phone numbers and SMS enabled
-      const eligibleRsvps = (rsvps as unknown as RSVPWithProfile[]).filter(
-        (r) => r.profiles?.phone_number && r.profiles?.sms_notifications_enabled !== false
-      );
+      // Fetch phone numbers from profiles_sensitive for eligible users
+      const userIds = (rsvps as unknown as RSVPWithProfile[])
+        .filter(r => r.profiles?.sms_notifications_enabled !== false)
+        .map(r => r.user_id);
+
+      const { data: sensitiveData } = await supabase
+        .from('profiles_sensitive')
+        .select('id, phone_number')
+        .in('id', userIds);
+
+      const phoneMap = new Map((sensitiveData || []).map((s: any) => [s.id, s.phone_number]));
+
+      const eligibleRsvps = (rsvps as unknown as RSVPWithProfile[]).filter(r => {
+        const phone = phoneMap.get(r.user_id);
+        return phone && r.profiles?.sms_notifications_enabled !== false;
+      });
 
       console.log(`${eligibleRsvps.length} eligible attendees for SMS`);
 
@@ -151,7 +162,8 @@ Deno.serve(async (req) => {
       const locationStr = [event.venue_name, event.city].filter(Boolean).join(', ');
 
       for (const rsvp of eligibleRsvps) {
-        if (!rsvp.profiles?.phone_number) continue;
+        const phoneNumber = phoneMap.get(rsvp.user_id);
+        if (!phoneNumber) continue;
 
         const firstName = rsvp.profiles.name?.split(' ')[0] || 'there';
         const message = `Hey ${firstName}! 🏀 Reminder: "${event.title}" is TODAY${timeStr ? ` at ${timeStr}` : ''}${locationStr ? ` - ${locationStr}` : ''}. See you there! - Loverball`;
@@ -162,7 +174,7 @@ Deno.serve(async (req) => {
           const authHeader = btoa(`${twilioAccountSid}:${twilioAuthToken}`);
 
           const formData = new URLSearchParams();
-          formData.append('To', rsvp.profiles.phone_number);
+          formData.append('To', phoneNumber);
           formData.append('From', twilioPhoneNumber);
           formData.append('Body', message);
 
@@ -177,10 +189,10 @@ Deno.serve(async (req) => {
 
           if (!twilioResponse.ok) {
             const errorText = await twilioResponse.text();
-            console.error(`Twilio error for ${rsvp.profiles.phone_number}:`, errorText);
+            console.error(`Twilio error for ${phoneNumber}:`, errorText);
             errors.push(`Failed to send to ${rsvp.user_id}: ${errorText}`);
           } else {
-            console.log(`SMS sent to ${rsvp.profiles.phone_number}`);
+            console.log(`SMS sent to ${phoneNumber}`);
             totalSent++;
           }
         } catch (smsError) {

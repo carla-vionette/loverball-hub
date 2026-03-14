@@ -42,7 +42,6 @@ type ProfileData = {
   participation_preferences: string[] | null;
   bio: string | null;
   profile_photo_url: string | null;
-  birthday: string | null;
   membership_tier: string | null;
 };
 
@@ -172,6 +171,7 @@ const Profile = () => {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [liveHoroscope, setLiveHoroscope] = useState<string | null>(null);
   const [horoscopeLoading, setHoroscopeLoading] = useState(false);
+  const [birthday, setBirthday] = useState<string | null>(null);
   
   const goTo = (path: string) => { window.location.href = path; };
   const { toast } = useToast();
@@ -208,6 +208,9 @@ const Profile = () => {
         if (profileResult.error || !profileResult.data) { goTo("/onboarding"); return; }
 
         setProfile(profileResult.data);
+        // Fetch birthday from sensitive table
+        const { data: sensitive } = await supabase.from("profiles_sensitive" as any).select("birthday").eq("id", user.id).maybeSingle();
+        if (sensitive) setBirthday((sensitive as any).birthday);
         if (rsvpResult.data) {
           setRsvpEvents(rsvpResult.data.filter(r => r.event !== null) as RSVPEvent[]);
         }
@@ -224,8 +227,8 @@ const Profile = () => {
 
   // Fetch live daily horoscope
   useEffect(() => {
-    if (!profile?.birthday) return;
-    const zodiacSign = getZodiacSign(profile.birthday);
+    if (!birthday) return;
+    const zodiacSign = getZodiacSign(birthday);
     if (!zodiacSign) return;
     setHoroscopeLoading(true);
     supabase.functions.invoke("horoscope", {
@@ -234,7 +237,7 @@ const Profile = () => {
       const reading = resp?.data?.horoscope || resp?.horoscope || resp?.reading;
       if (reading) setLiveHoroscope(reading);
     }).catch(() => {}).finally(() => setHoroscopeLoading(false));
-  }, [profile?.birthday]);
+  }, [birthday]);
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 60000);
@@ -270,7 +273,7 @@ const Profile = () => {
 
   const initials = profile.name.split(" ").map(n => n[0]).join("").toUpperCase();
   const locationText = profile.city || "Location not set";
-  const zodiac = getZodiacSign(profile.birthday);
+  const zodiac = getZodiacSign(birthday);
   const greeting = getGreeting();
   const userName = profile.name?.split(" ")[0] || "there";
   const formattedDate = currentTime.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" });
