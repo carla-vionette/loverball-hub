@@ -60,6 +60,7 @@ const LiveSportsBadge = () => {
 };
 
 const Index = () => {
+  // Component state
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [inviteCode, setInviteCode] = useState("");
