@@ -303,6 +303,34 @@ const Events = () => {
                             <EventTagBadges tags={ev.event_tags} size="sm" />
                           </div>
                         )}
+                        {/* Attendee avatars */}
+                        {eventAttendees[ev.id]?.length > 0 && (
+                          <div className="flex items-center gap-1 pt-1" onClick={(e) => e.stopPropagation()}>
+                            <div className="flex -space-x-1.5">
+                              {eventAttendees[ev.id].slice(0, 4).map((attendee) => (
+                                <button
+                                  key={attendee.id}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setSelectedProfile(attendee);
+                                    setDrawerOpen(true);
+                                  }}
+                                  className="hover:z-10 transition-transform hover:scale-110"
+                                >
+                                  <Avatar className="w-7 h-7 border-2 border-background">
+                                    <AvatarImage src={attendee.profile_photo_url || undefined} />
+                                    <AvatarFallback className="bg-primary/10 text-primary text-[10px]">
+                                      {attendee.name?.charAt(0).toUpperCase()}
+                                    </AvatarFallback>
+                                  </Avatar>
+                                </button>
+                              ))}
+                            </div>
+                            {ct > 4 && (
+                              <span className="text-[10px] text-muted-foreground ml-1">+{ct - 4}</span>
+                            )}
+                          </div>
+                        )}
                         <div className="flex items-center justify-between pt-2">
                           <span className="text-xs text-muted-foreground flex items-center gap-1">
                             <Users className="w-3 h-3" />{ct}{ev.capacity ? `/${ev.capacity}` : ""}
