@@ -30,7 +30,7 @@ export interface FeedVideoItem {
   isFollowing?: boolean;
 }
 
-export const FEED_VIDEOS: FeedVideoItem[] = [
+const _FEED_VIDEOS: FeedVideoItem[] = [
   {
     id: "feed_29",
     channelId: "loverball",
