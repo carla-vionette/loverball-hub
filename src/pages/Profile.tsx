@@ -190,24 +190,6 @@ const Profile = () => {
     goTo("/");
   };
 
-  // Fetch feed items from real RSS via edge function
-  const refreshFeed = async () => {
-    setFeedLoading(true);
-    try {
-      // Call edge function to refresh RSS articles
-      await supabase.functions.invoke('fetch-sports-news');
-    } catch (err) {
-      // Feed refresh is non-critical
-    }
-    // Fetch from DB (no 36h filter - show all recent articles)
-    const { data } = await supabase
-      .from("feed_items")
-      .select("*")
-      .order("created_at", { ascending: false })
-      .limit(30);
-    if (data) setFeedItems(data);
-    setFeedLoading(false);
-  };
 
   useEffect(() => {
     let cancelled = false;
