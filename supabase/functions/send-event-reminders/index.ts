@@ -162,7 +162,8 @@ Deno.serve(async (req) => {
       const locationStr = [event.venue_name, event.city].filter(Boolean).join(', ');
 
       for (const rsvp of eligibleRsvps) {
-        if (!rsvp.profiles?.phone_number) continue;
+        const phoneNumber = phoneMap.get(rsvp.user_id);
+        if (!phoneNumber) continue;
 
         const firstName = rsvp.profiles.name?.split(' ')[0] || 'there';
         const message = `Hey ${firstName}! 🏀 Reminder: "${event.title}" is TODAY${timeStr ? ` at ${timeStr}` : ''}${locationStr ? ` - ${locationStr}` : ''}. See you there! - Loverball`;
