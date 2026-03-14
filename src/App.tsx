@@ -11,6 +11,7 @@ import NetworkStatus from "@/components/NetworkStatus";
 import InstallPrompt from "@/components/InstallPrompt";
 import { usePageTracking } from "@/hooks/usePageTracking";
 import ProtectedRoute from "./components/ProtectedRoute";
+import SiteAccessGate from "./components/SiteAccessGate";
 
 // ── Every page is lazy-loaded for minimal initial bundle ──
 const Index = lazy(() => import("./pages/Index"));
@@ -93,6 +94,7 @@ const PageTracker = () => {
 
 const App = () => (
   <ErrorBoundary>
+    <SiteAccessGate>
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <TooltipProvider>
@@ -172,6 +174,7 @@ const App = () => (
         </TooltipProvider>
       </AuthProvider>
     </QueryClientProvider>
+    </SiteAccessGate>
   </ErrorBoundary>
 );
 
