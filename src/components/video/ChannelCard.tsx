@@ -74,7 +74,7 @@ const ChannelCard = ({ channel, variant = "team" }: ChannelCardProps) => {
         ) : (
           <>
             {channel.latestThumb ? (
-              <img src={channel.latestThumb} alt="" className="w-full h-full object-cover" />
+              <img src={channel.latestThumb} alt="" loading="lazy" className="w-full h-full object-cover" />
             ) : (
               <div className="w-full h-full bg-secondary flex items-center justify-center">
                 {!isLoverball && (

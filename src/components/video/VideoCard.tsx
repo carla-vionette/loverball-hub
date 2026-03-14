@@ -109,7 +109,7 @@ const VideoCard = ({
         </div>
         <div className="flex gap-3">
           {channelAvatar && (
-            <img src={channelAvatar} alt={channelName} className="w-8 h-8 rounded-full object-cover flex-shrink-0 mt-0.5 border border-border/20" />
+            <img src={channelAvatar} alt={channelName} loading="lazy" className="w-8 h-8 rounded-full object-cover flex-shrink-0 mt-0.5 border border-border/20" />
           )}
           <div className="min-w-0">
             <h3 className="text-sm font-medium text-foreground line-clamp-2 mb-1">{title}</h3>
