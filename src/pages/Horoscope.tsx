@@ -73,7 +73,7 @@ const Horoscope = () => {
       try {
         const { data: { user } } = await supabase.auth.getUser();
         if (user) {
-          const { data: sensitive } = await supabase.from("profiles_sensitive" as any).select("birthday").eq("id", user.id).single();
+          const { data: sensitive } = await supabase.from("profiles_sensitive" as any).select("birthday").eq("id", user.id).single() as { data: { birthday: string | null } | null };
           if (sensitive?.birthday) {
             const sign = getZodiacFromBirthday(sensitive.birthday);
             if (sign) setUserSign(sign);
