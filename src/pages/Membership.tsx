@@ -111,7 +111,7 @@ const Membership = () => {
             animate={{ opacity: 1, y: 0 }}
             className="text-center mb-12"
           >
-            <img src={loverballLogo} alt="Loverball" className="h-16 mx-auto mb-6" />
+            
             <h1 className="font-display text-3xl md:text-5xl uppercase tracking-tight text-foreground mb-3">
               Go Member
             </h1>
