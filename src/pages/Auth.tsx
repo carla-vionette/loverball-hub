@@ -22,6 +22,8 @@ const signInSchema = z.object({
   password: z.string().min(1, "Password is required"),
 });
 
+const ACCESS_CODE = '7988';
+
 const Auth = () => {
   const [searchParams] = useSearchParams();
   const [isSignUp, setIsSignUp] = useState(false);
@@ -29,6 +31,7 @@ const Auth = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [accessCode, setAccessCode] = useState("");
   
   const [loading, setLoading] = useState(false);
   const [splashName, setSplashName] = useState<string | null>(null);
