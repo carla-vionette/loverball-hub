@@ -314,8 +314,8 @@ const Auth = () => {
                 </div>
               </div>
             ) : isSignUp && !inviteVerified ? (
-            /* ── Invite Code Gate ── */
-            <div className="space-y-8">
+            /* ── Invite Code Gate — must enter 7988 before seeing signup form ── */
+            <div className="space-y-8" key="invite-gate">
               <form onSubmit={handleVerifyInvite} className="space-y-6">
                 <div className="space-y-2">
                   <Label htmlFor="inviteCode" className="text-xs tracking-wider uppercase text-foreground/60">Invite Code</Label>
