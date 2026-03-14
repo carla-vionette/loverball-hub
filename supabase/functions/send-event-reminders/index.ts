@@ -18,9 +18,9 @@ interface RSVPWithProfile {
   user_id: string;
   profiles: {
     name: string;
-    phone_number: string | null;
     sms_notifications_enabled: boolean | null;
   } | null;
+  phone_number?: string | null;
 }
 
 Deno.serve(async (req) => {
