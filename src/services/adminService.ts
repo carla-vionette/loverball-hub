@@ -1,10 +1,17 @@
 import { supabase } from '@/integrations/supabase/client';
 import type { UserProfile, VideoItem, EventItem, MemberApplication } from '@/types';
 
-const ADMIN_EMAIL = 'carla@stori.digital';
-
 export async function isAdminEmail(email: string): Promise<boolean> {
-  return email.toLowerCase() === ADMIN_EMAIL.toLowerCase();
+  // Check admin role via user_roles table instead of hardcoded email
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return false;
+  const { data } = await supabase
+    .from('user_roles')
+    .select('role')
+    .eq('user_id', user.id)
+    .eq('role', 'admin')
+    .maybeSingle();
+  return !!data;
 }
 
 // ── Members ──
