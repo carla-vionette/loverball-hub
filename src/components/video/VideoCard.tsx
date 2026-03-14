@@ -39,7 +39,7 @@ const VideoCard = ({
       >
         <Link to={`/watch/video/${id}`}>
           <div className="aspect-[9/16] relative">
-            <img src={thumbnail} alt={title} className="w-full h-full object-cover" />
+            <img src={thumbnail} alt={title} loading="lazy" className="w-full h-full object-cover" />
             <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-foreground/20 to-transparent" />
             <div className="absolute bottom-0 left-0 right-0 p-6">
               <span className="inline-block bg-accent text-accent-foreground text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-full mb-3">
