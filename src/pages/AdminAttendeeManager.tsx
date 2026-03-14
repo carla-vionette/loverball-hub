@@ -121,7 +121,6 @@ const AdminAttendeeManager = () => {
           created_at,
           profile:profiles (
             name,
-            phone_number,
             city,
             profile_photo_url,
             instagram_url
