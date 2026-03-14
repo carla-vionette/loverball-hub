@@ -70,7 +70,7 @@ const VideoCard = ({
           className="flex gap-3 p-2 rounded-2xl transition-colors group cursor-pointer"
         >
           <div className="relative w-28 aspect-[9/16] rounded-2xl overflow-hidden flex-shrink-0">
-            <img src={thumbnail} alt={title} className="w-full h-full object-cover" />
+            <img src={thumbnail} alt={title} loading="lazy" className="w-full h-full object-cover" />
             <span className="absolute bottom-1 right-1 bg-foreground/80 text-background text-[10px] font-medium px-1.5 py-0.5 rounded-full">
               {duration}
             </span>
