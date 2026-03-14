@@ -51,6 +51,16 @@ const fmtTime = (t: string) => {
   return format(d, "h:mm a");
 };
 
+interface AttendeeProfile {
+  id: string;
+  name: string;
+  profile_photo_url: string | null;
+  bio: string | null;
+  favorite_sports?: string[] | null;
+  primary_role?: string | null;
+  city?: string | null;
+}
+
 const Events = () => {
   const goTo = (path: string) => { window.location.href = path; };
   const [events, setEvents] = useState<DbEvent[]>([]);
@@ -59,6 +69,9 @@ const Events = () => {
   const [rsvpId, setRsvpId] = useState<string | null>(null);
   const [userRsvps, setUserRsvps] = useState<Record<string, string>>({});
   const [counts, setCounts] = useState<Record<string, number>>({});
+  const [eventAttendees, setEventAttendees] = useState<Record<string, AttendeeProfile[]>>({});
+  const [selectedProfile, setSelectedProfile] = useState<AttendeeProfile | null>(null);
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const { user } = useAuth();
   const { toast } = useToast();
 
