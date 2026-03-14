@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Calendar, MapPin, Users, Clock, Loader2 } from "lucide-react";
 import EventTagBadges from "@/components/EventTagBadges";
 import SponsorCard from "@/components/SponsorCard";
@@ -13,6 +14,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import BottomNav from "@/components/BottomNav";
 import DesktopNav from "@/components/DesktopNav";
 import MobileHeader from "@/components/MobileHeader";
+import AttendeeProfileDrawer from "@/components/AttendeeProfileDrawer";
 
 const CATEGORIES = ["All", "watch_party", "game", "panel", "brunch", "networking", "other"];
 const CATEGORY_LABELS: Record<string, string> = {
@@ -49,6 +51,16 @@ const fmtTime = (t: string) => {
   return format(d, "h:mm a");
 };
 
+interface AttendeeProfile {
+  id: string;
+  name: string;
+  profile_photo_url: string | null;
+  bio: string | null;
+  favorite_sports?: string[] | null;
+  primary_role?: string | null;
+  city?: string | null;
+}
+
 const Events = () => {
   const goTo = (path: string) => { window.location.href = path; };
   const [events, setEvents] = useState<DbEvent[]>([]);
@@ -57,6 +69,9 @@ const Events = () => {
   const [rsvpId, setRsvpId] = useState<string | null>(null);
   const [userRsvps, setUserRsvps] = useState<Record<string, string>>({});
   const [counts, setCounts] = useState<Record<string, number>>({});
+  const [eventAttendees, setEventAttendees] = useState<Record<string, AttendeeProfile[]>>({});
+  const [selectedProfile, setSelectedProfile] = useState<AttendeeProfile | null>(null);
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const { user } = useAuth();
   const { toast } = useToast();
 
@@ -72,15 +87,50 @@ const Events = () => {
         setEvents(data || []);
 
         if (data?.length) {
+          const eventIds = data.map(e => e.id);
           const { data: rsvps } = await supabase
             .from("event_rsvps")
             .select("event_id")
-            .in("event_id", data.map(e => e.id))
+            .in("event_id", eventIds)
             .in("status", ["attending", "confirmed"]);
           if (rsvps) {
             const c: Record<string, number> = {};
             rsvps.forEach(r => { c[r.event_id] = (c[r.event_id] || 0) + 1; });
             setCounts(c);
+          }
+
+          // Fetch attendee avatars for each event (up to 4 per event)
+          const { data: guests } = await supabase
+            .from("event_guests")
+            .select(`
+              event_id,
+              user_id,
+              profile:profiles!inner (
+                id, name, profile_photo_url, bio, favorite_sports, primary_role, city
+              )
+            `)
+            .in("event_id", eventIds)
+            .eq("status", "going")
+            .limit(200);
+
+          if (guests) {
+            const byEvent: Record<string, AttendeeProfile[]> = {};
+            (guests as any[]).forEach((g) => {
+              if (!g.profile) return;
+              if (!byEvent[g.event_id]) byEvent[g.event_id] = [];
+              if (byEvent[g.event_id].length < 4) {
+                byEvent[g.event_id].push({
+                  id: g.profile.id,
+                  name: g.profile.name,
+                  profile_photo_url: g.profile.profile_photo_url,
+                  bio: g.profile.bio,
+                  favorite_sports: g.profile.favorite_sports,
+                  primary_role: g.profile.primary_role,
+                  city: g.profile.city,
+                });
+              }
+            });
+            setEventAttendees(byEvent);
           }
         }
       } catch (err) {
@@ -253,6 +303,34 @@ const Events = () => {
                             <EventTagBadges tags={ev.event_tags} size="sm" />
                           </div>
                         )}
+                        {/* Attendee avatars */}
+                        {eventAttendees[ev.id]?.length > 0 && (
+                          <div className="flex items-center gap-1 pt-1" onClick={(e) => e.stopPropagation()}>
+                            <div className="flex -space-x-1.5">
+                              {eventAttendees[ev.id].slice(0, 4).map((attendee) => (
+                                <button
+                                  key={attendee.id}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setSelectedProfile(attendee);
+                                    setDrawerOpen(true);
+                                  }}
+                                  className="hover:z-10 transition-transform hover:scale-110"
+                                >
+                                  <Avatar className="w-7 h-7 border-2 border-background">
+                                    <AvatarImage src={attendee.profile_photo_url || undefined} />
+                                    <AvatarFallback className="bg-primary/10 text-primary text-[10px]">
+                                      {attendee.name?.charAt(0).toUpperCase()}
+                                    </AvatarFallback>
+                                  </Avatar>
+                                </button>
+                              ))}
+                            </div>
+                            {ct > 4 && (
+                              <span className="text-[10px] text-muted-foreground ml-1">+{ct - 4}</span>
+                            )}
+                          </div>
+                        )}
                         <div className="flex items-center justify-between pt-2">
                           <span className="text-xs text-muted-foreground flex items-center gap-1">
                             <Users className="w-3 h-3" />{ct}{ev.capacity ? `/${ev.capacity}` : ""}
@@ -290,6 +368,13 @@ const Events = () => {
             </div>
           </DialogContent>
         </Dialog>
+
+        {/* Attendee Profile Drawer */}
+        <AttendeeProfileDrawer
+          profile={selectedProfile}
+          open={drawerOpen}
+          onOpenChange={setDrawerOpen}
+        />
       </main>
     </div>
   );

@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { UserPlus, Check, Clock, Loader2, MessageCircle, Send, X } from "lucide-react";
+import FollowButton from "@/components/FollowButton";
 
 interface AttendeeProfile {
   id: string;
@@ -186,6 +187,8 @@ const AttendeeProfileDrawer = ({ profile, open, onOpenChange }: Props) => {
           {/* Action buttons */}
           {user && !isOwnProfile && (
             <div className="mt-2 w-full max-w-xs space-y-2">
+              {/* Follow button */}
+              <FollowButton targetUserId={profile.id} size="default" className="w-full" />
               {/* Friend action button */}
               {friendState === "loading" && (
                 <Button disabled className="w-full" variant="outline">
