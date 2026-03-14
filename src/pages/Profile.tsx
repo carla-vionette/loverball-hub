@@ -169,8 +169,6 @@ const Profile = () => {
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [rsvpEvents, setRsvpEvents] = useState<RSVPEvent[]>([]);
   const [suggestedEvents, setSuggestedEvents] = useState<SuggestedEvent[]>([]);
-  const [feedItems, setFeedItems] = useState<any[]>([]);
-  const [feedLoading, setFeedLoading] = useState(true);
   const [loading, setLoading] = useState(true);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [liveHoroscope, setLiveHoroscope] = useState<string | null>(null);
