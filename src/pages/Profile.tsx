@@ -208,6 +208,9 @@ const Profile = () => {
         if (profileResult.error || !profileResult.data) { goTo("/onboarding"); return; }
 
         setProfile(profileResult.data);
+        // Fetch birthday from sensitive table
+        const { data: sensitive } = await supabase.from("profiles_sensitive" as any).select("birthday").eq("id", user.id).maybeSingle();
+        if (sensitive) setBirthday((sensitive as any).birthday);
         if (rsvpResult.data) {
           setRsvpEvents(rsvpResult.data.filter(r => r.event !== null) as RSVPEvent[]);
         }
