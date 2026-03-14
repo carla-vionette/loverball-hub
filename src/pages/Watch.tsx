@@ -129,6 +129,7 @@ const Watch = () => {
             ))}
           </div>
           )}
+        </div>
       </main>
 
       {/* FULL-SCREEN VIEWER */}
