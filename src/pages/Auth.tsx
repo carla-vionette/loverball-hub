@@ -371,13 +371,13 @@ const Auth = () => {
 
                 {isSignUp && (
                   <div className="space-y-2">
-                    <Label htmlFor="accessCode" className="text-xs tracking-wider uppercase text-foreground/60">Access Code</Label>
+                    <Label htmlFor="accessCode" className="text-xs tracking-wider uppercase text-foreground/60">Invite Code</Label>
                     <Input
                       id="accessCode"
                       type="text"
                       inputMode="numeric"
                       maxLength={4}
-                      placeholder="Enter 4-digit code"
+                      placeholder="Enter your invite code"
                       value={accessCode}
                       onChange={(e) => setAccessCode(e.target.value)}
                       required
