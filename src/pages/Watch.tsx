@@ -96,6 +96,12 @@ const Watch = () => {
           </div>
 
           {/* REELS GRID */}
+          {filtered.length === 0 ? (
+            <div className="text-center py-16">
+              <Play className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
+              <p className="text-muted-foreground text-sm">No videos match this filter. Try another category.</p>
+            </div>
+          ) : (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {filtered.map(r => (
               <Card key={r.id} className="overflow-hidden group cursor-pointer hover:shadow-lg transition-all border-border/30 relative" onClick={() => openReel(r)}>
