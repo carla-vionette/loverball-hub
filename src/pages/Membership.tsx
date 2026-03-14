@@ -8,7 +8,6 @@ import { useAuth } from '@/hooks/useAuth';
 import { createCheckoutSession } from '@/services/subscriptionService';
 import { useToast } from '@/hooks/use-toast';
 import type { SubscriptionPlan } from '@/types';
-import loverballLogo from '@/assets/loverball-script-logo.png';
 import MobileHeader from '@/components/MobileHeader';
 import DesktopNav from '@/components/DesktopNav';
 import BottomNav from '@/components/BottomNav';
