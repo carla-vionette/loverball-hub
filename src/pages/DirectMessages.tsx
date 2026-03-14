@@ -79,8 +79,16 @@ const DirectMessages = () => {
       const matchIds = matches.map((m) => m.id);
       const { data: chats } = await supabase.from("chats").select("id, match_id").in("match_id", matchIds);
 
-      const otherUserIds = matches.map((m) => m.user_a_id === user.id ? m.user_b_id : m.user_a_id);
-      const { data: profiles } = await supabase.from("profiles").select("id, name, profile_photo_url").in("id", otherUserIds);
+      // Fetch profiles securely via RPC (avoids exposing sensitive columns)
+      const profilePromises = otherUserIds.map(async (id) => {
+        const { data } = await supabase.rpc("get_safe_profile", { profile_id: id });
+        if (data) {
+          const profile = typeof data === 'string' ? JSON.parse(data) : data;
+          return { id: profile.id, name: profile.name, profile_photo_url: profile.profile_photo_url };
+        }
+        return null;
+      });
+      const profiles = (await Promise.all(profilePromises)).filter(Boolean) as Array<{ id: string; name: string; profile_photo_url: string | null }>;
 
       const chatIds = chats?.map((c) => c.id) || [];
       let latestMessages: Record<string, { content: string; created_at: string; read_at: string | null }> = {};
