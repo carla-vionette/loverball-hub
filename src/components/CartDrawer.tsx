@@ -33,9 +33,11 @@ export const CartDrawer = () => {
       if (checkoutUrl) {
         window.open(checkoutUrl, '_blank');
         setIsOpen(false);
+      } else {
+        toast.error("Couldn't generate checkout link. Please try again.");
       }
     } catch (error) {
-      toast.error("Failed to create checkout. Please try again.");
+      toast.error("Checkout is temporarily unavailable. Please try again later.");
     }
   };
 
