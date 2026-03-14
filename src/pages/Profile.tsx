@@ -176,7 +176,14 @@ const Profile = () => {
   const goTo = (path: string) => { window.location.href = path; };
   const { toast } = useToast();
 
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [showFollowersModal, setShowFollowersModal] = useState<'followers' | 'following' | null>(null);
+
   const handleLogout = async () => {
+    setShowLogoutConfirm(true);
+  };
+
+  const confirmLogout = async () => {
     await supabase.auth.signOut();
     toast({ title: "Signed out", description: "You have been logged out successfully." });
     goTo("/");
