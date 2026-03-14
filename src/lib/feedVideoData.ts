@@ -7,6 +7,9 @@ import feedVideo34 from "@/assets/feed-video-34.mp4";
 import feedVideo35 from "@/assets/feed-video-35.mp4";
 import feedVideo36 from "@/assets/feed-video-36.mp4";
 import feedVideo37 from "@/assets/feed-video-37.mov";
+import feedVideo43 from "@/assets/feed-video-43.mp4";
+import feedVideo44 from "@/assets/feed-video-44.mp4";
+import feedVideo45 from "@/assets/feed-video-45.mp4";
 
 import loverballLogo from "@/assets/loverball-script-logo.png";
 
