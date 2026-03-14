@@ -9,9 +9,11 @@ const corsHeaders = {
 const MAX_REQUESTS = 100;
 const WINDOW_MINUTES = 15;
 
-// Sensitive fields that require a match/connection to view
+// Sensitive fields no longer in profiles table (moved to profiles_sensitive)
+// Keep stripping these in case of schema cache
 const SENSITIVE_FIELDS = [
   'phone_number',
+  'birthday',
   'instagram_url',
   'linkedin_url',
   'tiktok_url',

@@ -222,7 +222,7 @@ Deno.serve(async (req) => {
         });
 
         if (twilioResponse.ok) {
-          console.log(`SMS sent to ${profile.phone_number}`);
+          console.log(`SMS sent to ${userPhone}`);
           results.sms = true;
         } else {
           const errorText = await twilioResponse.text();
