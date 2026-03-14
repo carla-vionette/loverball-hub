@@ -151,10 +151,10 @@ const Index = () => {
 
 
   const trendingStories = [
-  { tag: "TENNIS", title: "Coco Gauff Retires from Indian Wells with Arm Injury", time: "Mar 9", image: fansImage },
-  { tag: "NWSL", title: "Angel City FC Signs Brazilian Star Ary Borges to Three-Year Deal", time: "Jan 2026", image: communityImage },
-  { tag: "TENNIS", title: "Top Seeds Advance to 2026 Indian Wells Quarterfinals", time: "Mar 12", image: athletesImage },
-  { tag: "NWSL", title: "Angel City FC Signs Forward Rajanah Reed as Replacement Player", time: "Feb 2026", image: philosophyImage }];
+  { tag: "TENNIS", title: "Coco Gauff Retires from Indian Wells with Arm Injury", time: "Mar 9" },
+  { tag: "NWSL", title: "Angel City FC Signs Brazilian Star Ary Borges to Three-Year Deal", time: "Jan 2026" },
+  { tag: "TENNIS", title: "Top Seeds Advance to 2026 Indian Wells Quarterfinals", time: "Mar 12" },
+  { tag: "NWSL", title: "Angel City FC Signs Forward Rajanah Reed as Replacement Player", time: "Feb 2026" }];
 
 
   const nearbyEvents = [
