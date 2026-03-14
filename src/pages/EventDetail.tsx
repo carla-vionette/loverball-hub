@@ -97,6 +97,14 @@ const EventDetail = () => {
   const [guestRefreshKey, setGuestRefreshKey] = useState(0);
   const [showAttendeeList, setShowAttendeeList] = useState(false);
   const [userTier, setUserTier] = useState<string | null>(null);
+  const isMobileDevice = useIsMobile();
+
+  const goBack = useCallback(() => navigate(-1), [navigate]);
+
+  // Swipe-right to go back on mobile
+  const gestureRef = useGestures<HTMLDivElement>({
+    onSwipeRight: goBack,
+  }, { swipeThreshold: 60 });
 
   // Fetch user subscription tier
   useEffect(() => {
