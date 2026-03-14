@@ -15,6 +15,8 @@ import { useToast } from "@/hooks/use-toast";
 import MobileHeader from "@/components/MobileHeader";
 import DesktopNav from "@/components/DesktopNav";
 import BottomNav from "@/components/BottomNav";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 
 import { format } from "date-fns";
 import { motion } from "framer-motion";
@@ -149,12 +151,12 @@ const staggerItem = {
 };
 
 
-const ProfileFollowCounts = ({ userId }: { userId: string }) => {
+const ProfileFollowCounts = ({ userId, onClickFollowers, onClickFollowing }: { userId: string; onClickFollowers: () => void; onClickFollowing: () => void }) => {
   const { followerCount, followingCount } = useFollow(userId);
   return (
     <div className="flex items-center gap-4 text-sm">
-      <span><strong>{followerCount}</strong> <span className="text-muted-foreground">followers</span></span>
-      <span><strong>{followingCount}</strong> <span className="text-muted-foreground">following</span></span>
+      <button onClick={onClickFollowers} className="hover:text-primary transition-colors cursor-pointer"><strong>{followerCount}</strong> <span className="text-muted-foreground">followers</span></button>
+      <button onClick={onClickFollowing} className="hover:text-primary transition-colors cursor-pointer"><strong>{followingCount}</strong> <span className="text-muted-foreground">following</span></button>
     </div>
   );
 };
@@ -176,7 +178,14 @@ const Profile = () => {
   const goTo = (path: string) => { window.location.href = path; };
   const { toast } = useToast();
 
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [showFollowersModal, setShowFollowersModal] = useState<'followers' | 'following' | null>(null);
+
   const handleLogout = async () => {
+    setShowLogoutConfirm(true);
+  };
+
+  const confirmLogout = async () => {
     await supabase.auth.signOut();
     toast({ title: "Signed out", description: "You have been logged out successfully." });
     goTo("/");
@@ -352,7 +361,7 @@ const Profile = () => {
                    </div>
 
                   {/* Follower/Following counts */}
-                  <ProfileFollowCounts userId={profile.id} />
+                  <ProfileFollowCounts userId={profile.id} onClickFollowers={() => setShowFollowersModal('followers')} onClickFollowing={() => setShowFollowersModal('following')} />
 
                   {/* Quick actions */}
                   <div className="flex items-center gap-2 flex-wrap justify-center">
@@ -730,6 +739,38 @@ const Profile = () => {
           </motion.div>
         </div>
       </main>
+
+      {/* Logout Confirmation Dialog */}
+      <AlertDialog open={showLogoutConfirm} onOpenChange={setShowLogoutConfirm}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Log out?</AlertDialogTitle>
+            <AlertDialogDescription>Are you sure you want to log out of your account?</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmLogout} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">Log Out</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Followers/Following Sheet */}
+      <Sheet open={!!showFollowersModal} onOpenChange={() => setShowFollowersModal(null)}>
+        <SheetContent>
+          <SheetHeader>
+            <SheetTitle>{showFollowersModal === 'followers' ? 'Followers' : 'Following'}</SheetTitle>
+          </SheetHeader>
+          <div className="py-8 text-center">
+            <Users className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
+            <p className="text-muted-foreground text-sm">
+              {showFollowersModal === 'followers' ? 'No followers yet' : 'Not following anyone yet'}
+            </p>
+            <p className="text-muted-foreground text-xs mt-1">
+              Connect with others at events to grow your network!
+            </p>
+          </div>
+        </SheetContent>
+      </Sheet>
     </div>
   );
 };

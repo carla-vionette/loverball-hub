@@ -1,5 +1,6 @@
 import { useRef, useEffect, useState, useCallback } from "react";
-import { Heart, MessageCircle, Share2, Volume2, VolumeX, Play, Bookmark, ChevronLeft, Camera, Music, Send, SmilePlus } from "lucide-react";
+import { toast } from "sonner";
+import { Heart, MessageCircle, Share2, Volume2, VolumeX, Play, Bookmark, ChevronLeft, Camera, Music, Send, SmilePlus, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { FeedVideoItem } from "@/lib/feedVideoData";
 import { trackVideoProgress, trackVideoComplete } from "@/lib/analytics";
@@ -127,10 +128,26 @@ const FeedVideoPlayer = ({ video, isActive, isMuted, onToggleMute }: FeedVideoPl
     else { setLiked(true); setLikeCount((c) => c + 1); }
   };
 
+  const [commentText, setCommentText] = useState("");
+  const [comments, setComments] = useState<{ id: string; text: string; user: string; time: string }[]>([]);
+  const [showComments, setShowComments] = useState(false);
+
   const handleShare = async () => {
+    const shareUrl = `${window.location.origin}/home`;
     if (navigator.share) {
-      try { await navigator.share({ title: video.title, url: window.location.href }); } catch {}
+      try { await navigator.share({ title: video.title, url: shareUrl }); } catch {}
+    } else {
+      try {
+        await navigator.clipboard.writeText(shareUrl);
+        toast.success("Link copied to clipboard!");
+      } catch {}
     }
+  };
+
+  const handleSubmitComment = () => {
+    if (!commentText.trim()) return;
+    setComments(prev => [...prev, { id: Date.now().toString(), text: commentText.trim(), user: "You", time: "now" }]);
+    setCommentText("");
   };
 
   useEffect(() => {
@@ -254,12 +271,12 @@ const FeedVideoPlayer = ({ video, isActive, isMuted, onToggleMute }: FeedVideoPl
 
         {/* Comment */}
         <button
-          onClick={(e) => e.stopPropagation()}
+          onClick={(e) => { e.stopPropagation(); setShowComments(!showComments); }}
           className="flex flex-col items-center gap-1"
           aria-label="Comments"
         >
           <MessageCircle className="w-7 h-7 text-white drop-shadow-lg" />
-          <span className="text-[11px] font-bold text-white">{formatCount(commentCount)}</span>
+          <span className="text-[11px] font-bold text-white">{formatCount(commentCount + comments.length)}</span>
         </button>
 
         {/* Bookmark */}
@@ -320,6 +337,39 @@ const FeedVideoPlayer = ({ video, isActive, isMuted, onToggleMute }: FeedVideoPl
         </div>
       </div>
 
+      {/* Comments panel */}
+      <AnimatePresence>
+        {showComments && (
+          <motion.div
+            initial={{ y: "100%" }}
+            animate={{ y: 0 }}
+            exit={{ y: "100%" }}
+            transition={{ type: "spring", damping: 25 }}
+            className="absolute bottom-20 left-0 right-0 z-30 bg-black/90 backdrop-blur-md rounded-t-2xl max-h-[50vh] flex flex-col pointer-events-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between px-4 py-3 border-b border-white/10">
+              <span className="text-white font-semibold text-sm">Comments ({commentCount + comments.length})</span>
+              <button onClick={() => setShowComments(false)}><X className="w-5 h-5 text-white/60" /></button>
+            </div>
+            <div className="flex-1 overflow-y-auto px-4 py-2 space-y-3 min-h-[100px]">
+              {comments.length === 0 && (
+                <p className="text-white/40 text-sm text-center py-4">No comments yet. Be the first!</p>
+              )}
+              {comments.map(c => (
+                <div key={c.id} className="flex gap-2">
+                  <div className="w-7 h-7 rounded-full bg-primary/40 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">Y</div>
+                  <div>
+                    <span className="text-white/80 text-xs font-semibold">{c.user}</span>
+                    <p className="text-white/70 text-sm">{c.text}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Bottom comment bar */}
       <div className="absolute bottom-24 left-4 right-4 z-20 flex items-center gap-2 pointer-events-auto safe-area-pb">
         <button onClick={(e) => e.stopPropagation()} className="w-9 h-9 flex items-center justify-center">
@@ -329,12 +379,15 @@ const FeedVideoPlayer = ({ video, isActive, isMuted, onToggleMute }: FeedVideoPl
           <input
             type="text"
             placeholder="Add a comment..."
+            value={commentText}
+            onChange={(e) => setCommentText(e.target.value)}
+            onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); handleSubmitComment(); } }}
             className="bg-transparent text-white text-sm placeholder:text-white/40 outline-none w-full"
             onClick={(e) => e.stopPropagation()}
           />
         </div>
-        <button onClick={(e) => e.stopPropagation()} className="w-9 h-9 flex items-center justify-center">
-          <Send className="w-5 h-5 text-white/60" />
+        <button onClick={(e) => { e.stopPropagation(); handleSubmitComment(); }} className="w-9 h-9 flex items-center justify-center">
+          <Send className={`w-5 h-5 ${commentText.trim() ? "text-primary" : "text-white/60"}`} />
         </button>
       </div>
 

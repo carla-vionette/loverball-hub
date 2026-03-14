@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useEffect } from "react";
+import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import { Heart, MessageCircle, Share2, Bookmark, Play, ChevronUp, ChevronDown, X, Volume2, VolumeX } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -32,7 +33,15 @@ const Watch = () => {
   const [saved, setSaved] = useState<Set<string>>(new Set());
   const [muted, setMuted] = useState(false);
 
-  const filtered = REELS.filter(r => type === "All" || r.type === type);
+  const filtered = REELS.filter(r => {
+    const typeMatch = type === "All" || r.type === type;
+    if (cat === "For You") return typeMatch;
+    if (cat === "Originals") return typeMatch && r.creator.toLowerCase().includes("loverball");
+    if (cat === "Creators") return typeMatch && !r.creator.toLowerCase().includes("loverball") && !r.live;
+    if (cat === "Teams") return typeMatch && (r.title.toLowerCase().includes("lakers") || r.title.toLowerCase().includes("dodgers") || r.title.toLowerCase().includes("angel city") || r.title.toLowerCase().includes("fc") || r.title.toLowerCase().includes("wnba"));
+    if (cat === "Live") return typeMatch && r.live;
+    return typeMatch;
+  });
 
   const openReel = (r: typeof REELS[0]) => {
     setViewing(r);
@@ -88,6 +97,12 @@ const Watch = () => {
           </div>
 
           {/* REELS GRID */}
+          {filtered.length === 0 ? (
+            <div className="text-center py-16">
+              <Play className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
+              <p className="text-muted-foreground text-sm">No videos match this filter. Try another category.</p>
+            </div>
+          ) : (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {filtered.map(r => (
               <Card key={r.id} className="overflow-hidden group cursor-pointer hover:shadow-lg transition-all border-border/30 relative" onClick={() => openReel(r)}>
@@ -114,6 +129,7 @@ const Watch = () => {
               </Card>
             ))}
           </div>
+          )}
         </div>
       </main>
 
@@ -152,7 +168,11 @@ const Watch = () => {
                 <MessageCircle className="w-7 h-7 text-card" />
                 <span className="text-card text-xs font-bold font-sans">{viewing.comments}</span>
               </button>
-              <button className="flex flex-col items-center gap-1">
+              <button className="flex flex-col items-center gap-1" onClick={async () => {
+                const url = `${window.location.origin}/watch`;
+                if (navigator.share) { try { await navigator.share({ title: viewing.title, url }); } catch {} }
+                else { await navigator.clipboard.writeText(url); toast.success("Link copied!"); }
+              }}>
                 <Share2 className="w-7 h-7 text-card" />
                 <span className="text-card text-xs font-bold font-sans">Share</span>
               </button>

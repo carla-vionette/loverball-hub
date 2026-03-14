@@ -91,7 +91,7 @@ const Membership = () => {
       window.location.href = url;
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : 'Failed to start checkout';
-      toast({ title: 'Error', description: message, variant: 'destructive' });
+      toast({ title: 'Checkout unavailable', description: 'We couldn\'t start the payment process. Please try again later or contact support.', variant: 'destructive' });
     } finally {
       setLoadingPlan(null);
     }
