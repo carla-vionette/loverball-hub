@@ -182,10 +182,10 @@ export async function deleteEvent(id: string): Promise<void> {
 
 export function exportMembersToCSV(members: UserProfile[]): void {
   if (members.length === 0) return;
-  const headers = ['Name', 'Pronouns', 'Age Range', 'City', 'Neighborhood', 'Phone', 'Instagram', 'LinkedIn', 'Website', 'Role', 'Industries', 'Looking For', 'Favorite Teams', 'Favorite Sports', 'Joined'];
+  const headers = ['Name', 'Pronouns', 'Age Range', 'City', 'Neighborhood', 'Instagram', 'LinkedIn', 'Website', 'Role', 'Industries', 'Looking For', 'Favorite Teams', 'Favorite Sports', 'Joined'];
   const rows = members.map(m => [
     m.name, m.pronouns || '', m.age_range || '', m.city || '', m.neighborhood || '',
-    m.phone_number || '', m.instagram_url || '', m.linkedin_url || '', m.website_url || '',
+    m.instagram_url || '', m.linkedin_url || '', m.website_url || '',
     m.primary_role || '', (m.industries || []).join('; '), (m.looking_for_tags || []).join('; '),
     (m.favorite_la_teams || []).join('; '), (m.favorite_sports || []).join('; '),
     new Date(m.created_at).toISOString().split('T')[0],
