@@ -159,9 +159,9 @@ const Index = () => {
 
   const nearbyEvents = [
   { date: "MAR 22", time: "7:00 PM", title: "Sparks vs Aces Watch Party", venue: "The Victorian, Santa Monica", type: "Watch Party" },
-  { date: "MAR 28", time: "5:30 PM", title: "Angel City FC Tailgate", venue: "BMO Stadium, DTLA", type: "Game Day" },
-  { date: "APR 02", time: "6:00 PM", title: "Tennis & Tequila: Indian Wells", venue: "The Bungalow, Santa Monica", type: "Meetup" },
-  { date: "APR 05", time: "4:00 PM", title: "March Madness Mixer", venue: "Loverball HQ, Venice", type: "Watch Party" }];
+  { date: "APR 05", time: "5:30 PM", title: "Angel City FC Tailgate", venue: "BMO Stadium, DTLA", type: "Game Day" },
+  { date: "APR 19", time: "6:00 PM", title: "Tennis & Tequila: Spring Edition", venue: "The Bungalow, Santa Monica", type: "Meetup" },
+  { date: "JUN 14", time: "4:00 PM", title: "World Cup Kickoff Mixer", venue: "Loverball HQ, Venice", type: "Watch Party" }];
 
 
   const featureCards = [
