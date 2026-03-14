@@ -209,6 +209,7 @@ const FeedVideoPlayer = ({ video, isActive, isMuted, onToggleMute }: FeedVideoPl
           <img
             src={video.channelAvatar}
             alt={video.channelName}
+            loading="lazy"
             className="w-11 h-11 rounded-full object-cover border-2 border-white"
           />
           {!following && (
