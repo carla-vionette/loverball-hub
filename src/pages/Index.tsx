@@ -165,7 +165,7 @@ const Index = () => {
 
 
   const featureCards = [
-  { icon: Heart, title: "DISCOVER FANS", desc: "Match with women who share your sports passion", color: "bg-hot-pink" },
+  { icon: Heart, title: "DISCOVER FANS", desc: "Connect with women who share your sports passion", color: "bg-hot-pink" },
   { icon: Calendar, title: "FIND EVENTS", desc: "Watch parties, tailgates & meetups near you", color: "bg-primary" },
   { icon: Play, title: "WATCH", desc: "Originals, highlights & creator content", color: "bg-accent" },
   { icon: ShoppingBag, title: "SHOP", desc: "Apparel and gear for the ultimate fan", color: "bg-foreground" }];
