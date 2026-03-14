@@ -98,9 +98,9 @@ const Auth = () => {
 
     try {
       if (isSignUp) {
-        // Validate access code
+        // Validate invite code
         if (accessCode.trim() !== ACCESS_CODE) {
-          throw new Error("Invalid access code. Please enter a valid code to sign up.");
+          throw new Error("Invalid invite code. Please enter a valid invite code to sign up.");
         }
 
         // Validate inputs
@@ -371,13 +371,13 @@ const Auth = () => {
 
                 {isSignUp && (
                   <div className="space-y-2">
-                    <Label htmlFor="accessCode" className="text-xs tracking-wider uppercase text-foreground/60">Access Code</Label>
+                    <Label htmlFor="accessCode" className="text-xs tracking-wider uppercase text-foreground/60">Invite Code</Label>
                     <Input
                       id="accessCode"
                       type="text"
                       inputMode="numeric"
                       maxLength={4}
-                      placeholder="Enter 4-digit code"
+                      placeholder="Enter your invite code"
                       value={accessCode}
                       onChange={(e) => setAccessCode(e.target.value)}
                       required
