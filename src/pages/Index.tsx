@@ -115,8 +115,27 @@ const Index = () => {
     }
   };
 
+  const handleVerifyInvite = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (inviteCode.trim() === ACCESS_CODE) {
+      setInviteVerified(true);
+      setInviteError(false);
+      return;
+    }
+
+    setInviteError(true);
+  };
+
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!inviteVerified) {
+      setInviteError(true);
+      toast({ title: "Error", description: "Invalid invite code", variant: "destructive" });
+      return;
+    }
+
     setLoading(true);
     try {
       const validation = signUpSchema.safeParse({ email, password });
