@@ -401,18 +401,17 @@ const Index = () => {
               onClick={openAuthModal}
               className="cursor-pointer group">
               
-                <div className="bg-card rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300">
-                  <div className="aspect-[16/10] overflow-hidden">
-                    <img src={story.image} alt={story.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                  </div>
-                  <div className="p-5">
-                    <div className="flex items-center gap-3 mb-3">
-                      <span className="text-[10px] font-sans font-bold tracking-[0.2em] uppercase text-accent-foreground bg-accent px-2.5 py-1 rounded-full">{story.tag}</span>
-                      <span className="text-[11px] text-muted-foreground flex items-center gap-1">
-                        <Clock className="w-3 h-3" /> {story.time}
-                      </span>
+                <div className="bg-card rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 h-full border border-border/20">
+                  <div className="p-6 flex flex-col justify-between h-full">
+                    <div>
+                      <div className="flex items-center gap-3 mb-4">
+                        <span className="text-[10px] font-sans font-bold tracking-[0.2em] uppercase text-accent-foreground bg-accent px-2.5 py-1 rounded-full">{story.tag}</span>
+                        <span className="text-[11px] text-muted-foreground flex items-center gap-1">
+                          <Clock className="w-3 h-3" /> {story.time}
+                        </span>
+                      </div>
+                      <h3 className="font-sans font-bold text-foreground text-base leading-snug group-hover:text-accent transition-colors">{story.title}</h3>
                     </div>
-                    <h3 className="font-sans font-bold text-foreground text-sm leading-snug group-hover:text-accent transition-colors">{story.title}</h3>
                   </div>
                 </div>
               </motion.div>
