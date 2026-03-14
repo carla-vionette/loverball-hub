@@ -288,7 +288,7 @@ const Index = () => {
               <LiveSportsBadge />
 
               <span className="text-[11px] font-sans font-bold tracking-[0.3em] uppercase text-primary-foreground/70 mb-6 block">
-                A Sports Community & Content Platform for Women
+                A GLOBAL SPORTS MEDIA + COMMUNITY PLATFORM
               </span>
               <h1 className="font-condensed font-bold text-[4.5rem] sm:text-[6rem] lg:text-[7.5rem] leading-[0.85] tracking-tight text-primary-foreground uppercase mb-6">
                 Her<br />Game.<br />
