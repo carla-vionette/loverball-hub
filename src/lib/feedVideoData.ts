@@ -30,7 +30,7 @@ export interface FeedVideoItem {
   isFollowing?: boolean;
 }
 
-export const FEED_VIDEOS: FeedVideoItem[] = [
+const _FEED_VIDEOS: FeedVideoItem[] = [
   {
     id: "feed_29",
     channelId: "loverball",
@@ -216,3 +216,15 @@ export const FEED_VIDEOS: FeedVideoItem[] = [
     tags: ["nightlife", "fans", "community"],
   },
 ];
+
+// Shuffle on each page load for a fresh feed
+function shuffle<T>(arr: T[]): T[] {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+export const FEED_VIDEOS: FeedVideoItem[] = shuffle(_FEED_VIDEOS);
