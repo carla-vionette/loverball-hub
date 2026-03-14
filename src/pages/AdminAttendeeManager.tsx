@@ -36,7 +36,7 @@ interface Attendee {
   created_at: string;
   profile: {
     name: string;
-    phone_number: string | null;
+    phone_number?: string | null;
     city: string | null;
     profile_photo_url: string | null;
     instagram_url: string | null;
