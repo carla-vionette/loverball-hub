@@ -230,13 +230,13 @@ const Auth = () => {
           >
             <p className="text-primary text-sm font-medium tracking-widest mb-6 uppercase">Welcome</p>
             <h1 className="text-4xl xl:text-5xl font-sans font-normal leading-tight mb-6 text-foreground">
-              {isResettingPassword ? "Reset Password." : isSignUp ? "Join the Movement." : "Welcome Back."}
+              {isResettingPassword ? "Reset Password." : isSignUp ? (inviteVerified ? "Join the Movement." : "Enter Invite Code.") : "Welcome Back."}
             </h1>
             <p className="text-foreground/60 text-sm leading-relaxed max-w-md">
               {isResettingPassword
                 ? "Enter your new password below to regain access to your account."
                 : isSignUp 
-                ? "Create your account to connect with women who share your passion for sports."
+                ? (inviteVerified ? "Create your account to connect with women who share your passion for sports." : "You need a valid invite code to create an account.")
                 : "Sign in to continue your journey with the community."}
             </p>
           </motion.div>
