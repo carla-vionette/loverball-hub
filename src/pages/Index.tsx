@@ -98,7 +98,7 @@ const Index = () => {
             ))}
           </div>
 
-          <Button onClick={handleJoin} size="sm" className="hidden md:inline-flex bg-[hsl(var(--landing-orange))] hover:bg-[hsl(var(--landing-orange)/.85)] text-white rounded-full">
+          <Button onClick={handleJoin} size="sm" className="hidden md:inline-flex bg-white text-[hsl(160,70%,30%)] hover:bg-white/90 rounded-full font-bold">
             Join the Community
           </Button>
 
