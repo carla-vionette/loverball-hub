@@ -498,6 +498,33 @@ const Explore = () => {
               {/* Teams Section */}
               <TeamFollowSection />
 
+              {/* Latest News */}
+              <section className="mb-8">
+                <h2 className="font-display text-lg font-semibold uppercase tracking-wide mb-3 flex items-center gap-2">
+                  <Newspaper className="w-4 h-4 text-accent" /> Latest News
+                </h2>
+                {newsLoading ? (
+                  <ScrollRow>
+                    {[1, 2, 3, 4].map(i => (
+                      <div key={i} className="flex-shrink-0 w-[260px] rounded-xl overflow-hidden border border-border/20 animate-pulse">
+                        <div className="h-32 bg-muted" />
+                        <div className="p-3 space-y-2">
+                          <div className="h-3 w-16 bg-muted rounded-full" />
+                          <div className="h-3 w-full bg-muted rounded" />
+                          <div className="h-3 w-3/4 bg-muted rounded" />
+                        </div>
+                      </div>
+                    ))}
+                  </ScrollRow>
+                ) : newsArticles.length > 0 ? (
+                  <ScrollRow>
+                    {newsArticles.map(a => <NewsArticleCard key={a.id} article={a} />)}
+                  </ScrollRow>
+                ) : (
+                  <p className="text-sm text-muted-foreground">No news articles available right now.</p>
+                )}
+              </section>
+
               {/* Featured Videos */}
               <section className="mb-8">
                 <h2 className="font-display text-lg font-semibold uppercase tracking-wide mb-3 flex items-center gap-2">
