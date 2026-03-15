@@ -10,7 +10,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import MobileHeader from "@/components/MobileHeader";
 import DesktopNav from "@/components/DesktopNav";
@@ -18,7 +17,7 @@ import BottomNav from "@/components/BottomNav";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 
-import { format } from "date-fns";
+import { format, formatDistanceToNow } from "date-fns";
 import { motion } from "framer-motion";
 import {
   TEAM_PERFORMANCE,
@@ -26,7 +25,8 @@ import {
 import { getTeamWatchUrl, getTeamTicketsUrl } from "@/lib/teamLinksMap";
 import MySportsFeed from "@/components/MySportsFeed";
 import LiveScores from "@/components/LiveScores";
-
+import TeamFollowSection from "@/components/TeamFollowSection";
+import { getSportEmoji, getSportColor } from "@/services/newsArticleService";
 
 type ProfileData = {
   id: string;
@@ -69,6 +69,20 @@ type SuggestedEvent = {
   image_url: string | null;
 };
 
+// --- News article type ---
+interface FeedArticle {
+  id: string;
+  title: string;
+  summary: string;
+  source: string;
+  source_url: string;
+  image_url: string | null;
+  category: string;
+  sport_tags: string[];
+  team_tags: string[];
+  created_at: string;
+}
+
 // --- Zodiac helpers ---
 const ZODIAC_SIGNS = [
   { name: "Capricorn", symbol: "♑", element: "earth", dates: [{ m: 12, d: 22 }, { m: 1, d: 19 }] },
@@ -84,13 +98,6 @@ const ZODIAC_SIGNS = [
   { name: "Scorpio", symbol: "♏", element: "water", dates: [{ m: 10, d: 23 }, { m: 11, d: 21 }] },
   { name: "Sagittarius", symbol: "♐", element: "fire", dates: [{ m: 11, d: 22 }, { m: 12, d: 21 }] },
 ];
-
-const ELEMENT_GRADIENTS: Record<string, string> = {
-  fire: "from-primary/20 via-primary/10 to-transparent",
-  earth: "from-accent/20 via-accent/10 to-transparent",
-  air: "from-accent/15 via-primary/10 to-transparent",
-  water: "from-accent/20 via-accent/10 to-transparent",
-};
 
 const HOROSCOPE_MESSAGES: Record<string, string> = {
   Aries: "Bold energy fuels your day. A surprise connection through sports could open a new door.",
@@ -130,17 +137,6 @@ function getGreeting(): string {
   return "Good evening";
 }
 
-function getTimeAgo(dateStr: string): string {
-  const now = Date.now();
-  const then = new Date(dateStr).getTime();
-  const diffMs = now - then;
-  const diffMins = Math.floor(diffMs / 60000);
-  if (diffMins < 60) return `${diffMins}m ago`;
-  const diffHrs = Math.floor(diffMins / 60);
-  if (diffHrs < 24) return `${diffHrs}h ago`;
-  return `${Math.floor(diffHrs / 24)}d ago`;
-}
-
 const staggerContainer = {
   hidden: { opacity: 0 },
   show: { opacity: 1, transition: { staggerChildren: 0.08 } },
@@ -148,6 +144,53 @@ const staggerContainer = {
 const staggerItem = {
   hidden: { opacity: 0, y: 16 },
   show: { opacity: 1, y: 0, transition: { duration: 0.35, ease: [0.25, 0.1, 0.25, 1] as const } },
+};
+
+// --- News Article Card (moved from Explore) ---
+const NewsArticleCard = ({ article }: { article: FeedArticle }) => {
+  const primarySport = article.sport_tags?.[0] || "";
+  const emoji = getSportEmoji(primarySport);
+  const sportColor = getSportColor(primarySport);
+  const timeAgo = (() => {
+    try { return formatDistanceToNow(new Date(article.created_at), { addSuffix: true }); } catch { return ""; }
+  })();
+
+  return (
+    <a href={article.source_url} target="_blank" rel="noopener noreferrer" className="block group">
+      <Card className="overflow-hidden hover:shadow-lg transition-all duration-300 border-border/20">
+        <div className="h-28 overflow-hidden relative bg-muted">
+          {article.image_url ? (
+            <img src={article.image_url} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center text-4xl" style={{ backgroundColor: `${sportColor}15` }}>
+              {emoji}
+            </div>
+          )}
+          {primarySport && (
+            <div className="absolute top-2 left-2 w-6 h-6 rounded-full flex items-center justify-center text-xs shadow-md" style={{ backgroundColor: sportColor + "E6" }}>
+              {emoji}
+            </div>
+          )}
+        </div>
+        <div className="p-3">
+          <div className="flex items-center gap-2 mb-1">
+            <Badge variant="secondary" className="text-[10px] font-semibold px-2 py-0 rounded-full capitalize">
+              {primarySport || article.category || "Sports"}
+            </Badge>
+            <span className="text-[10px] text-muted-foreground flex items-center gap-0.5">
+              <Clock className="w-2.5 h-2.5" /> {timeAgo}
+            </span>
+          </div>
+          <h3 className="font-semibold text-xs text-foreground leading-snug line-clamp-2 group-hover:text-accent transition-colors">
+            {article.title}
+          </h3>
+          <p className="text-[10px] text-muted-foreground mt-1 uppercase tracking-wider font-semibold">
+            {article.source}
+          </p>
+        </div>
+      </Card>
+    </a>
+  );
 };
 
 
@@ -172,6 +215,8 @@ const Profile = () => {
   const [liveHoroscope, setLiveHoroscope] = useState<string | null>(null);
   const [horoscopeLoading, setHoroscopeLoading] = useState(false);
   const [birthday, setBirthday] = useState<string | null>(null);
+  const [newsArticles, setNewsArticles] = useState<FeedArticle[]>([]);
+  const [newsLoading, setNewsLoading] = useState(true);
   
   const goTo = (path: string) => { window.location.href = path; };
   const { toast } = useToast();
@@ -189,6 +234,25 @@ const Profile = () => {
     goTo("/");
   };
 
+  // Fetch news articles
+  useEffect(() => {
+    const fetchNews = async () => {
+      try {
+        const { data, error } = await supabase
+          .from("feed_items")
+          .select("*")
+          .order("created_at", { ascending: false })
+          .limit(8);
+        if (error) throw error;
+        setNewsArticles(data || []);
+      } catch {
+        setNewsArticles([]);
+      } finally {
+        setNewsLoading(false);
+      }
+    };
+    fetchNews();
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -208,7 +272,6 @@ const Profile = () => {
         if (profileResult.error || !profileResult.data) { goTo("/onboarding"); return; }
 
         setProfile(profileResult.data);
-        // Fetch birthday from sensitive table
         const { data: sensitive } = await supabase.from("profiles_sensitive" as any).select("birthday").eq("id", user.id).maybeSingle();
         if (sensitive) setBirthday((sensitive as any).birthday);
         if (rsvpResult.data) {
@@ -244,9 +307,7 @@ const Profile = () => {
     return () => clearInterval(timer);
   }, []);
 
-
   const activePerfTeams = TEAM_PERFORMANCE.filter(t => t.winPct > 0);
-  const combinedWinPct = activePerfTeams.length > 0 ? activePerfTeams.reduce((s, t) => s + t.winPct, 0) / activePerfTeams.length : 0;
 
   if (loading) {
     return (
@@ -304,7 +365,6 @@ const Profile = () => {
                     </Avatar>
                   </div>
 
-                  {/* Name & info */}
                   <div>
                     <h1 className="text-2xl md:text-4xl font-display text-foreground tracking-tight flex items-center gap-2">
                       {profile.name}
@@ -317,10 +377,8 @@ const Profile = () => {
                     </div>
                    </div>
 
-                  {/* Follower/Following counts */}
                   <ProfileFollowCounts userId={profile.id} onClickFollowers={() => setShowFollowersModal('followers')} onClickFollowing={() => setShowFollowersModal('following')} />
 
-                  {/* Quick actions */}
                   <div className="flex items-center gap-2 flex-wrap justify-center">
                     <Button onClick={() => goTo("/profile/edit")} size="sm" className="rounded-full bg-primary hover:bg-primary/90 text-primary-foreground gap-1.5 text-xs">
                       <Edit className="w-3.5 h-3.5" /> Edit Profile
@@ -339,7 +397,7 @@ const Profile = () => {
               </div>
             </motion.div>
 
-            {/* BIO - Glassmorphism card */}
+            {/* BIO */}
             {profile.bio && (
               <motion.div variants={staggerItem}>
                 <div className="glass-card rounded-2xl p-5">
@@ -350,6 +408,11 @@ const Profile = () => {
                 </div>
               </motion.div>
             )}
+
+            {/* MY TEAMS (moved from Explore) */}
+            <motion.div variants={staggerItem}>
+              <TeamFollowSection />
+            </motion.div>
 
             {/* MY SCORES */}
             <motion.div variants={staggerItem}>
@@ -365,6 +428,34 @@ const Profile = () => {
               </Card>
             </motion.div>
 
+            {/* LATEST NEWS (moved from Explore) */}
+            <motion.div variants={staggerItem}>
+              <Card className="rounded-2xl overflow-hidden">
+                <CardHeader className="pb-2 pt-4 px-5">
+                  <CardTitle className="text-sm font-medium tracking-wider uppercase text-foreground/50 flex items-center gap-2">
+                    <Newspaper className="w-4 h-4 text-accent" /> Latest News
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="px-5 pb-5">
+                  {newsLoading ? (
+                    <div className="space-y-3">
+                      {[1, 2, 3].map(i => (
+                        <div key={i} className="h-20 bg-muted rounded-xl animate-pulse" />
+                      ))}
+                    </div>
+                  ) : newsArticles.length > 0 ? (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      {newsArticles.slice(0, 6).map(a => (
+                        <NewsArticleCard key={a.id} article={a} />
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-muted-foreground text-center py-4">No news articles available right now.</p>
+                  )}
+                </CardContent>
+              </Card>
+            </motion.div>
+
             {/* GREETING + DATE */}
             <motion.div variants={staggerItem} className="glass-card rounded-2xl p-5">
               <p className="text-lg font-sans text-foreground">{greeting}, <span className="text-primary font-semibold">{userName}</span></p>
@@ -375,7 +466,6 @@ const Profile = () => {
             <motion.div variants={staggerItem}>
               <PointsStreakCard />
             </motion.div>
-
 
             {/* DAILY HOROSCOPE SNIPPET */}
             <motion.div variants={staggerItem}>
@@ -422,7 +512,6 @@ const Profile = () => {
               <BadgeShelf />
             </motion.div>
 
-
             {/* FAVORITE TEAMS PERFORMANCE - COLLAPSIBLE */}
             <motion.div variants={staggerItem}>
               <Collapsible open={teamsOpen} onOpenChange={setTeamsOpen}>
@@ -433,7 +522,6 @@ const Profile = () => {
                       <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform duration-200 ${teamsOpen ? 'rotate-180' : ''}`} />
                     </button>
                   </CollapsibleTrigger>
-                  {/* Preview: first 2 teams always visible */}
                   {!teamsOpen && (
                     <div className="divide-y divide-border/30">
                       {TEAM_PERFORMANCE.slice(0, 2).map(team => (
@@ -521,7 +609,7 @@ const Profile = () => {
               </Collapsible>
             </motion.div>
 
-            {/* MY SPORTS FEED — Personalized news from news_articles */}
+            {/* MY SPORTS FEED */}
             <motion.div variants={staggerItem}>
               <MySportsFeed
                 userSports={profile.favorite_sports || []}
@@ -541,7 +629,6 @@ const Profile = () => {
                         <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform duration-200 ${recEventsOpen ? 'rotate-180' : ''}`} />
                       </button>
                     </CollapsibleTrigger>
-                    {/* Preview: first 2 events */}
                     {!recEventsOpen && (
                       <div className="px-5 pb-5">
                         <div className="space-y-3">
@@ -579,7 +666,6 @@ const Profile = () => {
                 </Collapsible>
               </motion.div>
             )}
-
 
           </motion.div>
         </div>
