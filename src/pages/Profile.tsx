@@ -285,8 +285,8 @@ const Profile = () => {
       <DesktopNav />
       <BottomNav />
 
-      <main className="md:ml-64 pb-20 md:pb-8 pt-[92px] md:pt-[48px]">
-        <div className="max-w-4xl mx-auto px-4">
+      <main className="md:ml-64 pb-20 md:pb-8 pt-16 md:pt-2">
+        <div className="max-w-4xl mx-auto px-4 pt-2">
           <motion.div variants={staggerContainer} initial="hidden" animate="show" className="space-y-6">
 
             {/* CINEMATIC HERO SECTION */}
