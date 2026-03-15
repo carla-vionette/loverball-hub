@@ -14,7 +14,7 @@ import {
   Trophy,
   Heart,
   Flame,
-  Star,
+  Sparkles,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import loverballLogo from "@/assets/loverball-script-logo.png";
