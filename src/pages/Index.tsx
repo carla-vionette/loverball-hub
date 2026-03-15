@@ -300,8 +300,6 @@ const Index = () => {
               transition={{ duration: 0.9, ease: "easeOut" }}
               className="relative z-10 max-w-lg">
               
-              {/* Live badge - dynamic */}
-              <LiveSportsBadge />
 
               <span className="text-[11px] font-sans font-bold tracking-[0.3em] uppercase text-primary-foreground/70 mb-6 block">
                 A GLOBAL SPORTS MEDIA + COMMUNITY PLATFORM
