@@ -53,6 +53,11 @@ const FEATURES = [
     title: "Build your sports identity",
     desc: "Create a profile showcasing your favorite teams, sports, and moments.",
   },
+  {
+    icon: Sparkles,
+    title: "AI-Curated News",
+    desc: "Get personalized sports news tailored to your favorite teams and leagues, powered by AI.",
+  },
 ];
 
 const AUDIENCE = [
