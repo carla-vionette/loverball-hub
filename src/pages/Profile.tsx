@@ -421,8 +421,8 @@ const Profile = () => {
                       ))}
                     </div>
                   ) : newsArticles.length > 0 ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      {newsArticles.slice(0, 6).map(a => (
+                    <div className="space-y-0">
+                      {newsArticles.slice(0, 8).map(a => (
                         <NewsArticleCard key={a.id} article={a} />
                       ))}
                     </div>
