@@ -1,6 +1,8 @@
+import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { User, Search, CalendarDays, Settings, ShoppingBag, Play, MessageCircle, Home, Compass, Newspaper, Shield, Trophy } from "lucide-react";
+import { User, Search, CalendarDays, Settings, ShoppingBag, Play, Home, Compass, Newspaper, Shield, Trophy, Users } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 import GlobalSearch from "@/components/GlobalSearch";
 import loverballLogo from "@/assets/loverball-script-logo.png";
 
@@ -12,17 +14,36 @@ const mainNavItems = [
   { icon: CalendarDays, label: "Events", path: "/events" },
   { icon: Trophy, label: "Scores", path: "/scores" },
   { icon: ShoppingBag, label: "Shop", path: "/shop" },
+  { icon: Users, label: "Friends", path: "/friends" },
 ];
 
 const secondaryNavItems = [
-  { icon: MessageCircle, label: "DMs", path: "/dms" },
   { icon: User, label: "Profile", path: "/profile" },
 ];
 
 const DesktopNav = () => {
   const location = useLocation();
-  const { isAdmin } = useAuth();
+  const { isAdmin, user } = useAuth();
   const isActive = (path: string) => location.pathname === path;
+  const [friendsBadge, setFriendsBadge] = useState(0);
+
+  useEffect(() => {
+    if (!user) return;
+    const fetchCount = async () => {
+      const [unreadRes, pendingRes] = await Promise.all([
+        supabase.from("direct_messages").select("id", { count: "exact", head: true }).eq("receiver_id", user.id).eq("read", false),
+        supabase.from("friendships").select("id", { count: "exact", head: true }).eq("addressee_id", user.id).eq("status", "pending"),
+      ]);
+      setFriendsBadge((unreadRes.count || 0) + (pendingRes.count || 0));
+    };
+    fetchCount();
+    const channel = supabase
+      .channel("desktop-nav-badge")
+      .on("postgres_changes", { event: "*", schema: "public", table: "direct_messages", filter: `receiver_id=eq.${user.id}` }, () => fetchCount())
+      .on("postgres_changes", { event: "*", schema: "public", table: "friendships", filter: `addressee_id=eq.${user.id}` }, () => fetchCount())
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, [user?.id]);
 
   return (
     <aside
@@ -45,6 +66,7 @@ const DesktopNav = () => {
           {mainNavItems.map((item) => {
             const Icon = item.icon;
             const active = isActive(item.path);
+            const showBadge = item.path === "/friends" && friendsBadge > 0;
             return (
               <Link
                 key={item.path}
@@ -56,7 +78,14 @@ const DesktopNav = () => {
                     : "text-muted-foreground hover:text-foreground hover:bg-secondary"
                 }`}
               >
-                <Icon className="w-5 h-5" aria-hidden="true" />
+                <div className="relative">
+                  <Icon className="w-5 h-5" aria-hidden="true" />
+                  {showBadge && (
+                    <span className="absolute -top-1.5 -right-2 bg-destructive text-destructive-foreground text-[9px] font-bold rounded-full min-w-[14px] h-3.5 flex items-center justify-center px-0.5">
+                      {friendsBadge > 99 ? "99+" : friendsBadge}
+                    </span>
+                  )}
+                </div>
                 <span className="text-sm">{item.label}</span>
               </Link>
             );
