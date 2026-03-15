@@ -15,9 +15,10 @@ import ProtectedRoute from "./components/ProtectedRoute";
 
 // ── Eager-load primary routes to avoid dual-React-instance crashes ──
 import Home from "./pages/Home";
+import Index from "./pages/Index";
+import Friends from "./pages/Friends";
 
 // ── Lazy-loaded secondary pages ──
-const Index = lazy(() => import("./pages/Index"));
 const Auth = lazy(() => import("./pages/Auth"));
 const Explore = lazy(() => import("./pages/Explore"));
 const Events = lazy(() => import("./pages/Events"));
@@ -46,7 +47,6 @@ const DirectMessages = lazy(() => import("./pages/DirectMessages"));
 const ChatRoom = lazy(() => import("./pages/ChatRoom"));
 const Terms = lazy(() => import("./pages/Terms"));
 const Privacy = lazy(() => import("./pages/Privacy"));
-const Friends = lazy(() => import("./pages/Friends"));
 const Settings = lazy(() => import("./pages/Settings"));
 const CheckoutSuccess = lazy(() => import("./pages/CheckoutSuccess"));
 const Ticker = lazy(() => import("./pages/Ticker"));
