@@ -208,10 +208,9 @@ export async function fetchPersonalizedNews(
 export async function fetchTrendingNews(limit = 8): Promise<NewsArticle[]> {
   try {
     const { data, error } = await supabase
-      .from("news_articles" as any)
+      .from("feed_items")
       .select("*")
-      .eq("is_trending", true)
-      .order("published_at", { ascending: false })
+      .order("created_at", { ascending: false })
       .limit(limit);
 
     if (error) {
