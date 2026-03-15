@@ -12,6 +12,9 @@ import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import AttendeeProfileDrawer from "@/components/AttendeeProfileDrawer";
 import BottomNav from "@/components/BottomNav";
+import DesktopNav from "@/components/DesktopNav";
+import MobileHeader from "@/components/MobileHeader";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { format } from "date-fns";
 
 interface FriendProfile {
