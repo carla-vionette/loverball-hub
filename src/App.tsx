@@ -13,10 +13,12 @@ import { usePageTracking } from "@/hooks/usePageTracking";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 
-// ── Every page is lazy-loaded for minimal initial bundle ──
+// ── Eager-load primary routes to avoid dual-React-instance crashes ──
+import Home from "./pages/Home";
+
+// ── Lazy-loaded secondary pages ──
 const Index = lazy(() => import("./pages/Index"));
 const Auth = lazy(() => import("./pages/Auth"));
-const Home = lazy(() => import("./pages/Home"));
 const Explore = lazy(() => import("./pages/Explore"));
 const Events = lazy(() => import("./pages/Events"));
 const Shop = lazy(() => import("./pages/Shop"));
