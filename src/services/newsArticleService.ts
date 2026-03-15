@@ -50,6 +50,37 @@ const CATEGORY_COLORS: Record<string, string> = {
   culture: "#A855F7",
 };
 
+const CATEGORY_EMOJI: Record<string, string> = {
+  womens_sports: "💪",
+  la_local: "📍",
+  national: "🇺🇸",
+  culture: "🎭",
+  breaking: "🚨",
+  trade: "🔄",
+  injury: "🏥",
+  recap: "📋",
+  preview: "👀",
+  opinion: "🧠",
+  lifestyle: "✨",
+  photography: "📸",
+  travel: "🌍",
+  tech: "🧠",
+  fitness: "🏋️‍♀️",
+};
+
+export function getCategoryEmoji(category: string | null, sport?: string): string {
+  if (sport) {
+    const sportEmoji = SPORT_EMOJI[sport.toLowerCase()];
+    if (sportEmoji) return sportEmoji;
+  }
+  return CATEGORY_EMOJI[category?.toLowerCase() || ""] || "🏅";
+}
+
+export function generateSummary(title: string, source?: string | null): string {
+  const sourceStr = source ? ` via ${source}` : "";
+  return `Get the latest update on this story${sourceStr}. Tap to read the full article and stay in the know.`;
+}
+
 export function getSportEmoji(sport: string): string {
   return SPORT_EMOJI[sport.toLowerCase()] || "🏅";
 }
