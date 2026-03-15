@@ -11,7 +11,7 @@ import { DISCOVER_VIDEOS, DISCOVER_CATEGORIES, type DiscoverVideo } from "@/lib/
 import TeamFollowSection from "@/components/TeamFollowSection";
 import { supabase } from "@/integrations/supabase/client";
 import { format, formatDistanceToNow } from "date-fns";
-import { getSportEmoji, getSportColor } from "@/services/newsArticleService";
+import { getSportEmoji, getSportColor, getCategoryEmoji, generateSummary } from "@/services/newsArticleService";
 
 const formatViews = (n: number) => {
   if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
@@ -214,10 +214,22 @@ interface FeedArticle {
   created_at: string;
 }
 
+const FALLBACK_GRADIENTS: Record<string, string> = {
+  basketball: "from-orange-500 to-amber-600",
+  soccer: "from-emerald-500 to-green-600",
+  football: "from-amber-800 to-yellow-700",
+  tennis: "from-lime-500 to-green-500",
+  hockey: "from-blue-500 to-cyan-600",
+  default: "from-accent to-primary",
+};
+
 const NewsArticleCard = ({ article }: { article: FeedArticle }) => {
   const primarySport = article.sport_tags?.[0] || "";
   const emoji = getSportEmoji(primarySport);
+  const catEmoji = getCategoryEmoji(article.category, primarySport);
   const sportColor = getSportColor(primarySport);
+  const gradient = FALLBACK_GRADIENTS[primarySport.toLowerCase()] || FALLBACK_GRADIENTS.default;
+  const summary = article.summary || generateSummary(article.title, article.source);
   const timeAgo = (() => {
     try {
       return formatDistanceToNow(new Date(article.created_at), { addSuffix: true });
@@ -231,13 +243,17 @@ const NewsArticleCard = ({ article }: { article: FeedArticle }) => {
       rel="noopener noreferrer"
       className="flex-shrink-0 w-[260px] block group"
     >
-      <Card className="overflow-hidden hover:shadow-lg transition-all duration-300 h-full border-border/20">
-        <div className="h-32 overflow-hidden relative bg-muted">
+      <Card className="overflow-hidden hover:shadow-lg transition-all duration-300 h-full border-border/20 flex flex-col">
+        {/* Thumbnail or Fallback Visual */}
+        <div className="h-32 overflow-hidden relative">
           {article.image_url ? (
             <img src={article.image_url} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
           ) : (
-            <div className="w-full h-full flex items-center justify-center text-4xl" style={{ backgroundColor: `${sportColor}15` }}>
-              {emoji}
+            <div className={`w-full h-full bg-gradient-to-br ${gradient} flex flex-col items-center justify-center gap-1.5 p-3`}>
+              <span className="text-4xl drop-shadow-lg">{emoji}</span>
+              <span className="text-background/90 text-[9px] font-bold uppercase tracking-widest text-center line-clamp-1">
+                {primarySport || article.category || "Sports"}
+              </span>
             </div>
           )}
           {primarySport && (
@@ -245,25 +261,40 @@ const NewsArticleCard = ({ article }: { article: FeedArticle }) => {
               {emoji}
             </div>
           )}
-          <div className="absolute top-2 right-2">
-            <ExternalLink className="w-3.5 h-3.5 text-background/70" />
-          </div>
         </div>
-        <div className="p-3">
+
+        <div className="p-3 flex flex-col flex-1">
+          {/* Category Tag + Emoji */}
           <div className="flex items-center gap-2 mb-1.5">
             <Badge variant="secondary" className="text-[10px] font-semibold px-2 py-0 rounded-full capitalize">
-              {primarySport || article.category || "Sports"}
+              {catEmoji} {primarySport || article.category || "Sports"}
             </Badge>
             <span className="text-[10px] text-muted-foreground flex items-center gap-0.5">
               <Clock className="w-2.5 h-2.5" /> {timeAgo}
             </span>
           </div>
-          <h3 className="font-semibold text-xs text-foreground leading-snug line-clamp-2 group-hover:text-accent transition-colors">
+
+          {/* Title */}
+          <h3 className="font-semibold text-xs text-foreground leading-snug line-clamp-2 group-hover:text-accent transition-colors mb-1">
             {article.title}
           </h3>
-          <p className="text-[10px] text-muted-foreground mt-1 uppercase tracking-wider font-semibold">
-            {article.source}
+
+          {/* Summary */}
+          <p className="text-[10px] text-muted-foreground leading-relaxed line-clamp-2 mb-2 flex-1">
+            {summary}
           </p>
+
+          {/* Source + Read More */}
+          <div className="flex items-center justify-between mt-auto">
+            {article.source && (
+              <p className="text-[9px] text-muted-foreground uppercase tracking-wider font-semibold">
+                {article.source}
+              </p>
+            )}
+            <span className="text-[10px] font-semibold text-accent flex items-center gap-1 group-hover:gap-1.5 transition-all ml-auto">
+              Read More <ExternalLink className="w-2.5 h-2.5" />
+            </span>
+          </div>
         </div>
       </Card>
     </a>
