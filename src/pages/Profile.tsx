@@ -146,49 +146,26 @@ const staggerItem = {
   show: { opacity: 1, y: 0, transition: { duration: 0.35, ease: [0.25, 0.1, 0.25, 1] as const } },
 };
 
-// --- News Article Card (moved from Explore) ---
+// --- News Article Card (compact list style) ---
 const NewsArticleCard = ({ article }: { article: FeedArticle }) => {
   const primarySport = article.sport_tags?.[0] || "";
   const emoji = getSportEmoji(primarySport);
-  const sportColor = getSportColor(primarySport);
   const timeAgo = (() => {
     try { return formatDistanceToNow(new Date(article.created_at), { addSuffix: true }); } catch { return ""; }
   })();
 
   return (
-    <a href={article.source_url} target="_blank" rel="noopener noreferrer" className="block group">
-      <Card className="overflow-hidden hover:shadow-lg transition-all duration-300 border-border/20">
-        <div className="h-28 overflow-hidden relative bg-muted">
-          {article.image_url ? (
-            <img src={article.image_url} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center text-4xl" style={{ backgroundColor: `${sportColor}15` }}>
-              {emoji}
-            </div>
-          )}
-          {primarySport && (
-            <div className="absolute top-2 left-2 w-6 h-6 rounded-full flex items-center justify-center text-xs shadow-md" style={{ backgroundColor: sportColor + "E6" }}>
-              {emoji}
-            </div>
-          )}
-        </div>
-        <div className="p-3">
-          <div className="flex items-center gap-2 mb-1">
-            <Badge variant="secondary" className="text-[10px] font-semibold px-2 py-0 rounded-full capitalize">
-              {primarySport || article.category || "Sports"}
-            </Badge>
-            <span className="text-[10px] text-muted-foreground flex items-center gap-0.5">
-              <Clock className="w-2.5 h-2.5" /> {timeAgo}
-            </span>
-          </div>
-          <h3 className="font-semibold text-xs text-foreground leading-snug line-clamp-2 group-hover:text-accent transition-colors">
-            {article.title}
-          </h3>
-          <p className="text-[10px] text-muted-foreground mt-1 uppercase tracking-wider font-semibold">
-            {article.source}
-          </p>
-        </div>
-      </Card>
+    <a href={article.source_url} target="_blank" rel="noopener noreferrer" className="flex items-start gap-3 py-2.5 group border-b border-border/10 last:border-b-0">
+      <span className="text-lg mt-0.5 flex-shrink-0">{emoji}</span>
+      <div className="flex-1 min-w-0">
+        <h3 className="font-semibold text-sm text-foreground leading-snug line-clamp-2 group-hover:text-accent transition-colors">
+          {article.title}
+        </h3>
+        <p className="text-[11px] text-muted-foreground mt-0.5">
+          <span className="uppercase tracking-wider font-semibold">{article.source}</span>
+          {timeAgo && <> · {timeAgo}</>}
+        </p>
+      </div>
     </a>
   );
 };
