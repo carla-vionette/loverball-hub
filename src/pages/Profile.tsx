@@ -289,14 +289,10 @@ const Profile = () => {
         <div className="max-w-4xl mx-auto px-4 pt-2">
           <motion.div variants={staggerContainer} initial="hidden" animate="show" className="space-y-6">
 
-            {/* CINEMATIC HERO SECTION */}
-            <motion.div variants={staggerItem} className="relative -mx-4 -mt-4 md:-mx-0 md:mt-0 md:rounded-2xl overflow-hidden">
-              {/* Background gradient overlay */}
-              <div className="absolute inset-0 bg-gradient-to-b from-primary/20 via-background/60 to-background z-10" />
-              <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-transparent to-accent/10 z-10" />
-              
-              {/* Hero content */}
-              <div className="relative z-20 px-6 pt-12 pb-8 md:px-10 md:pt-16 md:pb-10">
+            {/* PROFILE HERO - Compact */}
+            <motion.div variants={staggerItem} className="relative md:rounded-2xl overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-b from-primary/15 via-background/40 to-background z-10" />
+              <div className="relative z-20 px-4 pt-4 pb-5 md:px-8 md:pt-6 md:pb-6">
                 <div className="flex flex-col items-center text-center gap-5">
                   {/* Avatar with glow */}
                   <div className="relative">
