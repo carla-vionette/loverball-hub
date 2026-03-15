@@ -422,6 +422,23 @@ const Auth = () => {
                   />
                 </div>
 
+                {!isSignUp && (
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id="staySignedIn"
+                      checked={staySignedIn}
+                      onCheckedChange={(checked) => setStaySignedIn(checked === true)}
+                      className="border-border data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+                    />
+                    <Label
+                      htmlFor="staySignedIn"
+                      className="text-sm text-foreground/60 cursor-pointer select-none"
+                    >
+                      Stay signed in
+                    </Label>
+                  </div>
+                )}
+
                 <Button
                   type="submit" 
                   className="w-full rounded-none h-12 text-sm tracking-wider group" 
