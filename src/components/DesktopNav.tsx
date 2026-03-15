@@ -1,6 +1,8 @@
+import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { User, Search, CalendarDays, Settings, ShoppingBag, Play, MessageCircle, Home, Compass, Newspaper, Shield, Trophy } from "lucide-react";
+import { User, Search, CalendarDays, Settings, ShoppingBag, Play, Home, Compass, Newspaper, Shield, Trophy, Users } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 import GlobalSearch from "@/components/GlobalSearch";
 import loverballLogo from "@/assets/loverball-script-logo.png";
 
@@ -12,10 +14,10 @@ const mainNavItems = [
   { icon: CalendarDays, label: "Events", path: "/events" },
   { icon: Trophy, label: "Scores", path: "/scores" },
   { icon: ShoppingBag, label: "Shop", path: "/shop" },
+  { icon: Users, label: "Friends", path: "/friends" },
 ];
 
 const secondaryNavItems = [
-  { icon: MessageCircle, label: "DMs", path: "/dms" },
   { icon: User, label: "Profile", path: "/profile" },
 ];
 
