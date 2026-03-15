@@ -8,7 +8,10 @@ import {
   logNewsRead,
   getMatchReasons,
   getSportEmoji,
+  getSportColor,
   getCategoryColor,
+  getCategoryEmoji,
+  generateSummary,
   getTimeAgo,
   type NewsArticle,
   type FeedFilter,
@@ -121,7 +124,19 @@ const MySportsFeed: React.FC<MySportsFeedProps> = ({ userSports, userTeams, user
             const reasons = getMatchReasons(article, userSports, userTeams, userCity);
             const primarySport = article.sport_tags?.[0] || "";
             const sportEmoji = getSportEmoji(primarySport);
+            const catEmoji = getCategoryEmoji(article.category, primarySport);
             const catColor = getCategoryColor(article.category);
+            const sportColor = getSportColor(primarySport);
+            const summary = article.summary || generateSummary(article.title, article.source_name);
+
+            const GRADIENTS: Record<string, string> = {
+              basketball: "from-orange-500 to-amber-600",
+              soccer: "from-emerald-500 to-green-600",
+              football: "from-amber-800 to-yellow-700",
+              tennis: "from-lime-500 to-green-500",
+              hockey: "from-blue-500 to-cyan-600",
+            };
+            const gradient = GRADIENTS[primarySport.toLowerCase()] || "from-accent to-primary";
 
             return (
               <motion.div
@@ -133,49 +148,60 @@ const MySportsFeed: React.FC<MySportsFeedProps> = ({ userSports, userTeams, user
                 className="group cursor-pointer hover:bg-foreground/[0.04] transition-colors"
               >
                 <div className="p-4 flex gap-3">
-                  {/* Image */}
-                  {article.image_url ? (
-                    <div className="w-20 h-20 md:w-24 md:h-24 rounded-xl overflow-hidden flex-shrink-0 relative">
-                      <img
-                        src={article.image_url}
-                        alt=""
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                        loading="lazy"
-                      />
-                      {/* Sport emoji badge */}
-                      <div className="absolute top-1 left-1 w-6 h-6 rounded-full bg-background/90 flex items-center justify-center text-xs shadow-sm">
-                        {sportEmoji}
+                  {/* Thumbnail or Fallback Visual */}
+                  <div className="w-20 h-20 md:w-24 md:h-24 rounded-xl overflow-hidden flex-shrink-0 relative">
+                    {article.image_url ? (
+                      <>
+                        <img
+                          src={article.image_url}
+                          alt=""
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          loading="lazy"
+                        />
+                        <div className="absolute top-1 left-1 w-6 h-6 rounded-full bg-background/90 flex items-center justify-center text-xs shadow-sm">
+                          {sportEmoji}
+                        </div>
+                      </>
+                    ) : (
+                      <div className={`w-full h-full bg-gradient-to-br ${gradient} flex flex-col items-center justify-center gap-0.5 p-1`}>
+                        <span className="text-2xl drop-shadow-md">{sportEmoji}</span>
+                        <span className="text-background/80 text-[7px] font-bold uppercase tracking-wider text-center line-clamp-1">
+                          {primarySport || article.category || "Sports"}
+                        </span>
                       </div>
-                    </div>
-                  ) : (
-                    <div className="w-20 h-20 md:w-24 md:h-24 rounded-xl flex-shrink-0 flex items-center justify-center text-2xl"
-                      style={{ backgroundColor: `${catColor}15` }}>
-                      {sportEmoji}
-                    </div>
-                  )}
+                    )}
+                  </div>
 
                   {/* Text content */}
                   <div className="flex-1 min-w-0">
-                    {/* Headline */}
-                    <h3 className="text-sm font-bold text-foreground leading-snug line-clamp-2 group-hover:text-[#FF5D2E] transition-colors flex items-start gap-1">
+                    {/* Category Tag + Emoji */}
+                    <span
+                      className="inline-flex items-center text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-full mb-1"
+                      style={{ backgroundColor: `${catColor}20`, color: catColor }}
+                    >
+                      {catEmoji} {primarySport || article.category || "Sports"}
+                    </span>
+
+                    {/* Title */}
+                    <h3 className="text-sm font-bold text-foreground leading-snug line-clamp-2 group-hover:text-accent transition-colors">
                       {article.title}
-                      <ExternalLink className="w-3 h-3 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0 mt-0.5" />
                     </h3>
 
-                    {/* Summary with fade truncate */}
-                    {article.summary && (
-                      <p className="text-xs text-muted-foreground mt-1 leading-relaxed line-clamp-3 relative">
-                        {article.summary}
-                      </p>
-                    )}
+                    {/* Summary */}
+                    <p className="text-xs text-muted-foreground mt-1 leading-relaxed line-clamp-2">
+                      {summary}
+                    </p>
 
-                    {/* Source + time */}
+                    {/* Source + time + Read More */}
                     <div className="flex items-center gap-2 mt-1.5">
                       <span className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: catColor }}>
                         {article.source_name || "News"}
                       </span>
                       <span className="text-[10px] text-muted-foreground">
                         • {getTimeAgo(article.published_at || article.created_at)}
+                      </span>
+                      <span className="text-[10px] font-semibold text-accent flex items-center gap-0.5 ml-auto opacity-0 group-hover:opacity-100 transition-opacity">
+                        Read More <ExternalLink className="w-2.5 h-2.5" />
                       </span>
                     </div>
 
