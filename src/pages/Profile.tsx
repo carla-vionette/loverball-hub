@@ -25,7 +25,7 @@ import {
 } from "@/lib/mockStatsData";
 import { getTeamWatchUrl, getTeamTicketsUrl } from "@/lib/teamLinksMap";
 import MySportsFeed from "@/components/MySportsFeed";
-
+import LiveScores from "@/components/LiveScores";
 
 
 type ProfileData = {
