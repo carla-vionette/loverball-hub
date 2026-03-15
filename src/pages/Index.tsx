@@ -29,35 +29,6 @@ const signUpSchema = z.object({
 
 const ACCESS_CODE = "7988";
 
-const LiveSportsBadge = () => {
-  const { currentItem, loading: badgeLoading } = useLiveSportsBadge();
-
-  const displayText = badgeLoading
-    ? "Loading live scores…"
-    : currentItem
-      ? currentItem.text
-      : "No live games right now — check back soon!";
-
-  const isLive = currentItem?.isLive ?? false;
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.9 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.5, delay: 0.3 }}
-      className="inline-flex items-center gap-2 bg-accent text-accent-foreground rounded-full px-4 py-2 mb-8 shadow-lg"
-    >
-      <span className="relative flex h-2.5 w-2.5">
-        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent-foreground opacity-75" />
-        <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-accent-foreground" />
-      </span>
-      {currentItem?.sport && <span className="text-sm">{currentItem.sport}</span>}
-      <span className="text-[11px] font-sans font-bold tracking-wide uppercase">
-        {displayText}
-      </span>
-    </motion.div>
-  );
-};
 
 const Index = () => {
   // Component state
