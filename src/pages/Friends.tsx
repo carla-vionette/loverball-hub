@@ -459,8 +459,8 @@ const Friends = () => {
   // ─── Mobile: Chat fullscreen takeover ───
   if (isMobile && chatOpen && chatFriend) {
     return (
-      <div className="min-h-screen bg-background flex flex-col">
-        {renderChatPanel("flex-1")}
+      <div className="fixed inset-0 bg-background flex flex-col z-40">
+        {renderChatPanel("flex-1 min-h-0")}
       </div>
     );
   }
