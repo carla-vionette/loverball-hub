@@ -115,7 +115,7 @@ const Index = () => {
                 {l}
               </a>
             ))}
-            <Button onClick={handleJoin} className="w-full bg-[hsl(var(--landing-orange))] text-white rounded-full">
+            <Button onClick={handleJoin} className="w-full bg-white text-[hsl(160,70%,30%)] rounded-full font-bold">
               Join the Community
             </Button>
           </motion.div>
