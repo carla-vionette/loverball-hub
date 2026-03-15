@@ -25,7 +25,7 @@ import {
 } from "@/lib/mockStatsData";
 import { getTeamWatchUrl, getTeamTicketsUrl } from "@/lib/teamLinksMap";
 import MySportsFeed from "@/components/MySportsFeed";
-
+import LiveScores from "@/components/LiveScores";
 
 
 type ProfileData = {
@@ -254,7 +254,7 @@ const Profile = () => {
         <MobileHeader />
         <DesktopNav />
         <BottomNav />
-        <main className="md:ml-64 pb-20 md:pb-8 pt-[92px] md:pt-[48px]">
+        <main className="md:ml-64 pb-20 md:pb-8 pt-16 md:pt-2">
           <div className="max-w-4xl mx-auto px-4 py-8 space-y-6 animate-pulse">
             <div className="flex items-start gap-4">
               <div className="w-24 h-24 rounded-full bg-muted" />
@@ -285,23 +285,18 @@ const Profile = () => {
       <DesktopNav />
       <BottomNav />
 
-      <main className="md:ml-64 pb-20 md:pb-8 pt-[92px] md:pt-[48px]">
-        <div className="max-w-4xl mx-auto px-4">
+      <main className="md:ml-64 pb-20 md:pb-8 pt-16 md:pt-2">
+        <div className="max-w-4xl mx-auto px-4 pt-2">
           <motion.div variants={staggerContainer} initial="hidden" animate="show" className="space-y-6">
 
-            {/* CINEMATIC HERO SECTION */}
-            <motion.div variants={staggerItem} className="relative -mx-4 -mt-4 md:-mx-0 md:mt-0 md:rounded-2xl overflow-hidden">
-              {/* Background gradient overlay */}
-              <div className="absolute inset-0 bg-gradient-to-b from-primary/20 via-background/60 to-background z-10" />
-              <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-transparent to-accent/10 z-10" />
-              
-              {/* Hero content */}
-              <div className="relative z-20 px-6 pt-12 pb-8 md:px-10 md:pt-16 md:pb-10">
-                <div className="flex flex-col items-center text-center gap-5">
-                  {/* Avatar with glow */}
+            {/* PROFILE HERO - Compact */}
+            <motion.div variants={staggerItem} className="relative md:rounded-2xl overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-b from-primary/15 via-background/40 to-background z-10" />
+              <div className="relative z-20 px-4 pt-4 pb-5 md:px-8 md:pt-6 md:pb-6">
+                <div className="flex flex-col items-center text-center gap-3">
                   <div className="relative">
-                    <div className="absolute -inset-2 rounded-full bg-gradient-to-br from-primary/40 to-accent/40 blur-lg" />
-                    <Avatar className="relative w-28 h-28 md:w-32 md:h-32 border-[3px] border-primary/50 glow-primary">
+                    <div className="absolute -inset-1.5 rounded-full bg-gradient-to-br from-primary/30 to-accent/30 blur-md" />
+                    <Avatar className="relative w-20 h-20 md:w-24 md:h-24 border-[3px] border-primary/50">
                       {profile.profile_photo_url ? (
                         <AvatarImage src={profile.profile_photo_url} alt={profile.name} className="object-cover" />
                       ) : null}
@@ -356,6 +351,19 @@ const Profile = () => {
               </motion.div>
             )}
 
+            {/* MY SCORES */}
+            <motion.div variants={staggerItem}>
+              <Card className="rounded-2xl overflow-hidden">
+                <CardHeader className="pb-2 pt-4 px-5">
+                  <CardTitle className="text-sm font-medium tracking-wider uppercase text-foreground/50 flex items-center gap-2">
+                    <Trophy className="w-4 h-4 text-warning" /> Live Scores
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="px-5 pb-5">
+                  <LiveScores />
+                </CardContent>
+              </Card>
+            </motion.div>
 
             {/* GREETING + DATE */}
             <motion.div variants={staggerItem} className="glass-card rounded-2xl p-5">
