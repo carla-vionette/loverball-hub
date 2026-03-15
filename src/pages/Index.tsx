@@ -86,8 +86,8 @@ const Index = () => {
     <div className="landing-theme min-h-screen bg-[hsl(var(--background))] text-[hsl(var(--foreground))] overflow-x-hidden">
       {/* ═══════════════════════ NAVBAR ═══════════════════════ */}
       <nav className="fixed top-0 inset-x-0 z-50 backdrop-blur-md bg-[hsl(var(--background)/.85)] border-b border-[hsl(var(--border))]">
-        <div className="max-w-6xl mx-auto flex items-center justify-between px-5 h-16">
-          <img src={loverballLogo} alt="Loverball" className="h-10 w-auto" />
+        <div className="max-w-6xl mx-auto flex items-center justify-between px-5 h-20">
+          <img src={loverballLogo} alt="Loverball" className="h-14 w-auto" />
 
           {/* Desktop links */}
           <div className="hidden md:flex items-center gap-8 text-sm font-medium">
