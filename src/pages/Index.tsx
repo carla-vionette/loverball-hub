@@ -12,7 +12,7 @@ import { motion } from "framer-motion";
 import { ArrowRight, Lock, Users, Sparkles, Calendar, X, Menu, Mail, Play, Heart, ShoppingBag, Clock, MapPin, Zap } from "lucide-react";
 import TrendingNews from "@/components/TrendingNews";
 import heroImage from "@/assets/hero-women-new.png";
-import { useLiveSportsBadge } from "@/hooks/useLiveSportsBadge";
+
 import loverballLogo from "@/assets/loverball-script-logo.png";
 import philosophyImage from "@/assets/philosophy-image.jpg";
 import communityImage from "@/assets/landing-community.jpg";
@@ -29,35 +29,6 @@ const signUpSchema = z.object({
 
 const ACCESS_CODE = "7988";
 
-const LiveSportsBadge = () => {
-  const { currentItem, loading: badgeLoading } = useLiveSportsBadge();
-
-  const displayText = badgeLoading
-    ? "Loading live scores…"
-    : currentItem
-      ? currentItem.text
-      : "No live games right now — check back soon!";
-
-  const isLive = currentItem?.isLive ?? false;
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.9 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.5, delay: 0.3 }}
-      className="inline-flex items-center gap-2 bg-accent text-accent-foreground rounded-full px-4 py-2 mb-8 shadow-lg"
-    >
-      <span className="relative flex h-2.5 w-2.5">
-        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent-foreground opacity-75" />
-        <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-accent-foreground" />
-      </span>
-      {currentItem?.sport && <span className="text-sm">{currentItem.sport}</span>}
-      <span className="text-[11px] font-sans font-bold tracking-wide uppercase">
-        {displayText}
-      </span>
-    </motion.div>
-  );
-};
 
 const Index = () => {
   // Component state
@@ -167,17 +138,6 @@ const Index = () => {
     setAuthModalOpen(true);
   };
 
-  const sportsTicker = [
-  { emoji: "🎾", label: "Tennis" },
-  { emoji: "🏎️", label: "Formula 1" },
-  { emoji: "⛳", label: "Golf" },
-  { emoji: "🏐", label: "Volleyball" },
-  { emoji: "🥎", label: "Softball" },
-  { emoji: "🏒", label: "Hockey" },
-  { emoji: "🏀", label: "Basketball" },
-  { emoji: "⚽", label: "Soccer" },
-  { emoji: "🏃‍♀️", label: "Running" },
-  { emoji: "🏈", label: "Football" }];
 
 
   const trendingStories = [
@@ -340,8 +300,6 @@ const Index = () => {
               transition={{ duration: 0.9, ease: "easeOut" }}
               className="relative z-10 max-w-lg">
               
-              {/* Live badge - dynamic */}
-              <LiveSportsBadge />
 
               <span className="text-[11px] font-sans font-bold tracking-[0.3em] uppercase text-primary-foreground/70 mb-6 block">
                 A GLOBAL SPORTS MEDIA + COMMUNITY PLATFORM
