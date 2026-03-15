@@ -200,6 +200,76 @@ const CreatorCard = ({ channel }: { channel: ChannelData }) => (
   </a>
 );
 
+// ─── News Article Card ───
+interface FeedArticle {
+  id: string;
+  title: string;
+  summary: string;
+  source: string;
+  source_url: string;
+  image_url: string | null;
+  category: string;
+  sport_tags: string[];
+  team_tags: string[];
+  created_at: string;
+}
+
+const NewsArticleCard = ({ article }: { article: FeedArticle }) => {
+  const primarySport = article.sport_tags?.[0] || "";
+  const emoji = getSportEmoji(primarySport);
+  const sportColor = getSportColor(primarySport);
+  const timeAgo = (() => {
+    try {
+      return formatDistanceToNow(new Date(article.created_at), { addSuffix: true });
+    } catch { return ""; }
+  })();
+
+  return (
+    <a
+      href={article.source_url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="flex-shrink-0 w-[260px] block group"
+    >
+      <Card className="overflow-hidden hover:shadow-lg transition-all duration-300 h-full border-border/20">
+        <div className="h-32 overflow-hidden relative bg-muted">
+          {article.image_url ? (
+            <img src={article.image_url} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center text-4xl" style={{ backgroundColor: `${sportColor}15` }}>
+              {emoji}
+            </div>
+          )}
+          {primarySport && (
+            <div className="absolute top-2 left-2 w-7 h-7 rounded-full flex items-center justify-center text-xs shadow-md" style={{ backgroundColor: sportColor + "E6" }}>
+              {emoji}
+            </div>
+          )}
+          <div className="absolute top-2 right-2">
+            <ExternalLink className="w-3.5 h-3.5 text-background/70" />
+          </div>
+        </div>
+        <div className="p-3">
+          <div className="flex items-center gap-2 mb-1.5">
+            <Badge variant="secondary" className="text-[10px] font-semibold px-2 py-0 rounded-full capitalize">
+              {primarySport || article.category || "Sports"}
+            </Badge>
+            <span className="text-[10px] text-muted-foreground flex items-center gap-0.5">
+              <Clock className="w-2.5 h-2.5" /> {timeAgo}
+            </span>
+          </div>
+          <h3 className="font-semibold text-xs text-foreground leading-snug line-clamp-2 group-hover:text-accent transition-colors">
+            {article.title}
+          </h3>
+          <p className="text-[10px] text-muted-foreground mt-1 uppercase tracking-wider font-semibold">
+            {article.source}
+          </p>
+        </div>
+      </Card>
+    </a>
+  );
+};
+
 // ─── Main Page ───
 const Explore = () => {
   const [search, setSearch] = useState("");
@@ -207,6 +277,29 @@ const Explore = () => {
   const [searchEvents, setSearchEvents] = useState<any[]>([]);
   const [searchUsers, setSearchUsers] = useState<any[]>([]);
   const [searchLoading, setSearchLoading] = useState(false);
+  const [newsArticles, setNewsArticles] = useState<FeedArticle[]>([]);
+  const [newsLoading, setNewsLoading] = useState(true);
+
+  // Fetch news articles from feed_items
+  useEffect(() => {
+    const fetchNews = async () => {
+      try {
+        const { data, error } = await supabase
+          .from("feed_items")
+          .select("*")
+          .order("created_at", { ascending: false })
+          .limit(12);
+        if (error) throw error;
+        setNewsArticles(data || []);
+      } catch (err) {
+        console.warn("Failed to fetch news, using fallback:", err);
+        setNewsArticles([]);
+      } finally {
+        setNewsLoading(false);
+      }
+    };
+    fetchNews();
+  }, []);
 
   // Search across events, users, and teams when query changes
   useEffect(() => {
