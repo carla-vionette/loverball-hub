@@ -298,7 +298,7 @@ const Friends = () => {
           )}
         </div>
 
-        <div className="border-t border-border p-3 shrink-0">
+        <div className="border-t border-border p-3 shrink-0 bg-background safe-area-pb">
           <div className="flex gap-2">
             <Textarea
               placeholder="Type a message…"
