@@ -50,18 +50,19 @@ const Friends = () => {
   const [acting, setActing] = useState<string | null>(null);
 
   // Chat state
-  const [chatOpen, setChatOpen] = useState<string | null>(null); // friend user_id
+  const [chatOpen, setChatOpen] = useState<string | null>(null);
   const [chatFriend, setChatFriend] = useState<FriendProfile | null>(null);
   const [messages, setMessages] = useState<any[]>([]);
   const [chatLoading, setChatLoading] = useState(false);
   const [messageText, setMessageText] = useState("");
   const [sending, setSending] = useState(false);
 
+  const isMobile = useIsMobile();
+
   useEffect(() => {
     if (user) fetchAll();
   }, [user]);
 
-  // Subscribe to new DMs for live updates
   useEffect(() => {
     if (!user) return;
     const channel = supabase
@@ -71,11 +72,9 @@ const Friends = () => {
         { event: "INSERT", schema: "public", table: "direct_messages" },
         (payload) => {
           const msg = payload.new as any;
-          // If we're in a chat with this person, add the message
           if (chatOpen && (msg.sender_id === chatOpen || msg.receiver_id === chatOpen)) {
             setMessages((prev) => [...prev, msg]);
           }
-          // Refresh friends list to update last message / unread
           fetchAll();
         }
       )
@@ -88,28 +87,24 @@ const Friends = () => {
     if (!user) return;
     setLoading(true);
 
-    // Fetch accepted friendships
     const { data: accepted } = await supabase
       .from("friendships")
       .select("id, requester_id, addressee_id, status, created_at")
       .eq("status", "accepted")
       .or(`requester_id.eq.${user.id},addressee_id.eq.${user.id}`);
 
-    // Fetch pending received
     const { data: pending } = await supabase
       .from("friendships")
       .select("id, requester_id, addressee_id, status, created_at")
       .eq("status", "pending")
       .eq("addressee_id", user.id);
 
-    // Collect friend user IDs
     const friendIds = new Set<string>();
     (accepted || []).forEach((f) => {
       friendIds.add(f.requester_id === user.id ? f.addressee_id : f.requester_id);
     });
     (pending || []).forEach((f) => friendIds.add(f.requester_id));
 
-    // Fetch profiles
     const ids = Array.from(friendIds);
     let profileMap: Record<string, FriendProfile> = {};
     if (ids.length > 0) {
@@ -122,7 +117,6 @@ const Friends = () => {
       });
     }
 
-    // Fetch last message and unread count for each friend
     const friendIdList = (accepted || []).map((f) =>
       f.requester_id === user.id ? f.addressee_id : f.requester_id
     );
@@ -131,7 +125,6 @@ const Friends = () => {
     let unreadMap: Record<string, number> = {};
 
     if (friendIdList.length > 0) {
-      // Fetch all DMs with friends in one query
       const { data: allDms } = await supabase
         .from("direct_messages")
         .select("sender_id, receiver_id, message, created_at, read")
@@ -168,7 +161,6 @@ const Friends = () => {
       };
     });
 
-    // Sort: unread first, then by last message time, then by name
     friendRows.sort((a, b) => {
       if (a.unreadCount !== b.unreadCount) return (b.unreadCount || 0) - (a.unreadCount || 0);
       if (a.lastMessage && b.lastMessage) return b.lastMessage.created_at.localeCompare(a.lastMessage.created_at);
@@ -178,14 +170,12 @@ const Friends = () => {
     });
 
     setFriends(friendRows);
-
     setPendingReceived(
       (pending || []).map((f) => ({
         ...f,
         friend_profile: profileMap[f.requester_id] || null,
       }))
     );
-
     setLoading(false);
   };
 
@@ -208,7 +198,6 @@ const Friends = () => {
     setChatFriend(friendProfile);
     setChatLoading(true);
 
-    // Fetch conversation
     const { data } = await supabase
       .from("direct_messages")
       .select("*")
@@ -220,7 +209,6 @@ const Friends = () => {
     setMessages(data || []);
     setChatLoading(false);
 
-    // Mark unread messages as read
     await supabase
       .from("direct_messages")
       .update({ read: true })
@@ -228,7 +216,6 @@ const Friends = () => {
       .eq("receiver_id", user.id)
       .eq("read", false);
 
-    // Refresh to update unread counts
     fetchAll();
   };
 
@@ -248,10 +235,9 @@ const Friends = () => {
     setSending(false);
   };
 
-  const isMobile = useIsMobile();
+  // ─── Inline JSX helpers (NOT components — avoids hook issues) ───
 
-  // ─── Chat Panel (reusable) ───
-  const ChatPanel = ({ className = "" }: { className?: string }) => {
+  const renderChatPanel = (className = "") => {
     if (!chatOpen || !chatFriend) {
       return (
         <div className={`flex flex-col items-center justify-center text-center text-muted-foreground ${className}`}>
@@ -336,8 +322,7 @@ const Friends = () => {
     );
   };
 
-  // ─── Friends List Panel (reusable) ───
-  const FriendsListPanel = ({ className = "" }: { className?: string }) => (
+  const renderFriendsListPanel = (className = "") => (
     <div className={className}>
       <Tabs defaultValue="friends">
         <TabsList className="w-full">
@@ -475,7 +460,7 @@ const Friends = () => {
   if (isMobile && chatOpen && chatFriend) {
     return (
       <div className="min-h-screen bg-background flex flex-col">
-        <ChatPanel className="flex-1" />
+        {renderChatPanel("flex-1")}
       </div>
     );
   }
@@ -499,19 +484,17 @@ const Friends = () => {
             </div>
           </header>
           <div className="max-w-2xl mx-auto px-4 py-4">
-            <FriendsListPanel />
+            {renderFriendsListPanel()}
           </div>
         </div>
 
         {/* Desktop split layout */}
         <div className="hidden md:flex h-[calc(100vh)] border-t border-border/20">
-          {/* Left: Friends list */}
           <div className="w-[360px] border-r border-border/20 overflow-y-auto p-4">
             <h1 className="text-xl font-bold mb-4">Friends & Messages</h1>
-            <FriendsListPanel />
+            {renderFriendsListPanel()}
           </div>
-          {/* Right: Chat panel */}
-          <ChatPanel className="flex-1 h-full" />
+          {renderChatPanel("flex-1 h-full")}
         </div>
       </main>
 
