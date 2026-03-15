@@ -144,10 +144,22 @@ const Auth = () => {
           throw new Error(validation.error.errors[0].message);
         }
 
+        // Configure session persistence based on "Stay signed in"
+        if (!staySignedIn) {
+          // Temporarily switch to sessionStorage for this sign-in
+          await supabase.auth.setSession({ access_token: '', refresh_token: '' }).catch(() => {});
+        }
+
         const { error, data } = await supabase.auth.signInWithPassword({
           email: validation.data.email,
           password: validation.data.password,
         });
+
+        // If user chose not to stay signed in, move session to sessionStorage
+        if (!staySignedIn && data.session) {
+          localStorage.removeItem('sb-nfjavjfxgxrpvieinpdp-auth-token');
+          sessionStorage.setItem('sb-nfjavjfxgxrpvieinpdp-auth-token', JSON.stringify(data.session));
+        }
         
         if (error) throw error;
 
