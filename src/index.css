@@ -113,22 +113,12 @@
     --gradient-cream: linear-gradient(180deg, hsl(0 0% 100%), hsl(210 20% 96%));
   }
 
-  /* Landing page theme — Bright Teal + White + Coral pops */
+  /* Landing page theme */
   .landing-theme {
-    --background: 160 70% 44%;           /* Bright teal */
-    --foreground: 0 0% 100%;
-    --card: 160 60% 38%;
-    --card-foreground: 0 0% 100%;
-    --primary: 0 0% 100%;
-    --primary-foreground: 160 70% 30%;
-    --accent: 4 100% 68%;                /* Coral #FF6B6B */
+    --primary: 174 72% 35%;
+    --primary-foreground: 0 0% 100%;
+    --accent: 0 100% 70%;
     --accent-foreground: 0 0% 100%;
-    --secondary: 160 50% 38%;
-    --secondary-foreground: 0 0% 100%;
-    --muted: 160 40% 34%;
-    --muted-foreground: 0 0% 85%;
-    --border: 160 40% 50%;
-    --landing-coral: 4 100% 68%;         /* Coral for accents */
   }
 
   .dark {
