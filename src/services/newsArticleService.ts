@@ -141,16 +141,16 @@ export async function fetchPersonalizedNews(
       id: row.id,
       title: row.title,
       summary: row.summary,
-      source_name: row.source_name,
+      source_name: row.source || null,
       source_url: row.source_url,
       image_url: row.image_url,
-      published_at: row.published_at,
+      published_at: row.created_at,
       created_at: row.created_at,
       category: row.category,
-      is_trending: row.is_trending ?? false,
+      is_trending: false,
       sport_tags: row.sport_tags || [],
       team_tags: row.team_tags || [],
-      city_tags: row.city_tags || [],
+      city_tags: [],
     }));
 
     // Client-side filter for personalized feeds
