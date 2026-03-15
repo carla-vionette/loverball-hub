@@ -12,7 +12,7 @@ import { motion } from "framer-motion";
 import { ArrowRight, Lock, Users, Sparkles, Calendar, X, Menu, Mail, Play, Heart, ShoppingBag, Clock, MapPin, Zap } from "lucide-react";
 import TrendingNews from "@/components/TrendingNews";
 import heroImage from "@/assets/hero-women-new.png";
-import { useLiveSportsBadge } from "@/hooks/useLiveSportsBadge";
+
 import loverballLogo from "@/assets/loverball-script-logo.png";
 import philosophyImage from "@/assets/philosophy-image.jpg";
 import communityImage from "@/assets/landing-community.jpg";
