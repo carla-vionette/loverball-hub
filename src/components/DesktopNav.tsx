@@ -66,6 +66,7 @@ const DesktopNav = () => {
           {mainNavItems.map((item) => {
             const Icon = item.icon;
             const active = isActive(item.path);
+            const showBadge = item.path === "/friends" && friendsBadge > 0;
             return (
               <Link
                 key={item.path}
@@ -77,7 +78,14 @@ const DesktopNav = () => {
                     : "text-muted-foreground hover:text-foreground hover:bg-secondary"
                 }`}
               >
-                <Icon className="w-5 h-5" aria-hidden="true" />
+                <div className="relative">
+                  <Icon className="w-5 h-5" aria-hidden="true" />
+                  {showBadge && (
+                    <span className="absolute -top-1.5 -right-2 bg-destructive text-destructive-foreground text-[9px] font-bold rounded-full min-w-[14px] h-3.5 flex items-center justify-center px-0.5">
+                      {friendsBadge > 99 ? "99+" : friendsBadge}
+                    </span>
+                  )}
+                </div>
                 <span className="text-sm">{item.label}</span>
               </Link>
             );
