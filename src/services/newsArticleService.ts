@@ -126,8 +126,9 @@ export async function fetchPersonalizedNews(
       .order("created_at", { ascending: false })
       .limit(limit);
 
+    // feed_items doesn't have is_trending, so for "trending" just show latest
     if (filter === "trending") {
-      query = query.eq("is_trending", true);
+      // no additional filter needed
     }
 
     const { data, error } = await query;
