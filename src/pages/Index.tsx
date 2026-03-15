@@ -126,21 +126,23 @@ const Index = () => {
       <section className="relative pt-32 pb-20 md:pt-44 md:pb-32 px-5">
         <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">
           <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={0}>
-            <span className="inline-block text-xs font-bold tracking-widest uppercase text-[hsl(var(--landing-orange))] mb-4">
+            <span className="inline-block text-xs font-bold tracking-widest uppercase opacity-80 mb-4">
               Now in early access
             </span>
-            <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-[1.08] tracking-tight mb-6">
-              The community platform for women who love{" "}
-              <span className="text-[hsl(var(--landing-orange))]">sports.</span>
+            <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-[1.08] tracking-tight mb-4">
+              HER GAME.<br />HER COMMUNITY.
             </h1>
-            <p className="text-lg sm:text-xl opacity-70 max-w-lg mb-8 leading-relaxed">
+            <p className="text-lg font-semibold opacity-90 mb-2">
+              The community platform for women who love sports.
+            </p>
+            <p className="text-base sm:text-lg opacity-70 max-w-lg mb-8 leading-relaxed">
               Connect with women who live for the game — from fans and athletes to analysts and storytellers.
             </p>
             <div className="flex flex-wrap gap-3">
-              <Button onClick={handleJoin} size="lg" className="bg-[hsl(var(--landing-orange))] hover:bg-[hsl(var(--landing-orange)/.85)] text-white rounded-full gap-2">
+              <Button onClick={handleJoin} size="lg" className="bg-white text-[hsl(160,70%,30%)] hover:bg-white/90 rounded-full gap-2 font-bold">
                 Join the Community <ArrowRight className="w-4 h-4" />
               </Button>
-              <Button onClick={handleExplore} size="lg" variant="outline" className="border-[hsl(var(--border))] text-[hsl(var(--foreground))] hover:bg-[hsl(var(--secondary))] rounded-full">
+              <Button onClick={handleExplore} size="lg" variant="outline" className="border-white/40 text-white hover:bg-white/10 rounded-full">
                 Explore the Platform
               </Button>
             </div>
@@ -151,7 +153,7 @@ const Index = () => {
               <img src={communityImage} alt="Women celebrating at a game" className="rounded-2xl object-cover h-64 w-full" />
               <img src={fansImage} alt="Fans watching sports together" className="rounded-2xl object-cover h-64 w-full mt-8" />
             </div>
-            <div className="absolute -bottom-4 -left-4 bg-[hsl(var(--landing-orange))] text-white rounded-xl px-4 py-2.5 text-sm font-bold shadow-lg flex items-center gap-2">
+            <div className="absolute -bottom-4 -left-4 bg-white text-[hsl(160,70%,30%)] rounded-xl px-4 py-2.5 text-sm font-bold shadow-lg flex items-center gap-2">
               <Users className="w-4 h-4" /> 2,000+ members & growing
             </div>
           </motion.div>
