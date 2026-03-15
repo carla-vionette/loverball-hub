@@ -138,17 +138,6 @@ const Index = () => {
     setAuthModalOpen(true);
   };
 
-  const sportsTicker = [
-  { emoji: "🎾", label: "Tennis" },
-  { emoji: "🏎️", label: "Formula 1" },
-  { emoji: "⛳", label: "Golf" },
-  { emoji: "🏐", label: "Volleyball" },
-  { emoji: "🥎", label: "Softball" },
-  { emoji: "🏒", label: "Hockey" },
-  { emoji: "🏀", label: "Basketball" },
-  { emoji: "⚽", label: "Soccer" },
-  { emoji: "🏃‍♀️", label: "Running" },
-  { emoji: "🏈", label: "Football" }];
 
 
   const trendingStories = [
