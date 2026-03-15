@@ -10,6 +10,7 @@ import { motion } from "framer-motion";
 import { ArrowRight, ArrowLeft } from "lucide-react";
 import loverballLogo from "@/assets/loverball-script-logo.png";
 import { z } from "zod";
+import { Checkbox } from "@/components/ui/checkbox";
 import WelcomeSplash from "@/components/WelcomeSplash";
 
 const signUpSchema = z.object({
@@ -35,6 +36,7 @@ const Auth = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   
+  const [staySignedIn, setStaySignedIn] = useState(true);
   const [loading, setLoading] = useState(false);
   const [splashName, setSplashName] = useState<string | null>(null);
   const [pendingRedirect, setPendingRedirect] = useState<string | null>(null);
@@ -142,10 +144,22 @@ const Auth = () => {
           throw new Error(validation.error.errors[0].message);
         }
 
+        // Configure session persistence based on "Stay signed in"
+        if (!staySignedIn) {
+          // Temporarily switch to sessionStorage for this sign-in
+          await supabase.auth.setSession({ access_token: '', refresh_token: '' }).catch(() => {});
+        }
+
         const { error, data } = await supabase.auth.signInWithPassword({
           email: validation.data.email,
           password: validation.data.password,
         });
+
+        // If user chose not to stay signed in, move session to sessionStorage
+        if (!staySignedIn && data.session) {
+          localStorage.removeItem('sb-nfjavjfxgxrpvieinpdp-auth-token');
+          sessionStorage.setItem('sb-nfjavjfxgxrpvieinpdp-auth-token', JSON.stringify(data.session));
+        }
         
         if (error) throw error;
 
@@ -407,6 +421,23 @@ const Auth = () => {
                     className="rounded-none h-12 border-border bg-background placeholder:text-foreground/30"
                   />
                 </div>
+
+                {!isSignUp && (
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id="staySignedIn"
+                      checked={staySignedIn}
+                      onCheckedChange={(checked) => setStaySignedIn(checked === true)}
+                      className="border-border data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+                    />
+                    <Label
+                      htmlFor="staySignedIn"
+                      className="text-sm text-foreground/60 cursor-pointer select-none"
+                    >
+                      Stay signed in
+                    </Label>
+                  </div>
+                )}
 
                 <Button
                   type="submit" 
