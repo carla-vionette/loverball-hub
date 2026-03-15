@@ -393,15 +393,15 @@ const Index = () => {
 
       </section>
 
-      {/* ═══════ SPORTS TICKER ═══════ */}
-      <div className="bg-accent py-3.5 overflow-hidden">
-        <div className="flex items-center gap-10 whitespace-nowrap animate-[shimmer_30s_linear_infinite] px-8">
-          {[...sportsTicker, ...sportsTicker, ...sportsTicker].map((sport, i) =>
-          <span key={i} className="text-[12px] font-sans font-bold tracking-[0.25em] uppercase text-accent-foreground/90 flex items-center gap-2.5">
-              <span className="text-lg">{sport.emoji}</span>
-              {sport.label}
-            </span>
-          )}
+      {/* ═══════ ANNOUNCEMENT BANNER ═══════ */}
+      <div className="bg-primary/10 border-y border-primary/20 py-3">
+        <div className="max-w-[1400px] mx-auto px-8 flex items-center justify-center gap-3">
+          <span className="inline-flex items-center gap-1.5 bg-primary/20 text-primary rounded-full px-3 py-0.5 text-[10px] font-bold uppercase tracking-widest">
+            ✨ Early Access
+          </span>
+          <span className="text-[12px] font-sans font-semibold tracking-wide text-foreground/70">
+            Join 1,000+ women who love sports — your community is waiting
+          </span>
         </div>
       </div>
 
