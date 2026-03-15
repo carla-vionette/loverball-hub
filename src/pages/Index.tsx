@@ -89,7 +89,6 @@ const Index = () => {
         <div className="max-w-6xl mx-auto flex items-center justify-between px-5 h-20">
           <img src={loverballLogo} alt="Loverball" className="h-14 w-auto" />
 
-          {/* Desktop links */}
           <div className="hidden md:flex items-center gap-8 text-sm font-medium">
             {["About", "Community", "Features", "Join"].map((l) => (
               <a key={l} href={`#${l.toLowerCase()}`} className="opacity-70 hover:opacity-100 transition-opacity">
@@ -98,11 +97,10 @@ const Index = () => {
             ))}
           </div>
 
-          <Button onClick={handleJoin} size="sm" className="hidden md:inline-flex bg-white text-[hsl(160,70%,30%)] hover:bg-white/90 rounded-full font-bold">
+          <Button onClick={handleJoin} size="sm" className="hidden md:inline-flex bg-[hsl(var(--landing-coral))] hover:bg-[hsl(var(--landing-coral)/.85)] text-white rounded-full font-bold shadow-lg">
             Join the Community
           </Button>
 
-          {/* Mobile hamburger */}
           <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="md:hidden p-2 -mr-2" aria-label="Menu">
             {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
@@ -115,7 +113,7 @@ const Index = () => {
                 {l}
               </a>
             ))}
-            <Button onClick={handleJoin} className="w-full bg-white text-[hsl(160,70%,30%)] rounded-full font-bold">
+            <Button onClick={handleJoin} className="w-full bg-[hsl(var(--landing-coral))] hover:bg-[hsl(var(--landing-coral)/.85)] text-white rounded-full font-bold">
               Join the Community
             </Button>
           </motion.div>
@@ -126,7 +124,7 @@ const Index = () => {
       <section className="relative pt-32 pb-20 md:pt-44 md:pb-32 px-5">
         <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">
           <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={0}>
-            <span className="inline-block text-xs font-bold tracking-widest uppercase opacity-80 mb-4">
+            <span className="inline-block text-xs font-bold tracking-widest uppercase bg-[hsl(var(--landing-coral))] text-white rounded-full px-3 py-1 mb-5">
               Now in early access
             </span>
             <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-[1.08] tracking-tight mb-4">
@@ -139,7 +137,7 @@ const Index = () => {
               Connect with women who live for the game — from fans and athletes to analysts and storytellers.
             </p>
             <div className="flex flex-wrap gap-3">
-              <Button onClick={handleJoin} size="lg" className="bg-white text-[hsl(160,70%,30%)] hover:bg-white/90 rounded-full gap-2 font-bold">
+              <Button onClick={handleJoin} size="lg" className="bg-[hsl(var(--landing-coral))] hover:bg-[hsl(var(--landing-coral)/.85)] text-white rounded-full gap-2 font-bold shadow-lg">
                 Join the Community <ArrowRight className="w-4 h-4" />
               </Button>
               <Button onClick={handleExplore} size="lg" variant="outline" className="border-white/40 text-white hover:bg-white/10 rounded-full">
@@ -153,7 +151,7 @@ const Index = () => {
               <img src={communityImage} alt="Women celebrating at a game" className="rounded-2xl object-cover h-64 w-full" />
               <img src={fansImage} alt="Fans watching sports together" className="rounded-2xl object-cover h-64 w-full mt-8" />
             </div>
-            <div className="absolute -bottom-4 -left-4 bg-white text-[hsl(160,70%,30%)] rounded-xl px-4 py-2.5 text-sm font-bold shadow-lg flex items-center gap-2">
+            <div className="absolute -bottom-4 -left-4 bg-[hsl(var(--landing-coral))] text-white rounded-xl px-4 py-2.5 text-sm font-bold shadow-lg flex items-center gap-2">
               <Users className="w-4 h-4" /> 2,000+ members & growing
             </div>
           </motion.div>
@@ -161,9 +159,9 @@ const Index = () => {
       </section>
 
       {/* ═══════════════════════ PROBLEM ═══════════════════════ */}
-      <section id="about" className="py-20 md:py-28 px-5 bg-[hsl(var(--landing-navy-light))]">
+      <section id="about" className="py-20 md:py-28 px-5 bg-[hsl(160,60%,38%)]">
         <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="max-w-3xl mx-auto text-center">
-          <span className="inline-block text-xs font-bold tracking-widest uppercase text-[hsl(var(--landing-orange))] mb-4">
+          <span className="inline-block text-xs font-bold tracking-widest uppercase text-[hsl(var(--landing-coral))] mb-4">
             The problem
           </span>
           <h2 className="font-display text-3xl sm:text-4xl font-extrabold mb-6">
@@ -179,7 +177,7 @@ const Index = () => {
       <section className="py-20 md:py-28 px-5">
         <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-14 items-center">
           <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}>
-            <span className="inline-block text-xs font-bold tracking-widest uppercase text-[hsl(var(--landing-orange))] mb-4">
+            <span className="inline-block text-xs font-bold tracking-widest uppercase text-[hsl(var(--landing-coral))] mb-4">
               The solution
             </span>
             <h2 className="font-display text-3xl sm:text-4xl font-extrabold mb-6">
@@ -196,10 +194,10 @@ const Index = () => {
       </section>
 
       {/* ═══════════════════════ FEATURES ═══════════════════════ */}
-      <section id="features" className="py-20 md:py-28 px-5 bg-[hsl(var(--landing-navy-light))]">
+      <section id="features" className="py-20 md:py-28 px-5 bg-[hsl(160,60%,38%)]">
         <div className="max-w-6xl mx-auto">
           <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="text-center mb-14">
-            <span className="inline-block text-xs font-bold tracking-widest uppercase text-[hsl(var(--landing-orange))] mb-4">
+            <span className="inline-block text-xs font-bold tracking-widest uppercase text-[hsl(var(--landing-coral))] mb-4">
               Features
             </span>
             <h2 className="font-display text-3xl sm:text-4xl font-extrabold">
@@ -216,10 +214,10 @@ const Index = () => {
                 whileInView="visible"
                 viewport={{ once: true }}
                 custom={i}
-                className="group bg-[hsl(var(--card))] border border-[hsl(var(--border))] rounded-2xl p-6 hover:border-[hsl(var(--landing-orange)/.4)] transition-colors duration-300"
+                className="group bg-[hsl(var(--card))] border border-[hsl(var(--border))] rounded-2xl p-6 hover:border-[hsl(var(--landing-coral)/.5)] transition-colors duration-300"
               >
-                <div className="w-10 h-10 rounded-xl bg-[hsl(var(--landing-orange)/.12)] flex items-center justify-center mb-4 group-hover:bg-[hsl(var(--landing-orange)/.2)] transition-colors">
-                  <f.icon className="w-5 h-5 text-[hsl(var(--landing-orange))]" />
+                <div className="w-10 h-10 rounded-xl bg-[hsl(var(--landing-coral)/.15)] flex items-center justify-center mb-4 group-hover:bg-[hsl(var(--landing-coral)/.25)] transition-colors">
+                  <f.icon className="w-5 h-5 text-[hsl(var(--landing-coral))]" />
                 </div>
                 <h3 className="font-display font-bold text-lg mb-2">{f.title}</h3>
                 <p className="text-sm opacity-60 leading-relaxed">{f.desc}</p>
@@ -233,7 +231,7 @@ const Index = () => {
       <section className="py-20 md:py-28 px-5">
         <div className="max-w-3xl mx-auto text-center">
           <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}>
-            <span className="inline-block text-xs font-bold tracking-widest uppercase text-[hsl(var(--landing-orange))] mb-4">
+            <span className="inline-block text-xs font-bold tracking-widest uppercase text-[hsl(var(--landing-coral))] mb-4">
               Who it's for
             </span>
             <h2 className="font-display text-3xl sm:text-4xl font-extrabold mb-10">
@@ -265,10 +263,10 @@ const Index = () => {
       </section>
 
       {/* ═══════════════════════ COMMUNITY ═══════════════════════ */}
-      <section id="community" className="py-20 md:py-28 px-5 bg-[hsl(var(--landing-navy-light))]">
+      <section id="community" className="py-20 md:py-28 px-5 bg-[hsl(160,60%,38%)]">
         <div className="max-w-6xl mx-auto">
           <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="text-center mb-14">
-            <span className="inline-block text-xs font-bold tracking-widest uppercase text-[hsl(var(--landing-orange))] mb-4">
+            <span className="inline-block text-xs font-bold tracking-widest uppercase text-[hsl(var(--landing-coral))] mb-4">
               Community
             </span>
             <h2 className="font-display text-3xl sm:text-4xl font-extrabold mb-4">
@@ -288,7 +286,7 @@ const Index = () => {
                 whileInView="visible"
                 viewport={{ once: true }}
                 custom={i}
-                className="bg-[hsl(var(--card))] border border-[hsl(var(--border))] rounded-2xl p-6"
+                className="bg-[hsl(var(--card))] border border-[hsl(var(--border))] rounded-2xl p-6 hover:border-[hsl(var(--landing-coral)/.4)] transition-colors duration-300"
               >
                 <div className="flex items-center gap-3 mb-4">
                   <span className="text-2xl">{p.avatar}</span>
@@ -307,14 +305,14 @@ const Index = () => {
       {/* ═══════════════════════ FINAL CTA ═══════════════════════ */}
       <section id="join" className="py-24 md:py-32 px-5">
         <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="max-w-2xl mx-auto text-center">
-          <Trophy className="w-10 h-10 text-[hsl(var(--landing-orange))] mx-auto mb-6" />
+          <Trophy className="w-10 h-10 text-[hsl(var(--landing-coral))] mx-auto mb-6" />
           <h2 className="font-display text-3xl sm:text-4xl font-extrabold mb-4">
             Join the Loverball community.
           </h2>
           <p className="opacity-60 text-lg mb-8 max-w-lg mx-auto">
             Be part of a new era of sports conversation. Free to join.
           </p>
-          <Button onClick={handleJoin} size="lg" className="bg-white text-[hsl(160,70%,30%)] hover:bg-white/90 rounded-full gap-2 text-base px-8 font-bold">
+          <Button onClick={handleJoin} size="lg" className="bg-[hsl(var(--landing-coral))] hover:bg-[hsl(var(--landing-coral)/.85)] text-white rounded-full gap-2 text-base px-8 font-bold shadow-lg">
             Join the Community <ArrowRight className="w-4 h-4" />
           </Button>
         </motion.div>
