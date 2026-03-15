@@ -26,7 +26,7 @@ import { getTeamWatchUrl, getTeamTicketsUrl } from "@/lib/teamLinksMap";
 import MySportsFeed from "@/components/MySportsFeed";
 import LiveScores from "@/components/LiveScores";
 import TeamFollowSection from "@/components/TeamFollowSection";
-import { getSportEmoji, getSportColor } from "@/services/newsArticleService";
+import { getSportEmoji } from "@/services/newsArticleService";
 
 type ProfileData = {
   id: string;
