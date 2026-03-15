@@ -10,6 +10,7 @@ import { motion } from "framer-motion";
 import { ArrowRight, ArrowLeft } from "lucide-react";
 import loverballLogo from "@/assets/loverball-script-logo.png";
 import { z } from "zod";
+import { Checkbox } from "@/components/ui/checkbox";
 import WelcomeSplash from "@/components/WelcomeSplash";
 
 const signUpSchema = z.object({
