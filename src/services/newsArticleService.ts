@@ -121,9 +121,9 @@ export async function fetchPersonalizedNews(
   try {
     // Query news_articles with joined tags
     let query = supabase
-      .from("news_articles" as any)
+      .from("feed_items")
       .select("*")
-      .order("published_at", { ascending: false })
+      .order("created_at", { ascending: false })
       .limit(limit);
 
     if (filter === "trending") {
