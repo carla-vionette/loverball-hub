@@ -23,8 +23,27 @@ const secondaryNavItems = [
 
 const DesktopNav = () => {
   const location = useLocation();
-  const { isAdmin } = useAuth();
+  const { isAdmin, user } = useAuth();
   const isActive = (path: string) => location.pathname === path;
+  const [friendsBadge, setFriendsBadge] = useState(0);
+
+  useEffect(() => {
+    if (!user) return;
+    const fetchCount = async () => {
+      const [unreadRes, pendingRes] = await Promise.all([
+        supabase.from("direct_messages").select("id", { count: "exact", head: true }).eq("receiver_id", user.id).eq("read", false),
+        supabase.from("friendships").select("id", { count: "exact", head: true }).eq("addressee_id", user.id).eq("status", "pending"),
+      ]);
+      setFriendsBadge((unreadRes.count || 0) + (pendingRes.count || 0));
+    };
+    fetchCount();
+    const channel = supabase
+      .channel("desktop-nav-badge")
+      .on("postgres_changes", { event: "*", schema: "public", table: "direct_messages", filter: `receiver_id=eq.${user.id}` }, () => fetchCount())
+      .on("postgres_changes", { event: "*", schema: "public", table: "friendships", filter: `addressee_id=eq.${user.id}` }, () => fetchCount())
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, [user?.id]);
 
   return (
     <aside
