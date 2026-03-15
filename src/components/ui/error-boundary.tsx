@@ -26,6 +26,12 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
     return { hasError: true, error };
   }
 
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    console.error("[ErrorBoundary] Caught error:", error.message);
+    console.error("[ErrorBoundary] Stack:", error.stack);
+    console.error("[ErrorBoundary] Component stack:", errorInfo.componentStack);
+  }
+
   handleReset = () => {
     this.setState({ hasError: false, error: null });
     this.props.onReset?.();
@@ -46,7 +52,7 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
           </div>
           <h3 className="text-lg font-semibold text-foreground font-sans">Something went wrong</h3>
           <p className="text-sm text-muted-foreground text-center max-w-sm">
-            An unexpected error occurred. Please try again.
+            {this.state.error?.message || "An unexpected error occurred. Please try again."}
           </p>
           <Button onClick={this.handleReset} variant="outline" size="sm" aria-label="Try again">
             Try again
