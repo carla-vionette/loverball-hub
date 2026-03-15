@@ -11,7 +11,7 @@ import { DISCOVER_VIDEOS, DISCOVER_CATEGORIES, type DiscoverVideo } from "@/lib/
 import TeamFollowSection from "@/components/TeamFollowSection";
 import { supabase } from "@/integrations/supabase/client";
 import { format, formatDistanceToNow } from "date-fns";
-import { getSportEmoji, getSportColor } from "@/services/newsArticleService";
+import { getSportEmoji, getSportColor, getCategoryEmoji, generateSummary } from "@/services/newsArticleService";
 
 const formatViews = (n: number) => {
   if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
