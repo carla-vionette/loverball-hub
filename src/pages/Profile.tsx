@@ -254,7 +254,7 @@ const Profile = () => {
         <MobileHeader />
         <DesktopNav />
         <BottomNav />
-        <main className="md:ml-64 pb-20 md:pb-8 pt-[92px] md:pt-[48px]">
+        <main className="md:ml-64 pb-20 md:pb-8 pt-16 md:pt-2">
           <div className="max-w-4xl mx-auto px-4 py-8 space-y-6 animate-pulse">
             <div className="flex items-start gap-4">
               <div className="w-24 h-24 rounded-full bg-muted" />
