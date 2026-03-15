@@ -112,13 +112,13 @@ const PageTracker = () => {
 const App = () => (
   <ErrorBoundary>
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <NetworkStatus />
-          <InstallPrompt />
-          <BrowserRouter>
+      <BrowserRouter>
+        <AuthProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <NetworkStatus />
+            <InstallPrompt />
             <PageTracker />
             <Suspense fallback={<PageFallback />}>
               <Routes>
@@ -172,7 +172,7 @@ const App = () => (
                 <Route path="/friends" element={<ProtectedRoute><Friends /></ProtectedRoute>} />
                 <Route path="/inbox" element={<ProtectedRoute><Inbox /></ProtectedRoute>} />
                 <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
-                
+
                 <Route path="/billing" element={<ProtectedRoute><BillingPage /></ProtectedRoute>} />
                 <Route path="/invites" element={<ProtectedRoute><InvitesPage /></ProtectedRoute>} />
                 <Route path="/videos" element={<ProtectedRoute><VideoLibrary /></ProtectedRoute>} />
@@ -187,9 +187,9 @@ const App = () => (
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </Suspense>
-          </BrowserRouter>
-        </TooltipProvider>
-      </AuthProvider>
+          </TooltipProvider>
+        </AuthProvider>
+      </BrowserRouter>
     </QueryClientProvider>
   </ErrorBoundary>
 );
