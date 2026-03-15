@@ -121,13 +121,14 @@ export async function fetchPersonalizedNews(
   try {
     // Query news_articles with joined tags
     let query = supabase
-      .from("news_articles" as any)
+      .from("feed_items")
       .select("*")
-      .order("published_at", { ascending: false })
+      .order("created_at", { ascending: false })
       .limit(limit);
 
+    // feed_items doesn't have is_trending, so for "trending" just show latest
     if (filter === "trending") {
-      query = query.eq("is_trending", true);
+      // no additional filter needed
     }
 
     const { data, error } = await query;
@@ -141,16 +142,16 @@ export async function fetchPersonalizedNews(
       id: row.id,
       title: row.title,
       summary: row.summary,
-      source_name: row.source_name,
+      source_name: row.source || null,
       source_url: row.source_url,
       image_url: row.image_url,
-      published_at: row.published_at,
+      published_at: row.created_at,
       created_at: row.created_at,
       category: row.category,
-      is_trending: row.is_trending ?? false,
+      is_trending: false,
       sport_tags: row.sport_tags || [],
       team_tags: row.team_tags || [],
-      city_tags: row.city_tags || [],
+      city_tags: [],
     }));
 
     // Client-side filter for personalized feeds
@@ -208,10 +209,9 @@ export async function fetchPersonalizedNews(
 export async function fetchTrendingNews(limit = 8): Promise<NewsArticle[]> {
   try {
     const { data, error } = await supabase
-      .from("news_articles" as any)
+      .from("feed_items")
       .select("*")
-      .eq("is_trending", true)
-      .order("published_at", { ascending: false })
+      .order("created_at", { ascending: false })
       .limit(limit);
 
     if (error) {
@@ -223,16 +223,16 @@ export async function fetchTrendingNews(limit = 8): Promise<NewsArticle[]> {
       id: row.id,
       title: row.title,
       summary: row.summary,
-      source_name: row.source_name,
+      source_name: row.source || null,
       source_url: row.source_url,
       image_url: row.image_url,
-      published_at: row.published_at,
+      published_at: row.created_at,
       created_at: row.created_at,
       category: row.category,
-      is_trending: true,
+      is_trending: false,
       sport_tags: row.sport_tags || [],
       team_tags: row.team_tags || [],
-      city_tags: row.city_tags || [],
+      city_tags: [],
     }));
   } catch (err) {
     console.error("Trending fetch error:", err);
