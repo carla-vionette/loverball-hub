@@ -314,7 +314,7 @@ const Index = () => {
           <p className="opacity-60 text-lg mb-8 max-w-lg mx-auto">
             Be part of a new era of sports conversation. Free to join.
           </p>
-          <Button onClick={handleJoin} size="lg" className="bg-[hsl(var(--landing-orange))] hover:bg-[hsl(var(--landing-orange)/.85)] text-white rounded-full gap-2 text-base px-8">
+          <Button onClick={handleJoin} size="lg" className="bg-white text-[hsl(160,70%,30%)] hover:bg-white/90 rounded-full gap-2 text-base px-8 font-bold">
             Join the Community <ArrowRight className="w-4 h-4" />
           </Button>
         </motion.div>
