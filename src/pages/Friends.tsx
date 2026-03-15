@@ -298,7 +298,7 @@ const Friends = () => {
           )}
         </div>
 
-        <div className="border-t border-border p-3 shrink-0">
+        <div className="border-t border-border p-3 shrink-0 bg-background safe-area-pb">
           <div className="flex gap-2">
             <Textarea
               placeholder="Type a message…"
@@ -459,8 +459,8 @@ const Friends = () => {
   // ─── Mobile: Chat fullscreen takeover ───
   if (isMobile && chatOpen && chatFriend) {
     return (
-      <div className="min-h-screen bg-background flex flex-col">
-        {renderChatPanel("flex-1")}
+      <div className="fixed inset-0 bg-background flex flex-col z-40">
+        {renderChatPanel("flex-1 min-h-0")}
       </div>
     );
   }
