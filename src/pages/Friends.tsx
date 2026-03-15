@@ -265,7 +265,7 @@ const Friends = () => {
           <h2 className="text-base font-bold truncate">{chatFriend.name}</h2>
         </div>
 
-        <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3">
+        <div className={`flex-1 overflow-y-auto px-4 py-4 space-y-3 ${isMobile ? "pb-28" : ""}`}>
           {chatLoading ? (
             <div className="flex justify-center py-12">
               <Loader2 className="w-6 h-6 animate-spin text-primary" />
@@ -298,7 +298,7 @@ const Friends = () => {
           )}
         </div>
 
-        <div className="border-t border-border p-3 shrink-0 bg-background safe-area-pb">
+        <div className={`border-t border-border p-3 shrink-0 bg-background safe-area-pb ${isMobile ? "sticky bottom-0 z-20" : ""}`}>
           <div className="flex gap-2">
             <Textarea
               placeholder="Type a message…"
@@ -459,7 +459,7 @@ const Friends = () => {
   // ─── Mobile: Chat fullscreen takeover ───
   if (isMobile && chatOpen && chatFriend) {
     return (
-      <div className="fixed inset-0 bg-background flex flex-col z-40">
+      <div className="fixed inset-0 h-[100dvh] bg-background flex flex-col z-40">
         {renderChatPanel("flex-1 min-h-0")}
       </div>
     );
