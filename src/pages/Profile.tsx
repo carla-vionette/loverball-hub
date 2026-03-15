@@ -351,6 +351,19 @@ const Profile = () => {
               </motion.div>
             )}
 
+            {/* MY SCORES */}
+            <motion.div variants={staggerItem}>
+              <Card className="rounded-2xl overflow-hidden">
+                <CardHeader className="pb-2 pt-4 px-5">
+                  <CardTitle className="text-sm font-medium tracking-wider uppercase text-foreground/50 flex items-center gap-2">
+                    <Trophy className="w-4 h-4 text-warning" /> Live Scores
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="px-5 pb-5">
+                  <LiveScores />
+                </CardContent>
+              </Card>
+            </motion.div>
 
             {/* GREETING + DATE */}
             <motion.div variants={staggerItem} className="glass-card rounded-2xl p-5">
