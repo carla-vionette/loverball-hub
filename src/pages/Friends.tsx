@@ -248,26 +248,38 @@ const Friends = () => {
     setSending(false);
   };
 
-  // Chat view
-  if (chatOpen && chatFriend) {
+  const isMobile = useIsMobile();
+
+  // ─── Chat Panel (reusable) ───
+  const ChatPanel = ({ className = "" }: { className?: string }) => {
+    if (!chatOpen || !chatFriend) {
+      return (
+        <div className={`flex flex-col items-center justify-center text-center text-muted-foreground ${className}`}>
+          <MessageCircle className="w-12 h-12 mb-3 opacity-20" />
+          <p className="font-medium">Select a friend to start chatting</p>
+          <p className="text-sm">Your messages will appear here</p>
+        </div>
+      );
+    }
+
     return (
-      <div className="min-h-screen bg-background flex flex-col">
-        <header className="sticky top-0 z-40 bg-background/90 backdrop-blur-sm border-b border-border">
-          <div className="max-w-2xl mx-auto px-4 h-14 flex items-center gap-3">
+      <div className={`flex flex-col ${className}`}>
+        <div className="flex items-center gap-3 p-3 border-b border-border shrink-0">
+          {isMobile && (
             <Button variant="ghost" size="icon" onClick={() => { setChatOpen(null); setChatFriend(null); setMessages([]); }}>
               <ArrowLeft className="w-5 h-5" />
             </Button>
-            <Avatar className="w-8 h-8">
-              <AvatarImage src={chatFriend.profile_photo_url || undefined} />
-              <AvatarFallback className="bg-primary/10 text-primary text-xs font-semibold">
-                {chatFriend.name?.charAt(0).toUpperCase()}
-              </AvatarFallback>
-            </Avatar>
-            <h1 className="text-base font-bold truncate">{chatFriend.name}</h1>
-          </div>
-        </header>
+          )}
+          <Avatar className="w-8 h-8">
+            <AvatarImage src={chatFriend.profile_photo_url || undefined} />
+            <AvatarFallback className="bg-primary/10 text-primary text-xs font-semibold">
+              {chatFriend.name?.charAt(0).toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
+          <h2 className="text-base font-bold truncate">{chatFriend.name}</h2>
+        </div>
 
-        <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3 max-w-2xl mx-auto w-full">
+        <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3">
           {chatLoading ? (
             <div className="flex justify-center py-12">
               <Loader2 className="w-6 h-6 animate-spin text-primary" />
@@ -300,8 +312,8 @@ const Friends = () => {
           )}
         </div>
 
-        <div className="sticky bottom-0 bg-background border-t border-border p-3">
-          <div className="max-w-2xl mx-auto flex gap-2">
+        <div className="border-t border-border p-3 shrink-0">
+          <div className="flex gap-2">
             <Textarea
               placeholder="Type a message…"
               value={messageText}
@@ -322,53 +334,46 @@ const Friends = () => {
         </div>
       </div>
     );
-  }
+  };
 
-  return (
-    <div className="min-h-screen bg-background pb-24">
-      <header className="sticky top-0 z-40 bg-background/90 backdrop-blur-sm border-b border-border">
-        <div className="max-w-2xl mx-auto px-4 h-14 flex items-center gap-3">
-          <Button variant="ghost" size="icon" onClick={() => navigate(-1)}>
-            <ArrowLeft className="w-5 h-5" />
-          </Button>
-          <h1 className="text-lg font-bold">Friends & Messages</h1>
-        </div>
-      </header>
+  // ─── Friends List Panel (reusable) ───
+  const FriendsListPanel = ({ className = "" }: { className?: string }) => (
+    <div className={className}>
+      <Tabs defaultValue="friends">
+        <TabsList className="w-full">
+          <TabsTrigger value="friends" className="flex-1">
+            <MessageCircle className="w-4 h-4 mr-1.5" />
+            Friends ({friends.length})
+          </TabsTrigger>
+          <TabsTrigger value="requests" className="flex-1 relative">
+            <Clock className="w-4 h-4 mr-1.5" />
+            Requests
+            {pendingReceived.length > 0 && (
+              <span className="ml-1.5 bg-destructive text-destructive-foreground text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                {pendingReceived.length}
+              </span>
+            )}
+          </TabsTrigger>
+        </TabsList>
 
-      <div className="max-w-2xl mx-auto px-4 py-4">
-        <Tabs defaultValue="friends">
-          <TabsList className="w-full">
-            <TabsTrigger value="friends" className="flex-1">
-              <MessageCircle className="w-4 h-4 mr-1.5" />
-              Friends ({friends.length})
-            </TabsTrigger>
-            <TabsTrigger value="requests" className="flex-1 relative">
-              <Clock className="w-4 h-4 mr-1.5" />
-              Requests
-              {pendingReceived.length > 0 && (
-                <span className="ml-1.5 bg-destructive text-destructive-foreground text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center">
-                  {pendingReceived.length}
-                </span>
-              )}
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="friends" className="mt-4 space-y-2">
-            {loading ? (
-              <div className="flex justify-center py-12">
-                <Loader2 className="w-6 h-6 animate-spin text-primary" />
-              </div>
-            ) : friends.length === 0 ? (
-              <div className="text-center py-12 text-muted-foreground">
-                <Users className="w-12 h-12 mx-auto mb-3 opacity-30" />
-                <p className="font-medium">No friends yet</p>
-                <p className="text-sm">Attend events and connect with people!</p>
-              </div>
-            ) : (
-              friends.map((f) => (
+        <TabsContent value="friends" className="mt-4 space-y-2">
+          {loading ? (
+            <div className="flex justify-center py-12">
+              <Loader2 className="w-6 h-6 animate-spin text-primary" />
+            </div>
+          ) : friends.length === 0 ? (
+            <div className="text-center py-12 text-muted-foreground">
+              <Users className="w-12 h-12 mx-auto mb-3 opacity-30" />
+              <p className="font-medium">No friends yet</p>
+              <p className="text-sm">Attend events and connect with people!</p>
+            </div>
+          ) : (
+            friends.map((f) => {
+              const isSelected = chatOpen === f.friend_profile?.id;
+              return (
                 <Card
                   key={f.id}
-                  className={`cursor-pointer hover:bg-secondary/50 transition-colors ${f.unreadCount ? "border-primary/30" : ""}`}
+                  className={`cursor-pointer hover:bg-secondary/50 transition-colors ${f.unreadCount ? "border-primary/30" : ""} ${isSelected ? "bg-primary/5 border-primary/40" : ""}`}
                   onClick={() => f.friend_profile && openChat(f.friend_profile)}
                 >
                   <CardContent className="flex items-center gap-3 p-3">
@@ -387,9 +392,7 @@ const Friends = () => {
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
-                        <p className={`font-semibold text-foreground truncate ${f.unreadCount ? "text-foreground" : ""}`}>
-                          {f.friend_profile?.name}
-                        </p>
+                        <p className="font-semibold text-foreground truncate">{f.friend_profile?.name}</p>
                         {!f.lastMessage && (
                           <Badge variant="outline" className="text-[10px] shrink-0">
                             <Check className="w-3 h-3 mr-0.5" /> Friends
@@ -415,63 +418,108 @@ const Friends = () => {
                     </div>
                   </CardContent>
                 </Card>
-              ))
-            )}
-          </TabsContent>
+              );
+            })
+          )}
+        </TabsContent>
 
-          <TabsContent value="requests" className="mt-4 space-y-2">
-            {loading ? (
-              <div className="flex justify-center py-12">
-                <Loader2 className="w-6 h-6 animate-spin text-primary" />
-              </div>
-            ) : pendingReceived.length === 0 ? (
-              <div className="text-center py-12 text-muted-foreground">
-                <Clock className="w-12 h-12 mx-auto mb-3 opacity-30" />
-                <p className="font-medium">No pending requests</p>
-              </div>
-            ) : (
-              pendingReceived.map((f) => (
-                <Card key={f.id}>
-                  <CardContent className="flex items-center gap-3 p-3">
-                    <Avatar
-                      className="w-12 h-12 cursor-pointer"
-                      onClick={() => {
-                        if (f.friend_profile) {
-                          setSelectedProfile(f.friend_profile);
-                          setDrawerOpen(true);
-                        }
-                      }}
-                    >
-                      <AvatarImage src={f.friend_profile?.profile_photo_url || undefined} />
-                      <AvatarFallback className="bg-primary/10 text-primary font-semibold">
-                        {f.friend_profile?.name?.charAt(0).toUpperCase() || "?"}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-foreground truncate">{f.friend_profile?.name}</p>
-                      <p className="text-xs text-muted-foreground">Wants to be friends</p>
-                    </div>
-                    <Button
-                      size="sm"
-                      onClick={() => handleAccept(f.id, f.friend_profile?.name || "User")}
-                      disabled={acting === f.id}
-                    >
-                      {acting === f.id ? <Loader2 className="w-4 h-4 animate-spin" /> : "Accept"}
-                    </Button>
-                  </CardContent>
-                </Card>
-              ))
-            )}
-          </TabsContent>
-        </Tabs>
+        <TabsContent value="requests" className="mt-4 space-y-2">
+          {loading ? (
+            <div className="flex justify-center py-12">
+              <Loader2 className="w-6 h-6 animate-spin text-primary" />
+            </div>
+          ) : pendingReceived.length === 0 ? (
+            <div className="text-center py-12 text-muted-foreground">
+              <Clock className="w-12 h-12 mx-auto mb-3 opacity-30" />
+              <p className="font-medium">No pending requests</p>
+            </div>
+          ) : (
+            pendingReceived.map((f) => (
+              <Card key={f.id}>
+                <CardContent className="flex items-center gap-3 p-3">
+                  <Avatar
+                    className="w-12 h-12 cursor-pointer"
+                    onClick={() => {
+                      if (f.friend_profile) {
+                        setSelectedProfile(f.friend_profile);
+                        setDrawerOpen(true);
+                      }
+                    }}
+                  >
+                    <AvatarImage src={f.friend_profile?.profile_photo_url || undefined} />
+                    <AvatarFallback className="bg-primary/10 text-primary font-semibold">
+                      {f.friend_profile?.name?.charAt(0).toUpperCase() || "?"}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-foreground truncate">{f.friend_profile?.name}</p>
+                    <p className="text-xs text-muted-foreground">Wants to be friends</p>
+                  </div>
+                  <Button
+                    size="sm"
+                    onClick={() => handleAccept(f.id, f.friend_profile?.name || "User")}
+                    disabled={acting === f.id}
+                  >
+                    {acting === f.id ? <Loader2 className="w-4 h-4 animate-spin" /> : "Accept"}
+                  </Button>
+                </CardContent>
+              </Card>
+            ))
+          )}
+        </TabsContent>
+      </Tabs>
+    </div>
+  );
+
+  // ─── Mobile: Chat fullscreen takeover ───
+  if (isMobile && chatOpen && chatFriend) {
+    return (
+      <div className="min-h-screen bg-background flex flex-col">
+        <ChatPanel className="flex-1" />
       </div>
+    );
+  }
+
+  // ─── Desktop: Split panel layout ───
+  return (
+    <div className="min-h-screen bg-background">
+      <MobileHeader />
+      <DesktopNav />
+      <BottomNav />
+
+      <main className="md:ml-64 pb-24 md:pb-0">
+        {/* Mobile layout */}
+        <div className="md:hidden">
+          <header className="sticky top-0 z-40 bg-background/90 backdrop-blur-sm border-b border-border">
+            <div className="max-w-2xl mx-auto px-4 h-14 flex items-center gap-3">
+              <Button variant="ghost" size="icon" onClick={() => navigate(-1)}>
+                <ArrowLeft className="w-5 h-5" />
+              </Button>
+              <h1 className="text-lg font-bold">Friends & Messages</h1>
+            </div>
+          </header>
+          <div className="max-w-2xl mx-auto px-4 py-4">
+            <FriendsListPanel />
+          </div>
+        </div>
+
+        {/* Desktop split layout */}
+        <div className="hidden md:flex h-[calc(100vh)] border-t border-border/20">
+          {/* Left: Friends list */}
+          <div className="w-[360px] border-r border-border/20 overflow-y-auto p-4">
+            <h1 className="text-xl font-bold mb-4">Friends & Messages</h1>
+            <FriendsListPanel />
+          </div>
+          {/* Right: Chat panel */}
+          <ChatPanel className="flex-1 h-full" />
+        </div>
+      </main>
 
       <AttendeeProfileDrawer
         profile={selectedProfile}
         open={drawerOpen}
         onOpenChange={setDrawerOpen}
       />
-      <BottomNav />
     </div>
   );
 };
