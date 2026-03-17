@@ -29,6 +29,7 @@ const Auth = () => {
   const [searchParams] = useSearchParams();
   const [isSignUp, setIsSignUp] = useState(false);
   const [isResettingPassword, setIsResettingPassword] = useState(false);
+  const [showConfirmEmail, setShowConfirmEmail] = useState(false);
   const [inviteVerified, setInviteVerified] = useState(false);
   const [inviteCode, setInviteCode] = useState("");
   const [inviteError, setInviteError] = useState(false);
