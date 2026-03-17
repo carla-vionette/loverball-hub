@@ -29,6 +29,7 @@ const Auth = () => {
   const [searchParams] = useSearchParams();
   const [isSignUp, setIsSignUp] = useState(false);
   const [isResettingPassword, setIsResettingPassword] = useState(false);
+  const [showConfirmEmail, setShowConfirmEmail] = useState(false);
   const [inviteVerified, setInviteVerified] = useState(false);
   const [inviteCode, setInviteCode] = useState("");
   const [inviteError, setInviteError] = useState(false);
@@ -130,7 +131,10 @@ const Auth = () => {
         
         if (error) throw error;
         
-        if (data.user) {
+        if (data.user && !data.session) {
+          // Email confirmation required — user created but no session yet
+          setShowConfirmEmail(true);
+        } else if (data.user) {
           toast({
             title: "Welcome to Loverball!",
             description: "Let's choose your plan.",
@@ -272,7 +276,34 @@ const Auth = () => {
               </h1>
             </div>
 
-            {isResettingPassword ? (
+            {showConfirmEmail ? (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="space-y-6 text-center py-8"
+              >
+                <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
+                  <svg className="w-8 h-8 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+                  </svg>
+                </div>
+                <h2 className="text-2xl font-sans font-normal text-foreground">Check Your Email</h2>
+                <p className="text-foreground/60 text-sm leading-relaxed max-w-sm mx-auto">
+                  We sent a confirmation link to <span className="font-semibold text-foreground">{email}</span>. 
+                  Click the link to verify your account and join the community.
+                </p>
+                <p className="text-foreground/40 text-xs">
+                  Didn't receive it? Check your spam folder or{' '}
+                  <button
+                    type="button"
+                    onClick={() => { setShowConfirmEmail(false); }}
+                    className="text-primary hover:underline"
+                  >
+                    try again
+                  </button>
+                </p>
+              </motion.div>
+            ) : isResettingPassword ? (
               <div className="space-y-8">
                 <form onSubmit={handlePasswordReset} className="space-y-6">
                   <div className="space-y-2">
