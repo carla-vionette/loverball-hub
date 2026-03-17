@@ -131,7 +131,10 @@ const Auth = () => {
         
         if (error) throw error;
         
-        if (data.user) {
+        if (data.user && !data.session) {
+          // Email confirmation required — user created but no session yet
+          setShowConfirmEmail(true);
+        } else if (data.user) {
           toast({
             title: "Welcome to Loverball!",
             description: "Let's choose your plan.",
