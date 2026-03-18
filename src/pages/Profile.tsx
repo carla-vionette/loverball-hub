@@ -1,283 +1,86 @@
 import React, { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { MapPin, Edit, Sparkles, LogOut, Calendar, Clock, TrendingUp, TrendingDown, Trophy, Flame, Bookmark, BookOpen, Award, ChevronRight, ChevronDown, ArrowUpRight, Share2, AlertTriangle, Ticket, Play, Eye, Lightbulb, Settings, Heart, MessageCircle, Loader2, ExternalLink, Newspaper, Zap, RefreshCw, Users } from "lucide-react";
-import MemberBadge from "@/components/MemberBadge";
-import { useFollow } from "@/hooks/useFollow";
-import BadgeShelf from "@/components/BadgeShelf";
-import PointsStreakCard from "@/components/PointsStreakCard";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Loader2 } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { useToast } from "@/hooks/use-toast";
 import MobileHeader from "@/components/MobileHeader";
 import DesktopNav from "@/components/DesktopNav";
 import BottomNav from "@/components/BottomNav";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { useFollow } from "@/hooks/useFollow";
 
-import { format } from "date-fns";
-import { motion } from "framer-motion";
-import {
-  TEAM_PERFORMANCE,
-} from "@/lib/mockStatsData";
-import { getTeamWatchUrl, getTeamTicketsUrl } from "@/lib/teamLinksMap";
+import ProfileHeader from "@/components/profile/ProfileHeader";
+import TeamBadgesRow from "@/components/profile/TeamBadgesRow";
+import ProfilePostsTab from "@/components/profile/ProfilePostsTab";
+import ProfileEventsTab from "@/components/profile/ProfileEventsTab";
+import ProfileSavedTab from "@/components/profile/ProfileSavedTab";
+import FollowListSheet from "@/components/profile/FollowListSheet";
 import MySportsFeed from "@/components/MySportsFeed";
-import LiveScores from "@/components/LiveScores";
 
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 
 type ProfileData = {
   id: string;
   name: string;
+  username?: string | null;
   pronouns: string | null;
   city: string | null;
-  age_range: string | null;
-  favorite_sports: string[] | null;
-  favorite_teams_players: string[] | null;
-  sports_experience_types: string[] | null;
-  other_interests: string[] | null;
-  event_comfort_level: string | null;
-  participation_preferences: string[] | null;
   bio: string | null;
   profile_photo_url: string | null;
   membership_tier: string | null;
-};
-
-type RSVPEvent = {
-  id: string;
-  status: string;
-  event: {
-    id: string;
-    title: string;
-    event_date: string;
-    event_time: string | null;
-    venue_name: string | null;
-    city: string | null;
-    image_url: string | null;
-  };
-};
-
-type SuggestedEvent = {
-  id: string;
-  title: string;
-  event_date: string;
-  event_time: string | null;
-  venue_name: string | null;
-  city: string | null;
-  image_url: string | null;
-};
-
-// --- Zodiac helpers ---
-const ZODIAC_SIGNS = [
-  { name: "Capricorn", symbol: "♑", element: "earth", dates: [{ m: 12, d: 22 }, { m: 1, d: 19 }] },
-  { name: "Aquarius", symbol: "♒", element: "air", dates: [{ m: 1, d: 20 }, { m: 2, d: 18 }] },
-  { name: "Pisces", symbol: "♓", element: "water", dates: [{ m: 2, d: 19 }, { m: 3, d: 20 }] },
-  { name: "Aries", symbol: "♈", element: "fire", dates: [{ m: 3, d: 21 }, { m: 4, d: 19 }] },
-  { name: "Taurus", symbol: "♉", element: "earth", dates: [{ m: 4, d: 20 }, { m: 5, d: 20 }] },
-  { name: "Gemini", symbol: "♊", element: "air", dates: [{ m: 5, d: 21 }, { m: 6, d: 20 }] },
-  { name: "Cancer", symbol: "♋", element: "water", dates: [{ m: 6, d: 21 }, { m: 7, d: 22 }] },
-  { name: "Leo", symbol: "♌", element: "fire", dates: [{ m: 7, d: 23 }, { m: 8, d: 22 }] },
-  { name: "Virgo", symbol: "♍", element: "earth", dates: [{ m: 8, d: 23 }, { m: 9, d: 22 }] },
-  { name: "Libra", symbol: "♎", element: "air", dates: [{ m: 9, d: 23 }, { m: 10, d: 22 }] },
-  { name: "Scorpio", symbol: "♏", element: "water", dates: [{ m: 10, d: 23 }, { m: 11, d: 21 }] },
-  { name: "Sagittarius", symbol: "♐", element: "fire", dates: [{ m: 11, d: 22 }, { m: 12, d: 21 }] },
-];
-
-const ELEMENT_GRADIENTS: Record<string, string> = {
-  fire: "from-primary/20 via-primary/10 to-transparent",
-  earth: "from-accent/20 via-accent/10 to-transparent",
-  air: "from-accent/15 via-primary/10 to-transparent",
-  water: "from-accent/20 via-accent/10 to-transparent",
-};
-
-const HOROSCOPE_MESSAGES: Record<string, string> = {
-  Aries: "Bold energy fuels your day. A surprise connection through sports could open a new door.",
-  Taurus: "Steady wins the race today. Your loyalty to your favorite team mirrors your approach to life.",
-  Gemini: "Your social butterfly energy is at a peak. Multiple conversations lead to one meaningful connection.",
-  Cancer: "Home court advantage is yours today. Nurture your inner circle and watch your community grow.",
-  Leo: "You're the MVP today. Your confidence attracts attention and your leadership shines.",
-  Virgo: "Details matter today. Your analytical eye catches something others miss.",
-  Libra: "Balance is your superpower. A partnership opportunity arises that aligns with your values.",
-  Scorpio: "Intensity drives your focus. Go deep on something you're passionate about.",
-  Sagittarius: "Adventure calls! Explore a new sport or attend an event outside your comfort zone.",
-  Capricorn: "Discipline meets opportunity. Your hard work in building community connections starts to pay dividends.",
-  Aquarius: "Innovation is your theme. A unique idea for bringing fans together sparks excitement.",
-  Pisces: "Intuition guides your game today. Creative expression through sports brings unexpected fulfillment.",
-};
-
-function getZodiacSign(birthday: string | null) {
-  if (!birthday) return null;
-  const date = new Date(birthday);
-  const month = date.getMonth() + 1;
-  const day = date.getDate();
-  for (const sign of ZODIAC_SIGNS) {
-    const [start, end] = sign.dates;
-    if (sign.name === "Capricorn") {
-      if ((month === 12 && day >= 22) || (month === 1 && day <= 19)) return sign;
-    } else if ((month === start.m && day >= start.d) || (month === end.m && day <= end.d)) {
-      return sign;
-    }
-  }
-  return ZODIAC_SIGNS[0];
-}
-
-function getGreeting(): string {
-  const hour = new Date().getHours();
-  if (hour < 12) return "Good morning";
-  if (hour < 17) return "Good afternoon";
-  return "Good evening";
-}
-
-function getTimeAgo(dateStr: string): string {
-  const now = Date.now();
-  const then = new Date(dateStr).getTime();
-  const diffMs = now - then;
-  const diffMins = Math.floor(diffMs / 60000);
-  if (diffMins < 60) return `${diffMins}m ago`;
-  const diffHrs = Math.floor(diffMins / 60);
-  if (diffHrs < 24) return `${diffHrs}h ago`;
-  return `${Math.floor(diffHrs / 24)}d ago`;
-}
-
-const staggerContainer = {
-  hidden: { opacity: 0 },
-  show: { opacity: 1, transition: { staggerChildren: 0.08 } },
-};
-const staggerItem = {
-  hidden: { opacity: 0, y: 16 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.35, ease: [0.25, 0.1, 0.25, 1] as const } },
-};
-
-
-const ProfileFollowCounts = ({ userId, onClickFollowers, onClickFollowing }: { userId: string; onClickFollowers: () => void; onClickFollowing: () => void }) => {
-  const { followerCount, followingCount } = useFollow(userId);
-  return (
-    <div className="flex items-center gap-4 text-sm">
-      <button onClick={onClickFollowers} className="hover:text-primary transition-colors cursor-pointer"><strong>{followerCount}</strong> <span className="text-muted-foreground">followers</span></button>
-      <button onClick={onClickFollowing} className="hover:text-primary transition-colors cursor-pointer"><strong>{followingCount}</strong> <span className="text-muted-foreground">following</span></button>
-    </div>
-  );
+  favorite_sports: string[] | null;
+  favorite_teams_players: string[] | null;
+  favorite_la_teams: string[] | null;
 };
 
 const Profile = () => {
-  const [teamsOpen, setTeamsOpen] = useState(false);
-  const [recEventsOpen, setRecEventsOpen] = useState(false);
   const [profile, setProfile] = useState<ProfileData | null>(null);
-  const [rsvpEvents, setRsvpEvents] = useState<RSVPEvent[]>([]);
-  const [suggestedEvents, setSuggestedEvents] = useState<SuggestedEvent[]>([]);
   const [loading, setLoading] = useState(true);
-  const [currentTime, setCurrentTime] = useState(new Date());
-  const [liveHoroscope, setLiveHoroscope] = useState<string | null>(null);
-  const [horoscopeLoading, setHoroscopeLoading] = useState(false);
-  const [birthday, setBirthday] = useState<string | null>(null);
-  
+  const [postsCount, setPostsCount] = useState(0);
+  const [showFollowList, setShowFollowList] = useState<"followers" | "following" | null>(null);
+
   const goTo = (path: string) => { window.location.href = path; };
-  const { toast } = useToast();
-
-  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
-  const [showFollowersModal, setShowFollowersModal] = useState<'followers' | 'following' | null>(null);
-
-  const handleLogout = async () => {
-    setShowLogoutConfirm(true);
-  };
-
-  const confirmLogout = async () => {
-    await supabase.auth.signOut();
-    toast({ title: "Signed out", description: "You have been logged out successfully." });
-    goTo("/");
-  };
-
 
   useEffect(() => {
     let cancelled = false;
     const fetchProfile = async () => {
-      try {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user || cancelled) { if (!cancelled) goTo("/auth"); return; }
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user || cancelled) { if (!cancelled) goTo("/auth"); return; }
 
-        const [profileResult, rsvpResult, suggestedResult] = await Promise.all([
-          supabase.from("profiles").select("*").eq("id", user.id).maybeSingle(),
-          supabase.from("event_rsvps").select(`id, status, event:events (id, title, event_date, event_time, venue_name, city, image_url)`).eq("user_id", user.id).order("created_at", { ascending: false }),
-          supabase.from("events").select("id, title, event_date, event_time, venue_name, city, image_url").gte("event_date", new Date().toISOString().split("T")[0]).eq("status", "published").order("event_date", { ascending: true }).limit(4),
-        ]);
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("id, name, username, pronouns, city, bio, profile_photo_url, membership_tier, favorite_sports, favorite_teams_players, favorite_la_teams")
+        .eq("id", user.id)
+        .maybeSingle();
 
-        if (cancelled) return;
-
-        if (profileResult.error || !profileResult.data) { goTo("/onboarding"); return; }
-
-        setProfile(profileResult.data);
-        // Fetch birthday from sensitive table
-        const { data: sensitive } = await supabase.from("profiles_sensitive" as any).select("birthday").eq("id", user.id).maybeSingle();
-        if (sensitive) setBirthday((sensitive as any).birthday);
-        if (rsvpResult.data) {
-          setRsvpEvents(rsvpResult.data.filter(r => r.event !== null) as RSVPEvent[]);
-        }
-        if (suggestedResult.data) setSuggestedEvents(suggestedResult.data);
-      } catch (err) {
-        if (!cancelled) goTo("/onboarding");
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
+      if (cancelled) return;
+      if (error || !data) { goTo("/onboarding"); return; }
+      setProfile(data);
+      setLoading(false);
     };
     fetchProfile();
     return () => { cancelled = true; };
   }, []);
 
-  // Fetch live daily horoscope
-  useEffect(() => {
-    if (!birthday) return;
-    const zodiacSign = getZodiacSign(birthday);
-    if (!zodiacSign) return;
-    setHoroscopeLoading(true);
-    supabase.functions.invoke("horoscope", {
-      body: { sign: zodiacSign.name.toLowerCase(), period: "daily" },
-    }).then(({ data: resp }) => {
-      const reading = resp?.data?.horoscope || resp?.horoscope || resp?.reading;
-      if (reading) setLiveHoroscope(reading);
-    }).catch(() => {}).finally(() => setHoroscopeLoading(false));
-  }, [birthday]);
+  const { followerCount, followingCount } = useFollow(profile?.id);
 
-  useEffect(() => {
-    const timer = setInterval(() => setCurrentTime(new Date()), 60000);
-    return () => clearInterval(timer);
-  }, []);
-
-
-  const activePerfTeams = TEAM_PERFORMANCE.filter(t => t.winPct > 0);
-  const combinedWinPct = activePerfTeams.length > 0 ? activePerfTeams.reduce((s, t) => s + t.winPct, 0) / activePerfTeams.length : 0;
-
-  if (loading) {
+  if (loading || !profile) {
     return (
       <div className="min-h-screen bg-background">
         <MobileHeader />
         <DesktopNav />
         <BottomNav />
         <main className="md:ml-64 pb-20 md:pb-8 pt-16 md:pt-2">
-          <div className="max-w-4xl mx-auto px-4 py-8 space-y-6 animate-pulse">
-            <div className="flex items-start gap-4">
-              <div className="w-24 h-24 rounded-full bg-muted" />
-              <div className="flex-1 space-y-3">
-                <div className="h-6 w-40 bg-muted rounded" />
-                <div className="h-4 w-24 bg-muted rounded" />
-              </div>
-            </div>
+          <div className="max-w-lg mx-auto flex items-center justify-center py-20">
+            <Loader2 className="w-8 h-8 animate-spin text-primary" />
           </div>
         </main>
       </div>
     );
   }
 
-  if (!profile) return null;
-
-  const initials = profile.name.split(" ").map(n => n[0]).join("").toUpperCase();
-  const locationText = profile.city || "Location not set";
-  const zodiac = getZodiacSign(birthday);
-  const greeting = getGreeting();
-  const userName = profile.name?.split(" ")[0] || "there";
-  const formattedDate = currentTime.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" });
-  const formattedTime = currentTime.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+  const allTeams = [
+    ...(profile.favorite_teams_players || []),
+    ...(profile.favorite_la_teams || []),
+  ];
 
   return (
     <div className="min-h-screen bg-background">
@@ -286,336 +89,80 @@ const Profile = () => {
       <BottomNav />
 
       <main className="md:ml-64 pb-20 md:pb-8 pt-16 md:pt-2">
-        <div className="max-w-4xl mx-auto px-4 pt-2">
-          <motion.div variants={staggerContainer} initial="hidden" animate="show" className="space-y-6">
+        <div className="max-w-lg mx-auto">
+          {/* Profile Header */}
+          <ProfileHeader
+            profile={profile}
+            isOwnProfile={true}
+            postsCount={postsCount}
+            followerCount={followerCount}
+            followingCount={followingCount}
+            onClickFollowers={() => setShowFollowList("followers")}
+            onClickFollowing={() => setShowFollowList("following")}
+            onAvatarUpdated={(url) => setProfile(prev => prev ? { ...prev, profile_photo_url: url } : prev)}
+          />
 
-            {/* PROFILE HERO - Compact */}
-            <motion.div variants={staggerItem} className="relative md:rounded-2xl overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-b from-primary/15 via-background/40 to-background z-10" />
-              <div className="relative z-20 px-4 pt-4 pb-5 md:px-8 md:pt-6 md:pb-6">
-                <div className="flex flex-col items-center text-center gap-3">
-                  <div className="relative">
-                    <div className="absolute -inset-1.5 rounded-full bg-gradient-to-br from-primary/30 to-accent/30 blur-md" />
-                    <Avatar className="relative w-20 h-20 md:w-24 md:h-24 border-[3px] border-primary/50">
-                      {profile.profile_photo_url ? (
-                        <AvatarImage src={profile.profile_photo_url} alt={profile.name} className="object-cover" />
-                      ) : null}
-                      <AvatarFallback className="bg-primary text-primary-foreground text-3xl font-sans">{initials}</AvatarFallback>
-                    </Avatar>
-                  </div>
+          {/* Team Badges Row */}
+          <TeamBadgesRow teams={allTeams} />
 
-                  {/* Name & info */}
-                  <div>
-                    <h1 className="text-2xl md:text-4xl font-display text-foreground tracking-tight flex items-center gap-2">
-                      {profile.name}
-                      <MemberBadge tier={profile.membership_tier} size="lg" />
-                    </h1>
-                    {profile.pronouns && <p className="text-sm text-muted-foreground mt-1">{profile.pronouns}</p>}
-                    <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground mt-2">
-                      <MapPin className="w-4 h-4 text-primary flex-shrink-0" />
-                      <span>{locationText}</span>
-                    </div>
-                   </div>
+          {/* Tabs */}
+          <Tabs defaultValue="posts" className="w-full">
+            <TabsList className="w-full rounded-none border-b border-border/30 bg-transparent h-auto p-0">
+              <TabsTrigger
+                value="posts"
+                className="flex-1 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none py-3 text-xs font-semibold uppercase tracking-wider"
+              >
+                Posts
+              </TabsTrigger>
+              <TabsTrigger
+                value="feed"
+                className="flex-1 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none py-3 text-xs font-semibold uppercase tracking-wider"
+              >
+                My Feed
+              </TabsTrigger>
+              <TabsTrigger
+                value="events"
+                className="flex-1 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none py-3 text-xs font-semibold uppercase tracking-wider"
+              >
+                Events
+              </TabsTrigger>
+              <TabsTrigger
+                value="saved"
+                className="flex-1 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none py-3 text-xs font-semibold uppercase tracking-wider"
+              >
+                Saved
+              </TabsTrigger>
+            </TabsList>
 
-                  {/* Follower/Following counts */}
-                  <ProfileFollowCounts userId={profile.id} onClickFollowers={() => setShowFollowersModal('followers')} onClickFollowing={() => setShowFollowersModal('following')} />
+            <TabsContent value="posts" className="mt-0">
+              <ProfilePostsTab userId={profile.id} onPostsLoaded={setPostsCount} />
+            </TabsContent>
 
-                  {/* Quick actions */}
-                  <div className="flex items-center gap-2 flex-wrap justify-center">
-                    <Button onClick={() => goTo("/profile/edit")} size="sm" className="rounded-full bg-primary hover:bg-primary/90 text-primary-foreground gap-1.5 text-xs">
-                      <Edit className="w-3.5 h-3.5" /> Edit Profile
-                    </Button>
-                    <Button variant="outline" size="icon" onClick={() => goTo("/dms")} className="rounded-full border-border/40 text-foreground/70 hover:text-foreground h-8 w-8">
-                      <MessageCircle className="w-3.5 h-3.5" />
-                    </Button>
-                    <Button variant="outline" size="icon" onClick={() => goTo("/settings")} className="rounded-full border-border/40 text-foreground/70 hover:text-foreground h-8 w-8">
-                      <Settings className="w-3.5 h-3.5" />
-                    </Button>
-                    <Button variant="outline" size="icon" onClick={handleLogout} className="rounded-full border-border/40 text-destructive hover:text-destructive h-8 w-8">
-                      <LogOut className="w-3.5 h-3.5" />
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-
-            {/* BIO - Glassmorphism card */}
-            {profile.bio && (
-              <motion.div variants={staggerItem}>
-                <div className="glass-card rounded-2xl p-5">
-                  <div className="flex items-start gap-3">
-                    <Sparkles className="w-4 h-4 mt-1 text-primary flex-shrink-0" />
-                    <p className="text-sm text-foreground/80 leading-relaxed whitespace-pre-line">{profile.bio}</p>
-                  </div>
-                </div>
-              </motion.div>
-            )}
-
-            {/* MY SCORES */}
-            <motion.div variants={staggerItem}>
-              <Card className="rounded-2xl overflow-hidden">
-                <CardHeader className="pb-2 pt-4 px-5">
-                  <CardTitle className="text-sm font-medium tracking-wider uppercase text-foreground/50 flex items-center gap-2">
-                    <Trophy className="w-4 h-4 text-warning" /> Live Scores
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="px-5 pb-5">
-                  <LiveScores />
-                </CardContent>
-              </Card>
-            </motion.div>
-
-            {/* GREETING + DATE */}
-            <motion.div variants={staggerItem} className="glass-card rounded-2xl p-5">
-              <p className="text-lg font-sans text-foreground">{greeting}, <span className="text-primary font-semibold">{userName}</span></p>
-              <p className="text-sm text-muted-foreground mt-1">{formattedDate} · {formattedTime}</p>
-            </motion.div>
-
-            {/* POINTS & STREAK */}
-            <motion.div variants={staggerItem}>
-              <PointsStreakCard />
-            </motion.div>
-
-
-            {/* DAILY HOROSCOPE SNIPPET */}
-            <motion.div variants={staggerItem}>
-              <div className="rounded-2xl p-4 border-2 border-primary/30 bg-primary/5">
-                {zodiac ? (
-                  <div className="flex items-start gap-3">
-                    <span className="text-3xl mt-0.5">{zodiac.symbol}</span>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold text-foreground">{zodiac.name}</p>
-                      {horoscopeLoading ? (
-                        <p className="text-xs text-muted-foreground mt-1 animate-pulse">Loading your forecast…</p>
-                      ) : (
-                        <p className="text-xs text-foreground/70 leading-relaxed mt-1 line-clamp-3">
-                          {liveHoroscope || HOROSCOPE_MESSAGES[zodiac.name]}
-                        </p>
-                      )}
-                      <Button variant="link" className="px-0 mt-1 text-primary h-auto text-xs gap-1" onClick={() => goTo("/horoscope")}>
-                        Full Horoscope <ChevronRight className="w-3 h-3" />
-                      </Button>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="flex items-center gap-3">
-                    <span className="text-2xl">✨</span>
-                    <p className="text-xs text-muted-foreground">Add your birthday in <button className="text-primary underline" onClick={() => goTo("/profile/edit")}>Edit Profile</button> to see your daily horoscope.</p>
-                  </div>
-                )}
-              </div>
-            </motion.div>
-
-            {/* MY INTERESTS LINK */}
-            <motion.div variants={staggerItem}>
-              <div className="glass-card rounded-2xl cursor-pointer hover:border-primary/30 transition-colors p-4 flex items-center justify-between" onClick={() => goTo("/profile/interests")}>
-                <div>
-                  <p className="font-medium text-foreground">My Interests</p>
-                  <p className="text-sm text-muted-foreground">Teams, sports, experiences & more</p>
-                </div>
-                <ChevronRight className="w-5 h-5 text-muted-foreground" />
-              </div>
-            </motion.div>
-
-            {/* BADGE SHELF */}
-            <motion.div variants={staggerItem}>
-              <BadgeShelf />
-            </motion.div>
-
-
-            {/* FAVORITE TEAMS PERFORMANCE - COLLAPSIBLE */}
-            <motion.div variants={staggerItem}>
-              <Collapsible open={teamsOpen} onOpenChange={setTeamsOpen}>
-                <div className="glass-card rounded-2xl overflow-hidden">
-                  <CollapsibleTrigger asChild>
-                    <button className="w-full p-5 pb-2 flex items-center justify-between cursor-pointer hover:bg-foreground/[0.03] transition-colors">
-                      <span className="text-sm font-medium tracking-wider uppercase text-foreground/50">Favorite Teams</span>
-                      <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform duration-200 ${teamsOpen ? 'rotate-180' : ''}`} />
-                    </button>
-                  </CollapsibleTrigger>
-                  {/* Preview: first 2 teams always visible */}
-                  {!teamsOpen && (
-                    <div className="divide-y divide-border/30">
-                      {TEAM_PERFORMANCE.slice(0, 2).map(team => (
-                        <div
-                          key={team.name}
-                          className="flex items-center gap-3 px-5 py-4 hover:bg-foreground/[0.03] transition-colors cursor-pointer group"
-                          onClick={() => goTo(`/team/${team.slug}`)}
-                        >
-                          <img src={team.logo} alt={team.name} className="w-10 h-10 object-contain rounded-lg bg-foreground/5 p-0.5" onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} />
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2">
-                              <span className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">{team.name}</span>
-                              <Badge variant="outline" className="text-[9px] px-1.5 py-0 rounded-full border-border/30">{team.league}</Badge>
-                            </div>
-                            <p className="text-xs text-muted-foreground mt-0.5">{team.nextGame}</p>
-                            <p className="text-[10px] text-accent mt-0.5 cursor-pointer hover:underline">🎟 Get Tickets · From $28</p>
-                            <p className="text-[10px] text-muted-foreground">📺 Watch: ESPN, League Pass</p>
-                          </div>
-                          <p className={`text-sm font-sans font-bold ${team.winPct > 0.5 ? "text-accent" : team.winPct > 0 && team.winPct < 0.5 ? "text-destructive" : "text-foreground"}`}>{team.record}</p>
-                        </div>
-                      ))}
-                      {TEAM_PERFORMANCE.length > 2 && (
-                        <div className="px-5 py-2 text-center">
-                          <span className="text-xs text-muted-foreground">+{TEAM_PERFORMANCE.length - 2} more teams</span>
-                        </div>
-                      )}
-                    </div>
-                  )}
-                  <CollapsibleContent>
-                    <div className="divide-y divide-border/30">
-                      {TEAM_PERFORMANCE.map(team => (
-                        <div
-                          key={team.name}
-                          className="flex items-center gap-3 px-5 py-4 hover:bg-foreground/[0.03] transition-colors cursor-pointer group"
-                          onClick={() => goTo(`/team/${team.slug}`)}
-                        >
-                          <img src={team.logo} alt={team.name} className="w-10 h-10 object-contain rounded-lg bg-foreground/5 p-0.5" onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} />
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2">
-                              <span className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">{team.name}</span>
-                              <Badge variant="outline" className="text-[9px] px-1.5 py-0 rounded-full border-border/30">{team.league}</Badge>
-                              {team.injuryNote && (
-                                <span title={team.injuryNote}>
-                                  <AlertTriangle className="w-3.5 h-3.5 text-amber-500" />
-                                </span>
-                              )}
-                            </div>
-                            <p className="text-xs text-muted-foreground mt-0.5">{team.leadingScorer}</p>
-                            <p className="text-xs text-muted-foreground">{team.nextGame}</p>
-                            <p className="text-[10px] text-accent mt-0.5 cursor-pointer hover:underline">🎟 Get Tickets · From $28</p>
-                            <p className="text-[10px] text-muted-foreground">📺 Watch: ESPN, League Pass</p>
-                          </div>
-                          <div className="flex flex-col items-end gap-2">
-                            <p className={`text-sm font-sans font-bold ${team.winPct > 0.5 ? "text-accent" : team.winPct > 0 && team.winPct < 0.5 ? "text-destructive" : "text-foreground"}`}>{team.record}</p>
-                            {team.last5.length > 0 && (
-                              <div className="flex gap-0.5">
-                                {team.last5.map((win, i) => <div key={i} className={`w-2 h-2 rounded-full ${win ? "bg-accent" : "bg-destructive/60"}`} />)}
-                              </div>
-                            )}
-                            {team.nextGame !== "Offseason" && !team.nextGame.startsWith("Season") && (
-                              <div className="flex gap-1.5">
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  className="h-6 text-[10px] px-2 rounded-full gap-1 border-border/30"
-                                  onClick={(e) => { e.stopPropagation(); window.open(team.ticketUrl || getTeamTicketsUrl(team.name), '_blank'); }}
-                                >
-                                  <Ticket className="w-3 h-3" /> Tickets
-                                </Button>
-                                <Button
-                                  size="sm"
-                                  className="h-6 text-[10px] px-2 rounded-full gap-1"
-                                  onClick={(e) => { e.stopPropagation(); window.open(team.watchUrl || getTeamWatchUrl(team.name), '_blank'); }}
-                                >
-                                  <Play className="w-3 h-3" /> Watch
-                                </Button>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </CollapsibleContent>
-                </div>
-              </Collapsible>
-            </motion.div>
-
-            {/* MY SPORTS FEED — Personalized news from news_articles */}
-            <motion.div variants={staggerItem}>
+            <TabsContent value="feed" className="mt-0 p-4">
               <MySportsFeed
                 userSports={profile.favorite_sports || []}
-                userTeams={[...(profile.favorite_teams_players || []), ...((profile as any).favorite_la_teams || [])]}
+                userTeams={allTeams}
                 userCity={profile.city}
               />
-            </motion.div>
+            </TabsContent>
 
-            {/* RECOMMENDED EVENTS - COLLAPSIBLE */}
-            {suggestedEvents.length > 0 && (
-              <motion.div variants={staggerItem}>
-                <Collapsible open={recEventsOpen} onOpenChange={setRecEventsOpen}>
-                  <div className="glass-card rounded-2xl overflow-hidden">
-                    <CollapsibleTrigger asChild>
-                      <button className="w-full p-5 pb-3 flex items-center justify-between cursor-pointer hover:bg-foreground/[0.03] transition-colors">
-                        <span className="text-sm font-medium tracking-wider uppercase text-foreground/50">Recommended Events</span>
-                        <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform duration-200 ${recEventsOpen ? 'rotate-180' : ''}`} />
-                      </button>
-                    </CollapsibleTrigger>
-                    {/* Preview: first 2 events */}
-                    {!recEventsOpen && (
-                      <div className="px-5 pb-5">
-                        <div className="space-y-3">
-                          {suggestedEvents.slice(0, 2).map(event => (
-                            <div key={event.id} className="flex items-center gap-3 cursor-pointer hover:bg-foreground/[0.03] rounded-xl p-2 transition-colors" onClick={() => goTo(`/event/${event.id}`)}>
-                              {event.image_url ? <img src={event.image_url} alt={event.title} className="w-14 h-14 object-cover rounded-lg flex-shrink-0" /> : <div className="w-14 h-14 bg-muted rounded-lg flex items-center justify-center flex-shrink-0"><Calendar className="w-5 h-5 text-muted-foreground" /></div>}
-                              <div className="min-w-0">
-                                <p className="text-sm font-medium text-foreground line-clamp-1">{event.title}</p>
-                                <p className="text-xs text-muted-foreground">{event.venue_name || event.city || "Location TBD"} • {format(new Date(event.event_date), "MMM d")}</p>
-                              </div>
-                            </div>
-                          ))}
-                          {suggestedEvents.length > 2 && (
-                            <div className="text-center">
-                              <span className="text-xs text-muted-foreground">+{suggestedEvents.length - 2} more events</span>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    )}
-                    <CollapsibleContent>
-                      <div className="px-5 pb-5">
-                        <div className="grid md:grid-cols-2 gap-4">
-                          {suggestedEvents.map(event => (
-                            <div key={event.id} className="glass-card rounded-xl p-4 cursor-pointer hover:border-primary/30 transition-colors" onClick={() => goTo(`/event/${event.id}`)}>
-                              {event.image_url ? <img src={event.image_url} alt={event.title} className="w-full h-32 object-cover rounded-lg mb-3" /> : <div className="w-full h-32 bg-muted rounded-lg mb-3 flex items-center justify-center"><Calendar className="w-8 h-8 text-muted-foreground" /></div>}
-                              <p className="font-medium text-foreground">{event.title}</p>
-                              <p className="text-sm text-muted-foreground">{event.venue_name || event.city || "Location TBD"} • {format(new Date(event.event_date), "MMM d")}</p>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    </CollapsibleContent>
-                  </div>
-                </Collapsible>
-              </motion.div>
-            )}
+            <TabsContent value="events" className="mt-0">
+              <ProfileEventsTab userId={profile.id} />
+            </TabsContent>
 
-
-          </motion.div>
+            <TabsContent value="saved" className="mt-0">
+              <ProfileSavedTab userId={profile.id} />
+            </TabsContent>
+          </Tabs>
         </div>
       </main>
 
-      {/* Logout Confirmation Dialog */}
-      <AlertDialog open={showLogoutConfirm} onOpenChange={setShowLogoutConfirm}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Log out?</AlertDialogTitle>
-            <AlertDialogDescription>Are you sure you want to log out of your account?</AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmLogout} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">Log Out</AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-
-      {/* Followers/Following Sheet */}
-      <Sheet open={!!showFollowersModal} onOpenChange={() => setShowFollowersModal(null)}>
-        <SheetContent>
-          <SheetHeader>
-            <SheetTitle>{showFollowersModal === 'followers' ? 'Followers' : 'Following'}</SheetTitle>
-          </SheetHeader>
-          <div className="py-8 text-center">
-            <Users className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
-            <p className="text-muted-foreground text-sm">
-              {showFollowersModal === 'followers' ? 'No followers yet' : 'Not following anyone yet'}
-            </p>
-            <p className="text-muted-foreground text-xs mt-1">
-              Connect with others at events to grow your network!
-            </p>
-          </div>
-        </SheetContent>
-      </Sheet>
+      {/* Follow list sheet */}
+      <FollowListSheet
+        userId={profile.id}
+        type={showFollowList}
+        onClose={() => setShowFollowList(null)}
+      />
     </div>
   );
 };
