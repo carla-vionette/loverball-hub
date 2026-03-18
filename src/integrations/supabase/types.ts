@@ -1207,6 +1207,7 @@ export type Database = {
           tiktok_url: string | null
           total_points: number
           updated_at: string
+          username: string | null
           website_url: string | null
         }
         Insert: {
@@ -1243,6 +1244,7 @@ export type Database = {
           tiktok_url?: string | null
           total_points?: number
           updated_at?: string
+          username?: string | null
           website_url?: string | null
         }
         Update: {
@@ -1279,6 +1281,7 @@ export type Database = {
           tiktok_url?: string | null
           total_points?: number
           updated_at?: string
+          username?: string | null
           website_url?: string | null
         }
         Relationships: []
