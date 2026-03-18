@@ -32,7 +32,6 @@ const GameCard = ({ game }: { game: WnbaGame }) => {
         <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
           {game.GameID === 1 ? "NBA" : game.GameID === 2 ? "NHL" : game.GameID === 3 ? "MLS" : "NCAA"}
         </span>
-        </span>
         <div className={`flex items-center gap-1.5 text-xs font-semibold ${status.className}`}>
           <StatusIcon className="w-3.5 h-3.5" />
           {game.Status === "Scheduled" ? gameTime : status.label}
