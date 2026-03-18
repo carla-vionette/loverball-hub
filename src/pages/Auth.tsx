@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable/index";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -138,9 +137,9 @@ const Auth = () => {
         } else if (data.user) {
           toast({
             title: "Welcome to Loverball!",
-            description: "Let's set up your profile.",
+            description: "Let's choose your plan.",
           });
-          navigate("/onboarding");
+          navigate("/plans");
         }
       } else {
         // Validate sign in inputs
@@ -168,20 +167,24 @@ const Auth = () => {
         
         if (error) throw error;
 
-        // Check if profile exists and onboarding is complete
+        // Check if profile exists
         const { data: profile } = await supabase
           .from('profiles')
-          .select('name, membership_tier, has_completed_onboarding')
+          .select('*')
           .eq('id', data.user.id)
           .maybeSingle();
 
-        if (!profile) {
-          navigate("/onboarding");
-        } else if (!(profile as any).has_completed_onboarding) {
-          navigate("/onboarding");
+        if (profile) {
+          // Check if user has a plan selected
+          const profileAny = profile as any;
+          if (!profileAny.membership_tier) {
+            navigate("/plans");
+          } else {
+            setSplashName(profile.name);
+            setPendingRedirect(redirectTo);
+          }
         } else {
-          setSplashName(profile.name);
-          setPendingRedirect(redirectTo);
+          navigate("/plans");
         }
       }
     } catch (error: any) {
@@ -196,11 +199,21 @@ const Auth = () => {
   };
 
   const handleGoogleAuth = async () => {
-    const { error } = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin,
-    });
-    if (error) {
-      toast({ title: "Error", description: String(error), variant: "destructive" });
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/plans`
+        }
+      });
+      
+      if (error) throw error;
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
     }
   };
 
