@@ -96,7 +96,7 @@ const AuraBottomNav: React.FC = () => {
         .from("notifications")
         .select("*", { count: "exact", head: true })
         .eq("user_id", user.id)
-        .eq("read", false);
+        .eq("is_read", false);
       setUnreadCount(count ?? 0);
     };
 
