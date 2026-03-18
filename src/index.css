@@ -111,6 +111,14 @@
     --gradient-warm: linear-gradient(135deg, hsl(174 72% 35%), hsl(0 100% 70%));
     --gradient-sunset: linear-gradient(135deg, hsl(0 100% 70%), hsl(45 100% 50%));
     --gradient-cream: linear-gradient(180deg, hsl(0 0% 100%), hsl(210 20% 96%));
+
+    /* ── Magazine Home tokens ── */
+    --home-bg: 25 33% 96%;                 /* #F8F4F0 warm cream */
+    --home-bg-foreground: 210 20% 18%;
+    --home-coral: 14 100% 59%;             /* #FF5D2E */
+    --home-coral-end: 18 100% 68%;         /* #FF8A5C */
+    --home-coral-foreground: 0 0% 100%;
+    --gradient-coral: linear-gradient(135deg, hsl(14 100% 59%), hsl(18 100% 68%));
   }
 
   /* Landing page theme */
