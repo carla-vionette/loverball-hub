@@ -5,11 +5,12 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Trophy, Clock, Radio } from "lucide-react";
 
 // ── Fallback sample games when API key isn't configured ──
+// Fallback sample games reflecting sports actually in-season (March — NBA, NHL, MLS, NCAA)
 const SAMPLE_GAMES: WnbaGame[] = [
-  { GameID: 1, Season: 2026, Status: "InProgress", DateTime: new Date().toISOString(), HomeTeam: "LA Sparks", AwayTeam: "NY Liberty", HomeTeamScore: 67, AwayTeamScore: 72, HomeTeamID: 1, AwayTeamID: 2, Channel: "ESPN", Quarter: "Q3", TimeRemainingMinutes: 4, TimeRemainingSeconds: 32 },
-  { GameID: 2, Season: 2026, Status: "Final", DateTime: new Date().toISOString(), HomeTeam: "Las Vegas Aces", AwayTeam: "Seattle Storm", HomeTeamScore: 89, AwayTeamScore: 84, HomeTeamID: 3, AwayTeamID: 4, Channel: "ABC", Quarter: null, TimeRemainingMinutes: null, TimeRemainingSeconds: null },
-  { GameID: 3, Season: 2026, Status: "Scheduled", DateTime: new Date(Date.now() + 3 * 60 * 60 * 1000).toISOString(), HomeTeam: "Chicago Sky", AwayTeam: "Phoenix Mercury", HomeTeamScore: null, AwayTeamScore: null, HomeTeamID: 5, AwayTeamID: 6, Channel: "CBS Sports", Quarter: null, TimeRemainingMinutes: null, TimeRemainingSeconds: null },
-  { GameID: 4, Season: 2026, Status: "InProgress", DateTime: new Date().toISOString(), HomeTeam: "Angel City FC", AwayTeam: "Portland Thorns", HomeTeamScore: 2, AwayTeamScore: 1, HomeTeamID: 7, AwayTeamID: 8, Channel: "Paramount+", Quarter: "2H", TimeRemainingMinutes: 22, TimeRemainingSeconds: 0 },
+  { GameID: 1, Season: 2026, Status: "InProgress", DateTime: new Date().toISOString(), HomeTeam: "LA Lakers", AwayTeam: "LA Clippers", HomeTeamScore: 108, AwayTeamScore: 102, HomeTeamID: 1, AwayTeamID: 2, Channel: "ESPN", Quarter: "Q4", TimeRemainingMinutes: 3, TimeRemainingSeconds: 42 },
+  { GameID: 2, Season: 2026, Status: "Final", DateTime: new Date().toISOString(), HomeTeam: "LA Kings", AwayTeam: "Anaheim Ducks", HomeTeamScore: 3, AwayTeamScore: 2, HomeTeamID: 3, AwayTeamID: 4, Channel: "TNT", Quarter: null, TimeRemainingMinutes: null, TimeRemainingSeconds: null },
+  { GameID: 3, Season: 2026, Status: "Scheduled", DateTime: new Date(Date.now() + 3 * 60 * 60 * 1000).toISOString(), HomeTeam: "LAFC", AwayTeam: "LA Galaxy", HomeTeamScore: null, AwayTeamScore: null, HomeTeamID: 5, AwayTeamID: 6, Channel: "Apple TV", Quarter: null, TimeRemainingMinutes: null, TimeRemainingSeconds: null },
+  { GameID: 4, Season: 2026, Status: "InProgress", DateTime: new Date().toISOString(), HomeTeam: "UConn", AwayTeam: "Duke", HomeTeamScore: 72, AwayTeamScore: 68, HomeTeamID: 7, AwayTeamID: 8, Channel: "CBS", Quarter: "2H", TimeRemainingMinutes: 8, TimeRemainingSeconds: 15 },
 ];
 
 const statusConfig: Record<string, { label: string; icon: typeof Trophy; className: string }> = {
@@ -29,7 +30,7 @@ const GameCard = ({ game }: { game: WnbaGame }) => {
     <Card className="p-4 bg-card border-border/30 hover:border-primary/30 transition-colors">
       <div className="flex items-center justify-between mb-3">
         <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-          {game.GameID <= 3 ? "WNBA" : "NWSL"}
+          {game.GameID === 1 ? "NBA" : game.GameID === 2 ? "NHL" : game.GameID === 3 ? "MLS" : "NCAA"}
         </span>
         <div className={`flex items-center gap-1.5 text-xs font-semibold ${status.className}`}>
           <StatusIcon className="w-3.5 h-3.5" />
