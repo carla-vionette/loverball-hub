@@ -63,12 +63,12 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ["DM Sans", "Poppins", "system-ui", "sans-serif"],
-        display: ["Barlow Condensed", "Oswald", "Impact", "sans-serif"],
+        sans: ["Inter", "DM Sans", "system-ui", "sans-serif"],
+        display: ["Anton", "Barlow Condensed", "Impact", "sans-serif"],
         script: ["Pacifico", "cursive"],
         condensed: ["Barlow Condensed", "Oswald", "Impact", "sans-serif"],
-        serif: ["Poppins", "system-ui", "sans-serif"],
-        body: ["DM Sans", "system-ui", "sans-serif"],
+        serif: ["Playfair Display", "serif"],
+        body: ["Inter", "DM Sans", "system-ui", "sans-serif"],
       },
       fontSize: {
         xs: ["0.75rem", { lineHeight: "1rem" }],
@@ -123,6 +123,15 @@ export default {
         accent: {
           DEFAULT: "hsl(var(--accent))",
           foreground: "hsl(var(--accent-foreground))",
+          orange: "#FF3B00",
+          yellow: "#DFFF00",
+          blue: "#0038FF",
+          pink: "#FF0055",
+        },
+        base: {
+          100: "#0a0a0a",
+          200: "#141414",
+          300: "#222222",
         },
         coral: {
           DEFAULT: "hsl(var(--coral))",
@@ -186,6 +195,8 @@ export default {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+        "4xl": "2rem",
+        "5xl": "2.5rem",
       },
       gridTemplateColumns: {
         "layout": "repeat(12, minmax(0, 1fr))",
@@ -243,6 +254,10 @@ export default {
           "0%, 100%": { transform: "translateY(0)" },
           "50%": { transform: "translateY(-6px)" },
         },
+        marquee: {
+          "0%": { transform: "translateX(0)" },
+          "100%": { transform: "translateX(-50%)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -257,6 +272,7 @@ export default {
         "skeleton-pulse": "skeleton-pulse 2s ease-in-out infinite",
         shimmer: "shimmer 2s linear infinite",
         float: "float 3s ease-in-out infinite",
+        marquee: "marquee 15s linear infinite",
       },
     },
   },
