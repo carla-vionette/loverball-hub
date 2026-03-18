@@ -21,7 +21,15 @@ const Standings = () => {
     return <Card className="p-4"><Skeleton className="h-64 w-full" /></Card>;
   }
 
-  if (error && apiAvailable) {
+  if (!apiAvailable) {
+    return (
+      <Card className="p-6 text-center">
+        <p className="text-sm text-muted-foreground">Standings require an API key to be configured.</p>
+      </Card>
+    );
+  }
+
+  if (error) {
     return (
       <Card className="p-6 text-center">
         <p className="text-sm text-destructive">Failed to load standings.</p>
@@ -29,8 +37,15 @@ const Standings = () => {
     );
   }
 
-  const displayStandings = (apiAvailable && standings?.length) ? standings : SAMPLE_STANDINGS;
-  const sorted = [...displayStandings].sort((a, b) => b.Percentage - a.Percentage);
+  if (!standings?.length) {
+    return (
+      <Card className="p-6 text-center">
+        <p className="text-sm text-muted-foreground">WNBA season hasn't started yet. Standings will appear once the season begins.</p>
+      </Card>
+    );
+  }
+
+  const sorted = [...standings].sort((a, b) => b.Percentage - a.Percentage);
 
   return (
     <Card className="overflow-hidden border-border/30">
