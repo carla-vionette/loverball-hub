@@ -26,15 +26,15 @@ const MOCK_STORIES = [
 
 /* ── Mock fan posts ── */
 const MOCK_FAN_POSTS = [
-  { id: "fp1", authorName: "Jada Williams", authorAvatar: "", content: "Just got tickets to the Sparks game this weekend!! Who's coming? 🏀🔥 Can't believe it's already playoff season. Let's get a group together!", mediaUrl: null, mediaType: null, createdAt: new Date(Date.now() - 3600000).toISOString(), likesCount: 24, commentsCount: 8 },
-  { id: "fp2", authorName: "Toni Rivera", authorAvatar: "", content: "Angel City FC never disappoints. That second-half comeback was INSANE. Christen Press is a different beast this season 💪⚽", mediaUrl: null, mediaType: null, createdAt: new Date(Date.now() - 7200000).toISOString(), likesCount: 42, commentsCount: 15 },
-  { id: "fp3", authorName: "Ari Chen", authorAvatar: "", content: "Hosting a watch party for the WNBA Finals game 3 at my place in Silver Lake. DM me for the address! Bringing snacks and good vibes only 🍕🏀✨", mediaUrl: null, mediaType: null, createdAt: new Date(Date.now() - 14400000).toISOString(), likesCount: 67, commentsCount: 31 },
+  { id: "fp1", authorName: "Jada Williams", authorAvatar: "", content: "March Madness bracket is already busted but I don't even care 😂🏀 Anyone watching the Sweet 16 games tonight? Let's get a group watch going!", mediaUrl: null, mediaType: null, createdAt: new Date(Date.now() - 3600000).toISOString(), likesCount: 24, commentsCount: 8 },
+  { id: "fp2", authorName: "Toni Rivera", authorAvatar: "", content: "Lakers comeback in the 4th was WILD last night. AD had 38 points and LeBron with the dagger three 💪🏀 Playoff push is real!", mediaUrl: null, mediaType: null, createdAt: new Date(Date.now() - 7200000).toISOString(), likesCount: 42, commentsCount: 15 },
+  { id: "fp3", authorName: "Ari Chen", authorAvatar: "", content: "LAFC home opener this weekend — who's tailgating at the Banc? Bringing the grill and good vibes 🍕⚽✨ DM me for the meetup spot!", mediaUrl: null, mediaType: null, createdAt: new Date(Date.now() - 14400000).toISOString(), likesCount: 67, commentsCount: 31 },
 ];
 
-/* ── Mock scores ── */
+/* ── Mock scores (March 2026 — NBA, NHL, MLS, NCAA) ── */
 const MOCK_SCORES = [
-  { homeTeam: "Sparks", awayTeam: "Aces", homeScore: 82, awayScore: 78, isLive: true, gameTime: "Q4 · 3:42" },
-  { homeTeam: "Angel City", awayTeam: "Wave", homeScore: 2, awayScore: 1, isLive: false, gameTime: "Full Time" },
+  { homeTeam: "Lakers", awayTeam: "Clippers", homeScore: 108, awayScore: 102, isLive: true, gameTime: "Q4 · 3:42" },
+  { homeTeam: "Kings", awayTeam: "Ducks", homeScore: 3, awayScore: 2, isLive: false, gameTime: "Final" },
 ];
 
 const Home = () => {
