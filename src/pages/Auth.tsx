@@ -168,24 +168,20 @@ const Auth = () => {
         
         if (error) throw error;
 
-        // Check if profile exists
+        // Check if profile exists and onboarding is complete
         const { data: profile } = await supabase
           .from('profiles')
-          .select('*')
+          .select('name, membership_tier, has_completed_onboarding')
           .eq('id', data.user.id)
           .maybeSingle();
 
-        if (profile) {
-          // Check if user has a plan selected
-          const profileAny = profile as any;
-          if (!profileAny.membership_tier) {
-            navigate("/plans");
-          } else {
-            setSplashName(profile.name);
-            setPendingRedirect(redirectTo);
-          }
+        if (!profile) {
+          navigate("/onboarding");
+        } else if (!(profile as any).has_completed_onboarding) {
+          navigate("/onboarding");
         } else {
-          navigate("/plans");
+          setSplashName(profile.name);
+          setPendingRedirect(redirectTo);
         }
       }
     } catch (error: any) {
