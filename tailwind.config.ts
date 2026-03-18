@@ -160,6 +160,15 @@ export default {
           DEFAULT: "hsl(var(--warm-beige))",
           foreground: "hsl(var(--warm-beige-foreground))",
         },
+        "home-bg": {
+          DEFAULT: "hsl(var(--home-bg))",
+          foreground: "hsl(var(--home-bg-foreground))",
+        },
+        "home-coral": {
+          DEFAULT: "hsl(var(--home-coral))",
+          end: "hsl(var(--home-coral-end))",
+          foreground: "hsl(var(--home-coral-foreground))",
+        },
         "hot-pink": {
           DEFAULT: "hsl(var(--hot-pink))",
           foreground: "hsl(var(--hot-pink-foreground))",
