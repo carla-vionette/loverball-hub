@@ -2,6 +2,7 @@ import { useRef, useState, useEffect, useCallback } from "react";
 import FeedVideoPlayer from "@/components/video/FeedVideoPlayer";
 import { FEED_VIDEOS } from "@/lib/feedVideoData";
 import BottomNav from "@/components/BottomNav";
+import WelcomeBanner from "@/components/WelcomeBanner";
 
 const Home = () => {
   const containerRef = useRef<HTMLDivElement>(null);
