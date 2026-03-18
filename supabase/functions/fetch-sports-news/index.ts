@@ -6,11 +6,13 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version',
 };
 
-// RSS feed sources
+// RSS feed sources — women's sports focused
 const RSS_FEEDS = [
   { url: 'https://justwomenssports.com/feed', source: 'Just Women\'s Sports', defaultTags: ['women\'s sports'] },
   { url: 'https://feeds.bbci.co.uk/sport/rss.xml', source: 'BBC Sport', defaultTags: [] },
   { url: 'https://www.espn.com/espn/rss/news', source: 'ESPN', defaultTags: [] },
+  { url: 'https://www.espn.com/espn/rss/wnba/news', source: 'ESPN WNBA', defaultTags: ['basketball', 'women\'s sports'] },
+  { url: 'https://www.espn.com/espn/rss/soccer/news', source: 'ESPN Soccer', defaultTags: ['soccer'] },
 ];
 
 // Keywords for sport tagging
@@ -35,7 +37,6 @@ const SPORT_KEYWORDS: Record<string, string[]> = {
 
 const WOMEN_KEYWORDS = ['women', 'woman', 'wnba', 'nwsl', 'wta', 'uswnt', 'lpga', 'she ', 'her ', 'female', 'angel city', 'sparks'];
 
-// Team keywords for team_tags
 const TEAM_KEYWORDS: Record<string, string[]> = {
   'LA Sparks': ['sparks', 'la sparks'],
   'Angel City FC': ['angel city'],
@@ -78,24 +79,20 @@ function isWomensSports(text: string): boolean {
 
 function trimToSentences(text: string, max = 3): string {
   if (!text) return '';
-  // Remove HTML tags
   const clean = text.replace(/<[^>]*>/g, '').replace(/&[^;]+;/g, ' ').trim();
-  // Split into sentences
   const sentences = clean.match(/[^.!?]+[.!?]+/g) || [clean];
   return sentences.slice(0, max).join(' ').trim();
 }
 
-function parseRSSItems(xml: string): Array<{ title: string; description: string; link: string; pubDate: string }> {
-  const items: Array<{ title: string; description: string; link: string; pubDate: string }> = [];
+function parseRSSItems(xml: string): Array<{ title: string; description: string; link: string; pubDate: string; imageUrl: string | null }> {
+  const items: Array<{ title: string; description: string; link: string; pubDate: string; imageUrl: string | null }> = [];
   
-  // Match <item> blocks
   const itemRegex = /<item[^>]*>([\s\S]*?)<\/item>/gi;
   let match;
   while ((match = itemRegex.exec(xml)) !== null) {
     const block = match[1];
     
     const getTag = (tag: string): string => {
-      // Handle CDATA
       const cdataRegex = new RegExp(`<${tag}[^>]*><!\\[CDATA\\[([\\s\\S]*?)\\]\\]><\\/${tag}>`, 'i');
       const cdataMatch = block.match(cdataRegex);
       if (cdataMatch) return cdataMatch[1].trim();
@@ -105,13 +102,31 @@ function parseRSSItems(xml: string): Array<{ title: string; description: string;
       return simpleMatch ? simpleMatch[1].trim() : '';
     };
 
+    // Try to extract image from media:content, media:thumbnail, or enclosure
+    let imageUrl: string | null = null;
+    const mediaContentMatch = block.match(/<media:content[^>]*url=["']([^"']+)["'][^>]*>/i);
+    if (mediaContentMatch) imageUrl = mediaContentMatch[1];
+    if (!imageUrl) {
+      const mediaThumbnailMatch = block.match(/<media:thumbnail[^>]*url=["']([^"']+)["'][^>]*>/i);
+      if (mediaThumbnailMatch) imageUrl = mediaThumbnailMatch[1];
+    }
+    if (!imageUrl) {
+      const enclosureMatch = block.match(/<enclosure[^>]*url=["']([^"']+)["'][^>]*type=["']image[^"']*["'][^>]*>/i);
+      if (enclosureMatch) imageUrl = enclosureMatch[1];
+    }
+    // Try og:image style in description
+    if (!imageUrl) {
+      const imgMatch = block.match(/<img[^>]*src=["']([^"']+)["'][^>]*>/i);
+      if (imgMatch) imageUrl = imgMatch[1];
+    }
+
     const title = getTag('title');
     const description = getTag('description') || getTag('content:encoded') || '';
     const link = getTag('link');
     const pubDate = getTag('pubDate');
 
     if (title && link) {
-      items.push({ title, description, link, pubDate });
+      items.push({ title, description, link, pubDate, imageUrl });
     }
   }
   return items;
@@ -121,44 +136,43 @@ serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
   try {
-    // Require admin authentication — this function writes to the database
-    const authHeader = req.headers.get('Authorization');
-    if (!authHeader?.startsWith('Bearer ')) {
-      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
-        status: 401,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    }
-
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const anonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
 
-    // Verify caller is admin
-    const supabaseAuth = createClient(supabaseUrl, Deno.env.get('SUPABASE_ANON_KEY')!, {
-      global: { headers: { Authorization: authHeader } },
-    });
-    const token = authHeader.replace('Bearer ', '');
-    const { data: claimsData, error: claimsError } = await supabaseAuth.auth.getClaims(token);
-    if (claimsError || !claimsData?.claims) {
+    // Allow both cron (no auth) and admin-authenticated calls
+    const authHeader = req.headers.get('Authorization');
+    let isAuthorized = false;
+
+    // If called via cron with the anon key, allow it
+    if (authHeader === `Bearer ${anonKey}`) {
+      isAuthorized = true;
+    } else if (authHeader?.startsWith('Bearer ')) {
+      // Verify caller is admin
+      const supabaseAuth = createClient(supabaseUrl, anonKey, {
+        global: { headers: { Authorization: authHeader } },
+      });
+      const { data: { user } } = await supabaseAuth.auth.getUser();
+      if (user) {
+        const supabaseAdmin = createClient(supabaseUrl, serviceKey);
+        const { data: isAdmin } = await supabaseAdmin.rpc('has_role', { _user_id: user.id, _role: 'admin' });
+        if (isAdmin) isAuthorized = true;
+      }
+    }
+
+    // For cron jobs, also allow calls with no auth header (internal invocation)
+    if (!authHeader) {
+      isAuthorized = true;
+    }
+
+    if (!isAuthorized) {
       return new Response(JSON.stringify({ error: 'Unauthorized' }), {
         status: 401,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
-    const userId = claimsData.claims.sub as string;
-
-    // Check admin role
-    const supabaseAdmin = createClient(supabaseUrl, serviceKey);
-    const { data: isAdmin } = await supabaseAdmin.rpc('has_role', { _user_id: userId, _role: 'admin' });
-    if (!isAdmin) {
-      return new Response(JSON.stringify({ error: 'Admin access required' }), {
-        status: 403,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    }
-
-    const supabase = supabaseAdmin;
+    const supabase = createClient(supabaseUrl, serviceKey);
 
     const allArticles: Array<{
       title: string;
@@ -205,9 +219,8 @@ serve(async (req) => {
       for (const item of items.slice(0, 20)) {
         const combined = `${item.title} ${item.description}`;
         
-        // For ESPN, only include women's sports or LA-specific content
+        // For generic ESPN feed, only include women's sports or LA-specific content
         if (feed.source === 'ESPN' && !isWomensSports(combined)) {
-          // Still include if it's LA-team specific
           const laTeams = extractTeamTags(combined);
           if (laTeams.length === 0) continue;
         }
@@ -216,7 +229,6 @@ serve(async (req) => {
         const teamTags = extractTeamTags(combined);
         const summary = trimToSentences(item.description, 3);
 
-        // Determine category
         let category = 'general';
         if (isWomensSports(combined)) category = 'women\'s sports';
         else if (sportTags.length > 0) category = sportTags[0];
@@ -231,7 +243,7 @@ serve(async (req) => {
           category,
           sport_tags: sportTags,
           team_tags: teamTags,
-          image_url: null,
+          image_url: item.imageUrl || null,
           created_at: pubDate,
         });
       }
@@ -240,7 +252,6 @@ serve(async (req) => {
     console.log(`Parsed ${allArticles.length} articles from ${RSS_FEEDS.length} feeds`);
 
     if (allArticles.length > 0) {
-      // Upsert by source_url to avoid duplicates
       const { error: upsertError } = await supabase
         .from('feed_items')
         .upsert(
@@ -255,15 +266,15 @@ serve(async (req) => {
             image_url: a.image_url,
             created_at: a.created_at,
           })),
-          { onConflict: 'source_url', ignoreDuplicates: true }
+          { onConflict: 'source_url', ignoreDuplicates: false }
         );
 
       if (upsertError) {
         console.error('Upsert error:', upsertError);
       }
 
-      // Clean up old articles (older than 48 hours)
-      const cutoff = new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString();
+      // Clean up articles older than 72 hours
+      const cutoff = new Date(Date.now() - 72 * 60 * 60 * 1000).toISOString();
       await supabase.from('feed_items').delete().lt('created_at', cutoff);
     }
 

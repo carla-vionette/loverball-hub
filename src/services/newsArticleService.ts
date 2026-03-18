@@ -239,9 +239,13 @@ export async function fetchPersonalizedNews(
  */
 export async function fetchTrendingNews(limit = 8): Promise<NewsArticle[]> {
   try {
+    // Only show articles from the last 48 hours
+    const cutoff = new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString();
+
     const { data, error } = await supabase
       .from("feed_items")
       .select("*")
+      .gte("created_at", cutoff)
       .order("created_at", { ascending: false })
       .limit(limit);
 
