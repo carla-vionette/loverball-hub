@@ -1039,6 +1039,38 @@ export type Database = {
           },
         ]
       }
+      post_comments: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          post_id: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          post_id: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          post_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "post_comments_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       post_likes: {
         Row: {
           created_at: string
@@ -1184,6 +1216,7 @@ export type Database = {
           favorite_la_teams: string[] | null
           favorite_sports: string[] | null
           favorite_teams_players: string[] | null
+          has_completed_onboarding: boolean
           id: string
           industries: string[] | null
           instagram_url: string | null
@@ -1207,6 +1240,7 @@ export type Database = {
           tiktok_url: string | null
           total_points: number
           updated_at: string
+          username: string | null
           website_url: string | null
         }
         Insert: {
@@ -1220,6 +1254,7 @@ export type Database = {
           favorite_la_teams?: string[] | null
           favorite_sports?: string[] | null
           favorite_teams_players?: string[] | null
+          has_completed_onboarding?: boolean
           id: string
           industries?: string[] | null
           instagram_url?: string | null
@@ -1243,6 +1278,7 @@ export type Database = {
           tiktok_url?: string | null
           total_points?: number
           updated_at?: string
+          username?: string | null
           website_url?: string | null
         }
         Update: {
@@ -1256,6 +1292,7 @@ export type Database = {
           favorite_la_teams?: string[] | null
           favorite_sports?: string[] | null
           favorite_teams_players?: string[] | null
+          has_completed_onboarding?: boolean
           id?: string
           industries?: string[] | null
           instagram_url?: string | null
@@ -1279,6 +1316,7 @@ export type Database = {
           tiktok_url?: string | null
           total_points?: number
           updated_at?: string
+          username?: string | null
           website_url?: string | null
         }
         Relationships: []
@@ -1331,6 +1369,30 @@ export type Database = {
           request_count?: number
           user_id?: string
           window_start?: string
+        }
+        Relationships: []
+      }
+      saved_items: {
+        Row: {
+          created_at: string
+          id: string
+          item_id: string
+          item_type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          item_id: string
+          item_type: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          item_id?: string
+          item_type?: string
+          user_id?: string
         }
         Relationships: []
       }
