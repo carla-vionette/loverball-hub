@@ -4,14 +4,6 @@ import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Trophy, Clock, Radio } from "lucide-react";
 
-// ── Fallback sample games when API key isn't configured ──
-// Fallback sample games reflecting sports actually in-season (March — NBA, NHL, MLS, NCAA)
-const SAMPLE_GAMES: WnbaGame[] = [
-  { GameID: 1, Season: 2026, Status: "InProgress", DateTime: new Date().toISOString(), HomeTeam: "LA Lakers", AwayTeam: "LA Clippers", HomeTeamScore: 108, AwayTeamScore: 102, HomeTeamID: 1, AwayTeamID: 2, Channel: "ESPN", Quarter: "Q4", TimeRemainingMinutes: 3, TimeRemainingSeconds: 42 },
-  { GameID: 2, Season: 2026, Status: "Final", DateTime: new Date().toISOString(), HomeTeam: "LA Kings", AwayTeam: "Anaheim Ducks", HomeTeamScore: 3, AwayTeamScore: 2, HomeTeamID: 3, AwayTeamID: 4, Channel: "TNT", Quarter: null, TimeRemainingMinutes: null, TimeRemainingSeconds: null },
-  { GameID: 3, Season: 2026, Status: "Scheduled", DateTime: new Date(Date.now() + 3 * 60 * 60 * 1000).toISOString(), HomeTeam: "LAFC", AwayTeam: "LA Galaxy", HomeTeamScore: null, AwayTeamScore: null, HomeTeamID: 5, AwayTeamID: 6, Channel: "Apple TV", Quarter: null, TimeRemainingMinutes: null, TimeRemainingSeconds: null },
-  { GameID: 4, Season: 2026, Status: "InProgress", DateTime: new Date().toISOString(), HomeTeam: "UConn", AwayTeam: "Duke", HomeTeamScore: 72, AwayTeamScore: 68, HomeTeamID: 7, AwayTeamID: 8, Channel: "CBS", Quarter: "2H", TimeRemainingMinutes: 8, TimeRemainingSeconds: 15 },
-];
 
 const statusConfig: Record<string, { label: string; icon: typeof Trophy; className: string }> = {
   Final: { label: "Final", icon: Trophy, className: "text-muted-foreground" },
@@ -81,7 +73,15 @@ const LiveScores = () => {
     );
   }
 
-  if (error && apiAvailable) {
+  if (!apiAvailable) {
+    return (
+      <Card className="p-6 text-center">
+        <p className="text-sm text-muted-foreground">Live scores require an API key to be configured.</p>
+      </Card>
+    );
+  }
+
+  if (error) {
     return (
       <Card className="p-6 text-center">
         <p className="text-sm text-destructive">Failed to load scores. Please try again later.</p>
@@ -89,12 +89,17 @@ const LiveScores = () => {
     );
   }
 
-  // Use API data if available, otherwise fallback sample data
-  const displayGames = (apiAvailable && games?.length) ? games : SAMPLE_GAMES;
+  if (!games?.length) {
+    return (
+      <Card className="p-6 text-center">
+        <p className="text-sm text-muted-foreground">No games scheduled today. Check back later!</p>
+      </Card>
+    );
+  }
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-      {displayGames.map((game) => (
+      {games.map((game) => (
         <GameCard key={game.GameID} game={game} />
       ))}
     </div>
