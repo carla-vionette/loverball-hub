@@ -73,7 +73,15 @@ const LiveScores = () => {
     );
   }
 
-  if (error && apiAvailable) {
+  if (!apiAvailable) {
+    return (
+      <Card className="p-6 text-center">
+        <p className="text-sm text-muted-foreground">Live scores require an API key to be configured.</p>
+      </Card>
+    );
+  }
+
+  if (error) {
     return (
       <Card className="p-6 text-center">
         <p className="text-sm text-destructive">Failed to load scores. Please try again later.</p>
@@ -81,12 +89,17 @@ const LiveScores = () => {
     );
   }
 
-  // Use API data if available, otherwise fallback sample data
-  const displayGames = (apiAvailable && games?.length) ? games : SAMPLE_GAMES;
+  if (!games?.length) {
+    return (
+      <Card className="p-6 text-center">
+        <p className="text-sm text-muted-foreground">No games scheduled today. Check back later!</p>
+      </Card>
+    );
+  }
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-      {displayGames.map((game) => (
+      {games.map((game) => (
         <GameCard key={game.GameID} game={game} />
       ))}
     </div>
