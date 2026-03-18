@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import { Clock, ExternalLink, RefreshCw, Loader2, Newspaper } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "@/hooks/use-toast";
 import {
   fetchTrendingNews,
   getSportEmoji,
@@ -52,16 +53,41 @@ const TrendingNews: React.FC<TrendingNewsProps> = ({ onAuthRequired }) => {
   const handleRefresh = async () => {
     setRefreshing(true);
     try {
+      // Try with user session first, fall back to anon invocation
       const { data: { session } } = await supabase.auth.getSession();
+      const headers: Record<string, string> = {};
       if (session) {
-        await supabase.functions.invoke('fetch-sports-news', {
-          headers: { Authorization: `Bearer ${session.access_token}` },
+        headers.Authorization = `Bearer ${session.access_token}`;
+      }
+
+      const { data, error } = await supabase.functions.invoke('fetch-sports-news', {
+        headers,
+      });
+
+      if (error) {
+        console.error('Edge function error:', error);
+        toast({
+          title: "Refresh failed",
+          description: error.message || "Could not fetch news. Try again later.",
+          variant: "destructive",
+        });
+      } else {
+        const count = data?.articlesProcessed ?? 0;
+        toast({
+          title: "News refreshed",
+          description: `Fetched ${count} articles from RSS feeds.`,
         });
       }
-      await new Promise(r => setTimeout(r, 1500));
+
+      await new Promise(r => setTimeout(r, 1000));
       await loadNews();
-    } catch (err) {
+    } catch (err: any) {
       console.error('Refresh failed:', err);
+      toast({
+        title: "Refresh error",
+        description: err?.message || "An unexpected error occurred.",
+        variant: "destructive",
+      });
     } finally {
       setRefreshing(false);
     }
