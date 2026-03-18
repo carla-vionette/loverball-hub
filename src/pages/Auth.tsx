@@ -138,9 +138,9 @@ const Auth = () => {
         } else if (data.user) {
           toast({
             title: "Welcome to Loverball!",
-            description: "Let's choose your plan.",
+            description: "Let's set up your profile.",
           });
-          navigate("/plans");
+          navigate("/onboarding");
         }
       } else {
         // Validate sign in inputs
