@@ -17,15 +17,15 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Home from "./pages/Home";
 import Index from "./pages/Index";
 import Friends from "./pages/Friends";
+import Watch from "./pages/Watch";
+import Explore from "./pages/Explore";
 
 // ── Lazy-loaded secondary pages ──
 const Auth = lazy(() => import("./pages/Auth"));
-const Explore = lazy(() => import("./pages/Explore"));
 const Events = lazy(() => import("./pages/Events"));
 const Shop = lazy(() => import("./pages/Shop"));
 const Profile = lazy(() => import("./pages/Profile"));
 const Feed = lazy(() => import("./pages/Feed"));
-const Watch = lazy(() => import("./pages/Watch"));
 const Search = lazy(() => import("./pages/Search"));
 const VideoDetail = lazy(() => import("./pages/VideoDetail"));
 const ChannelProfile = lazy(() => import("./pages/ChannelProfile"));
