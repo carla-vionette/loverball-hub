@@ -46,6 +46,7 @@ const Home = () => {
 
   return (
     <div className="fixed inset-0 bg-black z-30">
+      <WelcomeBanner />
       <div
         ref={containerRef}
         className="h-full overflow-y-scroll snap-y snap-mandatory scrollbar-hide"
