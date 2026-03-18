@@ -1,34 +1,40 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Link } from "react-router-dom";
-import { Bell, Plus, ChevronRight } from "lucide-react";
+import { Bell } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useHomepageData } from "@/hooks/useHomepageData";
 import BottomNav from "@/components/BottomNav";
 import WelcomeBanner from "@/components/WelcomeBanner";
-import lLogo from "@/assets/loverball-new-l-logo.png";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { format } from "date-fns";
-import { LA_PRO_TEAMS } from "@/lib/laTeamsConfig";
+import FeedFilterChips from "@/components/feed/FeedFilterChips";
+import StoriesRow from "@/components/feed/StoriesRow";
+import NewsArticleCard from "@/components/feed/NewsArticleCard";
+import FanPostCard from "@/components/feed/FanPostCard";
+import EventFeedCard from "@/components/feed/EventFeedCard";
+import ScoreFeedCard from "@/components/feed/ScoreFeedCard";
+import lLogo from "@/assets/loverball-script-logo.png";
 
-/* ── Mock stories for demo ── */
+/* ── Mock stories ── */
 const MOCK_STORIES = [
-  { id: "1", name: "Jada", avatar: "" },
-  { id: "2", name: "Maya", avatar: "" },
-  { id: "3", name: "Toni", avatar: "" },
-  { id: "4", name: "Ari", avatar: "" },
-  { id: "5", name: "Lex", avatar: "" },
-  { id: "6", name: "Bri", avatar: "" },
-  { id: "7", name: "Sam", avatar: "" },
+  { id: "1", name: "Jada", avatar: "", seen: false },
+  { id: "2", name: "Maya", avatar: "", seen: false },
+  { id: "3", name: "Toni", avatar: "", seen: false },
+  { id: "4", name: "Ari", avatar: "", seen: true },
+  { id: "5", name: "Lex", avatar: "", seen: true },
+  { id: "6", name: "Bri", avatar: "", seen: true },
 ];
 
-/* ── Shows / Content lane data ── */
-const SHOW_CARDS = [
-  { id: "1", title: "LOCKER ROOM\nSTORIES", gradient: "from-[hsl(14,100%,59%)] to-[hsl(18,100%,68%)]" },
-  { id: "2", title: "MESSY\nFANS", gradient: "from-[hsl(174,72%,35%)] to-[hsl(174,50%,50%)]" },
-  { id: "3", title: "GAME DAY\nDRAMA", gradient: "from-[hsl(25,90%,50%)] to-[hsl(40,95%,60%)]" },
-  { id: "4", title: "COURTSIDE\nCONFESSIONS", gradient: "from-[hsl(350,80%,55%)] to-[hsl(14,100%,65%)]" },
-  { id: "5", title: "THE\nPLAYBOOK", gradient: "from-[hsl(210,20%,18%)] to-[hsl(210,15%,35%)]" },
+/* ── Mock fan posts ── */
+const MOCK_FAN_POSTS = [
+  { id: "fp1", authorName: "Jada Williams", authorAvatar: "", content: "Just got tickets to the Sparks game this weekend!! Who's coming? 🏀🔥 Can't believe it's already playoff season. Let's get a group together!", mediaUrl: null, mediaType: null, createdAt: new Date(Date.now() - 3600000).toISOString(), likesCount: 24, commentsCount: 8 },
+  { id: "fp2", authorName: "Toni Rivera", authorAvatar: "", content: "Angel City FC never disappoints. That second-half comeback was INSANE. Christen Press is a different beast this season 💪⚽", mediaUrl: null, mediaType: null, createdAt: new Date(Date.now() - 7200000).toISOString(), likesCount: 42, commentsCount: 15 },
+  { id: "fp3", authorName: "Ari Chen", authorAvatar: "", content: "Hosting a watch party for the WNBA Finals game 3 at my place in Silver Lake. DM me for the address! Bringing snacks and good vibes only 🍕🏀✨", mediaUrl: null, mediaType: null, createdAt: new Date(Date.now() - 14400000).toISOString(), likesCount: 67, commentsCount: 31 },
+];
+
+/* ── Mock scores ── */
+const MOCK_SCORES = [
+  { homeTeam: "Sparks", awayTeam: "Aces", homeScore: 82, awayScore: 78, isLive: true, gameTime: "Q4 · 3:42" },
+  { homeTeam: "Angel City", awayTeam: "Wave", homeScore: 2, awayScore: 1, isLive: false, gameTime: "Full Time" },
 ];
 
 const Home = () => {
@@ -36,222 +42,168 @@ const Home = () => {
   const { data: homepageData } = useHomepageData();
   const [unreadCount, setUnreadCount] = useState(0);
   const [profile, setProfile] = useState<any>(null);
+  const [activeFilter, setActiveFilter] = useState("For You");
 
-  // Fetch unread notification count
   useEffect(() => {
     if (!user) return;
-    const fetchUnread = async () => {
-      const { count } = await supabase
-        .from("notifications")
-        .select("id", { count: "exact", head: true })
-        .eq("user_id", user.id)
-        .eq("is_read", false);
-      setUnreadCount(count || 0);
-    };
-    fetchUnread();
+    supabase
+      .from("notifications")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", user.id)
+      .eq("is_read", false)
+      .then(({ count }) => setUnreadCount(count || 0));
   }, [user?.id]);
 
-  // Fetch profile for avatar & teams
   useEffect(() => {
     if (!user) return;
     supabase
       .from("profiles")
-      .select("name, profile_photo_url, favorite_la_teams")
+      .select("name, profile_photo_url, favorite_la_teams, favorite_sports")
       .eq("id", user.id)
       .single()
       .then(({ data }) => setProfile(data));
   }, [user?.id]);
 
   const userTeams = (profile?.favorite_la_teams || []) as string[];
-  const matchedTeams = LA_PRO_TEAMS.filter((t) =>
-    userTeams.some((ut: string) => t.shortName === ut || t.name === ut)
-  );
+  const filters = useMemo(() => ["For You", "Following", ...userTeams], [userTeams]);
 
+  const news = homepageData?.trending_news ?? [];
   const events = homepageData?.upcoming_events ?? [];
 
+  /* ── Interleave algorithm: every 3 news → 1 fan post → 1 event/score ── */
+  const feedItems = useMemo(() => {
+    const items: Array<{ type: string; data: any }> = [];
+    let newsIdx = 0;
+    let postIdx = 0;
+    let eventIdx = 0;
+    let scoreIdx = 0;
+
+    const maxItems = Math.max(news.length, 12);
+
+    for (let i = 0; i < maxItems; i++) {
+      // 3 news articles
+      for (let n = 0; n < 3 && newsIdx < news.length; n++, newsIdx++) {
+        items.push({ type: "news", data: news[newsIdx] });
+      }
+
+      // 1 fan post
+      if (postIdx < MOCK_FAN_POSTS.length) {
+        items.push({ type: "fan_post", data: MOCK_FAN_POSTS[postIdx++] });
+      }
+
+      // alternate event and score
+      if (i % 2 === 0 && eventIdx < events.length) {
+        items.push({ type: "event", data: events[eventIdx++] });
+      } else if (scoreIdx < MOCK_SCORES.length) {
+        items.push({ type: "score", data: MOCK_SCORES[scoreIdx++] });
+      } else if (eventIdx < events.length) {
+        items.push({ type: "event", data: events[eventIdx++] });
+      }
+
+      if (newsIdx >= news.length && postIdx >= MOCK_FAN_POSTS.length) break;
+    }
+
+    return items;
+  }, [news, events]);
+
   return (
-    <div className="min-h-screen bg-home-bg pb-24">
+    <div className="min-h-screen bg-background pb-24">
       <WelcomeBanner />
 
       {/* ── Top Bar ── */}
-      <header className="sticky top-0 z-40 flex items-center justify-between px-4 py-3 bg-home-bg/95 backdrop-blur-sm">
-        <img src={lLogo} alt="Loverball" className="h-9 w-auto" />
+      <header className="sticky top-0 z-40 flex items-center justify-between px-4 py-3 bg-background/95 backdrop-blur-sm border-b border-border/10">
+        <img src={lLogo} alt="Loverball" className="h-8 w-auto" />
         <Link to="/inbox" className="relative p-2 -mr-2">
-          <Bell className="w-6 h-6 text-home-bg-foreground" />
+          <Bell className="w-5 h-5 text-foreground" />
           {unreadCount > 0 && (
-            <span className="absolute top-1 right-1 w-2.5 h-2.5 rounded-full bg-home-coral" />
+            <span className="absolute top-1 right-1 w-2.5 h-2.5 rounded-full bg-accent" />
           )}
         </Link>
       </header>
 
-      <main className="px-4 space-y-7">
-        {/* ── Section 1: Hero "Game of the Day" ── */}
-        <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-home-coral to-home-coral-end p-6 min-h-[200px] flex flex-col justify-end">
-          {/* subtle texture */}
-          <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_70%_30%,white_0%,transparent_60%)]" />
-          <div className="relative z-10">
-            <p className="font-display text-sm tracking-[0.2em] text-white/80 uppercase mb-1">Match of the Day</p>
-            <h2 className="font-display text-4xl font-extrabold text-white uppercase leading-none tracking-tight">
-              TONIGHT'S<br />GAME
-            </h2>
-            <p className="font-body text-sm text-white/80 mt-2">
-              {events.length > 0 ? events[0].title : "Lakers vs Clippers • 7:30 PM PT"}
-            </p>
-            <Link
-              to={events.length > 0 ? `/event/${events[0].id}` : "/events"}
-              className="inline-flex items-center mt-4 px-5 py-2.5 rounded-full bg-white text-home-bg-foreground font-body font-semibold text-sm shadow-md hover:shadow-lg transition-shadow"
-            >
-              Watch Party
-              <ChevronRight className="w-4 h-4 ml-1" />
-            </Link>
-          </div>
-        </section>
+      {/* ── Filter Chips ── */}
+      <FeedFilterChips
+        filters={filters}
+        activeFilter={activeFilter}
+        onFilterChange={setActiveFilter}
+      />
 
-        {/* ── Section 2: Stories Row ── */}
-        <section>
-          <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-1">
-            {/* Your story */}
-            <div className="flex flex-col items-center gap-1.5 shrink-0">
-              <div className="relative">
-                <Avatar className="w-16 h-16 ring-2 ring-border">
-                  <AvatarImage src={profile?.profile_photo_url || ""} />
-                  <AvatarFallback className="bg-muted text-muted-foreground font-display text-lg">
-                    {profile?.name?.charAt(0) || "?"}
-                  </AvatarFallback>
-                </Avatar>
-                <span className="absolute bottom-0 right-0 w-5 h-5 rounded-full bg-home-coral flex items-center justify-center ring-2 ring-home-bg">
-                  <Plus className="w-3 h-3 text-white" />
-                </span>
-              </div>
-              <span className="text-[11px] font-body text-muted-foreground">You</span>
-            </div>
-            {MOCK_STORIES.map((s, i) => (
-              <div key={s.id} className="flex flex-col items-center gap-1.5 shrink-0">
-                <Avatar className={`w-16 h-16 ring-2 ${i < 3 ? "ring-primary" : "ring-border"}`}>
-                  <AvatarFallback className="bg-muted text-muted-foreground font-display text-lg">
-                    {s.name.charAt(0)}
-                  </AvatarFallback>
-                </Avatar>
-                <span className="text-[11px] font-body text-muted-foreground">{s.name}</span>
-              </div>
-            ))}
-          </div>
-        </section>
+      {/* ── Stories Row ── */}
+      <StoriesRow
+        userAvatar={profile?.profile_photo_url || ""}
+        userName={profile?.name || ""}
+        stories={MOCK_STORIES}
+      />
 
-        {/* ── Section 3: Shows & Content Lane ── */}
-        <section>
-          <h3 className="font-display text-xs tracking-[0.2em] uppercase text-muted-foreground mb-3">Shows & Content</h3>
-          <div className="flex gap-3 overflow-x-auto scrollbar-hide pb-1">
-            {SHOW_CARDS.map((card) => (
-              <Link
-                key={card.id}
-                to="/watch"
-                className={`shrink-0 w-36 h-48 rounded-2xl bg-gradient-to-br ${card.gradient} flex items-end p-4 shadow-md hover:shadow-lg transition-shadow`}
-              >
-                <h4 className="font-display text-lg font-extrabold text-white uppercase leading-tight whitespace-pre-line">
-                  {card.title}
-                </h4>
-              </Link>
-            ))}
-          </div>
-        </section>
-
-        {/* ── Section 4: Events Cards ── */}
-        <section>
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="font-display text-xs tracking-[0.2em] uppercase text-muted-foreground">Upcoming Events</h3>
-            <Link to="/events" className="text-xs font-body font-semibold text-home-coral">See all</Link>
-          </div>
-          <div className="space-y-3">
-            {(events.length > 0 ? events.slice(0, 3) : [
-              { id: "demo1", title: "Sober Brunch & Basketball", event_date: "2026-04-05", city: "Los Angeles", sport_tags: ["messy sports girlies", "sober brunch"], slug: null },
-              { id: "demo2", title: "WNBA Season Opener Watch Party", event_date: "2026-05-17", city: "Inglewood", sport_tags: ["watch party", "wnba"], slug: null },
-            ]).map((ev: any) => (
-              <Link
-                key={ev.id}
-                to={ev.slug ? `/event/${ev.slug}` : `/event/${ev.id}`}
-                className="block rounded-2xl border border-home-coral/15 bg-white p-5 shadow-sm hover:shadow-md transition-shadow"
-              >
-                <h4 className="font-display text-xl font-extrabold uppercase text-home-bg-foreground leading-tight">
-                  {ev.title}
-                </h4>
-                <p className="font-body text-sm text-muted-foreground mt-1">
-                  {ev.city || "Los Angeles"} • {format(new Date(ev.event_date), "MMM d")}
-                </p>
-                {ev.sport_tags && ev.sport_tags.length > 0 && (
-                  <div className="flex flex-wrap gap-1.5 mt-3">
-                    {(ev.sport_tags as string[]).slice(0, 3).map((tag: string) => (
-                      <span
-                        key={tag}
-                        className="px-2.5 py-0.5 rounded-full bg-home-bg text-[11px] font-body font-medium text-muted-foreground"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                )}
-                <span className="inline-block mt-3 px-4 py-1.5 rounded-full bg-home-coral text-white font-body font-semibold text-xs uppercase tracking-wide">
-                  RSVP
-                </span>
-              </Link>
-            ))}
-          </div>
-        </section>
-
-        {/* ── Section 5: Your Teams / Community ── */}
-        {matchedTeams.length > 0 && (
-          <section>
-            <h3 className="font-display text-xs tracking-[0.2em] uppercase text-muted-foreground mb-3">Your Teams</h3>
-            <div className="flex gap-3 overflow-x-auto scrollbar-hide pb-1">
-              {matchedTeams.map((team) => (
-                <Link
-                  key={team.shortName}
-                  to={`/community`}
-                  className="shrink-0 w-28 rounded-2xl bg-white border border-border/30 p-4 flex flex-col items-center gap-2 shadow-sm hover:shadow-md transition-shadow"
-                >
-                  <div className="w-12 h-12 rounded-xl bg-muted flex items-center justify-center">
-                    <span className="font-display text-sm font-extrabold text-muted-foreground uppercase">
-                      {team.shortName.slice(0, 3)}
-                    </span>
-                  </div>
-                  <span className="font-body text-xs text-home-bg-foreground font-medium text-center leading-tight">
-                    {team.shortName}
-                  </span>
-                  {team.gender === "women" && (
-                    <span className="px-2 py-0.5 rounded-full bg-primary/15 text-primary text-[10px] font-body font-semibold">
-                      LIVE NOW
-                    </span>
-                  )}
-                </Link>
-              ))}
-            </div>
-          </section>
+      {/* ── Feed ── */}
+      <main className="px-4 space-y-3 mt-2">
+        {feedItems.length === 0 && (
+          <>
+            {/* Fallback demo cards when no API data */}
+            <FanPostCard {...MOCK_FAN_POSTS[0]} />
+            <EventFeedCard
+              id="demo1"
+              title="Sober Brunch & Basketball"
+              eventDate="2026-04-05"
+              eventTime="11:00 AM"
+              venueName="The Courtyard"
+              city="Los Angeles"
+              slug={null}
+            />
+            <ScoreFeedCard {...MOCK_SCORES[0]} />
+            <FanPostCard {...MOCK_FAN_POSTS[1]} />
+            <EventFeedCard
+              id="demo2"
+              title="WNBA Season Opener Watch Party"
+              eventDate="2026-05-17"
+              eventTime="7:00 PM"
+              venueName="Crypto.com Arena"
+              city="Los Angeles"
+              slug={null}
+            />
+            <ScoreFeedCard {...MOCK_SCORES[1]} />
+            <FanPostCard {...MOCK_FAN_POSTS[2]} />
+          </>
         )}
 
-        {/* Fallback teams section when user has none */}
-        {matchedTeams.length === 0 && (
-          <section>
-            <h3 className="font-display text-xs tracking-[0.2em] uppercase text-muted-foreground mb-3">Popular Teams</h3>
-            <div className="flex gap-3 overflow-x-auto scrollbar-hide pb-1">
-              {LA_PRO_TEAMS.filter(t => t.gender === "women").slice(0, 4).map((team) => (
-                <Link
-                  key={team.shortName}
-                  to="/community"
-                  className="shrink-0 w-28 rounded-2xl bg-white border border-border/30 p-4 flex flex-col items-center gap-2 shadow-sm"
-                >
-                  <div className="w-12 h-12 rounded-xl bg-muted flex items-center justify-center">
-                    <span className="font-display text-sm font-extrabold text-muted-foreground uppercase">
-                      {team.shortName.slice(0, 3)}
-                    </span>
-                  </div>
-                  <span className="font-body text-xs text-home-bg-foreground font-medium text-center">
-                    {team.shortName}
-                  </span>
-                </Link>
-              ))}
-            </div>
-          </section>
-        )}
+        {feedItems.map((item, idx) => {
+          switch (item.type) {
+            case "news":
+              return (
+                <NewsArticleCard
+                  key={`news-${idx}`}
+                  id={item.data.id}
+                  title={item.data.title}
+                  summary={item.data.summary}
+                  source={item.data.source}
+                  sourceUrl={item.data.source_url}
+                  imageUrl={item.data.image_url}
+                  category={item.data.category}
+                  sportTags={item.data.sport_tags}
+                  createdAt={item.data.created_at}
+                />
+              );
+            case "fan_post":
+              return <FanPostCard key={`post-${idx}`} {...item.data} />;
+            case "event":
+              return (
+                <EventFeedCard
+                  key={`event-${idx}`}
+                  id={item.data.id}
+                  title={item.data.title}
+                  eventDate={item.data.event_date}
+                  eventTime={item.data.event_time}
+                  venueName={item.data.venue_name}
+                  city={item.data.city}
+                  slug={item.data.slug}
+                />
+              );
+            case "score":
+              return <ScoreFeedCard key={`score-${idx}`} {...item.data} />;
+            default:
+              return null;
+          }
+        })}
       </main>
 
       <BottomNav />
