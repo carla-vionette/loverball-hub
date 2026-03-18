@@ -30,7 +30,8 @@ const GameCard = ({ game }: { game: WnbaGame }) => {
     <Card className="p-4 bg-card border-border/30 hover:border-primary/30 transition-colors">
       <div className="flex items-center justify-between mb-3">
         <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-          {game.GameID <= 3 ? "WNBA" : "NWSL"}
+          {game.GameID === 1 ? "NBA" : game.GameID === 2 ? "NHL" : game.GameID === 3 ? "MLS" : "NCAA"}
+        </span>
         </span>
         <div className={`flex items-center gap-1.5 text-xs font-semibold ${status.className}`}>
           <StatusIcon className="w-3.5 h-3.5" />
