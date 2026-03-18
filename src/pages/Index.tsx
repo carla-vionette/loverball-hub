@@ -140,11 +140,6 @@ const Index = () => {
 
 
 
-  const trendingStories = [
-  { tag: "TENNIS", title: "Coco Gauff Leads USA Fed Cup Charge in April Showdown", time: "Mar 14", image: "/images/all-stars-event.jpg" },
-  { tag: "NWSL", title: "Angel City FC Signs Brazilian Star Ary Borges to Three-Year Deal", time: "Apr 2", image: "/images/angel-city-fc-opener.jpg" },
-  { tag: "OLYMPICS", title: "LA28 Women's Sports Preview: New Events & Venues Announced", time: "Jun 10", image: "/images/la28-olympics-mixer.jpg" },
-  { tag: "SOCCER", title: "World Cup LA 2026: Women's Watch Party Guide Drops This Spring", time: "Apr 18", image: "/images/world-cup-la-preview.jpg" }];
 
 
   const nearbyEvents = [
