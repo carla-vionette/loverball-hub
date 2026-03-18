@@ -239,8 +239,8 @@ export async function fetchPersonalizedNews(
  */
 export async function fetchTrendingNews(limit = 8): Promise<NewsArticle[]> {
   try {
-    // Only show articles from the last 48 hours
-    const cutoff = new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString();
+    // Show articles from the last 7 days
+    const cutoff = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
 
     const { data, error } = await supabase
       .from("feed_items")
