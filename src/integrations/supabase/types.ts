@@ -1184,6 +1184,7 @@ export type Database = {
           favorite_la_teams: string[] | null
           favorite_sports: string[] | null
           favorite_teams_players: string[] | null
+          has_completed_onboarding: boolean
           id: string
           industries: string[] | null
           instagram_url: string | null
@@ -1221,6 +1222,7 @@ export type Database = {
           favorite_la_teams?: string[] | null
           favorite_sports?: string[] | null
           favorite_teams_players?: string[] | null
+          has_completed_onboarding?: boolean
           id: string
           industries?: string[] | null
           instagram_url?: string | null
@@ -1258,6 +1260,7 @@ export type Database = {
           favorite_la_teams?: string[] | null
           favorite_sports?: string[] | null
           favorite_teams_players?: string[] | null
+          has_completed_onboarding?: boolean
           id?: string
           industries?: string[] | null
           instagram_url?: string | null

@@ -2,6 +2,7 @@ import { useRef, useState, useEffect, useCallback } from "react";
 import FeedVideoPlayer from "@/components/video/FeedVideoPlayer";
 import { FEED_VIDEOS } from "@/lib/feedVideoData";
 import BottomNav from "@/components/BottomNav";
+import WelcomeBanner from "@/components/WelcomeBanner";
 
 const Home = () => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -45,6 +46,7 @@ const Home = () => {
 
   return (
     <div className="fixed inset-0 bg-black z-30">
+      <WelcomeBanner />
       <div
         ref={containerRef}
         className="h-full overflow-y-scroll snap-y snap-mandatory scrollbar-hide"
