@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -9,17 +9,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useAuth } from "@/hooks/useAuth";
 import { motion } from "framer-motion";
-import { ArrowRight, Lock, Users, Sparkles, Calendar, X, Menu, Mail, Play, Heart, ShoppingBag, Clock, MapPin, Zap } from "lucide-react";
+import { ArrowRight, Sparkles, Calendar, X, Menu, Mail, Play, Heart, ShoppingBag, Clock, MapPin, Zap } from "lucide-react";
 import TrendingNews from "@/components/TrendingNews";
 import heroImage from "@/assets/hero-women-new.png";
 
 import loverballLogo from "@/assets/loverball-script-logo.png";
 import philosophyImage from "@/assets/philosophy-image.jpg";
-import communityImage from "@/assets/landing-community.jpg";
 import athletesImage from "@/assets/landing-athletes.jpg";
 import fansImage from "@/assets/landing-fans.jpg";
-import teamSpirit from "@/assets/community-women.jpg";
-import wnbaWatch from "@/assets/landing-woman.png";
 import { z } from "zod";
 
 const signUpSchema = z.object({
@@ -28,7 +25,6 @@ const signUpSchema = z.object({
 });
 
 const ACCESS_CODE = "7988";
-
 
 const Index = () => {
   // Component state
@@ -46,7 +42,6 @@ const Index = () => {
   const { toast } = useToast();
   const { user, loading: authLoading } = useAuth();
   const isAuthenticated = !!user;
-
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -138,23 +133,17 @@ const Index = () => {
     setAuthModalOpen(true);
   };
 
-
-
-
-
   const nearbyEvents = [
   { date: "MAR 22", time: "7:00 PM", title: "Sparks vs Aces Watch Party", venue: "The Victorian, Santa Monica", type: "Watch Party" },
   { date: "APR 05", time: "5:30 PM", title: "Angel City FC Tailgate", venue: "BMO Stadium, DTLA", type: "Game Day" },
   { date: "APR 19", time: "6:00 PM", title: "Tennis & Tequila: Spring Edition", venue: "The Bungalow, Santa Monica", type: "Meetup" },
   { date: "JUN 14", time: "4:00 PM", title: "World Cup Kickoff Mixer", venue: "Loverball HQ, Venice", type: "Watch Party" }];
 
-
   const featureCards = [
   { icon: Heart, title: "DISCOVER FANS", desc: "Connect with women who share your sports passion", color: "bg-hot-pink" },
   { icon: Calendar, title: "FIND EVENTS", desc: "Watch parties, tailgates & meetups near you", color: "bg-primary" },
   { icon: Play, title: "WATCH", desc: "Originals, highlights & creator content", color: "bg-accent" },
   { icon: ShoppingBag, title: "SHOP", desc: "Apparel and gear for the ultimate fan", color: "bg-foreground" }];
-
 
   return (
     <div className="min-h-screen bg-background overflow-x-hidden landing-theme">
