@@ -20,8 +20,10 @@
 @tailwind utilities;
 
 /* ============================================================
-   LOVERBALL DESIGN SYSTEM — Teal Sports Energy
-   Teal + Coral + Clean White
+   LOVERBALL DESIGN SYSTEM — AURA Edition
+   Base: near-black #0a0a0a
+   Accents: orange #FF3B00, yellow #DFFF00, blue #0038FF, pink #FF0055
+   Typography: Anton (display), Playfair Display (editorial), Inter (body)
    ============================================================ */
 
 @layer base {
@@ -177,8 +179,9 @@
 
 /* ============================================================
    TYPOGRAPHY
-   Display: Poppins (bold, warm, playful headings)
-   Body: Poppins (cohesive, friendly feel)
+   Display: Anton (AURA bold impact headings)
+   Editorial: Playfair Display italic
+   Body: Inter (clean, readable)
    Script: Pacifico (brand/logo)
    ============================================================ */
 
@@ -193,11 +196,17 @@
 
   body {
     @apply bg-background text-foreground font-sans antialiased text-base leading-relaxed;
+    overflow-x: hidden;
   }
 
-  /* Heading hierarchy — Poppins display font */
-  h1 { @apply font-display text-[28px] md:text-[32px] font-extrabold leading-none tracking-tight; }
-  h2 { @apply font-display text-[22px] md:text-[24px] font-bold leading-none tracking-tight; }
+  ::selection {
+    background-color: #FF3B00;
+    color: white;
+  }
+
+  /* Heading hierarchy — Anton display font */
+  h1 { @apply font-display text-[28px] md:text-[32px] font-extrabold leading-none tracking-tight uppercase; }
+  h2 { @apply font-display text-[22px] md:text-[24px] font-bold leading-none tracking-tight uppercase; }
   h3 { @apply font-display text-xl font-bold leading-tight; }
   h4 { @apply font-sans font-semibold text-lg leading-snug; }
   h5 { @apply font-sans font-medium text-base leading-normal; }
@@ -206,6 +215,27 @@
   /* Caption / label */
   small, .caption { @apply text-xs leading-normal text-muted-foreground; }
   label { @apply text-sm font-medium leading-none font-sans; }
+}
+
+/* ============================================================
+   AURA GLOBAL STYLES
+   ============================================================ */
+
+/* Noise texture overlay */
+.noise-bg {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  pointer-events: none;
+  z-index: 50;
+  opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+/* Outline text */
+.text-outline-thin {
+  -webkit-text-stroke: 1px rgba(255,255,255,0.5);
+  color: transparent;
 }
 
 /* ============================================================
@@ -226,14 +256,14 @@
   }
 
   .editorial-card {
-    @apply bg-card rounded-2xl shadow-sm transition-all duration-200;
+    @apply bg-card rounded-[2rem] shadow-sm transition-all duration-200;
   }
   .editorial-card:hover {
     @apply shadow-md -translate-y-0.5;
   }
 
   .quote-card {
-    @apply relative p-8 sm:p-12 rounded-2xl;
+    @apply relative p-8 sm:p-12 rounded-[2rem];
   }
   .quote-card::before {
     content: '\201C';
@@ -264,6 +294,12 @@
     background-color: hsl(var(--warm-beige));
     color: hsl(var(--warm-beige-foreground));
   }
+
+  /* AURA accent blocks */
+  .aura-orange { background-color: #FF3B00; color: white; }
+  .aura-yellow { background-color: #DFFF00; color: black; }
+  .aura-blue   { background-color: #0038FF; color: white; }
+  .aura-pink   { background-color: #FF0055; color: white; }
 
   .overlap-left { @apply relative lg:-ml-12 lg:z-10; }
   .overlap-right { @apply relative lg:-mr-12 lg:z-10; }
@@ -300,10 +336,15 @@
 
   /* Consistent card hover */
   .interactive-card {
-    @apply bg-card rounded-2xl border border-border/30 shadow-sm transition-all duration-200;
+    @apply bg-card rounded-[2rem] border border-border/30 shadow-sm transition-all duration-200;
   }
   .interactive-card:hover {
     @apply shadow-md border-border/50 -translate-y-0.5;
+  }
+
+  /* Frosted nav */
+  .frosted-nav {
+    @apply bg-base-200/90 backdrop-blur-xl border border-white/10;
   }
 
   /* Page container */
@@ -316,7 +357,7 @@
 
   /* Section header */
   .section-header {
-    @apply font-display text-xl font-bold tracking-tight;
+    @apply font-display text-xl font-bold tracking-tight uppercase;
   }
 
   /* Warm gradient button */
@@ -329,11 +370,25 @@
     filter: brightness(1.05);
   }
 
+  /* AURA CTA button */
+  .btn-aura {
+    @apply bg-accent-orange text-black font-display uppercase tracking-tight rounded-[2rem] px-6 py-3 font-bold transition-all duration-200;
+  }
+  .btn-aura:hover {
+    @apply -translate-y-0.5 shadow-lg;
+    filter: brightness(1.1);
+  }
+
   /* Gold highlight */
   .gold-badge {
     background-color: hsl(var(--gold));
     color: hsl(var(--gold-foreground));
     @apply rounded-full px-3 py-1 text-xs font-bold;
+  }
+
+  /* Muted label utility */
+  .muted-label {
+    @apply text-white/50 text-[10px] uppercase tracking-widest font-sans;
   }
 }
 
@@ -351,13 +406,17 @@
   }
   .scrollbar-hide::-webkit-scrollbar { display: none; }
 
+  /* AURA alias */
+  .hide-scrollbar::-webkit-scrollbar { display: none; }
+  .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
   .tap-target { @apply min-h-[44px] min-w-[44px]; }
 
   .glass-card {
-    @apply bg-card/80 backdrop-blur-md rounded-2xl shadow-sm border border-border/30;
+    @apply bg-card/80 backdrop-blur-md rounded-[2rem] shadow-sm border border-border/30;
   }
   .glass-card-strong {
-    @apply bg-card/90 backdrop-blur-lg rounded-2xl shadow-md border border-border/20;
+    @apply bg-card/90 backdrop-blur-lg rounded-[2rem] shadow-md border border-border/20;
   }
 
   .focus-ring {
@@ -401,6 +460,11 @@
   .bg-gradient-cream {
     background: var(--gradient-cream);
   }
+
+  /* AURA dark backgrounds */
+  .bg-aura-base { background-color: #0a0a0a; }
+  .bg-aura-surface { background-color: #141414; }
+  .bg-aura-elevated { background-color: #222222; }
 
   @keyframes pageIn {
     from { opacity: 0; transform: translateY(8px); }
