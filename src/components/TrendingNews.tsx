@@ -33,13 +33,12 @@ const FALLBACK_GRADIENTS: Record<string, string> = {
 const getFallbackGradient = (sport: string) =>
   FALLBACK_GRADIENTS[sport.toLowerCase()] || FALLBACK_GRADIENTS.default;
 
-const TrendingNews: React.FC<TrendingNewsProps> = ({ onAuthRequired }) => {
+const TrendingNews: React.FC<TrendingNewsProps> = ({ onAuthRequired, user }) => {
   const [articles, setArticles] = useState<NewsArticle[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [lastUpdated, setLastUpdated] = useState<string | null>(null);
   const [userTeams, setUserTeams] = useState<string[]>([]);
-  const { user } = useAuth();
 
   // Fetch user's favorite teams from profile
   useEffect(() => {
