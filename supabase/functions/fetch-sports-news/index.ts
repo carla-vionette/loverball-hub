@@ -69,7 +69,7 @@ const SPORT_KEYWORDS: Record<string, string[]> = {
   'softball': ['softball'],
   'gymnastics': ['gymnastics', 'gymnast'],
   'swimming': ['swimming', 'swim'],
-  'track': ['track', 'field', 'athletics', 'marathon', 'running'],
+  'track': ['track and field', 'athletics', 'marathon', 'running', 'sprint', '100m', '200m', '400m', '800m', 'relay', 'hurdle'],
   'baseball': ['baseball', 'mlb', 'dodgers', 'angels'],
   'football': ['nfl', 'rams', 'chargers', 'super bowl'],
   'hockey': ['hockey', 'nhl', 'kings', 'ducks'],
