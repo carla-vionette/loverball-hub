@@ -359,7 +359,7 @@ const Index = () => {
             ✨ Early Access
           </span>
           <span className="text-[12px] font-sans font-semibold tracking-wide text-foreground/70">
-            Join 1,000+ women who love sports — your community is waiting
+            Join women who love sports — your community is waiting
           </span>
         </div>
       </div>
