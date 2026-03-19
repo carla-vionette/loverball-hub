@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { motion } from "framer-motion";
 import { Clock, ExternalLink, RefreshCw, Loader2, Newspaper, Star } from "lucide-react";
-import type { User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import {
@@ -16,9 +15,10 @@ import {
 } from "@/services/newsArticleService";
 
 interface TrendingNewsProps {
-  onAuthRequired: () => void;
-  user?: User | null;
+  userTeams?: string[];
 }
+
+type DisplayArticle = NewsArticle & { _matched?: boolean };
 
 const FALLBACK_GRADIENTS: Record<string, string> = {
   basketball: "from-orange-500 to-amber-600",
@@ -33,62 +33,49 @@ const FALLBACK_GRADIENTS: Record<string, string> = {
 const getFallbackGradient = (sport: string) =>
   FALLBACK_GRADIENTS[sport.toLowerCase()] || FALLBACK_GRADIENTS.default;
 
-const TrendingNews: React.FC<TrendingNewsProps> = ({ onAuthRequired, user }) => {
-  const [articles, setArticles] = useState<NewsArticle[]>([]);
+const TrendingNews: React.FC<TrendingNewsProps> = ({ userTeams = [] }) => {
+  const [articles, setArticles] = useState<DisplayArticle[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [lastUpdated, setLastUpdated] = useState<string | null>(null);
-  const [userTeams, setUserTeams] = useState<string[]>([]);
 
-  // Fetch user's favorite teams from profile
-  useEffect(() => {
-    if (!user) { setUserTeams([]); return; }
-    (async () => {
-      const { data } = await supabase
-        .from("profiles")
-        .select("favorite_la_teams, favorite_teams_players")
-        .eq("id", user.id)
-        .single();
-      if (data) {
-        const teams = [
-          ...(data.favorite_la_teams || []),
-          ...(data.favorite_teams_players || []),
-        ];
-        setUserTeams(teams);
-      }
-    })();
-  }, [user]);
+  const normalizedUserTeams = useMemo(
+    () => userTeams.map((team) => team.toLowerCase().trim()).filter(Boolean),
+    [userTeams]
+  );
 
   const loadNews = useCallback(async () => {
     const data = await fetchTrendingNews(12);
-    // Personalize: team-matched articles first
-    if (userTeams.length > 0) {
-      const lowerTeams = userTeams.map(t => t.toLowerCase());
-      const matched: NewsArticle[] = [];
-      const rest: NewsArticle[] = [];
+
+    if (normalizedUserTeams.length > 0) {
+      const matched: DisplayArticle[] = [];
+      const rest: DisplayArticle[] = [];
+
       for (const article of data) {
         const allTags = [...(article.team_tags || []), ...(article.sport_tags || [])];
-        const isMatch = allTags.some(tag =>
-          lowerTeams.some(ut => tag.toLowerCase().includes(ut) || ut.includes(tag.toLowerCase()))
-        ) || lowerTeams.some(ut =>
-          article.title.toLowerCase().includes(ut)
-        );
+        const isMatch =
+          allTags.some((tag) =>
+            normalizedUserTeams.some((team) => tag.toLowerCase().includes(team) || team.includes(tag.toLowerCase()))
+          ) ||
+          normalizedUserTeams.some((team) => article.title.toLowerCase().includes(team));
+
         if (isMatch) {
-          matched.push({ ...article, _matched: true } as any);
+          matched.push({ ...article, _matched: true });
         } else {
           rest.push(article);
         }
       }
-      const sorted = [...matched, ...rest];
-      setArticles(sorted);
+
+      setArticles([...matched, ...rest]);
     } else {
       setArticles(data);
     }
+
     if (data.length > 0) {
       setLastUpdated(data[0].created_at);
     }
     setLoading(false);
-  }, [userTeams]);
+  }, [normalizedUserTeams]);
 
   useEffect(() => {
     loadNews();
@@ -97,25 +84,32 @@ const TrendingNews: React.FC<TrendingNewsProps> = ({ onAuthRequired, user }) => 
   const handleRefresh = async () => {
     setRefreshing(true);
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      const headers: Record<string, string> = {};
-      if (session) headers.Authorization = `Bearer ${session.access_token}`;
-
-      const { data, error } = await supabase.functions.invoke('fetch-sports-news', { headers });
+      const { data, error } = await supabase.functions.invoke("fetch-sports-news");
 
       if (error) {
-        console.error('Edge function error:', error);
-        toast({ title: "Refresh failed", description: error.message || "Could not fetch news. Try again later.", variant: "destructive" });
+        console.error("Edge function error:", error);
+        toast({
+          title: "Refresh failed",
+          description: error.message || "Could not fetch news. Try again later.",
+          variant: "destructive",
+        });
       } else {
         const count = data?.articlesProcessed ?? 0;
-        toast({ title: "News refreshed", description: `Fetched ${count} articles from RSS feeds.` });
+        toast({
+          title: "News refreshed",
+          description: `Fetched ${count} articles from RSS feeds.`,
+        });
       }
 
-      await new Promise(r => setTimeout(r, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       await loadNews();
     } catch (err: any) {
-      console.error('Refresh failed:', err);
-      toast({ title: "Refresh error", description: err?.message || "An unexpected error occurred.", variant: "destructive" });
+      console.error("Refresh failed:", err);
+      toast({
+        title: "Refresh error",
+        description: err?.message || "An unexpected error occurred.",
+        variant: "destructive",
+      });
     } finally {
       setRefreshing(false);
     }
@@ -132,9 +126,7 @@ const TrendingNews: React.FC<TrendingNewsProps> = ({ onAuthRequired, user }) => 
         {refreshing ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <RefreshCw className="w-3.5 h-3.5" />}
         <span>Refresh</span>
       </button>
-      {lastUpdated && (
-        <span className="text-[10px] text-muted-foreground">Updated {getTimeAgo(lastUpdated)}</span>
-      )}
+      {lastUpdated && <span className="text-[10px] text-muted-foreground">Updated {getTimeAgo(lastUpdated)}</span>}
     </div>
   );
 
@@ -176,9 +168,8 @@ const TrendingNews: React.FC<TrendingNewsProps> = ({ onAuthRequired, user }) => 
     );
   }
 
-  // Determine how many matched articles we have
-  const matchedCount = articles.filter((a: any) => a._matched).length;
-  const hasPersonalized = matchedCount > 0 && userTeams.length > 0;
+  const matchedCount = articles.filter((article) => article._matched).length;
+  const hasPersonalized = matchedCount > 0 && normalizedUserTeams.length > 0;
 
   return (
     <div>
@@ -191,14 +182,14 @@ const TrendingNews: React.FC<TrendingNewsProps> = ({ onAuthRequired, user }) => 
             Your Teams
           </span>
           <span className="text-[11px] text-muted-foreground">
-            {matchedCount} article{matchedCount !== 1 ? 's' : ''} matching your favorites
+            {matchedCount} article{matchedCount !== 1 ? "s" : ""} matching your favorites
           </span>
         </div>
       )}
 
       <div className="flex gap-5 overflow-x-auto pb-4 scrollbar-hide snap-x snap-mandatory lg:grid lg:grid-cols-4 lg:overflow-visible lg:pb-0">
         {articles.map((article, i) => {
-          const isMatched = (article as any)._matched;
+          const isMatched = !!article._matched;
           const primarySport = article.sport_tags?.[0] || "";
           const sportEmoji = getSportEmoji(primarySport);
           const catEmoji = getCategoryEmoji(article.category, primarySport);
@@ -206,9 +197,7 @@ const TrendingNews: React.FC<TrendingNewsProps> = ({ onAuthRequired, user }) => 
           const catColor = getCategoryColor(article.category);
           const summary = article.summary || generateSummary(article.title, article.source_name);
           const gradient = getFallbackGradient(primarySport);
-
-          // Insert "More Stories" divider after matched articles
-          const showDivider = hasPersonalized && isMatched && i < articles.length - 1 && !(articles[i + 1] as any)?._matched;
+          const showDivider = hasPersonalized && isMatched && i < articles.length - 1 && !articles[i + 1]?._matched;
 
           return (
             <React.Fragment key={article.id}>
@@ -222,7 +211,7 @@ const TrendingNews: React.FC<TrendingNewsProps> = ({ onAuthRequired, user }) => 
                 }}
                 className="cursor-pointer group snap-start min-w-[280px] lg:min-w-0"
               >
-                <div className={`bg-card rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 h-full border flex flex-col ${isMatched ? 'border-primary/30 ring-1 ring-primary/10' : 'border-border/20'}`}>
+                <div className={`bg-card rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 h-full border flex flex-col ${isMatched ? "border-primary/30 ring-1 ring-primary/10" : "border-border/20"}`}>
                   <div className="h-40 overflow-hidden relative">
                     {article.image_url ? (
                       <img src={article.image_url} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
@@ -234,14 +223,17 @@ const TrendingNews: React.FC<TrendingNewsProps> = ({ onAuthRequired, user }) => 
                         </span>
                       </div>
                     )}
-                    <div className="absolute top-2.5 left-2.5 w-8 h-8 rounded-full flex items-center justify-center text-sm shadow-md" style={{ backgroundColor: sportColor + "E6" }}>
+
+                    <div className="absolute top-2.5 left-2.5 w-8 h-8 rounded-full flex items-center justify-center text-sm shadow-md" style={{ backgroundColor: `${sportColor}E6` }}>
                       {sportEmoji}
                     </div>
+
                     {isMatched && (
                       <div className="absolute top-2.5 right-2.5 px-2 py-0.5 rounded-full bg-primary text-primary-foreground text-[9px] font-bold uppercase tracking-wider shadow-md flex items-center gap-1">
                         <Star className="w-2.5 h-2.5 fill-current" /> For You
                       </div>
                     )}
+
                     <div className="absolute bottom-0 left-0 right-0 h-1" style={{ backgroundColor: catColor }} />
                   </div>
 
