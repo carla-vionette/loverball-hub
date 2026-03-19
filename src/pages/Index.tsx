@@ -151,10 +151,10 @@ const Index = () => {
   };
 
   const nearbyEvents = [
-  { date: "MAR 22", time: "7:00 PM", title: "Sparks vs Aces Watch Party", venue: "The Victorian, Santa Monica", type: "Watch Party" },
-  { date: "APR 05", time: "5:30 PM", title: "Angel City FC Tailgate", venue: "BMO Stadium, DTLA", type: "Game Day" },
-  { date: "APR 19", time: "6:00 PM", title: "Tennis & Tequila: Spring Edition", venue: "The Bungalow, Santa Monica", type: "Meetup" },
-  { date: "JUN 14", time: "4:00 PM", title: "World Cup Kickoff Mixer", venue: "Loverball HQ, Venice", type: "Watch Party" }];
+  { date: "MAR 27", time: "7:00 PM", title: "ACFC vs Houston Dash Watch Party", venue: "BMO Stadium, DTLA", type: "Watch Party" },
+  { date: "APR 26", time: "3:00 PM", title: "ACFC vs Portland Thorns Watch Party", venue: "BMO Stadium, DTLA", type: "Watch Party" },
+  { date: "MAY 10", time: "3:00 PM", title: "Sparks vs Aces Season Opener", venue: "Crypto.com Arena, DTLA", type: "Watch Party" },
+  { date: "MAY 13", time: "7:00 PM", title: "Sparks vs Indiana Fever Watch Party", venue: "Crypto.com Arena, DTLA", type: "Watch Party" }];
 
   const featureCards = [
   { icon: Heart, title: "DISCOVER FANS", desc: "Connect with women who share your sports passion", color: "bg-hot-pink" },
