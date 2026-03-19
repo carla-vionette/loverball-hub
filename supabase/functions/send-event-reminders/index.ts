@@ -165,7 +165,7 @@ Deno.serve(async (req) => {
         const phoneNumber = phoneMap.get(rsvp.user_id);
         if (!phoneNumber) continue;
 
-        const firstName = rsvp.profiles.name?.split(' ')[0] || 'there';
+        const firstName = (rsvp.profiles as any)?.name?.split(' ')[0] || 'there';
         const message = `Hey ${firstName}! 🏀 Reminder: "${event.title}" is TODAY${timeStr ? ` at ${timeStr}` : ''}${locationStr ? ` - ${locationStr}` : ''}. See you there! - Loverball`;
 
         try {
