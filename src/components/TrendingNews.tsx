@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import { Clock, ExternalLink, RefreshCw, Loader2, Newspaper, Star } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import type { User } from "@supabase/supabase-js";
 import { toast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import {
