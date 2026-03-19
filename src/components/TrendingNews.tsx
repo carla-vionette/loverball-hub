@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import { Clock, ExternalLink, RefreshCw, Loader2, Newspaper, Star } from "lucide-react";
+import type { User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
-import { useAuth } from "@/hooks/useAuth";
 import {
   fetchTrendingNews,
   getSportEmoji,
@@ -17,6 +17,7 @@ import {
 
 interface TrendingNewsProps {
   onAuthRequired: () => void;
+  user?: User | null;
 }
 
 const FALLBACK_GRADIENTS: Record<string, string> = {
@@ -32,13 +33,12 @@ const FALLBACK_GRADIENTS: Record<string, string> = {
 const getFallbackGradient = (sport: string) =>
   FALLBACK_GRADIENTS[sport.toLowerCase()] || FALLBACK_GRADIENTS.default;
 
-const TrendingNews: React.FC<TrendingNewsProps> = ({ onAuthRequired }) => {
+const TrendingNews: React.FC<TrendingNewsProps> = ({ onAuthRequired, user }) => {
   const [articles, setArticles] = useState<NewsArticle[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [lastUpdated, setLastUpdated] = useState<string | null>(null);
   const [userTeams, setUserTeams] = useState<string[]>([]);
-  const { user } = useAuth();
 
   // Fetch user's favorite teams from profile
   useEffect(() => {
