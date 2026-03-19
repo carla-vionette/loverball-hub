@@ -405,7 +405,7 @@ const Index = () => {
             <Zap className="w-8 h-8 text-[#FF5D2E] hidden md:block" />
           </motion.div>
 
-          <TrendingNews onAuthRequired={openAuthModal} user={user} />
+          <TrendingNews />
         </div>
       </section>
 
