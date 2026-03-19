@@ -17,6 +17,7 @@ import {
 
 interface TrendingNewsProps {
   onAuthRequired: () => void;
+  user?: User | null;
 }
 
 const FALLBACK_GRADIENTS: Record<string, string> = {
