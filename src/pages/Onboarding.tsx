@@ -156,7 +156,7 @@ const Onboarding = () => {
         photoUrl = await uploadProfilePhoto();
       }
       
-      const { error } = await supabase.from("profiles").insert({
+      const { error } = await supabase.from("profiles").upsert({
         id: userId,
         name,
         pronouns,
@@ -167,7 +167,7 @@ const Onboarding = () => {
         bio,
         profile_photo_url: photoUrl,
         sms_notifications_enabled: smsOptIn,
-      });
+      }, { onConflict: "id" });
 
       if (error) throw error;
 
