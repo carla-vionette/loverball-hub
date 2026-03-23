@@ -1,6 +1,195 @@
-import Home from "./Home";
+import { useRef, useState, useEffect, useCallback } from "react";
+import FeedVideoPlayer from "@/components/video/FeedVideoPlayer";
+import { FEED_VIDEOS, type FeedVideoItem } from "@/lib/feedVideoData";
+import BottomNav from "@/components/BottomNav";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Play } from "lucide-react";
 
-// Feed is now identical to Home — single TikTok-style experience
-const Feed = () => <Home />;
+type FeedTab = "foryou" | "following";
+
+const FeedSkeleton = () => (
+  <div className="h-screen w-full bg-black flex flex-col items-center justify-center gap-4 snap-start">
+    <div className="relative w-full h-full">
+      {/* Shimmer overlay */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/60" />
+      {/* Fake action sidebar */}
+      <div className="absolute right-3 bottom-36 flex flex-col items-center gap-5">
+        <Skeleton className="w-11 h-11 rounded-full bg-white/10" />
+        <Skeleton className="w-7 h-7 rounded-full bg-white/10" />
+        <Skeleton className="w-7 h-7 rounded-full bg-white/10" />
+        <Skeleton className="w-7 h-7 rounded-full bg-white/10" />
+        <Skeleton className="w-7 h-7 rounded-full bg-white/10" />
+      </div>
+      {/* Fake bottom text */}
+      <div className="absolute left-3 bottom-24 space-y-2">
+        <Skeleton className="h-4 w-28 bg-white/10 rounded" />
+        <Skeleton className="h-3 w-48 bg-white/10 rounded" />
+        <Skeleton className="h-3 w-36 bg-white/10 rounded" />
+      </div>
+      {/* Center spinner */}
+      <div className="absolute inset-0 flex items-center justify-center">
+        <div className="w-12 h-12 border-2 border-white/20 border-t-primary rounded-full animate-spin" />
+      </div>
+    </div>
+  </div>
+);
+
+const EmptyState = () => (
+  <div className="h-screen w-full bg-black flex flex-col items-center justify-center gap-4 snap-start">
+    <div className="w-20 h-20 rounded-full bg-white/10 flex items-center justify-center">
+      <Play className="w-10 h-10 text-white/40" />
+    </div>
+    <h2 className="text-white text-lg font-semibold">No videos yet</h2>
+    <p className="text-white/50 text-sm text-center max-w-[260px]">
+      Videos from creators you follow will appear here. Explore the For You tab to discover content.
+    </p>
+  </div>
+);
+
+const Feed = () => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [isMuted, setIsMuted] = useState(true);
+  const [activeTab, setActiveTab] = useState<FeedTab>("foryou");
+  const [isLoading, setIsLoading] = useState(true);
+  const observerRef = useRef<IntersectionObserver | null>(null);
+  const videoRefs = useRef<Map<number, HTMLDivElement>>(new Map());
+
+  // Separate feeds
+  const forYouVideos = FEED_VIDEOS;
+  const followingVideos = FEED_VIDEOS.filter((v) => v.isFollowing);
+
+  const [videos, setVideos] = useState<FeedVideoItem[]>(forYouVideos);
+
+  // Simulate initial load
+  useEffect(() => {
+    const t = setTimeout(() => setIsLoading(false), 600);
+    return () => clearTimeout(t);
+  }, []);
+
+  // Switch tabs
+  useEffect(() => {
+    setActiveIndex(0);
+    setVideos(activeTab === "following" ? followingVideos : forYouVideos);
+    containerRef.current?.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
+  }, [activeTab]);
+
+  // IntersectionObserver
+  useEffect(() => {
+    observerRef.current = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && entry.intersectionRatio > 0.6) {
+            const idx = Number(entry.target.getAttribute("data-index"));
+            if (!isNaN(idx)) setActiveIndex(idx);
+          }
+        });
+      },
+      { root: containerRef.current, threshold: 0.6 }
+    );
+    return () => observerRef.current?.disconnect();
+  }, [videos]);
+
+  const setVideoRef = useCallback((el: HTMLDivElement | null, index: number) => {
+    if (el) {
+      videoRefs.current.set(index, el);
+      observerRef.current?.observe(el);
+    }
+  }, []);
+
+  // Infinite scroll for "For You"
+  useEffect(() => {
+    if (activeTab !== "foryou") return;
+    if (activeIndex >= videos.length - 2) {
+      const shuffled = [...FEED_VIDEOS]
+        .sort(() => Math.random() - 0.5)
+        .map((v, i) => ({ ...v, id: `${v.id}_${videos.length + i}` }));
+      setVideos((prev) => [...prev, ...shuffled]);
+    }
+  }, [activeIndex, videos.length, activeTab]);
+
+  // Preload next video
+  useEffect(() => {
+    const nextVideo = videos[activeIndex + 1];
+    if (nextVideo?.videoUrl) {
+      const link = document.createElement("link");
+      link.rel = "preload";
+      link.as = "video";
+      link.href = nextVideo.videoUrl;
+      link.setAttribute("data-feed-preload", "true");
+      // Remove old preload links
+      document.querySelectorAll('link[data-feed-preload]').forEach((el) => el.remove());
+      document.head.appendChild(link);
+      return () => { link.remove(); };
+    }
+  }, [activeIndex, videos]);
+
+  const currentVideos = videos;
+  const isEmpty = !isLoading && currentVideos.length === 0;
+
+  return (
+    <div className="fixed inset-0 bg-black z-30">
+      {/* Top tabs — Following / For You */}
+      <div className="absolute top-0 left-0 right-0 z-40 flex items-center justify-center pt-12 pb-2 pointer-events-auto">
+        <div className="flex items-center gap-6">
+          <button
+            onClick={() => setActiveTab("following")}
+            className={`text-[15px] font-semibold transition-all pb-1 border-b-2 ${
+              activeTab === "following"
+                ? "text-white border-white"
+                : "text-white/50 border-transparent"
+            }`}
+          >
+            Following
+          </button>
+          <button
+            onClick={() => setActiveTab("foryou")}
+            className={`text-[15px] font-semibold transition-all pb-1 border-b-2 ${
+              activeTab === "foryou"
+                ? "text-white border-white"
+                : "text-white/50 border-transparent"
+            }`}
+          >
+            For You
+          </button>
+        </div>
+      </div>
+
+      {/* Video container */}
+      <div
+        ref={containerRef}
+        className="h-full overflow-y-scroll snap-y snap-mandatory scrollbar-hide"
+      >
+        {isLoading ? (
+          <>
+            <FeedSkeleton />
+            <FeedSkeleton />
+          </>
+        ) : isEmpty ? (
+          <EmptyState />
+        ) : (
+          currentVideos.map((video, index) => (
+            <div
+              key={video.id}
+              ref={(el) => setVideoRef(el, index)}
+              data-index={index}
+              className="h-screen w-full snap-start snap-always"
+            >
+              <FeedVideoPlayer
+                video={video}
+                isActive={index === activeIndex}
+                isMuted={isMuted}
+                onToggleMute={() => setIsMuted(!isMuted)}
+              />
+            </div>
+          ))
+        )}
+      </div>
+
+      {/* Bottom nav */}
+      <BottomNav />
+    </div>
+  );
+};
 
 export default Feed;
