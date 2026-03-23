@@ -472,6 +472,38 @@ export type Database = {
           },
         ]
       }
+      event_comments: {
+        Row: {
+          created_at: string
+          event_id: string
+          id: string
+          message: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          event_id: string
+          id?: string
+          message: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          event_id?: string
+          id?: string
+          message?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_comments_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       event_guests: {
         Row: {
           created_at: string
@@ -561,6 +593,7 @@ export type Database = {
           banner_image: string | null
           capacity: number | null
           city: string | null
+          co_host_ids: string[] | null
           created_at: string
           description: string | null
           end_time: string | null
@@ -569,14 +602,18 @@ export type Database = {
           event_tags: string[] | null
           event_time: string | null
           event_type: string | null
+          guest_visibility: boolean | null
           host_user_id: string | null
           id: string
           image_url: string | null
           layout_json: Json | null
           location: string | null
+          location_lat: number | null
+          location_lng: number | null
           location_map_url: string | null
           location_type: string | null
           price: number | null
+          rsvp_approval_required: boolean | null
           rsvp_deadline: string | null
           slug: string | null
           sport_tags: string[] | null
@@ -595,6 +632,7 @@ export type Database = {
           banner_image?: string | null
           capacity?: number | null
           city?: string | null
+          co_host_ids?: string[] | null
           created_at?: string
           description?: string | null
           end_time?: string | null
@@ -603,14 +641,18 @@ export type Database = {
           event_tags?: string[] | null
           event_time?: string | null
           event_type?: string | null
+          guest_visibility?: boolean | null
           host_user_id?: string | null
           id?: string
           image_url?: string | null
           layout_json?: Json | null
           location?: string | null
+          location_lat?: number | null
+          location_lng?: number | null
           location_map_url?: string | null
           location_type?: string | null
           price?: number | null
+          rsvp_approval_required?: boolean | null
           rsvp_deadline?: string | null
           slug?: string | null
           sport_tags?: string[] | null
@@ -629,6 +671,7 @@ export type Database = {
           banner_image?: string | null
           capacity?: number | null
           city?: string | null
+          co_host_ids?: string[] | null
           created_at?: string
           description?: string | null
           end_time?: string | null
@@ -637,14 +680,18 @@ export type Database = {
           event_tags?: string[] | null
           event_time?: string | null
           event_type?: string | null
+          guest_visibility?: boolean | null
           host_user_id?: string | null
           id?: string
           image_url?: string | null
           layout_json?: Json | null
           location?: string | null
+          location_lat?: number | null
+          location_lng?: number | null
           location_map_url?: string | null
           location_type?: string | null
           price?: number | null
+          rsvp_approval_required?: boolean | null
           rsvp_deadline?: string | null
           slug?: string | null
           sport_tags?: string[] | null
