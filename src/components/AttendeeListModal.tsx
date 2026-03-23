@@ -4,8 +4,9 @@ import { useAuth } from "@/hooks/useAuth";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, MapPin, Users, Hand } from "lucide-react";
+import { Loader2, MapPin, Users } from "lucide-react";
 import FollowButton from "@/components/FollowButton";
+import AddFriendButton from "@/components/AddFriendButton";
 
 interface AttendeeWithProfile {
   user_id: string;
@@ -169,7 +170,10 @@ const AttendeeListModal = ({ eventId, open, onOpenChange }: Props) => {
                   </div>
                 </div>
 
-                <FollowButton targetUserId={a.user_id} size="sm" />
+                <div className="flex items-center gap-1.5">
+                  <AddFriendButton targetUserId={a.user_id} targetName={a.profile.name} size="sm" />
+                  <FollowButton targetUserId={a.user_id} size="sm" />
+                </div>
               </div>
             ))}
           </div>

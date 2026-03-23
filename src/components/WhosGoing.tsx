@@ -3,8 +3,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Users, MessageCircle } from "lucide-react";
+import { Users, MessageCircle, UserPlus } from "lucide-react";
 import AttendeeProfileDrawer from "./AttendeeProfileDrawer";
+import AddFriendButton from "./AddFriendButton";
 
 interface GuestProfile {
   id: string;
@@ -139,19 +140,27 @@ const WhosGoing = ({ eventId, refreshKey }: Props) => {
                   </div>
                 )}
               </div>
-              <div className="flex items-center gap-0.5 w-full justify-center">
+              <div className="flex flex-col items-center gap-0.5 w-full">
                 <span className="text-xs font-medium text-foreground truncate">
                   {guest.profile?.name?.split(" ")[0] || "Guest"}
                 </span>
                 {user && guest.profile && guest.profile.id !== user.id && (
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-5 w-5 shrink-0 text-muted-foreground hover:text-primary"
-                    onClick={(e) => guest.profile && handleDmClick(e, guest.profile)}
-                  >
-                    <MessageCircle className="w-3 h-3" />
-                  </Button>
+                  <div className="flex items-center gap-0.5">
+                    <AddFriendButton
+                      targetUserId={guest.profile.id}
+                      targetName={guest.profile.name}
+                      size="icon"
+                      className="h-5 w-5"
+                    />
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-5 w-5 shrink-0 text-muted-foreground hover:text-primary"
+                      onClick={(e) => guest.profile && handleDmClick(e, guest.profile)}
+                    >
+                      <MessageCircle className="w-3 h-3" />
+                    </Button>
+                  </div>
                 )}
               </div>
             </button>
