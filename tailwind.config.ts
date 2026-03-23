@@ -64,10 +64,11 @@ export default {
     extend: {
       fontFamily: {
         sans: ["Poppins", "system-ui", "sans-serif"],
-        display: ["Poppins", "system-ui", "sans-serif"],
+        display: ["Oswald", "Impact", "sans-serif"],
         script: ["Pacifico", "cursive"],
         condensed: ["Oswald", "Impact", "sans-serif"],
-        serif: ["Poppins", "system-ui", "sans-serif"],
+        serif: ["Playfair Display", "Georgia", "serif"],
+        elegant: ["Playfair Display", "Georgia", "serif"],
       },
       fontSize: {
         xs: ["0.75rem", { lineHeight: "1rem" }],
@@ -80,6 +81,7 @@ export default {
         "4xl": ["2.25rem", { lineHeight: "2.5rem" }],
         "5xl": ["3rem", { lineHeight: "1.15" }],
         "6xl": ["3.75rem", { lineHeight: "1.1" }],
+        "7xl": ["4.5rem", { lineHeight: "1.05" }],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -176,6 +178,8 @@ export default {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+        "2xl": "1.25rem",
+        "3xl": "1.5rem",
       },
       gridTemplateColumns: {
         "layout": "repeat(12, minmax(0, 1fr))",

@@ -24,13 +24,11 @@ const BottomNav = () => {
     if (!user) { setBadgeCount(0); return; }
 
     const [unreadRes, pendingRes] = await Promise.all([
-      // Unread DMs
       supabase
         .from("direct_messages")
         .select("id", { count: "exact", head: true })
         .eq("receiver_id", user.id)
         .eq("read", false),
-      // Pending friend requests
       supabase
         .from("friendships")
         .select("id", { count: "exact", head: true })
@@ -47,7 +45,6 @@ const BottomNav = () => {
     fetchBadgeCount();
   }, [user?.id, pathname]);
 
-  // Realtime subscription for live badge updates
   useEffect(() => {
     if (!user) return;
 
@@ -70,13 +67,11 @@ const BottomNav = () => {
 
   return (
     <nav
-      className={`fixed bottom-0 left-0 right-0 z-50 md:hidden safe-area-pb ${
-        isWatchScreen ? "bg-black/70 backdrop-blur-md border-t border-white/5" : "bg-background border-t border-border/30"
-      }`}
+      className={`fixed bottom-0 left-0 right-0 z-50 md:hidden safe-area-pb bg-background/95 backdrop-blur-md border-t border-border/20`}
       role="navigation"
       aria-label="Main navigation"
     >
-      <div className="flex justify-around items-center h-16">
+      <div className="flex justify-around items-center h-16 max-w-lg mx-auto">
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive = pathname === item.path;
@@ -87,28 +82,28 @@ const BottomNav = () => {
               to={item.path}
               aria-current={isActive ? "page" : undefined}
               aria-label={item.label}
-              className="flex flex-col items-center justify-center flex-1 h-full transition-colors duration-200 tap-target focus-ring"
+              className="flex flex-col items-center justify-center flex-1 h-full transition-all duration-300 tap-target focus-ring relative"
             >
-              <div className="relative">
+              <div className={`relative flex items-center justify-center w-10 h-8 rounded-full transition-all duration-300 ${isActive ? 'bg-primary' : ''}`}>
                 <Icon
-                  className={`w-5 h-5 ${
+                  className={`w-5 h-5 transition-colors duration-300 ${
                     isActive
-                      ? "text-primary"
-                      : isWatchScreen ? "text-white/40" : "text-muted-foreground"
+                      ? "text-primary-foreground"
+                      : "text-muted-foreground"
                   }`}
                   fill={isActive ? "currentColor" : "none"}
                   aria-hidden="true"
                 />
                 {showBadge && (
-                  <span className="absolute -top-1.5 -right-2.5 bg-destructive text-destructive-foreground text-[9px] font-bold rounded-full min-w-[16px] h-4 flex items-center justify-center px-1">
+                  <span className="absolute -top-1.5 -right-2.5 bg-primary text-primary-foreground text-[9px] font-bold rounded-full min-w-[16px] h-4 flex items-center justify-center px-1">
                     {badgeCount > 99 ? "99+" : badgeCount}
                   </span>
                 )}
               </div>
-              <span className={`text-[10px] mt-1 font-medium ${
+              <span className={`text-[10px] mt-0.5 font-medium transition-colors duration-300 ${
                 isActive
                   ? "text-primary"
-                  : isWatchScreen ? "text-white/40" : "text-muted-foreground"
+                  : "text-muted-foreground"
               }`}>
                 {item.label}
               </span>
