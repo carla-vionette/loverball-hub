@@ -29,7 +29,6 @@ import LockedFeature from "@/components/LockedFeature";
 import EventComments from "@/components/EventComments";
 import EventHostProfile from "@/components/EventHostProfile";
 import { getUserTier } from "@/services/subscriptionService";
-import { getUserTier } from "@/services/subscriptionService";
 
 interface Event {
   id: string;
