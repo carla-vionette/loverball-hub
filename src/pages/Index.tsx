@@ -257,12 +257,15 @@ const Index = () => {
               transition={{ duration: 0.9, ease: "easeOut" }}
               className="relative z-10 max-w-xl"
             >
+              <span className="text-[11px] font-sans font-bold tracking-[0.3em] uppercase mb-4 block" style={{ color: '#6B7280', letterSpacing: '0.2em' }}>
+                VOL. 01 ▸ WOMEN'S SPORTS
+              </span>
               <span className="text-[11px] font-sans font-bold tracking-[0.3em] uppercase mb-8 block" style={{ color: '#9CA3AF' }}>
                 A GLOBAL SPORTS MEDIA + COMMUNITY PLATFORM
               </span>
               <h1 className="font-display font-bold text-[3.5rem] sm:text-[5rem] lg:text-[6.5rem] leading-[0.85] tracking-tight uppercase mb-8" style={{ color: '#FFFFFF' }}>
                 Her<br />Game.<br />
-                <span className="text-primary">Her</span><br />
+                <span className="font-serif italic font-normal text-[2rem] sm:text-[3rem] lg:text-[4rem]" style={{ color: '#F5F0EB' }}>Her</span><br />
                 <span className="text-primary">Community.</span>
               </h1>
               <p className="text-base font-sans font-medium text-muted-foreground leading-relaxed mb-10 max-w-[480px]">
@@ -287,6 +290,10 @@ const Index = () => {
             className="lg:col-span-5 bg-card relative flex items-center justify-center py-24 lg:py-0 px-8 overflow-hidden"
           >
             <div className="relative w-full max-w-md h-[500px] lg:h-[600px]">
+              {/* Spinning FOR HER badge */}
+              <div className="absolute -top-2 -right-2 z-30 w-20 h-20 rounded-full bg-primary flex items-center justify-center" style={{ animation: 'spin-slow 20s linear infinite', transform: 'rotate(5deg)' }}>
+                <span className="text-primary-foreground font-bold text-[11px] uppercase tracking-[0.1em]">For Her</span>
+              </div>
               <motion.div initial={{ opacity: 0, rotate: -8, scale: 0.9 }} animate={{ opacity: 1, rotate: -6, scale: 1 }} transition={{ duration: 0.8, delay: 0.4 }} className="absolute left-0 bottom-12 w-[55%] z-10">
                 <div className="rounded-[20px] overflow-hidden" style={{ boxShadow: '0 12px 40px rgba(0,0,0,0.5)' }}>
                   <img src={athletesImage} alt="Women athletes" className="w-full aspect-[3/4] object-cover" />
@@ -322,6 +329,7 @@ const Index = () => {
       <section id="explore" className="section-spacing bg-background">
         <div className="max-w-[1280px] mx-auto px-8">
           <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} viewport={{ once: true }} className="text-center section-gap">
+            <span className="font-serif italic text-base block mb-2" style={{ color: '#FF8C7C' }}>discover</span>
             <h2 className="font-display text-[2.5rem] lg:text-[3.5rem] leading-none tracking-tight text-foreground uppercase font-bold">
               Explore Loverball
             </h2>
@@ -355,7 +363,10 @@ const Index = () => {
       <section id="trending" className="section-spacing bg-secondary">
         <div className="max-w-[1280px] mx-auto px-8">
           <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ duration: 0.8 }} viewport={{ once: true }} className="flex items-end justify-between section-gap">
-            <h2 className="font-display text-[2.5rem] lg:text-[3.5rem] leading-none tracking-tight text-foreground uppercase font-bold">Trending Now</h2>
+            <div>
+              <span className="font-serif italic text-base block mb-2" style={{ color: '#FF8C7C' }}>trending</span>
+              <h2 className="font-display text-[2.5rem] lg:text-[3.5rem] leading-none tracking-tight text-foreground uppercase font-bold">Trending Now</h2>
+            </div>
             <Zap className="w-8 h-8 text-primary hidden md:block" />
           </motion.div>
 
@@ -367,7 +378,10 @@ const Index = () => {
       <section id="events" className="section-spacing bg-background">
         <div className="max-w-[1280px] mx-auto px-8">
           <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ duration: 0.8 }} viewport={{ once: true }} className="flex items-end justify-between section-gap">
-            <h2 className="font-display text-[2.5rem] lg:text-[3.5rem] leading-none tracking-tight text-foreground uppercase font-bold">Events Near You</h2>
+            <div>
+              <span className="font-serif italic text-base block mb-2" style={{ color: '#FF8C7C' }}>events</span>
+              <h2 className="font-display text-[2.5rem] lg:text-[3.5rem] leading-none tracking-tight text-foreground uppercase font-bold">Events Near You</h2>
+            </div>
             <Button onClick={openAuthModal} className="hidden md:flex rounded-full px-6 py-2.5 text-[11px] font-sans font-bold tracking-[0.2em] uppercase h-auto">
               View All <ArrowRight className="ml-2 h-3.5 w-3.5" />
             </Button>
@@ -451,7 +465,8 @@ const Index = () => {
             viewport={{ once: true }}
             className="px-8 lg:px-16 py-24 lg:py-28 flex flex-col justify-center"
           >
-            <span className="text-[11px] font-sans font-bold tracking-[0.3em] uppercase text-muted-foreground mb-6">Our Mission</span>
+            <span className="font-serif italic text-base block mb-2" style={{ color: '#FF8C7C' }}>mission</span>
+            <span className="text-[11px] font-sans font-bold tracking-[0.3em] uppercase text-muted-foreground mb-6 block">Our Mission</span>
             <h2 className="font-display text-[2.5rem] lg:text-[3.5rem] leading-[0.85] tracking-tight text-foreground uppercase mb-8 font-bold">
               Giving Women Fans<br />A Home in Sports
             </h2>
