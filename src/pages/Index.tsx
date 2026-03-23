@@ -329,6 +329,7 @@ const Index = () => {
       <section id="explore" className="section-spacing bg-background">
         <div className="max-w-[1280px] mx-auto px-8">
           <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} viewport={{ once: true }} className="text-center section-gap">
+            <span className="font-serif italic text-base block mb-2" style={{ color: '#FF8C7C' }}>discover</span>
             <h2 className="font-display text-[2.5rem] lg:text-[3.5rem] leading-none tracking-tight text-foreground uppercase font-bold">
               Explore Loverball
             </h2>
