@@ -259,8 +259,18 @@ const Events = () => {
 
           {/* EVENTS GRID */}
           {filtered.length === 0 ? (
-            <div className="text-center py-20">
-              <p className="text-muted-foreground">No events in this category.</p>
+            <div className="text-center py-20 space-y-4">
+              <div className="w-24 h-24 mx-auto rounded-full bg-primary/10 flex items-center justify-center">
+                <Calendar className="w-12 h-12 text-primary/40" />
+              </div>
+              <h2 className="text-lg font-semibold text-foreground">
+                {tab === "upcoming" ? "No upcoming events" : "No past events"}
+              </h2>
+              <p className="text-sm text-muted-foreground max-w-sm mx-auto">
+                {tab === "upcoming"
+                  ? "New events are added regularly. Check back soon or follow us to get notified!"
+                  : "Past event recaps will appear here after events conclude."}
+              </p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
