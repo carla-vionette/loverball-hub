@@ -232,40 +232,91 @@ export type Database = {
       }
       creator_applications: {
         Row: {
+          account_type: string | null
           admin_notes: string | null
           applicant_user_id: string
+          banner_url: string | null
+          bio: string | null
+          city: string | null
           content_focus: string
           created_at: string
           desired_channel_name: string
           example_content_links: string | null
           id: string
+          instagram_followers: number | null
+          instagram_url: string | null
+          league: string | null
+          logo_url: string | null
+          name: string | null
           reviewed_at: string | null
           social_handles: string | null
+          sport: string | null
           status: string
+          submitted_at: string | null
+          tiktok_followers: number | null
+          tiktok_url: string | null
+          twitter_followers: number | null
+          twitter_url: string | null
+          youtube_followers: number | null
+          youtube_url: string | null
         }
         Insert: {
+          account_type?: string | null
           admin_notes?: string | null
           applicant_user_id: string
+          banner_url?: string | null
+          bio?: string | null
+          city?: string | null
           content_focus: string
           created_at?: string
           desired_channel_name: string
           example_content_links?: string | null
           id?: string
+          instagram_followers?: number | null
+          instagram_url?: string | null
+          league?: string | null
+          logo_url?: string | null
+          name?: string | null
           reviewed_at?: string | null
           social_handles?: string | null
+          sport?: string | null
           status?: string
+          submitted_at?: string | null
+          tiktok_followers?: number | null
+          tiktok_url?: string | null
+          twitter_followers?: number | null
+          twitter_url?: string | null
+          youtube_followers?: number | null
+          youtube_url?: string | null
         }
         Update: {
+          account_type?: string | null
           admin_notes?: string | null
           applicant_user_id?: string
+          banner_url?: string | null
+          bio?: string | null
+          city?: string | null
           content_focus?: string
           created_at?: string
           desired_channel_name?: string
           example_content_links?: string | null
           id?: string
+          instagram_followers?: number | null
+          instagram_url?: string | null
+          league?: string | null
+          logo_url?: string | null
+          name?: string | null
           reviewed_at?: string | null
           social_handles?: string | null
+          sport?: string | null
           status?: string
+          submitted_at?: string | null
+          tiktok_followers?: number | null
+          tiktok_url?: string | null
+          twitter_followers?: number | null
+          twitter_url?: string | null
+          youtube_followers?: number | null
+          youtube_url?: string | null
         }
         Relationships: []
       }
