@@ -1,4 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
+import { logAdminAction } from '@/services/adminActivityService';
 import type { UserProfile, VideoItem, EventItem, MemberApplication } from '@/types';
 
 export async function isAdminEmail(email: string): Promise<boolean> {
@@ -31,6 +32,7 @@ export async function suspendMember(userId: string): Promise<void> {
     .update({ role: 'pending' })
     .eq('user_id', userId);
   if (error) throw error;
+  await logAdminAction('member_suspended', 'member', userId);
 }
 
 export async function deleteMember(userId: string): Promise<void> {
@@ -38,6 +40,7 @@ export async function deleteMember(userId: string): Promise<void> {
   await supabase.from('user_roles').delete().eq('user_id', userId);
   const { error } = await supabase.from('profiles').delete().eq('id', userId);
   if (error) throw error;
+  await logAdminAction('member_deleted', 'member', userId);
 }
 
 // ── Applications ──
