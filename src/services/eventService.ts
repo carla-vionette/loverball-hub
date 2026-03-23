@@ -10,6 +10,7 @@ export async function fetchEvents(options?: {
   let query = supabase
     .from('events')
     .select('*')
+    .eq('approval_status', 'approved')
     .order('event_date', { ascending: true });
 
   if (options?.upcoming) {
@@ -63,5 +64,7 @@ function mapEvent(e: Record<string, unknown>): EventItem {
     tier: (e.tier as EventItem['tier']) || null,
     layout_json: (e.layout_json as EventLayout) || null,
     banner_image: (e.banner_image as string) || null,
+    approval_status: (e.approval_status as EventItem['approval_status']) || 'approved',
+    submitted_by: (e.submitted_by as string) || null,
   };
 }
