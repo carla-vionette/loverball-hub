@@ -808,22 +808,28 @@ export type Database = {
           addressee_id: string
           created_at: string
           id: string
+          mutual_teams: string[] | null
           requester_id: string
           status: string
+          updated_at: string | null
         }
         Insert: {
           addressee_id: string
           created_at?: string
           id?: string
+          mutual_teams?: string[] | null
           requester_id: string
           status?: string
+          updated_at?: string | null
         }
         Update: {
           addressee_id?: string
           created_at?: string
           id?: string
+          mutual_teams?: string[] | null
           requester_id?: string
           status?: string
+          updated_at?: string | null
         }
         Relationships: [
           {
