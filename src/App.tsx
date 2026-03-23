@@ -66,6 +66,10 @@ const VideoPlayerPage = lazy(() => import("./pages/VideoPlayerPage"));
 const Apply = lazy(() => import("./pages/Apply"));
 const ApplicationPending = lazy(() => import("./pages/ApplicationPending"));
 
+// Creator/Application pages
+const CreatorApplication = lazy(() => import("./pages/CreatorApplication"));
+const ApplicationPending = lazy(() => import("./pages/ApplicationPending"));
+
 // Admin pages
 const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
 const AdminEventEditor = lazy(() => import("./pages/AdminEventEditor"));
@@ -160,6 +164,10 @@ const App = () => (
                 <Route path="/gather" element={<Navigate to="/events" replace />} />
                 <Route path="/connect" element={<Navigate to="/friends" replace />} />
                 <Route path="/trending" element={<Navigate to="/#trending" replace />} />
+
+                {/* Application routes */}
+                <Route path="/apply" element={<ProtectedRoute><CreatorApplication /></ProtectedRoute>} />
+                <Route path="/application-pending" element={<ProtectedRoute><ApplicationPending /></ProtectedRoute>} />
 
                 {/* Protected member routes */}
                 <Route path="/dashboard" element={<ProtectedRoute><MemberDashboard /></ProtectedRoute>} />
