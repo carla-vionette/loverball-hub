@@ -216,7 +216,11 @@ const TrendingNews: React.FC<TrendingNewsProps> = ({ userTeams = [], onAuthRequi
                 }}
                 className="cursor-pointer group snap-start min-w-[280px] lg:min-w-0"
               >
-                <div className={`bg-card rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 h-full border flex flex-col ${isMatched ? "border-primary/30 ring-1 ring-primary/10" : "border-border/20"}`}>
+                <div className={`bg-card rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 h-full border flex flex-col relative ${isMatched ? "border-primary/30 ring-1 ring-primary/10" : "border-border/20"}`}>
+                  {/* Numbered index */}
+                  <span className="absolute bottom-2 left-3 font-display font-bold text-[72px] leading-none pointer-events-none select-none z-0" style={{ color: 'rgba(255,255,255,0.05)' }}>
+                    {String(i + 1).padStart(2, '0')}
+                  </span>
                   <div className="h-40 overflow-hidden relative">
                     {article.image_url ? (
                       <img src={article.image_url} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
@@ -244,7 +248,8 @@ const TrendingNews: React.FC<TrendingNewsProps> = ({ userTeams = [], onAuthRequi
 
                   <div className="p-5 flex flex-col flex-1">
                     <div className="flex items-center gap-2 mb-3">
-                      <span className="text-[10px] font-sans font-bold tracking-[0.2em] uppercase px-2.5 py-1 rounded-full" style={{ backgroundColor: `${catColor}20`, color: catColor }}>
+                      <span className="text-[10px] font-sans font-bold tracking-[0.2em] uppercase px-2.5 py-1 rounded-full flex items-center gap-1.5" style={{ backgroundColor: `${catColor}20`, color: catColor }}>
+                        <span className="inline-block w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: i % 2 === 0 ? '#3B82F6' : catColor }} />
                         {catEmoji} {primarySport || article.category || "Sports"}
                       </span>
                       <span className="text-[11px] text-muted-foreground flex items-center gap-1">
