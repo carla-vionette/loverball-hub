@@ -44,8 +44,9 @@ type RSVPEvent = {
 };
 
 const Profile = () => {
-  const [profile, setProfile] = useState<ProfileData | null>(null);
+const [profile, setProfile] = useState<ProfileData | null>(null);
   const [rsvpEvents, setRsvpEvents] = useState<RSVPEvent[]>([]);
+  const [followedTeamKeys, setFollowedTeamKeys] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [showFollowersModal, setShowFollowersModal] = useState<"followers" | "following" | null>(null);
@@ -67,7 +68,7 @@ const Profile = () => {
           return;
         }
 
-        const [profileResult, rsvpResult] = await Promise.all([
+        const [profileResult, rsvpResult, teamFollowsResult] = await Promise.all([
           supabase.from("profiles").select("*").eq("id", user.id).maybeSingle(),
           supabase
             .from("event_rsvps")
@@ -76,6 +77,10 @@ const Profile = () => {
             )
             .eq("user_id", user.id)
             .order("created_at", { ascending: false }),
+          supabase
+            .from("team_follows")
+            .select("team_key")
+            .eq("user_id", user.id),
         ]);
 
         if (cancelled) return;
@@ -89,6 +94,9 @@ const Profile = () => {
           setRsvpEvents(
             rsvpResult.data.filter((r) => r.event !== null) as RSVPEvent[]
           );
+        }
+        if (teamFollowsResult.data) {
+          setFollowedTeamKeys(teamFollowsResult.data.map((d) => d.team_key));
         }
       } catch {
         if (!cancelled) goTo("/onboarding");
@@ -184,7 +192,7 @@ const Profile = () => {
               </TabsList>
 
               <TabsContent value="feed" className="mt-4">
-                <ProfileFeedTab profile={profile} />
+                <ProfileFeedTab profile={profile} followedTeamKeys={followedTeamKeys} />
               </TabsContent>
 
               <TabsContent value="teams" className="mt-4">
