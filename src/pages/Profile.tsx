@@ -44,8 +44,9 @@ type RSVPEvent = {
 };
 
 const Profile = () => {
-  const [profile, setProfile] = useState<ProfileData | null>(null);
+const [profile, setProfile] = useState<ProfileData | null>(null);
   const [rsvpEvents, setRsvpEvents] = useState<RSVPEvent[]>([]);
+  const [followedTeamKeys, setFollowedTeamKeys] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [showFollowersModal, setShowFollowersModal] = useState<"followers" | "following" | null>(null);
