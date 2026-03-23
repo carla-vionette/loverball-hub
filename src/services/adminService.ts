@@ -1,6 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
-import { logAdminAction } from '@/services/adminActivityService';
-import type { UserProfile, VideoItem, EventItem, MemberApplication } from '@/types';
+import type { UserProfile, VideoItem, EventItem, MemberApplication, CreatorApplication } from '@/types';
 
 export async function isAdminEmail(email: string): Promise<boolean> {
   // Check admin role via user_roles table instead of hardcoded email
@@ -32,7 +31,6 @@ export async function suspendMember(userId: string): Promise<void> {
     .update({ role: 'pending' })
     .eq('user_id', userId);
   if (error) throw error;
-  await logAdminAction('member_suspended', 'member', userId);
 }
 
 export async function deleteMember(userId: string): Promise<void> {
@@ -40,7 +38,6 @@ export async function deleteMember(userId: string): Promise<void> {
   await supabase.from('user_roles').delete().eq('user_id', userId);
   const { error } = await supabase.from('profiles').delete().eq('id', userId);
   if (error) throw error;
-  await logAdminAction('member_deleted', 'member', userId);
 }
 
 // ── Applications ──
@@ -95,6 +92,7 @@ export async function createVideo(video: {
   tier?: string | null;
   duration?: string | null;
   channel_id?: string;
+  approval_status?: string;
 }): Promise<VideoItem> {
   const insertPayload = {
     title: video.title,
@@ -106,6 +104,7 @@ export async function createVideo(video: {
     tier: video.tier ?? 'free',
     duration: video.duration ?? null,
     channel_id: video.channel_id ?? 'default',
+    approval_status: video.approval_status ?? 'approved',
   };
   const { data, error } = await supabase
     .from('videos')
@@ -166,8 +165,13 @@ export async function createEvent(event: {
   cover_image_url?: string;
   event_type?: string;
   visibility?: string;
+  approval_status?: string;
+  submitted_by?: string;
 }): Promise<void> {
-  const { error } = await supabase.from('events').insert(event);
+  const { error } = await supabase.from('events').insert({
+    ...event,
+    approval_status: event.approval_status ?? 'approved',
+  });
   if (error) throw error;
 }
 
@@ -178,6 +182,165 @@ export async function updateEvent(id: string, updates: Record<string, unknown>):
 
 export async function deleteEvent(id: string): Promise<void> {
   const { error } = await supabase.from('events').delete().eq('id', id);
+  if (error) throw error;
+}
+
+// ── Creator/Team/Org Applications ──
+
+export async function submitCreatorApplication(application: {
+  user_id: string;
+  account_type: 'team' | 'creator' | 'organization';
+  official_email: string;
+  phone_number: string;
+  social_links: Record<string, string>;
+  content_bio?: string;
+  org_name?: string;
+}): Promise<void> {
+  // Insert the application
+  const { error: appError } = await supabase
+    .from('creator_applications' as any)
+    .insert(application as any);
+  if (appError) throw appError;
+
+  // Update profile with account_type and pending_review status
+  const { error: profileError } = await supabase
+    .from('profiles')
+    .update({
+      account_type: application.account_type,
+      approval_status: 'pending_review',
+      official_email: application.official_email,
+      phone_number: application.phone_number,
+      social_links: application.social_links,
+      content_bio: application.content_bio || null,
+      org_name: application.org_name || null,
+    } as any)
+    .eq('id', application.user_id);
+  if (profileError) throw profileError;
+}
+
+export async function fetchCreatorApplications(): Promise<CreatorApplication[]> {
+  const { data, error } = await supabase
+    .from('creator_applications' as any)
+    .select('*')
+    .order('created_at', { ascending: false });
+  if (error) throw error;
+
+  const apps = (data || []) as any[];
+
+  // Fetch profile names for display
+  const userIds = apps.map((a: any) => a.user_id);
+  if (userIds.length > 0) {
+    const { data: profiles } = await supabase
+      .from('profiles')
+      .select('id, name, profile_photo_url')
+      .in('id', userIds);
+
+    const profileMap = new Map((profiles || []).map((p: any) => [p.id, p]));
+    return apps.map((a: any) => ({
+      ...a,
+      applicant_name: profileMap.get(a.user_id)?.name || 'Unknown',
+      profile_photo_url: profileMap.get(a.user_id)?.profile_photo_url || null,
+    }));
+  }
+
+  return apps;
+}
+
+export async function handleCreatorApplication(
+  applicationId: string,
+  action: 'approved' | 'rejected',
+  reviewerId: string
+): Promise<void> {
+  // Update the application
+  const { data: app, error: fetchError } = await supabase
+    .from('creator_applications' as any)
+    .update({
+      status: action,
+      reviewed_by: reviewerId,
+      reviewed_at: new Date().toISOString(),
+    } as any)
+    .eq('id', applicationId)
+    .select()
+    .single();
+  if (fetchError) throw fetchError;
+
+  const appData = app as any;
+
+  // Update profile approval_status
+  const { error: profileError } = await supabase
+    .from('profiles')
+    .update({
+      approval_status: action === 'approved' ? 'approved' : 'rejected',
+    } as any)
+    .eq('id', appData.user_id);
+  if (profileError) throw profileError;
+
+  // If approved, ensure user has member role
+  if (action === 'approved') {
+    const { error: roleError } = await supabase
+      .from('user_roles')
+      .upsert({ user_id: appData.user_id, role: 'member' }, { onConflict: 'user_id' });
+    if (roleError && !roleError.message.includes('duplicate')) throw roleError;
+  }
+}
+
+// ── Event Approvals ──
+
+export async function fetchPendingEvents(): Promise<EventItem[]> {
+  const { data, error } = await supabase
+    .from('events')
+    .select('*')
+    .order('created_at', { ascending: false });
+  if (error) throw error;
+  return (data || []).map((e: any) => ({
+    id: e.id,
+    title: e.title,
+    description: e.description,
+    event_date: e.event_date,
+    location: e.location,
+    event_link: e.event_link,
+    image: e.cover_image_url || e.image_url || null,
+    event_type: e.event_type,
+    visibility: e.visibility || 'public',
+    created_at: e.created_at,
+    tier: e.tier || null,
+    layout_json: e.layout_json || null,
+    banner_image: e.banner_image || null,
+    approval_status: e.approval_status || 'approved',
+    submitted_by: e.submitted_by || null,
+  }));
+}
+
+export async function handleEventApproval(
+  eventId: string,
+  action: 'approved' | 'rejected'
+): Promise<void> {
+  const { error } = await supabase
+    .from('events')
+    .update({ approval_status: action } as any)
+    .eq('id', eventId);
+  if (error) throw error;
+}
+
+// ── Video Approvals ──
+
+export async function fetchAllVideosForAdmin(): Promise<VideoItem[]> {
+  const { data, error } = await supabase
+    .from('videos')
+    .select('*')
+    .order('created_at', { ascending: false });
+  if (error) throw error;
+  return (data || []) as VideoItem[];
+}
+
+export async function handleVideoApproval(
+  videoId: string,
+  action: 'approved' | 'rejected'
+): Promise<void> {
+  const { error } = await supabase
+    .from('videos')
+    .update({ approval_status: action } as any)
+    .eq('id', videoId);
   if (error) throw error;
 }
 

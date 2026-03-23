@@ -22,17 +22,28 @@ import {
   SPORTS_OPTIONS,
   CONTENT_INTERESTS_OPTIONS,
 } from "@/lib/onboardingOptions";
-import { X, Camera, Loader2, Check, ChevronRight, ChevronLeft } from "lucide-react";
+import { X, Camera, Loader2, Check, ChevronRight, ChevronLeft, User, Users, Tv, Building2 } from "lucide-react";
 import loverballLogo from "@/assets/loverball-script-logo.png";
 import { motion, AnimatePresence } from "framer-motion";
+import type { AccountType } from "@/types";
+
+const ACCOUNT_TYPE_OPTIONS: { type: AccountType; label: string; description: string; icon: typeof User }[] = [
+  { type: "member", label: "Member", description: "Fan, supporter, or sports enthusiast", icon: User },
+  { type: "creator", label: "Creator", description: "Sports content creator or influencer", icon: Tv },
+  { type: "team", label: "Team", description: "Sports team or athletic organization", icon: Users },
+  { type: "organization", label: "Organization", description: "League, media company, or brand", icon: Building2 },
+];
 
 const Onboarding = () => {
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(0); // Step 0 = account type selection
   const [loading, setLoading] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
   const [direction, setDirection] = useState(1);
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  // Step 0: Account type
+  const [accountType, setAccountType] = useState<AccountType | null>(null);
 
   // Step 1: Basic Info
   const [name, setName] = useState("");
@@ -66,8 +77,8 @@ const Onboarding = () => {
     checkAuth();
   }, [navigate]);
 
-  const totalSteps = 4;
-  const progress = (step / totalSteps) * 100;
+  const totalSteps = 5; // 0: account type, 1-4: member onboarding
+  const progress = (step / (totalSteps - 1)) * 100;
 
   const toggleArrayItem = (arr: string[], item: string, setter: (arr: string[]) => void) => {
     if (arr.includes(item)) {
@@ -106,22 +117,22 @@ const Onboarding = () => {
 
   const uploadProfilePhoto = async (): Promise<string | null> => {
     if (!profilePhoto || !userId) return null;
-    
+
     setUploadingPhoto(true);
     try {
       const fileExt = profilePhoto.name.split('.').pop();
       const filePath = `${userId}/profile.${fileExt}`;
-      
+
       const { error: uploadError } = await supabase.storage
         .from('profile-photos')
         .upload(filePath, profilePhoto, { upsert: true });
-      
+
       if (uploadError) throw uploadError;
-      
+
       const { data } = supabase.storage
         .from('profile-photos')
         .getPublicUrl(filePath);
-      
+
       return data.publicUrl;
     } catch (error: any) {
       toast({
@@ -140,7 +151,7 @@ const Onboarding = () => {
     const interestsList = contentInterests.slice(0, 2).join(", ");
     const teamText = favTeams[0] ? `${favTeams[0]} fan` : `${sportsList} enthusiast`;
     const locationText = city ? `in ${city}` : "";
-    
+
     return `${teamText} ${locationText} who loves ${sportsList}${interestsList ? `, ${interestsList},` : ''} and connecting with fellow sports fans.`;
   };
 
@@ -150,12 +161,12 @@ const Onboarding = () => {
     setLoading(true);
     try {
       const bio = generateBio();
-      
+
       let photoUrl: string | null = null;
       if (profilePhoto) {
         photoUrl = await uploadProfilePhoto();
       }
-      
+
       const { error } = await supabase.from("profiles").upsert({
         id: userId,
         name,
@@ -167,7 +178,9 @@ const Onboarding = () => {
         bio,
         profile_photo_url: photoUrl,
         sms_notifications_enabled: smsOptIn,
-      }, { onConflict: "id" });
+        account_type: 'member',
+        approval_status: 'approved',
+      } as any, { onConflict: "id" });
 
       if (error) throw error;
 
@@ -188,9 +201,9 @@ const Onboarding = () => {
 
       toast({
         title: "Profile created!",
-        description: "Welcome to Loverball! 🏀",
+        description: "Welcome to Loverball!",
       });
-      
+
       navigate("/profile");
     } catch (error: any) {
       toast({
@@ -203,8 +216,27 @@ const Onboarding = () => {
     }
   };
 
+  const handleAccountTypeSelect = (type: AccountType) => {
+    setAccountType(type);
+  };
+
+  const handleAccountTypeContinue = () => {
+    if (!accountType) return;
+
+    if (accountType === "member") {
+      // Continue with member onboarding
+      setDirection(1);
+      setStep(1);
+    } else {
+      // Redirect to creator/team/org application page
+      navigate(`/apply?type=${accountType}`);
+    }
+  };
+
   const canProceed = () => {
     switch (step) {
+      case 0:
+        return !!accountType;
       case 1:
         return name.trim() && city;
       case 2:
@@ -220,6 +252,7 @@ const Onboarding = () => {
 
   const getStepTitle = () => {
     switch (step) {
+      case 0: return "How will you use Loverball?";
       case 1: return "Tell us about yourself.";
       case 2: return "Your sports preferences.";
       case 3: return "What topics interest you?";
@@ -243,6 +276,10 @@ const Onboarding = () => {
   };
 
   const goNext = () => {
+    if (step === 0) {
+      handleAccountTypeContinue();
+      return;
+    }
     setDirection(1);
     setStep(step + 1);
   };
@@ -257,6 +294,10 @@ const Onboarding = () => {
     center: { x: 0, opacity: 1 },
     exit: (dir: number) => ({ x: dir > 0 ? -80 : 80, opacity: 0 }),
   };
+
+  // Display step numbers starting from 1 for user
+  const displayStep = step === 0 ? 1 : step + 1;
+  const displayTotalSteps = totalSteps;
 
   return (
     <div className="min-h-screen bg-background">
@@ -274,13 +315,13 @@ const Onboarding = () => {
           {/* Header */}
           <div className="mb-8">
             <div className="flex items-center justify-between mb-4">
-              <p className="text-primary text-sm font-medium tracking-widest uppercase">Step {step} of {totalSteps}</p>
+              <p className="text-primary text-sm font-medium tracking-widest uppercase">Step {displayStep} of {displayTotalSteps}</p>
               <div className="flex gap-1.5">
-                {Array.from({ length: totalSteps }).map((_, i) => (
+                {Array.from({ length: displayTotalSteps }).map((_, i) => (
                   <div
                     key={i}
                     className={`h-2 w-8 rounded-full transition-colors duration-300 ${
-                      i + 1 <= step ? "bg-primary" : "bg-border"
+                      i + 1 <= displayStep ? "bg-primary" : "bg-border"
                     }`}
                   />
                 ))}
@@ -303,6 +344,47 @@ const Onboarding = () => {
               transition={{ duration: 0.25, ease: "easeInOut" }}
             >
               <div className="bg-pale-pink p-6 sm:p-10 space-y-6">
+
+                {/* Step 0: Account Type Selection */}
+                {step === 0 && (
+                  <div className="space-y-6">
+                    <p className="text-sm text-muted-foreground">
+                      Select how you'd like to join the Loverball community.
+                    </p>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      {ACCOUNT_TYPE_OPTIONS.map((option) => {
+                        const Icon = option.icon;
+                        const selected = accountType === option.type;
+                        return (
+                          <button
+                            key={option.type}
+                            type="button"
+                            onClick={() => handleAccountTypeSelect(option.type)}
+                            className={`flex flex-col items-center gap-3 p-6 border-2 transition-all duration-200 text-center ${
+                              selected
+                                ? "bg-primary/10 border-primary"
+                                : "bg-background border-border hover:border-primary/50"
+                            }`}
+                          >
+                            <Icon className={`w-8 h-8 ${selected ? "text-primary" : "text-foreground/60"}`} />
+                            <div>
+                              <h3 className="font-semibold text-foreground">{option.label}</h3>
+                              <p className="text-xs text-muted-foreground mt-1">{option.description}</p>
+                            </div>
+                            {selected && (
+                              <Check className="w-5 h-5 text-primary" />
+                            )}
+                          </button>
+                        );
+                      })}
+                    </div>
+                    {accountType && accountType !== "member" && (
+                      <p className="text-sm text-muted-foreground bg-secondary/50 p-3 rounded">
+                        As a {accountType}, you'll be directed to our application page. Your account will need admin approval before you can post events or upload videos.
+                      </p>
+                    )}
+                  </div>
+                )}
 
                 {/* Step 1: Basic Info */}
                 {step === 1 && (
@@ -511,7 +593,7 @@ const Onboarding = () => {
                             {city}{pronouns ? ` · ${pronouns}` : ""}
                           </p>
                           {phoneNumber && (
-                            <p className="text-xs text-muted-foreground mt-1">📱 {phoneNumber}{smsOptIn ? " · SMS updates ON" : ""}</p>
+                            <p className="text-xs text-muted-foreground mt-1">{phoneNumber}{smsOptIn ? " · SMS updates ON" : ""}</p>
                           )}
                         </div>
                       </div>
@@ -564,13 +646,13 @@ const Onboarding = () => {
 
           {/* Buttons */}
           <div className="flex gap-3 pt-6">
-            {step > 1 && (
+            {step > 0 && (
               <Button variant="outline" onClick={goBack} className="rounded-none h-12 px-6 text-sm tracking-wider gap-2">
                 <ChevronLeft className="h-4 w-4" />
                 BACK
               </Button>
             )}
-            {step < totalSteps && (
+            {step < 4 && (
               <Button
                 onClick={goNext}
                 disabled={!canProceed()}
@@ -580,7 +662,7 @@ const Onboarding = () => {
                 <ChevronRight className="h-4 w-4" />
               </Button>
             )}
-            {step === totalSteps && (
+            {step === 4 && (
               <Button
                 onClick={handleSubmit}
                 disabled={loading}
