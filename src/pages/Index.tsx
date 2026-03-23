@@ -257,12 +257,15 @@ const Index = () => {
               transition={{ duration: 0.9, ease: "easeOut" }}
               className="relative z-10 max-w-xl"
             >
+              <span className="text-[11px] font-sans font-bold tracking-[0.3em] uppercase mb-4 block" style={{ color: '#6B7280', letterSpacing: '0.2em' }}>
+                VOL. 01 ▸ WOMEN'S SPORTS
+              </span>
               <span className="text-[11px] font-sans font-bold tracking-[0.3em] uppercase mb-8 block" style={{ color: '#9CA3AF' }}>
                 A GLOBAL SPORTS MEDIA + COMMUNITY PLATFORM
               </span>
               <h1 className="font-display font-bold text-[3.5rem] sm:text-[5rem] lg:text-[6.5rem] leading-[0.85] tracking-tight uppercase mb-8" style={{ color: '#FFFFFF' }}>
                 Her<br />Game.<br />
-                <span className="text-primary">Her</span><br />
+                <span className="font-serif italic font-normal text-[2rem] sm:text-[3rem] lg:text-[4rem]" style={{ color: '#F5F0EB' }}>Her</span><br />
                 <span className="text-primary">Community.</span>
               </h1>
               <p className="text-base font-sans font-medium text-muted-foreground leading-relaxed mb-10 max-w-[480px]">
