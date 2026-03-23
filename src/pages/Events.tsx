@@ -3,7 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Calendar, MapPin, Users, Clock, Loader2 } from "lucide-react";
+import { Calendar, MapPin, Users, Clock, Loader2, PlusCircle, Send } from "lucide-react";
 import EventTagBadges from "@/components/EventTagBadges";
 import SponsorCard from "@/components/SponsorCard";
 import { supabase } from "@/integrations/supabase/client";
@@ -15,6 +15,7 @@ import BottomNav from "@/components/BottomNav";
 import DesktopNav from "@/components/DesktopNav";
 import MobileHeader from "@/components/MobileHeader";
 import AttendeeProfileDrawer from "@/components/AttendeeProfileDrawer";
+import EventSubmissionForm from "@/components/EventSubmissionForm";
 
 const CATEGORIES = ["All", "watch_party", "game", "panel", "brunch", "networking", "other"];
 const CATEGORY_LABELS: Record<string, string> = {
@@ -72,8 +73,24 @@ const Events = () => {
   const [eventAttendees, setEventAttendees] = useState<Record<string, AttendeeProfile[]>>({});
   const [selectedProfile, setSelectedProfile] = useState<AttendeeProfile | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [showSubmitForm, setShowSubmitForm] = useState(false);
+  const [isApprovedCreator, setIsApprovedCreator] = useState(false);
   const { user } = useAuth();
   const { toast } = useToast();
+
+  // Check if user is an approved creator/team/org account
+  useEffect(() => {
+    if (!user) return;
+    (async () => {
+      const { data } = await supabase
+        .from("creator_channels")
+        .select("id")
+        .eq("owner_user_id", user.id)
+        .eq("status", "active")
+        .limit(1);
+      setIsApprovedCreator(!!data && data.length > 0);
+    })();
+  }, [user]);
 
   useEffect(() => {
     (async () => {
@@ -197,7 +214,31 @@ const Events = () => {
 
       <main className="md:ml-64 pt-16 md:pt-0 pb-24 md:pb-0">
         <div className="max-w-6xl mx-auto px-4 md:px-10 py-6">
-          <h1 className="font-display text-2xl md:text-[28px] font-bold uppercase tracking-tight mb-4">Events</h1>
+          <div className="flex items-center justify-between mb-4">
+            <h1 className="font-display text-2xl md:text-[28px] font-bold uppercase tracking-tight">Events</h1>
+            {user && isApprovedCreator && (
+              <Button className="rounded-full gap-2" onClick={() => setShowSubmitForm(true)}>
+                <PlusCircle className="w-4 h-4" /> Submit Event
+              </Button>
+            )}
+          </div>
+
+          {/* Apply to Post CTA for non-approved users */}
+          {user && !isApprovedCreator && (
+            <Card className="mb-6 border-dashed border-primary/30 bg-primary/5">
+              <CardContent className="p-4 flex flex-col sm:flex-row items-start sm:items-center gap-3">
+                <div className="flex-1">
+                  <h3 className="font-semibold text-sm">Want to post an event?</h3>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    Team, creator, and organization accounts can submit events for review. Apply to become an approved account to start posting.
+                  </p>
+                </div>
+                <Button variant="outline" className="rounded-full gap-2 whitespace-nowrap" onClick={() => window.location.href = "/auth?apply=creator"}>
+                  <Send className="w-3.5 h-3.5" /> Apply to Post
+                </Button>
+              </CardContent>
+            </Card>
+          )}
 
           {/* TABS */}
           <div className="flex gap-1 mb-6 bg-secondary rounded-full p-1 w-fit">
@@ -385,6 +426,9 @@ const Events = () => {
           open={drawerOpen}
           onOpenChange={setDrawerOpen}
         />
+
+        {/* Event Submission Form */}
+        <EventSubmissionForm open={showSubmitForm} onOpenChange={setShowSubmitForm} />
       </main>
     </div>
   );
