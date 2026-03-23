@@ -20,7 +20,7 @@ import { z } from "zod";
 
 const signUpSchema = z.object({
   email: z.string().trim().email("Please enter a valid email address"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
+  password: z.string().min(6, "Password must be at least 6 characters")
 });
 
 const ACCESS_CODE = "7988";
@@ -48,7 +48,7 @@ const Index = () => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       if (mounted) setIsAuthenticated(!!session);
     });
-    return () => { mounted = false; subscription.unsubscribe(); };
+    return () => {mounted = false;subscription.unsubscribe();};
   }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -65,7 +65,7 @@ const Index = () => {
       }
     } catch (error: any) {
       toast({ title: "Error", description: error.message, variant: "destructive" });
-    } finally { setLoading(false); }
+    } finally {setLoading(false);}
   };
 
   const handleForgotPassword = async (e: React.FormEvent) => {
@@ -84,18 +84,18 @@ const Index = () => {
       setShowForgotPassword(false);
     } catch (error: any) {
       toast({ title: "Error", description: error.message, variant: "destructive" });
-    } finally { setLoading(false); }
+    } finally {setLoading(false);}
   };
 
   const handleVerifyInvite = (e: React.FormEvent) => {
     e.preventDefault();
-    if (inviteCode.trim() === ACCESS_CODE) { setInviteVerified(true); setInviteError(false); return; }
+    if (inviteCode.trim() === ACCESS_CODE) {setInviteVerified(true);setInviteError(false);return;}
     setInviteError(true);
   };
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!inviteVerified) { setInviteError(true); toast({ title: "Error", description: "Invalid invite code", variant: "destructive" }); return; }
+    if (!inviteVerified) {setInviteError(true);toast({ title: "Error", description: "Invalid invite code", variant: "destructive" });return;}
     setLoading(true);
     try {
       const validation = signUpSchema.safeParse({ email, password });
@@ -113,26 +113,26 @@ const Index = () => {
       }
     } catch (error: any) {
       toast({ title: "Error", description: error.message, variant: "destructive" });
-    } finally { setLoading(false); }
+    } finally {setLoading(false);}
   };
 
   const openAuthModal = () => {
-    setInviteCode(""); setInviteVerified(false); setInviteError(false); setAuthModalOpen(true);
+    setInviteCode("");setInviteVerified(false);setInviteError(false);setAuthModalOpen(true);
   };
 
   const nearbyEvents = [
-    { date: "MAR 27", time: "7:00 PM", title: "ACFC vs Houston Dash Watch Party", venue: "BMO Stadium, DTLA", type: "Watch Party" },
-    { date: "APR 26", time: "3:00 PM", title: "ACFC vs Portland Thorns Watch Party", venue: "BMO Stadium, DTLA", type: "Watch Party" },
-    { date: "MAY 10", time: "3:00 PM", title: "Sparks vs Aces Season Opener", venue: "Crypto.com Arena, DTLA", type: "Watch Party" },
-    { date: "MAY 13", time: "7:00 PM", title: "Sparks vs Indiana Fever Watch Party", venue: "Crypto.com Arena, DTLA", type: "Watch Party" },
-  ];
+  { date: "MAR 27", time: "7:00 PM", title: "ACFC vs Houston Dash Watch Party", venue: "BMO Stadium, DTLA", type: "Watch Party" },
+  { date: "APR 26", time: "3:00 PM", title: "ACFC vs Portland Thorns Watch Party", venue: "BMO Stadium, DTLA", type: "Watch Party" },
+  { date: "MAY 10", time: "3:00 PM", title: "Sparks vs Aces Season Opener", venue: "Crypto.com Arena, DTLA", type: "Watch Party" },
+  { date: "MAY 13", time: "7:00 PM", title: "Sparks vs Indiana Fever Watch Party", venue: "Crypto.com Arena, DTLA", type: "Watch Party" }];
+
 
   const featureCards = [
-    { icon: Heart, title: "DISCOVER FANS", desc: "Connect with women who share your sports passion" },
-    { icon: Calendar, title: "FIND EVENTS", desc: "Watch parties, tailgates & meetups near you" },
-    { icon: Play, title: "WATCH", desc: "Originals, highlights & creator content" },
-    { icon: ShoppingBag, title: "SHOP", desc: "Apparel and gear for the ultimate fan" },
-  ];
+  { icon: Heart, title: "DISCOVER FANS", desc: "Connect with women who share your sports passion" },
+  { icon: Calendar, title: "FIND EVENTS", desc: "Watch parties, tailgates & meetups near you" },
+  { icon: Play, title: "WATCH", desc: "Originals, highlights & creator content" },
+  { icon: ShoppingBag, title: "SHOP", desc: "Apparel and gear for the ultimate fan" }];
+
 
   const tickerItems = ["WNBA SEASON", "NWSL PLAYOFFS", "USWNT", "ANGEL CITY FC", "LA SPARKS", "WTA TOUR", "WOMEN'S WORLD CUP", "MARCH MADNESS", "OLYMPIC GAMES"];
 
@@ -164,16 +164,16 @@ const Index = () => {
             </div>
           </div>
         </div>
-        {mobileMenuOpen && (
-          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="lg:hidden bg-background border-t border-border/20 px-8 py-6 space-y-1">
+        {mobileMenuOpen &&
+        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="lg:hidden bg-background border-t border-border/20 px-8 py-6 space-y-1">
             <a href="#explore" onClick={() => setMobileMenuOpen(false)} className="block py-3 text-[11px] font-sans font-bold tracking-[0.25em] uppercase text-muted-foreground">Explore</a>
             <a href="#trending" onClick={() => setMobileMenuOpen(false)} className="block py-3 text-[11px] font-sans font-bold tracking-[0.25em] uppercase text-muted-foreground">Trending</a>
             <a href="#events" onClick={() => setMobileMenuOpen(false)} className="block py-3 text-[11px] font-sans font-bold tracking-[0.25em] uppercase text-muted-foreground">Events</a>
-            <Button onClick={() => { setMobileMenuOpen(false); openAuthModal(); }} className="w-full rounded-full mt-4 bg-primary text-primary-foreground text-[11px] tracking-[0.2em] uppercase">
+            <Button onClick={() => {setMobileMenuOpen(false);openAuthModal();}} className="w-full rounded-full mt-4 bg-primary text-primary-foreground text-[11px] tracking-[0.2em] uppercase">
               Join Loverball
             </Button>
           </motion.div>
-        )}
+        }
       </nav>
 
       {/* ═══════ AUTH MODAL ═══════ */}
@@ -190,8 +190,8 @@ const Index = () => {
                 <TabsTrigger value="signup" className="rounded-full data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-[11px] font-sans font-bold tracking-[0.1em] uppercase">Sign Up</TabsTrigger>
               </TabsList>
               <TabsContent value="login">
-                {showForgotPassword ? (
-                  <form onSubmit={handleForgotPassword} className="space-y-5 mt-8">
+                {showForgotPassword ?
+                <form onSubmit={handleForgotPassword} className="space-y-5 mt-8">
                     <div className="space-y-2">
                       <Label htmlFor="reset-email" className="text-foreground text-[11px] tracking-[0.1em] uppercase">Email</Label>
                       <Input id="reset-email" type="email" placeholder="Enter your email" value={email} onChange={(e) => setEmail(e.target.value)} required />
@@ -199,9 +199,9 @@ const Index = () => {
                     <p className="text-muted-foreground text-sm">We'll send you a link to reset your password.</p>
                     <Button type="submit" className="w-full rounded-full h-12 text-[11px] font-sans tracking-[0.1em] uppercase" disabled={loading}>{loading ? "Sending..." : "Send Reset Link"}</Button>
                     <button type="button" onClick={() => setShowForgotPassword(false)} className="w-full text-sm text-primary hover:text-primary/80 transition-colors font-medium">Back to sign in</button>
-                  </form>
-                ) : (
-                  <form onSubmit={handleLogin} className="space-y-5 mt-8">
+                  </form> :
+
+                <form onSubmit={handleLogin} className="space-y-5 mt-8">
                     <div className="space-y-2">
                       <Label htmlFor="login-email" className="text-foreground text-[11px] tracking-[0.1em] uppercase">Email</Label>
                       <Input id="login-email" type="email" placeholder="Enter your email" value={email} onChange={(e) => setEmail(e.target.value)} required />
@@ -215,20 +215,20 @@ const Index = () => {
                     </div>
                     <Button type="submit" className="w-full rounded-full h-12 text-[11px] font-sans tracking-[0.1em] uppercase" disabled={loading}>{loading ? "Signing in..." : "Sign In"}</Button>
                   </form>
-                )}
+                }
               </TabsContent>
               <TabsContent value="signup">
-                {!inviteVerified ? (
-                  <form onSubmit={handleVerifyInvite} className="space-y-5 mt-8">
+                {!inviteVerified ?
+                <form onSubmit={handleVerifyInvite} className="space-y-5 mt-8">
                     <div className="space-y-2">
                       <Label htmlFor="signup-invite-code" className="text-foreground text-[11px] tracking-[0.1em] uppercase">Invite Code</Label>
-                      <Input id="signup-invite-code" type="text" inputMode="numeric" maxLength={4} placeholder="Enter invite code" value={inviteCode} onChange={(e) => { setInviteCode(e.target.value); setInviteError(false); }} required />
+                      <Input id="signup-invite-code" type="text" inputMode="numeric" maxLength={4} placeholder="Enter invite code" value={inviteCode} onChange={(e) => {setInviteCode(e.target.value);setInviteError(false);}} required />
                       {inviteError && <p className="text-destructive text-sm">Invalid invite code</p>}
                     </div>
                     <Button type="submit" className="w-full rounded-full h-12 text-[11px] font-sans tracking-[0.1em] uppercase">VERIFY CODE</Button>
-                  </form>
-                ) : (
-                  <form onSubmit={handleSignup} className="space-y-5 mt-8">
+                  </form> :
+
+                <form onSubmit={handleSignup} className="space-y-5 mt-8">
                     <div className="space-y-2">
                       <Label htmlFor="signup-email" className="text-foreground text-[11px] tracking-[0.1em] uppercase">Email</Label>
                       <Input id="signup-email" type="email" placeholder="Enter your email" value={email} onChange={(e) => setEmail(e.target.value)} required />
@@ -239,7 +239,7 @@ const Index = () => {
                     </div>
                     <Button type="submit" className="w-full rounded-full h-12 text-[11px] font-sans tracking-[0.1em] uppercase" disabled={loading}>{loading ? "Creating account..." : "Create Account"}</Button>
                   </form>
-                )}
+                }
               </TabsContent>
             </Tabs>
           </div>
@@ -255,17 +255,14 @@ const Index = () => {
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.9, ease: "easeOut" }}
-              className="relative z-10 max-w-xl"
-            >
-              <span className="text-[11px] font-sans font-bold tracking-[0.3em] uppercase mb-4 block" style={{ color: '#6B7280', letterSpacing: '0.2em' }}>
-                VOL. 01 ▸ WOMEN'S SPORTS
-              </span>
+              className="relative z-10 max-w-xl">
+              
               <span className="text-[11px] font-sans font-bold tracking-[0.3em] uppercase mb-8 block" style={{ color: '#9CA3AF' }}>
-                A GLOBAL SPORTS MEDIA + COMMUNITY PLATFORM
+
               </span>
               <h1 className="font-display font-bold text-[3.5rem] sm:text-[5rem] lg:text-[6.5rem] leading-[0.85] tracking-tight uppercase mb-8" style={{ color: '#FFFFFF' }}>
                 Her<br />Game.<br />
-                <span className="font-serif italic font-normal text-[2rem] sm:text-[3rem] lg:text-[4rem]" style={{ color: '#F5F0EB' }}>Her</span><br />
+                <span className="text-primary">Her</span><br />
                 <span className="text-primary">Community.</span>
               </h1>
               <p className="text-base font-sans font-medium text-muted-foreground leading-relaxed mb-10 max-w-[480px]">
@@ -287,13 +284,9 @@ const Index = () => {
             initial={{ opacity: 0, x: 40 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.9, delay: 0.2 }}
-            className="lg:col-span-5 bg-card relative flex items-center justify-center py-24 lg:py-0 px-8 overflow-hidden"
-          >
+            className="lg:col-span-5 bg-card relative flex items-center justify-center py-24 lg:py-0 px-8 overflow-hidden">
+            
             <div className="relative w-full max-w-md h-[500px] lg:h-[600px]">
-              {/* Spinning FOR HER badge */}
-              <div className="absolute -top-2 -right-2 z-30 w-20 h-20 rounded-full bg-primary flex items-center justify-center" style={{ animation: 'spin-slow 20s linear infinite', transform: 'rotate(5deg)' }}>
-                <span className="text-primary-foreground font-bold text-[11px] uppercase tracking-[0.1em]">For Her</span>
-              </div>
               <motion.div initial={{ opacity: 0, rotate: -8, scale: 0.9 }} animate={{ opacity: 1, rotate: -6, scale: 1 }} transition={{ duration: 0.8, delay: 0.4 }} className="absolute left-0 bottom-12 w-[55%] z-10">
                 <div className="rounded-[20px] overflow-hidden" style={{ boxShadow: '0 12px 40px rgba(0,0,0,0.5)' }}>
                   <img src={athletesImage} alt="Women athletes" className="w-full aspect-[3/4] object-cover" />
@@ -317,11 +310,11 @@ const Index = () => {
       {/* ═══════ SCROLLING TICKER ═══════ */}
       <div className="bg-primary py-3.5 overflow-hidden">
         <div className="marquee-track">
-          {[...tickerItems, ...tickerItems].map((item, i) => (
-            <span key={i} className="text-primary-foreground font-display text-sm font-bold tracking-[0.15em] uppercase flex items-center gap-8">
+          {[...tickerItems, ...tickerItems].map((item, i) =>
+          <span key={i} className="text-primary-foreground font-display text-sm font-bold tracking-[0.15em] uppercase flex items-center gap-8">
               {item} <span className="text-primary-foreground/40">+</span>
             </span>
-          ))}
+          )}
         </div>
       </div>
 
@@ -329,23 +322,22 @@ const Index = () => {
       <section id="explore" className="section-spacing bg-background">
         <div className="max-w-[1280px] mx-auto px-8">
           <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} viewport={{ once: true }} className="text-center section-gap">
-            <span className="font-serif italic text-base block mb-2" style={{ color: '#FF8C7C' }}>discover</span>
             <h2 className="font-display text-[2.5rem] lg:text-[3.5rem] leading-none tracking-tight text-foreground uppercase font-bold">
               Explore Loverball
             </h2>
           </motion.div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8">
-            {featureCards.map((card, i) => (
-              <motion.div
-                key={card.title}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: i * 0.1 }}
-                viewport={{ once: true }}
-                onClick={openAuthModal}
-                className="cursor-pointer group"
-              >
+            {featureCards.map((card, i) =>
+            <motion.div
+              key={card.title}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: i * 0.1 }}
+              viewport={{ once: true }}
+              onClick={openAuthModal}
+              className="cursor-pointer group">
+              
                 <div className="bg-card rounded-[20px] p-6 h-full transition-all duration-300 hover:scale-[1.03] border border-border/20" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.3)' }}>
                   <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-primary/15 mb-6">
                     <card.icon className="w-7 h-7 text-primary" />
@@ -354,7 +346,7 @@ const Index = () => {
                   <p className="text-muted-foreground text-sm font-medium leading-relaxed">{card.desc}</p>
                 </div>
               </motion.div>
-            ))}
+            )}
           </div>
         </div>
       </section>
@@ -363,10 +355,7 @@ const Index = () => {
       <section id="trending" className="section-spacing bg-secondary">
         <div className="max-w-[1280px] mx-auto px-8">
           <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ duration: 0.8 }} viewport={{ once: true }} className="flex items-end justify-between section-gap">
-            <div>
-              <span className="font-serif italic text-base block mb-2" style={{ color: '#FF8C7C' }}>trending</span>
-              <h2 className="font-display text-[2.5rem] lg:text-[3.5rem] leading-none tracking-tight text-foreground uppercase font-bold">Trending Now</h2>
-            </div>
+            <h2 className="font-display text-[2.5rem] lg:text-[3.5rem] leading-none tracking-tight text-foreground uppercase font-bold">Trending Now</h2>
             <Zap className="w-8 h-8 text-primary hidden md:block" />
           </motion.div>
 
@@ -378,26 +367,23 @@ const Index = () => {
       <section id="events" className="section-spacing bg-background">
         <div className="max-w-[1280px] mx-auto px-8">
           <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ duration: 0.8 }} viewport={{ once: true }} className="flex items-end justify-between section-gap">
-            <div>
-              <span className="font-serif italic text-base block mb-2" style={{ color: '#FF8C7C' }}>events</span>
-              <h2 className="font-display text-[2.5rem] lg:text-[3.5rem] leading-none tracking-tight text-foreground uppercase font-bold">Events Near You</h2>
-            </div>
+            <h2 className="font-display text-[2.5rem] lg:text-[3.5rem] leading-none tracking-tight text-foreground uppercase font-bold">Events Near You</h2>
             <Button onClick={openAuthModal} className="hidden md:flex rounded-full px-6 py-2.5 text-[11px] font-sans font-bold tracking-[0.2em] uppercase h-auto">
               View All <ArrowRight className="ml-2 h-3.5 w-3.5" />
             </Button>
           </motion.div>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
-            {nearbyEvents.map((event, i) => (
-              <motion.div
-                key={event.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: i * 0.08 }}
-                viewport={{ once: true }}
-                onClick={openAuthModal}
-                className="cursor-pointer group"
-              >
+            {nearbyEvents.map((event, i) =>
+            <motion.div
+              key={event.title}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: i * 0.08 }}
+              viewport={{ once: true }}
+              onClick={openAuthModal}
+              className="cursor-pointer group">
+              
                 <div className="bg-card rounded-[20px] p-6 h-full border border-border/20 transition-all duration-300 hover:scale-[1.02]" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.3)' }}>
                   <div className="flex items-center gap-3 mb-5">
                     <div className="bg-primary/10 rounded-xl px-3 py-2 text-center">
@@ -417,7 +403,7 @@ const Index = () => {
                   </div>
                 </div>
               </motion.div>
-            ))}
+            )}
           </div>
 
           <div className="mt-10 md:hidden text-center">
@@ -436,8 +422,8 @@ const Index = () => {
             whileInView={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
-            className="text-center"
-          >
+            className="text-center">
+            
             <div className="inline-flex items-center gap-2 bg-primary-foreground/20 rounded-full px-5 py-2 mb-8">
               <Sparkles className="w-4 h-4 text-primary-foreground" />
               <span className="text-[11px] font-sans font-bold tracking-[0.2em] uppercase text-primary-foreground">New Match Waiting</span>
@@ -463,10 +449,9 @@ const Index = () => {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
-            className="px-8 lg:px-16 py-24 lg:py-28 flex flex-col justify-center"
-          >
-            <span className="font-serif italic text-base block mb-2" style={{ color: '#FF8C7C' }}>mission</span>
-            <span className="text-[11px] font-sans font-bold tracking-[0.3em] uppercase text-muted-foreground mb-6 block">Our Mission</span>
+            className="px-8 lg:px-16 py-24 lg:py-28 flex flex-col justify-center">
+            
+            <span className="text-[11px] font-sans font-bold tracking-[0.3em] uppercase text-muted-foreground mb-6">Our Mission</span>
             <h2 className="font-display text-[2.5rem] lg:text-[3.5rem] leading-[0.85] tracking-tight text-foreground uppercase mb-8 font-bold">
               Giving Women Fans<br />A Home in Sports
             </h2>
@@ -490,15 +475,15 @@ const Index = () => {
             <h2 className="font-display text-[2.5rem] lg:text-[3rem] leading-none tracking-tight text-muted-foreground uppercase block mb-12">What They Say</h2>
             <div className="grid md:grid-cols-3 gap-8">
               {[
-                { quote: "Finally a sports community that gets me.", name: "Alicia", detail: "Lakers fan" },
-                { quote: "I met my best friends at a Loverball watch party.", name: "Dani", detail: "WNBA superfan" },
-                { quote: "The content here actually speaks to women fans.", name: "Maria", detail: "Soccer obsessed" },
-              ].map((t, i) => (
-                <motion.div key={t.name} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: i * 0.1 }} viewport={{ once: true }} className="bg-card rounded-[20px] p-8 border border-border/20" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.3)' }}>
+              { quote: "Finally a sports community that gets me.", name: "Alicia", detail: "Lakers fan" },
+              { quote: "I met my best friends at a Loverball watch party.", name: "Dani", detail: "WNBA superfan" },
+              { quote: "The content here actually speaks to women fans.", name: "Maria", detail: "Soccer obsessed" }].
+              map((t, i) =>
+              <motion.div key={t.name} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: i * 0.1 }} viewport={{ once: true }} className="bg-card rounded-[20px] p-8 border border-border/20" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.3)' }}>
                   <p className="font-elegant text-xl lg:text-2xl text-foreground leading-relaxed mb-6">"{t.quote}"</p>
                   <p className="text-[11px] font-sans font-bold tracking-[0.2em] uppercase text-muted-foreground">— {t.name}, {t.detail}</p>
                 </motion.div>
-              ))}
+              )}
             </div>
           </motion.div>
         </div>
@@ -531,7 +516,7 @@ const Index = () => {
             <div className="max-w-md mx-auto text-center">
               <h3 className="font-display text-2xl uppercase tracking-wide text-foreground mb-4">Stay In The Loop</h3>
               <p className="text-muted-foreground text-sm mb-6">Get the latest on events, content drops, and community updates.</p>
-              <form onSubmit={(e) => { e.preventDefault(); toast({ title: "Subscribed!", description: "You'll hear from us soon." }); setNewsletterEmail(""); }} className="flex gap-2">
+              <form onSubmit={(e) => {e.preventDefault();toast({ title: "Subscribed!", description: "You'll hear from us soon." });setNewsletterEmail("");}} className="flex gap-2">
                 <Input type="email" placeholder="Enter your email" value={newsletterEmail} onChange={(e) => setNewsletterEmail(e.target.value)} required className="flex-1 rounded-full h-12" />
                 <Button type="submit" className="rounded-full px-6 h-12">
                   <Mail className="h-4 w-4" />
@@ -575,8 +560,8 @@ const Index = () => {
           </div>
         </div>
       </footer>
-    </div>
-  );
+    </div>);
+
 };
 
 export default Index;
