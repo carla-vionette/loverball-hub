@@ -18,7 +18,7 @@ export async function logAdminAction(
 ): Promise<void> {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return;
-  await supabase.from('admin_activity_log' as any).insert({
+  await (supabase as any).from('admin_activity_log').insert({
     admin_id: user.id,
     action_type,
     target_type,
