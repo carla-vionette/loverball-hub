@@ -63,6 +63,8 @@ const InvitesPage = lazy(() => import("./pages/InvitesPage"));
 const InviteLanding = lazy(() => import("./pages/InviteLanding"));
 const VideoLibrary = lazy(() => import("./pages/VideoLibrary"));
 const VideoPlayerPage = lazy(() => import("./pages/VideoPlayerPage"));
+const Apply = lazy(() => import("./pages/Apply"));
+const ApplicationPending = lazy(() => import("./pages/ApplicationPending"));
 
 // Admin pages
 const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
