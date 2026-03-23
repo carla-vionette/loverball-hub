@@ -148,7 +148,7 @@ const Index = () => {
               <a href="#events" className="text-[11px] font-sans font-bold tracking-[0.25em] uppercase text-muted-foreground hover:text-foreground transition-colors duration-300">Events</a>
             </div>
             <div className="absolute left-1/2 -translate-x-1/2">
-              <img src={loverballLogo} alt="Loverball" className="h-56 w-auto brightness-0 invert" />
+              <img src={loverballLogo} alt="Loverball" className="h-56 w-auto" style={{ filter: 'brightness(0) invert(1)' }} />
             </div>
             <div className="hidden lg:flex items-center gap-10">
               <button onClick={() => isAuthenticated ? navigate("/shop") : openAuthModal()} className="text-[11px] font-sans font-bold tracking-[0.25em] uppercase text-muted-foreground hover:text-foreground transition-colors duration-300 bg-transparent border-none cursor-pointer">Shop</button>
