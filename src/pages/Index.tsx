@@ -363,7 +363,10 @@ const Index = () => {
       <section id="trending" className="section-spacing bg-secondary">
         <div className="max-w-[1280px] mx-auto px-8">
           <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ duration: 0.8 }} viewport={{ once: true }} className="flex items-end justify-between section-gap">
-            <h2 className="font-display text-[2.5rem] lg:text-[3.5rem] leading-none tracking-tight text-foreground uppercase font-bold">Trending Now</h2>
+            <div>
+              <span className="font-serif italic text-base block mb-2" style={{ color: '#FF8C7C' }}>trending</span>
+              <h2 className="font-display text-[2.5rem] lg:text-[3.5rem] leading-none tracking-tight text-foreground uppercase font-bold">Trending Now</h2>
+            </div>
             <Zap className="w-8 h-8 text-primary hidden md:block" />
           </motion.div>
 
