@@ -63,6 +63,8 @@ const InvitesPage = lazy(() => import("./pages/InvitesPage"));
 const InviteLanding = lazy(() => import("./pages/InviteLanding"));
 const VideoLibrary = lazy(() => import("./pages/VideoLibrary"));
 const VideoPlayerPage = lazy(() => import("./pages/VideoPlayerPage"));
+const Apply = lazy(() => import("./pages/Apply"));
+const ApplicationPending = lazy(() => import("./pages/ApplicationPending"));
 
 // Admin pages
 const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
@@ -148,6 +150,8 @@ const App = () => (
                 <Route path="/invite/:code" element={<InviteLanding />} />
                 <Route path="/membership" element={<Membership />} />
                 <Route path="/scores" element={<Scores />} />
+                <Route path="/apply" element={<Apply />} />
+                <Route path="/application-pending" element={<ApplicationPending />} />
 
                 {/* Redirects */}
                 <Route path="/index" element={<Navigate to="/" replace />} />
