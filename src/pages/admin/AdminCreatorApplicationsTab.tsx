@@ -58,9 +58,8 @@ const AdminCreatorApplicationsTab = ({ onRefresh }: Props) => {
   const [drawerApp, setDrawerApp] = useState<CreatorApp | null>(null);
   const [actionLoading, setActionLoading] = useState(false);
 
-  useState(() => {
-    loadApps();
-  });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { loadApps(); }, []);
 
   async function loadApps() {
     setLoading(true);
