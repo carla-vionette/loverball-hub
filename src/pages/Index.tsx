@@ -465,7 +465,8 @@ const Index = () => {
             viewport={{ once: true }}
             className="px-8 lg:px-16 py-24 lg:py-28 flex flex-col justify-center"
           >
-            <span className="text-[11px] font-sans font-bold tracking-[0.3em] uppercase text-muted-foreground mb-6">Our Mission</span>
+            <span className="font-serif italic text-base block mb-2" style={{ color: '#FF8C7C' }}>mission</span>
+            <span className="text-[11px] font-sans font-bold tracking-[0.3em] uppercase text-muted-foreground mb-6 block">Our Mission</span>
             <h2 className="font-display text-[2.5rem] lg:text-[3.5rem] leading-[0.85] tracking-tight text-foreground uppercase mb-8 font-bold">
               Giving Women Fans<br />A Home in Sports
             </h2>

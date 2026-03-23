@@ -304,7 +304,12 @@
   }
 
   /* Marquee / scrolling ticker */
-  .marquee-track {
+@keyframes spin-slow {
+  from { transform: rotate(5deg); }
+  to { transform: rotate(365deg); }
+}
+
+.marquee-track {
     @apply flex items-center gap-8 whitespace-nowrap;
     animation: marquee 30s linear infinite;
   }
