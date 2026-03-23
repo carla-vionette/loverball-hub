@@ -430,6 +430,42 @@ export type Database = {
         }
         Relationships: []
       }
+      curated_content: {
+        Row: {
+          body: string | null
+          content_type: string
+          created_at: string
+          date: string
+          id: string
+          image_url: string | null
+          sport: string | null
+          team_tag: string | null
+          title: string
+        }
+        Insert: {
+          body?: string | null
+          content_type?: string
+          created_at?: string
+          date?: string
+          id?: string
+          image_url?: string | null
+          sport?: string | null
+          team_tag?: string | null
+          title: string
+        }
+        Update: {
+          body?: string | null
+          content_type?: string
+          created_at?: string
+          date?: string
+          id?: string
+          image_url?: string | null
+          sport?: string | null
+          team_tag?: string | null
+          title?: string
+        }
+        Relationships: []
+      }
       direct_messages: {
         Row: {
           created_at: string
