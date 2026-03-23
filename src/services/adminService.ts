@@ -32,7 +32,7 @@ export async function suspendMember(userId: string): Promise<void> {
     .update({ role: 'pending' })
     .eq('user_id', userId);
   if (error) throw error;
-}
+  await logAdminAction('member_suspended', 'member', userId);
 
 export async function deleteMember(userId: string): Promise<void> {
   // Remove role first, then profile
