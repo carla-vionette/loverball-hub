@@ -41,6 +41,7 @@ export async function deleteMember(userId: string): Promise<void> {
   const { error } = await supabase.from('profiles').delete().eq('id', userId);
   if (error) throw error;
   await logAdminAction('member_deleted', 'member', userId);
+}
 
 // ── Applications ──
 
