@@ -192,7 +192,7 @@ const [profile, setProfile] = useState<ProfileData | null>(null);
               </TabsList>
 
               <TabsContent value="feed" className="mt-4">
-                <ProfileFeedTab profile={profile} />
+                <ProfileFeedTab profile={profile} followedTeamKeys={followedTeamKeys} />
               </TabsContent>
 
               <TabsContent value="teams" className="mt-4">
