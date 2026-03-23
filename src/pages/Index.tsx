@@ -378,7 +378,10 @@ const Index = () => {
       <section id="events" className="section-spacing bg-background">
         <div className="max-w-[1280px] mx-auto px-8">
           <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ duration: 0.8 }} viewport={{ once: true }} className="flex items-end justify-between section-gap">
-            <h2 className="font-display text-[2.5rem] lg:text-[3.5rem] leading-none tracking-tight text-foreground uppercase font-bold">Events Near You</h2>
+            <div>
+              <span className="font-serif italic text-base block mb-2" style={{ color: '#FF8C7C' }}>events</span>
+              <h2 className="font-display text-[2.5rem] lg:text-[3.5rem] leading-none tracking-tight text-foreground uppercase font-bold">Events Near You</h2>
+            </div>
             <Button onClick={openAuthModal} className="hidden md:flex rounded-full px-6 py-2.5 text-[11px] font-sans font-bold tracking-[0.2em] uppercase h-auto">
               View All <ArrowRight className="ml-2 h-3.5 w-3.5" />
             </Button>
