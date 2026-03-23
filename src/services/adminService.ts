@@ -39,7 +39,7 @@ export async function deleteMember(userId: string): Promise<void> {
   await supabase.from('user_roles').delete().eq('user_id', userId);
   const { error } = await supabase.from('profiles').delete().eq('id', userId);
   if (error) throw error;
-}
+  await logAdminAction('member_deleted', 'member', userId);
 
 // ── Applications ──
 
