@@ -68,7 +68,7 @@ const [profile, setProfile] = useState<ProfileData | null>(null);
           return;
         }
 
-        const [profileResult, rsvpResult] = await Promise.all([
+        const [profileResult, rsvpResult, teamFollowsResult] = await Promise.all([
           supabase.from("profiles").select("*").eq("id", user.id).maybeSingle(),
           supabase
             .from("event_rsvps")
@@ -77,6 +77,10 @@ const [profile, setProfile] = useState<ProfileData | null>(null);
             )
             .eq("user_id", user.id)
             .order("created_at", { ascending: false }),
+          supabase
+            .from("team_follows")
+            .select("team_key")
+            .eq("user_id", user.id),
         ]);
 
         if (cancelled) return;
