@@ -17,10 +17,12 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { useToast } from '@/hooks/use-toast';
-import { Plus, Pencil, Trash2, Users } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Plus, Pencil, Trash2, Users, CheckCircle, XCircle } from 'lucide-react';
 import { format } from 'date-fns';
 import type { EventItem } from '@/types';
 import { createEvent, updateEvent, deleteEvent } from '@/services/adminService';
+import { supabase } from '@/integrations/supabase/client';
 
 interface Props {
   events: EventItem[];
@@ -46,6 +48,32 @@ const AdminEventsTab = ({ events, onRefresh }: Props) => {
   const [form, setForm] = useState(emptyForm);
   const [deleteTarget, setDeleteTarget] = useState<EventItem | null>(null);
   const [saving, setSaving] = useState(false);
+  const [pendingEvents, setPendingEvents] = useState<any[]>([]);
+
+  // Fetch pending event submissions
+  const fetchPending = async () => {
+    const { data } = await supabase
+      .from('events')
+      .select('*')
+      .eq('approval_status', 'pending')
+      .order('created_at', { ascending: false });
+    setPendingEvents(data || []);
+  };
+
+  useState(() => { fetchPending(); });
+
+  const handleApproval = async (eventId: string, status: 'approved' | 'rejected') => {
+    const updates: any = { approval_status: status };
+    if (status === 'approved') updates.status = 'published';
+    const { error } = await supabase.from('events').update(updates).eq('id', eventId);
+    if (error) {
+      toast({ title: 'Error', description: error.message, variant: 'destructive' });
+    } else {
+      toast({ title: status === 'approved' ? 'Event approved!' : 'Event rejected' });
+      fetchPending();
+      onRefresh();
+    }
+  };
 
   const openCreate = () => {
     setEditingId(null);
@@ -115,6 +143,51 @@ const AdminEventsTab = ({ events, onRefresh }: Props) => {
 
   return (
     <section>
+      {/* Pending Approvals */}
+      {pendingEvents.length > 0 && (
+        <div className="mb-8">
+          <h2 className="font-display text-xl font-bold uppercase mb-4 flex items-center gap-2">
+            Pending Approvals
+            <Badge variant="destructive" className="text-xs">{pendingEvents.length}</Badge>
+          </h2>
+          <div className="bg-card border border-destructive/20 rounded-xl overflow-hidden">
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow className="bg-destructive/5">
+                    <TableHead className="text-xs uppercase tracking-widest text-muted-foreground">Title</TableHead>
+                    <TableHead className="text-xs uppercase tracking-widest text-muted-foreground">Date</TableHead>
+                    <TableHead className="text-xs uppercase tracking-widest text-muted-foreground">Submitted By</TableHead>
+                    <TableHead className="text-xs uppercase tracking-widest text-muted-foreground">Contact</TableHead>
+                    <TableHead className="text-xs uppercase tracking-widest text-muted-foreground">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {pendingEvents.map((ev: any) => (
+                    <TableRow key={ev.id} className="hover:bg-secondary/50 transition-colors">
+                      <TableCell className="font-semibold">{ev.title}</TableCell>
+                      <TableCell className="text-sm">{ev.event_date ? format(new Date(ev.event_date), 'MMM d, yyyy') : '-'}</TableCell>
+                      <TableCell className="text-sm text-muted-foreground">{ev.submitter_email || '-'}</TableCell>
+                      <TableCell className="text-sm text-muted-foreground">{ev.submitter_phone || '-'}</TableCell>
+                      <TableCell>
+                        <div className="flex gap-1">
+                          <Button size="sm" variant="default" className="gap-1" onClick={() => handleApproval(ev.id, 'approved')}>
+                            <CheckCircle className="w-3.5 h-3.5" /> Approve
+                          </Button>
+                          <Button size="sm" variant="outline" className="gap-1 text-destructive" onClick={() => handleApproval(ev.id, 'rejected')}>
+                            <XCircle className="w-3.5 h-3.5" /> Reject
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="flex items-center justify-between mb-4">
         <h2 className="font-display text-xl font-bold uppercase">Events ({events.length})</h2>
         <Button onClick={openCreate}>

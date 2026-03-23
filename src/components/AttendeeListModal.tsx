@@ -6,6 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Loader2, MapPin, Users, Hand } from "lucide-react";
 import FollowButton from "@/components/FollowButton";
+import AddFriendButton from "@/components/AddFriendButton";
 
 interface AttendeeWithProfile {
   user_id: string;
@@ -169,7 +170,10 @@ const AttendeeListModal = ({ eventId, open, onOpenChange }: Props) => {
                   </div>
                 </div>
 
-                <FollowButton targetUserId={a.user_id} size="sm" />
+                <div className="flex flex-col gap-1">
+                  <AddFriendButton targetUserId={a.user_id} size="sm" />
+                  <FollowButton targetUserId={a.user_id} size="sm" />
+                </div>
               </div>
             ))}
           </div>
