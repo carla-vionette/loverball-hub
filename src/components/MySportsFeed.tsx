@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
-import { Loader2, ExternalLink, Newspaper, RefreshCw, Zap } from "lucide-react";
+import { Loader2, ExternalLink, Newspaper, RefreshCw, Zap, Sparkles } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -68,10 +68,13 @@ const MySportsFeed: React.FC<MySportsFeedProps> = ({ userSports, userTeams, user
       <div className="p-5 pb-3">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
-            <Newspaper className="w-4 h-4 text-[#FF5D2E]" />
+            <Sparkles className="w-4 h-4 text-[#FF5D2E]" />
             <span className="text-sm font-medium tracking-wider uppercase text-foreground/50">
-              My Sports Feed
+              AI-Curated Sports News
             </span>
+            <Badge variant="secondary" className="text-[9px] px-1.5 py-0 bg-[#FF5D2E]/10 text-[#FF5D2E] border-0">
+              For You
+            </Badge>
           </div>
           <Button
             variant="ghost"
@@ -83,6 +86,8 @@ const MySportsFeed: React.FC<MySportsFeedProps> = ({ userSports, userTeams, user
             <RefreshCw className={`w-3.5 h-3.5 text-muted-foreground ${loading ? "animate-spin" : ""}`} />
           </Button>
         </div>
+
+        <p className="text-xs text-muted-foreground mb-3">Personalized based on your favorite teams and sports</p>
 
         {/* Filter Pills */}
         <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-hide">

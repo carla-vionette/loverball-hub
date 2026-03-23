@@ -25,7 +25,8 @@ import {
 } from "@/lib/mockStatsData";
 import { getTeamWatchUrl, getTeamTicketsUrl } from "@/lib/teamLinksMap";
 import MySportsFeed from "@/components/MySportsFeed";
-import LiveScores from "@/components/LiveScores";
+import PersonalizedScores from "@/components/PersonalizedScores";
+import WhereToWatchGames from "@/components/WhereToWatchGames";
 
 
 type ProfileData = {
@@ -351,18 +352,19 @@ const Profile = () => {
               </motion.div>
             )}
 
-            {/* MY SCORES */}
+            {/* PERSONALIZED SCORES — Recent & Live for favorite teams */}
             <motion.div variants={staggerItem}>
-              <Card className="rounded-2xl overflow-hidden">
-                <CardHeader className="pb-2 pt-4 px-5">
-                  <CardTitle className="text-sm font-medium tracking-wider uppercase text-foreground/50 flex items-center gap-2">
-                    <Trophy className="w-4 h-4 text-warning" /> Live Scores
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="px-5 pb-5">
-                  <LiveScores />
-                </CardContent>
-              </Card>
+              <PersonalizedScores
+                userTeams={[...(profile.favorite_teams_players || []), ...((profile as any).favorite_la_teams || [])]}
+                userSports={profile.favorite_sports || []}
+              />
+            </motion.div>
+
+            {/* WHERE TO WATCH — Upcoming game broadcast info */}
+            <motion.div variants={staggerItem}>
+              <WhereToWatchGames
+                userTeams={[...(profile.favorite_teams_players || []), ...((profile as any).favorite_la_teams || [])]}
+              />
             </motion.div>
 
             {/* GREETING + DATE */}
