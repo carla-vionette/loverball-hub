@@ -148,7 +148,7 @@ const Index = () => {
               <a href="#events" className="text-[11px] font-sans font-bold tracking-[0.25em] uppercase text-muted-foreground hover:text-foreground transition-colors duration-300">Events</a>
             </div>
             <div className="absolute left-1/2 -translate-x-1/2">
-              <img src={loverballLogo} alt="Loverball" className="h-56 w-auto brightness-0 invert" />
+              <img src={loverballLogo} alt="Loverball" className="h-56 w-auto" style={{ filter: 'brightness(0) invert(1)' }} />
             </div>
             <div className="hidden lg:flex items-center gap-10">
               <button onClick={() => isAuthenticated ? navigate("/shop") : openAuthModal()} className="text-[11px] font-sans font-bold tracking-[0.25em] uppercase text-muted-foreground hover:text-foreground transition-colors duration-300 bg-transparent border-none cursor-pointer">Shop</button>
@@ -257,10 +257,10 @@ const Index = () => {
               transition={{ duration: 0.9, ease: "easeOut" }}
               className="relative z-10 max-w-xl"
             >
-              <span className="text-[11px] font-sans font-bold tracking-[0.3em] uppercase text-muted-foreground mb-8 block">
+              <span className="text-[11px] font-sans font-bold tracking-[0.3em] uppercase mb-8 block" style={{ color: '#9CA3AF' }}>
                 A GLOBAL SPORTS MEDIA + COMMUNITY PLATFORM
               </span>
-              <h1 className="font-display font-bold text-[3.5rem] sm:text-[5rem] lg:text-[6.5rem] leading-[0.85] tracking-tight text-foreground uppercase mb-8">
+              <h1 className="font-display font-bold text-[3.5rem] sm:text-[5rem] lg:text-[6.5rem] leading-[0.85] tracking-tight uppercase mb-8" style={{ color: '#FFFFFF' }}>
                 Her<br />Game.<br />
                 <span className="text-primary">Her</span><br />
                 <span className="text-primary">Community.</span>
@@ -327,7 +327,7 @@ const Index = () => {
             </h2>
           </motion.div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8">
             {featureCards.map((card, i) => (
               <motion.div
                 key={card.title}
