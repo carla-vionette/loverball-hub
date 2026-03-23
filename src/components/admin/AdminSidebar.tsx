@@ -2,7 +2,8 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import {
   LayoutDashboard, Users, Calendar, Video,
-  LogOut, Settings, CreditCard, BarChart3
+  LogOut, Settings, CreditCard, BarChart3,
+  ShieldCheck, CalendarCheck, VideoIcon
 } from 'lucide-react';
 import loverballLogo from '@/assets/loverball-logo.png';
 
@@ -15,6 +16,9 @@ const navItems = [
   { id: 'overview', label: 'Overview', icon: LayoutDashboard },
   { id: 'members', label: 'Members', icon: Users },
   { id: 'applications', label: 'Applications', icon: Users },
+  { id: 'creator-applications', label: 'Creator Apps', icon: ShieldCheck },
+  { id: 'event-approvals', label: 'Event Approvals', icon: CalendarCheck },
+  { id: 'video-approvals', label: 'Video Approvals', icon: VideoIcon },
   { id: 'videos', label: 'Videos', icon: Video },
   { id: 'events', label: 'Events', icon: Calendar },
   { id: 'subscriptions', label: 'Subscriptions', icon: CreditCard },
