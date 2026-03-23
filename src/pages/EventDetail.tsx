@@ -743,6 +743,12 @@ const EventDetail = () => {
                 </div>
               )}
 
+              {/* Host Profile */}
+              <EventHostProfile
+                hostId={event.host_user_id}
+                coHostIds={event.co_host_ids as string[] | undefined}
+              />
+
               {/* Where to Watch */}
               <WhereToWatch eventCity={event.city} eventType={event.event_type} />
 
