@@ -765,6 +765,13 @@ const EventDetail = () => {
                 </div>
               )}
 
+              {/* Comments / Hype Section */}
+              {id && (
+                <div className="mb-6">
+                  <EventComments eventId={id} />
+                </div>
+              )}
+
               {/* Map Embed */}
               {event.location_map_url && (
                 <div className="mb-6 rounded-lg overflow-hidden border">
