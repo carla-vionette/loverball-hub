@@ -1,5 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
-import type { UserProfile, VideoItem, EventItem, MemberApplication } from '@/types';
+import type { UserProfile, VideoItem, EventItem, MemberApplication, CreatorApplication } from '@/types';
 
 export async function isAdminEmail(email: string): Promise<boolean> {
   // Check admin role via user_roles table instead of hardcoded email
@@ -79,7 +79,10 @@ export async function fetchAdminVideos(): Promise<VideoItem[]> {
     .select('*')
     .order('created_at', { ascending: false });
   if (error) throw error;
-  return (data || []) as VideoItem[];
+  return (data || []).map((v: any) => ({
+    ...v,
+    approval_status: v.approval_status || 'approved',
+  })) as VideoItem[];
 }
 
 export async function createVideo(video: {
@@ -151,6 +154,8 @@ export async function fetchAdminEvents(): Promise<EventItem[]> {
     tier: e.tier || null,
     layout_json: e.layout_json || null,
     banner_image: e.banner_image || null,
+    approval_status: e.approval_status || 'approved',
+    submitted_by: e.submitted_by || null,
   }));
 }
 
@@ -175,6 +180,99 @@ export async function updateEvent(id: string, updates: Record<string, unknown>):
 
 export async function deleteEvent(id: string): Promise<void> {
   const { error } = await supabase.from('events').delete().eq('id', id);
+  if (error) throw error;
+}
+
+// ── Creator Applications ──
+
+export async function fetchCreatorApplications(): Promise<CreatorApplication[]> {
+  const { data, error } = await supabase
+    .from('creator_applications' as any)
+    .select('*')
+    .order('created_at', { ascending: false });
+  if (error) throw error;
+
+  const apps = (data || []) as any[];
+  // Fetch user names for display
+  if (apps.length > 0) {
+    const userIds = apps.map((a: any) => a.user_id).filter(Boolean);
+    const { data: profiles } = await supabase
+      .from('profiles')
+      .select('id, name')
+      .in('id', userIds);
+    const nameMap = new Map((profiles || []).map((p: any) => [p.id, p.name]));
+    return apps.map((a: any) => ({
+      ...a,
+      user_name: nameMap.get(a.user_id) || a.official_email || 'Unknown',
+    }));
+  }
+  return apps;
+}
+
+export async function handleCreatorApplication(
+  applicationId: string,
+  action: 'approved' | 'rejected',
+  reviewerId: string,
+): Promise<void> {
+  // Update the application
+  const { data: app, error: fetchError } = await supabase
+    .from('creator_applications' as any)
+    .select('user_id, account_type')
+    .eq('id', applicationId)
+    .single();
+  if (fetchError) throw fetchError;
+
+  const { error: updateError } = await supabase
+    .from('creator_applications' as any)
+    .update({
+      status: action,
+      reviewed_by: reviewerId,
+      reviewed_at: new Date().toISOString(),
+    } as any)
+    .eq('id', applicationId);
+  if (updateError) throw updateError;
+
+  // Update the user's profile approval_status
+  if ((app as any)?.user_id) {
+    const { error: profileError } = await supabase
+      .from('profiles')
+      .update({ approval_status: action } as any)
+      .eq('id', (app as any).user_id);
+    if (profileError) throw profileError;
+
+    // If approved, ensure they have a 'member' role so they can use the platform
+    if (action === 'approved') {
+      const { error: roleError } = await supabase
+        .from('user_roles')
+        .insert({ user_id: (app as any).user_id, role: 'member' } as any);
+      if (roleError && !roleError.message.includes('duplicate')) throw roleError;
+    }
+  }
+}
+
+// ── Event Approvals ──
+
+export async function updateEventApproval(
+  eventId: string,
+  action: 'approved' | 'rejected',
+): Promise<void> {
+  const { error } = await supabase
+    .from('events')
+    .update({ approval_status: action } as any)
+    .eq('id', eventId);
+  if (error) throw error;
+}
+
+// ── Video Approvals ──
+
+export async function updateVideoApproval(
+  videoId: string,
+  action: 'approved' | 'rejected',
+): Promise<void> {
+  const { error } = await supabase
+    .from('videos')
+    .update({ approval_status: action } as any)
+    .eq('id', videoId);
   if (error) throw error;
 }
 

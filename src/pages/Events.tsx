@@ -81,7 +81,6 @@ const Events = () => {
         const { data, error } = await supabase
           .from("events")
           .select("*")
-          .eq("status", "published")
           .order("event_date");
         if (error) throw error;
         setEvents(data || []);

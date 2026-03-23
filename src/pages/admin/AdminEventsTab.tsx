@@ -17,10 +17,10 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { useToast } from '@/hooks/use-toast';
-import { Plus, Pencil, Trash2, Users } from 'lucide-react';
+import { Plus, Pencil, Trash2, Users, Check, X } from 'lucide-react';
 import { format } from 'date-fns';
 import type { EventItem } from '@/types';
-import { createEvent, updateEvent, deleteEvent } from '@/services/adminService';
+import { createEvent, updateEvent, deleteEvent, updateEventApproval } from '@/services/adminService';
 
 interface Props {
   events: EventItem[];
@@ -38,6 +38,18 @@ const emptyForm = {
   visibility: 'public',
 };
 
+const statusBadge = (status: string) => {
+  const cls =
+    status === 'approved' ? 'bg-green-500/10 text-green-500' :
+    status === 'rejected' ? 'bg-destructive/10 text-destructive' :
+    'bg-yellow-500/10 text-yellow-600';
+  return (
+    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold uppercase ${cls}`}>
+      {status}
+    </span>
+  );
+};
+
 const AdminEventsTab = ({ events, onRefresh }: Props) => {
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -46,6 +58,7 @@ const AdminEventsTab = ({ events, onRefresh }: Props) => {
   const [form, setForm] = useState(emptyForm);
   const [deleteTarget, setDeleteTarget] = useState<EventItem | null>(null);
   const [saving, setSaving] = useState(false);
+  const [filterStatus, setFilterStatus] = useState<string>('all');
 
   const openCreate = () => {
     setEditingId(null);
@@ -113,17 +126,53 @@ const AdminEventsTab = ({ events, onRefresh }: Props) => {
     }
   };
 
+  const handleApproval = async (eventId: string, action: 'approved' | 'rejected') => {
+    try {
+      await updateEventApproval(eventId, action);
+      toast({ title: `Event ${action}` });
+      onRefresh();
+    } catch (error: any) {
+      toast({ title: 'Error', description: error.message, variant: 'destructive' });
+    }
+  };
+
+  const pendingCount = events.filter(e => e.approval_status === 'pending').length;
+  const filteredEvents = filterStatus === 'all'
+    ? events
+    : events.filter(e => e.approval_status === filterStatus);
+
   return (
     <section>
       <div className="flex items-center justify-between mb-4">
-        <h2 className="font-display text-xl font-bold uppercase">Events ({events.length})</h2>
-        <Button onClick={openCreate}>
-          <Plus className="w-4 h-4 mr-2" /> Create Event
-        </Button>
+        <div>
+          <h2 className="font-display text-xl font-bold uppercase">Events ({events.length})</h2>
+          {pendingCount > 0 && (
+            <p className="text-sm text-yellow-600 font-medium">{pendingCount} pending approval</p>
+          )}
+        </div>
+        <div className="flex gap-2">
+          {/* Filter buttons */}
+          <div className="flex gap-1 bg-secondary rounded-lg p-1">
+            {['all', 'pending', 'approved', 'rejected'].map((status) => (
+              <button
+                key={status}
+                onClick={() => setFilterStatus(status)}
+                className={`px-3 py-1.5 text-xs font-semibold rounded-md capitalize transition-colors ${
+                  filterStatus === status ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                {status}
+              </button>
+            ))}
+          </div>
+          <Button onClick={openCreate}>
+            <Plus className="w-4 h-4 mr-2" /> Create Event
+          </Button>
+        </div>
       </div>
 
       <div className="bg-card border border-border rounded-xl overflow-hidden">
-        {events.length > 0 ? (
+        {filteredEvents.length > 0 ? (
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
@@ -132,17 +181,19 @@ const AdminEventsTab = ({ events, onRefresh }: Props) => {
                   <TableHead className="text-xs uppercase tracking-widest text-muted-foreground">Date</TableHead>
                   <TableHead className="text-xs uppercase tracking-widest text-muted-foreground">Location</TableHead>
                   <TableHead className="text-xs uppercase tracking-widest text-muted-foreground">Type</TableHead>
+                  <TableHead className="text-xs uppercase tracking-widest text-muted-foreground">Approval</TableHead>
                   <TableHead className="text-xs uppercase tracking-widest text-muted-foreground">Visibility</TableHead>
                   <TableHead className="text-xs uppercase tracking-widest text-muted-foreground">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {events.map((event) => (
+                {filteredEvents.map((event) => (
                   <TableRow key={event.id} className="hover:bg-secondary/50 transition-colors">
                     <TableCell className="font-semibold">{event.title}</TableCell>
                     <TableCell className="text-sm">{format(new Date(event.event_date), 'MMM d, yyyy')}</TableCell>
                     <TableCell className="text-sm">{event.location || '-'}</TableCell>
                     <TableCell className="capitalize text-sm">{event.event_type?.replace('_', ' ') || '-'}</TableCell>
+                    <TableCell>{statusBadge(event.approval_status || 'approved')}</TableCell>
                     <TableCell>
                       <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold uppercase
                         ${event.visibility === 'public' ? 'bg-green-500/10 text-green-500' : 'bg-secondary text-muted-foreground'}
@@ -152,6 +203,16 @@ const AdminEventsTab = ({ events, onRefresh }: Props) => {
                     </TableCell>
                     <TableCell>
                       <div className="flex gap-1">
+                        {event.approval_status === 'pending' && (
+                          <>
+                            <Button size="sm" variant="outline" onClick={() => handleApproval(event.id, 'approved')} title="Approve">
+                              <Check className="w-4 h-4 text-green-500" />
+                            </Button>
+                            <Button size="sm" variant="outline" onClick={() => handleApproval(event.id, 'rejected')} title="Reject">
+                              <X className="w-4 h-4 text-destructive" />
+                            </Button>
+                          </>
+                        )}
                         <Button size="sm" variant="ghost" onClick={() => openEdit(event)}>
                           <Pencil className="w-4 h-4" />
                         </Button>
@@ -169,7 +230,9 @@ const AdminEventsTab = ({ events, onRefresh }: Props) => {
             </Table>
           </div>
         ) : (
-          <p className="text-muted-foreground text-center py-12">No events yet. Click "Create Event" to add one.</p>
+          <p className="text-muted-foreground text-center py-12">
+            {filterStatus === 'all' ? 'No events yet. Click "Create Event" to add one.' : `No ${filterStatus} events.`}
+          </p>
         )}
       </div>
 

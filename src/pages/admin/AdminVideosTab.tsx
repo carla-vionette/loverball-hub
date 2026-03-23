@@ -18,10 +18,10 @@ import {
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
-import { Plus, Pencil, Trash2 } from 'lucide-react';
+import { Plus, Pencil, Trash2, Check, X } from 'lucide-react';
 import { format } from 'date-fns';
 import type { VideoItem } from '@/types';
-import { createVideo, updateVideo, deleteVideo } from '@/services/adminService';
+import { createVideo, updateVideo, deleteVideo, updateVideoApproval } from '@/services/adminService';
 
 interface Props {
   videos: VideoItem[];
@@ -32,6 +32,18 @@ const VIDEO_CATEGORIES = ['Highlights', 'Interviews', 'Training', 'Events', 'Com
 
 const emptyForm = { title: '', description: '', video_url: '', thumbnail: '', category: '' };
 
+const statusBadge = (status: string) => {
+  const cls =
+    status === 'approved' ? 'bg-green-500/10 text-green-500' :
+    status === 'rejected' ? 'bg-destructive/10 text-destructive' :
+    'bg-yellow-500/10 text-yellow-600';
+  return (
+    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold uppercase ${cls}`}>
+      {status}
+    </span>
+  );
+};
+
 const AdminVideosTab = ({ videos, onRefresh }: Props) => {
   const { toast } = useToast();
   const { user } = useAuth();
@@ -40,6 +52,7 @@ const AdminVideosTab = ({ videos, onRefresh }: Props) => {
   const [form, setForm] = useState(emptyForm);
   const [deleteTarget, setDeleteTarget] = useState<VideoItem | null>(null);
   const [saving, setSaving] = useState(false);
+  const [filterStatus, setFilterStatus] = useState<string>('all');
 
   const openCreate = () => {
     setEditingId(null);
@@ -109,33 +122,71 @@ const AdminVideosTab = ({ videos, onRefresh }: Props) => {
     }
   };
 
+  const handleApproval = async (videoId: string, action: 'approved' | 'rejected') => {
+    try {
+      await updateVideoApproval(videoId, action);
+      toast({ title: `Video ${action}` });
+      onRefresh();
+    } catch (error: any) {
+      toast({ title: 'Error', description: error.message, variant: 'destructive' });
+    }
+  };
+
+  const pendingCount = videos.filter(v => v.approval_status === 'pending').length;
+  const filteredVideos = filterStatus === 'all'
+    ? videos
+    : videos.filter(v => v.approval_status === filterStatus);
+
   return (
     <section>
       <div className="flex items-center justify-between mb-4">
-        <h2 className="font-display text-xl font-bold uppercase">Videos ({videos.length})</h2>
-        <Button onClick={openCreate}>
-          <Plus className="w-4 h-4 mr-2" /> Add Video
-        </Button>
+        <div>
+          <h2 className="font-display text-xl font-bold uppercase">Videos ({videos.length})</h2>
+          {pendingCount > 0 && (
+            <p className="text-sm text-yellow-600 font-medium">{pendingCount} pending approval</p>
+          )}
+        </div>
+        <div className="flex gap-2">
+          {/* Filter buttons */}
+          <div className="flex gap-1 bg-secondary rounded-lg p-1">
+            {['all', 'pending', 'approved', 'rejected'].map((status) => (
+              <button
+                key={status}
+                onClick={() => setFilterStatus(status)}
+                className={`px-3 py-1.5 text-xs font-semibold rounded-md capitalize transition-colors ${
+                  filterStatus === status ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                {status}
+              </button>
+            ))}
+          </div>
+          <Button onClick={openCreate}>
+            <Plus className="w-4 h-4 mr-2" /> Add Video
+          </Button>
+        </div>
       </div>
 
       <div className="bg-card border border-border rounded-xl overflow-hidden">
-        {videos.length > 0 ? (
+        {filteredVideos.length > 0 ? (
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow className="bg-secondary">
                   <TableHead className="text-xs uppercase tracking-widest text-muted-foreground">Title</TableHead>
                   <TableHead className="text-xs uppercase tracking-widest text-muted-foreground">Category</TableHead>
+                  <TableHead className="text-xs uppercase tracking-widest text-muted-foreground">Approval</TableHead>
                   <TableHead className="text-xs uppercase tracking-widest text-muted-foreground">URL</TableHead>
                   <TableHead className="text-xs uppercase tracking-widest text-muted-foreground">Created</TableHead>
                   <TableHead className="text-xs uppercase tracking-widest text-muted-foreground">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {videos.map((video) => (
+                {filteredVideos.map((video) => (
                   <TableRow key={video.id} className="hover:bg-secondary/50 transition-colors">
                     <TableCell className="font-semibold">{video.title}</TableCell>
                     <TableCell className="text-sm">{video.category || '-'}</TableCell>
+                    <TableCell>{statusBadge(video.approval_status || 'approved')}</TableCell>
                     <TableCell className="text-sm text-muted-foreground max-w-[200px] truncate">
                       {video.video_url}
                     </TableCell>
@@ -144,6 +195,16 @@ const AdminVideosTab = ({ videos, onRefresh }: Props) => {
                     </TableCell>
                     <TableCell>
                       <div className="flex gap-1">
+                        {video.approval_status === 'pending' && (
+                          <>
+                            <Button size="sm" variant="outline" onClick={() => handleApproval(video.id, 'approved')} title="Approve">
+                              <Check className="w-4 h-4 text-green-500" />
+                            </Button>
+                            <Button size="sm" variant="outline" onClick={() => handleApproval(video.id, 'rejected')} title="Reject">
+                              <X className="w-4 h-4 text-destructive" />
+                            </Button>
+                          </>
+                        )}
                         <Button size="sm" variant="ghost" onClick={() => openEdit(video)}>
                           <Pencil className="w-4 h-4" />
                         </Button>
@@ -158,7 +219,9 @@ const AdminVideosTab = ({ videos, onRefresh }: Props) => {
             </Table>
           </div>
         ) : (
-          <p className="text-muted-foreground text-center py-12">No videos yet. Click "Add Video" to upload one.</p>
+          <p className="text-muted-foreground text-center py-12">
+            {filterStatus === 'all' ? 'No videos yet. Click "Add Video" to upload one.' : `No ${filterStatus} videos.`}
+          </p>
         )}
       </div>
 

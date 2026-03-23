@@ -55,6 +55,8 @@ const Inbox = lazy(() => import("./pages/Inbox"));
 
 const Membership = lazy(() => import("./pages/Membership"));
 const Scores = lazy(() => import("./pages/Scores"));
+const AccountTypeSelection = lazy(() => import("./pages/AccountTypeSelection"));
+const CreatorApplication = lazy(() => import("./pages/CreatorApplication"));
 
 // SaaS pages
 const PricingPage = lazy(() => import("./pages/PricingPage"));
@@ -160,6 +162,8 @@ const App = () => (
                 {/* Protected member routes */}
                 <Route path="/dashboard" element={<ProtectedRoute><MemberDashboard /></ProtectedRoute>} />
                 <Route path="/plans" element={<ProtectedRoute><PlanSelection /></ProtectedRoute>} />
+                <Route path="/account-type" element={<ProtectedRoute><AccountTypeSelection /></ProtectedRoute>} />
+                <Route path="/creator-application" element={<ProtectedRoute><CreatorApplication /></ProtectedRoute>} />
                 <Route path="/onboarding" element={<ProtectedRoute><Onboarding /></ProtectedRoute>} />
                 <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
                 <Route path="/profile/edit" element={<ProtectedRoute><EditProfile /></ProtectedRoute>} />

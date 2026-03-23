@@ -2,6 +2,8 @@ export type AppRole = 'pending' | 'member' | 'admin';
 export type SubscriptionPlan = 'free' | 'community' | 'allaccess';
 export type SubscriptionStatus = 'active' | 'canceled' | 'past_due' | 'trialing';
 export type ContentTier = 'free' | 'community' | 'allaccess';
+export type AccountType = 'member' | 'team' | 'creator' | 'organization';
+export type ApprovalStatus = 'pending' | 'approved' | 'rejected';
 
 export interface UserProfile {
   id: string;
@@ -24,6 +26,12 @@ export interface UserProfile {
   pronouns: string | null;
   profile_photo_url: string | null;
   created_at: string;
+  account_type?: AccountType;
+  approval_status?: ApprovalStatus;
+  official_email?: string | null;
+  social_links?: Record<string, string | null> | null;
+  content_bio?: string | null;
+  org_name?: string | null;
 }
 
 export interface Subscription {
@@ -56,6 +64,7 @@ export interface VideoItem {
   category: string | null;
   tier: ContentTier | null;
   duration: string | null;
+  approval_status?: ApprovalStatus;
 }
 
 export interface EventItem {
@@ -72,6 +81,8 @@ export interface EventItem {
   tier: ContentTier | null;
   layout_json: EventLayout | null;
   banner_image: string | null;
+  approval_status?: ApprovalStatus;
+  submitted_by?: string | null;
 }
 
 export interface MemberApplication {
@@ -84,6 +95,24 @@ export interface MemberApplication {
   status: string;
   created_at: string;
   user_id?: string | null;
+}
+
+export interface CreatorApplication {
+  id: string;
+  user_id: string;
+  account_type: AccountType;
+  official_email: string;
+  phone_number: string;
+  social_links: Record<string, string | null>;
+  content_bio: string | null;
+  org_name: string | null;
+  status: ApprovalStatus;
+  reviewed_by: string | null;
+  reviewed_at: string | null;
+  created_at: string;
+  updated_at: string;
+  // Joined from profiles
+  user_name?: string;
 }
 
 export interface NavItem {

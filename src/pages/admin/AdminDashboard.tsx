@@ -11,8 +11,8 @@ import AdminAnalyticsTab from '@/pages/admin/AdminAnalyticsTab';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { Loader2, Users, Calendar, Video, RefreshCw, CreditCard, UserPlus } from 'lucide-react';
-import type { UserProfile, MemberApplication, EventItem, VideoItem } from '@/types';
-import { fetchMembers, fetchApplications, fetchAdminEvents, fetchAdminVideos } from '@/services/adminService';
+import type { UserProfile, MemberApplication, EventItem, VideoItem, CreatorApplication } from '@/types';
+import { fetchMembers, fetchApplications, fetchAdminEvents, fetchAdminVideos, fetchCreatorApplications } from '@/services/adminService';
 import { fetchDashboardStats, type DashboardStats } from '@/services/analyticsService';
 
 type AdminTab = 'overview' | 'members' | 'applications' | 'events' | 'videos' | 'subscriptions' | 'analytics';
@@ -21,6 +21,7 @@ const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState<AdminTab>('overview');
   const [members, setMembers] = useState<UserProfile[]>([]);
   const [applications, setApplications] = useState<MemberApplication[]>([]);
+  const [creatorApplications, setCreatorApplications] = useState<CreatorApplication[]>([]);
   const [events, setEvents] = useState<EventItem[]>([]);
   const [videos, setVideos] = useState<VideoItem[]>([]);
   const [stats, setStats] = useState<DashboardStats | null>(null);
@@ -39,15 +40,17 @@ const AdminDashboard = () => {
   const loadAllData = async () => {
     setLoading(true);
     try {
-      const [membersData, appsData, eventsData, videosData, statsData] = await Promise.all([
+      const [membersData, appsData, creatorAppsData, eventsData, videosData, statsData] = await Promise.all([
         fetchMembers(),
         fetchApplications(),
+        fetchCreatorApplications(),
         fetchAdminEvents(),
         fetchAdminVideos(),
         fetchDashboardStats(),
       ]);
       setMembers(membersData);
       setApplications(appsData);
+      setCreatorApplications(creatorAppsData);
       setEvents(eventsData);
       setVideos(videosData);
       setStats(statsData);
@@ -59,6 +62,10 @@ const AdminDashboard = () => {
   };
 
   const pendingApps = applications.filter(a => a.status === 'pending');
+  const pendingCreatorApps = creatorApplications.filter(a => a.status === 'pending');
+  const pendingEvents = events.filter(e => e.approval_status === 'pending');
+  const pendingVideos = videos.filter(v => v.approval_status === 'pending');
+  const totalPending = pendingApps.length + pendingCreatorApps.length + pendingEvents.length + pendingVideos.length;
 
   if (loading) {
     return (
@@ -109,7 +116,7 @@ const AdminDashboard = () => {
           <>
             <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 mb-8">
               <KpiCard label="Members" value={stats?.totalMembers || members.length} icon={Users} />
-              <KpiCard label="Pending" value={pendingApps.length} icon={Users} />
+              <KpiCard label="Pending" value={totalPending} icon={Users} />
               <KpiCard label="Videos" value={stats?.totalVideos || videos.length} icon={Video} />
               <KpiCard label="Events" value={stats?.totalEvents || events.length} icon={Calendar} />
               <KpiCard label="Paid Subs" value={stats?.activeSubscriptions || 0} icon={CreditCard} />
@@ -151,6 +158,7 @@ const AdminDashboard = () => {
         {activeTab === 'applications' && (
           <AdminApplicationsTab
             applications={applications}
+            creatorApplications={creatorApplications}
             userId={user?.id || ''}
             onRefresh={loadAllData}
           />

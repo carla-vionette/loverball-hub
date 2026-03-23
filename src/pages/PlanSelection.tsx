@@ -221,10 +221,10 @@ const PlanSelection = () => {
           : "You can manage your subscription anytime in Settings.",
       });
 
-      navigate("/onboarding");
+      navigate("/account-type");
     } catch (error: any) {
       // Still navigate even if save fails — we can retry later
-      navigate("/onboarding");
+      navigate("/account-type");
     } finally {
       setSaving(false);
     }
