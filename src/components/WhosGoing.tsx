@@ -3,8 +3,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Users, MessageCircle } from "lucide-react";
+import { Users, MessageCircle, UserPlus } from "lucide-react";
 import AttendeeProfileDrawer from "./AttendeeProfileDrawer";
+import AddFriendButton from "./AddFriendButton";
+import PeopleYouMayKnow from "./PeopleYouMayKnow";
 
 interface GuestProfile {
   id: string;
