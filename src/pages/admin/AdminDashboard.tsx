@@ -3,19 +3,23 @@ import { useNavigate } from 'react-router-dom';
 import AdminSidebar from '@/components/admin/AdminSidebar';
 import KpiCard from '@/components/admin/KpiCard';
 import AdminMembersTab from '@/pages/admin/AdminMembersTab';
+import AdminApplicationsTab from '@/pages/admin/AdminApplicationsTab';
+import AdminCreatorApplicationsTab from '@/pages/admin/AdminCreatorApplicationsTab';
 import AdminVideosTab from '@/pages/admin/AdminVideosTab';
 import AdminEventsTab from '@/pages/admin/AdminEventsTab';
-import AdminApplicationsTab from '@/pages/admin/AdminApplicationsTab';
 import AdminSubscriptionsTab from '@/pages/admin/AdminSubscriptionsTab';
 import AdminAnalyticsTab from '@/pages/admin/AdminAnalyticsTab';
+import AdminCuratedContentTab from '@/pages/admin/AdminCuratedContentTab';
+import AdminActivityLogTab from '@/pages/admin/AdminActivityLogTab';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
-import { Loader2, Users, Calendar, Video, RefreshCw, CreditCard, UserPlus } from 'lucide-react';
+import { Loader2, Users, Calendar, Video, RefreshCw, CreditCard, UserPlus, AlertTriangle, FileText } from 'lucide-react';
 import type { UserProfile, MemberApplication, EventItem, VideoItem } from '@/types';
 import { fetchMembers, fetchApplications, fetchAdminEvents, fetchAdminVideos } from '@/services/adminService';
 import { fetchDashboardStats, type DashboardStats } from '@/services/analyticsService';
+import { supabase } from '@/integrations/supabase/client';
 
-type AdminTab = 'overview' | 'members' | 'applications' | 'events' | 'videos' | 'subscriptions' | 'analytics';
+type AdminTab = 'overview' | 'members' | 'applications' | 'creators' | 'events' | 'videos' | 'content' | 'subscriptions' | 'analytics' | 'activity';
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState<AdminTab>('overview');
@@ -24,6 +28,7 @@ const AdminDashboard = () => {
   const [events, setEvents] = useState<EventItem[]>([]);
   const [videos, setVideos] = useState<VideoItem[]>([]);
   const [stats, setStats] = useState<DashboardStats | null>(null);
+  const [pendingCreators, setPendingCreators] = useState(0);
   const [loading, setLoading] = useState(true);
   const { user, isAdmin } = useAuth();
   const navigate = useNavigate();
@@ -39,26 +44,33 @@ const AdminDashboard = () => {
   const loadAllData = async () => {
     setLoading(true);
     try {
-      const [membersData, appsData, eventsData, videosData, statsData] = await Promise.all([
+      const [membersData, appsData, eventsData, videosData, statsData, creatorApps] = await Promise.all([
         fetchMembers(),
         fetchApplications(),
         fetchAdminEvents(),
         fetchAdminVideos(),
         fetchDashboardStats(),
+        supabase.from('creator_applications').select('id', { count: 'exact', head: true }).in('status', ['submitted', 'pending']),
       ]);
       setMembers(membersData);
       setApplications(appsData);
       setEvents(eventsData);
       setVideos(videosData);
       setStats(statsData);
-    } catch (error) {
-      // Admin data fetch error handled silently
+      setPendingCreators(creatorApps.count || 0);
+    } catch {
+      // silent
     } finally {
       setLoading(false);
     }
   };
 
   const pendingApps = applications.filter(a => a.status === 'pending');
+
+  // Needs attention items
+  const alerts: { label: string; count: number; tab: AdminTab }[] = [];
+  if (pendingApps.length > 0) alerts.push({ label: 'Pending member applications', count: pendingApps.length, tab: 'applications' });
+  if (pendingCreators > 0) alerts.push({ label: 'Pending creator applications', count: pendingCreators, tab: 'creators' });
 
   if (loading) {
     return (
@@ -71,13 +83,18 @@ const AdminDashboard = () => {
   return (
     <div className="flex h-screen overflow-hidden bg-background">
       <div className="hidden md:flex">
-        <AdminSidebar activeTab={activeTab} onTabChange={(t) => setActiveTab(t as AdminTab)} />
+        <AdminSidebar
+          activeTab={activeTab}
+          onTabChange={(t) => setActiveTab(t as AdminTab)}
+          pendingApps={pendingApps.length}
+          pendingCreators={pendingCreators}
+        />
       </div>
 
       <main className="flex-1 overflow-y-auto p-6 md:p-8">
         {/* Mobile tab bar */}
         <div className="flex md:hidden gap-2 overflow-x-auto pb-4 mb-4 scrollbar-hide">
-          {(['overview', 'members', 'applications', 'videos', 'events', 'subscriptions', 'analytics'] as const).map(tab => (
+          {(['overview', 'members', 'applications', 'creators', 'videos', 'events', 'content', 'subscriptions', 'analytics', 'activity'] as const).map(tab => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
@@ -85,11 +102,6 @@ const AdminDashboard = () => {
                 ${activeTab === tab ? 'bg-primary text-primary-foreground' : 'bg-secondary text-secondary-foreground'}`}
             >
               {tab}
-              {tab === 'applications' && pendingApps.length > 0 && (
-                <span className="ml-1.5 bg-destructive text-destructive-foreground text-[10px] font-bold px-1.5 py-0.5 rounded-full">
-                  {pendingApps.length}
-                </span>
-              )}
             </button>
           ))}
         </div>
@@ -97,7 +109,7 @@ const AdminDashboard = () => {
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <h1 className="font-display text-3xl md:text-4xl font-black uppercase tracking-tight capitalize">
-            {activeTab === 'overview' ? 'Dashboard' : activeTab}
+            {activeTab === 'overview' ? 'Dashboard' : activeTab === 'creators' ? 'Creator Applications' : activeTab}
           </h1>
           <Button variant="outline" size="sm" onClick={loadAllData}>
             <RefreshCw className="w-4 h-4 mr-2" /> Refresh
@@ -109,12 +121,35 @@ const AdminDashboard = () => {
           <>
             <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 mb-8">
               <KpiCard label="Members" value={stats?.totalMembers || members.length} icon={Users} />
-              <KpiCard label="Pending" value={pendingApps.length} icon={Users} />
+              <KpiCard label="Pending Apps" value={pendingApps.length + pendingCreators} icon={FileText}
+                trend={pendingApps.length + pendingCreators > 0 ? { direction: 'up', text: `${pendingApps.length + pendingCreators} need review` } : undefined} />
               <KpiCard label="Videos" value={stats?.totalVideos || videos.length} icon={Video} />
               <KpiCard label="Events" value={stats?.totalEvents || events.length} icon={Calendar} />
               <KpiCard label="Paid Subs" value={stats?.activeSubscriptions || 0} icon={CreditCard} />
-              <KpiCard label="New (7d)" value={stats?.recentSignups || 0} icon={UserPlus} />
+              <KpiCard label="New (7d)" value={stats?.recentSignups || 0} icon={UserPlus}
+                trend={stats?.recentSignups ? { direction: 'up', text: `+${stats.recentSignups} this week` } : undefined} />
             </div>
+
+            {/* Needs Attention */}
+            {alerts.length > 0 && (
+              <div className="mb-8">
+                <h3 className="font-display text-lg font-bold uppercase mb-3 flex items-center gap-2">
+                  <AlertTriangle className="w-5 h-5 text-yellow-500" /> Needs Attention
+                </h3>
+                <div className="space-y-2">
+                  {alerts.map(a => (
+                    <button
+                      key={a.tab}
+                      onClick={() => setActiveTab(a.tab)}
+                      className="w-full flex items-center justify-between bg-yellow-500/5 border border-yellow-500/20 rounded-xl px-4 py-3 hover:bg-yellow-500/10 transition-colors text-left"
+                    >
+                      <span className="text-sm font-medium">{a.label}</span>
+                      <span className="bg-yellow-500/15 text-yellow-600 text-xs font-bold px-2.5 py-1 rounded-full">{a.count}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <div>
@@ -145,24 +180,15 @@ const AdminDashboard = () => {
           </>
         )}
 
-        {activeTab === 'members' && (
-          <AdminMembersTab members={members} onRefresh={loadAllData} />
-        )}
-        {activeTab === 'applications' && (
-          <AdminApplicationsTab
-            applications={applications}
-            userId={user?.id || ''}
-            onRefresh={loadAllData}
-          />
-        )}
-        {activeTab === 'videos' && (
-          <AdminVideosTab videos={videos} onRefresh={loadAllData} />
-        )}
-        {activeTab === 'events' && (
-          <AdminEventsTab events={events} onRefresh={loadAllData} />
-        )}
+        {activeTab === 'members' && <AdminMembersTab members={members} onRefresh={loadAllData} />}
+        {activeTab === 'applications' && <AdminApplicationsTab applications={applications} userId={user?.id || ''} onRefresh={loadAllData} />}
+        {activeTab === 'creators' && <AdminCreatorApplicationsTab onRefresh={loadAllData} />}
+        {activeTab === 'videos' && <AdminVideosTab videos={videos} onRefresh={loadAllData} />}
+        {activeTab === 'events' && <AdminEventsTab events={events} onRefresh={loadAllData} />}
+        {activeTab === 'content' && <AdminCuratedContentTab />}
         {activeTab === 'subscriptions' && <AdminSubscriptionsTab />}
         {activeTab === 'analytics' && <AdminAnalyticsTab />}
+        {activeTab === 'activity' && <AdminActivityLogTab />}
       </main>
     </div>
   );
