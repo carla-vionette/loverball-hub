@@ -3,8 +3,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Users, MessageCircle } from "lucide-react";
+import { Users, MessageCircle, UserPlus } from "lucide-react";
 import AttendeeProfileDrawer from "./AttendeeProfileDrawer";
+import AddFriendButton from "./AddFriendButton";
+import PeopleYouMayKnow from "./PeopleYouMayKnow";
 
 interface GuestProfile {
   id: string;
@@ -108,15 +110,28 @@ const WhosGoing = ({ eventId, refreshKey }: Props) => {
     }, 300);
   };
 
+  const [showPeopleSheet, setShowPeopleSheet] = useState(false);
+
   if (guests.length === 0) return null;
 
   return (
     <>
       <div className="mt-6">
-        <div className="flex items-center gap-2 mb-4">
-          <Users className="w-5 h-5 text-primary" />
-          <h3 className="text-lg font-bold text-foreground">Who's Going</h3>
-          <span className="text-sm text-muted-foreground">({guests.length})</span>
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <Users className="w-5 h-5 text-primary" />
+            <h3 className="text-lg font-bold text-foreground">Who's Going</h3>
+            <span className="text-sm text-muted-foreground">({guests.length})</span>
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            className="rounded-full text-xs gap-1"
+            onClick={() => setShowPeopleSheet(true)}
+          >
+            <UserPlus className="w-3.5 h-3.5" />
+            Find Friends
+          </Button>
         </div>
 
         <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3">
@@ -139,25 +154,30 @@ const WhosGoing = ({ eventId, refreshKey }: Props) => {
                   </div>
                 )}
               </div>
-              <div className="flex items-center gap-0.5 w-full justify-center">
-                <span className="text-xs font-medium text-foreground truncate">
+              <div className="flex flex-col items-center w-full">
+                <span className="text-xs font-medium text-foreground truncate max-w-full">
                   {guest.profile?.name?.split(" ")[0] || "Guest"}
                 </span>
                 {user && guest.profile && guest.profile.id !== user.id && (
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-5 w-5 shrink-0 text-muted-foreground hover:text-primary"
-                    onClick={(e) => guest.profile && handleDmClick(e, guest.profile)}
-                  >
-                    <MessageCircle className="w-3 h-3" />
-                  </Button>
+                  <div className="flex items-center gap-1 mt-0.5">
+                    <AddFriendButton
+                      targetUserId={guest.profile.id}
+                      targetName={guest.profile.name}
+                      size="sm"
+                    />
+                  </div>
                 )}
               </div>
             </button>
           ))}
         </div>
       </div>
+
+      <PeopleYouMayKnow
+        eventId={eventId}
+        open={showPeopleSheet}
+        onOpenChange={setShowPeopleSheet}
+      />
 
       <AttendeeProfileDrawer
         profile={selectedProfile}

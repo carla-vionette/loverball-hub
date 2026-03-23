@@ -7,7 +7,9 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft, Users, Clock, Check, Loader2, MessageCircle, Send, X, ChevronRight } from "lucide-react";
+import { ArrowLeft, Users, Clock, Check, Loader2, MessageCircle, Send, X, ChevronRight, Sparkles, Trophy } from "lucide-react";
+import AddFriendButton from "@/components/AddFriendButton";
+import { EmptyState } from "@/components/ui/empty-state";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import AttendeeProfileDrawer from "@/components/AttendeeProfileDrawer";
@@ -322,22 +324,96 @@ const Friends = () => {
     );
   };
 
+  // Suggestions: people from same events or same teams
+  const [suggestions, setSuggestions] = useState<FriendProfile[]>([]);
+  const [sugLoading, setSugLoading] = useState(false);
+
+  useEffect(() => {
+    if (!user) return;
+    const fetchSuggestions = async () => {
+      setSugLoading(true);
+      // Get events user attended
+      const { data: myEvents } = await supabase
+        .from("event_guests")
+        .select("event_id")
+        .eq("user_id", user.id)
+        .eq("status", "going");
+
+      const eventIds = (myEvents || []).map((e) => e.event_id);
+      const candidateIds = new Set<string>();
+
+      if (eventIds.length > 0) {
+        const { data: coAttendees } = await supabase
+          .from("event_guests")
+          .select("user_id")
+          .in("event_id", eventIds)
+          .eq("status", "going")
+          .neq("user_id", user.id)
+          .limit(50);
+        (coAttendees || []).forEach((c) => candidateIds.add(c.user_id));
+      }
+
+      // Get people who follow same teams
+      const { data: myTeams } = await supabase
+        .from("team_follows")
+        .select("team_key")
+        .eq("user_id", user.id);
+
+      if (myTeams && myTeams.length > 0) {
+        const teamKeys = myTeams.map((t) => t.team_key);
+        const { data: teamFollowers } = await supabase
+          .from("team_follows")
+          .select("user_id")
+          .in("team_key", teamKeys)
+          .neq("user_id", user.id)
+          .limit(50);
+        (teamFollowers || []).forEach((f) => candidateIds.add(f.user_id));
+      }
+
+      // Remove existing friends and pending
+      const friendUserIds = new Set<string>();
+      friends.forEach((f) => { if (f.friend_profile) friendUserIds.add(f.friend_profile.id); });
+      pendingReceived.forEach((f) => { if (f.friend_profile) friendUserIds.add(f.friend_profile.id); });
+
+      const filteredIds = Array.from(candidateIds).filter((id) => !friendUserIds.has(id));
+
+      if (filteredIds.length === 0) {
+        setSuggestions([]);
+        setSugLoading(false);
+        return;
+      }
+
+      const { data: profiles } = await supabase
+        .from("profiles")
+        .select("id, name, profile_photo_url, bio, favorite_sports, primary_role, city")
+        .in("id", filteredIds.slice(0, 20));
+
+      setSuggestions((profiles as FriendProfile[]) || []);
+      setSugLoading(false);
+    };
+    fetchSuggestions();
+  }, [user?.id, friends.length, pendingReceived.length]);
+
   const renderFriendsListPanel = (className = "") => (
     <div className={className}>
       <Tabs defaultValue="friends">
-        <TabsList className="w-full">
-          <TabsTrigger value="friends" className="flex-1">
-            <MessageCircle className="w-4 h-4 mr-1.5" />
-            Friends ({friends.length})
+        <TabsList className="w-full grid grid-cols-3">
+          <TabsTrigger value="friends" className="text-xs">
+            <MessageCircle className="w-3.5 h-3.5 mr-1" />
+            Friends
           </TabsTrigger>
-          <TabsTrigger value="requests" className="flex-1 relative">
-            <Clock className="w-4 h-4 mr-1.5" />
-            Requests
+          <TabsTrigger value="requests" className="text-xs relative">
+            <Clock className="w-3.5 h-3.5 mr-1" />
+            Pending
             {pendingReceived.length > 0 && (
-              <span className="ml-1.5 bg-destructive text-destructive-foreground text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center">
+              <span className="ml-1 bg-destructive text-destructive-foreground text-[9px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
                 {pendingReceived.length}
               </span>
             )}
+          </TabsTrigger>
+          <TabsTrigger value="suggestions" className="text-xs">
+            <Sparkles className="w-3.5 h-3.5 mr-1" />
+            Suggestions
           </TabsTrigger>
         </TabsList>
 
@@ -347,11 +423,11 @@ const Friends = () => {
               <Loader2 className="w-6 h-6 animate-spin text-primary" />
             </div>
           ) : friends.length === 0 ? (
-            <div className="text-center py-12 text-muted-foreground">
-              <Users className="w-12 h-12 mx-auto mb-3 opacity-30" />
-              <p className="font-medium">No friends yet</p>
-              <p className="text-sm">Attend events and connect with people!</p>
-            </div>
+            <EmptyState
+              icon={Users}
+              title="No friends yet"
+              description="Attend events and connect with others to build your network!"
+            />
           ) : (
             friends.map((f) => {
               const isSelected = chatOpen === f.friend_profile?.id;
@@ -414,10 +490,11 @@ const Friends = () => {
               <Loader2 className="w-6 h-6 animate-spin text-primary" />
             </div>
           ) : pendingReceived.length === 0 ? (
-            <div className="text-center py-12 text-muted-foreground">
-              <Clock className="w-12 h-12 mx-auto mb-3 opacity-30" />
-              <p className="font-medium">No pending requests</p>
-            </div>
+            <EmptyState
+              icon={Clock}
+              title="No pending requests"
+              description="When someone sends you a friend request, it'll show up here."
+            />
           ) : (
             pendingReceived.map((f) => (
               <Card key={f.id}>
@@ -442,11 +519,73 @@ const Friends = () => {
                   </div>
                   <Button
                     size="sm"
+                    className="rounded-full text-xs bg-primary hover:bg-primary/90"
                     onClick={() => handleAccept(f.id, f.friend_profile?.name || "User")}
                     disabled={acting === f.id}
                   >
                     {acting === f.id ? <Loader2 className="w-4 h-4 animate-spin" /> : "Accept"}
                   </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="rounded-full text-xs"
+                    onClick={async () => {
+                      setActing(f.id);
+                      await supabase.from("friendships").update({ status: "declined" }).eq("id", f.id);
+                      fetchAll();
+                      setActing(null);
+                    }}
+                    disabled={acting === f.id}
+                  >
+                    Decline
+                  </Button>
+                </CardContent>
+              </Card>
+            ))
+          )}
+        </TabsContent>
+
+        <TabsContent value="suggestions" className="mt-4 space-y-2">
+          {sugLoading ? (
+            <div className="flex justify-center py-12">
+              <Loader2 className="w-6 h-6 animate-spin text-primary" />
+            </div>
+          ) : suggestions.length === 0 ? (
+            <EmptyState
+              icon={Sparkles}
+              title="No suggestions yet"
+              description="Attend events and follow teams to discover people with shared interests!"
+            />
+          ) : (
+            suggestions.map((profile) => (
+              <Card key={profile.id} className="hover:bg-secondary/50 transition-colors">
+                <CardContent className="flex items-center gap-3 p-3">
+                  <Avatar className="w-12 h-12">
+                    <AvatarImage src={profile.profile_photo_url || undefined} />
+                    <AvatarFallback className="bg-primary/10 text-primary font-semibold">
+                      {profile.name?.charAt(0).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-foreground truncate">{profile.name}</p>
+                    <p className="text-xs text-muted-foreground truncate">
+                      {profile.city || profile.primary_role || "Sports fan"}
+                    </p>
+                    {profile.favorite_sports && profile.favorite_sports.length > 0 && (
+                      <div className="flex gap-1 mt-1">
+                        {profile.favorite_sports.slice(0, 2).map((s) => (
+                          <Badge key={s} variant="secondary" className="text-[9px] px-1.5 py-0">
+                            {s}
+                          </Badge>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                  <AddFriendButton
+                    targetUserId={profile.id}
+                    targetName={profile.name}
+                    size="sm"
+                  />
                 </CardContent>
               </Card>
             ))
