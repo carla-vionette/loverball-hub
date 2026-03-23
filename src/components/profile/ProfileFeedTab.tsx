@@ -17,12 +17,12 @@ interface ProfileFeedTabProps {
   };
 }
 
-const STREAMING_BADGES: Record<string, { label: string; bg: string; text: string }> = {
-  espn: { label: "ESPN+", bg: "bg-red-600", text: "text-white" },
-  tnt: { label: "TNT", bg: "bg-blue-700", text: "text-white" },
-  peacock: { label: "Peacock", bg: "bg-black", text: "text-white" },
-  appletv: { label: "Apple TV+", bg: "bg-gray-800", text: "text-white" },
-  paramount: { label: "Paramount+", bg: "bg-blue-500", text: "text-white" },
+const STREAMING_BADGES: Record<string, { label: string; bg: string; text: string; url: string }> = {
+  espn: { label: "ESPN+", bg: "bg-red-600", text: "text-white", url: "https://plus.espn.com" },
+  tnt: { label: "TNT", bg: "bg-blue-700", text: "text-white", url: "https://www.tntdrama.com/sports" },
+  peacock: { label: "Peacock", bg: "bg-black", text: "text-white", url: "https://www.peacocktv.com/sports" },
+  appletv: { label: "Apple TV+", bg: "bg-gray-800", text: "text-white", url: "https://tv.apple.com/us/mls-season-pass" },
+  paramount: { label: "Paramount+", bg: "bg-blue-500", text: "text-white", url: "https://www.paramountplus.com/sports" },
 };
 
 const ProfileFeedTab = ({ profile }: ProfileFeedTabProps) => {
@@ -68,13 +68,16 @@ const ProfileFeedTab = ({ profile }: ProfileFeedTabProps) => {
       {/* Where to Watch Shelf */}
       <HorizontalShelf title="Where to Watch" emoji="📺">
         {Object.entries(STREAMING_BADGES).map(([key, badge]) => (
-          <div
+          <a
             key={key}
-            className={`min-w-[100px] shrink-0 rounded-xl ${badge.bg} ${badge.text} p-3 flex flex-col items-center gap-1.5 cursor-pointer hover:opacity-90 transition-opacity`}
+            href={badge.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={`min-w-[100px] shrink-0 rounded-xl ${badge.bg} ${badge.text} p-3 flex flex-col items-center gap-1.5 cursor-pointer hover:scale-105 hover:brightness-110 transition-all duration-200`}
           >
             <Tv className="w-5 h-5" />
             <span className="text-[11px] font-bold">{badge.label}</span>
-          </div>
+          </a>
         ))}
       </HorizontalShelf>
 
