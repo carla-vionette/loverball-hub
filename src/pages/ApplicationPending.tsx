@@ -38,9 +38,9 @@ const ApplicationPending = () => {
         </p>
 
         {/* Status badge */}
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-50 border border-amber-200 mb-8">
-          <Clock className="w-4 h-4 text-amber-600" />
-          <span className="text-amber-700 text-sm font-semibold">Pending Review</span>
+        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent border border-border mb-8">
+          <Clock className="w-4 h-4 text-primary" />
+          <span className="text-foreground text-sm font-semibold">Pending Review</span>
         </div>
 
         {/* Actions */}
