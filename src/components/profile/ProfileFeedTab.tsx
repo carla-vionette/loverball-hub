@@ -68,13 +68,16 @@ const ProfileFeedTab = ({ profile }: ProfileFeedTabProps) => {
       {/* Where to Watch Shelf */}
       <HorizontalShelf title="Where to Watch" emoji="📺">
         {Object.entries(STREAMING_BADGES).map(([key, badge]) => (
-          <div
+          <a
             key={key}
-            className={`min-w-[100px] shrink-0 rounded-xl ${badge.bg} ${badge.text} p-3 flex flex-col items-center gap-1.5 cursor-pointer hover:opacity-90 transition-opacity`}
+            href={badge.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={`min-w-[100px] shrink-0 rounded-xl ${badge.bg} ${badge.text} p-3 flex flex-col items-center gap-1.5 cursor-pointer hover:scale-105 hover:brightness-110 transition-all duration-200`}
           >
             <Tv className="w-5 h-5" />
             <span className="text-[11px] font-bold">{badge.label}</span>
-          </div>
+          </a>
         ))}
       </HorizontalShelf>
 
