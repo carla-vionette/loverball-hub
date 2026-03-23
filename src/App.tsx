@@ -150,6 +150,8 @@ const App = () => (
                 <Route path="/invite/:code" element={<InviteLanding />} />
                 <Route path="/membership" element={<Membership />} />
                 <Route path="/scores" element={<Scores />} />
+                <Route path="/apply" element={<Apply />} />
+                <Route path="/application-pending" element={<ApplicationPending />} />
 
                 {/* Redirects */}
                 <Route path="/index" element={<Navigate to="/" replace />} />
