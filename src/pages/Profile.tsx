@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { MapPin, Edit, Sparkles, LogOut, Calendar, Clock, TrendingUp, TrendingDown, Trophy, Flame, Bookmark, BookOpen, Award, ChevronRight, ChevronDown, ArrowUpRight, Share2, AlertTriangle, Ticket, Play, Eye, Lightbulb, Settings, Heart, MessageCircle, Loader2, ExternalLink, Newspaper, Zap, RefreshCw, Users } from "lucide-react";
+import { MapPin, Edit, Sparkles, LogOut, Calendar, Clock, TrendingUp, TrendingDown, Trophy, Flame, Bookmark, BookOpen, Award, ChevronRight, ChevronDown, ArrowUpRight, Share2, AlertTriangle, Ticket, Play, Eye, Lightbulb, Settings, Heart, MessageCircle, Loader2, ExternalLink, Newspaper, Zap, RefreshCw, Users, Tv, Radio } from "lucide-react";
 import MemberBadge from "@/components/MemberBadge";
 import { useFollow } from "@/hooks/useFollow";
 import BadgeShelf from "@/components/BadgeShelf";
@@ -26,6 +26,8 @@ import {
 import { getTeamWatchUrl, getTeamTicketsUrl } from "@/lib/teamLinksMap";
 import MySportsFeed from "@/components/MySportsFeed";
 import LiveScores from "@/components/LiveScores";
+import ProfileScores from "@/components/ProfileScores";
+import ProfileWhereToWatch from "@/components/ProfileWhereToWatch";
 
 
 type ProfileData = {
@@ -351,16 +353,16 @@ const Profile = () => {
               </motion.div>
             )}
 
-            {/* MY SCORES */}
+            {/* LIVE / RECENT SCORES */}
             <motion.div variants={staggerItem}>
               <Card className="rounded-2xl overflow-hidden">
                 <CardHeader className="pb-2 pt-4 px-5">
                   <CardTitle className="text-sm font-medium tracking-wider uppercase text-foreground/50 flex items-center gap-2">
-                    <Trophy className="w-4 h-4 text-warning" /> Live Scores
+                    <Radio className="w-4 h-4 text-[#FF5D2E]" /> Live &amp; Recent Scores
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="px-5 pb-5">
-                  <LiveScores />
+                  <ProfileScores />
                 </CardContent>
               </Card>
             </motion.div>
@@ -528,6 +530,20 @@ const Profile = () => {
                 userTeams={[...(profile.favorite_teams_players || []), ...((profile as any).favorite_la_teams || [])]}
                 userCity={profile.city}
               />
+            </motion.div>
+
+            {/* WHERE TO WATCH */}
+            <motion.div variants={staggerItem}>
+              <Card className="rounded-2xl overflow-hidden">
+                <CardHeader className="pb-2 pt-4 px-5">
+                  <CardTitle className="text-sm font-medium tracking-wider uppercase text-foreground/50 flex items-center gap-2">
+                    <Tv className="w-4 h-4 text-primary" /> Where to Watch
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="px-5 pb-5">
+                  <ProfileWhereToWatch />
+                </CardContent>
+              </Card>
             </motion.div>
 
             {/* RECOMMENDED EVENTS - COLLAPSIBLE */}
