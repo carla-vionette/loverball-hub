@@ -8,10 +8,10 @@ interface KpiCardProps {
 }
 
 const KpiCard = ({ label, value, icon: Icon, trend }: KpiCardProps) => (
-  <div className="bg-card border border-border/20 rounded-xl p-5 shadow-sm">
-    <div className="flex items-center gap-3 mb-2">
+  <div className="bg-card border border-border/20 rounded-[20px] p-6 transition-all duration-300 hover:scale-[1.02]" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.3)' }}>
+    <div className="flex items-center gap-3 mb-3">
       <Icon className="w-5 h-5 text-primary" />
-      <span className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+      <span className="text-[12px] font-semibold uppercase tracking-[0.15em] text-muted-foreground">
         {label}
       </span>
     </div>
@@ -19,7 +19,7 @@ const KpiCard = ({ label, value, icon: Icon, trend }: KpiCardProps) => (
       {value}
     </p>
     {trend && (
-      <p className={`text-xs font-semibold mt-2 ${trend.direction === 'up' ? 'text-success' : 'text-destructive'}`}>
+      <p className={`text-xs font-semibold mt-3 ${trend.direction === 'up' ? 'text-success' : 'text-destructive'}`}>
         {trend.text}
       </p>
     )}

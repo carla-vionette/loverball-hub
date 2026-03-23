@@ -3,91 +3,92 @@
 @import "@fontsource/poppins/600.css";
 @import "@fontsource/poppins/700.css";
 @import "@fontsource/poppins/800.css";
+@import "@fontsource/oswald/400.css";
 @import "@fontsource/oswald/600.css";
 @import "@fontsource/oswald/700.css";
 @import "@fontsource/pacifico/400.css";
+@import "@fontsource/playfair-display/400-italic.css";
+@import "@fontsource/playfair-display/600-italic.css";
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 /* ============================================================
-   LOVERBALL DESIGN SYSTEM — Teal Sports Energy
-   Teal + Coral + Clean White
+   LOVERBALL DESIGN SYSTEM — Premium Editorial Sports Magazine
+   Deep Navy + Coral + Cream
    ============================================================ */
 
 @layer base {
   :root {
     /* ── Brand ── */
-    --brand: 174 72% 35%;                /* Teal #16A085 */
-    --brand-foreground: 0 0% 100%;
+    --brand: 8 100% 61%;                  /* Coral #FF4D3A */
+    --brand-foreground: 30 33% 95%;
 
-    /* ── Core palette ── */
-    --background: 0 0% 100%;             /* Clean white */
-    --foreground: 210 20% 18%;             /* Dark charcoal */
+    /* ── Core palette — dark editorial ── */
+    --background: 222 60% 10%;             /* Deep navy #0A1128 */
+    --foreground: 30 33% 95%;              /* Cream #F5F0EB */
 
-    --card: 0 0% 100%;                   /* White */
-    --card-foreground: 210 20% 18%;
+    --card: 230 25% 16%;                   /* Dark charcoal #1e2235 */
+    --card-foreground: 30 33% 95%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 210 20% 18%;
+    --popover: 230 25% 16%;
+    --popover-foreground: 30 33% 95%;
 
-    /* Primary = Teal */
-    --primary: 174 72% 35%;              /* #16A085 */
+    /* Primary = Coral/Orange-Red */
+    --primary: 8 100% 61%;                /* #FF4D3A */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 20% 96%;             /* Light gray */
-    --secondary-foreground: 210 20% 18%;
+    --secondary: 228 30% 14%;              /* Slightly lighter navy #1a1f3a */
+    --secondary-foreground: 30 33% 95%;
 
-    --muted: 210 15% 94%;
-    --muted-foreground: 210 15% 45%;
+    --muted: 228 20% 20%;
+    --muted-foreground: 215 14% 65%;       /* Muted gray #9CA3AF */
 
-    /* Accent = Coral #FF6B6B */
-    --accent: 0 100% 70%;               /* #FF6B6B */
+    /* Accent = Soft warm pink */
+    --accent: 10 100% 74%;                /* #FF8C7C */
     --accent-foreground: 0 0% 100%;
 
     /* ── Status colors ── */
     --success: 142 72% 42%;
     --success-foreground: 0 0% 100%;
-    --warning: 45 100% 50%;              /* Gold */
+    --warning: 45 100% 50%;
     --warning-foreground: 0 0% 0%;
-    --info: 174 72% 40%;
+    --info: 200 80% 55%;
     --info-foreground: 0 0% 100%;
     --destructive: 0 84% 50%;
     --destructive-foreground: 0 0% 100%;
 
     /* ── Additional brand ── */
-    --coral: 0 100% 70%;                 /* #FF6B6B */
+    --coral: 8 100% 61%;                   /* #FF4D3A */
     --coral-foreground: 0 0% 100%;
-    --pale-pink: 350 60% 95%;
-    --pale-pink-foreground: 210 20% 18%;
+    --pale-pink: 10 60% 90%;
+    --pale-pink-foreground: 222 60% 10%;
     --medium-blue: 210 40% 50%;
     --medium-blue-foreground: 0 0% 100%;
     --olive: 174 30% 30%;
     --olive-foreground: 0 0% 100%;
-    --light-lime: 0 90% 75%;
+    --light-lime: 10 90% 75%;
     --light-lime-foreground: 0 0% 100%;
-    --ticker: 45 100% 50%;               /* Gold */
-    --ticker-foreground: 0 0% 0%;
-    --gold: 45 100% 50%;                 /* #FFD700 */
+    --ticker: 8 100% 61%;                  /* Coral ticker */
+    --ticker-foreground: 0 0% 100%;
+    --gold: 45 100% 50%;
     --gold-foreground: 0 0% 0%;
 
-    /* Terracotta → Coral */
-    --terracotta: 0 100% 70%;
+    --terracotta: 8 100% 61%;
     --terracotta-foreground: 0 0% 100%;
-    --warm-beige: 210 20% 96%;
-    --warm-beige-foreground: 210 20% 18%;
+    --warm-beige: 228 30% 14%;
+    --warm-beige-foreground: 30 33% 95%;
 
-    /* Hot Pink → Coral variant */
     --hot-pink: 350 80% 62%;
     --hot-pink-foreground: 0 0% 100%;
 
     /* ── Chrome ── */
-    --border: 210 15% 88%;
-    --input: 210 15% 88%;
-    --ring: 174 72% 35%;
+    --border: 228 20% 22%;
+    --input: 228 20% 22%;
+    --ring: 8 100% 61%;
 
-    --radius: 1rem;
+    --radius: 1.125rem;
 
     /* ── Design tokens ── */
     --radius-sm: 0.5rem;
@@ -95,74 +96,51 @@
     --radius-lg: 1.25rem;
     --radius-xl: 1.75rem;
 
-    --shadow-sm: 0 1px 3px 0 rgb(22 160 133 / 0.06);
-    --shadow-md: 0 4px 12px -2px rgb(22 160 133 / 0.1);
-    --shadow-lg: 0 12px 24px -4px rgb(22 160 133 / 0.12);
-    --shadow-glow: 0 0 20px rgb(255 107 107 / 0.2);
+    --shadow-sm: 0 2px 8px 0 rgba(0, 0, 0, 0.25);
+    --shadow-md: 0 4px 20px -2px rgba(0, 0, 0, 0.35);
+    --shadow-lg: 0 12px 32px -4px rgba(0, 0, 0, 0.4);
+    --shadow-glow: 0 0 24px rgba(255, 77, 58, 0.25);
 
     --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-normal: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-slow: 400ms cubic-bezier(0.4, 0, 0.2, 1);
 
     /* Gradients */
-    --gradient-warm: linear-gradient(135deg, hsl(174 72% 35%), hsl(0 100% 70%));
-    --gradient-sunset: linear-gradient(135deg, hsl(0 100% 70%), hsl(45 100% 50%));
-    --gradient-cream: linear-gradient(180deg, hsl(0 0% 100%), hsl(210 20% 96%));
+    --gradient-warm: linear-gradient(135deg, hsl(8 100% 61%), hsl(10 100% 74%));
+    --gradient-sunset: linear-gradient(135deg, hsl(8 100% 61%), hsl(45 100% 50%));
+    --gradient-cream: linear-gradient(180deg, hsl(222 60% 10%), hsl(228 30% 14%));
+    --gradient-navy: linear-gradient(180deg, hsl(222 60% 10%), hsl(228 25% 12%));
   }
 
-  /* Landing page theme */
+  /* Landing page uses same dark theme */
   .landing-theme {
-    --primary: 174 72% 35%;
+    --primary: 8 100% 61%;
     --primary-foreground: 0 0% 100%;
-    --accent: 0 100% 70%;
+    --accent: 10 100% 74%;
     --accent-foreground: 0 0% 100%;
   }
 
   .dark {
-    --background: 210 30% 8%;            /* Dark charcoal */
-    --foreground: 210 20% 93%;
-    --card: 210 25% 12%;
-    --card-foreground: 210 20% 93%;
-    --popover: 210 25% 12%;
-    --popover-foreground: 210 20% 93%;
-    --primary: 174 72% 45%;               /* Brighter teal in dark */
-    --primary-foreground: 0 0% 100%;
-    --secondary: 210 25% 16%;
-    --secondary-foreground: 210 30% 70%;
-    --muted: 210 20% 18%;
-    --muted-foreground: 210 20% 55%;
-    --accent: 45 100% 50%;               /* Gold accent in dark */
-    --accent-foreground: 0 0% 0%;
-    --success: 142 72% 42%;
-    --success-foreground: 0 0% 100%;
-    --warning: 45 100% 50%;
-    --warning-foreground: 0 0% 0%;
-    --info: 174 72% 60%;
-    --info-foreground: 0 0% 100%;
-    --destructive: 0 84% 50%;
-    --destructive-foreground: 0 0% 100%;
-    --border: 210 25% 18%;
-    --input: 210 25% 18%;
-    --ring: 0 100% 70%;
+    /* Already dark by default — no changes needed */
   }
 
-  /* Watch screen dark theme */
   .watch-dark {
-    --background: 210 30% 6%;
-    --foreground: 210 20% 93%;
-    --card: 210 25% 10%;
-    --card-foreground: 210 20% 93%;
-    --popover: 210 25% 10%;
-    --popover-foreground: 210 20% 93%;
-    --border: 210 25% 16%;
-    --input: 210 25% 16%;
+    --background: 222 60% 6%;
+    --foreground: 30 33% 95%;
+    --card: 228 25% 10%;
+    --card-foreground: 30 33% 95%;
+    --popover: 228 25% 10%;
+    --popover-foreground: 30 33% 95%;
+    --border: 228 25% 16%;
+    --input: 228 25% 16%;
   }
 }
 
 /* ============================================================
    TYPOGRAPHY
-   Display: Poppins (bold, warm, playful headings)
-   Body: Poppins (cohesive, friendly feel)
+   Display: Oswald (bold condensed headlines)
+   Body: Poppins (clean, modern)
+   Accent: Playfair Display Italic (elegant quotes)
    Script: Pacifico (brand/logo)
    ============================================================ */
 
@@ -179,17 +157,37 @@
     @apply bg-background text-foreground font-sans antialiased text-base leading-relaxed;
   }
 
-  /* Heading hierarchy — Poppins display font */
-  h1 { @apply font-display text-[28px] md:text-[32px] font-extrabold leading-none tracking-tight; }
-  h2 { @apply font-display text-[22px] md:text-[24px] font-bold leading-none tracking-tight; }
-  h3 { @apply font-display text-xl font-bold leading-tight; }
+  /* Heading hierarchy — Oswald condensed */
+  h1 {
+    font-family: 'Oswald', 'Impact', sans-serif;
+    @apply text-[32px] md:text-[48px] lg:text-[64px] font-bold leading-[1.1] uppercase;
+    letter-spacing: -0.02em;
+  }
+  h2 {
+    @apply text-[20px] md:text-[24px] font-semibold leading-tight uppercase;
+    letter-spacing: 0.15em;
+  }
+  h3 {
+    font-family: 'Oswald', 'Impact', sans-serif;
+    @apply text-xl font-bold leading-tight uppercase;
+  }
   h4 { @apply font-sans font-semibold text-lg leading-snug; }
   h5 { @apply font-sans font-medium text-base leading-normal; }
   h6 { @apply font-sans font-medium text-sm leading-normal; }
 
+  p {
+    @apply text-base leading-[1.6];
+    max-width: 65ch;
+  }
+
   /* Caption / label */
-  small, .caption { @apply text-xs leading-normal text-muted-foreground; }
-  label { @apply text-sm font-medium leading-none font-sans; }
+  small, .caption {
+    @apply text-[12px] leading-normal text-muted-foreground uppercase;
+    letter-spacing: 0.1em;
+  }
+  label {
+    @apply text-sm font-medium leading-none font-sans;
+  }
 }
 
 /* ============================================================
@@ -202,79 +200,60 @@
   }
   .editorial-underline::after {
     content: '';
-    @apply absolute bottom-0 left-0 w-full h-[3px] bg-accent rounded-full;
+    @apply absolute bottom-0 left-0 w-full h-[3px] bg-primary rounded-full;
   }
 
   .pill-button {
-    @apply px-6 py-2.5 rounded-full text-sm font-semibold tracking-wide transition-all duration-200;
+    @apply px-8 py-3 rounded-full text-sm font-semibold uppercase transition-all duration-300;
+    letter-spacing: 0.1em;
   }
 
   .editorial-card {
-    @apply bg-card rounded-2xl shadow-sm transition-all duration-200;
+    @apply bg-card rounded-[20px] shadow-sm transition-all duration-300 p-6;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
   }
   .editorial-card:hover {
-    @apply shadow-md -translate-y-0.5;
+    @apply -translate-y-0.5;
+    transform: scale(1.02);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
   }
 
   .quote-card {
-    @apply relative p-8 sm:p-12 rounded-2xl;
+    @apply relative p-8 sm:p-12 rounded-[20px];
   }
   .quote-card::before {
     content: '\201C';
-    @apply absolute top-4 left-6 text-7xl leading-none opacity-20 font-display;
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    @apply absolute top-4 left-6 text-7xl leading-none opacity-20;
   }
 
-  .color-block-yellow {
-    background: var(--gradient-sunset);
-    color: hsl(var(--primary-foreground));
-  }
-  .color-block-blue {
-    background: var(--gradient-warm);
-    color: hsl(var(--primary-foreground));
-  }
   .color-block-coral {
-    background-color: hsl(var(--accent));
-    color: hsl(var(--accent-foreground));
+    background-color: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
   }
-  .color-block-terracotta {
-    background-color: hsl(var(--coral));
-    color: hsl(var(--coral-foreground));
-  }
-  .color-block-beige {
+  .color-block-navy {
     background-color: hsl(var(--secondary));
     color: hsl(var(--secondary-foreground));
   }
-  .color-block-sand {
-    background-color: hsl(var(--warm-beige));
-    color: hsl(var(--warm-beige-foreground));
-  }
-
-  .overlap-left { @apply relative lg:-ml-12 lg:z-10; }
-  .overlap-right { @apply relative lg:-mr-12 lg:z-10; }
 
   .ribbon {
     @apply bg-primary text-primary-foreground px-4 py-1 text-xs font-semibold tracking-widest uppercase rounded-full;
   }
 
-  .annotation-circle { @apply relative inline-block; }
-  .annotation-circle::before {
-    content: '';
-    @apply absolute -inset-2 border-2 border-accent rounded-full;
-  }
-
   .section-number {
-    @apply font-display text-8xl text-accent/10 leading-none;
+    font-family: 'Oswald', 'Impact', sans-serif;
+    @apply text-8xl text-primary/10 leading-none;
   }
 
   .category-tag {
-    @apply inline-block px-3 py-1.5 text-xs font-bold tracking-widest uppercase rounded-full;
+    @apply inline-block px-3 py-1.5 text-xs font-bold tracking-widest uppercase rounded-full bg-primary text-primary-foreground;
   }
 
   .toast-success { @apply border-success bg-success text-success-foreground; }
   .toast-warning { @apply border-warning bg-warning text-warning-foreground; }
   .toast-info    { @apply border-info bg-info text-info-foreground; }
 
-  /* Tier badges */
   .tier-badge-pro {
     @apply bg-primary/10 text-primary border border-primary/20;
   }
@@ -284,40 +263,55 @@
 
   /* Consistent card hover */
   .interactive-card {
-    @apply bg-card rounded-2xl border border-border/30 shadow-sm transition-all duration-200;
+    @apply bg-card rounded-[20px] border border-border/30 transition-all duration-300 p-6;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
   }
   .interactive-card:hover {
-    @apply shadow-md border-border/50 -translate-y-0.5;
+    @apply border-border/50;
+    transform: scale(1.02);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
   }
 
-  /* Page container */
+  /* Page container — generous spacing */
   .page-container {
-    @apply container mx-auto px-4 py-8 max-w-6xl;
+    @apply mx-auto px-8 py-12 md:py-20 max-w-[1280px];
   }
   .page-container-narrow {
-    @apply container mx-auto px-4 py-8 max-w-3xl;
+    @apply mx-auto px-8 py-12 md:py-20 max-w-3xl;
   }
 
   /* Section header */
   .section-header {
-    @apply font-display text-xl font-bold tracking-tight;
+    font-family: 'Oswald', 'Impact', sans-serif;
+    @apply text-xl font-bold tracking-tight uppercase;
   }
 
   /* Warm gradient button */
   .btn-gradient {
     background: var(--gradient-warm);
-    @apply text-white rounded-full px-6 py-3 font-semibold shadow-md transition-all duration-200;
+    @apply text-white rounded-full px-8 py-3 font-semibold shadow-md transition-all duration-300 uppercase;
+    letter-spacing: 0.1em;
   }
   .btn-gradient:hover {
     @apply shadow-lg -translate-y-0.5;
     filter: brightness(1.05);
   }
 
-  /* Gold highlight */
   .gold-badge {
     background-color: hsl(var(--gold));
     color: hsl(var(--gold-foreground));
     @apply rounded-full px-3 py-1 text-xs font-bold;
+  }
+
+  /* Marquee / scrolling ticker */
+  .marquee-track {
+    @apply flex items-center gap-8 whitespace-nowrap;
+    animation: marquee 30s linear infinite;
+  }
+
+  @keyframes marquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
   }
 }
 
@@ -326,7 +320,7 @@
    ============================================================ */
 
 @layer utilities {
-  .hover-lift { @apply transition-transform duration-200 hover:-translate-y-0.5; }
+  .hover-lift { @apply transition-all duration-300 hover:-translate-y-0.5 hover:scale-[1.02]; }
   .text-balance { text-wrap: balance; }
 
   .scrollbar-hide {
@@ -338,10 +332,10 @@
   .tap-target { @apply min-h-[44px] min-w-[44px]; }
 
   .glass-card {
-    @apply bg-card/80 backdrop-blur-md rounded-2xl shadow-sm border border-border/30;
+    @apply bg-card/80 backdrop-blur-md rounded-[20px] shadow-sm border border-border/30;
   }
   .glass-card-strong {
-    @apply bg-card/90 backdrop-blur-lg rounded-2xl shadow-md border border-border/20;
+    @apply bg-card/90 backdrop-blur-lg rounded-[20px] shadow-md border border-border/20;
   }
 
   .focus-ring {
@@ -375,15 +369,24 @@
     animation: pageIn var(--transition-normal) both;
   }
 
-  /* Warm gradient backgrounds */
-  .bg-gradient-warm {
-    background: var(--gradient-warm);
+  /* Gradient backgrounds */
+  .bg-gradient-warm { background: var(--gradient-warm); }
+  .bg-gradient-sunset { background: var(--gradient-sunset); }
+  .bg-gradient-cream { background: var(--gradient-cream); }
+  .bg-gradient-navy { background: var(--gradient-navy); }
+
+  /* Playfair italic accent */
+  .font-elegant {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
   }
-  .bg-gradient-sunset {
-    background: var(--gradient-sunset);
+
+  /* Section spacing */
+  .section-spacing {
+    @apply py-12 md:py-20 lg:py-24;
   }
-  .bg-gradient-cream {
-    background: var(--gradient-cream);
+  .section-gap {
+    @apply mb-8 md:mb-10;
   }
 
   @keyframes pageIn {
@@ -397,5 +400,6 @@
       transform: none !important;
     }
     .page-enter { animation: none; }
+    .marquee-track { animation: none; }
   }
 }
