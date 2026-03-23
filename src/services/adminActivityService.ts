@@ -28,8 +28,8 @@ export async function logAdminAction(
 }
 
 export async function fetchActivityLog(limit = 50): Promise<ActivityLogEntry[]> {
-  const { data, error } = await supabase
-    .from('admin_activity_log' as any)
+  const { data, error } = await (supabase as any)
+    .from('admin_activity_log')
     .select('*')
     .order('created_at', { ascending: false })
     .limit(limit);
