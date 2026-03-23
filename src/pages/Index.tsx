@@ -290,6 +290,10 @@ const Index = () => {
             className="lg:col-span-5 bg-card relative flex items-center justify-center py-24 lg:py-0 px-8 overflow-hidden"
           >
             <div className="relative w-full max-w-md h-[500px] lg:h-[600px]">
+              {/* Spinning FOR HER badge */}
+              <div className="absolute -top-2 -right-2 z-30 w-20 h-20 rounded-full bg-primary flex items-center justify-center" style={{ animation: 'spin-slow 20s linear infinite', transform: 'rotate(5deg)' }}>
+                <span className="text-primary-foreground font-bold text-[11px] uppercase tracking-[0.1em]">For Her</span>
+              </div>
               <motion.div initial={{ opacity: 0, rotate: -8, scale: 0.9 }} animate={{ opacity: 1, rotate: -6, scale: 1 }} transition={{ duration: 0.8, delay: 0.4 }} className="absolute left-0 bottom-12 w-[55%] z-10">
                 <div className="rounded-[20px] overflow-hidden" style={{ boxShadow: '0 12px 40px rgba(0,0,0,0.5)' }}>
                   <img src={athletesImage} alt="Women athletes" className="w-full aspect-[3/4] object-cover" />
