@@ -244,7 +244,8 @@ const TrendingNews: React.FC<TrendingNewsProps> = ({ userTeams = [], onAuthRequi
 
                   <div className="p-5 flex flex-col flex-1">
                     <div className="flex items-center gap-2 mb-3">
-                      <span className="text-[10px] font-sans font-bold tracking-[0.2em] uppercase px-2.5 py-1 rounded-full" style={{ backgroundColor: `${catColor}20`, color: catColor }}>
+                      <span className="text-[10px] font-sans font-bold tracking-[0.2em] uppercase px-2.5 py-1 rounded-full flex items-center gap-1.5" style={{ backgroundColor: `${catColor}20`, color: catColor }}>
+                        <span className="inline-block w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: i % 2 === 0 ? '#3B82F6' : catColor }} />
                         {catEmoji} {primarySport || article.category || "Sports"}
                       </span>
                       <span className="text-[11px] text-muted-foreground flex items-center gap-1">
