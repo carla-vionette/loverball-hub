@@ -50,6 +50,10 @@ interface Event {
   rsvp_deadline?: string | null;
   theme?: string | null;
   event_tags?: string[] | null;
+  host_user_id?: string | null;
+  co_host_ids?: string[] | null;
+  rsvp_approval_required?: boolean | null;
+  guest_visibility?: boolean | null;
 }
 
 interface Attendee {
