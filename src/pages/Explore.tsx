@@ -1,55 +1,42 @@
 import React, { useState, useMemo, useRef, useCallback, useEffect } from "react";
-import { Search, Users, CheckCircle, Play, Eye, ChevronLeft, ChevronRight, TrendingUp, Clock, Star, Heart, Calendar, MapPin, Newspaper, ExternalLink } from "lucide-react";
+import { Search, Users, CheckCircle, Play, ChevronLeft, ChevronRight, TrendingUp, Clock, Star, Calendar, MapPin, Newspaper, ExternalLink } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import BottomNav from "@/components/BottomNav";
 import DesktopNav from "@/components/DesktopNav";
 import MobileHeader from "@/components/MobileHeader";
-import { DISCOVER_VIDEOS, DISCOVER_CATEGORIES, type DiscoverVideo } from "@/lib/discoverVideoData";
 import TeamFollowSection from "@/components/TeamFollowSection";
 import { supabase } from "@/integrations/supabase/client";
 import { format, formatDistanceToNow } from "date-fns";
 import { getSportEmoji, getSportColor, getCategoryEmoji, generateSummary } from "@/services/newsArticleService";
 
-const formatViews = (n: number) => {
-  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
-  if (n >= 1_000) return `${(n / 1_000).toFixed(1)}K`;
-  return String(n);
-};
-
-// ─── Channel Data ───
-interface ChannelData {
-  handle: string;
+// ─── Types ───
+interface DbChannel {
+  id: string;
   name: string;
-  category: string;
-  followers: string;
-  followerNum: number;
-  description: string;
-  trending?: boolean;
-  recentlyActive?: boolean;
+  handle: string;
+  description: string | null;
+  channel_type: string;
+  league: string | null;
+  avatar_url: string | null;
+  is_verified: boolean;
 }
 
-const CHANNELS: ChannelData[] = [
-  { handle: "@CourtSideQueens", name: "CourtSide Queens", category: "Basketball", followers: "51.3K", followerNum: 51300, description: "Courtside perspectives on women's basketball", trending: true },
-  { handle: "@WNBAHighlights", name: "WNBA Highlights", category: "WNBA", followers: "45.2K", followerNum: 45200, description: "Daily WNBA highlights and analysis", trending: true },
-  { handle: "@GameDayGirls", name: "Game Day Girls", category: "Lifestyle", followers: "41.2K", followerNum: 41200, description: "Game day fashion, food & culture", trending: true },
-  { handle: "@FitFemmes", name: "Fit Femmes", category: "Fitness", followers: "38.7K", followerNum: 38700, description: "Sports fitness and training content", recentlyActive: true },
-  { handle: "@SoccerSisters", name: "Soccer Sisters", category: "Soccer", followers: "32.1K", followerNum: 32100, description: "Women's soccer coverage worldwide", recentlyActive: true },
-  { handle: "@LoverballOriginals", name: "Loverball Originals", category: "Culture", followers: "28.5K", followerNum: 28500, description: "Original content from the Loverball team", trending: true },
-  { handle: "@OlympicDreams", name: "Olympic Dreams", category: "Culture", followers: "27.9K", followerNum: 27900, description: "Road to LA28 and beyond" },
-  { handle: "@NWSLWatch", name: "NWSL Watch", category: "Soccer", followers: "22.4K", followerNum: 22400, description: "All things NWSL", recentlyActive: true },
-  { handle: "@TitleIXToday", name: "Title IX Today", category: "Culture", followers: "19.8K", followerNum: 19800, description: "Covering the evolution of women in sports" },
-  { handle: "@ServeAndVolley", name: "Serve & Volley", category: "Tennis", followers: "15.6K", followerNum: 15600, description: "WTA and women's tennis coverage" },
-  { handle: "@StrongGirlSummer", name: "Strong Girl Summer", category: "Fitness", followers: "48.1K", followerNum: 48100, description: "Women athlete workout routines", trending: true, recentlyActive: true },
-  { handle: "@CourtVision", name: "Court Vision", category: "Basketball", followers: "18.3K", followerNum: 18300, description: "Basketball strategy & game breakdowns" },
-];
-
-const AVATAR_COLORS: Record<string, string> = {
-  Basketball: "bg-accent", Soccer: "bg-primary", WNBA: "bg-accent",
-  Tennis: "bg-primary", Culture: "bg-accent", Lifestyle: "bg-primary", Fitness: "bg-accent",
-};
+interface FeedArticle {
+  id: string;
+  title: string;
+  summary: string;
+  source: string;
+  source_url: string;
+  image_url: string | null;
+  category: string;
+  sport_tags: string[];
+  team_tags: string[];
+  created_at: string;
+}
 
 // ─── Scroll Row ───
 const ScrollRow = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => {
@@ -98,7 +85,7 @@ const ScrollRow = ({ children, className = "" }: { children: React.ReactNode; cl
 };
 
 // ─── Follow Button ───
-const FollowButton = ({ compact = false }: { compact?: boolean }) => {
+const FollowBtn = ({ compact = false }: { compact?: boolean }) => {
   const [following, setFollowing] = useState(false);
   return (
     <button
@@ -114,62 +101,35 @@ const FollowButton = ({ compact = false }: { compact?: boolean }) => {
   );
 };
 
-// ─── Video Card ───
-const VideoCard = ({ video }: { video: DiscoverVideo }) => (
-  <div
-    className="flex-shrink-0 w-[130px] cursor-pointer group"
-    onClick={() => { window.location.href = `/watch/video/${video.id}`; }}
-    role="link"
-    tabIndex={0}
-    onKeyDown={(e) => { if (e.key === "Enter") window.location.href = `/watch/video/${video.id}`; }}
-  >
-    <div className="relative w-[130px] h-[231px] rounded-xl overflow-hidden">
-      {video.thumbnail ? (
-        <img src={video.thumbnail} alt={video.title} className="w-full h-full object-cover pointer-events-none" />
-      ) : (
-        <div className={`w-full h-full bg-gradient-to-br ${video.gradient} pointer-events-none`} />
-      )}
-      <div className="absolute inset-0 bg-foreground/10 group-hover:bg-foreground/20 transition-colors flex items-center justify-center pointer-events-none">
-        <div className="w-10 h-10 rounded-full bg-background/20 backdrop-blur-sm flex items-center justify-center group-hover:bg-background/40 transition-colors">
-          <Play className="w-4 h-4 text-background ml-0.5" fill="currentColor" />
-        </div>
-      </div>
-      <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between pointer-events-none">
-        <span className="text-[10px] text-background/80 font-medium flex items-center gap-1">
-          <Eye className="w-3 h-3" /> {formatViews(video.views)}
-        </span>
-        <span className="text-[10px] text-background/80 bg-foreground/40 px-1.5 py-0.5 rounded-full">{video.duration}</span>
-      </div>
-    </div>
-    <p className="text-[11px] font-semibold text-foreground mt-1.5 leading-tight line-clamp-2">{video.title}</p>
-    <p className="text-[10px] text-muted-foreground truncate">{video.channel}</p>
-  </div>
-);
-
 // ─── Channel Card ───
-const ChannelCard = ({ channel }: { channel: ChannelData }) => (
-  <a href={`/channel/${channel.handle.replace("@", "")}`} className="block">
+const ChannelCard = ({ channel }: { channel: DbChannel }) => (
+  <a href={`/channel/${channel.handle}`} className="block">
     <Card className="p-4 hover:shadow-md transition-all group cursor-pointer">
       <div className="flex items-start gap-3">
         <Avatar className="w-12 h-12 flex-shrink-0">
-          <AvatarFallback className={`${AVATAR_COLORS[channel.category] || "bg-primary"} text-white font-bold text-sm`}>
+          <AvatarImage src={channel.avatar_url || undefined} />
+          <AvatarFallback className="bg-primary text-white font-bold text-sm">
             {channel.name.split(" ").map(w => w[0]).join("").slice(0, 2)}
           </AvatarFallback>
         </Avatar>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-1.5 mb-0.5">
             <h3 className="font-semibold text-sm text-foreground truncate">{channel.name}</h3>
-            <CheckCircle className="w-3.5 h-3.5 text-primary flex-shrink-0" />
+            {channel.is_verified && <CheckCircle className="w-3.5 h-3.5 text-primary flex-shrink-0" />}
           </div>
-          <p className="text-xs text-muted-foreground mb-1.5">{channel.handle}</p>
+          <p className="text-xs text-muted-foreground mb-1.5">@{channel.handle}</p>
           <div className="flex items-center gap-2 mb-2">
-            <Badge className="bg-accent/10 text-accent text-[10px] font-semibold border-0 rounded-full">{channel.category}</Badge>
-            <span className="text-[11px] text-muted-foreground flex items-center gap-1"><Users className="w-3 h-3" /> {channel.followers}</span>
+            {channel.league && (
+              <Badge className="bg-accent/10 text-accent text-[10px] font-semibold border-0 rounded-full">{channel.league}</Badge>
+            )}
+            <Badge variant="outline" className="text-[10px] font-semibold rounded-full capitalize">{channel.channel_type.replace("_", " ")}</Badge>
           </div>
-          <p className="text-xs text-muted-foreground line-clamp-2">{channel.description}</p>
+          {channel.description && (
+            <p className="text-xs text-muted-foreground line-clamp-2">{channel.description}</p>
+          )}
         </div>
         <div className="flex-shrink-0 pt-1">
-          <FollowButton />
+          <FollowBtn />
         </div>
       </div>
     </Card>
@@ -177,43 +137,33 @@ const ChannelCard = ({ channel }: { channel: ChannelData }) => (
 );
 
 // ─── Compact Creator Card ───
-const CreatorCard = ({ channel }: { channel: ChannelData }) => (
-  <a href={`/channel/${channel.handle.replace("@", "")}`} className="flex-shrink-0 w-[160px] block">
+const CreatorCard = ({ channel }: { channel: DbChannel }) => (
+  <a href={`/channel/${channel.handle}`} className="flex-shrink-0 w-[160px] block">
     <Card className="p-3 hover:shadow-md transition-all cursor-pointer h-full">
       <div className="flex flex-col items-center text-center gap-2">
         <Avatar className="w-14 h-14">
-          <AvatarFallback className={`${AVATAR_COLORS[channel.category] || "bg-primary"} text-white font-bold`}>
+          <AvatarImage src={channel.avatar_url || undefined} />
+          <AvatarFallback className="bg-primary text-white font-bold">
             {channel.name.split(" ").map(w => w[0]).join("").slice(0, 2)}
           </AvatarFallback>
         </Avatar>
         <div>
           <div className="flex items-center justify-center gap-1">
             <h3 className="font-semibold text-xs truncate">{channel.name}</h3>
-            <CheckCircle className="w-3 h-3 text-primary" />
+            {channel.is_verified && <CheckCircle className="w-3 h-3 text-primary" />}
           </div>
-          <p className="text-[10px] text-muted-foreground">{channel.followers} followers</p>
+          <p className="text-[10px] text-muted-foreground">@{channel.handle}</p>
         </div>
-        <Badge className="bg-accent/10 text-accent text-[10px] font-semibold border-0 rounded-full">{channel.category}</Badge>
-        <FollowButton compact />
+        {channel.league && (
+          <Badge className="bg-accent/10 text-accent text-[10px] font-semibold border-0 rounded-full">{channel.league}</Badge>
+        )}
+        <FollowBtn compact />
       </div>
     </Card>
   </a>
 );
 
 // ─── News Article Card ───
-interface FeedArticle {
-  id: string;
-  title: string;
-  summary: string;
-  source: string;
-  source_url: string;
-  image_url: string | null;
-  category: string;
-  sport_tags: string[];
-  team_tags: string[];
-  created_at: string;
-}
-
 const FALLBACK_GRADIENTS: Record<string, string> = {
   basketball: "from-orange-500 to-amber-600",
   soccer: "from-emerald-500 to-green-600",
@@ -227,24 +177,15 @@ const NewsArticleCard = ({ article }: { article: FeedArticle }) => {
   const primarySport = article.sport_tags?.[0] || "";
   const emoji = getSportEmoji(primarySport);
   const catEmoji = getCategoryEmoji(article.category, primarySport);
-  const sportColor = getSportColor(primarySport);
   const gradient = FALLBACK_GRADIENTS[primarySport.toLowerCase()] || FALLBACK_GRADIENTS.default;
   const summary = article.summary || generateSummary(article.title, article.source);
   const timeAgo = (() => {
-    try {
-      return formatDistanceToNow(new Date(article.created_at), { addSuffix: true });
-    } catch { return ""; }
+    try { return formatDistanceToNow(new Date(article.created_at), { addSuffix: true }); } catch { return ""; }
   })();
 
   return (
-    <a
-      href={article.source_url}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="flex-shrink-0 w-[260px] block group"
-    >
+    <a href={article.source_url} target="_blank" rel="noopener noreferrer" className="flex-shrink-0 w-[260px] block group">
       <Card className="overflow-hidden hover:shadow-lg transition-all duration-300 h-full border-border/20 flex flex-col">
-        {/* Thumbnail or Fallback Visual */}
         <div className="h-32 overflow-hidden relative">
           {article.image_url ? (
             <img src={article.image_url} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
@@ -256,15 +197,8 @@ const NewsArticleCard = ({ article }: { article: FeedArticle }) => {
               </span>
             </div>
           )}
-          {primarySport && (
-            <div className="absolute top-2 left-2 w-7 h-7 rounded-full flex items-center justify-center text-xs shadow-md" style={{ backgroundColor: sportColor + "E6" }}>
-              {emoji}
-            </div>
-          )}
         </div>
-
         <div className="p-3 flex flex-col flex-1">
-          {/* Category Tag + Emoji */}
           <div className="flex items-center gap-2 mb-1.5">
             <Badge variant="secondary" className="text-[10px] font-semibold px-2 py-0 rounded-full capitalize">
               {catEmoji} {primarySport || article.category || "Sports"}
@@ -273,24 +207,10 @@ const NewsArticleCard = ({ article }: { article: FeedArticle }) => {
               <Clock className="w-2.5 h-2.5" /> {timeAgo}
             </span>
           </div>
-
-          {/* Title */}
-          <h3 className="font-semibold text-xs text-foreground leading-snug line-clamp-2 group-hover:text-accent transition-colors mb-1">
-            {article.title}
-          </h3>
-
-          {/* Summary */}
-          <p className="text-[10px] text-muted-foreground leading-relaxed line-clamp-2 mb-2 flex-1">
-            {summary}
-          </p>
-
-          {/* Source + Read More */}
+          <h3 className="font-semibold text-xs text-foreground leading-snug line-clamp-2 group-hover:text-accent transition-colors mb-1">{article.title}</h3>
+          <p className="text-[10px] text-muted-foreground leading-relaxed line-clamp-2 mb-2 flex-1">{summary}</p>
           <div className="flex items-center justify-between mt-auto">
-            {article.source && (
-              <p className="text-[9px] text-muted-foreground uppercase tracking-wider font-semibold">
-                {article.source}
-              </p>
-            )}
+            {article.source && <p className="text-[9px] text-muted-foreground uppercase tracking-wider font-semibold">{article.source}</p>}
             <span className="text-[10px] font-semibold text-accent flex items-center gap-1 group-hover:gap-1.5 transition-all ml-auto">
               Read More <ExternalLink className="w-2.5 h-2.5" />
             </span>
@@ -301,17 +221,36 @@ const NewsArticleCard = ({ article }: { article: FeedArticle }) => {
   );
 };
 
+// ─── Discover Filters ───
+const FILTERS = ["All", "Teams", "Creators", "Loverball"];
+
 // ─── Main Page ───
 const Explore = () => {
   const [search, setSearch] = useState("");
-  const [activeCategory, setActiveCategory] = useState("All");
+  const [activeFilter, setActiveFilter] = useState("All");
+  const [channels, setChannels] = useState<DbChannel[]>([]);
+  const [channelsLoading, setChannelsLoading] = useState(true);
   const [searchEvents, setSearchEvents] = useState<any[]>([]);
   const [searchUsers, setSearchUsers] = useState<any[]>([]);
-  const [searchLoading, setSearchLoading] = useState(false);
   const [newsArticles, setNewsArticles] = useState<FeedArticle[]>([]);
   const [newsLoading, setNewsLoading] = useState(true);
 
-  // Fetch news articles from feed_items
+  // Fetch channels from DB
+  useEffect(() => {
+    const fetchChannels = async () => {
+      const { data, error } = await supabase
+        .from("channels")
+        .select("*")
+        .order("name");
+      if (!error && data) {
+        setChannels(data as DbChannel[]);
+      }
+      setChannelsLoading(false);
+    };
+    fetchChannels();
+  }, []);
+
+  // Fetch news articles
   useEffect(() => {
     const fetchNews = async () => {
       try {
@@ -322,8 +261,7 @@ const Explore = () => {
           .limit(12);
         if (error) throw error;
         setNewsArticles(data || []);
-      } catch (err) {
-        console.warn("Failed to fetch news, using fallback:", err);
+      } catch {
         setNewsArticles([]);
       } finally {
         setNewsLoading(false);
@@ -332,7 +270,7 @@ const Explore = () => {
     fetchNews();
   }, []);
 
-  // Search across events, users, and teams when query changes
+  // Search across events, users
   useEffect(() => {
     if (!search || search.length < 2) {
       setSearchEvents([]);
@@ -340,7 +278,6 @@ const Explore = () => {
       return;
     }
     const timer = setTimeout(async () => {
-      setSearchLoading(true);
       const [eventsRes, usersRes] = await Promise.all([
         supabase
           .from("events")
@@ -356,33 +293,31 @@ const Explore = () => {
       ]);
       setSearchEvents(eventsRes.data || []);
       setSearchUsers(usersRes.data || []);
-      setSearchLoading(false);
     }, 300);
     return () => clearTimeout(timer);
   }, [search]);
 
-  const filteredVideos = useMemo(() => {
-    return DISCOVER_VIDEOS.filter(v => {
-      const matchCat = activeCategory === "All" || v.category === activeCategory;
-      const matchSearch = !search || v.title.toLowerCase().includes(search.toLowerCase()) || v.channel.toLowerCase().includes(search.toLowerCase());
-      return matchCat && matchSearch;
-    });
-  }, [search, activeCategory]);
-
+  // Filter channels
   const filteredChannels = useMemo(() => {
-    return CHANNELS.filter(ch => {
-      const matchCat = activeCategory === "All" || ch.category === activeCategory;
-      const matchSearch = !search || ch.name.toLowerCase().includes(search.toLowerCase()) || ch.handle.toLowerCase().includes(search.toLowerCase()) || ch.category.toLowerCase().includes(search.toLowerCase());
-      return matchCat && matchSearch;
+    return channels.filter((ch) => {
+      const matchFilter =
+        activeFilter === "All" ||
+        (activeFilter === "Teams" && ch.channel_type === "team") ||
+        (activeFilter === "Creators" && ch.channel_type === "creator") ||
+        (activeFilter === "Loverball" && ch.channel_type === "loverball_official");
+      const matchSearch =
+        !search ||
+        ch.name.toLowerCase().includes(search.toLowerCase()) ||
+        ch.handle.toLowerCase().includes(search.toLowerCase()) ||
+        (ch.league || "").toLowerCase().includes(search.toLowerCase());
+      return matchFilter && matchSearch;
     });
-  }, [search, activeCategory]);
+  }, [channels, search, activeFilter]);
 
-  const trendingVideos = DISCOVER_VIDEOS.filter(v => v.trending);
-  const recentVideos = [...DISCOVER_VIDEOS].sort((a, b) => b.addedDate.localeCompare(a.addedDate)).slice(0, 8);
-  const popularCreators = CHANNELS.filter(ch => ch.trending).sort((a, b) => b.followerNum - a.followerNum);
-
-  const isFiltering = search || activeCategory !== "All";
+  const teamChannels = channels.filter((ch) => ch.channel_type === "team");
+  const creatorChannels = channels.filter((ch) => ch.channel_type === "creator");
   const hasUnifiedResults = search && search.length >= 2;
+  const isFiltering = search || activeFilter !== "All";
 
   return (
     <div className="min-h-screen bg-background">
@@ -394,41 +329,42 @@ const Explore = () => {
         <div className="max-w-3xl mx-auto px-5 md:px-10 py-6">
           <h1 className="font-display text-2xl md:text-[28px] font-bold uppercase tracking-tight mb-5">Discover</h1>
 
-          {/* Unified Search */}
+          {/* Search */}
           <div className="relative mb-5">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
-              placeholder="Search events, teams, people, videos..."
+              placeholder="Search channels, events, people..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="pl-10 rounded-full bg-secondary border-border/20"
             />
             {search && (
-              <button onClick={() => setSearch("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground hover:text-foreground">✕</button>
+              <button onClick={() => setSearch("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground hover:text-foreground">
+                ✕
+              </button>
             )}
           </div>
 
-          {/* Category Pills */}
+          {/* Filter Pills */}
           <div className="flex gap-2 overflow-x-auto pb-3 mb-6 scrollbar-none">
-            {DISCOVER_CATEGORIES.map(cat => (
+            {FILTERS.map((f) => (
               <button
-                key={cat}
-                onClick={() => setActiveCategory(cat)}
+                key={f}
+                onClick={() => setActiveFilter(f)}
                 className={`px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-200 ${
-                  activeCategory === cat
+                  activeFilter === f
                     ? "bg-primary text-primary-foreground shadow-sm scale-105"
                     : "border border-foreground/20 text-foreground hover:bg-secondary"
                 }`}
               >
-                {cat}
+                {f}
               </button>
             ))}
           </div>
 
-          {/* Unified search results (events + users) */}
+          {/* Unified search results */}
           {hasUnifiedResults && (
             <>
-              {/* Event results */}
               {searchEvents.length > 0 && (
                 <section className="mb-6">
                   <h2 className="font-display text-sm font-semibold uppercase tracking-wide mb-2 flex items-center gap-2 text-muted-foreground">
@@ -460,8 +396,6 @@ const Explore = () => {
                   </div>
                 </section>
               )}
-
-              {/* User results */}
               {searchUsers.length > 0 && (
                 <section className="mb-6">
                   <h2 className="font-display text-sm font-semibold uppercase tracking-wide mb-2 flex items-center gap-2 text-muted-foreground">
@@ -492,36 +426,23 @@ const Explore = () => {
             </>
           )}
 
-          {/* Filtered Results */}
+          {/* Filtered / Default views */}
           {isFiltering ? (
             <>
-              {/* Filtered Videos */}
-              {filteredVideos.length > 0 && (
-                <section className="mb-8">
-                  <h2 className="font-display text-lg font-semibold uppercase tracking-wide mb-3 flex items-center gap-2">
-                    <Play className="w-4 h-4 text-accent" /> Videos {activeCategory !== "All" && `— ${activeCategory}`}
-                  </h2>
-                  <ScrollRow>
-                    {filteredVideos.map(v => <VideoCard key={v.id} video={v} />)}
-                  </ScrollRow>
-                </section>
-              )}
-
-              {/* Filtered Channels */}
-              {filteredChannels.length > 0 && (
+              {filteredChannels.length > 0 ? (
                 <section className="mb-8">
                   <h2 className="font-display text-lg font-semibold uppercase tracking-wide mb-3">Channels</h2>
                   <div className="grid gap-3">
-                    {filteredChannels.map(ch => <ChannelCard key={ch.handle} channel={ch} />)}
+                    {filteredChannels.map((ch) => <ChannelCard key={ch.id} channel={ch} />)}
                   </div>
                 </section>
-              )}
-
-              {filteredVideos.length === 0 && filteredChannels.length === 0 && !hasUnifiedResults && (
-                <div className="text-center py-12 text-muted-foreground">
-                  <Search className="w-8 h-8 mx-auto mb-2 opacity-40" />
-                  <p className="text-sm">No results found</p>
-                </div>
+              ) : (
+                !hasUnifiedResults && (
+                  <div className="text-center py-12 text-muted-foreground">
+                    <Search className="w-8 h-8 mx-auto mb-2 opacity-40" />
+                    <p className="text-sm">No results found</p>
+                  </div>
+                )
               )}
             </>
           ) : (
@@ -536,7 +457,7 @@ const Explore = () => {
                 </h2>
                 {newsLoading ? (
                   <ScrollRow>
-                    {[1, 2, 3, 4].map(i => (
+                    {[1, 2, 3, 4].map((i) => (
                       <div key={i} className="flex-shrink-0 w-[260px] rounded-xl overflow-hidden border border-border/20 animate-pulse">
                         <div className="h-32 bg-muted" />
                         <div className="p-3 space-y-2">
@@ -549,60 +470,53 @@ const Explore = () => {
                   </ScrollRow>
                 ) : newsArticles.length > 0 ? (
                   <ScrollRow>
-                    {newsArticles.map(a => <NewsArticleCard key={a.id} article={a} />)}
+                    {newsArticles.map((a) => <NewsArticleCard key={a.id} article={a} />)}
                   </ScrollRow>
                 ) : (
                   <p className="text-sm text-muted-foreground">No news articles available right now.</p>
                 )}
               </section>
 
-              {/* Featured Videos */}
-              <section className="mb-8">
-                <h2 className="font-display text-lg font-semibold uppercase tracking-wide mb-3 flex items-center gap-2">
-                  <Star className="w-4 h-4 text-accent" /> Featured Videos
-                </h2>
-                <ScrollRow>
-                  {DISCOVER_VIDEOS.slice(0, 8).map(v => <VideoCard key={v.id} video={v} />)}
-                </ScrollRow>
-              </section>
+              {/* Creator Channels */}
+              {creatorChannels.length > 0 && (
+                <section className="mb-8">
+                  <h2 className="font-display text-lg font-semibold uppercase tracking-wide mb-3 flex items-center gap-2">
+                    <Star className="w-4 h-4 text-accent" /> Creator Channels
+                  </h2>
+                  <ScrollRow>
+                    {creatorChannels.map((ch) => <CreatorCard key={ch.id} channel={ch} />)}
+                  </ScrollRow>
+                </section>
+              )}
 
-              {/* Trending Now */}
-              <section className="mb-8">
-                <h2 className="font-display text-lg font-semibold uppercase tracking-wide mb-3 flex items-center gap-2">
-                  <TrendingUp className="w-4 h-4 text-destructive" /> Trending Now
-                </h2>
-                <ScrollRow>
-                  {trendingVideos.map(v => <VideoCard key={v.id} video={v} />)}
-                </ScrollRow>
-              </section>
-
-              {/* Popular Creators */}
-              <section className="mb-8">
-                <h2 className="font-display text-lg font-semibold uppercase tracking-wide mb-3 flex items-center gap-2">
-                  <Users className="w-4 h-4 text-primary" /> Popular Creators
-                </h2>
-                <ScrollRow>
-                  {popularCreators.map(ch => <CreatorCard key={ch.handle} channel={ch} />)}
-                </ScrollRow>
-              </section>
-
-              {/* Recently Added */}
-              <section className="mb-8">
-                <h2 className="font-display text-lg font-semibold uppercase tracking-wide mb-3 flex items-center gap-2">
-                  <Clock className="w-4 h-4 text-muted-foreground" /> Recently Added
-                </h2>
-                <ScrollRow>
-                  {recentVideos.map(v => <VideoCard key={v.id} video={v} />)}
-                </ScrollRow>
-              </section>
+              {/* Team Channels */}
+              {teamChannels.length > 0 && (
+                <section className="mb-8">
+                  <h2 className="font-display text-lg font-semibold uppercase tracking-wide mb-3 flex items-center gap-2">
+                    <TrendingUp className="w-4 h-4 text-destructive" /> Team Channels
+                  </h2>
+                  <ScrollRow>
+                    {teamChannels.map((ch) => <CreatorCard key={ch.id} channel={ch} />)}
+                  </ScrollRow>
+                </section>
+              )}
 
               {/* Browse All Channels */}
-              <section>
-                <h2 className="font-display text-lg font-semibold uppercase tracking-wide mb-3">Browse Channels</h2>
-                <div className="grid gap-3">
-                  {CHANNELS.slice(0, 6).map(ch => <ChannelCard key={ch.handle} channel={ch} />)}
-                </div>
-              </section>
+              {channels.length > 0 && (
+                <section>
+                  <h2 className="font-display text-lg font-semibold uppercase tracking-wide mb-3">Browse All Channels</h2>
+                  <div className="grid gap-3">
+                    {channels.slice(0, 8).map((ch) => <ChannelCard key={ch.id} channel={ch} />)}
+                  </div>
+                  {channels.length > 8 && (
+                    <div className="text-center mt-4">
+                      <Button variant="outline" className="rounded-full" onClick={() => setActiveFilter("All")}>
+                        View All {channels.length} Channels
+                      </Button>
+                    </div>
+                  )}
+                </section>
+              )}
             </>
           )}
         </div>

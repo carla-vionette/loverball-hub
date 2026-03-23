@@ -3,7 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Calendar, MapPin, Users, Clock, Loader2 } from "lucide-react";
+import { Calendar, MapPin, Users, Clock, Loader2, PlusCircle, UserPlus } from "lucide-react";
 import EventTagBadges from "@/components/EventTagBadges";
 import SponsorCard from "@/components/SponsorCard";
 import { supabase } from "@/integrations/supabase/client";
@@ -15,6 +15,8 @@ import BottomNav from "@/components/BottomNav";
 import DesktopNav from "@/components/DesktopNav";
 import MobileHeader from "@/components/MobileHeader";
 import AttendeeProfileDrawer from "@/components/AttendeeProfileDrawer";
+import EventSubmissionDialog from "@/components/EventSubmissionDialog";
+import AddFriendButton from "@/components/AddFriendButton";
 
 const CATEGORIES = ["All", "watch_party", "game", "panel", "brunch", "networking", "other"];
 const CATEGORY_LABELS: Record<string, string> = {
@@ -72,6 +74,7 @@ const Events = () => {
   const [eventAttendees, setEventAttendees] = useState<Record<string, AttendeeProfile[]>>({});
   const [selectedProfile, setSelectedProfile] = useState<AttendeeProfile | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [showSubmitDialog, setShowSubmitDialog] = useState(false);
   const { user } = useAuth();
   const { toast } = useToast();
 
@@ -82,6 +85,7 @@ const Events = () => {
           .from("events")
           .select("*")
           .eq("status", "published")
+          .eq("approval_status" as any, "approved")
           .order("event_date");
         if (error) throw error;
         setEvents(data || []);
@@ -197,7 +201,18 @@ const Events = () => {
 
       <main className="md:ml-64 pt-16 md:pt-0 pb-24 md:pb-0">
         <div className="max-w-6xl mx-auto px-4 md:px-10 py-6">
-          <h1 className="font-display text-2xl md:text-[28px] font-bold uppercase tracking-tight mb-4">Events</h1>
+          <div className="flex items-center justify-between mb-4">
+            <h1 className="font-display text-2xl md:text-[28px] font-bold uppercase tracking-tight">Events</h1>
+            <Button
+              variant="outline"
+              size="sm"
+              className="rounded-full text-xs gap-1.5"
+              onClick={() => setShowSubmitDialog(true)}
+            >
+              <PlusCircle className="w-3.5 h-3.5" />
+              Apply to Post an Event
+            </Button>
+          </div>
 
           {/* TABS */}
           <div className="flex gap-1 mb-6 bg-secondary rounded-full p-1 w-fit">
@@ -303,32 +318,35 @@ const Events = () => {
                             <EventTagBadges tags={ev.event_tags} size="sm" />
                           </div>
                         )}
-                        {/* Attendee avatars */}
+                        {/* Attendee avatars — Who's Going */}
                         {eventAttendees[ev.id]?.length > 0 && (
-                          <div className="flex items-center gap-1 pt-1" onClick={(e) => e.stopPropagation()}>
-                            <div className="flex -space-x-1.5">
-                              {eventAttendees[ev.id].slice(0, 4).map((attendee) => (
-                                <button
-                                  key={attendee.id}
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    setSelectedProfile(attendee);
-                                    setDrawerOpen(true);
-                                  }}
-                                  className="hover:z-10 transition-transform hover:scale-110"
-                                >
-                                  <Avatar className="w-7 h-7 border-2 border-background">
-                                    <AvatarImage src={attendee.profile_photo_url || undefined} />
-                                    <AvatarFallback className="bg-primary/10 text-primary text-[10px]">
-                                      {attendee.name?.charAt(0).toUpperCase()}
-                                    </AvatarFallback>
-                                  </Avatar>
-                                </button>
-                              ))}
+                          <div className="pt-1" onClick={(e) => e.stopPropagation()}>
+                            <p className="text-[10px] text-muted-foreground mb-1 font-semibold uppercase tracking-wide">Who's Going</p>
+                            <div className="flex items-center gap-1">
+                              <div className="flex -space-x-1.5">
+                                {eventAttendees[ev.id].slice(0, 4).map((attendee) => (
+                                  <button
+                                    key={attendee.id}
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setSelectedProfile(attendee);
+                                      setDrawerOpen(true);
+                                    }}
+                                    className="hover:z-10 transition-transform hover:scale-110"
+                                  >
+                                    <Avatar className="w-7 h-7 border-2 border-background">
+                                      <AvatarImage src={attendee.profile_photo_url || undefined} />
+                                      <AvatarFallback className="bg-primary/10 text-primary text-[10px]">
+                                        {attendee.name?.charAt(0).toUpperCase()}
+                                      </AvatarFallback>
+                                    </Avatar>
+                                  </button>
+                                ))}
+                              </div>
+                              {ct > 4 && (
+                                <span className="text-[10px] text-muted-foreground ml-1">+{ct - 4}</span>
+                              )}
                             </div>
-                            {ct > 4 && (
-                              <span className="text-[10px] text-muted-foreground ml-1">+{ct - 4}</span>
-                            )}
                           </div>
                         )}
                         <div className="flex items-center justify-between pt-2">
@@ -374,6 +392,12 @@ const Events = () => {
           profile={selectedProfile}
           open={drawerOpen}
           onOpenChange={setDrawerOpen}
+        />
+
+        {/* Event Submission Dialog */}
+        <EventSubmissionDialog
+          open={showSubmitDialog}
+          onOpenChange={setShowSubmitDialog}
         />
       </main>
     </div>

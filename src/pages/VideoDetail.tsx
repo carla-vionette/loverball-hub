@@ -1,13 +1,14 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { ArrowLeft, Heart, Share2, Eye, Clock, Play, Pause, Volume2, VolumeX, Maximize } from "lucide-react";
+import { ArrowLeft, Heart, Share2, Eye, Clock, Play, Pause, Volume2, VolumeX, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import BottomNav from "@/components/BottomNav";
 import DesktopNav from "@/components/DesktopNav";
 import MobileHeader from "@/components/MobileHeader";
 import { DISCOVER_VIDEOS, type DiscoverVideo } from "@/lib/discoverVideoData";
+import { supabase } from "@/integrations/supabase/client";
 
 const formatViews = (n: number) => {
   if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
@@ -15,19 +16,77 @@ const formatViews = (n: number) => {
   return String(n);
 };
 
+interface DbVideo {
+  id: string;
+  title: string;
+  description: string | null;
+  video_url: string;
+  thumbnail: string | null;
+  category: string | null;
+  creator_name: string | null;
+  likes_count: number;
+  comments_count: number;
+  channel: {
+    name: string;
+    handle: string;
+    avatar_url: string | null;
+    is_verified: boolean;
+  } | null;
+}
+
 const VideoDetail = () => {
   const { id } = useParams<{ id: string }>();
-  const video = DISCOVER_VIDEOS.find(v => v.id === id);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [playing, setPlaying] = useState(false);
   const [muted, setMuted] = useState(false);
   const [liked, setLiked] = useState(false);
+  const [dbVideo, setDbVideo] = useState<DbVideo | null>(null);
+  const [loading, setLoading] = useState(true);
   const goTo = (path: string) => { window.location.href = path; };
 
-  const relatedVideos = DISCOVER_VIDEOS.filter(v => v.id !== id && v.category === video?.category).slice(0, 6);
-  const moreVideos = relatedVideos.length < 4
-    ? [...relatedVideos, ...DISCOVER_VIDEOS.filter(v => v.id !== id && !relatedVideos.find(r => r.id === v.id)).slice(0, 4 - relatedVideos.length)]
-    : relatedVideos;
+  // Try hardcoded data first
+  const hardcodedVideo = DISCOVER_VIDEOS.find(v => v.id === id);
+
+  useEffect(() => {
+    if (!hardcodedVideo && id) {
+      fetchDbVideo();
+    } else {
+      setLoading(false);
+    }
+  }, [id]);
+
+  const fetchDbVideo = async () => {
+    const { data } = await supabase
+      .from("videos")
+      .select(`
+        id, title, description, video_url, thumbnail, category, creator_name,
+        likes_count, comments_count,
+        channel:channels!videos_channel_id_fkey (
+          name, handle, avatar_url, is_verified
+        )
+      `)
+      .eq("id", id!)
+      .maybeSingle();
+
+    if (data) {
+      const v = data as any;
+      setDbVideo({
+        id: v.id,
+        title: v.title,
+        description: v.description,
+        video_url: v.video_url,
+        thumbnail: v.thumbnail,
+        category: v.category,
+        creator_name: v.creator_name,
+        likes_count: v.likes_count || 0,
+        comments_count: v.comments_count || 0,
+        channel: v.channel ? { name: v.channel.name, handle: v.channel.handle, avatar_url: v.channel.avatar_url, is_verified: v.channel.is_verified } : null,
+      });
+    }
+    setLoading(false);
+  };
+
+  const relatedVideos = DISCOVER_VIDEOS.filter(v => v.id !== id && v.category === hardcodedVideo?.category).slice(0, 6);
 
   const togglePlay = () => {
     if (!videoRef.current) return;
@@ -36,6 +95,16 @@ const VideoDetail = () => {
     setPlaying(!playing);
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full" />
+      </div>
+    );
+  }
+
+  // Use hardcoded or DB video
+  const video = hardcodedVideo || dbVideo;
   if (!video) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -47,6 +116,18 @@ const VideoDetail = () => {
     );
   }
 
+  // Normalize to common shape
+  const title = hardcodedVideo ? hardcodedVideo.title : (dbVideo?.title || "");
+  const videoUrl = hardcodedVideo ? hardcodedVideo.videoUrl : (dbVideo?.video_url || "");
+  const thumbnail = hardcodedVideo ? hardcodedVideo.thumbnail : (dbVideo?.thumbnail || "");
+  const channelName = hardcodedVideo ? hardcodedVideo.channel : (dbVideo?.channel?.name || dbVideo?.creator_name || "Loverball");
+  const category = hardcodedVideo ? hardcodedVideo.category : (dbVideo?.category || "");
+  const views = hardcodedVideo ? hardcodedVideo.views : 0;
+  const likes = hardcodedVideo ? hardcodedVideo.likes : (dbVideo?.likes_count || 0);
+  const gradient = hardcodedVideo ? hardcodedVideo.gradient : "from-primary/40 to-accent/40";
+  const duration = hardcodedVideo ? hardcodedVideo.duration : "";
+  const isVerified = dbVideo?.channel?.is_verified || false;
+
   return (
     <div className="min-h-screen bg-background">
       <MobileHeader />
@@ -55,23 +136,21 @@ const VideoDetail = () => {
 
       <main className="md:ml-64 pt-16 md:pt-0 pb-24 md:pb-0">
         <div className="max-w-4xl mx-auto px-4 md:px-8 py-4">
-          {/* Back */}
           <button onClick={() => window.history.back()} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-4 transition-colors">
             <ArrowLeft className="w-4 h-4" /> Back
           </button>
 
-          {/* Video Player */}
           <div className="relative aspect-[9/16] max-h-[70vh] mx-auto rounded-2xl overflow-hidden bg-foreground/5 mb-6">
-            {video.videoUrl ? (
+            {videoUrl ? (
               <>
                 <video
                   ref={videoRef}
-                  src={video.videoUrl}
+                  src={videoUrl}
                   className="w-full h-full object-cover"
                   loop
                   muted={muted}
                   playsInline
-                  poster={video.thumbnail}
+                  poster={thumbnail || undefined}
                   onClick={togglePlay}
                 />
                 <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between">
@@ -85,8 +164,10 @@ const VideoDetail = () => {
                   </div>
                 </div>
               </>
+            ) : thumbnail ? (
+              <img src={thumbnail} alt={title} className="w-full h-full object-cover" />
             ) : (
-              <div className={`w-full h-full bg-gradient-to-br ${video.gradient} flex items-center justify-center`}>
+              <div className={`w-full h-full bg-gradient-to-br ${gradient} flex items-center justify-center`}>
                 <div className="w-20 h-20 rounded-full bg-background/20 backdrop-blur-sm flex items-center justify-center">
                   <Play className="w-8 h-8 text-background ml-1" fill="currentColor" />
                 </div>
@@ -94,25 +175,28 @@ const VideoDetail = () => {
             )}
           </div>
 
-          {/* Info */}
           <div className="mb-6">
-            <h1 className="text-xl font-bold text-foreground mb-2">{video.title}</h1>
+            <h1 className="text-xl font-bold text-foreground mb-2">{title}</h1>
             <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4">
-              <span className="flex items-center gap-1"><Eye className="w-4 h-4" />{formatViews(video.views)}</span>
-              <span className="flex items-center gap-1"><Clock className="w-4 h-4" />{video.duration}</span>
-              <Badge className="bg-accent/10 text-accent border-0 text-xs">{video.category}</Badge>
+              {views > 0 && <span className="flex items-center gap-1"><Eye className="w-4 h-4" />{formatViews(views)}</span>}
+              {duration && <span className="flex items-center gap-1"><Clock className="w-4 h-4" />{duration}</span>}
+              {category && <Badge className="bg-accent/10 text-accent border-0 text-xs">{category}</Badge>}
             </div>
 
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <Avatar className="w-10 h-10">
+                  <AvatarImage src={dbVideo?.channel?.avatar_url || undefined} />
                   <AvatarFallback className="bg-accent text-accent-foreground font-bold text-sm">
-                    {video.channel.slice(0, 2).toUpperCase()}
+                    {channelName.slice(0, 2).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
                 <div>
-                  <p className="font-semibold text-sm">{video.channel}</p>
-                  <p className="text-xs text-muted-foreground">{video.category}</p>
+                  <div className="flex items-center gap-1">
+                    <p className="font-semibold text-sm">{channelName}</p>
+                    {isVerified && <CheckCircle className="w-3.5 h-3.5 text-primary" />}
+                  </div>
+                  {category && <p className="text-xs text-muted-foreground">{category}</p>}
                 </div>
               </div>
               <div className="flex gap-2">
@@ -122,23 +206,26 @@ const VideoDetail = () => {
                   className={`rounded-full ${liked ? "text-destructive border-destructive/30" : ""}`}
                   onClick={() => setLiked(!liked)}
                 >
-                  <Heart className={`w-4 h-4 mr-1 ${liked ? "fill-current" : ""}`} />{formatViews(video.likes + (liked ? 1 : 0))}
+                  <Heart className={`w-4 h-4 mr-1 ${liked ? "fill-current" : ""}`} />{formatViews(likes + (liked ? 1 : 0))}
                 </Button>
                 <Button variant="outline" size="sm" className="rounded-full" onClick={() => {
-                  if (navigator.share) navigator.share({ title: video.title, url: window.location.href });
+                  if (navigator.share) navigator.share({ title, url: window.location.href });
                 }}>
                   <Share2 className="w-4 h-4" />
                 </Button>
               </div>
             </div>
+
+            {dbVideo?.description && (
+              <p className="text-sm text-muted-foreground mt-4">{dbVideo.description}</p>
+            )}
           </div>
 
-          {/* Related */}
-          {moreVideos.length > 0 && (
+          {relatedVideos.length > 0 && (
             <section>
               <h2 className="font-display text-lg font-semibold uppercase tracking-wide mb-3">Related Videos</h2>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                {moreVideos.map(v => (
+                {relatedVideos.map(v => (
                   <a key={v.id} href={`/watch/video/${v.id}`} className="group cursor-pointer">
                     <div className="relative aspect-[9/16] rounded-xl overflow-hidden mb-2">
                       {v.thumbnail ? (
