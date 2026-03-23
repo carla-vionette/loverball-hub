@@ -26,6 +26,8 @@ import WhereToSit from "@/components/WhereToSit";
 import EventTagBadges from "@/components/EventTagBadges";
 import EarlyAccessBanner from "@/components/EarlyAccessBanner";
 import LockedFeature from "@/components/LockedFeature";
+import EventComments from "@/components/EventComments";
+import EventHostProfile from "@/components/EventHostProfile";
 import { getUserTier } from "@/services/subscriptionService";
 
 interface Event {
@@ -48,6 +50,10 @@ interface Event {
   rsvp_deadline?: string | null;
   theme?: string | null;
   event_tags?: string[] | null;
+  host_user_id?: string | null;
+  co_host_ids?: string[] | null;
+  rsvp_approval_required?: boolean | null;
+  guest_visibility?: boolean | null;
 }
 
 interface Attendee {
@@ -737,6 +743,12 @@ const EventDetail = () => {
                 </div>
               )}
 
+              {/* Host Profile */}
+              <EventHostProfile
+                hostId={event.host_user_id}
+                coHostIds={event.co_host_ids as string[] | undefined}
+              />
+
               {/* Where to Watch */}
               <WhereToWatch eventCity={event.city} eventType={event.event_type} />
 
@@ -750,6 +762,13 @@ const EventDetail = () => {
               {user && (
                 <div className="mt-6">
                   <YouveMetCard />
+                </div>
+              )}
+
+              {/* Comments / Hype Section */}
+              {id && (
+                <div className="mb-6">
+                  <EventComments eventId={id} />
                 </div>
               )}
 
