@@ -16,6 +16,7 @@ import { uploadVideoFile, uploadThumbnail, VIDEO_CATEGORIES } from '@/services/v
 import { createVideo } from '@/services/adminService';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
+import { useAccountType } from '@/hooks/useAccountType';
 import type { ContentTier } from '@/types';
 
 interface VideoUploadDialogProps {
@@ -25,7 +26,8 @@ interface VideoUploadDialogProps {
 }
 
 const VideoUploadDialog = ({ open, onOpenChange, onSuccess }: VideoUploadDialogProps) => {
-  const { user } = useAuth();
+  const { user, isAdmin } = useAuth();
+  const { canUploadVideos } = useAccountType();
   const { toast } = useToast();
   const videoInputRef = useRef<HTMLInputElement>(null);
   const thumbInputRef = useRef<HTMLInputElement>(null);
@@ -49,6 +51,10 @@ const VideoUploadDialog = ({ open, onOpenChange, onSuccess }: VideoUploadDialogP
   };
 
   const handleSubmit = async () => {
+    if (!isAdmin && !canUploadVideos) {
+      toast({ title: 'Access denied', description: 'Only approved creators, teams, and organizations can upload videos.', variant: 'destructive' });
+      return;
+    }
     if (!form.title) {
       toast({ title: 'Title is required', variant: 'destructive' });
       return;
@@ -70,7 +76,7 @@ const VideoUploadDialog = ({ open, onOpenChange, onSuccess }: VideoUploadDialogP
         thumbnailUrl = await uploadThumbnail(thumbFile);
       }
 
-      // Create video record
+      // Create video record — admin uploads are auto-approved, creator uploads need review
       await createVideo({
         title: form.title,
         description: form.description || null,
@@ -80,6 +86,7 @@ const VideoUploadDialog = ({ open, onOpenChange, onSuccess }: VideoUploadDialogP
         uploaded_by: user?.id || null,
         tier: form.tier || 'free',
         duration: form.duration || null,
+        approval_status: isAdmin ? 'approved' : 'pending',
       });
 
       toast({ title: 'Video uploaded successfully' });

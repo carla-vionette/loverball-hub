@@ -1,7 +1,17 @@
 export type AppRole = 'pending' | 'member' | 'admin';
+export type AccountType = 'member' | 'team' | 'creator' | 'organization';
+export type ApprovalStatus = 'approved' | 'pending_review' | 'rejected';
+export type ContentApprovalStatus = 'approved' | 'pending' | 'rejected';
 export type SubscriptionPlan = 'free' | 'community' | 'allaccess';
 export type SubscriptionStatus = 'active' | 'canceled' | 'past_due' | 'trialing';
 export type ContentTier = 'free' | 'community' | 'allaccess';
+
+export interface SocialLinks {
+  instagram?: string;
+  tiktok?: string;
+  youtube?: string;
+  twitter?: string;
+}
 
 export interface UserProfile {
   id: string;
@@ -24,6 +34,12 @@ export interface UserProfile {
   pronouns: string | null;
   profile_photo_url: string | null;
   created_at: string;
+  account_type?: AccountType;
+  approval_status?: ApprovalStatus;
+  official_email?: string | null;
+  social_links?: SocialLinks | null;
+  content_bio?: string | null;
+  org_name?: string | null;
 }
 
 export interface Subscription {
@@ -56,6 +72,7 @@ export interface VideoItem {
   category: string | null;
   tier: ContentTier | null;
   duration: string | null;
+  approval_status?: ContentApprovalStatus;
 }
 
 export interface EventItem {
@@ -72,6 +89,8 @@ export interface EventItem {
   tier: ContentTier | null;
   layout_json: EventLayout | null;
   banner_image: string | null;
+  approval_status?: ContentApprovalStatus;
+  submitted_by?: string | null;
 }
 
 export interface MemberApplication {
@@ -84,6 +103,24 @@ export interface MemberApplication {
   status: string;
   created_at: string;
   user_id?: string | null;
+}
+
+export interface CreatorApplication {
+  id: string;
+  user_id: string;
+  account_type: 'team' | 'creator' | 'organization';
+  official_email: string;
+  phone_number: string;
+  social_links: SocialLinks;
+  content_bio: string | null;
+  org_name: string | null;
+  status: 'pending' | 'approved' | 'rejected';
+  reviewed_by: string | null;
+  reviewed_at: string | null;
+  created_at: string;
+  // Joined from profiles for admin display
+  applicant_name?: string;
+  profile_photo_url?: string | null;
 }
 
 export interface NavItem {
