@@ -1,4 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
+import { logAdminAction } from '@/services/adminActivityService';
 import type { UserProfile, VideoItem, EventItem, MemberApplication } from '@/types';
 
 export async function isAdminEmail(email: string): Promise<boolean> {
