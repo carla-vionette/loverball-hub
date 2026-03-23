@@ -32,14 +32,6 @@ const Standings = () => {
     return <Card className="p-4"><Skeleton className="h-64 w-full" /></Card>;
   }
 
-  if (error && apiAvailable) {
-    return (
-      <Card className="p-6 text-center">
-        <p className="text-sm text-destructive">Failed to load standings.</p>
-      </Card>
-    );
-  }
-
   const displayStandings = (apiAvailable && standings?.length) ? standings : SAMPLE_STANDINGS;
   const sorted = [...displayStandings].sort((a, b) => b.Percentage - a.Percentage);
 
