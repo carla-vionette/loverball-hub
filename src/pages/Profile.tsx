@@ -95,6 +95,9 @@ const [profile, setProfile] = useState<ProfileData | null>(null);
             rsvpResult.data.filter((r) => r.event !== null) as RSVPEvent[]
           );
         }
+        if (teamFollowsResult.data) {
+          setFollowedTeamKeys(teamFollowsResult.data.map((d) => d.team_key));
+        }
       } catch {
         if (!cancelled) goTo("/onboarding");
       } finally {
