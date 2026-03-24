@@ -1,0 +1,2 @@
+ALTER TABLE public.creator_channels DROP CONSTRAINT creator_channels_status_check;
+ALTER TABLE public.creator_channels ADD CONSTRAINT creator_channels_status_check CHECK (status = ANY (ARRAY['pending_review', 'approved', 'rejected', 'active', 'suspended']));
