@@ -313,7 +313,7 @@ const Explore = () => {
       (channelFilter === "Creators" && ch.channel_type === "creator") ||
       (channelFilter === "Official" && ch.channel_type === "loverball_official");
     const matchSearch = !search || ch.channel_name.toLowerCase().includes(search.toLowerCase()) ||
-      (ch.handle || "").toLowerCase().includes(search.toLowerCase()) ||
+      (ch.slug || "").toLowerCase().includes(search.toLowerCase()) ||
       (ch.description || "").toLowerCase().includes(search.toLowerCase());
     return matchFilter && matchSearch;
   });
