@@ -145,7 +145,7 @@ const CreatorCard = ({ channel }: { channel: DbChannel }) => {
   const initials = channel.channel_name.split(" ").map(w => w[0]).join("").slice(0, 2);
 
   return (
-    <a href={`/channel/${channel.handle || channel.slug}`} className="flex-shrink-0 w-[160px] block">
+    <a href={`/channel/${channel.slug}`} className="flex-shrink-0 w-[160px] block">
       <Card className="p-3 hover:shadow-md transition-all cursor-pointer h-full">
         <div className="flex flex-col items-center text-center gap-2">
           <Avatar className="w-14 h-14">
