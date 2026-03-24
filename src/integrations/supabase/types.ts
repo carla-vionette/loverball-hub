@@ -160,6 +160,35 @@ export type Database = {
           },
         ]
       }
+      channel_subscriptions: {
+        Row: {
+          channel_id: string
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          channel_id: string
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          channel_id?: string
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "channel_subscriptions_channel_id_fkey"
+            columns: ["channel_id"]
+            isOneToOne: false
+            referencedRelation: "creator_channels"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       chats: {
         Row: {
           created_at: string
@@ -652,6 +681,66 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      event_submissions: {
+        Row: {
+          admin_notes: string | null
+          city: string | null
+          created_at: string
+          description: string | null
+          email: string
+          event_date: string
+          event_time: string | null
+          event_type: string | null
+          id: string
+          image_url: string | null
+          phone: string
+          social_links: Json | null
+          status: string
+          submitter_id: string
+          title: string
+          updated_at: string
+          venue_name: string | null
+        }
+        Insert: {
+          admin_notes?: string | null
+          city?: string | null
+          created_at?: string
+          description?: string | null
+          email: string
+          event_date: string
+          event_time?: string | null
+          event_type?: string | null
+          id?: string
+          image_url?: string | null
+          phone: string
+          social_links?: Json | null
+          status?: string
+          submitter_id: string
+          title: string
+          updated_at?: string
+          venue_name?: string | null
+        }
+        Update: {
+          admin_notes?: string | null
+          city?: string | null
+          created_at?: string
+          description?: string | null
+          email?: string
+          event_date?: string
+          event_time?: string | null
+          event_type?: string | null
+          id?: string
+          image_url?: string | null
+          phone?: string
+          social_links?: Json | null
+          status?: string
+          submitter_id?: string
+          title?: string
+          updated_at?: string
+          venue_name?: string | null
+        }
+        Relationships: []
       }
       events: {
         Row: {

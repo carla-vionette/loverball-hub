@@ -81,7 +81,8 @@ const EventSubmissionForm = ({ open, onOpenChange }: Props) => {
         twitter: form.social_twitter || null,
       };
 
-      const { error } = await supabase.from("events").insert({
+      const { error } = await supabase.from("event_submissions").insert({
+        submitter_id: user.id,
         title: form.title,
         description: form.description || null,
         event_date: form.event_date,
@@ -90,14 +91,11 @@ const EventSubmissionForm = ({ open, onOpenChange }: Props) => {
         city: form.city || null,
         event_type: form.event_type || null,
         image_url: imageUrl,
-        host_user_id: user.id,
-        status: "draft",
-        approval_status: "pending",
-        submitter_email: form.email,
-        submitter_phone: form.phone,
-        submitter_social_links: socialLinks,
-        visibility: "public",
-      } as any);
+        email: form.email,
+        phone: form.phone,
+        social_links: socialLinks,
+        status: "pending",
+      });
 
       if (error) throw error;
 
