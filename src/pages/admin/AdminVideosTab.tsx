@@ -59,7 +59,7 @@ const AdminVideosTab = ({ videos, onRefresh }: Props) => {
   useState(() => { fetchPendingVideos(); });
 
   const handleVideoApproval = async (videoId: string, status: 'approved' | 'rejected') => {
-    const updates: any = { approval_status: status };
+    const updates: any = { is_published: status === 'approved' };
     if (status === 'approved') updates.is_published = true;
     const { error } = await supabase.from('videos').update(updates).eq('id', videoId);
     if (error) {
