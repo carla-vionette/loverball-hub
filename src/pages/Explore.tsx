@@ -117,7 +117,7 @@ const ChannelCard = ({ channel }: { channel: DbChannel }) => {
               <h3 className="font-semibold text-sm text-foreground truncate">{channel.channel_name}</h3>
               {channel.verified && <CheckCircle className="w-3.5 h-3.5 text-primary flex-shrink-0" />}
             </div>
-            <p className="text-xs text-muted-foreground mb-1.5">@{channel.handle || channel.slug}</p>
+            <p className="text-xs text-muted-foreground mb-1.5">@{channel.slug}</p>
             <div className="flex items-center gap-2 mb-2 flex-wrap">
               {channel.league && (
                 <Badge className="bg-accent/10 text-accent text-[10px] font-semibold border-0 rounded-full">{channel.league}</Badge>
