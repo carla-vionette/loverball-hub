@@ -162,7 +162,6 @@ const WhosGoing = ({ eventId, refreshKey }: Props) => {
                   <div className="flex items-center gap-1 mt-0.5">
                     <AddFriendButton
                       targetUserId={guest.profile.id}
-                      targetName={guest.profile.name}
                       size="sm"
                     />
                   </div>

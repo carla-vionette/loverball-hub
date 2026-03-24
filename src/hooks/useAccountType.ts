@@ -30,14 +30,17 @@ export const useAccountType = (): AccountInfo => {
       try {
         const { data, error } = await supabase
           .from('profiles')
-          .select('account_type, approval_status')
+          .select('primary_role')
           .eq('id', user.id)
           .maybeSingle();
 
         if (error) throw error;
 
-        setAccountType((data?.account_type as AccountType) || 'member');
-        setApprovalStatus((data?.approval_status as ApprovalStatus) || 'approved');
+        // Map primary_role to account type; profiles table doesn't have account_type/approval_status
+        const role = (data?.primary_role as string) || 'member';
+        const mappedType: AccountType = (role === 'creator' || role === 'team' || role === 'organization') ? role as AccountType : 'member';
+        setAccountType(mappedType);
+        setApprovalStatus('approved');
       } catch {
         setAccountType('member');
         setApprovalStatus('approved');
