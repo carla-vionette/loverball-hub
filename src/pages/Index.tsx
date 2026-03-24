@@ -166,9 +166,9 @@ const Index = () => {
         </div>
         {mobileMenuOpen &&
         <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="lg:hidden bg-background border-t border-border/20 px-8 py-6 space-y-1">
-            <a href="#explore" onClick={() => setMobileMenuOpen(false)} className="block py-3 text-[11px] font-sans font-bold tracking-[0.25em] uppercase text-muted-foreground">Explore</a>
-            <a href="#trending" onClick={() => setMobileMenuOpen(false)} className="block py-3 text-[11px] font-sans font-bold tracking-[0.25em] uppercase text-muted-foreground">Trending</a>
-            <a href="#events" onClick={() => setMobileMenuOpen(false)} className="block py-3 text-[11px] font-sans font-bold tracking-[0.25em] uppercase text-muted-foreground">Events</a>
+            <button onClick={() => {setMobileMenuOpen(false);openAuthModal();}} className="block py-3 text-[11px] font-sans font-bold tracking-[0.25em] uppercase text-muted-foreground bg-transparent border-none cursor-pointer w-full text-left">Explore</button>
+            <button onClick={() => {setMobileMenuOpen(false);openAuthModal();}} className="block py-3 text-[11px] font-sans font-bold tracking-[0.25em] uppercase text-muted-foreground bg-transparent border-none cursor-pointer w-full text-left">Trending</button>
+            <button onClick={() => {setMobileMenuOpen(false);openAuthModal();}} className="block py-3 text-[11px] font-sans font-bold tracking-[0.25em] uppercase text-muted-foreground bg-transparent border-none cursor-pointer w-full text-left">Events</button>
             <Button onClick={() => {setMobileMenuOpen(false);openAuthModal();}} className="w-full rounded-full mt-4 bg-primary text-primary-foreground text-[11px] tracking-[0.2em] uppercase">
               Join Loverball
             </Button>
