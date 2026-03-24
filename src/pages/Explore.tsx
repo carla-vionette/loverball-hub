@@ -258,7 +258,7 @@ const Explore = () => {
       try {
         const { data, error } = await supabase
           .from("creator_channels")
-          .select("id, channel_name, slug, handle, description, channel_type, league, sport_focus, avatar_url, verified, follower_count")
+          .select("id, channel_name, slug, description, channel_type, league, sport_focus, avatar_url, verified, follower_count")
           .eq("status", "active")
           .order("channel_name");
         if (error) throw error;
