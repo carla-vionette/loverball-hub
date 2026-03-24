@@ -2,9 +2,9 @@ export type AppRole = 'pending' | 'member' | 'admin';
 export type AccountType = 'member' | 'team' | 'creator' | 'organization';
 export type ApprovalStatus = 'approved' | 'pending_review' | 'rejected';
 export type ContentApprovalStatus = 'approved' | 'pending' | 'rejected';
-export type SubscriptionPlan = 'free' | 'community' | 'allaccess';
+export type SubscriptionPlan = 'free' | 'digital' | 'local';
 export type SubscriptionStatus = 'active' | 'canceled' | 'past_due' | 'trialing';
-export type ContentTier = 'free' | 'community' | 'allaccess';
+export type ContentTier = 'free' | 'digital' | 'local';
 
 export interface SocialLinks {
   instagram?: string;

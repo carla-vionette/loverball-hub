@@ -12,8 +12,8 @@ import type { VideoItem, ContentTier } from '@/types';
 
 const TIER_COLORS: Record<string, string> = {
   free: 'bg-green-500/10 text-green-600',
-  pro: 'bg-primary/10 text-primary',
-  premium: 'bg-accent/10 text-accent',
+  digital: 'bg-primary/10 text-primary',
+  local: 'bg-accent/10 text-accent',
 };
 
 const VideoLibrary = () => {
@@ -91,7 +91,7 @@ const VideoLibrary = () => {
 
           {/* Tier filter */}
           <div className="flex gap-2 mt-3">
-            {['', 'free', 'pro', 'premium'].map(tier => (
+            {['', 'free', 'digital', 'local'].map(tier => (
               <Button
                 key={tier}
                 size="sm"

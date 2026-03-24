@@ -51,7 +51,7 @@ const AdminVideosTab = ({ videos, onRefresh }: Props) => {
         id, title, video_url, thumbnail, category, created_at,
         channel:creator_channels!videos_channel_id_fkey ( channel_name )
       `)
-      .eq('approval_status', 'pending')
+      .eq('is_published', false)
       .order('created_at', { ascending: false });
     setPendingVideos(data || []);
   };
@@ -59,7 +59,7 @@ const AdminVideosTab = ({ videos, onRefresh }: Props) => {
   useState(() => { fetchPendingVideos(); });
 
   const handleVideoApproval = async (videoId: string, status: 'approved' | 'rejected') => {
-    const updates: any = { approval_status: status };
+    const updates: any = { is_published: status === 'approved' };
     if (status === 'approved') updates.is_published = true;
     const { error } = await supabase.from('videos').update(updates).eq('id', videoId);
     if (error) {
