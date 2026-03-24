@@ -63,8 +63,7 @@ const AdminEventsTab = ({ events, onRefresh }: Props) => {
   useState(() => { fetchPending(); });
 
   const handleApproval = async (eventId: string, status: 'approved' | 'rejected') => {
-    const updates: any = { approval_status: status };
-    if (status === 'approved') updates.status = 'published';
+    const updates: any = { status: status === 'approved' ? 'published' : 'rejected' };
     const { error } = await supabase.from('events').update(updates).eq('id', eventId);
     if (error) {
       toast({ title: 'Error', description: error.message, variant: 'destructive' });
