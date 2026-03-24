@@ -23,7 +23,6 @@ interface DbChannel {
   id: string;
   channel_name: string;
   slug: string;
-  handle: string | null;
   description: string | null;
   channel_type: string;
   league: string | null;

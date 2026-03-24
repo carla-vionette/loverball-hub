@@ -61,7 +61,7 @@ const Watch = () => {
         .select(`
           id, title, description, video_url, thumbnail, thumbnail_url, category, tags, created_at,
           channel:creator_channels!videos_channel_id_fkey (
-            id, channel_name, handle, slug, avatar_url, verified, channel_type
+            id, channel_name, slug, avatar_url, verified, channel_type
           )
         `)
         .eq("is_published", true)
