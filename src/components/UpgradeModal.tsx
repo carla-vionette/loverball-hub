@@ -20,7 +20,7 @@ interface UpgradeModalProps {
   requiredTier?: string;
 }
 
-const UpgradeModal = ({ open, onOpenChange, requiredTier = 'community' }: UpgradeModalProps) => {
+const UpgradeModal = ({ open, onOpenChange, requiredTier = 'digital' }: UpgradeModalProps) => {
   const { user } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -49,19 +49,19 @@ const UpgradeModal = ({ open, onOpenChange, requiredTier = 'community' }: Upgrad
         <DialogHeader>
           <DialogTitle className="font-display text-xl uppercase">Upgrade Required</DialogTitle>
           <DialogDescription>
-            This content requires a {requiredTier === 'allaccess' ? 'All Access' : 'Community'} plan or higher.
+            This content requires {requiredTier === 'local' ? 'The Club' : 'an All Access'} plan or higher.
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-3 mt-4">
-          {requiredTier !== 'allaccess' && (
+          {requiredTier !== 'local' && (
             <div className="border rounded-lg p-4">
               <div className="flex items-center justify-between mb-2">
                 <div>
-                  <p className="font-semibold">⚡ Community</p>
+                  <p className="font-semibold">⚡ All Access</p>
                   <p className="text-sm text-muted-foreground">$15/month</p>
                 </div>
-                <Button size="sm" onClick={() => handleUpgrade('community')} disabled={!!loading}>
-                  {loading === 'community' ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Upgrade'}
+                <Button size="sm" onClick={() => handleUpgrade('digital')} disabled={!!loading}>
+                  {loading === 'digital' ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Upgrade'}
                 </Button>
               </div>
               <ul className="space-y-1">
@@ -76,15 +76,15 @@ const UpgradeModal = ({ open, onOpenChange, requiredTier = 'community' }: Upgrad
           <div className="border rounded-lg p-4 border-primary/30 bg-primary/5">
             <div className="flex items-center justify-between mb-2">
               <div>
-                <p className="font-semibold">💎 All Access</p>
+                <p className="font-semibold">💎 The Club</p>
                 <p className="text-sm text-muted-foreground">$35/month</p>
               </div>
-              <Button size="sm" onClick={() => handleUpgrade('allaccess')} disabled={!!loading}>
-                {loading === 'allaccess' ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Upgrade'}
+              <Button size="sm" onClick={() => handleUpgrade('local')} disabled={!!loading}>
+                {loading === 'local' ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Upgrade'}
               </Button>
             </div>
             <ul className="space-y-1">
-              {['Everything in Community', 'Exclusive events', 'Ticket discounts', 'Reserved seating', 'VIP perks'].map((f) => (
+              {['Everything in All Access', 'Exclusive events', 'Ticket discounts', 'Reserved seating', 'VIP perks'].map((f) => (
                 <li key={f} className="text-xs text-muted-foreground flex items-center gap-1.5">
                   <Check className="w-3 h-3 text-primary" /> {f}
                 </li>

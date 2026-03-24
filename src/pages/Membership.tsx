@@ -32,8 +32,8 @@ const tiers = [
     cta: 'Current Plan',
   },
   {
-    id: 'community' as SubscriptionPlan,
-    name: 'Community',
+    id: 'digital' as SubscriptionPlan,
+    name: 'All Access',
     emoji: '⚡',
     price: 15,
     tagline: 'Most Popular',
@@ -48,11 +48,11 @@ const tiers = [
       'Priority waitlist promotion',
       '⚡ Member badge on profile',
     ],
-    cta: 'Go Community',
+    cta: 'Go All Access',
   },
   {
-    id: 'allaccess' as SubscriptionPlan,
-    name: 'All Access',
+    id: 'local' as SubscriptionPlan,
+    name: 'The Club',
     emoji: '💎',
     price: 35,
     tagline: 'Best Value',
@@ -60,14 +60,14 @@ const tiers = [
     highlight: false,
     badge: '💎',
     features: [
-      'Everything in Community, plus:',
+      'Everything in All Access, plus:',
       'Exclusive member-only events',
       'Ticket discounts with partner venues',
       'Reserved group seating sections',
       'VIP perks & early access',
       '💎 Premium badge on profile',
     ],
-    cta: 'Go All Access',
+    cta: 'Go Club',
   },
 ];
 
@@ -189,7 +189,7 @@ const Membership = () => {
                     className={`w-full rounded-xl h-12 ${
                       tier.highlight
                         ? 'bg-primary-foreground text-primary hover:bg-primary-foreground/90'
-                        : tier.id === 'allaccess'
+                        : tier.id === 'local'
                         ? 'bg-foreground text-background hover:bg-foreground/90'
                         : ''
                     }`}
