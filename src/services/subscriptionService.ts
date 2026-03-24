@@ -24,7 +24,6 @@ export async function fetchAllSubscriptions(): Promise<SubscriptionWithUser[]> {
     .order('created_at', { ascending: false });
   if (error) throw error;
 
-  // Fetch profile names for each subscription
   const subs = (data || []) as Subscription[];
   const userIds = subs.map(s => s.user_id);
   const { data: profiles } = await supabase
@@ -64,16 +63,16 @@ export async function createCheckoutSession(plan: SubscriptionPlan): Promise<str
   if (!session) throw new Error('Not authenticated');
 
   const priceMap: Record<string, number> = {
-    community: 15,
-    allaccess: 35,
+    digital: 15,
+    local: 35,
   };
 
   const price = priceMap[plan];
   if (!price) throw new Error('Invalid plan');
 
   const labelMap: Record<string, string> = {
-    community: 'Community',
-    allaccess: 'All Access',
+    digital: 'All Access',
+    local: 'The Club',
   };
 
   const { data, error } = await supabase.functions.invoke('create-checkout', {
@@ -91,6 +90,6 @@ export async function createCheckoutSession(plan: SubscriptionPlan): Promise<str
 
 export function canAccessTier(userTier: SubscriptionPlan, contentTier: string | null): boolean {
   if (!contentTier || contentTier === 'free') return true;
-  const tierRank: Record<string, number> = { free: 0, community: 1, allaccess: 2 };
+  const tierRank: Record<string, number> = { free: 0, digital: 1, local: 2 };
   return (tierRank[userTier] || 0) >= (tierRank[contentTier] || 0);
 }

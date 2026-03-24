@@ -55,7 +55,7 @@ const AdminEventsTab = ({ events, onRefresh }: Props) => {
     const { data } = await supabase
       .from('events')
       .select('*')
-      .eq('approval_status', 'pending')
+      .eq('status', 'pending')
       .order('created_at', { ascending: false });
     setPendingEvents(data || []);
   };
@@ -63,8 +63,7 @@ const AdminEventsTab = ({ events, onRefresh }: Props) => {
   useState(() => { fetchPending(); });
 
   const handleApproval = async (eventId: string, status: 'approved' | 'rejected') => {
-    const updates: any = { approval_status: status };
-    if (status === 'approved') updates.status = 'published';
+    const updates: any = { status: status === 'approved' ? 'published' : 'rejected' };
     const { error } = await supabase.from('events').update(updates).eq('id', eventId);
     if (error) {
       toast({ title: 'Error', description: error.message, variant: 'destructive' });
