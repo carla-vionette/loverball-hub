@@ -63,20 +63,14 @@ const ChannelProfile = () => {
       // Try matching by handle first, then slug
       let { data, error } = await supabase
         .from("creator_channels")
-        .select("*")
-        .eq("handle", handle)
+        .select("id, channel_name, slug, description, channel_type, league, sport_focus, location, avatar_url, banner_url, verified, follower_count, total_views")
+        .eq("slug", handle)
         .maybeSingle();
 
-      if (!data) {
-        ({ data, error } = await supabase
-          .from("creator_channels")
-          .select("*")
-          .eq("slug", handle)
-          .maybeSingle());
-      }
-
       if (error) throw error;
-      setChannel(data);
+      if (data) {
+        setChannel({ ...data, handle: null });
+      }
 
       if (data) {
         // Fetch channel videos

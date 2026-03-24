@@ -23,7 +23,6 @@ interface DbChannel {
   id: string;
   channel_name: string;
   slug: string;
-  handle: string | null;
   description: string | null;
   channel_type: string;
   league: string | null;
@@ -104,7 +103,7 @@ const ChannelCard = ({ channel }: { channel: DbChannel }) => {
   const typeColor = channel.channel_type === "team" ? "bg-accent" : channel.channel_type === "creator" ? "bg-primary" : "bg-primary";
 
   return (
-    <a href={`/channel/${channel.handle || channel.slug}`} className="block">
+    <a href={`/channel/${channel.slug}`} className="block">
       <Card className="p-4 hover:shadow-md transition-all group cursor-pointer">
         <div className="flex items-start gap-3">
           <Avatar className="w-12 h-12 flex-shrink-0">
@@ -118,7 +117,7 @@ const ChannelCard = ({ channel }: { channel: DbChannel }) => {
               <h3 className="font-semibold text-sm text-foreground truncate">{channel.channel_name}</h3>
               {channel.verified && <CheckCircle className="w-3.5 h-3.5 text-primary flex-shrink-0" />}
             </div>
-            <p className="text-xs text-muted-foreground mb-1.5">@{channel.handle || channel.slug}</p>
+            <p className="text-xs text-muted-foreground mb-1.5">@{channel.slug}</p>
             <div className="flex items-center gap-2 mb-2 flex-wrap">
               {channel.league && (
                 <Badge className="bg-accent/10 text-accent text-[10px] font-semibold border-0 rounded-full">{channel.league}</Badge>
@@ -146,7 +145,7 @@ const CreatorCard = ({ channel }: { channel: DbChannel }) => {
   const initials = channel.channel_name.split(" ").map(w => w[0]).join("").slice(0, 2);
 
   return (
-    <a href={`/channel/${channel.handle || channel.slug}`} className="flex-shrink-0 w-[160px] block">
+    <a href={`/channel/${channel.slug}`} className="flex-shrink-0 w-[160px] block">
       <Card className="p-3 hover:shadow-md transition-all cursor-pointer h-full">
         <div className="flex flex-col items-center text-center gap-2">
           <Avatar className="w-14 h-14">
@@ -258,7 +257,7 @@ const Explore = () => {
       try {
         const { data, error } = await supabase
           .from("creator_channels")
-          .select("id, channel_name, slug, handle, description, channel_type, league, sport_focus, avatar_url, verified, follower_count")
+          .select("id, channel_name, slug, description, channel_type, league, sport_focus, avatar_url, verified, follower_count")
           .eq("status", "active")
           .order("channel_name");
         if (error) throw error;
@@ -314,7 +313,7 @@ const Explore = () => {
       (channelFilter === "Creators" && ch.channel_type === "creator") ||
       (channelFilter === "Official" && ch.channel_type === "loverball_official");
     const matchSearch = !search || ch.channel_name.toLowerCase().includes(search.toLowerCase()) ||
-      (ch.handle || "").toLowerCase().includes(search.toLowerCase()) ||
+      (ch.slug || "").toLowerCase().includes(search.toLowerCase()) ||
       (ch.description || "").toLowerCase().includes(search.toLowerCase());
     return matchFilter && matchSearch;
   });

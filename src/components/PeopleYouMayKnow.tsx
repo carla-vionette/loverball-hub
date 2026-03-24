@@ -145,8 +145,6 @@ const PeopleYouMayKnow = ({ eventId, open, onOpenChange }: PeopleYouMayKnowProps
 
                   <AddFriendButton
                     targetUserId={attendee.id}
-                    targetName={attendee.name}
-                    mutualTeams={mutuals}
                     size="sm"
                   />
                 </div>

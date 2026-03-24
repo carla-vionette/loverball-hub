@@ -10,7 +10,6 @@ export async function fetchEvents(options?: {
   let query = supabase
     .from('events')
     .select('*')
-    .eq('approval_status', 'approved')
     .order('event_date', { ascending: true });
 
   if (options?.upcoming) {
