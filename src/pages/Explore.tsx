@@ -103,7 +103,7 @@ const ChannelCard = ({ channel }: { channel: DbChannel }) => {
   const typeColor = channel.channel_type === "team" ? "bg-accent" : channel.channel_type === "creator" ? "bg-primary" : "bg-primary";
 
   return (
-    <a href={`/channel/${channel.handle || channel.slug}`} className="block">
+    <a href={`/channel/${channel.slug}`} className="block">
       <Card className="p-4 hover:shadow-md transition-all group cursor-pointer">
         <div className="flex items-start gap-3">
           <Avatar className="w-12 h-12 flex-shrink-0">
