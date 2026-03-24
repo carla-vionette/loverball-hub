@@ -143,9 +143,9 @@ const Index = () => {
         <div className="max-w-[1280px] mx-auto px-8">
           <div className="flex items-center justify-between h-20">
             <div className="hidden lg:flex items-center gap-10">
-              <a href="#explore" className="text-[11px] font-sans font-bold tracking-[0.25em] uppercase text-muted-foreground hover:text-foreground transition-colors duration-300">Explore</a>
-              <a href="#trending" className="text-[11px] font-sans font-bold tracking-[0.25em] uppercase text-muted-foreground hover:text-foreground transition-colors duration-300">Trending</a>
-              <a href="#events" className="text-[11px] font-sans font-bold tracking-[0.25em] uppercase text-muted-foreground hover:text-foreground transition-colors duration-300">Events</a>
+              <button onClick={openAuthModal} className="text-[11px] font-sans font-bold tracking-[0.25em] uppercase text-muted-foreground hover:text-foreground transition-colors duration-300 bg-transparent border-none cursor-pointer">Explore</button>
+              <button onClick={openAuthModal} className="text-[11px] font-sans font-bold tracking-[0.25em] uppercase text-muted-foreground hover:text-foreground transition-colors duration-300 bg-transparent border-none cursor-pointer">Trending</button>
+              <button onClick={openAuthModal} className="text-[11px] font-sans font-bold tracking-[0.25em] uppercase text-muted-foreground hover:text-foreground transition-colors duration-300 bg-transparent border-none cursor-pointer">Events</button>
             </div>
             <div className="absolute left-1/2 -translate-x-1/2">
               <img src={loverballLogo} alt="Loverball" className="h-56 w-auto" style={{ filter: 'brightness(0) invert(1)' }} />
@@ -166,9 +166,9 @@ const Index = () => {
         </div>
         {mobileMenuOpen &&
         <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="lg:hidden bg-background border-t border-border/20 px-8 py-6 space-y-1">
-            <a href="#explore" onClick={() => setMobileMenuOpen(false)} className="block py-3 text-[11px] font-sans font-bold tracking-[0.25em] uppercase text-muted-foreground">Explore</a>
-            <a href="#trending" onClick={() => setMobileMenuOpen(false)} className="block py-3 text-[11px] font-sans font-bold tracking-[0.25em] uppercase text-muted-foreground">Trending</a>
-            <a href="#events" onClick={() => setMobileMenuOpen(false)} className="block py-3 text-[11px] font-sans font-bold tracking-[0.25em] uppercase text-muted-foreground">Events</a>
+            <button onClick={() => {setMobileMenuOpen(false);openAuthModal();}} className="block py-3 text-[11px] font-sans font-bold tracking-[0.25em] uppercase text-muted-foreground bg-transparent border-none cursor-pointer w-full text-left">Explore</button>
+            <button onClick={() => {setMobileMenuOpen(false);openAuthModal();}} className="block py-3 text-[11px] font-sans font-bold tracking-[0.25em] uppercase text-muted-foreground bg-transparent border-none cursor-pointer w-full text-left">Trending</button>
+            <button onClick={() => {setMobileMenuOpen(false);openAuthModal();}} className="block py-3 text-[11px] font-sans font-bold tracking-[0.25em] uppercase text-muted-foreground bg-transparent border-none cursor-pointer w-full text-left">Events</button>
             <Button onClick={() => {setMobileMenuOpen(false);openAuthModal();}} className="w-full rounded-full mt-4 bg-primary text-primary-foreground text-[11px] tracking-[0.2em] uppercase">
               Join Loverball
             </Button>
@@ -272,7 +272,7 @@ const Index = () => {
                 <Button onClick={openAuthModal} className="rounded-full bg-primary text-primary-foreground hover:bg-primary/90 px-8 py-5 text-[11px] font-sans font-bold tracking-[0.2em] uppercase h-auto">
                   Join Loverball <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
-                <Button onClick={() => document.getElementById("events")?.scrollIntoView({ behavior: "smooth" })} variant="outline" className="rounded-full border-2 border-foreground/30 text-foreground bg-transparent hover:bg-foreground/5 px-8 py-5 text-[11px] font-sans font-bold tracking-[0.2em] uppercase h-auto">
+                <Button onClick={openAuthModal} variant="outline" className="rounded-full border-2 border-foreground/30 text-foreground bg-transparent hover:bg-foreground/5 px-8 py-5 text-[11px] font-sans font-bold tracking-[0.2em] uppercase h-auto">
                   Find Events
                 </Button>
               </div>
@@ -359,7 +359,7 @@ const Index = () => {
             <Zap className="w-8 h-8 text-primary hidden md:block" />
           </motion.div>
 
-          <TrendingNews />
+          <TrendingNews onAuthRequired={openAuthModal} />
         </div>
       </section>
 
@@ -534,9 +534,9 @@ const Index = () => {
             <div className="lg:col-span-2 lg:col-start-7">
               <p className="text-muted-foreground/50 text-[11px] font-sans font-bold tracking-[0.2em] uppercase mb-4">Platform</p>
               <nav className="space-y-3">
-                <a href="#explore" className="block text-sm text-muted-foreground hover:text-foreground transition-colors duration-300">Explore</a>
-                <a href="#trending" className="block text-sm text-muted-foreground hover:text-foreground transition-colors duration-300">Trending</a>
-                <a href="#events" className="block text-sm text-muted-foreground hover:text-foreground transition-colors duration-300">Events</a>
+                <button onClick={openAuthModal} className="block text-sm text-muted-foreground hover:text-foreground transition-colors duration-300 bg-transparent border-none cursor-pointer p-0 text-left">Explore</button>
+                <button onClick={openAuthModal} className="block text-sm text-muted-foreground hover:text-foreground transition-colors duration-300 bg-transparent border-none cursor-pointer p-0 text-left">Trending</button>
+                <button onClick={openAuthModal} className="block text-sm text-muted-foreground hover:text-foreground transition-colors duration-300 bg-transparent border-none cursor-pointer p-0 text-left">Events</button>
               </nav>
             </div>
             <div className="lg:col-span-2">
