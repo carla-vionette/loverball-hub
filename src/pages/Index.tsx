@@ -272,7 +272,7 @@ const Index = () => {
                 <Button onClick={openAuthModal} className="rounded-full bg-primary text-primary-foreground hover:bg-primary/90 px-8 py-5 text-[11px] font-sans font-bold tracking-[0.2em] uppercase h-auto">
                   Join Loverball <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
-                <Button onClick={() => document.getElementById("events")?.scrollIntoView({ behavior: "smooth" })} variant="outline" className="rounded-full border-2 border-foreground/30 text-foreground bg-transparent hover:bg-foreground/5 px-8 py-5 text-[11px] font-sans font-bold tracking-[0.2em] uppercase h-auto">
+                <Button onClick={openAuthModal} variant="outline" className="rounded-full border-2 border-foreground/30 text-foreground bg-transparent hover:bg-foreground/5 px-8 py-5 text-[11px] font-sans font-bold tracking-[0.2em] uppercase h-auto">
                   Find Events
                 </Button>
               </div>
