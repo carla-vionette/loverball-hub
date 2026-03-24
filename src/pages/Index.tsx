@@ -359,7 +359,7 @@ const Index = () => {
             <Zap className="w-8 h-8 text-primary hidden md:block" />
           </motion.div>
 
-          <TrendingNews />
+          <TrendingNews onAuthRequired={openAuthModal} />
         </div>
       </section>
 
