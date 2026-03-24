@@ -391,7 +391,7 @@ const Watch = () => {
             {/* Bottom creator info */}
             <div className="absolute bottom-8 left-4 right-20 z-10">
               <a
-                href={`/channel/${activeVideo.channel?.handle || activeVideo.channel?.slug || ""}`}
+                href={`/channel/${activeVideo.channel?.slug || ""}`}
                 className="flex items-center gap-2 mb-2"
                 onClick={(e) => e.stopPropagation()}
               >
