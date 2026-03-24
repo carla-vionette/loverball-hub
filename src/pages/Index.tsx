@@ -143,9 +143,9 @@ const Index = () => {
         <div className="max-w-[1280px] mx-auto px-8">
           <div className="flex items-center justify-between h-20">
             <div className="hidden lg:flex items-center gap-10">
-              <a href="#explore" className="text-[11px] font-sans font-bold tracking-[0.25em] uppercase text-muted-foreground hover:text-foreground transition-colors duration-300">Explore</a>
-              <a href="#trending" className="text-[11px] font-sans font-bold tracking-[0.25em] uppercase text-muted-foreground hover:text-foreground transition-colors duration-300">Trending</a>
-              <a href="#events" className="text-[11px] font-sans font-bold tracking-[0.25em] uppercase text-muted-foreground hover:text-foreground transition-colors duration-300">Events</a>
+              <button onClick={openAuthModal} className="text-[11px] font-sans font-bold tracking-[0.25em] uppercase text-muted-foreground hover:text-foreground transition-colors duration-300 bg-transparent border-none cursor-pointer">Explore</button>
+              <button onClick={openAuthModal} className="text-[11px] font-sans font-bold tracking-[0.25em] uppercase text-muted-foreground hover:text-foreground transition-colors duration-300 bg-transparent border-none cursor-pointer">Trending</button>
+              <button onClick={openAuthModal} className="text-[11px] font-sans font-bold tracking-[0.25em] uppercase text-muted-foreground hover:text-foreground transition-colors duration-300 bg-transparent border-none cursor-pointer">Events</button>
             </div>
             <div className="absolute left-1/2 -translate-x-1/2">
               <img src={loverballLogo} alt="Loverball" className="h-56 w-auto" style={{ filter: 'brightness(0) invert(1)' }} />
