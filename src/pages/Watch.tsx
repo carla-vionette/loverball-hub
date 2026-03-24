@@ -24,7 +24,6 @@ interface VideoWithChannel {
   channel: {
     id: string;
     channel_name: string;
-    handle: string | null;
     slug: string;
     avatar_url: string | null;
     verified: boolean;
