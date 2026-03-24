@@ -534,9 +534,9 @@ const Index = () => {
             <div className="lg:col-span-2 lg:col-start-7">
               <p className="text-muted-foreground/50 text-[11px] font-sans font-bold tracking-[0.2em] uppercase mb-4">Platform</p>
               <nav className="space-y-3">
-                <a href="#explore" className="block text-sm text-muted-foreground hover:text-foreground transition-colors duration-300">Explore</a>
-                <a href="#trending" className="block text-sm text-muted-foreground hover:text-foreground transition-colors duration-300">Trending</a>
-                <a href="#events" className="block text-sm text-muted-foreground hover:text-foreground transition-colors duration-300">Events</a>
+                <button onClick={openAuthModal} className="block text-sm text-muted-foreground hover:text-foreground transition-colors duration-300 bg-transparent border-none cursor-pointer p-0 text-left">Explore</button>
+                <button onClick={openAuthModal} className="block text-sm text-muted-foreground hover:text-foreground transition-colors duration-300 bg-transparent border-none cursor-pointer p-0 text-left">Trending</button>
+                <button onClick={openAuthModal} className="block text-sm text-muted-foreground hover:text-foreground transition-colors duration-300 bg-transparent border-none cursor-pointer p-0 text-left">Events</button>
               </nav>
             </div>
             <div className="lg:col-span-2">
