@@ -55,7 +55,7 @@ const AdminEventsTab = ({ events, onRefresh }: Props) => {
     const { data } = await supabase
       .from('events')
       .select('*')
-      .eq('approval_status', 'pending')
+      .eq('status', 'pending')
       .order('created_at', { ascending: false });
     setPendingEvents(data || []);
   };
