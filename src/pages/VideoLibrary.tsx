@@ -91,7 +91,7 @@ const VideoLibrary = () => {
 
           {/* Tier filter */}
           <div className="flex gap-2 mt-3">
-            {['', 'free', 'pro', 'premium'].map(tier => (
+            {['', 'free', 'digital', 'local'].map(tier => (
               <Button
                 key={tier}
                 size="sm"

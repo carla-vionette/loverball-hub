@@ -51,7 +51,7 @@ const AdminVideosTab = ({ videos, onRefresh }: Props) => {
         id, title, video_url, thumbnail, category, created_at,
         channel:creator_channels!videos_channel_id_fkey ( channel_name )
       `)
-      .eq('approval_status', 'pending')
+      .eq('is_published', false)
       .order('created_at', { ascending: false });
     setPendingVideos(data || []);
   };

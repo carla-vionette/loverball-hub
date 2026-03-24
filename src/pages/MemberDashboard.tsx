@@ -130,7 +130,7 @@ const MemberDashboard = () => {
               <Card className="border-primary/20 bg-primary/5">
                 <CardContent className="p-4 flex items-center justify-between">
                   <div>
-                    <p className="font-semibold">Upgrade to Pro or Premium</p>
+                    <p className="font-semibold">Upgrade to All Access or The Club</p>
                     <p className="text-sm text-muted-foreground">Unlock the full video library, all events, and more.</p>
                   </div>
                   <Link to="/pricing">
