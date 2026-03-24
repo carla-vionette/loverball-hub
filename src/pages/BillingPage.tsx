@@ -9,6 +9,15 @@ import { useAuth } from '@/hooks/useAuth';
 import { getUserSubscription } from '@/services/subscriptionService';
 import type { Subscription } from '@/types';
 
+const PLAN_LABELS: Record<string, string> = {
+  free: 'Free',
+  digital: 'All Access',
+  local: 'The Club',
+  // legacy fallbacks
+  community: 'All Access',
+  allaccess: 'The Club',
+};
+
 const BillingPage = () => {
   const { user } = useAuth();
   const [subscription, setSubscription] = useState<Subscription | null>(null);
@@ -67,13 +76,13 @@ const BillingPage = () => {
           <CardContent>
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-2xl font-bold capitalize">{plan}</p>
+                <p className="text-2xl font-bold">{PLAN_LABELS[plan] || plan}</p>
                 <p className="text-muted-foreground text-sm mt-1">
                   {plan === 'free'
                     ? 'Limited access — upgrade for more'
-                    : plan === 'community'
-                    ? '$15/month — Full platform access'
-                    : '$35/month — All Access experience'}
+                    : plan === 'digital'
+                    ? '$15/month — All Access experience'
+                    : '$35/month — The Club experience'}
                 </p>
                 {periodEnd && (
                   <p className="text-xs text-muted-foreground mt-2">
