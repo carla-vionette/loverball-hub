@@ -351,7 +351,7 @@ const Watch = () => {
             <div className="absolute right-4 bottom-32 z-10 flex flex-col items-center gap-6">
               {/* Channel avatar */}
               <a
-                href={`/channel/${activeVideo.channel?.handle || activeVideo.channel?.slug || ""}`}
+                href={`/channel/${activeVideo.channel?.slug || ""}`}
                 className="block"
                 onClick={(e) => e.stopPropagation()}
               >
