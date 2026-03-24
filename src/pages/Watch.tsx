@@ -24,7 +24,6 @@ interface VideoWithChannel {
   channel: {
     id: string;
     channel_name: string;
-    handle: string | null;
     slug: string;
     avatar_url: string | null;
     verified: boolean;
@@ -61,7 +60,7 @@ const Watch = () => {
         .select(`
           id, title, description, video_url, thumbnail, thumbnail_url, category, tags, created_at,
           channel:creator_channels!videos_channel_id_fkey (
-            id, channel_name, handle, slug, avatar_url, verified, channel_type
+            id, channel_name, slug, avatar_url, verified, channel_type
           )
         `)
         .eq("is_published", true)
@@ -352,7 +351,7 @@ const Watch = () => {
             <div className="absolute right-4 bottom-32 z-10 flex flex-col items-center gap-6">
               {/* Channel avatar */}
               <a
-                href={`/channel/${activeVideo.channel?.handle || activeVideo.channel?.slug || ""}`}
+                href={`/channel/${activeVideo.channel?.slug || ""}`}
                 className="block"
                 onClick={(e) => e.stopPropagation()}
               >
@@ -392,7 +391,7 @@ const Watch = () => {
             {/* Bottom creator info */}
             <div className="absolute bottom-8 left-4 right-20 z-10">
               <a
-                href={`/channel/${activeVideo.channel?.handle || activeVideo.channel?.slug || ""}`}
+                href={`/channel/${activeVideo.channel?.slug || ""}`}
                 className="flex items-center gap-2 mb-2"
                 onClick={(e) => e.stopPropagation()}
               >

@@ -583,7 +583,6 @@ const Friends = () => {
                   </div>
                   <AddFriendButton
                     targetUserId={profile.id}
-                    targetName={profile.name}
                     size="sm"
                   />
                 </CardContent>

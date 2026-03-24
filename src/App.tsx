@@ -68,7 +68,6 @@ const ApplicationPending = lazy(() => import("./pages/ApplicationPending"));
 
 // Creator/Application pages
 const CreatorApplication = lazy(() => import("./pages/CreatorApplication"));
-const ApplicationPending = lazy(() => import("./pages/ApplicationPending"));
 
 // Admin pages
 const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));

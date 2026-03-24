@@ -229,8 +229,6 @@ const AdminDashboard = () => {
         )}
         {activeTab === 'creator-applications' && (
           <AdminCreatorApplicationsTab
-            applications={creatorApplications}
-            reviewerId={user?.id || ''}
             onRefresh={loadAllData}
           />
         )}

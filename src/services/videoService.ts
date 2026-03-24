@@ -10,7 +10,6 @@ export async function fetchVideos(options?: {
   let query = supabase
     .from('videos')
     .select('*')
-    .eq('approval_status', 'approved')
     .order('created_at', { ascending: false });
 
   if (options?.category) {
@@ -46,7 +45,6 @@ export async function fetchRelatedVideos(videoId: string, category: string | nul
     .from('videos')
     .select('*')
     .neq('id', videoId)
-    .eq('approval_status', 'approved')
     .order('created_at', { ascending: false })
     .limit(6);
 
