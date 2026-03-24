@@ -1,92 +1,93 @@
-import { useQuery } from "@tanstack/react-query";
-import { fetchWnbaGamesByDate, formatSportsDate, hasApiKey, type WnbaGame } from "@/services/sportsDataApi";
+import { useState } from "react";
 import { Card } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Trophy, Clock, Radio } from "lucide-react";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { EmptyState } from "@/components/ui/empty-state";
+import { Calendar, Trophy, Clock } from "lucide-react";
 
-const statusConfig: Record<string, { label: string; icon: typeof Trophy; className: string }> = {
-  Final: { label: "Final", icon: Trophy, className: "text-muted-foreground" },
-  InProgress: { label: "LIVE", icon: Radio, className: "text-accent animate-pulse" },
-  Scheduled: { label: "Upcoming", icon: Clock, className: "text-primary" },
-};
+/**
+ * LiveScores — Shows live/upcoming games for women's leagues.
+ *
+ * TODO: Real API integration
+ * ─────────────────────────
+ * When a SportsDataIO (or similar) API key is available, replace the empty
+ * states below with live data fetched via a backend edge function
+ * (e.g. supabase/functions/sports-data-proxy) to avoid CORS issues.
+ *
+ * Endpoints to integrate:
+ *   WNBA:  https://api.sportsdata.io/v3/wnba/scores/json/GamesByDate/{date}
+ *   NWSL:  https://api.sportsdata.io/v3/soccer/scores/json/GamesByDate/nwsl/{date}
+ *   NCAAW: https://api.sportsdata.io/v3/cbb/scores/json/GamesByDate/{date} (filter women's)
+ */
 
-const GameCard = ({ game }: { game: WnbaGame }) => {
-  const status = statusConfig[game.Status] || statusConfig.Scheduled;
-  const StatusIcon = status.icon;
-  const gameTime = game.DateTime
-    ? new Date(game.DateTime).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })
-    : "TBD";
+interface LeagueInfo {
+  key: string;
+  name: string;
+  seasonStatus: string;
+  seasonNote: string;
+  icon: string;
+}
 
-  return (
-    <Card className="p-4 bg-card border-border/30 hover:border-primary/30 transition-colors">
-      <div className="flex items-center justify-between mb-3">
-        <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-          {game.GameID <= 3 ? "WNBA" : "NWSL"}
-        </span>
-        <div className={`flex items-center gap-1.5 text-xs font-semibold ${status.className}`}>
-          <StatusIcon className="w-3.5 h-3.5" />
-          {game.Status === "Scheduled" ? gameTime : status.label}
-        </div>
-      </div>
+const LEAGUES: LeagueInfo[] = [
+  {
+    key: "wnba",
+    name: "WNBA",
+    seasonStatus: "Season starts May 2026",
+    seasonNote: "The 2026 WNBA season tips off in May. Check back for live scores, standings, and game schedules.",
+    icon: "🏀",
+  },
+  {
+    key: "nwsl",
+    name: "NWSL",
+    seasonStatus: "Season underway — March 2026",
+    seasonNote: "The 2026 NWSL season is in progress. Connect a sports data API to see live scores and results.",
+    icon: "⚽",
+  },
+  {
+    key: "ncaaw",
+    name: "NCAAW",
+    seasonStatus: "March Madness — March 2026",
+    seasonNote: "The 2026 NCAA Women's Basketball Tournament is happening now. Connect a sports data API to see live scores.",
+    icon: "🏀",
+  },
+];
 
-      <div className="space-y-2.5">
-        <div className="flex items-center justify-between">
-          <span className="font-semibold text-sm text-foreground">{game.AwayTeam}</span>
-          <span className={`text-lg font-bold tabular-nums ${game.Status === "Final" && (game.AwayTeamScore ?? 0) > (game.HomeTeamScore ?? 0) ? "text-primary" : "text-foreground"}`}>
-            {game.AwayTeamScore ?? "-"}
-          </span>
-        </div>
-        <div className="flex items-center justify-between">
-          <span className="font-semibold text-sm text-foreground">{game.HomeTeam}</span>
-          <span className={`text-lg font-bold tabular-nums ${game.Status === "Final" && (game.HomeTeamScore ?? 0) > (game.AwayTeamScore ?? 0) ? "text-primary" : "text-foreground"}`}>
-            {game.HomeTeamScore ?? "-"}
-          </span>
-        </div>
-      </div>
-
-      {game.Channel && (
-        <p className="text-[10px] text-muted-foreground mt-2 pt-2 border-t border-border/20">{game.Channel}</p>
-      )}
-    </Card>
-  );
-};
+const LeagueEmptyState = ({ league }: { league: LeagueInfo }) => (
+  <div className="py-8">
+    <EmptyState
+      icon={league.key === "ncaaw" ? Trophy : league.key === "nwsl" ? Clock : Calendar}
+      title={`No live ${league.name} games right now`}
+      description={league.seasonNote}
+    />
+    <div className="flex justify-center mt-2">
+      <span className="text-xs font-semibold uppercase tracking-wider text-accent">
+        {league.icon} {league.seasonStatus}
+      </span>
+    </div>
+  </div>
+);
 
 const LiveScores = () => {
-  const today = formatSportsDate();
-  const apiAvailable = hasApiKey();
-
-  const { data: games, isLoading, error } = useQuery({
-    queryKey: ["wnba-scores", today],
-    queryFn: () => fetchWnbaGamesByDate(today),
-    refetchInterval: 60_000,
-    enabled: apiAvailable,
-  });
-
-  const FALLBACK_GAMES: WnbaGame[] = [
-    { GameID: 901, Season: 2026, Status: "Final", DateTime: new Date().toISOString(), HomeTeam: "LVA", AwayTeam: "LAS", HomeTeamScore: 92, AwayTeamScore: 84, HomeTeamID: 1, AwayTeamID: 6, Channel: "ESPN", Quarter: null, TimeRemainingMinutes: null, TimeRemainingSeconds: null },
-    { GameID: 902, Season: 2026, Status: "InProgress", DateTime: new Date().toISOString(), HomeTeam: "NYL", AwayTeam: "SEA", HomeTeamScore: 56, AwayTeamScore: 61, HomeTeamID: 2, AwayTeamID: 3, Channel: "ESPN2", Quarter: "3rd", TimeRemainingMinutes: 4, TimeRemainingSeconds: 32 },
-    { GameID: 903, Season: 2026, Status: "Scheduled", DateTime: new Date(Date.now() + 3 * 3600000).toISOString(), HomeTeam: "MIN", AwayTeam: "CON", HomeTeamScore: null, AwayTeamScore: null, HomeTeamID: 4, AwayTeamID: 5, Channel: "CBS Sports", Quarter: null, TimeRemainingMinutes: null, TimeRemainingSeconds: null },
-    { GameID: 904, Season: 2026, Status: "Final", DateTime: new Date().toISOString(), HomeTeam: "CHI", AwayTeam: "PHO", HomeTeamScore: 78, AwayTeamScore: 85, HomeTeamID: 7, AwayTeamID: 8, Channel: "Peacock", Quarter: null, TimeRemainingMinutes: null, TimeRemainingSeconds: null },
-  ];
-
-  const displayGames = (games?.length) ? games : FALLBACK_GAMES;
-
-  if (isLoading) {
-    return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        {[1, 2, 3].map((i) => (
-          <Card key={i} className="p-4"><Skeleton className="h-24 w-full" /></Card>
-        ))}
-      </div>
-    );
-  }
+  const [activeLeague, setActiveLeague] = useState("wnba");
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-      {displayGames.map((game) => (
-        <GameCard key={game.GameID} game={game} />
+    <Tabs value={activeLeague} onValueChange={setActiveLeague}>
+      <TabsList className="w-full">
+        {LEAGUES.map((l) => (
+          <TabsTrigger key={l.key} value={l.key} className="flex-1 text-xs font-bold uppercase tracking-wider">
+            {l.icon} {l.name}
+          </TabsTrigger>
+        ))}
+      </TabsList>
+
+      {LEAGUES.map((league) => (
+        <TabsContent key={league.key} value={league.key}>
+          <Card className="border-border/30">
+            {/* TODO: Replace with real game cards when API is connected */}
+            <LeagueEmptyState league={league} />
+          </Card>
+        </TabsContent>
       ))}
-    </div>
+    </Tabs>
   );
 };
 

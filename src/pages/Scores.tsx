@@ -17,12 +17,12 @@ const ScoresContent = () => (
     </div>
 
     <section>
-      <h2 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-3">Today's Games</h2>
+      <h2 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-3">Games</h2>
       <LiveScores />
     </section>
 
     <section>
-      <h2 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-3">WNBA Standings</h2>
+      <h2 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-3">Standings</h2>
       <Standings />
     </section>
   </div>
