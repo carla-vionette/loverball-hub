@@ -24,6 +24,7 @@ const signInSchema = z.object({
 });
 
 const ACCESS_CODE = '7988';
+const LIVE_SITE_URL = 'https://loverball-hub.lovable.app';
 
 const Auth = () => {
   const [searchParams] = useSearchParams();
@@ -39,6 +40,7 @@ const Auth = () => {
   
   const [staySignedIn, setStaySignedIn] = useState(true);
   const [loading, setLoading] = useState(false);
+  const [resendLoading, setResendLoading] = useState(false);
   const [splashName, setSplashName] = useState<string | null>(null);
   const [pendingRedirect, setPendingRedirect] = useState<string | null>(null);
   const navigate = useNavigate();
@@ -108,6 +110,52 @@ const Auth = () => {
     }
   };
 
+  const handleResendConfirmation = async () => {
+    if (!email) return;
+    setResendLoading(true);
+    try {
+      const { error } = await supabase.auth.resend({
+        type: 'signup',
+        email,
+        options: {
+          emailRedirectTo: `${LIVE_SITE_URL}/onboarding`,
+        },
+      });
+      if (error) throw error;
+      toast({
+        title: "Email Resent",
+        description: "We sent another confirmation email. Please check your inbox and spam folder.",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Could not resend",
+        description: error.message || "Please wait a minute and try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setResendLoading(false);
+    }
+  };
+
+  const handleForgotPassword = async () => {
+    if (!email) {
+      toast({ title: "Enter your email", description: "Type your email address above, then click Forgot Password.", variant: "destructive" });
+      return;
+    }
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${LIVE_SITE_URL}/auth?reset=true`,
+      });
+      if (error) throw error;
+      toast({ title: "Reset Link Sent", description: "Check your email for a password reset link." });
+    } catch (error: any) {
+      toast({ title: "Error", description: error.message, variant: "destructive" });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleEmailAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -125,7 +173,7 @@ const Auth = () => {
           email: validation.data.email,
           password: validation.data.password,
           options: {
-            emailRedirectTo: `${window.location.origin}/onboarding`
+            emailRedirectTo: `${LIVE_SITE_URL}/onboarding`
           }
         });
         
@@ -203,7 +251,7 @@ const Auth = () => {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/plans`
+          redirectTo: `${LIVE_SITE_URL}/plans`
         }
       });
       
@@ -292,14 +340,29 @@ const Auth = () => {
                   We sent a confirmation link to <span className="font-semibold text-foreground">{email}</span>. 
                   Click the link to verify your account and join the community.
                 </p>
+                <div className="bg-muted/50 border border-border rounded-lg p-4 max-w-sm mx-auto">
+                  <p className="text-foreground/60 text-xs leading-relaxed">
+                    📧 <strong>Don't see it?</strong> Check your <strong>spam/junk folder</strong>. 
+                    Confirmation emails can sometimes take a few minutes to arrive.
+                  </p>
+                </div>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handleResendConfirmation}
+                  disabled={resendLoading}
+                  className="rounded-none h-10 text-xs tracking-wider"
+                >
+                  {resendLoading ? "SENDING..." : "RESEND CONFIRMATION EMAIL"}
+                </Button>
                 <p className="text-foreground/40 text-xs">
-                  Didn't receive it? Check your spam folder or{' '}
+                  Wrong email?{' '}
                   <button
                     type="button"
                     onClick={() => { setShowConfirmEmail(false); }}
                     className="text-primary hover:underline"
                   >
-                    try again
+                    Go back and try again
                   </button>
                 </p>
               </motion.div>
@@ -454,19 +517,28 @@ const Auth = () => {
                 </div>
 
                 {!isSignUp && (
-                  <div className="flex items-center space-x-2">
-                    <Checkbox
-                      id="staySignedIn"
-                      checked={staySignedIn}
-                      onCheckedChange={(checked) => setStaySignedIn(checked === true)}
-                      className="border-border data-[state=checked]:bg-primary data-[state=checked]:border-primary"
-                    />
-                    <Label
-                      htmlFor="staySignedIn"
-                      className="text-sm text-foreground/60 cursor-pointer select-none"
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <Checkbox
+                        id="staySignedIn"
+                        checked={staySignedIn}
+                        onCheckedChange={(checked) => setStaySignedIn(checked === true)}
+                        className="border-border data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+                      />
+                      <Label
+                        htmlFor="staySignedIn"
+                        className="text-sm text-foreground/60 cursor-pointer select-none"
+                      >
+                        Stay signed in
+                      </Label>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleForgotPassword}
+                      className="text-xs text-primary hover:underline"
                     >
-                      Stay signed in
-                    </Label>
+                      Forgot password?
+                    </button>
                   </div>
                 )}
 
