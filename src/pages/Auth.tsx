@@ -40,6 +40,7 @@ const Auth = () => {
   
   const [staySignedIn, setStaySignedIn] = useState(true);
   const [loading, setLoading] = useState(false);
+  const [resendLoading, setResendLoading] = useState(false);
   const [splashName, setSplashName] = useState<string | null>(null);
   const [pendingRedirect, setPendingRedirect] = useState<string | null>(null);
   const navigate = useNavigate();
