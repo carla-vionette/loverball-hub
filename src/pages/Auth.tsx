@@ -110,6 +110,52 @@ const Auth = () => {
     }
   };
 
+  const handleResendConfirmation = async () => {
+    if (!email) return;
+    setResendLoading(true);
+    try {
+      const { error } = await supabase.auth.resend({
+        type: 'signup',
+        email,
+        options: {
+          emailRedirectTo: `${LIVE_SITE_URL}/onboarding`,
+        },
+      });
+      if (error) throw error;
+      toast({
+        title: "Email Resent",
+        description: "We sent another confirmation email. Please check your inbox and spam folder.",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Could not resend",
+        description: error.message || "Please wait a minute and try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setResendLoading(false);
+    }
+  };
+
+  const handleForgotPassword = async () => {
+    if (!email) {
+      toast({ title: "Enter your email", description: "Type your email address above, then click Forgot Password.", variant: "destructive" });
+      return;
+    }
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${LIVE_SITE_URL}/auth?reset=true`,
+      });
+      if (error) throw error;
+      toast({ title: "Reset Link Sent", description: "Check your email for a password reset link." });
+    } catch (error: any) {
+      toast({ title: "Error", description: error.message, variant: "destructive" });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleEmailAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
