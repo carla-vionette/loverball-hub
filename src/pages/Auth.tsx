@@ -127,7 +127,7 @@ const Auth = () => {
           email: validation.data.email,
           password: validation.data.password,
           options: {
-            emailRedirectTo: `${window.location.origin}/onboarding`
+            emailRedirectTo: `${LIVE_SITE_URL}/onboarding`
           }
         });
         
