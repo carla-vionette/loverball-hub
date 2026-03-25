@@ -340,14 +340,29 @@ const Auth = () => {
                   We sent a confirmation link to <span className="font-semibold text-foreground">{email}</span>. 
                   Click the link to verify your account and join the community.
                 </p>
+                <div className="bg-muted/50 border border-border rounded-lg p-4 max-w-sm mx-auto">
+                  <p className="text-foreground/60 text-xs leading-relaxed">
+                    📧 <strong>Don't see it?</strong> Check your <strong>spam/junk folder</strong>. 
+                    Confirmation emails can sometimes take a few minutes to arrive.
+                  </p>
+                </div>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handleResendConfirmation}
+                  disabled={resendLoading}
+                  className="rounded-none h-10 text-xs tracking-wider"
+                >
+                  {resendLoading ? "SENDING..." : "RESEND CONFIRMATION EMAIL"}
+                </Button>
                 <p className="text-foreground/40 text-xs">
-                  Didn't receive it? Check your spam folder or{' '}
+                  Wrong email?{' '}
                   <button
                     type="button"
                     onClick={() => { setShowConfirmEmail(false); }}
                     className="text-primary hover:underline"
                   >
-                    try again
+                    Go back and try again
                   </button>
                 </p>
               </motion.div>
