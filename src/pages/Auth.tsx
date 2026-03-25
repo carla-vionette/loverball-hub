@@ -24,6 +24,7 @@ const signInSchema = z.object({
 });
 
 const ACCESS_CODE = '7988';
+const LIVE_SITE_URL = 'https://loverball-hub.lovable.app';
 
 const Auth = () => {
   const [searchParams] = useSearchParams();
