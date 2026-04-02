@@ -178,9 +178,7 @@ const Onboarding = () => {
         bio,
         profile_photo_url: photoUrl,
         sms_notifications_enabled: smsOptIn,
-        account_type: 'member',
-        approval_status: 'approved',
-      } as any, { onConflict: "id" });
+      }, { onConflict: "id" });
 
       if (error) throw error;
 
