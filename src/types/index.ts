@@ -1,5 +1,5 @@
 export type AppRole = 'pending' | 'member' | 'admin';
-export type AccountType = 'member' | 'team' | 'creator' | 'organization';
+export type AccountType = 'fan' | 'member' | 'team' | 'creator' | 'organization';
 export type ApprovalStatus = 'approved' | 'pending_review' | 'rejected';
 export type ContentApprovalStatus = 'approved' | 'pending' | 'rejected';
 export type SubscriptionPlan = 'free' | 'digital' | 'local';
