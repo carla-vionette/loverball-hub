@@ -68,27 +68,16 @@ const CreatorApplication = () => {
 
     setLoading(true);
     try {
-      // First create a basic profile
+      // Create/update basic profile with only columns that exist in the DB
       const { error: profileError } = await supabase.from("profiles").upsert({
         id: userId,
         name: orgName || officialEmail.split("@")[0],
         account_type: accountType,
-        approval_status: "pending_review",
-        official_email: officialEmail,
-        phone_number: phoneNumber,
-        social_links: {
-          instagram: instagram || undefined,
-          tiktok: tiktok || undefined,
-          youtube: youtube || undefined,
-          twitter: twitter || undefined,
-        },
-        content_bio: contentBio || null,
-        org_name: orgName || null,
-      } as any, { onConflict: "id" });
+      }, { onConflict: "id" });
 
       if (profileError) throw profileError;
 
-      // Submit the application
+      // Submit the application (stores all details in creator_applications table)
       await submitCreatorApplication({
         user_id: userId,
         account_type: accountType,
