@@ -9,6 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import BottomNav from "@/components/BottomNav";
 import DesktopNav from "@/components/DesktopNav";
+import DesktopTopBar from "@/components/DesktopTopBar";
 import MobileHeader from "@/components/MobileHeader";
 
 interface VideoWithChannel {
@@ -205,8 +206,11 @@ const Watch = () => {
         <MobileHeader />
         <DesktopNav />
         <BottomNav />
-        <main className="md:ml-64 pt-16 md:pt-0 pb-24 md:pb-0 flex items-center justify-center">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <main className="md:ml-64 pt-16 md:pt-0 pb-24 md:pb-0">
+          <DesktopTopBar />
+          <div className="flex items-center justify-center min-h-[60vh]">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          </div>
         </main>
       </div>
     );
@@ -219,7 +223,8 @@ const Watch = () => {
       <BottomNav />
 
       <main className="md:ml-64 pt-16 md:pt-0 pb-24 md:pb-0">
-        <div className="max-w-6xl mx-auto px-5 md:px-10 py-6">
+        <DesktopTopBar />
+        <div className="max-w-6xl mx-auto px-5 md:px-10 py-6 md:scroll-mt-24 md:pt-6">
           <h1 className="font-condensed text-3xl font-bold uppercase tracking-wide mb-5">Watch</h1>
 
           {/* Category Tabs */}
