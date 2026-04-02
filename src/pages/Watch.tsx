@@ -219,7 +219,7 @@ const Watch = () => {
       <BottomNav />
 
       <main className="md:ml-64 pt-16 md:pt-0 pb-24 md:pb-0">
-        <div className="max-w-6xl mx-auto px-5 md:px-10 py-6">
+        <div className="max-w-6xl mx-auto px-5 md:px-10 py-6 md:pt-10 md:scroll-mt-[96px]">
           <h1 className="font-condensed text-3xl font-bold uppercase tracking-wide mb-5">Watch</h1>
 
           {/* Category Tabs */}
