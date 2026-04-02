@@ -1465,6 +1465,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          account_type: string | null
           age_range: string | null
           billing_period: string | null
           bio: string | null
@@ -1503,6 +1504,7 @@ export type Database = {
           website_url: string | null
         }
         Insert: {
+          account_type?: string | null
           age_range?: string | null
           billing_period?: string | null
           bio?: string | null
@@ -1541,6 +1543,7 @@ export type Database = {
           website_url?: string | null
         }
         Update: {
+          account_type?: string | null
           age_range?: string | null
           billing_period?: string | null
           bio?: string | null
