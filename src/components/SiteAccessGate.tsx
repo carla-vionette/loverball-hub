@@ -1,6 +1,6 @@
 import { useState, useEffect, ReactNode } from 'react';
 
-const ACCESS_CODE = '7988';
+const ACCESS_CODE = '7688';
 const STORAGE_KEY = 'loverball_site_access';
 
 const SiteAccessGate = ({ children }: { children: ReactNode }) => {
