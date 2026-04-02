@@ -23,7 +23,7 @@ const signInSchema = z.object({
   password: z.string().min(1, "Password is required"),
 });
 
-const ACCESS_CODE = '7988';
+const ACCESS_CODE = '7688';
 const LIVE_SITE_URL = 'https://loverball-hub.lovable.app';
 
 const Auth = () => {
