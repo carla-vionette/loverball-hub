@@ -202,18 +202,12 @@ export async function submitCreatorApplication(application: {
     .insert(application as any);
   if (appError) throw appError;
 
-  // Update profile with account_type and pending_review status
+  // Update profile account_type (approval is tracked in creator_applications table)
   const { error: profileError } = await supabase
     .from('profiles')
     .update({
       account_type: application.account_type,
-      approval_status: 'pending_review',
-      official_email: application.official_email,
-      phone_number: application.phone_number,
-      social_links: application.social_links,
-      content_bio: application.content_bio || null,
-      org_name: application.org_name || null,
-    } as any)
+    })
     .eq('id', application.user_id);
   if (profileError) throw profileError;
 }
@@ -266,14 +260,7 @@ export async function handleCreatorApplication(
 
   const appData = app as any;
 
-  // Update profile approval_status
-  const { error: profileError } = await supabase
-    .from('profiles')
-    .update({
-      approval_status: action === 'approved' ? 'approved' : 'rejected',
-    } as any)
-    .eq('id', appData.user_id);
-  if (profileError) throw profileError;
+  // Approval status is tracked in creator_applications table, not profiles
 
   // If approved, ensure user has member role
   if (action === 'approved') {
