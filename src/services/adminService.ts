@@ -22,7 +22,7 @@ export async function fetchMembers(): Promise<UserProfile[]> {
     .select('*')
     .order('created_at', { ascending: false });
   if (error) throw error;
-  return data || [];
+  return (data || []) as UserProfile[];
 }
 
 export async function suspendMember(userId: string): Promise<void> {
