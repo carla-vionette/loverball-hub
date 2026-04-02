@@ -117,7 +117,7 @@ const VideoDetail = () => {
       <div className="min-h-screen bg-background">
         <MobileHeader /><DesktopNav /><BottomNav />
         <main className="md:ml-64 pt-16 md:pt-0 pb-24 md:pb-0">
-          <div className="max-w-4xl mx-auto px-4 md:px-8 py-4">
+          <div className="max-w-4xl mx-auto px-4 md:px-8 py-4 md:pt-10 md:scroll-mt-[96px]">
             <button onClick={() => window.history.back()} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-4 transition-colors">
               <ArrowLeft className="w-4 h-4" /> Back
             </button>
@@ -176,7 +176,7 @@ const VideoDetail = () => {
     <div className="min-h-screen bg-background">
       <MobileHeader /><DesktopNav /><BottomNav />
       <main className="md:ml-64 pt-16 md:pt-0 pb-24 md:pb-0">
-        <div className="max-w-4xl mx-auto px-4 md:px-8 py-4">
+        <div className="max-w-4xl mx-auto px-4 md:px-8 py-4 md:pt-10 md:scroll-mt-[96px]">
           <button onClick={() => window.history.back()} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-4 transition-colors">
             <ArrowLeft className="w-4 h-4" /> Back
           </button>

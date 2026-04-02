@@ -67,7 +67,7 @@ const VideoPlayerPage = () => {
 
   return (
     <AppLayout>
-      <div className="container mx-auto px-4 py-8 max-w-5xl">
+      <div className="container mx-auto px-4 py-8 max-w-5xl md:pt-10 md:scroll-mt-[96px]">
         <Link to="/videos" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-4">
           <ArrowLeft className="w-4 h-4" /> Back to Videos
         </Link>

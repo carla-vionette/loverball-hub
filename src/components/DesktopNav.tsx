@@ -47,7 +47,7 @@ const DesktopNav = () => {
 
   return (
     <aside
-      className="hidden md:flex fixed left-0 top-0 h-screen w-64 bg-background border-r border-border/20 flex-col z-50"
+      className="hidden md:flex fixed left-0 top-0 h-screen w-64 bg-[rgba(247,246,242,0.92)] backdrop-blur-[10px] border-r border-[rgba(40,37,29,0.08)] flex-col z-[1000]"
       role="navigation"
       aria-label="Main navigation"
     >
