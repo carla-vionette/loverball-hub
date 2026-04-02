@@ -1,6 +1,7 @@
 import { ReactNode } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import DesktopNav from '@/components/DesktopNav';
+import DesktopTopBar from '@/components/DesktopTopBar';
 import MobileHeader from '@/components/MobileHeader';
 import BottomNav from '@/components/BottomNav';
 
@@ -21,6 +22,7 @@ const AppLayout = ({ children, hideNav = false }: AppLayoutProps) => {
       <MobileHeader />
       <DesktopNav />
       <main className="md:ml-64 pt-[72px] md:pt-0 pb-24 md:pb-0">
+        <DesktopTopBar />
         {children}
       </main>
       <BottomNav />

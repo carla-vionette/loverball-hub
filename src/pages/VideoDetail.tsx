@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import BottomNav from "@/components/BottomNav";
 import DesktopNav from "@/components/DesktopNav";
+import DesktopTopBar from "@/components/DesktopTopBar";
 import MobileHeader from "@/components/MobileHeader";
 import { DISCOVER_VIDEOS, type DiscoverVideo } from "@/lib/discoverVideoData";
 import { supabase } from "@/integrations/supabase/client";
@@ -103,8 +104,11 @@ const VideoDetail = () => {
     return (
       <div className="min-h-screen bg-background">
         <MobileHeader /><DesktopNav /><BottomNav />
-        <main className="md:ml-64 pt-16 md:pt-0 pb-24 flex items-center justify-center min-h-[60vh]">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <main className="md:ml-64 pt-16 md:pt-0 pb-24 md:pb-0">
+          <DesktopTopBar />
+          <div className="flex items-center justify-center min-h-[60vh]">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          </div>
         </main>
       </div>
     );
@@ -117,7 +121,8 @@ const VideoDetail = () => {
       <div className="min-h-screen bg-background">
         <MobileHeader /><DesktopNav /><BottomNav />
         <main className="md:ml-64 pt-16 md:pt-0 pb-24 md:pb-0">
-          <div className="max-w-4xl mx-auto px-4 md:px-8 py-4">
+          <DesktopTopBar />
+          <div className="max-w-4xl mx-auto px-4 md:px-8 py-4 md:scroll-mt-24 md:pt-6">
             <button onClick={() => window.history.back()} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-4 transition-colors">
               <ArrowLeft className="w-4 h-4" /> Back
             </button>
@@ -176,7 +181,8 @@ const VideoDetail = () => {
     <div className="min-h-screen bg-background">
       <MobileHeader /><DesktopNav /><BottomNav />
       <main className="md:ml-64 pt-16 md:pt-0 pb-24 md:pb-0">
-        <div className="max-w-4xl mx-auto px-4 md:px-8 py-4">
+        <DesktopTopBar />
+        <div className="max-w-4xl mx-auto px-4 md:px-8 py-4 md:scroll-mt-24 md:pt-6">
           <button onClick={() => window.history.back()} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-4 transition-colors">
             <ArrowLeft className="w-4 h-4" /> Back
           </button>
