@@ -72,6 +72,14 @@ export default function FinishProfile() {
   const openField = (f: Field) => {
     setActiveField(f.key);
     setDraft(profile[f.key] ?? (f.key === "favorite_la_teams" ? [] : ""));
+    setPhotoPreview(null);
+    setPhotoFile(null);
+  };
+
+  const closeSheet = () => {
+    setActiveField(null);
+    setPhotoPreview(null);
+    setPhotoFile(null);
   };
 
   const saveField = async () => {
