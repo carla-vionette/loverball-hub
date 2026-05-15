@@ -64,6 +64,8 @@ const InviteLanding = lazy(() => import("./pages/InviteLanding"));
 const VideoLibrary = lazy(() => import("./pages/VideoLibrary"));
 const VideoPlayerPage = lazy(() => import("./pages/VideoPlayerPage"));
 const Apply = lazy(() => import("./pages/Apply"));
+const Signup = lazy(() => import("./pages/Signup"));
+const FinishProfile = lazy(() => import("./pages/FinishProfile"));
 const ApplicationPending = lazy(() => import("./pages/ApplicationPending"));
 
 // Creator/Application pages
