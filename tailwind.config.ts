@@ -63,12 +63,9 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ["Poppins", "system-ui", "sans-serif"],
-        display: ["Oswald", "Impact", "sans-serif"],
-        script: ["Pacifico", "cursive"],
-        condensed: ["Oswald", "Impact", "sans-serif"],
+        sans: ["Inter", "system-ui", "sans-serif"],
         serif: ["Playfair Display", "Georgia", "serif"],
-        elegant: ["Playfair Display", "Georgia", "serif"],
+        display: ["Playfair Display", "Georgia", "serif"],
       },
       fontSize: {
         xs: ["0.75rem", { lineHeight: "1rem" }],
