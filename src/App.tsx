@@ -64,6 +64,8 @@ const InviteLanding = lazy(() => import("./pages/InviteLanding"));
 const VideoLibrary = lazy(() => import("./pages/VideoLibrary"));
 const VideoPlayerPage = lazy(() => import("./pages/VideoPlayerPage"));
 const Apply = lazy(() => import("./pages/Apply"));
+const Signup = lazy(() => import("./pages/Signup"));
+const FinishProfile = lazy(() => import("./pages/FinishProfile"));
 const ApplicationPending = lazy(() => import("./pages/ApplicationPending"));
 
 // Creator/Application pages
@@ -130,6 +132,8 @@ const App = () => (
                 {/* Public routes */}
                 <Route path="/" element={<Index />} />
                 <Route path="/auth" element={<Auth />} />
+                <Route path="/signup" element={<Signup />} />
+                <Route path="/finish-profile" element={<ProtectedRoute><FinishProfile /></ProtectedRoute>} />
                 <Route path="/home" element={<Home />} />
                 <Route path="/explore" element={<Explore />} />
                 <Route path="/discover" element={<Navigate to="/explore" replace />} />
