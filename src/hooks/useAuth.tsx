@@ -2,16 +2,15 @@ import React, { useState, useEffect, createContext, useContext, ReactNode } from
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 
-type AppRole = 'pending' | 'member' | 'admin';
-
 interface AuthContextType {
   user: User | null;
   session: Session | null;
   loading: boolean;
-  role: AppRole | null;
+  signOut: () => Promise<void>;
+  // legacy-compat shims so any lingering imports won't crash
+  role: null;
   isMember: boolean;
   isAdmin: boolean;
-  signOut: () => Promise<void>;
   refreshRole: () => Promise<void>;
 }
 
@@ -21,63 +20,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
-  const [role, setRole] = useState<AppRole | null>(null);
-
-  const fetchUserRole = async (userId: string) => {
-    const { data, error } = await supabase
-      .from('user_roles')
-      .select('role')
-      .eq('user_id', userId)
-      .maybeSingle();
-    
-    if (error) {
-      return null;
-    }
-    return data?.role as AppRole | null;
-  };
-
-  const refreshRole = async () => {
-    if (user) {
-      const userRole = await fetchUserRole(user.id);
-      setRole(userRole);
-    }
-  };
 
   useEffect(() => {
-    // Set up auth state listener FIRST
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-        
-        // Defer role fetch to avoid deadlock
-        if (session?.user) {
-          setTimeout(() => {
-            fetchUserRole(session.user.id).then(setRole);
-          }, 0);
-        } else {
-          setRole(null);
-        }
-        
-        setLoading(false);
-      }
-    );
-
-    // THEN check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      
-      if (session?.user) {
-        fetchUserRole(session.user.id).then((r) => {
-          setRole(r);
-          setLoading(false);
-        });
-      } else {
-        setLoading(false);
-      }
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, s) => {
+      setSession(s);
+      setUser(s?.user ?? null);
+      setLoading(false);
     });
-
+    supabase.auth.getSession().then(({ data: { session: s } }) => {
+      setSession(s);
+      setUser(s?.user ?? null);
+      setLoading(false);
+    });
     return () => subscription.unsubscribe();
   }, []);
 
@@ -85,27 +39,24 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     await supabase.auth.signOut();
     setUser(null);
     setSession(null);
-    setRole(null);
   };
 
   const value: AuthContextType = {
     user,
     session,
     loading,
-    role,
-    isMember: role === 'member' || role === 'admin',
-    isAdmin: role === 'admin',
     signOut,
-    refreshRole,
+    role: null,
+    isMember: !!user,
+    isAdmin: false,
+    refreshRole: async () => {},
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
 export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
+  const ctx = useContext(AuthContext);
+  if (ctx === undefined) throw new Error('useAuth must be used within an AuthProvider');
+  return ctx;
 };
