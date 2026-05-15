@@ -1,10 +1,9 @@
-import { Home, Compass, Search, ArrowLeft } from "lucide-react";
+import { Home, Search, ArrowLeft } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import scriptLogo from "@/assets/loverball-script-logo.png";
 
 const navItems = [
   { icon: Home, label: "For You", path: "/watch" },
-  { icon: Compass, label: "Discover", path: "/watch/discover" },
   { icon: Search, label: "Search", path: "/watch/search" },
 ];
 

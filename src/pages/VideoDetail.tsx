@@ -166,7 +166,7 @@ const VideoDetail = () => {
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <p className="text-muted-foreground mb-4">Video not found</p>
-          <Button onClick={() => goTo("/explore")}>Back to Discover</Button>
+          <Button onClick={() => goTo("/watch")}>Back to Watch</Button>
         </div>
       </div>
     );

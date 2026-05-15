@@ -53,10 +53,10 @@ const ApplicationPending = () => {
             Go to Home
           </button>
           <button
-            onClick={() => navigate("/explore")}
+            onClick={() => navigate("/watch")}
             className="w-full py-3 rounded-full border border-border text-foreground font-semibold flex items-center justify-center gap-2 hover:bg-muted transition-colors"
           >
-            Explore Content
+            Browse Content
             <ArrowRight className="w-4 h-4" />
           </button>
         </div>
