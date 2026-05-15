@@ -20,7 +20,6 @@ import Friends from "./pages/Friends";
 
 // ── Lazy-loaded secondary pages ──
 const Auth = lazy(() => import("./pages/Auth"));
-const Explore = lazy(() => import("./pages/Explore"));
 const Events = lazy(() => import("./pages/Events"));
 const Shop = lazy(() => import("./pages/Shop"));
 const Profile = lazy(() => import("./pages/Profile"));
@@ -135,8 +134,8 @@ const App = () => (
                 <Route path="/signup" element={<Signup />} />
                 <Route path="/finish-profile" element={<ProtectedRoute><FinishProfile /></ProtectedRoute>} />
                 <Route path="/home" element={<Home />} />
-                <Route path="/explore" element={<Explore />} />
-                <Route path="/discover" element={<Navigate to="/explore" replace />} />
+                <Route path="/explore" element={<Navigate to="/home" replace />} />
+                <Route path="/discover" element={<Navigate to="/home" replace />} />
                 <Route path="/channel/:handle" element={<ChannelProfile />} />
                 <Route path="/feed" element={<Feed />} />
                 <Route path="/watch" element={<Watch />} />
