@@ -44,11 +44,16 @@ export default function FinishProfile() {
       if (cancelled) return;
       if (!session) { navigate("/signup", { replace: true }); return; }
       setUserId(session.user.id);
-      const { data } = await supabase
+      let { data } = await supabase
         .from("profiles")
         .select("name, profile_photo_url, username, favorite_la_teams, city, bio")
         .eq("id", session.user.id)
         .maybeSingle();
+      if (!data) {
+        const fallbackName = (session.user.user_metadata as any)?.name?.trim() || "Friend";
+        await supabase.from("profiles").insert({ id: session.user.id, name: fallbackName });
+        data = { name: fallbackName, profile_photo_url: null, username: null, favorite_la_teams: null, city: null, bio: null } as any;
+      }
       setProfile(data || {});
       setLoading(false);
     });
