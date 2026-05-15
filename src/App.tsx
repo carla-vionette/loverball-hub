@@ -31,7 +31,6 @@ const VideoDetail = lazy(() => import("./pages/VideoDetail"));
 const ChannelProfile = lazy(() => import("./pages/ChannelProfile"));
 const MemberDashboard = lazy(() => import("./pages/MemberDashboard"));
 const Onboarding = lazy(() => import("./pages/Onboarding"));
-const FinishProfile = lazy(() => import("./pages/FinishProfile"));
 const Horoscope = lazy(() => import("./pages/Horoscope"));
 const Community = lazy(() => import("./pages/Community"));
 const GroupChat = lazy(() => import("./pages/GroupChat"));
@@ -173,7 +172,6 @@ const App = () => (
                 <Route path="/dashboard" element={<ProtectedRoute><MemberDashboard /></ProtectedRoute>} />
                 <Route path="/plans" element={<ProtectedRoute><PlanSelection /></ProtectedRoute>} />
                 <Route path="/onboarding" element={<ProtectedRoute><Onboarding /></ProtectedRoute>} />
-                <Route path="/finish-profile" element={<ProtectedRoute><FinishProfile /></ProtectedRoute>} />
                 <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
                 <Route path="/profile/edit" element={<ProtectedRoute><EditProfile /></ProtectedRoute>} />
                 <Route path="/profile/interests" element={<ProtectedRoute><ProfileInterests /></ProtectedRoute>} />
