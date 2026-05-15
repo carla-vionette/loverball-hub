@@ -37,6 +37,9 @@ export default function FinishProfile() {
   const [saving, setSaving] = useState(false);
   const [activeField, setActiveField] = useState<Field["key"] | null>(null);
   const [draft, setDraft] = useState<string | string[]>("");
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const [photoFile, setPhotoFile] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     let cancelled = false;
