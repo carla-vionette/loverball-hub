@@ -1058,6 +1058,198 @@ export type Database = {
         }
         Relationships: []
       }
+      lb_events: {
+        Row: {
+          capacity: number | null
+          created_at: string
+          description: string | null
+          ends_at: string | null
+          hero_image_url: string | null
+          host_user_id: string | null
+          id: string
+          is_private: boolean
+          neighborhood: string | null
+          pillar: string
+          slug: string
+          starts_at: string
+          title: string
+          venue_address: string | null
+          venue_name: string | null
+        }
+        Insert: {
+          capacity?: number | null
+          created_at?: string
+          description?: string | null
+          ends_at?: string | null
+          hero_image_url?: string | null
+          host_user_id?: string | null
+          id?: string
+          is_private?: boolean
+          neighborhood?: string | null
+          pillar: string
+          slug: string
+          starts_at: string
+          title: string
+          venue_address?: string | null
+          venue_name?: string | null
+        }
+        Update: {
+          capacity?: number | null
+          created_at?: string
+          description?: string | null
+          ends_at?: string | null
+          hero_image_url?: string | null
+          host_user_id?: string | null
+          id?: string
+          is_private?: boolean
+          neighborhood?: string | null
+          pillar?: string
+          slug?: string
+          starts_at?: string
+          title?: string
+          venue_address?: string | null
+          venue_name?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lb_events_host_user_id_fkey"
+            columns: ["host_user_id"]
+            isOneToOne: false
+            referencedRelation: "lb_users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lb_rsvps: {
+        Row: {
+          created_at: string
+          event_id: string
+          id: string
+          plus_one_count: number
+          referral_user_id: string | null
+          status: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          event_id: string
+          id?: string
+          plus_one_count?: number
+          referral_user_id?: string | null
+          status?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          event_id?: string
+          id?: string
+          plus_one_count?: number
+          referral_user_id?: string | null
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lb_rsvps_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "lb_events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lb_rsvps_referral_user_id_fkey"
+            columns: ["referral_user_id"]
+            isOneToOne: false
+            referencedRelation: "lb_users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lb_rsvps_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "lb_users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lb_teams: {
+        Row: {
+          created_at: string
+          id: string
+          is_active: boolean
+          league: string
+          logo_url: string | null
+          name: string
+          sport: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          league: string
+          logo_url?: string | null
+          name: string
+          sport: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          league?: string
+          logo_url?: string | null
+          name?: string
+          sport?: string
+        }
+        Relationships: []
+      }
+      lb_users: {
+        Row: {
+          birthday: string | null
+          created_at: string
+          created_via_event_id: string | null
+          display_name: string | null
+          email: string | null
+          favorite_sports: string[]
+          favorite_team_ids: string[]
+          id: string
+          phone: string | null
+          photo_url: string | null
+          profile_completion: number
+          updated_at: string
+          vibe_tags: string[]
+        }
+        Insert: {
+          birthday?: string | null
+          created_at?: string
+          created_via_event_id?: string | null
+          display_name?: string | null
+          email?: string | null
+          favorite_sports?: string[]
+          favorite_team_ids?: string[]
+          id: string
+          phone?: string | null
+          photo_url?: string | null
+          profile_completion?: number
+          updated_at?: string
+          vibe_tags?: string[]
+        }
+        Update: {
+          birthday?: string | null
+          created_at?: string
+          created_via_event_id?: string | null
+          display_name?: string | null
+          email?: string | null
+          favorite_sports?: string[]
+          favorite_team_ids?: string[]
+          id?: string
+          phone?: string | null
+          photo_url?: string | null
+          profile_completion?: number
+          updated_at?: string
+          vibe_tags?: string[]
+        }
+        Relationships: []
+      }
       matches: {
         Row: {
           created_at: string
