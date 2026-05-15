@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
-import { Camera, AtSign, MapPin, Trophy, FileText, ArrowRight, Check } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Camera, AtSign, MapPin, Trophy, FileText, ArrowRight, Check, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -37,6 +37,9 @@ export default function FinishProfile() {
   const [saving, setSaving] = useState(false);
   const [activeField, setActiveField] = useState<Field["key"] | null>(null);
   const [draft, setDraft] = useState<string | string[]>("");
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const [photoFile, setPhotoFile] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -69,20 +72,41 @@ export default function FinishProfile() {
   const openField = (f: Field) => {
     setActiveField(f.key);
     setDraft(profile[f.key] ?? (f.key === "favorite_la_teams" ? [] : ""));
+    setPhotoPreview(null);
+    setPhotoFile(null);
+  };
+
+  const closeSheet = () => {
+    setActiveField(null);
+    setPhotoPreview(null);
+    setPhotoFile(null);
   };
 
   const saveField = async () => {
     if (!userId || !activeField) return;
     setSaving(true);
     try {
-      const value = draft;
-      const { error } = await supabase
-        .from("profiles")
-        .update({ [activeField]: Array.isArray(value) ? value : (value as string).trim() || null })
-        .eq("id", userId);
-      if (error) throw error;
-      setProfile((p) => ({ ...p, [activeField]: value }));
-      setActiveField(null);
+      if (activeField === "profile_photo_url" && photoFile) {
+        const ext = photoFile.name.split(".").pop();
+        const path = `${userId}/avatar-${Date.now()}.${ext}`;
+        const { error: upErr } = await supabase.storage
+          .from("profile-photos")
+          .upload(path, photoFile, { upsert: true });
+        if (upErr) throw upErr;
+        const { data: { publicUrl } } = supabase.storage.from("profile-photos").getPublicUrl(path);
+        const { error } = await supabase.from("profiles").update({ profile_photo_url: publicUrl }).eq("id", userId);
+        if (error) throw error;
+        setProfile((p) => ({ ...p, profile_photo_url: publicUrl }));
+      } else {
+        const value = draft;
+        const { error } = await supabase
+          .from("profiles")
+          .update({ [activeField]: Array.isArray(value) ? value : (value as string).trim() || null })
+          .eq("id", userId);
+        if (error) throw error;
+        setProfile((p) => ({ ...p, [activeField]: value }));
+      }
+      closeSheet();
     } catch (err: any) {
       toast({ title: "Couldn't save", description: err.message, variant: "destructive" });
     } finally {
@@ -90,23 +114,11 @@ export default function FinishProfile() {
     }
   };
 
-  const uploadPhoto = async (file: File) => {
-    if (!userId) return;
-    setSaving(true);
-    try {
-      const ext = file.name.split(".").pop();
-      const path = `${userId}/avatar-${Date.now()}.${ext}`;
-      const { error: upErr } = await supabase.storage.from("profile-photos").upload(path, file, { upsert: true });
-      if (upErr) throw upErr;
-      const { data: { publicUrl } } = supabase.storage.from("profile-photos").getPublicUrl(path);
-      await supabase.from("profiles").update({ profile_photo_url: publicUrl }).eq("id", userId);
-      setProfile((p) => ({ ...p, profile_photo_url: publicUrl }));
-      setActiveField(null);
-    } catch (err: any) {
-      toast({ title: "Upload failed", description: err.message, variant: "destructive" });
-    } finally {
-      setSaving(false);
-    }
+  const onPhotoSelected = (file: File) => {
+    setPhotoFile(file);
+    const reader = new FileReader();
+    reader.onload = () => setPhotoPreview(reader.result as string);
+    reader.readAsDataURL(file);
   };
 
   if (loading) {
@@ -182,99 +194,162 @@ export default function FinishProfile() {
       </footer>
 
       {/* Field editor sheet */}
-      {activeField && (
-        <div className="fixed inset-0 z-50 bg-black/40 flex items-end sm:items-center justify-center" onClick={() => setActiveField(null)}>
+      <AnimatePresence>
+        {activeField && (
           <motion.div
-            initial={{ y: 40, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            onClick={(e) => e.stopPropagation()}
-            className="w-full sm:max-w-md bg-background rounded-t-3xl sm:rounded-3xl p-6 pb-[max(1.5rem,env(safe-area-inset-bottom))]"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center"
+            onClick={closeSheet}
           >
-            <h2 className="text-xl font-serif text-foreground mb-4">
-              {FIELDS.find((f) => f.key === activeField)?.label}
-            </h2>
+            <motion.div
+              key="sheet"
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "100%" }}
+              transition={{ type: "spring", damping: 32, stiffness: 320 }}
+              drag="y"
+              dragConstraints={{ top: 0, bottom: 0 }}
+              dragElastic={{ top: 0, bottom: 0.4 }}
+              onDragEnd={(_, info) => { if (info.offset.y > 120) closeSheet(); }}
+              onClick={(e) => e.stopPropagation()}
+              className="w-full sm:max-w-md bg-background rounded-t-3xl sm:rounded-3xl p-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] shadow-2xl"
+            >
+              <div className="mx-auto w-12 h-1.5 rounded-full bg-foreground/15 mb-5 sm:hidden" />
 
-            {activeField === "profile_photo_url" && (
-              <label className="block w-full">
-                <input
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={(e) => e.target.files?.[0] && uploadPhoto(e.target.files[0])}
-                />
-                <div className="border-2 border-dashed border-border rounded-2xl p-8 text-center cursor-pointer hover:border-primary transition-colors">
-                  <Camera className="w-8 h-8 mx-auto text-foreground/50" />
-                  <p className="mt-2 text-sm text-foreground/70">Tap to upload a photo</p>
-                </div>
-              </label>
-            )}
-
-            {activeField === "username" && (
-              <Input
-                autoFocus
-                value={draft as string}
-                onChange={(e) => setDraft(e.target.value.replace(/\s+/g, "").toLowerCase())}
-                placeholder="@yourname"
-                maxLength={30}
-                className="h-14 rounded-2xl text-base"
-              />
-            )}
-
-            {activeField === "city" && (
-              <Input
-                autoFocus
-                value={draft as string}
-                onChange={(e) => setDraft(e.target.value)}
-                placeholder="Los Angeles"
-                maxLength={80}
-                className="h-14 rounded-2xl text-base"
-              />
-            )}
-
-            {activeField === "bio" && (
-              <Textarea
-                autoFocus
-                value={draft as string}
-                onChange={(e) => setDraft(e.target.value)}
-                placeholder="A little about you, your fandom, your vibe…"
-                maxLength={200}
-                rows={4}
-                className="rounded-2xl text-base"
-              />
-            )}
-
-            {activeField === "favorite_la_teams" && (
-              <div className="flex flex-wrap gap-2">
-                {TEAM_OPTIONS.map((t) => {
-                  const selected = (draft as string[]).includes(t);
-                  return (
-                    <button
-                      key={t}
-                      type="button"
-                      onClick={() => {
-                        const arr = draft as string[];
-                        setDraft(selected ? arr.filter((x) => x !== t) : [...arr, t]);
-                      }}
-                      className={`px-4 py-2 rounded-full text-sm border transition-colors ${selected ? "bg-primary text-primary-foreground border-primary" : "bg-background border-border text-foreground/70"}`}
-                    >
-                      {t}
-                    </button>
-                  );
-                })}
+              <div className="flex items-start justify-between mb-5">
+                <h2 className="text-xl font-serif text-foreground">
+                  {FIELDS.find((f) => f.key === activeField)?.label}
+                </h2>
+                <button
+                  onClick={closeSheet}
+                  className="w-8 h-8 -mt-1 -mr-1 rounded-full flex items-center justify-center text-foreground/60 hover:bg-muted"
+                  aria-label="Close"
+                >
+                  <X className="w-4 h-4" />
+                </button>
               </div>
-            )}
 
-            {activeField !== "profile_photo_url" && (
+              {activeField === "profile_photo_url" && (
+                <div>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(e) => e.target.files?.[0] && onPhotoSelected(e.target.files[0])}
+                  />
+                  {photoPreview || profile.profile_photo_url ? (
+                    <div className="flex flex-col items-center gap-4">
+                      <img
+                        src={photoPreview || profile.profile_photo_url}
+                        alt="Profile preview"
+                        className="w-32 h-32 rounded-full object-cover border-4 border-primary/20"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => fileInputRef.current?.click()}
+                        className="text-sm text-primary font-medium"
+                      >
+                        Choose a different photo
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      className="w-full border-2 border-dashed border-border rounded-2xl p-10 text-center hover:border-primary transition-colors"
+                    >
+                      <Camera className="w-8 h-8 mx-auto text-foreground/50" />
+                      <p className="mt-3 text-sm text-foreground/70">Tap to upload a photo</p>
+                      <p className="mt-1 text-xs text-foreground/40">JPG or PNG, up to 5MB</p>
+                    </button>
+                  )}
+                </div>
+              )}
+
+              {activeField === "username" && (
+                <Input
+                  autoFocus
+                  value={draft as string}
+                  onChange={(e) => setDraft(e.target.value.replace(/\s+/g, "").toLowerCase())}
+                  placeholder="@yourname"
+                  maxLength={30}
+                  className="h-14 rounded-2xl text-base"
+                />
+              )}
+
+              {activeField === "city" && (
+                <Input
+                  autoFocus
+                  value={draft as string}
+                  onChange={(e) => setDraft(e.target.value)}
+                  placeholder="Los Angeles"
+                  maxLength={80}
+                  className="h-14 rounded-2xl text-base"
+                />
+              )}
+
+              {activeField === "bio" && (
+                <Textarea
+                  autoFocus
+                  value={draft as string}
+                  onChange={(e) => setDraft(e.target.value)}
+                  placeholder="A little about you, your fandom, your vibe…"
+                  maxLength={200}
+                  rows={4}
+                  className="rounded-2xl text-base resize-none"
+                />
+              )}
+
+              {activeField === "favorite_la_teams" && (
+                <div className="flex flex-wrap gap-2 max-h-72 overflow-y-auto">
+                  {TEAM_OPTIONS.map((t) => {
+                    const selected = (draft as string[]).includes(t);
+                    return (
+                      <button
+                        key={t}
+                        type="button"
+                        onClick={() => {
+                          const arr = draft as string[];
+                          setDraft(selected ? arr.filter((x) => x !== t) : [...arr, t]);
+                        }}
+                        className={`px-4 py-2 rounded-full text-sm border transition-colors ${selected ? "bg-primary text-primary-foreground border-primary" : "bg-background border-border text-foreground/70 hover:border-primary/50"}`}
+                      >
+                        {t}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+
               <div className="mt-6 flex gap-3">
-                <Button variant="ghost" onClick={() => setActiveField(null)} className="flex-1 h-12 rounded-2xl">Cancel</Button>
-                <Button onClick={saveField} disabled={saving} className="flex-1 h-12 rounded-2xl font-semibold">
+                <Button
+                  variant="ghost"
+                  onClick={closeSheet}
+                  className="flex-1 h-12 rounded-2xl"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={saveField}
+                  disabled={
+                    saving ||
+                    (activeField === "profile_photo_url" && !photoFile) ||
+                    (activeField === "username" && !(draft as string).trim()) ||
+                    (activeField === "favorite_la_teams" && (draft as string[]).length === 0)
+                  }
+                  className="flex-1 h-12 rounded-2xl font-semibold"
+                >
                   {saving ? "Saving…" : "Save"}
                 </Button>
               </div>
-            )}
+            </motion.div>
           </motion.div>
-        </div>
-      )}
+        )}
+      </AnimatePresence>
     </div>
   );
 }
