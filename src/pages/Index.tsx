@@ -117,7 +117,7 @@ const Index = () => {
   };
 
   const openAuthModal = () => {
-    setInviteCode("");setInviteVerified(false);setInviteError(false);setAuthModalOpen(true);
+    navigate("/signup");
   };
 
   const nearbyEvents = [
