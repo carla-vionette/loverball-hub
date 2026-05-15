@@ -86,14 +86,27 @@ export default function FinishProfile() {
     if (!userId || !activeField) return;
     setSaving(true);
     try {
-      const value = draft;
-      const { error } = await supabase
-        .from("profiles")
-        .update({ [activeField]: Array.isArray(value) ? value : (value as string).trim() || null })
-        .eq("id", userId);
-      if (error) throw error;
-      setProfile((p) => ({ ...p, [activeField]: value }));
-      setActiveField(null);
+      if (activeField === "profile_photo_url" && photoFile) {
+        const ext = photoFile.name.split(".").pop();
+        const path = `${userId}/avatar-${Date.now()}.${ext}`;
+        const { error: upErr } = await supabase.storage
+          .from("profile-photos")
+          .upload(path, photoFile, { upsert: true });
+        if (upErr) throw upErr;
+        const { data: { publicUrl } } = supabase.storage.from("profile-photos").getPublicUrl(path);
+        const { error } = await supabase.from("profiles").update({ profile_photo_url: publicUrl }).eq("id", userId);
+        if (error) throw error;
+        setProfile((p) => ({ ...p, profile_photo_url: publicUrl }));
+      } else {
+        const value = draft;
+        const { error } = await supabase
+          .from("profiles")
+          .update({ [activeField]: Array.isArray(value) ? value : (value as string).trim() || null })
+          .eq("id", userId);
+        if (error) throw error;
+        setProfile((p) => ({ ...p, [activeField]: value }));
+      }
+      closeSheet();
     } catch (err: any) {
       toast({ title: "Couldn't save", description: err.message, variant: "destructive" });
     } finally {
@@ -101,23 +114,11 @@ export default function FinishProfile() {
     }
   };
 
-  const uploadPhoto = async (file: File) => {
-    if (!userId) return;
-    setSaving(true);
-    try {
-      const ext = file.name.split(".").pop();
-      const path = `${userId}/avatar-${Date.now()}.${ext}`;
-      const { error: upErr } = await supabase.storage.from("profile-photos").upload(path, file, { upsert: true });
-      if (upErr) throw upErr;
-      const { data: { publicUrl } } = supabase.storage.from("profile-photos").getPublicUrl(path);
-      await supabase.from("profiles").update({ profile_photo_url: publicUrl }).eq("id", userId);
-      setProfile((p) => ({ ...p, profile_photo_url: publicUrl }));
-      setActiveField(null);
-    } catch (err: any) {
-      toast({ title: "Upload failed", description: err.message, variant: "destructive" });
-    } finally {
-      setSaving(false);
-    }
+  const onPhotoSelected = (file: File) => {
+    setPhotoFile(file);
+    const reader = new FileReader();
+    reader.onload = () => setPhotoPreview(reader.result as string);
+    reader.readAsDataURL(file);
   };
 
   if (loading) {
