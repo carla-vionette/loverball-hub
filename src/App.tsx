@@ -12,63 +12,39 @@ import InstallPrompt from "@/components/InstallPrompt";
 import { usePageTracking } from "@/hooks/usePageTracking";
 import ProtectedRoute from "./components/ProtectedRoute";
 
-
-// ── Eager-load primary routes to avoid dual-React-instance crashes ──
-import Home from "./pages/Home";
+// ── Eager-load primary routes ──
 import Index from "./pages/Index";
 import Friends from "./pages/Friends";
 
 // ── Lazy-loaded secondary pages ──
 const Auth = lazy(() => import("./pages/Auth"));
-const Events = lazy(() => import("./pages/Events"));
-const Shop = lazy(() => import("./pages/Shop"));
-const Profile = lazy(() => import("./pages/Profile"));
+const Signup = lazy(() => import("./pages/Signup"));
+const FinishProfile = lazy(() => import("./pages/FinishProfile"));
 const Feed = lazy(() => import("./pages/Feed"));
-const Watch = lazy(() => import("./pages/Watch"));
-const Search = lazy(() => import("./pages/Search"));
-const VideoDetail = lazy(() => import("./pages/VideoDetail"));
-const ChannelProfile = lazy(() => import("./pages/ChannelProfile"));
-const MemberDashboard = lazy(() => import("./pages/MemberDashboard"));
-const Onboarding = lazy(() => import("./pages/Onboarding"));
-const Horoscope = lazy(() => import("./pages/Horoscope"));
-const Community = lazy(() => import("./pages/Community"));
-const GroupChat = lazy(() => import("./pages/GroupChat"));
-const EditProfile = lazy(() => import("./pages/EditProfile"));
-const ProfileInterests = lazy(() => import("./pages/ProfileInterests"));
-const ProductDetail = lazy(() => import("./pages/ProductDetail"));
-const NotFound = lazy(() => import("./pages/NotFound"));
+const Events = lazy(() => import("./pages/Events"));
+const EventDetail = lazy(() => import("./pages/EventDetail"));
 const Members = lazy(() => import("./pages/Members"));
 const MemberProfile = lazy(() => import("./pages/MemberProfile"));
-const EventDetail = lazy(() => import("./pages/EventDetail"));
-const MessagesPage = lazy(() => import("./pages/MessagesPage"));
-const Connections = lazy(() => import("./pages/Connections"));
-const DirectMessages = lazy(() => import("./pages/DirectMessages"));
-const ChatRoom = lazy(() => import("./pages/ChatRoom"));
-const Terms = lazy(() => import("./pages/Terms"));
-const Privacy = lazy(() => import("./pages/Privacy"));
+const Profile = lazy(() => import("./pages/Profile"));
+const EditProfile = lazy(() => import("./pages/EditProfile"));
+const ProfileInterests = lazy(() => import("./pages/ProfileInterests"));
+const Onboarding = lazy(() => import("./pages/Onboarding"));
+const Horoscope = lazy(() => import("./pages/Horoscope"));
 const Settings = lazy(() => import("./pages/Settings"));
-const CheckoutSuccess = lazy(() => import("./pages/CheckoutSuccess"));
-const Ticker = lazy(() => import("./pages/Ticker"));
-const PlanSelection = lazy(() => import("./pages/PlanSelection"));
 const Inbox = lazy(() => import("./pages/Inbox"));
-
+const MessagesPage = lazy(() => import("./pages/MessagesPage"));
+const ChatRoom = lazy(() => import("./pages/ChatRoom"));
+const DirectMessages = lazy(() => import("./pages/DirectMessages"));
+const Connections = lazy(() => import("./pages/Connections"));
 const Membership = lazy(() => import("./pages/Membership"));
-const Scores = lazy(() => import("./pages/Scores"));
-
-// SaaS pages
 const PricingPage = lazy(() => import("./pages/PricingPage"));
 const BillingPage = lazy(() => import("./pages/BillingPage"));
 const InvitesPage = lazy(() => import("./pages/InvitesPage"));
 const InviteLanding = lazy(() => import("./pages/InviteLanding"));
-const VideoLibrary = lazy(() => import("./pages/VideoLibrary"));
-const VideoPlayerPage = lazy(() => import("./pages/VideoPlayerPage"));
-const Apply = lazy(() => import("./pages/Apply"));
-const Signup = lazy(() => import("./pages/Signup"));
-const FinishProfile = lazy(() => import("./pages/FinishProfile"));
-const ApplicationPending = lazy(() => import("./pages/ApplicationPending"));
-
-// Creator/Application pages
-const CreatorApplication = lazy(() => import("./pages/CreatorApplication"));
+const CheckoutSuccess = lazy(() => import("./pages/CheckoutSuccess"));
+const Terms = lazy(() => import("./pages/Terms"));
+const Privacy = lazy(() => import("./pages/Privacy"));
+const NotFound = lazy(() => import("./pages/NotFound"));
 
 // Admin pages
 const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
@@ -76,21 +52,18 @@ const AdminEventEditor = lazy(() => import("./pages/AdminEventEditor"));
 const AdminAttendeeManager = lazy(() => import("./pages/AdminAttendeeManager"));
 const EventBuilder = lazy(() => import("./pages/admin/EventBuilder"));
 
-// ── Stale-while-revalidate query config for slow connections ──
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 5 * 60 * 1000,       // 5 min — don't refetch if data is fresh
-      gcTime: 30 * 60 * 1000,          // 30 min — keep in cache
-      retry: 2,                         // Retry failed requests twice
+      staleTime: 5 * 60 * 1000,
+      gcTime: 30 * 60 * 1000,
+      retry: 2,
       retryDelay: (attempt) => Math.min(1000 * 2 ** attempt, 10000),
-      refetchOnWindowFocus: false,      // Don't refetch when tab regains focus
-      refetchOnReconnect: 'always',     // But do refetch when connection restores
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: 'always',
     },
   },
 });
-
-const PageLoader = lazy(() => import("./components/PageSkeleton").then(m => ({ default: m.default })));
 
 const PageFallback = () => (
   <div className="min-h-screen bg-background animate-pulse">
@@ -128,75 +101,72 @@ const App = () => (
             <PageTracker />
             <Suspense fallback={<PageFallback />}>
               <Routes>
-                {/* Public routes */}
+                {/* Public */}
                 <Route path="/" element={<Index />} />
                 <Route path="/auth" element={<Auth />} />
                 <Route path="/signup" element={<Signup />} />
-                <Route path="/finish-profile" element={<ProtectedRoute><FinishProfile /></ProtectedRoute>} />
-                <Route path="/home" element={<Home />} />
-                <Route path="/explore" element={<Navigate to="/home" replace />} />
-                <Route path="/discover" element={<Navigate to="/home" replace />} />
-                <Route path="/channel/:handle" element={<ChannelProfile />} />
-                <Route path="/feed" element={<Feed />} />
-                <Route path="/watch" element={<Watch />} />
-                <Route path="/watch/video/:id" element={<VideoDetail />} />
-                <Route path="/horoscope" element={<Horoscope />} />
-                <Route path="/events" element={<Events />} />
-                <Route path="/event/:id" element={<EventDetail />} />
-                <Route path="/community" element={<Community />} />
-                <Route path="/search" element={<Search />} />
-                <Route path="/shop" element={<Shop />} />
-                <Route path="/product/:handle" element={<ProductDetail />} />
-                <Route path="/members" element={<Members />} />
-                <Route path="/members/:id" element={<MemberProfile />} />
                 <Route path="/terms" element={<Terms />} />
                 <Route path="/privacy" element={<Privacy />} />
-                <Route path="/checkout-success" element={<CheckoutSuccess />} />
                 <Route path="/pricing" element={<PricingPage />} />
                 <Route path="/invite/:code" element={<InviteLanding />} />
-                <Route path="/membership" element={<Membership />} />
-                <Route path="/scores" element={<Scores />} />
-                <Route path="/apply" element={<Apply />} />
-                <Route path="/application-pending" element={<ApplicationPending />} />
 
-                {/* Redirects */}
-                <Route path="/index" element={<Navigate to="/" replace />} />
-                <Route path="/following" element={<Navigate to="/profile" replace />} />
-                <Route path="/network" element={<Navigate to="/members" replace />} />
-                <Route path="/gather" element={<Navigate to="/events" replace />} />
-                <Route path="/connect" element={<Navigate to="/friends" replace />} />
-                <Route path="/trending" element={<Navigate to="/#trending" replace />} />
-
-                {/* Application routes */}
-                <Route path="/apply" element={<ProtectedRoute><CreatorApplication /></ProtectedRoute>} />
-                <Route path="/application-pending" element={<ProtectedRoute><ApplicationPending /></ProtectedRoute>} />
-
-                {/* Protected member routes */}
-                <Route path="/dashboard" element={<ProtectedRoute><MemberDashboard /></ProtectedRoute>} />
-                <Route path="/plans" element={<ProtectedRoute><PlanSelection /></ProtectedRoute>} />
-                <Route path="/onboarding" element={<ProtectedRoute><Onboarding /></ProtectedRoute>} />
+                {/* Core tabs: FEED, SCENE, CLUB, PROFILE */}
+                <Route path="/feed" element={<Feed />} />
+                <Route path="/events" element={<Events />} />
+                <Route path="/event/:id" element={<EventDetail />} />
+                <Route path="/members" element={<ProtectedRoute><Members /></ProtectedRoute>} />
+                <Route path="/members/:id" element={<ProtectedRoute><MemberProfile /></ProtectedRoute>} />
                 <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
                 <Route path="/profile/edit" element={<ProtectedRoute><EditProfile /></ProtectedRoute>} />
                 <Route path="/profile/interests" element={<ProtectedRoute><ProfileInterests /></ProtectedRoute>} />
-                <Route path="/community/:groupId" element={<ProtectedRoute><GroupChat /></ProtectedRoute>} />
-                <Route path="/connections" element={<ProtectedRoute><Connections /></ProtectedRoute>} />
-                <Route path="/dms" element={<ProtectedRoute><DirectMessages /></ProtectedRoute>} />
+
+                {/* Profile-linked utilities */}
+                <Route path="/finish-profile" element={<ProtectedRoute><FinishProfile /></ProtectedRoute>} />
+                <Route path="/onboarding" element={<ProtectedRoute><Onboarding /></ProtectedRoute>} />
+                <Route path="/horoscope" element={<ProtectedRoute><Horoscope /></ProtectedRoute>} />
+                <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+                <Route path="/inbox" element={<ProtectedRoute><Inbox /></ProtectedRoute>} />
                 <Route path="/messages" element={<ProtectedRoute><MessagesPage /></ProtectedRoute>} />
                 <Route path="/messages/:chatId" element={<ProtectedRoute><ChatRoom /></ProtectedRoute>} />
+                <Route path="/dms" element={<ProtectedRoute><DirectMessages /></ProtectedRoute>} />
                 <Route path="/friends" element={<ProtectedRoute><Friends /></ProtectedRoute>} />
-                <Route path="/inbox" element={<ProtectedRoute><Inbox /></ProtectedRoute>} />
-                <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
-
+                <Route path="/connections" element={<ProtectedRoute><Connections /></ProtectedRoute>} />
+                <Route path="/membership" element={<ProtectedRoute><Membership /></ProtectedRoute>} />
                 <Route path="/billing" element={<ProtectedRoute><BillingPage /></ProtectedRoute>} />
                 <Route path="/invites" element={<ProtectedRoute><InvitesPage /></ProtectedRoute>} />
-                <Route path="/videos" element={<ProtectedRoute><VideoLibrary /></ProtectedRoute>} />
-                <Route path="/videos/:id" element={<ProtectedRoute><VideoPlayerPage /></ProtectedRoute>} />
+                <Route path="/checkout-success" element={<ProtectedRoute><CheckoutSuccess /></ProtectedRoute>} />
 
-                {/* Admin routes */}
+                {/* Admin */}
                 <Route path="/admin" element={<ProtectedRoute requireAdmin><AdminDashboard /></ProtectedRoute>} />
                 <Route path="/admin/events/:id/edit" element={<ProtectedRoute requireAdmin><AdminEventEditor /></ProtectedRoute>} />
                 <Route path="/admin/events/:id/attendees" element={<ProtectedRoute requireAdmin><AdminAttendeeManager /></ProtectedRoute>} />
                 <Route path="/admin/events/:id/builder" element={<ProtectedRoute requireAdmin><EventBuilder /></ProtectedRoute>} />
+
+                {/* Legacy redirects → 4 core tabs */}
+                <Route path="/index" element={<Navigate to="/" replace />} />
+                <Route path="/home" element={<Navigate to="/feed" replace />} />
+                <Route path="/explore" element={<Navigate to="/feed" replace />} />
+                <Route path="/discover" element={<Navigate to="/feed" replace />} />
+                <Route path="/watch" element={<Navigate to="/feed" replace />} />
+                <Route path="/watch/video/:id" element={<Navigate to="/feed" replace />} />
+                <Route path="/videos" element={<Navigate to="/feed" replace />} />
+                <Route path="/videos/:id" element={<Navigate to="/feed" replace />} />
+                <Route path="/channel/:handle" element={<Navigate to="/feed" replace />} />
+                <Route path="/search" element={<Navigate to="/feed" replace />} />
+                <Route path="/trending" element={<Navigate to="/feed" replace />} />
+                <Route path="/community" element={<Navigate to="/members" replace />} />
+                <Route path="/community/:groupId" element={<Navigate to="/members" replace />} />
+                <Route path="/network" element={<Navigate to="/members" replace />} />
+                <Route path="/connect" element={<Navigate to="/friends" replace />} />
+                <Route path="/gather" element={<Navigate to="/events" replace />} />
+                <Route path="/following" element={<Navigate to="/profile" replace />} />
+                <Route path="/shop" element={<Navigate to="/profile" replace />} />
+                <Route path="/product/:handle" element={<Navigate to="/profile" replace />} />
+                <Route path="/scores" element={<Navigate to="/events" replace />} />
+                <Route path="/dashboard" element={<Navigate to="/profile" replace />} />
+                <Route path="/plans" element={<Navigate to="/membership" replace />} />
+                <Route path="/apply" element={<Navigate to="/profile" replace />} />
+                <Route path="/application-pending" element={<Navigate to="/profile" replace />} />
 
                 <Route path="*" element={<NotFound />} />
               </Routes>
