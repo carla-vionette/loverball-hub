@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import BottomNav from '@/components/BottomNav';
+import Seo from '@/components/Seo';
 import DesktopNav from '@/components/DesktopNav';
 import MobileHeader from '@/components/MobileHeader';
 import MemberCard from '@/components/MemberCard';
@@ -186,6 +187,11 @@ const Members = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <Seo
+        title="Club Members | Loverball"
+        description="Discover and connect with women sports fans in your city. Search the Loverball member roster."
+        path="/members"
+      />
       <MobileHeader />
       <DesktopNav />
       <BottomNav />
