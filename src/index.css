@@ -85,7 +85,7 @@
     --hot-pink-foreground: 0 0% 100%;
 
     /* ── Chrome ── */
-    --border: 0 0% 100%;                    /* used with /8 opacity below */
+    --border: 240 4% 16%;                   /* subtle ~rgba(255,255,255,0.08) */
     --input: 240 3% 14%;
     --ring: 338 80% 53%;
 
@@ -113,8 +113,7 @@
     --gradient-navy: linear-gradient(180deg, hsl(240 6% 4%), hsl(240 4% 11%));
   }
 
-  /* Border at 8% white opacity */
-  * { border-color: rgba(255, 255, 255, 0.08); }
+  /* Subtle border default */
 
   .landing-theme {
     --primary: 338 80% 53%;
