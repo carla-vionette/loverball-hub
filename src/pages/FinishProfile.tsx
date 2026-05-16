@@ -28,6 +28,12 @@ const slideVariants = {
   exit: (dir: number) => ({ x: dir > 0 ? -60 : 60, opacity: 0 }),
 };
 
+const consumeRedirect = () => {
+  const r = sessionStorage.getItem("postAuthRedirect");
+  if (r) sessionStorage.removeItem("postAuthRedirect");
+  return r || "/watch";
+};
+
 const FinishProfile = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
