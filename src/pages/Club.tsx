@@ -251,50 +251,28 @@ const Club: React.FC = () => {
       <main className="md:ml-64 pb-28 md:pb-10 pt-16 md:pt-2">
         <div className="max-w-[440px] md:max-w-2xl mx-auto px-5">
           {/* MASTHEAD */}
-          <header className="pt-4 pb-1">
-            <h1
-              style={{
-                fontFamily: "'Playfair Display', Georgia, serif",
-                fontStyle: "italic",
-                fontWeight: 500,
-                fontSize: 38,
-                lineHeight: 1,
-                letterSpacing: "-0.01em",
-                color: C.text,
-              }}
-            >
-              Starting
-              <br />
-              XI.
-            </h1>
-          </header>
-
-          <div
-            className="mt-2 mb-5 pb-3 flex items-end justify-between"
-            style={{ borderBottom: `0.5px solid ${C.borderStrong}` }}
-          >
-            <span
-              className="text-[11px] uppercase"
-              style={{
-                color: C.muted,
-                letterSpacing: "0.05em",
-                fontFamily: "Inter, sans-serif",
-              }}
-            >
-              Picked for you this week
-            </span>
-            <button
-              onClick={() => navigate("/club/drafts")}
-              className="text-[11px] uppercase font-medium"
-              style={{
-                color: C.raspberry,
-                letterSpacing: "0.05em",
-                fontFamily: "Inter, sans-serif",
-              }}
-            >
-              Drafts left: {draftsLeft}
-            </button>
-          </div>
+          <EditorialMasthead
+            volume="Vol. 03"
+            section="The Club"
+            meta="picked this week"
+            eyebrow="starting eleven"
+            title="Starting XI"
+            size="md"
+            rightSlot={
+              <button
+                onClick={() => navigate("/club/drafts")}
+                style={{
+                  fontFamily: "'Space Mono', ui-monospace, monospace",
+                  fontSize: 11,
+                  letterSpacing: "0.14em",
+                  textTransform: "uppercase",
+                  color: C.raspberry,
+                }}
+              >
+                Drafts: {draftsLeft}
+              </button>
+            }
+          />
 
           {/* Surfaced strip */}
           <div
