@@ -58,28 +58,10 @@ const variantMap: Record<string, SceneVariant> = {
   other: "cultural",
 };
 const getVariant = (t?: string | null): SceneVariant => (t && variantMap[t]) || "cultural";
-const sceneTheme: Record<SceneVariant, { bg: string; text: string; badge: string; eyebrow: string; label: string }> = {
-  external: {
-    bg: "bg-foreground",
-    text: "text-background",
-    badge: "bg-background text-foreground",
-    eyebrow: "text-background/70",
-    label: "Broadcast",
-  },
-  hosted: {
-    bg: "bg-primary",
-    text: "text-primary-foreground",
-    badge: "bg-primary-foreground text-primary",
-    eyebrow: "text-primary-foreground/80",
-    label: "Hosted",
-  },
-  cultural: {
-    bg: "bg-[hsl(173_58%_39%)]",
-    text: "text-white",
-    badge: "bg-white text-[hsl(173_58%_39%)]",
-    eyebrow: "text-white/80",
-    label: "Cultural",
-  },
+const sceneTheme: Record<SceneVariant, { accent: string; label: string }> = {
+  external: { accent: "#E8276F", label: "Broadcast" },
+  hosted:   { accent: "#D88C5A", label: "Hosted" },
+  cultural: { accent: "#F8F8F8", label: "Cultural" },
 };
 
 const fmtTime = (t: string) => {
@@ -271,119 +253,197 @@ const Events = () => {
       <MobileHeader /><DesktopNav /><BottomNav />
 
       <main className="md:ml-64 pt-16 md:pt-0 pb-24 md:pb-0">
-        <div className="max-w-6xl mx-auto px-4 md:px-10 py-6">
-          <div className="flex items-end justify-between mb-6">
-            <div>
-              <span className="mag-eyebrow text-raspberry" style={{ transform: "rotate(-2deg)", display: "inline-block" }}>Curated for you</span>
-              <h1 className="mag-title text-foreground" style={{ fontSize: "clamp(48px, 14vw, 72px)", marginTop: 4 }}>
-                The Scene
-              </h1>
+        <div className="max-w-6xl mx-auto px-5 md:px-10 py-8">
+          {/* ── Editorial masthead ── */}
+          <div className="mb-8">
+            <div className="flex items-center gap-2 mb-3">
+              <span style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 10, letterSpacing: "0.22em", color: "#E8276F", textTransform: "uppercase" }}>
+                Vol. 02
+              </span>
+              <span style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 10, letterSpacing: "0.22em", color: "rgba(248,248,248,0.5)", textTransform: "uppercase" }}>
+                · The Scene · {upcomingEvents.length} on deck
+              </span>
             </div>
-            {user && isApprovedCreator && (
-              <Button className="rounded-full gap-2" onClick={() => setShowSubmitForm(true)}>
-                <PlusCircle className="w-4 h-4" /> Submit
-              </Button>
-            )}
+            <div className="flex items-end justify-between gap-4">
+              <div>
+                <span style={{ fontFamily: "'Playfair Display', serif", fontStyle: "italic", fontWeight: 600, fontSize: 16, color: "rgba(248,248,248,0.6)" }}>
+                  selectively assembled
+                </span>
+                <h1 style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: "clamp(56px, 16vw, 92px)", lineHeight: 0.88, color: "#F8F8F8", textTransform: "uppercase", margin: 0, marginTop: 2 }}>
+                  The Scene
+                </h1>
+              </div>
+              {user && isApprovedCreator && (
+                <Button
+                  className="rounded-full gap-2 h-10 px-5"
+                  style={{ background: "#E8276F", color: "#fff", fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 700, letterSpacing: "0.06em", fontSize: 11, textTransform: "uppercase" }}
+                  onClick={() => setShowSubmitForm(true)}
+                >
+                  <PlusCircle className="w-4 h-4" /> Submit
+                </Button>
+              )}
+            </div>
+            <div className="mt-5 h-px w-full" style={{ background: "rgba(255,255,255,0.08)" }} />
           </div>
 
           {/* Apply to Post CTA for non-approved users */}
           {user && !isApprovedCreator && (
-            <Card className="mb-6 border-dashed border-primary/30 bg-primary/5">
-              <CardContent className="p-4 flex flex-col sm:flex-row items-start sm:items-center gap-3">
-                <div className="flex-1">
-                  <h3 className="font-semibold text-sm">Want to post an event?</h3>
-                  <p className="text-xs text-muted-foreground mt-0.5">
-                    Team, creator, and organization accounts can submit events for review. Apply to become an approved account to start posting.
-                  </p>
-                </div>
-                <Button variant="outline" className="rounded-full gap-2 whitespace-nowrap" onClick={() => window.location.href = "/auth?apply=creator"}>
-                  <Send className="w-3.5 h-3.5" /> Apply to Post
-                </Button>
-              </CardContent>
-            </Card>
+            <div className="mb-6 rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center gap-3"
+              style={{ background: "rgba(232,39,111,0.06)", border: "1px solid rgba(232,39,111,0.18)" }}>
+              <div className="flex-1">
+                <h3 style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: 16, color: "#F8F8F8", textTransform: "uppercase", letterSpacing: "0.02em", margin: 0 }}>
+                  Want to post an event?
+                </h3>
+                <p className="mt-1" style={{ fontFamily: "'Inter', system-ui, sans-serif", fontSize: 12, color: "rgba(248,248,248,0.6)", margin: 0 }}>
+                  Team, creator, and organization accounts can submit events for review.
+                </p>
+              </div>
+              <Button variant="outline" className="rounded-full gap-2 whitespace-nowrap"
+                style={{ borderColor: "rgba(232,39,111,0.4)", color: "#E8276F", background: "transparent" }}
+                onClick={() => window.location.href = "/auth?apply=creator"}>
+                <Send className="w-3.5 h-3.5" /> Apply to Post
+              </Button>
+            </div>
           )}
 
           {/* TABS */}
-          <div className="flex gap-1 mb-6 bg-secondary rounded-full p-1 w-fit">
-            <button
-              onClick={() => setTab("upcoming")}
-              className={`px-5 py-2 rounded-full text-sm font-semibold transition-all ${tab === "upcoming" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
-            >
-              Upcoming
-            </button>
-            <button
-              onClick={() => setTab("past")}
-              className={`px-5 py-2 rounded-full text-sm font-semibold transition-all ${tab === "past" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
-            >
-              Past Events
-            </button>
-          </div>
-
-          {/* FEATURED */}
-          {featured && (() => {
-            const v = getVariant(featured.event_type);
-            const th = sceneTheme[v];
-            return (
-            <Card className={`overflow-hidden mb-8 group cursor-pointer hover:shadow-lg transition-all border-none ${th.bg} ${th.text}`}
-              onClick={() => openTile(featured.id)}>
-              <div className="relative h-56 md:h-72 overflow-hidden">
-                {featured.image_url ? (
-                  <>
-                    <img src={featured.image_url} alt={featured.title} loading="eager" className="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-500" />
-                    <div className={`absolute inset-0 ${th.bg} mix-blend-multiply opacity-60`} />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
-                  </>
-                ) : (
-                  <div className={`w-full h-full ${th.bg}`} />
-                )}
-                <div className="absolute top-4 left-4">
-                  <span className={`text-[10px] font-bold tracking-[0.2em] uppercase ${th.eyebrow}`}>{th.label} · {CATEGORY_LABELS[featured.event_type || ""] || featured.event_type}</span>
-                </div>
-                <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6">
-                  <Badge className={`${th.badge} text-[10px] font-semibold tracking-wider rounded-full mb-2`}>Featured Event</Badge>
-                  <h2 className={`font-display text-2xl md:text-3xl font-bold uppercase ${th.text}`}>{featured.title}</h2>
-                  <div className={`flex flex-wrap items-center gap-x-3 gap-y-1 text-xs sm:text-sm mt-2 ${th.eyebrow}`}>
-                    <span className="flex items-center gap-1"><Calendar className="w-3.5 h-3.5" />{format(new Date(featured.event_date), "MMM d, yyyy")}</span>
-                    {featured.event_time && <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5" />{fmtTime(featured.event_time)}</span>}
-                    {(featured.venue_name || featured.city) && <span className="flex items-center gap-1 truncate max-w-[180px]"><MapPin className="w-3.5 h-3.5 flex-shrink-0" />{featured.venue_name || featured.city}</span>}
-                  </div>
-                  <Button className={`rounded-full mt-4 ${th.badge} hover:opacity-90`} onClick={e => { e.stopPropagation(); requestRsvp(featured.id); }}>{user ? "RSVP Now" : "Sign Up to RSVP"}</Button>
-                </div>
-              </div>
-            </Card>
-            );
-          })()}
-
-          {/* CATEGORY CHIPS */}
-          <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-4 -mx-5 px-5 mb-6">
-            {CATEGORIES.map(c => (
+          <div className="flex gap-1 mb-7 p-1 w-fit rounded-full"
+            style={{ background: "rgba(20,20,21,0.6)", border: "1px solid rgba(255,255,255,0.08)" }}>
+            {[
+              { k: "upcoming" as const, label: "Upcoming" },
+              { k: "past" as const, label: "Past" },
+            ].map((t) => (
               <button
-                key={c}
-                onClick={() => setCategory(c)}
-                className={`px-5 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition-all ${
-                  category === c 
-                    ? "bg-primary text-primary-foreground" 
-                    : "border border-foreground/20 text-foreground hover:bg-secondary"
-                }`}
+                key={t.k}
+                onClick={() => setTab(t.k)}
+                className="px-5 py-2 rounded-full transition-all"
+                style={{
+                  background: tab === t.k ? "#E8276F" : "transparent",
+                  color: tab === t.k ? "#fff" : "rgba(248,248,248,0.6)",
+                  fontFamily: "'Inter', system-ui, sans-serif",
+                  fontWeight: 700,
+                  fontSize: 11,
+                  letterSpacing: "0.1em",
+                  textTransform: "uppercase",
+                }}
               >
-                {CATEGORY_LABELS[c] || c}
+                {t.label}
               </button>
             ))}
           </div>
 
+          {/* FEATURED — cinematic */}
+          {featured && (() => {
+            const th = sceneTheme[getVariant(featured.event_type)];
+            const d = new Date(featured.event_date);
+            return (
+              <div
+                className="relative overflow-hidden mb-10 cursor-pointer group rounded-[24px]"
+                style={{ background: "#141415", border: "1px solid rgba(255,255,255,0.08)" }}
+                onClick={() => openTile(featured.id)}
+              >
+                <div className="relative h-72 md:h-[420px] overflow-hidden">
+                  {featured.image_url ? (
+                    <img src={featured.image_url} alt={featured.title} loading="eager"
+                      className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700" />
+                  ) : (
+                    <div className="w-full h-full" style={{ background: `linear-gradient(135deg, ${th.accent}, #141415)` }} />
+                  )}
+                  {/* layered overlays */}
+                  <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, rgba(10,10,11,0.35) 0%, rgba(10,10,11,0.15) 40%, rgba(10,10,11,0.92) 100%)" }} />
+                  <div className="absolute inset-0" style={{ background: "radial-gradient(120% 80% at 30% 20%, rgba(0,0,0,0) 50%, rgba(0,0,0,0.4) 100%)" }} />
+
+                  {/* eyebrow */}
+                  <div className="absolute top-5 left-5 flex items-center gap-2">
+                    <span className="px-2.5 py-1 rounded-full"
+                      style={{ background: `${th.accent}22`, border: `1px solid ${th.accent}55`, color: th.accent, fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 700, fontSize: 9, letterSpacing: "0.18em", textTransform: "uppercase" }}>
+                      {th.label}
+                    </span>
+                    <span style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 10, letterSpacing: "0.18em", color: "rgba(248,248,248,0.7)", textTransform: "uppercase" }}>
+                      · Featured
+                    </span>
+                  </div>
+
+                  {/* Date stamp — strong treatment */}
+                  <div className="absolute top-5 right-5 text-right">
+                    <div style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 10, letterSpacing: "0.22em", color: "rgba(248,248,248,0.6)", textTransform: "uppercase" }}>
+                      {format(d, "EEE")}
+                    </div>
+                    <div style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: 56, lineHeight: 0.85, color: "#F8F8F8" }}>
+                      {format(d, "dd")}
+                    </div>
+                    <div style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 10, letterSpacing: "0.22em", color: "rgba(248,248,248,0.6)", textTransform: "uppercase" }}>
+                      {format(d, "MMM yyyy")}
+                    </div>
+                  </div>
+
+                  {/* Bottom block */}
+                  <div className="absolute bottom-0 left-0 right-0 p-5 md:p-7">
+                    <h2 className="line-clamp-2"
+                      style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: "clamp(28px, 6vw, 44px)", lineHeight: 0.95, color: "#F8F8F8", textTransform: "uppercase", letterSpacing: "0.005em", margin: 0 }}>
+                      {featured.title}
+                    </h2>
+                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-3"
+                      style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 11, color: "rgba(248,248,248,0.7)", letterSpacing: "0.04em" }}>
+                      {featured.event_time && <span className="flex items-center gap-1.5"><Clock className="w-3.5 h-3.5" />{fmtTime(featured.event_time)}</span>}
+                      {(featured.venue_name || featured.city) && <span className="flex items-center gap-1.5 truncate max-w-[220px]"><MapPin className="w-3.5 h-3.5 flex-shrink-0" style={{ color: "#D88C5A" }} />{featured.venue_name || featured.city}</span>}
+                      {counts[featured.id] > 0 && <span className="flex items-center gap-1.5"><Users className="w-3.5 h-3.5" />{counts[featured.id]} going</span>}
+                    </div>
+                    <Button
+                      className="rounded-full mt-5 h-11 px-6"
+                      style={{ background: "#E8276F", color: "#fff", fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 700, fontSize: 12, letterSpacing: "0.1em", textTransform: "uppercase" }}
+                      onClick={e => { e.stopPropagation(); requestRsvp(featured.id); }}
+                    >
+                      {user ? "RSVP Now" : "Sign Up to RSVP"}
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            );
+          })()}
+
+          {/* CATEGORY CHIPS */}
+          <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-3 -mx-5 px-5 mb-7">
+            {CATEGORIES.map(c => {
+              const active = category === c;
+              return (
+                <button
+                  key={c}
+                  onClick={() => setCategory(c)}
+                  className="px-4 py-2 rounded-full whitespace-nowrap transition-all"
+                  style={{
+                    background: active ? "#F8F8F8" : "rgba(20,20,21,0.6)",
+                    color: active ? "#0A0A0B" : "rgba(248,248,248,0.7)",
+                    border: active ? "1px solid #F8F8F8" : "1px solid rgba(255,255,255,0.08)",
+                    fontFamily: "'Inter', system-ui, sans-serif",
+                    fontWeight: 700,
+                    fontSize: 11,
+                    letterSpacing: "0.08em",
+                    textTransform: "uppercase",
+                  }}
+                >
+                  {CATEGORY_LABELS[c] || c}
+                </button>
+              );
+            })}
+          </div>
+
           {/* EVENTS GRID */}
           {filtered.length === 0 ? (
-            <div className="text-center py-20 space-y-4">
-              <div className="w-24 h-24 mx-auto rounded-full bg-primary/10 flex items-center justify-center">
-                <Calendar className="w-12 h-12 text-primary/40" />
+            <div className="text-center py-20 space-y-4 rounded-3xl"
+              style={{ background: "#141415", border: "1px solid rgba(255,255,255,0.08)" }}>
+              <div className="w-20 h-20 mx-auto rounded-full flex items-center justify-center"
+                style={{ background: "rgba(232,39,111,0.1)", border: "1px solid rgba(232,39,111,0.25)" }}>
+                <Calendar className="w-9 h-9" style={{ color: "#E8276F" }} />
               </div>
-              <h2 className="text-lg font-semibold text-foreground">
+              <h2 style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: 22, color: "#F8F8F8", textTransform: "uppercase", letterSpacing: "0.02em", margin: 0 }}>
                 {tab === "upcoming" ? "No upcoming events" : "No past events"}
               </h2>
-              <p className="text-sm text-muted-foreground max-w-sm mx-auto">
+              <p className="max-w-sm mx-auto"
+                style={{ fontFamily: "'Playfair Display', serif", fontStyle: "italic", fontSize: 14, color: "rgba(248,248,248,0.55)" }}>
                 {tab === "upcoming"
-                  ? "New events are added regularly. Check back soon or follow us to get notified!"
-                  : "Past event recaps will appear here after events conclude."}
+                  ? "Curated invitations drop weekly. Stay close."
+                  : "Recaps will appear here after the lights come up."}
               </p>
             </div>
           ) : (
@@ -394,101 +454,132 @@ const Events = () => {
                 const spotsLeft = ev.capacity ? ev.capacity - ct : null;
                 const cardIndex = idx + 1;
                 const sponsorSlot = cardIndex > 0 && cardIndex % 5 === 0;
-
-                const v = getVariant(ev.event_type);
-                const th = sceneTheme[v];
+                const th = sceneTheme[getVariant(ev.event_type)];
+                const d = new Date(ev.event_date);
 
                 return (
                   <React.Fragment key={ev.id}>
-                    <Card className="overflow-hidden group cursor-pointer hover:shadow-lg transition-all border-none"
-                      onClick={() => openTile(ev.id)}>
-                      <div className={`relative h-44 overflow-hidden ${th.bg}`}>
+                    <article
+                      className="overflow-hidden cursor-pointer group rounded-[22px] transition-all"
+                      style={{ background: "#1A1A1C", border: "1px solid rgba(255,255,255,0.08)" }}
+                      onClick={() => openTile(ev.id)}
+                    >
+                      {/* Cinematic header w/ date stamp */}
+                      <div className="relative h-44 overflow-hidden">
                         {ev.image_url ? (
-                          <>
-                            <img src={ev.image_url} alt={ev.title} loading="lazy" className="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-500" />
-                            <div className={`absolute inset-0 ${th.bg} mix-blend-multiply opacity-50`} />
-                          </>
+                          <img src={ev.image_url} alt={ev.title} loading="lazy"
+                            className="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-500" />
                         ) : (
-                          <div className={`absolute inset-0 flex items-center justify-center ${th.text}`}>
-                            <Calendar className="w-10 h-10 opacity-50" />
-                          </div>
+                          <div className="w-full h-full" style={{ background: `linear-gradient(135deg, ${th.accent}40, #141415)` }} />
                         )}
-                        <div className="absolute top-3 left-3 flex items-center gap-2">
-                          <Badge className={`${th.badge} text-[10px] font-semibold tracking-wider rounded-full`}>{th.label}</Badge>
-                          {ev.event_type && <span className={`text-[10px] font-semibold tracking-wider uppercase ${th.text} drop-shadow`}>{CATEGORY_LABELS[ev.event_type] || ev.event_type}</span>}
+                        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, rgba(10,10,11,0.1) 0%, rgba(10,10,11,0.55) 100%)" }} />
+
+                        {/* Eyebrow */}
+                        <div className="absolute top-3 left-3 flex items-center gap-1.5">
+                          <span className="px-2 py-0.5 rounded-full"
+                            style={{ background: `${th.accent}22`, border: `1px solid ${th.accent}55`, color: th.accent, fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 700, fontSize: 8.5, letterSpacing: "0.18em", textTransform: "uppercase" }}>
+                            {th.label}
+                          </span>
+                          {ev.price === 0 && (
+                            <span className="px-2 py-0.5 rounded-full"
+                              style={{ background: "rgba(248,248,248,0.92)", color: "#0A0A0B", fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 800, fontSize: 8.5, letterSpacing: "0.16em", textTransform: "uppercase" }}>
+                              Free
+                            </span>
+                          )}
                         </div>
-                        {ev.price === 0 && <Badge className={`absolute top-3 right-3 ${th.badge} text-[10px] font-semibold rounded-full`}>Free</Badge>}
-                        <div className="absolute bottom-3 right-3">
-                          <span className={`font-display text-4xl font-bold drop-shadow-lg ${th.text}`}>{format(new Date(ev.event_date), "d")}</span>
+
+                        {/* Date block */}
+                        <div className="absolute bottom-3 left-3 px-2.5 py-1.5 rounded-lg text-center"
+                          style={{ background: "rgba(10,10,11,0.78)", border: "1px solid rgba(255,255,255,0.1)", backdropFilter: "blur(8px)" }}>
+                          <div style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 9, letterSpacing: "0.18em", color: "rgba(248,248,248,0.6)", textTransform: "uppercase" }}>
+                            {format(d, "MMM")}
+                          </div>
+                          <div style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: 24, lineHeight: 0.9, color: "#F8F8F8" }}>
+                            {format(d, "dd")}
+                          </div>
                         </div>
                       </div>
-                      <CardContent className="p-4 space-y-2">
-                        <h3 className="font-semibold text-sm line-clamp-2 group-hover:text-primary transition-colors">{ev.title}</h3>
-                        <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                          <span className="flex items-center gap-1"><Calendar className="w-3 h-3" />{format(new Date(ev.event_date), "MMM d")}</span>
+
+                      <div className="p-4 space-y-3">
+                        <h3 className="line-clamp-2"
+                          style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: 18, lineHeight: 1.05, color: "#F8F8F8", textTransform: "uppercase", letterSpacing: "0.01em", margin: 0 }}>
+                          {ev.title}
+                        </h3>
+                        <div className="flex flex-wrap items-center gap-x-3 gap-y-1"
+                          style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 10, color: "rgba(248,248,248,0.55)", letterSpacing: "0.04em" }}>
                           {ev.event_time && <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{fmtTime(ev.event_time)}</span>}
+                          {(ev.venue_name || ev.city) && (
+                            <span className="flex items-center gap-1 truncate max-w-[180px]">
+                              <MapPin className="w-3 h-3" style={{ color: "#D88C5A" }} />
+                              {ev.venue_name}{ev.venue_name && ev.city ? ", " : ""}{ev.city}
+                            </span>
+                          )}
                         </div>
-                        {(ev.venue_name || ev.city) && (
-                          <p className="text-xs text-muted-foreground flex items-center gap-1"><MapPin className="w-3 h-3 text-accent" />{ev.venue_name}{ev.venue_name && ev.city ? ", " : ""}{ev.city}</p>
-                        )}
+
                         {user ? (
                           <>
                             {ev.event_tags && ev.event_tags.length > 0 && (
-                              <div className="pt-1" onClick={(e) => e.stopPropagation()}>
+                              <div onClick={(e) => e.stopPropagation()}>
                                 <EventTagBadges tags={ev.event_tags} size="sm" />
                               </div>
                             )}
-                            {/* Attendee avatars */}
+                            {/* Attendee avatars — guest signal */}
                             {eventAttendees[ev.id]?.length > 0 && (
-                              <div className="flex items-center gap-1 pt-1" onClick={(e) => e.stopPropagation()}>
-                                <div className="flex -space-x-1.5">
+                              <div className="flex items-center gap-2 pt-1" onClick={(e) => e.stopPropagation()}>
+                                <div className="flex -space-x-2">
                                   {eventAttendees[ev.id].slice(0, 4).map((attendee) => (
                                     <button
                                       key={attendee.id}
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        setSelectedProfile(attendee);
-                                        setDrawerOpen(true);
-                                      }}
+                                      onClick={(e) => { e.stopPropagation(); setSelectedProfile(attendee); setDrawerOpen(true); }}
                                       className="hover:z-10 transition-transform hover:scale-110"
                                     >
-                                      <Avatar className="w-7 h-7 border-2 border-background">
+                                      <Avatar className="w-7 h-7" style={{ border: "2px solid #1A1A1C" }}>
                                         <AvatarImage src={attendee.profile_photo_url || undefined} />
-                                        <AvatarFallback className="bg-primary/10 text-primary text-[10px]">
+                                        <AvatarFallback style={{ background: "rgba(232,39,111,0.18)", color: "#E8276F", fontSize: 10, fontFamily: "'Inter', sans-serif", fontWeight: 700 }}>
                                           {attendee.name?.charAt(0).toUpperCase()}
                                         </AvatarFallback>
                                       </Avatar>
                                     </button>
                                   ))}
                                 </div>
-                                {ct > 4 && (
-                                  <span className="text-[10px] text-muted-foreground ml-1">+{ct - 4}</span>
-                                )}
+                                <span style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 10, color: "rgba(248,248,248,0.55)", letterSpacing: "0.04em" }}>
+                                  {ct} going{spotsLeft !== null && spotsLeft > 0 && spotsLeft <= 5 ? ` · ${spotsLeft} left` : ev.capacity ? ` / ${ev.capacity}` : ""}
+                                </span>
                               </div>
                             )}
-                            <div className="flex items-center justify-between pt-2">
-                              <span className="text-xs text-muted-foreground flex items-center gap-1">
+                            <div className="flex items-center justify-between pt-2" style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+                              <span className="flex items-center gap-1"
+                                style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 10, color: "rgba(248,248,248,0.5)", letterSpacing: "0.04em" }}>
                                 <Users className="w-3 h-3" />{ct}{ev.capacity ? `/${ev.capacity}` : ""}
-                                {spotsLeft !== null && spotsLeft > 0 && spotsLeft <= 5 && (
-                                  <span className="text-destructive ml-1">({spotsLeft} left!)</span>
-                                )}
                               </span>
                               {rsvp ? (
-                                <Badge variant="outline" className="text-[10px] rounded-full capitalize text-muted-foreground">{rsvp}</Badge>
+                                <span className="px-3 py-1 rounded-full capitalize"
+                                  style={{ background: rsvp === "attending" ? "rgba(232,39,111,0.15)" : "rgba(255,255,255,0.06)", color: rsvp === "attending" ? "#E8276F" : "rgba(248,248,248,0.6)", border: rsvp === "attending" ? "1px solid rgba(232,39,111,0.35)" : "1px solid rgba(255,255,255,0.08)", fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 700, fontSize: 10, letterSpacing: "0.08em", textTransform: "uppercase" }}>
+                                  {rsvp === "attending" ? "Going ✓" : rsvp}
+                                </span>
                               ) : (
-                                <Button size="sm" className="rounded-full text-xs h-8 px-4 bg-primary text-primary-foreground" onClick={e => { e.stopPropagation(); setRsvpId(ev.id); }}>RSVP</Button>
+                                <Button size="sm" className="rounded-full h-8 px-4"
+                                  style={{ background: "#E8276F", color: "#fff", fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 700, fontSize: 10, letterSpacing: "0.1em", textTransform: "uppercase" }}
+                                  onClick={e => { e.stopPropagation(); setRsvpId(ev.id); }}>
+                                  RSVP
+                                </Button>
                               )}
                             </div>
                           </>
                         ) : (
-                          <div className="pt-2 flex items-center justify-between gap-2">
-                            <p className="text-[11px] text-muted-foreground leading-snug">Sign up to see who's going & RSVP</p>
-                            <Button size="sm" className="rounded-full text-xs h-8 px-4 bg-primary text-primary-foreground" onClick={e => { e.stopPropagation(); openGate(ev.id); }}>Unlock</Button>
+                          <div className="pt-2 flex items-center justify-between gap-2" style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+                            <p style={{ fontFamily: "'Playfair Display', serif", fontStyle: "italic", fontSize: 12, color: "rgba(248,248,248,0.55)", margin: 0 }}>
+                              Sign up to see who's going
+                            </p>
+                            <Button size="sm" className="rounded-full h-8 px-4"
+                              style={{ background: "transparent", color: "#E8276F", border: "1px solid rgba(232,39,111,0.4)", fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 700, fontSize: 10, letterSpacing: "0.1em", textTransform: "uppercase" }}
+                              onClick={e => { e.stopPropagation(); openGate(ev.id); }}>
+                              Unlock
+                            </Button>
                           </div>
                         )}
-                      </CardContent>
-                    </Card>
-                    {/* Sponsor slot every 5th card */}
+                      </div>
+                    </article>
                     {sponsorSlot && <SponsorCard index={Math.floor(cardIndex / 5) - 1} />}
                   </React.Fragment>
                 );
@@ -499,14 +590,25 @@ const Events = () => {
 
         {/* RSVP MODAL */}
         <Dialog open={!!rsvpId} onOpenChange={() => setRsvpId(null)}>
-          <DialogContent className="sm:max-w-sm">
+          <DialogContent className="sm:max-w-sm rounded-3xl" style={{ background: "#141415", border: "1px solid rgba(255,255,255,0.08)" }}>
             <DialogHeader>
-              <DialogTitle className="font-display text-xl uppercase">RSVP</DialogTitle>
+              <span style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 10, letterSpacing: "0.22em", color: "#E8276F", textTransform: "uppercase" }}>
+                Confirm your seat
+              </span>
+              <DialogTitle style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: 30, lineHeight: 0.95, color: "#F8F8F8", textTransform: "uppercase", letterSpacing: "0.01em", marginTop: 4 }}>
+                RSVP
+              </DialogTitle>
             </DialogHeader>
-            <div className="space-y-3 pt-2">
-              <Button className="w-full rounded-full bg-primary text-primary-foreground" onClick={() => handleRsvp("attending")}>✅ Going</Button>
-              <Button variant="outline" className="w-full rounded-full" onClick={() => handleRsvp("maybe")}>🤔 Maybe</Button>
-              <Button variant="ghost" className="w-full rounded-full" onClick={() => handleRsvp("not_going")}>❌ Can't Make It</Button>
+            <div className="space-y-2.5 pt-3">
+              <Button className="w-full rounded-full h-11"
+                style={{ background: "#E8276F", color: "#fff", fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: 12, letterSpacing: "0.12em", textTransform: "uppercase" }}
+                onClick={() => handleRsvp("attending")}>Going</Button>
+              <Button className="w-full rounded-full h-11"
+                style={{ background: "transparent", color: "#F8F8F8", border: "1px solid rgba(255,255,255,0.12)", fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: 12, letterSpacing: "0.12em", textTransform: "uppercase" }}
+                onClick={() => handleRsvp("maybe")}>Maybe</Button>
+              <Button variant="ghost" className="w-full rounded-full h-11"
+                style={{ color: "rgba(248,248,248,0.5)", fontFamily: "'Inter', sans-serif", fontWeight: 600, fontSize: 11, letterSpacing: "0.1em", textTransform: "uppercase" }}
+                onClick={() => handleRsvp("not_going")}>Can't Make It</Button>
             </div>
           </DialogContent>
         </Dialog>
