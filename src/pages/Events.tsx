@@ -285,7 +285,7 @@ const Events = () => {
                     {featured.event_time && <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5" />{fmtTime(featured.event_time)}</span>}
                     {(featured.venue_name || featured.city) && <span className="flex items-center gap-1 truncate max-w-[180px]"><MapPin className="w-3.5 h-3.5 text-accent flex-shrink-0" />{featured.venue_name || featured.city}</span>}
                   </div>
-                  <Button className="rounded-full mt-4 bg-primary text-primary-foreground" onClick={e => { e.stopPropagation(); setRsvpId(featured.id); }}>RSVP Now</Button>
+                  <Button className="rounded-full mt-4 bg-primary text-primary-foreground" onClick={e => { e.stopPropagation(); requestRsvp(featured.id); }}>{user ? "RSVP Now" : "Sign Up to RSVP"}</Button>
                 </div>
               </div>
             </Card>
