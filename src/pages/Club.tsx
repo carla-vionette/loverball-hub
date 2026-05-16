@@ -7,6 +7,7 @@ import MobileHeader from "@/components/MobileHeader";
 import DesktopNav from "@/components/DesktopNav";
 import BottomNav from "@/components/BottomNav";
 import Seo from "@/components/Seo";
+import DraftConfirmModal from "@/components/club/DraftConfirmModal";
 
 // ── Loverball design system (Club, aligned with global tokens) ───────
 const C = {
@@ -136,6 +137,11 @@ const Club: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [drafted, setDrafted] = useState<string[]>(loadDrafted().ids);
   const [pending, setPending] = useState<string | null>(null);
+  const [confirm, setConfirm] = useState<{ open: boolean; first: string; opener: string }>({
+    open: false,
+    first: "",
+    opener: "",
+  });
 
   const draftsLeft = Math.max(0, DRAFT_LIMIT - drafted.length);
   const featured = candidates[0];
@@ -222,7 +228,13 @@ const Club: React.FC = () => {
     const next = [...drafted, c.id];
     setDrafted(next);
     saveDrafted(next);
-    toast.success(`Drafted ${c.name?.split(" ")[0] || "member"} — they'll be notified.`);
+    const first = c.name?.split(" ")[0] || "Member";
+    const opener = c.sharedTeams[0]
+      ? `Saw you ride for ${c.sharedTeams[0]}. Watch party this weekend?`
+      : c.sharedSports[0]
+      ? `Fellow ${c.sharedSports[0]} head — what's your take on the season?`
+      : `Hey ${first} — your profile caught my eye. What are you watching?`;
+    setConfirm({ open: true, first, opener });
   };
 
   return (
@@ -294,7 +306,8 @@ const Club: React.FC = () => {
               >
                 Picked for you · Week {weekKey().slice(5)}
               </span>
-              <span
+              <button
+                onClick={() => navigate("/club/drafts")}
                 className="text-[10px] uppercase font-semibold"
                 style={{
                   fontFamily: "'Space Mono', ui-monospace, monospace",
@@ -302,8 +315,8 @@ const Club: React.FC = () => {
                   letterSpacing: "0.18em",
                 }}
               >
-                {draftsLeft} draft{draftsLeft === 1 ? "" : "s"} left
-              </span>
+                {draftsLeft} draft{draftsLeft === 1 ? "" : "s"} left  ›
+              </button>
             </div>
           </header>
 
@@ -389,6 +402,14 @@ const Club: React.FC = () => {
           )}
         </div>
       </main>
+
+      <DraftConfirmModal
+        open={confirm.open}
+        memberFirstName={confirm.first}
+        suggestedOpener={confirm.opener}
+        draftsLeft={draftsLeft}
+        onClose={() => setConfirm((s) => ({ ...s, open: false }))}
+      />
     </div>
   );
 };
