@@ -45,6 +45,42 @@ interface DbEvent {
   event_tags?: string[] | null;
 }
 
+type SceneVariant = "external" | "hosted" | "cultural";
+const variantMap: Record<string, SceneVariant> = {
+  game: "external",
+  watch_party: "external",
+  networking: "hosted",
+  brunch: "hosted",
+  party: "hosted",
+  panel: "cultural",
+  salon: "cultural",
+  other: "cultural",
+};
+const getVariant = (t?: string | null): SceneVariant => (t && variantMap[t]) || "cultural";
+const sceneTheme: Record<SceneVariant, { bg: string; text: string; badge: string; eyebrow: string; label: string }> = {
+  external: {
+    bg: "bg-foreground",
+    text: "text-background",
+    badge: "bg-background text-foreground",
+    eyebrow: "text-background/70",
+    label: "Broadcast",
+  },
+  hosted: {
+    bg: "bg-primary",
+    text: "text-primary-foreground",
+    badge: "bg-primary-foreground text-primary",
+    eyebrow: "text-primary-foreground/80",
+    label: "Hosted",
+  },
+  cultural: {
+    bg: "bg-[hsl(173_58%_39%)]",
+    text: "text-white",
+    badge: "bg-white text-[hsl(173_58%_39%)]",
+    eyebrow: "text-white/80",
+    label: "Cultural",
+  },
+};
+
 const fmtTime = (t: string) => {
   const [h, m] = t.split(":");
   const d = new Date();
