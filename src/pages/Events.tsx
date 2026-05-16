@@ -16,6 +16,7 @@ import DesktopNav from "@/components/DesktopNav";
 import MobileHeader from "@/components/MobileHeader";
 import AttendeeProfileDrawer from "@/components/AttendeeProfileDrawer";
 import EventSubmissionForm from "@/components/EventSubmissionForm";
+import Seo from "@/components/Seo";
 
 const CATEGORIES = ["All", "watch_party", "game", "panel", "brunch", "networking", "other"];
 const CATEGORY_LABELS: Record<string, string> = {
