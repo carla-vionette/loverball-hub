@@ -129,6 +129,12 @@ const Feed = () => {
 
   return (
     <div className="fixed inset-0 bg-black z-30">
+      <Seo
+        title="Video Feed | Loverball"
+        description="Watch the latest women's sports videos, highlights, and creator content — the Loverball immersive feed."
+        path="/feed"
+      />
+      <h1 className="sr-only">Loverball Video Feed</h1>
       {/* Top tabs — Following / For You */}
       <div className="absolute top-0 left-0 right-0 z-40 flex items-center justify-center pt-12 pb-2 pointer-events-auto">
         <div className="flex items-center gap-6">
