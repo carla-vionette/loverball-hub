@@ -116,15 +116,41 @@ const EventComments = ({ eventId }: EventCommentsProps) => {
     }
   };
 
+  const STARTER_PROMPTS = [
+    "Who's pulling up? 🙋‍♀️",
+    "Anyone coming solo?",
+    "Where are we meeting first?",
+    "What's everyone wearing?",
+  ];
+
   return (
-    <div className="border border-border rounded-2xl overflow-hidden bg-card">
+    <div id="event-chat" className="border border-border rounded-2xl overflow-hidden bg-card scroll-mt-20">
       {/* Header */}
-      <div className="px-4 py-3 border-b border-border flex items-center gap-2">
-        <MessageCircle className="w-4 h-4 text-primary" />
-        <h3 className="font-semibold text-sm text-foreground">
-          Hype & Comments ({comments.length})
-        </h3>
+      <div className="px-4 py-3 border-b border-border flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <MessageCircle className="w-4 h-4 text-primary" />
+          <h3 className="font-semibold text-sm text-foreground">
+            Event Chat {comments.length > 0 && `· ${comments.length}`}
+          </h3>
+        </div>
+        <span className="text-[10px] uppercase tracking-wider text-muted-foreground">Members</span>
       </div>
+
+      {/* Starter prompts */}
+      {user && (
+        <div className="px-4 pt-3 flex flex-wrap gap-2">
+          {STARTER_PROMPTS.map((p) => (
+            <button
+              key={p}
+              type="button"
+              onClick={() => setMessage(p)}
+              className="text-xs px-3 py-1 rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
+            >
+              {p}
+            </button>
+          ))}
+        </div>
+      )}
 
       {/* Comments list */}
       <div ref={scrollRef} className="max-h-[320px] overflow-y-auto px-4 py-3 space-y-4">
@@ -142,8 +168,8 @@ const EventComments = ({ eventId }: EventCommentsProps) => {
           </div>
         ) : comments.length === 0 ? (
           <div className="text-center py-6">
-            <p className="text-muted-foreground text-sm">No comments yet</p>
-            <p className="text-muted-foreground/60 text-xs mt-1">Be the first to hype this event! 🔥</p>
+            <p className="text-foreground font-medium text-sm">Be the first to start the chat 💬</p>
+            <p className="text-muted-foreground text-xs mt-1">Say hi, share plans, or ask who's going.</p>
           </div>
         ) : (
           <AnimatePresence>
@@ -201,7 +227,7 @@ const EventComments = ({ eventId }: EventCommentsProps) => {
                   handlePost();
                 }
               }}
-              placeholder="Get hyped! 🔥"
+              placeholder="Say something to the group…"
               maxLength={500}
               className="flex-1 bg-muted/50 rounded-full px-4 py-2 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:ring-2 focus:ring-primary/30"
             />
