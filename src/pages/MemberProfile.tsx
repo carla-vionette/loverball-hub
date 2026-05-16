@@ -629,6 +629,61 @@ const MemberProfile = () => {
             </section>
           )}
 
+          {/* Attending */}
+          {attending.length > 0 && (
+            <section className="mb-6">
+              <Eyebrow label={`Attending · ${attending.length}`} />
+              <div className="flex flex-col gap-2">
+                {attending.map((e) => {
+                  const d = new Date(e.event_date);
+                  const dateLbl = d.toLocaleString("en-US", { month: "short", day: "numeric" });
+                  return (
+                    <button
+                      key={e.id}
+                      onClick={() => navigate(`/events/${e.slug || e.id}`)}
+                      className="flex items-center gap-3 rounded-xl p-2.5 text-left active:opacity-80 transition-opacity"
+                      style={{ background: C.card, border: `1px solid ${C.border}` }}
+                    >
+                      <div
+                        className="flex-shrink-0 rounded-lg overflow-hidden flex flex-col items-center justify-center"
+                        style={{
+                          width: 52, height: 52,
+                          background: e.image_url ? `url(${e.image_url}) center/cover` : C.cardElev,
+                          border: `1px solid ${C.border}`,
+                        }}
+                      >
+                        {!e.image_url && (
+                          <>
+                            <span style={{ fontFamily: "'Space Mono', monospace", fontSize: 9, letterSpacing: "0.18em", color: C.copper }}>
+                              {d.toLocaleString("en-US", { month: "short" }).toUpperCase()}
+                            </span>
+                            <span style={{ fontFamily: "'Playfair Display', Georgia, serif", fontStyle: "italic", fontSize: 20, lineHeight: 1, color: C.text }}>
+                              {d.getDate()}
+                            </span>
+                          </>
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div
+                          className="truncate"
+                          style={{ fontFamily: "'Playfair Display', Georgia, serif", fontStyle: "italic", fontSize: 15, color: C.text, lineHeight: 1.15 }}
+                        >
+                          {e.title}
+                        </div>
+                        <div
+                          className="truncate mt-1"
+                          style={{ fontFamily: "'Space Mono', monospace", fontSize: 10, letterSpacing: "0.12em", color: C.muted, textTransform: "uppercase" }}
+                        >
+                          {dateLbl}{e.venue_name ? ` · ${e.venue_name}` : e.city ? ` · ${e.city}` : ""}
+                        </div>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </section>
+          )}
+
           {/* Recent rounds — soft empty when no live activity */}
           <section className="mb-6">
             <Eyebrow label="Recent rounds" />
