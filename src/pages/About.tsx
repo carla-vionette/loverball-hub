@@ -35,7 +35,7 @@ const About = () => (
       <p style={{ color: C.muted }}>No bots. No bad-faith trolls. No algorithm dragging you off-topic. Just members, the games, and the people who love them.</p>
       <div className="pt-6 flex flex-wrap gap-6">
         <Link to="/contact" style={{ fontFamily: fonts.mono, fontSize: 12, letterSpacing: "0.16em", textTransform: "uppercase", color: C.raspberry, borderBottom: `1px solid ${C.raspberry}` }}>Contact us</Link>
-        <Link to="/signup" style={{ fontFamily: fonts.mono, fontSize: 12, letterSpacing: "0.16em", textTransform: "uppercase", color: C.text, borderBottom: `1px solid ${C.borderStrong}` }}>Join Loverball</Link>
+        <Link to="/auth?mode=signup" style={{ fontFamily: fonts.mono, fontSize: 12, letterSpacing: "0.16em", textTransform: "uppercase", color: C.text, borderBottom: `1px solid ${C.borderStrong}` }}>Join Loverball</Link>
       </div>
     </section>
 
