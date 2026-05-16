@@ -185,6 +185,7 @@ export default function Signup() {
                   />
                   <p className="text-xs text-foreground/50 pt-1">
                     We'll {method === "email" ? "email" : "text"} you a confirmation code.
+                    {method === "phone" && " US mobile numbers only — if it fails, switch to email."}
                   </p>
                 </div>
 
