@@ -607,7 +607,7 @@ const Profile = () => {
                 <div className="glass-card rounded-2xl overflow-hidden">
                   <CollapsibleTrigger asChild>
                     <button className="w-full p-5 pb-3 flex items-center justify-between cursor-pointer hover:bg-foreground/[0.03] transition-colors">
-                      <span className="text-sm font-medium tracking-wider uppercase text-foreground/60 flex items-center gap-2">
+                      <span className="text-[15px] flex items-center gap-2.5 lb-section-label">
                         <Shield className="w-3.5 h-3.5 text-primary" strokeWidth={2.5} /> Favorite Teams
                       </span>
                       <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform duration-200 ${teamsOpen ? 'rotate-180' : ''}`} />
@@ -702,7 +702,7 @@ const Profile = () => {
                 <Card className="rounded-2xl overflow-hidden">
                   <CollapsibleTrigger asChild>
                     <button className="w-full pt-4 px-5 pb-3 flex items-center justify-between cursor-pointer hover:bg-foreground/[0.03] transition-colors">
-                      <span className="text-sm font-medium tracking-wider uppercase text-foreground/60 flex items-center gap-2">
+                      <span className="text-[15px] flex items-center gap-2.5 lb-section-label">
                         <Tv className="w-3.5 h-3.5 text-primary" /> Where to Watch
                       </span>
                       <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform duration-200 ${watchOpen ? 'rotate-180' : ''}`} />
@@ -723,7 +723,7 @@ const Profile = () => {
                 <Card className="rounded-2xl overflow-hidden">
                   <CollapsibleTrigger asChild>
                     <button className="w-full pt-4 px-5 pb-3 flex items-center justify-between cursor-pointer hover:bg-foreground/[0.03] transition-colors">
-                      <span className="text-sm font-medium tracking-wider uppercase text-foreground/60 flex items-center gap-2">
+                      <span className="text-[15px] flex items-center gap-2.5 lb-section-label">
                         <Radio className="w-3.5 h-3.5 text-[#FF5D2E]" /> Live &amp; Recent Scores
                       </span>
                       <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform duration-200 ${scoresOpen ? 'rotate-180' : ''}`} />
@@ -745,7 +745,7 @@ const Profile = () => {
                   <div className="glass-card rounded-2xl overflow-hidden">
                     <CollapsibleTrigger asChild>
                       <button className="w-full p-5 pb-3 flex items-center justify-between cursor-pointer hover:bg-foreground/[0.03] transition-colors">
-                        <span className="text-sm font-medium tracking-wider uppercase text-foreground/60 flex items-center gap-2">
+                        <span className="text-[15px] flex items-center gap-2.5 lb-section-label">
                           <CalendarHeart className="w-3.5 h-3.5 text-primary" strokeWidth={2.5} /> Recommended Events
                         </span>
                         <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform duration-200 ${recEventsOpen ? 'rotate-180' : ''}`} />
