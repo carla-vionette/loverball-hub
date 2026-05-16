@@ -1,15 +1,9 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Seo } from "@/components/Seo";
-import { Check, Minus, ArrowRight, ChevronDown } from "lucide-react";
+import { Check, Minus, ChevronDown, Sparkles } from "lucide-react";
 import { C, fonts } from "@/lib/editorialTheme";
-
-const Slug = ({ children }: { children: React.ReactNode }) => (
-  <span style={{ fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.22em", textTransform: "uppercase", color: C.raspberry }}>{children}</span>
-);
-const Mono = ({ children, color = C.muted, size = 11 }: any) => (
-  <span style={{ fontFamily: fonts.mono, fontSize: size, letterSpacing: "0.14em", textTransform: "uppercase", color }}>{children}</span>
-);
+import { H1, H2, H3, Body, Slug, Mono, PrimaryBtn, SecondaryBtn, TertiaryLink } from "@/components/editorial/primitives";
 
 const NavBar = () => (
   <header className="px-6 md:px-12 pt-10 pb-6 flex items-center justify-between" style={{ borderBottom: `0.5px solid ${C.border}` }}>
@@ -60,7 +54,7 @@ const TIERS: Tier[] = [
   },
 ];
 
-const COMPARE: Array<{ label: string; free: boolean | string; insider: boolean | string; all: boolean | string }> = [
+const COMPARE = [
   { label: "Editorial stories & scores", free: true, insider: true, all: true },
   { label: "Fan matching", free: false, insider: true, all: true },
   { label: "Group chats", free: "Preview", insider: "Unlimited", all: "Unlimited" },
@@ -68,7 +62,7 @@ const COMPARE: Array<{ label: string; free: boolean | string; insider: boolean |
   { label: "Members-only events", free: false, insider: true, all: "Priority" },
   { label: "Mixers & away-game travel", free: false, insider: false, all: true },
   { label: "Merch drops", free: false, insider: false, all: true },
-];
+] as const;
 
 const FAQS = [
   { q: "Who is Loverball for?", a: "Sports fans who want a serious community — built around watch parties, group chats, fan matching, and IRL meetups. Headquartered in LA, members worldwide." },
@@ -81,6 +75,7 @@ const FAQS = [
 const Membership = () => {
   const navigate = useNavigate();
   const [open, setOpen] = useState<number | null>(0);
+  const goSignup = () => navigate("/auth?mode=signup");
 
   return (
     <div style={{ background: C.bg, color: C.text, fontFamily: fonts.sans }} className="min-h-screen">
@@ -95,67 +90,86 @@ const Membership = () => {
       {/* Hero */}
       <section className="px-6 md:px-12 pt-16 md:pt-24 pb-16 max-w-6xl">
         <Slug>Membership · Choose your pass</Slug>
-        <h1 className="mt-6" style={{ fontFamily: fonts.serif, fontStyle: "italic", fontWeight: 500, fontSize: "clamp(48px, 8vw, 112px)", lineHeight: 0.95, letterSpacing: "-0.03em" }}>
-          Pick your<br/>Loverball pass.
-        </h1>
-        <p className="mt-8 max-w-xl" style={{ fontSize: 18, lineHeight: 1.6, color: C.muted }}>
+        <H1 className="mt-6">Pick your<br/>Loverball pass.</H1>
+        <Body muted size={18} className="mt-8 max-w-xl">
           Three ways in. All built around the same idea — sports are better with the right people.
-        </p>
+        </Body>
       </section>
 
       {/* Pricing tiers */}
-      <section className="px-6 md:px-12 pb-24 grid md:grid-cols-3 gap-px max-w-6xl" style={{ background: C.border }}>
-        {TIERS.map((t) => (
-          <article
-            key={t.name}
-            className="p-8 md:p-10 flex flex-col"
-            style={{
-              background: t.highlight ? C.surface : C.bg,
-              border: t.highlight ? `0.5px solid ${C.raspberry}55` : undefined,
-            }}
-          >
-            <div className="flex items-center justify-between">
-              <Mono color={t.highlight ? C.raspberry : C.muted}>{t.name}</Mono>
-              {t.highlight && <Mono color={C.gold} size={10}>Most popular</Mono>}
-            </div>
-            <div className="mt-6 flex items-baseline gap-2">
-              <span style={{ fontFamily: fonts.serif, fontStyle: "italic", fontWeight: 500, fontSize: 64, lineHeight: 1, letterSpacing: "-0.02em" }}>{t.price}</span>
-              <Mono>/ {t.cadence}</Mono>
-            </div>
-            <p className="mt-3" style={{ color: C.muted, fontSize: 14, lineHeight: 1.5 }}>{t.tagline}</p>
+      <section className="px-6 md:px-12 pb-24 max-w-6xl">
+        <div className="grid md:grid-cols-3 gap-6">
+          {TIERS.map((t) => {
+            const hi = !!t.highlight;
+            return (
+              <article
+                key={t.name}
+                className="relative p-8 md:p-10 flex flex-col"
+                style={{
+                  background: hi
+                    ? `linear-gradient(180deg, ${C.raspberry}0F 0%, ${C.surface} 60%)`
+                    : C.surface,
+                  border: hi ? `1.5px solid ${C.raspberry}` : `0.5px solid ${C.border}`,
+                  borderRadius: 8,
+                  boxShadow: hi
+                    ? `0 24px 60px -28px ${C.raspberry}99, 0 0 0 4px ${C.raspberry}14`
+                    : "none",
+                  transform: hi ? "translateY(-8px)" : "none",
+                }}
+              >
+                {hi && (
+                  <div
+                    className="absolute -top-3 left-1/2 -translate-x-1/2 inline-flex items-center gap-1.5 px-3 py-1.5"
+                    style={{
+                      background: C.raspberry,
+                      color: "#fff",
+                      fontFamily: fonts.mono,
+                      fontSize: 10,
+                      letterSpacing: "0.18em",
+                      textTransform: "uppercase",
+                      borderRadius: 999,
+                      fontWeight: 600,
+                      boxShadow: `0 8px 20px -8px ${C.raspberry}AA`,
+                    }}
+                  >
+                    <Sparkles size={11} /> Most members pick this
+                  </div>
+                )}
 
-            <ul className="mt-8 space-y-3 flex-1">
-              {t.features.map((f) => (
-                <li key={f} className="flex items-start gap-3" style={{ fontSize: 14, lineHeight: 1.5 }}>
-                  <Check size={16} color={C.raspberry} strokeWidth={2} className="mt-0.5 shrink-0" />
-                  <span>{f}</span>
-                </li>
-              ))}
-            </ul>
+                <Mono color={hi ? C.raspberry : C.muted}>{t.name}</Mono>
 
-            <button
-              onClick={() => navigate("/auth?mode=signup")}
-              className="mt-10 inline-flex items-center justify-center gap-2 transition-all hover:opacity-90 active:scale-[0.98]"
-              style={{
-                background: t.highlight ? C.raspberry : "transparent",
-                color: t.highlight ? "#fff" : C.text,
-                border: t.highlight ? "none" : `1px solid ${C.borderStrong}`,
-                fontFamily: fonts.mono, fontSize: 12, letterSpacing: "0.16em", textTransform: "uppercase",
-                padding: "16px 22px", borderRadius: 999, fontWeight: 500,
-              }}
-            >
-              {t.cta} <ArrowRight size={14} />
-            </button>
-          </article>
-        ))}
+                <div className="mt-6 flex items-baseline gap-2">
+                  <span style={{ fontFamily: fonts.serif, fontStyle: "italic", fontWeight: 500, fontSize: 72, lineHeight: 1, letterSpacing: "-0.02em", color: C.text }}>{t.price}</span>
+                  <Mono>/ {t.cadence}</Mono>
+                </div>
+                <Body muted size={14} className="mt-3">{t.tagline}</Body>
+
+                <ul className="mt-8 space-y-3 flex-1">
+                  {t.features.map((f) => (
+                    <li key={f} className="flex items-start gap-3" style={{ fontFamily: fonts.sans, fontSize: 14, lineHeight: 1.55, color: C.text }}>
+                      <Check size={16} color={hi ? C.raspberry : C.gold} strokeWidth={2.25} className="mt-0.5 shrink-0" />
+                      <span>{f}</span>
+                    </li>
+                  ))}
+                </ul>
+
+                <div className="mt-10">
+                  {hi ? (
+                    <PrimaryBtn onClick={goSignup} style={{ width: "100%" }}>{t.cta}</PrimaryBtn>
+                  ) : (
+                    <SecondaryBtn onClick={goSignup} style={{ width: "100%" }}>{t.cta}</SecondaryBtn>
+                  )}
+                </div>
+              </article>
+            );
+          })}
+        </div>
       </section>
 
       {/* Comparison */}
       <section className="px-6 md:px-12 py-20 max-w-6xl" style={{ borderTop: `0.5px solid ${C.border}` }}>
         <Slug>Compare</Slug>
-        <h2 className="mt-4 mb-12" style={{ fontFamily: fonts.serif, fontStyle: "italic", fontWeight: 500, fontSize: "clamp(36px, 5vw, 56px)", lineHeight: 1, letterSpacing: "-0.02em" }}>
-          What's in each pass.
-        </h2>
+        <H2 className="mt-4 mb-12">What's in each pass.</H2>
 
         <div className="overflow-x-auto">
           <table className="w-full min-w-[640px]" style={{ borderCollapse: "collapse" }}>
@@ -170,9 +184,9 @@ const Membership = () => {
             <tbody>
               {COMPARE.map((row) => (
                 <tr key={row.label} style={{ borderBottom: `0.5px solid ${C.border}` }}>
-                  <td className="py-4 pr-4" style={{ fontSize: 15 }}>{row.label}</td>
+                  <td className="py-4 pr-4" style={{ fontFamily: fonts.sans, fontSize: 15, color: C.text }}>{row.label}</td>
                   {[row.free, row.insider, row.all].map((v, i) => (
-                    <td key={i} className="py-4 pr-4" style={{ fontSize: 14, color: C.muted }}>
+                    <td key={i} className="py-4 pr-4" style={{ fontFamily: fonts.sans, fontSize: 14, color: C.muted }}>
                       {v === true ? <Check size={16} color={C.raspberry} /> : v === false ? <Minus size={16} color={C.border} /> : <span style={{ color: C.text }}>{v}</span>}
                     </td>
                   ))}
@@ -186,25 +200,18 @@ const Membership = () => {
       {/* FAQ */}
       <section className="px-6 md:px-12 py-20 max-w-3xl" style={{ borderTop: `0.5px solid ${C.border}` }}>
         <Slug>FAQ</Slug>
-        <h2 className="mt-4 mb-12" style={{ fontFamily: fonts.serif, fontStyle: "italic", fontWeight: 500, fontSize: "clamp(36px, 5vw, 56px)", lineHeight: 1, letterSpacing: "-0.02em" }}>
-          Questions, answered.
-        </h2>
+        <H2 className="mt-4 mb-12">Questions, answered.</H2>
 
         <div>
           {FAQS.map((f, i) => {
             const isOpen = open === i;
             return (
               <div key={f.q} style={{ borderBottom: `0.5px solid ${C.border}` }}>
-                <button
-                  onClick={() => setOpen(isOpen ? null : i)}
-                  className="w-full text-left py-6 flex items-center justify-between gap-4"
-                >
-                  <span style={{ fontFamily: fonts.serif, fontStyle: "italic", fontSize: 22, lineHeight: 1.2, letterSpacing: "-0.01em" }}>{f.q}</span>
+                <button onClick={() => setOpen(isOpen ? null : i)} className="w-full text-left py-6 flex items-center justify-between gap-4">
+                  <H3 style={{ fontSize: 22 }}>{f.q}</H3>
                   <ChevronDown size={18} style={{ transform: isOpen ? "rotate(180deg)" : "none", transition: "transform 200ms", color: C.muted }} />
                 </button>
-                {isOpen && (
-                  <p className="pb-6 pr-10" style={{ color: C.muted, fontSize: 15, lineHeight: 1.6 }}>{f.a}</p>
-                )}
+                {isOpen && <Body muted className="pb-6 pr-10">{f.a}</Body>}
               </div>
             );
           })}
@@ -214,16 +221,13 @@ const Membership = () => {
       {/* Final CTA */}
       <section className="px-6 md:px-12 py-24 text-center" style={{ borderTop: `0.5px solid ${C.border}` }}>
         <Slug>Ready</Slug>
-        <h2 className="mt-4 mx-auto max-w-3xl" style={{ fontFamily: fonts.serif, fontStyle: "italic", fontWeight: 500, fontSize: "clamp(40px, 6vw, 80px)", lineHeight: 1, letterSpacing: "-0.02em" }}>
+        <H2 className="mt-4 mx-auto max-w-3xl" style={{ fontSize: "clamp(40px, 6vw, 80px)" }}>
           The members-only home for sports fandom.
-        </h2>
-        <button
-          onClick={() => navigate("/auth?mode=signup")}
-          className="mt-10 inline-flex items-center justify-center gap-2 transition-all hover:opacity-90 active:scale-[0.98]"
-          style={{ background: C.raspberry, color: "#fff", fontFamily: fonts.mono, fontSize: 12, letterSpacing: "0.16em", textTransform: "uppercase", padding: "18px 30px", borderRadius: 999, fontWeight: 500 }}
-        >
-          Join Loverball <ArrowRight size={14} />
-        </button>
+        </H2>
+        <div className="mt-10 flex flex-wrap gap-4 justify-center">
+          <PrimaryBtn onClick={goSignup}>Become an Insider</PrimaryBtn>
+          <SecondaryBtn to="/club">Tour the Club</SecondaryBtn>
+        </div>
       </section>
 
       <footer className="px-6 md:px-12 py-10" style={{ borderTop: `0.5px solid ${C.border}` }}>
