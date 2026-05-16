@@ -590,14 +590,25 @@ const Events = () => {
 
         {/* RSVP MODAL */}
         <Dialog open={!!rsvpId} onOpenChange={() => setRsvpId(null)}>
-          <DialogContent className="sm:max-w-sm">
+          <DialogContent className="sm:max-w-sm rounded-3xl" style={{ background: "#141415", border: "1px solid rgba(255,255,255,0.08)" }}>
             <DialogHeader>
-              <DialogTitle className="font-display text-xl uppercase">RSVP</DialogTitle>
+              <span style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 10, letterSpacing: "0.22em", color: "#E8276F", textTransform: "uppercase" }}>
+                Confirm your seat
+              </span>
+              <DialogTitle style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: 30, lineHeight: 0.95, color: "#F8F8F8", textTransform: "uppercase", letterSpacing: "0.01em", marginTop: 4 }}>
+                RSVP
+              </DialogTitle>
             </DialogHeader>
-            <div className="space-y-3 pt-2">
-              <Button className="w-full rounded-full bg-primary text-primary-foreground" onClick={() => handleRsvp("attending")}>✅ Going</Button>
-              <Button variant="outline" className="w-full rounded-full" onClick={() => handleRsvp("maybe")}>🤔 Maybe</Button>
-              <Button variant="ghost" className="w-full rounded-full" onClick={() => handleRsvp("not_going")}>❌ Can't Make It</Button>
+            <div className="space-y-2.5 pt-3">
+              <Button className="w-full rounded-full h-11"
+                style={{ background: "#E8276F", color: "#fff", fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: 12, letterSpacing: "0.12em", textTransform: "uppercase" }}
+                onClick={() => handleRsvp("attending")}>Going</Button>
+              <Button className="w-full rounded-full h-11"
+                style={{ background: "transparent", color: "#F8F8F8", border: "1px solid rgba(255,255,255,0.12)", fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: 12, letterSpacing: "0.12em", textTransform: "uppercase" }}
+                onClick={() => handleRsvp("maybe")}>Maybe</Button>
+              <Button variant="ghost" className="w-full rounded-full h-11"
+                style={{ color: "rgba(248,248,248,0.5)", fontFamily: "'Inter', sans-serif", fontWeight: 600, fontSize: 11, letterSpacing: "0.1em", textTransform: "uppercase" }}
+                onClick={() => handleRsvp("not_going")}>Can't Make It</Button>
             </div>
           </DialogContent>
         </Dialog>
