@@ -71,7 +71,7 @@ const BottomNav = () => {
                 {showBadge && (
                   <span
                     className="absolute -top-1.5 -right-2.5 text-[9px] font-bold rounded-full min-w-[16px] h-4 flex items-center justify-center px-1"
-                    style={{ background: "#e8276f", color: "#fff" }}
+                    style={{ background: "#FF4D3A", color: "#fff" }}
                   >
                     {badgeCount > 99 ? "99+" : badgeCount}
                   </span>
