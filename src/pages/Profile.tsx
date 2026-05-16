@@ -285,6 +285,11 @@ const Profile = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <Seo
+        title="Your Profile | Loverball"
+        description="Your Loverball member profile — favorite teams, personalized news, daily horoscope, and live scores."
+        path="/profile"
+      />
       <MobileHeader />
       <DesktopNav />
       <BottomNav />
