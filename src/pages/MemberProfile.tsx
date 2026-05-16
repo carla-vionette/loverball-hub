@@ -158,6 +158,7 @@ const MemberProfile = () => {
   const [drafted, setDrafted] = useState<string[]>(loadDrafted());
   const [pending, setPending] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const [attending, setAttending] = useState<Array<{ id: string; title: string; event_date: string; venue_name: string | null; city: string | null; image_url: string | null; slug: string | null }>>([]);
 
   const draftsLeft = Math.max(0, DRAFT_LIMIT - drafted.length);
   const isDrafted = !!id && drafted.includes(id);
@@ -180,6 +181,19 @@ const MemberProfile = () => {
           .eq("id", user.id)
           .maybeSingle();
         if (myRow) setMe(myRow as MyProfile);
+
+        // Fetch events this member is attending (going / approved RSVPs on public events)
+        const { data: guestRows } = await supabase
+          .from("event_guests")
+          .select("event_id, status, events!inner(id,title,event_date,venue_name,city,image_url,slug,visibility)")
+          .eq("user_id", id)
+          .in("status", ["going", "approved", "confirmed"]);
+        const upcoming = (guestRows || [])
+          .map((r: any) => r.events)
+          .filter((e: any) => e && e.visibility === "public" && new Date(e.event_date) >= new Date(new Date().toDateString()))
+          .sort((a: any, b: any) => a.event_date.localeCompare(b.event_date))
+          .slice(0, 6);
+        setAttending(upcoming as any);
       } catch {
         /* swallow */
       } finally {
@@ -611,6 +625,61 @@ const MemberProfile = () => {
                     </span>
                   </div>
                 )}
+              </div>
+            </section>
+          )}
+
+          {/* Attending */}
+          {attending.length > 0 && (
+            <section className="mb-6">
+              <Eyebrow label={`Attending · ${attending.length}`} />
+              <div className="flex flex-col gap-2">
+                {attending.map((e) => {
+                  const d = new Date(e.event_date);
+                  const dateLbl = d.toLocaleString("en-US", { month: "short", day: "numeric" });
+                  return (
+                    <button
+                      key={e.id}
+                      onClick={() => navigate(`/events/${e.slug || e.id}`)}
+                      className="flex items-center gap-3 rounded-xl p-2.5 text-left active:opacity-80 transition-opacity"
+                      style={{ background: C.card, border: `1px solid ${C.border}` }}
+                    >
+                      <div
+                        className="flex-shrink-0 rounded-lg overflow-hidden flex flex-col items-center justify-center"
+                        style={{
+                          width: 52, height: 52,
+                          background: e.image_url ? `url(${e.image_url}) center/cover` : C.cardElev,
+                          border: `1px solid ${C.border}`,
+                        }}
+                      >
+                        {!e.image_url && (
+                          <>
+                            <span style={{ fontFamily: "'Space Mono', monospace", fontSize: 9, letterSpacing: "0.18em", color: C.copper }}>
+                              {d.toLocaleString("en-US", { month: "short" }).toUpperCase()}
+                            </span>
+                            <span style={{ fontFamily: "'Playfair Display', Georgia, serif", fontStyle: "italic", fontSize: 20, lineHeight: 1, color: C.text }}>
+                              {d.getDate()}
+                            </span>
+                          </>
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div
+                          className="truncate"
+                          style={{ fontFamily: "'Playfair Display', Georgia, serif", fontStyle: "italic", fontSize: 15, color: C.text, lineHeight: 1.15 }}
+                        >
+                          {e.title}
+                        </div>
+                        <div
+                          className="truncate mt-1"
+                          style={{ fontFamily: "'Space Mono', monospace", fontSize: 10, letterSpacing: "0.12em", color: C.muted, textTransform: "uppercase" }}
+                        >
+                          {dateLbl}{e.venue_name ? ` · ${e.venue_name}` : e.city ? ` · ${e.city}` : ""}
+                        </div>
+                      </div>
+                    </button>
+                  );
+                })}
               </div>
             </section>
           )}
