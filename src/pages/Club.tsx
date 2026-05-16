@@ -145,8 +145,6 @@ const Club: React.FC = () => {
   });
 
   const draftsLeft = Math.max(0, DRAFT_LIMIT - drafted.length);
-  const featured = candidates[0];
-  const rest = candidates.slice(1);
 
   useEffect(() => {
     let cancelled = false;
