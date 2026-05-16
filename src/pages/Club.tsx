@@ -306,7 +306,8 @@ const Club: React.FC = () => {
               >
                 Picked for you · Week {weekKey().slice(5)}
               </span>
-              <span
+              <button
+                onClick={() => navigate("/club/drafts")}
                 className="text-[10px] uppercase font-semibold"
                 style={{
                   fontFamily: "'Space Mono', ui-monospace, monospace",
@@ -314,8 +315,8 @@ const Club: React.FC = () => {
                   letterSpacing: "0.18em",
                 }}
               >
-                {draftsLeft} draft{draftsLeft === 1 ? "" : "s"} left
-              </span>
+                {draftsLeft} draft{draftsLeft === 1 ? "" : "s"} left  ›
+              </button>
             </div>
           </header>
 
