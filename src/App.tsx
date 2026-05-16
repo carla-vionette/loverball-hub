@@ -115,7 +115,7 @@ const App = () => (
                 <Route path="/feed" element={<Feed />} />
                 <Route path="/events" element={<Events />} />
                 <Route path="/event/:id" element={<EventDetail />} />
-                <Route path="/members" element={<ProtectedRoute><Members /></ProtectedRoute>} />
+                <Route path="/members" element={<Navigate to="/club" replace />} />
                 <Route path="/members/:id" element={<ProtectedRoute><MemberProfile /></ProtectedRoute>} />
                 <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
                 <Route path="/club" element={<ProtectedRoute><Club /></ProtectedRoute>} />
