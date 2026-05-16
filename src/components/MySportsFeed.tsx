@@ -26,9 +26,6 @@ interface MySportsFeedProps {
 
 const FILTER_PILLS: { key: FeedFilter; label: string; emoji: string }[] = [
   { key: "all", label: "All", emoji: "✨" },
-  { key: "teams", label: "My Teams", emoji: "🏟️" },
-  { key: "sports", label: "My Sports", emoji: "🏅" },
-  { key: "local", label: "Local", emoji: "📍" },
 ];
 
 const MATCH_CHIP_COLORS: Record<MatchReason["type"], string> = {
