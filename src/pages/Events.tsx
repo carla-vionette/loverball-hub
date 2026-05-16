@@ -359,52 +359,61 @@ const Events = () => {
                         {(ev.venue_name || ev.city) && (
                           <p className="text-xs text-muted-foreground flex items-center gap-1"><MapPin className="w-3 h-3 text-accent" />{ev.venue_name}{ev.venue_name && ev.city ? ", " : ""}{ev.city}</p>
                         )}
-                        {ev.event_tags && ev.event_tags.length > 0 && (
-                          <div className="pt-1" onClick={(e) => e.stopPropagation()}>
-                            <EventTagBadges tags={ev.event_tags} size="sm" />
-                          </div>
-                        )}
-                        {/* Attendee avatars */}
-                        {eventAttendees[ev.id]?.length > 0 && (
-                          <div className="flex items-center gap-1 pt-1" onClick={(e) => e.stopPropagation()}>
-                            <div className="flex -space-x-1.5">
-                              {eventAttendees[ev.id].slice(0, 4).map((attendee) => (
-                                <button
-                                  key={attendee.id}
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    setSelectedProfile(attendee);
-                                    setDrawerOpen(true);
-                                  }}
-                                  className="hover:z-10 transition-transform hover:scale-110"
-                                >
-                                  <Avatar className="w-7 h-7 border-2 border-background">
-                                    <AvatarImage src={attendee.profile_photo_url || undefined} />
-                                    <AvatarFallback className="bg-primary/10 text-primary text-[10px]">
-                                      {attendee.name?.charAt(0).toUpperCase()}
-                                    </AvatarFallback>
-                                  </Avatar>
-                                </button>
-                              ))}
+                        {user ? (
+                          <>
+                            {ev.event_tags && ev.event_tags.length > 0 && (
+                              <div className="pt-1" onClick={(e) => e.stopPropagation()}>
+                                <EventTagBadges tags={ev.event_tags} size="sm" />
+                              </div>
+                            )}
+                            {/* Attendee avatars */}
+                            {eventAttendees[ev.id]?.length > 0 && (
+                              <div className="flex items-center gap-1 pt-1" onClick={(e) => e.stopPropagation()}>
+                                <div className="flex -space-x-1.5">
+                                  {eventAttendees[ev.id].slice(0, 4).map((attendee) => (
+                                    <button
+                                      key={attendee.id}
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        setSelectedProfile(attendee);
+                                        setDrawerOpen(true);
+                                      }}
+                                      className="hover:z-10 transition-transform hover:scale-110"
+                                    >
+                                      <Avatar className="w-7 h-7 border-2 border-background">
+                                        <AvatarImage src={attendee.profile_photo_url || undefined} />
+                                        <AvatarFallback className="bg-primary/10 text-primary text-[10px]">
+                                          {attendee.name?.charAt(0).toUpperCase()}
+                                        </AvatarFallback>
+                                      </Avatar>
+                                    </button>
+                                  ))}
+                                </div>
+                                {ct > 4 && (
+                                  <span className="text-[10px] text-muted-foreground ml-1">+{ct - 4}</span>
+                                )}
+                              </div>
+                            )}
+                            <div className="flex items-center justify-between pt-2">
+                              <span className="text-xs text-muted-foreground flex items-center gap-1">
+                                <Users className="w-3 h-3" />{ct}{ev.capacity ? `/${ev.capacity}` : ""}
+                                {spotsLeft !== null && spotsLeft > 0 && spotsLeft <= 5 && (
+                                  <span className="text-destructive ml-1">({spotsLeft} left!)</span>
+                                )}
+                              </span>
+                              {rsvp ? (
+                                <Badge variant="outline" className="text-[10px] rounded-full capitalize text-muted-foreground">{rsvp}</Badge>
+                              ) : (
+                                <Button size="sm" className="rounded-full text-xs h-8 px-4 bg-primary text-primary-foreground" onClick={e => { e.stopPropagation(); setRsvpId(ev.id); }}>RSVP</Button>
+                              )}
                             </div>
-                            {ct > 4 && (
-                              <span className="text-[10px] text-muted-foreground ml-1">+{ct - 4}</span>
-                            )}
+                          </>
+                        ) : (
+                          <div className="pt-2 flex items-center justify-between gap-2">
+                            <p className="text-[11px] text-muted-foreground leading-snug">Sign up to see who's going & RSVP</p>
+                            <Button size="sm" className="rounded-full text-xs h-8 px-4 bg-primary text-primary-foreground" onClick={e => { e.stopPropagation(); setGateOpen(true); }}>Unlock</Button>
                           </div>
                         )}
-                        <div className="flex items-center justify-between pt-2">
-                          <span className="text-xs text-muted-foreground flex items-center gap-1">
-                            <Users className="w-3 h-3" />{ct}{ev.capacity ? `/${ev.capacity}` : ""}
-                            {spotsLeft !== null && spotsLeft > 0 && spotsLeft <= 5 && (
-                              <span className="text-destructive ml-1">({spotsLeft} left!)</span>
-                            )}
-                          </span>
-                          {rsvp ? (
-                            <Badge variant="outline" className="text-[10px] rounded-full capitalize text-muted-foreground">{rsvp}</Badge>
-                          ) : (
-                            <Button size="sm" className="rounded-full text-xs h-8 px-4 bg-primary text-primary-foreground" onClick={e => { e.stopPropagation(); setRsvpId(ev.id); }}>RSVP</Button>
-                          )}
-                        </div>
                       </CardContent>
                     </Card>
                     {/* Sponsor slot every 5th card */}
