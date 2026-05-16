@@ -110,20 +110,42 @@ const Eyebrow: React.FC<{ icon?: React.ReactNode; label: string }> = ({ icon, la
   </div>
 );
 
-const Chip: React.FC<{ children: React.ReactNode; accent?: boolean }> = ({ children, accent }) => (
+// Squared team chip (Rides for)
+const TeamChip: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <span
-    className="text-[9.5px] uppercase font-semibold px-2.5 py-1 rounded-full"
+    className="font-medium"
     style={{
-      background: accent ? "rgba(232,39,111,0.1)" : C.chip,
-      color: accent ? C.raspberry : C.text,
-      border: `1px solid ${accent ? "rgba(232,39,111,0.28)" : C.border}`,
-      letterSpacing: "0.14em",
+      background: C.card,
+      border: `1px solid rgba(255,255,255,0.07)`,
+      color: C.text,
+      fontSize: 11,
+      padding: "6px 10px",
+      borderRadius: 6,
       fontFamily: "Inter, sans-serif",
     }}
   >
     {children}
   </span>
 );
+
+// Small square tag chip (uppercase letter-spaced)
+const TagChip: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <span
+    className="uppercase font-semibold"
+    style={{
+      background: "rgba(255,255,255,0.06)",
+      color: "#B8B8B8",
+      fontSize: 9,
+      padding: "4px 8px",
+      borderRadius: 4,
+      letterSpacing: "0.12em",
+      fontFamily: "Inter, sans-serif",
+    }}
+  >
+    {children}
+  </span>
+);
+
 
 const MemberProfile = () => {
   const { id } = useParams<{ id: string }>();
