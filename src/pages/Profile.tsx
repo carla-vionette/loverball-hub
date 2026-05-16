@@ -354,6 +354,12 @@ const Profile = () => {
               </motion.div>
             )}
 
+            {/* GREETING + DATE */}
+            <motion.div variants={staggerItem} className="glass-card rounded-2xl p-5">
+              <p className="text-lg font-sans text-foreground">{greeting}, <span className="text-primary font-semibold">{userName}</span></p>
+              <p className="text-sm text-muted-foreground mt-1">{formattedDate} · {formattedTime}</p>
+            </motion.div>
+
             {/* MY INTERESTS LINK */}
             <motion.div variants={staggerItem}>
               <div className="glass-card rounded-2xl cursor-pointer hover:border-primary/30 transition-colors p-4 flex items-center justify-between" onClick={() => goTo("/profile/interests")}>
@@ -363,12 +369,6 @@ const Profile = () => {
                 </div>
                 <ChevronRight className="w-5 h-5 text-muted-foreground" />
               </div>
-            </motion.div>
-
-            {/* GREETING + DATE */}
-            <motion.div variants={staggerItem} className="glass-card rounded-2xl p-5">
-              <p className="text-lg font-sans text-foreground">{greeting}, <span className="text-primary font-semibold">{userName}</span></p>
-              <p className="text-sm text-muted-foreground mt-1">{formattedDate} · {formattedTime}</p>
             </motion.div>
 
 
