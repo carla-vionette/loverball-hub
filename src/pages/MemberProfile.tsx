@@ -158,6 +158,7 @@ const MemberProfile = () => {
   const [drafted, setDrafted] = useState<string[]>(loadDrafted());
   const [pending, setPending] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const [attending, setAttending] = useState<Array<{ id: string; title: string; event_date: string; venue_name: string | null; city: string | null; image_url: string | null; slug: string | null }>>([]);
 
   const draftsLeft = Math.max(0, DRAFT_LIMIT - drafted.length);
   const isDrafted = !!id && drafted.includes(id);
