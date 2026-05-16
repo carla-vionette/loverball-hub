@@ -552,7 +552,7 @@ const FinishProfile = () => {
                 </p>
               </div>
               <Button
-                onClick={() => navigate("/watch")}
+                onClick={() => navigate(consumeRedirect())}
                 className="w-full h-14 text-base rounded-2xl font-semibold gap-2 group"
               >
                 Enter Loverball
