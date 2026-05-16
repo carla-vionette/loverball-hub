@@ -502,25 +502,7 @@ const Profile = () => {
               </Collapsible>
             </motion.div>
 
-            {/* MY SPORTS FEED — Personalized news from news_articles */}
-            <motion.div variants={staggerItem} className="space-y-3">
-              <div className="px-1">
-                <span className="mag-eyebrow text-raspberry">For you</span>
-                <h2 className="mag-title text-foreground" style={{ fontSize: "clamp(40px, 11vw, 56px)", marginTop: 2 }}>
-                  Your Feed
-                </h2>
-                <p className="text-copper text-[11px] mt-1" style={{ fontFamily: "'Inter', system-ui", fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase" }}>
-                  Curated by Loverball
-                </p>
-              </div>
-              <MySportsFeed
-                userSports={profile.favorite_sports || []}
-                userTeams={[...(profile.favorite_teams_players || []), ...((profile as any).favorite_la_teams || [])]}
-                userCity={profile.city}
-              />
-            </motion.div>
-
-            {/* WHERE TO WATCH - COLLAPSIBLE (under My Sports Feed) */}
+            {/* WHERE TO WATCH - COLLAPSIBLE */}
             <motion.div variants={staggerItem}>
               <Collapsible open={watchOpen} onOpenChange={setWatchOpen}>
                 <Card className="rounded-2xl overflow-hidden">
@@ -562,7 +544,6 @@ const Profile = () => {
               </Collapsible>
             </motion.div>
 
-
             {/* RECOMMENDED EVENTS - COLLAPSIBLE */}
             {suggestedEvents.length > 0 && (
               <motion.div variants={staggerItem}>
@@ -574,27 +555,6 @@ const Profile = () => {
                         <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform duration-200 ${recEventsOpen ? 'rotate-180' : ''}`} />
                       </button>
                     </CollapsibleTrigger>
-                    {/* Preview: first 2 events */}
-                    {!recEventsOpen && (
-                      <div className="px-5 pb-5">
-                        <div className="space-y-3">
-                          {suggestedEvents.slice(0, 2).map(event => (
-                            <div key={event.id} className="flex items-center gap-3 cursor-pointer hover:bg-foreground/[0.03] rounded-xl p-2 transition-colors" onClick={() => goTo(`/event/${event.id}`)}>
-                              {event.image_url ? <img src={event.image_url} alt={event.title} className="w-14 h-14 object-cover rounded-lg flex-shrink-0" /> : <div className="w-14 h-14 bg-muted rounded-lg flex items-center justify-center flex-shrink-0"><Calendar className="w-5 h-5 text-muted-foreground" /></div>}
-                              <div className="min-w-0">
-                                <p className="text-sm font-medium text-foreground line-clamp-1">{event.title}</p>
-                                <p className="text-xs text-muted-foreground">{event.venue_name || event.city || "Location TBD"} • {format(new Date(event.event_date), "MMM d")}</p>
-                              </div>
-                            </div>
-                          ))}
-                          {suggestedEvents.length > 2 && (
-                            <div className="text-center">
-                              <span className="text-xs text-muted-foreground">+{suggestedEvents.length - 2} more events</span>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    )}
                     <CollapsibleContent>
                       <div className="px-5 pb-5">
                         <div className="grid md:grid-cols-2 gap-4">
@@ -612,6 +572,24 @@ const Profile = () => {
                 </Collapsible>
               </motion.div>
             )}
+
+            {/* MY SPORTS FEED — Personalized news from news_articles */}
+            <motion.div variants={staggerItem} className="space-y-3">
+              <div className="px-1">
+                <span className="mag-eyebrow text-raspberry">For you</span>
+                <h2 className="mag-title text-foreground" style={{ fontSize: "clamp(40px, 11vw, 56px)", marginTop: 2 }}>
+                  Your Feed
+                </h2>
+                <p className="text-copper text-[11px] mt-1" style={{ fontFamily: "'Inter', system-ui", fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase" }}>
+                  Curated by Loverball
+                </p>
+              </div>
+              <MySportsFeed
+                userSports={profile.favorite_sports || []}
+                userTeams={[...(profile.favorite_teams_players || []), ...((profile as any).favorite_la_teams || [])]}
+                userCity={profile.city}
+              />
+            </motion.div>
 
 
           </motion.div>
