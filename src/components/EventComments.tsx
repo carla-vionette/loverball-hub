@@ -116,15 +116,41 @@ const EventComments = ({ eventId }: EventCommentsProps) => {
     }
   };
 
+  const STARTER_PROMPTS = [
+    "Who's pulling up? 🙋‍♀️",
+    "Anyone coming solo?",
+    "Where are we meeting first?",
+    "What's everyone wearing?",
+  ];
+
   return (
-    <div className="border border-border rounded-2xl overflow-hidden bg-card">
+    <div id="event-chat" className="border border-border rounded-2xl overflow-hidden bg-card scroll-mt-20">
       {/* Header */}
-      <div className="px-4 py-3 border-b border-border flex items-center gap-2">
-        <MessageCircle className="w-4 h-4 text-primary" />
-        <h3 className="font-semibold text-sm text-foreground">
-          Hype & Comments ({comments.length})
-        </h3>
+      <div className="px-4 py-3 border-b border-border flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <MessageCircle className="w-4 h-4 text-primary" />
+          <h3 className="font-semibold text-sm text-foreground">
+            Event Chat {comments.length > 0 && `· ${comments.length}`}
+          </h3>
+        </div>
+        <span className="text-[10px] uppercase tracking-wider text-muted-foreground">Members</span>
       </div>
+
+      {/* Starter prompts */}
+      {user && (
+        <div className="px-4 pt-3 flex flex-wrap gap-2">
+          {STARTER_PROMPTS.map((p) => (
+            <button
+              key={p}
+              type="button"
+              onClick={() => setMessage(p)}
+              className="text-xs px-3 py-1 rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
+            >
+              {p}
+            </button>
+          ))}
+        </div>
+      )}
 
       {/* Comments list */}
       <div ref={scrollRef} className="max-h-[320px] overflow-y-auto px-4 py-3 space-y-4">
