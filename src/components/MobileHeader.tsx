@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { Search, ShoppingCart, Bell } from "lucide-react";
+import { Search, MessageCircle, Bell } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useCartStore } from "@/stores/cartStore";
 import loverballLogo from "@/assets/loverball-new-l-logo.png";
