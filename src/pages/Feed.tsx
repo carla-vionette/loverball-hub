@@ -136,29 +136,98 @@ const Feed = () => {
         path="/feed"
       />
       <h1 className="sr-only">Loverball Video Feed</h1>
-      {/* Top tabs — Following / For You */}
-      <div className="absolute top-0 left-0 right-0 z-40 flex items-center justify-center pt-12 pb-2 pointer-events-auto">
-        <div className="flex items-center gap-6">
-          <button
-            onClick={() => setActiveTab("following")}
-            className={`text-[15px] font-semibold transition-all pb-1 border-b-2 ${
-              activeTab === "following"
-                ? "text-white border-white"
-                : "text-white/50 border-transparent"
-            }`}
-          >
-            Following
-          </button>
-          <button
-            onClick={() => setActiveTab("foryou")}
-            className={`text-[15px] font-semibold transition-all pb-1 border-b-2 ${
-              activeTab === "foryou"
-                ? "text-white border-white"
-                : "text-white/50 border-transparent"
-            }`}
-          >
-            For You
-          </button>
+      {/* Editorial masthead */}
+      <div className="absolute top-0 left-0 right-0 z-40 pointer-events-auto">
+        <div
+          className="pt-[max(env(safe-area-inset-top),12px)] pb-3 px-5"
+          style={{
+            background:
+              "linear-gradient(180deg, rgba(10,10,11,0.85) 0%, rgba(10,10,11,0.55) 60%, rgba(10,10,11,0) 100%)",
+          }}
+        >
+          <div className="flex items-end justify-between mb-2.5">
+            <div className="flex items-baseline gap-2">
+              <span
+                style={{
+                  fontFamily: "'Space Mono', ui-monospace, monospace",
+                  fontSize: 10,
+                  letterSpacing: "0.22em",
+                  color: "#E8276F",
+                  textTransform: "uppercase",
+                }}
+              >
+                Vol. 01
+              </span>
+              <span
+                style={{
+                  fontFamily: "'Space Mono', ui-monospace, monospace",
+                  fontSize: 10,
+                  letterSpacing: "0.22em",
+                  color: "rgba(248,248,248,0.5)",
+                  textTransform: "uppercase",
+                }}
+              >
+                · The Feed
+              </span>
+            </div>
+            <span
+              style={{
+                fontFamily: "'Playfair Display', serif",
+                fontStyle: "italic",
+                fontWeight: 600,
+                fontSize: 13,
+                color: "rgba(248,248,248,0.55)",
+              }}
+            >
+              dispatches
+            </span>
+          </div>
+
+          <div className="flex items-center justify-between">
+            <h2
+              style={{
+                fontFamily: "'Anton', Impact, sans-serif",
+                fontSize: 30,
+                lineHeight: 0.92,
+                letterSpacing: "0.005em",
+                color: "#F8F8F8",
+                textTransform: "uppercase",
+                margin: 0,
+              }}
+            >
+              Loverball
+            </h2>
+
+            <div className="flex items-center gap-1 p-1 rounded-full" style={{ background: "rgba(20,20,21,0.6)", border: "1px solid rgba(255,255,255,0.08)", backdropFilter: "blur(12px)" }}>
+              {[
+                { key: "following" as const, label: "Following" },
+                { key: "foryou" as const, label: "For You" },
+              ].map((t) => {
+                const active = activeTab === t.key;
+                return (
+                  <button
+                    key={t.key}
+                    onClick={() => setActiveTab(t.key)}
+                    className="px-3 py-1 rounded-full transition-all"
+                    style={{
+                      background: active ? "#E8276F" : "transparent",
+                      color: active ? "#fff" : "rgba(248,248,248,0.65)",
+                      fontFamily: "'Inter', system-ui, sans-serif",
+                      fontWeight: 700,
+                      fontSize: 11,
+                      letterSpacing: "0.08em",
+                      textTransform: "uppercase",
+                    }}
+                  >
+                    {t.label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Hairline rule */}
+          <div className="mt-2.5 h-px w-full" style={{ background: "rgba(255,255,255,0.08)" }} />
         </div>
       </div>
 
