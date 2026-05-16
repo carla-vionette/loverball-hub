@@ -42,13 +42,17 @@ const BottomNav = () => {
 
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-50 md:hidden safe-area-pb"
+      className="fixed bottom-3 left-3 right-3 z-50 md:hidden safe-area-pb"
       role="navigation"
       aria-label="Main navigation"
       style={{
-        height: 70,
-        background: "linear-gradient(to top, #0A1128 60%, rgba(10,17,40,0.92) 100%)",
-        borderTop: "1px solid rgba(255,77,58,0.18)",
+        height: 64,
+        background: "rgba(20, 20, 21, 0.72)",
+        backdropFilter: "blur(20px) saturate(140%)",
+        WebkitBackdropFilter: "blur(20px) saturate(140%)",
+        border: "1px solid rgba(255,255,255,0.08)",
+        borderRadius: 24,
+        boxShadow: "0 12px 32px -8px rgba(0,0,0,0.6)",
       }}
     >
       <div className="relative flex justify-around items-center h-full max-w-lg mx-auto px-2">
@@ -56,7 +60,7 @@ const BottomNav = () => {
           const Icon = item.icon;
           const isActive = item.matches.some(m => pathname === m || (m.endsWith("/") && pathname.startsWith(m)));
           const showBadge = item.path === "/members" && badgeCount > 0;
-          const color = isActive ? "#FF4D3A" : "rgba(255,255,255,0.55)";
+          const color = isActive ? "#E8276F" : "rgba(248,248,248,0.55)";
           return (
             <Link
               key={item.path}
@@ -67,11 +71,11 @@ const BottomNav = () => {
               style={{ color }}
             >
               <div className="relative flex items-center justify-center">
-                <Icon className="w-5 h-5" aria-hidden="true" fill={isActive ? "currentColor" : "none"} />
+                <Icon className="w-[20px] h-[20px]" aria-hidden="true" fill={isActive ? "currentColor" : "none"} strokeWidth={isActive ? 2 : 1.75} />
                 {showBadge && (
                   <span
                     className="absolute -top-1.5 -right-2.5 text-[9px] font-bold rounded-full min-w-[16px] h-4 flex items-center justify-center px-1"
-                    style={{ background: "#FF4D3A", color: "#fff" }}
+                    style={{ background: "#E8276F", color: "#fff" }}
                   >
                     {badgeCount > 99 ? "99+" : badgeCount}
                   </span>
@@ -81,9 +85,9 @@ const BottomNav = () => {
                 className="mt-1"
                 style={{
                   fontFamily: "'Inter', system-ui, sans-serif",
-                  fontWeight: 800,
+                  fontWeight: 700,
                   fontSize: 10,
-                  letterSpacing: "1.5px",
+                  letterSpacing: "1.4px",
                   textTransform: "uppercase",
                 }}
               >
