@@ -578,7 +578,7 @@ const Profile = () => {
             {/* MY SPORTS FEED — Personalized news from news_articles */}
             <motion.div variants={staggerItem} className="space-y-3">
               <div className="px-1">
-                <span className="mag-eyebrow text-raspberry">For you</span>
+                <span className="mag-eyebrow text-raspberry">{"\n"}</span>
                 <h2 className="mag-title text-foreground" style={{ fontSize: "clamp(40px, 11vw, 56px)", marginTop: 2 }}>
                   Your Feed
                 </h2>
