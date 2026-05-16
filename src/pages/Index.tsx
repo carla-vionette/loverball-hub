@@ -1,567 +1,1100 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { useToast } from "@/hooks/use-toast";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { motion } from "framer-motion";
-import { ArrowRight, Sparkles, Calendar, X, Menu, Mail, Play, Heart, ShoppingBag, Clock, MapPin, Zap } from "lucide-react";
-import TrendingNews from "@/components/TrendingNews";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { Seo } from "@/components/Seo";
+import { Menu, X, Instagram, ArrowRight } from "lucide-react";
 import heroImage from "@/assets/hero-women-new.png";
+import featuredImage from "@/assets/landing-athletes.jpg";
+import secondaryImage from "@/assets/landing-fans.jpg";
+import manifestoImage from "@/assets/landing-community.jpg";
 
-import loverballLogo from "@/assets/loverball-script-logo.png";
-import philosophyImage from "@/assets/philosophy-image.jpg";
-import athletesImage from "@/assets/landing-athletes.jpg";
-import fansImage from "@/assets/landing-fans.jpg";
-import { z } from "zod";
+/* ============================================================
+   LOVERBALL — MEMBERS-ONLY LANDING
+   Dark editorial sports magazine + private club
+   ============================================================ */
 
-const signUpSchema = z.object({
-  email: z.string().trim().email("Please enter a valid email address"),
-  password: z.string().min(6, "Password must be at least 6 characters")
-});
+const C = {
+  bg: "#0a0a0a",
+  surface: "#1A1A1A",
+  surfaceHi: "#2A2A2A",
+  text: "#FAF5E9",
+  muted: "#B8B8B8",
+  raspberry: "#D4537E",
+  gold: "#E8B86A",
+  teal: "#4ECDC4",
+  border: "rgba(250, 245, 233, 0.08)",
+  borderStrong: "rgba(250, 245, 233, 0.15)",
+};
 
-const ACCESS_CODE = "7688";
+const fonts = {
+  serif: "'Playfair Display', Georgia, serif",
+  sans: "'Inter', system-ui, sans-serif",
+  mono: "'Space Mono', ui-monospace, 'JetBrains Mono', monospace",
+};
+
+/* ---------- Small atoms ---------- */
+
+const Slug = ({ children, color = C.raspberry }: { children: React.ReactNode; color?: string }) => (
+  <span
+    style={{
+      fontFamily: fonts.mono,
+      fontSize: 11,
+      letterSpacing: "0.22em",
+      textTransform: "uppercase",
+      color,
+    }}
+  >
+    {children}
+  </span>
+);
+
+const Chip = ({ children, accent = C.raspberry }: { children: React.ReactNode; accent?: string }) => (
+  <span
+    className="inline-flex items-center"
+    style={{
+      fontFamily: fonts.mono,
+      fontSize: 10,
+      letterSpacing: "0.18em",
+      textTransform: "uppercase",
+      color: accent,
+      background: `${accent}14`,
+      border: `0.5px solid ${accent}55`,
+      padding: "5px 10px",
+      borderRadius: 4,
+    }}
+  >
+    {children}
+  </span>
+);
+
+const Mono = ({ children, color = C.muted, size = 11 }: { children: React.ReactNode; color?: string; size?: number }) => (
+  <span
+    style={{
+      fontFamily: fonts.mono,
+      fontSize: size,
+      letterSpacing: "0.14em",
+      textTransform: "uppercase",
+      color,
+    }}
+  >
+    {children}
+  </span>
+);
+
+const PinkLink = ({ children, onClick }: { children: React.ReactNode; onClick?: () => void }) => (
+  <button
+    onClick={onClick}
+    style={{
+      fontFamily: fonts.mono,
+      fontSize: 12,
+      letterSpacing: "0.16em",
+      textTransform: "uppercase",
+      color: C.raspberry,
+      borderBottom: `1px solid ${C.raspberry}`,
+      paddingBottom: 2,
+    }}
+    className="inline-flex items-center gap-2 hover:opacity-80 transition-opacity"
+  >
+    {children}
+  </button>
+);
+
+const PrimaryBtn = ({ children, onClick }: { children: React.ReactNode; onClick?: () => void }) => (
+  <button
+    onClick={onClick}
+    className="inline-flex items-center justify-center gap-2 transition-all hover:opacity-90 active:scale-[0.98]"
+    style={{
+      background: C.raspberry,
+      color: "#fff",
+      fontFamily: fonts.mono,
+      fontSize: 12,
+      letterSpacing: "0.16em",
+      textTransform: "uppercase",
+      padding: "16px 26px",
+      borderRadius: 999,
+      fontWeight: 500,
+    }}
+  >
+    {children}
+  </button>
+);
+
+const OutlineBtn = ({ children, onClick }: { children: React.ReactNode; onClick?: () => void }) => (
+  <button
+    onClick={onClick}
+    className="inline-flex items-center justify-center gap-2 transition-all hover:bg-white/5 active:scale-[0.98]"
+    style={{
+      background: "transparent",
+      color: C.text,
+      fontFamily: fonts.mono,
+      fontSize: 12,
+      letterSpacing: "0.16em",
+      textTransform: "uppercase",
+      padding: "15px 26px",
+      borderRadius: 999,
+      border: `1px solid ${C.borderStrong}`,
+      fontWeight: 500,
+    }}
+  >
+    {children}
+  </button>
+);
+
+/* ---------- Page ---------- */
 
 const Index = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [inviteCode, setInviteCode] = useState("");
-  const [inviteVerified, setInviteVerified] = useState(false);
-  const [inviteError, setInviteError] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [showForgotPassword, setShowForgotPassword] = useState(false);
-  const [authModalOpen, setAuthModalOpen] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [newsletterEmail, setNewsletterEmail] = useState("");
   const navigate = useNavigate();
-  const { toast } = useToast();
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [newsletterEmail, setNewsletterEmail] = useState("");
 
-  useEffect(() => {
-    let mounted = true;
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (mounted) setIsAuthenticated(!!session);
-    });
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (mounted) setIsAuthenticated(!!session);
-    });
-    return () => {mounted = false;subscription.unsubscribe();};
-  }, []);
+  const goJoin = () => navigate("/signup");
+  const goSignIn = () => navigate("/auth");
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      const { error, data } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
-      if (error) throw error;
-      if (data.user) {
-        const { data: profile } = await supabase.from("profiles").select("*").eq("id", data.user.id).maybeSingle();
-        navigate(profile ? "/profile" : "/onboarding");
-        toast({ title: "Welcome back!", description: "Successfully logged in." });
-        setAuthModalOpen(false);
-      }
-    } catch (error: any) {
-      toast({ title: "Error", description: error.message, variant: "destructive" });
-    } finally {setLoading(false);}
-  };
-
-  const handleForgotPassword = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email.trim()) {
-      toast({ title: "Email required", description: "Please enter your email address.", variant: "destructive" });
-      return;
-    }
-    setLoading(true);
-    try {
-      const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
-        redirectTo: `${window.location.origin}/auth?reset=true`
-      });
-      if (error) throw error;
-      toast({ title: "Check your email", description: "We've sent you a password reset link." });
-      setShowForgotPassword(false);
-    } catch (error: any) {
-      toast({ title: "Error", description: error.message, variant: "destructive" });
-    } finally {setLoading(false);}
-  };
-
-  const handleVerifyInvite = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (inviteCode.trim() === ACCESS_CODE) {setInviteVerified(true);setInviteError(false);return;}
-    setInviteError(true);
-  };
-
-  const handleSignup = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!inviteVerified) {setInviteError(true);toast({ title: "Error", description: "Invalid invite code", variant: "destructive" });return;}
-    setLoading(true);
-    try {
-      const validation = signUpSchema.safeParse({ email, password });
-      if (!validation.success) throw new Error(validation.error.errors[0].message);
-      const { error, data } = await supabase.auth.signUp({
-        email: validation.data.email,
-        password: validation.data.password,
-        options: { emailRedirectTo: `${window.location.origin}/onboarding` }
-      });
-      if (error) throw error;
-      if (data.user) {
-        toast({ title: "Welcome to Loverball!", description: "Let's set up your profile." });
-        setAuthModalOpen(false);
-        navigate("/onboarding");
-      }
-    } catch (error: any) {
-      toast({ title: "Error", description: error.message, variant: "destructive" });
-    } finally {setLoading(false);}
-  };
-
-  const openAuthModal = () => {
-    navigate("/signup");
-  };
-
-  const nearbyEvents = [
-  { date: "MAR 27", time: "7:00 PM", title: "ACFC vs Houston Dash Watch Party", venue: "BMO Stadium, DTLA", type: "Watch Party" },
-  { date: "APR 26", time: "3:00 PM", title: "ACFC vs Portland Thorns Watch Party", venue: "BMO Stadium, DTLA", type: "Watch Party" },
-  { date: "MAY 10", time: "3:00 PM", title: "Sparks vs Aces Season Opener", venue: "Crypto.com Arena, DTLA", type: "Watch Party" },
-  { date: "MAY 13", time: "7:00 PM", title: "Sparks vs Indiana Fever Watch Party", venue: "Crypto.com Arena, DTLA", type: "Watch Party" }];
-
-
-  const featureCards = [
-  { icon: Heart, title: "DISCOVER FANS", desc: "Connect with women who share your sports passion" },
-  { icon: Calendar, title: "FIND EVENTS", desc: "Watch parties, tailgates & meetups near you" },
-  { icon: Play, title: "WATCH", desc: "Originals, highlights & creator content" },
-  { icon: ShoppingBag, title: "SHOP", desc: "Apparel and gear for the ultimate fan" }];
-
-
-  const tickerItems = ["WNBA SEASON", "NWSL PLAYOFFS", "USWNT", "ANGEL CITY FC", "LA SPARKS", "WTA TOUR", "WOMEN'S WORLD CUP", "MARCH MADNESS", "OLYMPIC GAMES"];
+  const navItems: Array<{ label: string; to: string }> = [
+    { label: "Watch", to: "/feed" },
+    { label: "Connect", to: "/club" },
+    { label: "Events", to: "/events" },
+    { label: "Club", to: "/club" },
+  ];
 
   return (
-    <div className="min-h-screen bg-background overflow-x-hidden landing-theme">
-      {/* ═══════ NAV ═══════ */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-md border-b border-border/10">
-        <div className="max-w-[1280px] mx-auto px-8">
-          <div className="flex items-center justify-between h-20">
-            <div className="hidden lg:flex items-center gap-10">
-              <button onClick={openAuthModal} className="text-[11px] font-sans font-bold tracking-[0.25em] uppercase text-muted-foreground hover:text-foreground transition-colors duration-300 bg-transparent border-none cursor-pointer">Explore</button>
-              <button onClick={openAuthModal} className="text-[11px] font-sans font-bold tracking-[0.25em] uppercase text-muted-foreground hover:text-foreground transition-colors duration-300 bg-transparent border-none cursor-pointer">Trending</button>
-              <button onClick={openAuthModal} className="text-[11px] font-sans font-bold tracking-[0.25em] uppercase text-muted-foreground hover:text-foreground transition-colors duration-300 bg-transparent border-none cursor-pointer">Events</button>
-            </div>
-            <div className="absolute left-1/2 -translate-x-1/2">
-              <img src={loverballLogo} alt="Loverball — Women's Sports Community" className="h-56 w-auto" style={{ filter: 'brightness(0) invert(1)' }} />
-            </div>
-            <div className="hidden lg:flex items-center gap-10">
-              <button onClick={() => isAuthenticated ? navigate("/shop") : openAuthModal()} className="text-[11px] font-sans font-bold tracking-[0.25em] uppercase text-muted-foreground hover:text-foreground transition-colors duration-300 bg-transparent border-none cursor-pointer">Shop</button>
-              <button onClick={() => isAuthenticated ? navigate("/watch") : openAuthModal()} className="text-[11px] font-sans font-bold tracking-[0.25em] uppercase text-muted-foreground hover:text-foreground transition-colors duration-300 bg-transparent border-none cursor-pointer">Watch</button>
-              <Button onClick={openAuthModal} className="rounded-full bg-primary text-primary-foreground hover:bg-primary/90 px-7 py-2.5 text-[11px] font-sans font-bold tracking-[0.2em] uppercase h-auto">
-                Join Loverball
-              </Button>
-            </div>
-            <div className="lg:hidden ml-auto">
-              <Button variant="ghost" size="icon" onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="rounded-full text-foreground">
-                {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-              </Button>
+    <div style={{ background: C.bg, color: C.text, fontFamily: fonts.sans }} className="min-h-screen">
+      <Seo
+        title="Loverball — The members-only home for female sports fandom."
+        description="Watch the game. Connect with your people. Loverball is the members-only home for female sports fandom — built around stories, watch parties, and the community that finally gets it."
+        path="/"
+      />
+
+      {/* ============ STICKY NAV ============ */}
+      <nav
+        className="fixed top-0 inset-x-0 z-50"
+        style={{
+          background: "rgba(10, 10, 10, 0.8)",
+          backdropFilter: "blur(16px)",
+          WebkitBackdropFilter: "blur(16px)",
+          borderBottom: `0.5px solid ${C.border}`,
+        }}
+      >
+        <div className="max-w-7xl mx-auto px-5 md:px-10 py-4 flex items-center justify-between">
+          <Link to="/" className="flex flex-col">
+            <span
+              style={{
+                fontFamily: fonts.serif,
+                fontStyle: "italic",
+                fontWeight: 500,
+                fontSize: 22,
+                lineHeight: 1,
+                color: C.text,
+                letterSpacing: "-0.01em",
+              }}
+            >
+              Loverball
+            </span>
+            <span className="md:hidden mt-0.5">
+              <Mono size={9}>Issue 04</Mono>
+            </span>
+          </Link>
+
+          <div className="hidden md:flex items-center gap-8">
+            {navItems.map((n) => (
+              <Link
+                key={n.label}
+                to={n.to}
+                style={{
+                  fontFamily: fonts.mono,
+                  fontSize: 11,
+                  letterSpacing: "0.18em",
+                  textTransform: "uppercase",
+                  color: C.text,
+                }}
+                className="hover:text-[#D4537E] transition-colors"
+              >
+                {n.label}
+              </Link>
+            ))}
+          </div>
+
+          <div className="hidden md:flex items-center gap-5">
+            <button
+              onClick={goSignIn}
+              style={{ fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.18em", textTransform: "uppercase", color: C.muted }}
+              className="hover:text-[#FAF5E9] transition-colors"
+            >
+              Sign in
+            </button>
+            <button
+              onClick={goJoin}
+              style={{
+                background: C.raspberry,
+                color: "#fff",
+                fontFamily: fonts.mono,
+                fontSize: 11,
+                letterSpacing: "0.16em",
+                textTransform: "uppercase",
+                padding: "10px 18px",
+                borderRadius: 999,
+              }}
+            >
+              Join free
+            </button>
+          </div>
+
+          <button
+            className="md:hidden p-2 -mr-2"
+            onClick={() => setMobileOpen(!mobileOpen)}
+            aria-label="Toggle menu"
+          >
+            {mobileOpen ? <X size={22} /> : <Menu size={22} />}
+          </button>
+        </div>
+
+        {mobileOpen && (
+          <div className="md:hidden px-5 pb-5 pt-2 flex flex-col gap-4" style={{ borderTop: `0.5px solid ${C.border}` }}>
+            {navItems.map((n) => (
+              <Link
+                key={n.label}
+                to={n.to}
+                onClick={() => setMobileOpen(false)}
+                style={{
+                  fontFamily: fonts.mono,
+                  fontSize: 12,
+                  letterSpacing: "0.18em",
+                  textTransform: "uppercase",
+                  color: C.text,
+                }}
+              >
+                {n.label}
+              </Link>
+            ))}
+            <div className="flex gap-3 pt-2">
+              <button
+                onClick={() => { setMobileOpen(false); goSignIn(); }}
+                className="flex-1"
+                style={{
+                  fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.16em", textTransform: "uppercase",
+                  color: C.text, padding: "11px 18px", borderRadius: 999, border: `1px solid ${C.borderStrong}`,
+                }}
+              >
+                Sign in
+              </button>
+              <button
+                onClick={() => { setMobileOpen(false); goJoin(); }}
+                className="flex-1"
+                style={{
+                  background: C.raspberry, color: "#fff",
+                  fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.16em", textTransform: "uppercase",
+                  padding: "12px 18px", borderRadius: 999,
+                }}
+              >
+                Join free
+              </button>
             </div>
           </div>
-        </div>
-        {mobileMenuOpen &&
-        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="lg:hidden bg-background border-t border-border/20 px-8 py-6 space-y-1">
-            <button onClick={() => {setMobileMenuOpen(false);openAuthModal();}} className="block py-3 text-[11px] font-sans font-bold tracking-[0.25em] uppercase text-muted-foreground bg-transparent border-none cursor-pointer w-full text-left">Explore</button>
-            <button onClick={() => {setMobileMenuOpen(false);openAuthModal();}} className="block py-3 text-[11px] font-sans font-bold tracking-[0.25em] uppercase text-muted-foreground bg-transparent border-none cursor-pointer w-full text-left">Trending</button>
-            <button onClick={() => {setMobileMenuOpen(false);openAuthModal();}} className="block py-3 text-[11px] font-sans font-bold tracking-[0.25em] uppercase text-muted-foreground bg-transparent border-none cursor-pointer w-full text-left">Events</button>
-            <Button onClick={() => {setMobileMenuOpen(false);openAuthModal();}} className="w-full rounded-full mt-4 bg-primary text-primary-foreground text-[11px] tracking-[0.2em] uppercase">
-              Join Loverball
-            </Button>
-          </motion.div>
-        }
+        )}
       </nav>
 
-      {/* ═══════ AUTH MODAL ═══════ */}
-      <Dialog open={authModalOpen} onOpenChange={setAuthModalOpen}>
-        <DialogContent className="sm:max-w-md rounded-[20px] p-0 overflow-hidden border-border/20 bg-card">
-          <div className="p-8 sm:p-10">
-            <DialogTitle className="sr-only">Member Access</DialogTitle>
-            <div className="flex justify-center mb-8">
-              <img src={loverballLogo} alt="Loverball — Women's Sports Community" className="h-20 w-auto brightness-0 invert" />
-            </div>
-            <Tabs defaultValue="login" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 bg-secondary rounded-full p-1 h-12">
-                <TabsTrigger value="login" className="rounded-full data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-[11px] font-sans font-bold tracking-[0.1em] uppercase">Sign In</TabsTrigger>
-                <TabsTrigger value="signup" className="rounded-full data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-[11px] font-sans font-bold tracking-[0.1em] uppercase">Sign Up</TabsTrigger>
-              </TabsList>
-              <TabsContent value="login">
-                {showForgotPassword ?
-                <form onSubmit={handleForgotPassword} className="space-y-5 mt-8">
-                    <div className="space-y-2">
-                      <Label htmlFor="reset-email" className="text-foreground text-[11px] tracking-[0.1em] uppercase">Email</Label>
-                      <Input id="reset-email" type="email" placeholder="Enter your email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-                    </div>
-                    <p className="text-muted-foreground text-sm">We'll send you a link to reset your password.</p>
-                    <Button type="submit" className="w-full rounded-full h-12 text-[11px] font-sans tracking-[0.1em] uppercase" disabled={loading}>{loading ? "Sending..." : "Send Reset Link"}</Button>
-                    <button type="button" onClick={() => setShowForgotPassword(false)} className="w-full text-sm text-primary hover:text-primary/80 transition-colors font-medium">Back to sign in</button>
-                  </form> :
-
-                <form onSubmit={handleLogin} className="space-y-5 mt-8">
-                    <div className="space-y-2">
-                      <Label htmlFor="login-email" className="text-foreground text-[11px] tracking-[0.1em] uppercase">Email</Label>
-                      <Input id="login-email" type="email" placeholder="Enter your email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-                    </div>
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <Label htmlFor="login-password" className="text-foreground text-[11px] tracking-[0.1em] uppercase">Password</Label>
-                        <button type="button" onClick={() => setShowForgotPassword(true)} className="text-xs text-primary hover:text-primary/80 transition-colors">Forgot?</button>
-                      </div>
-                      <Input id="login-password" type="password" placeholder="Enter your password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-                    </div>
-                    <Button type="submit" className="w-full rounded-full h-12 text-[11px] font-sans tracking-[0.1em] uppercase" disabled={loading}>{loading ? "Signing in..." : "Sign In"}</Button>
-                  </form>
-                }
-              </TabsContent>
-              <TabsContent value="signup">
-                {!inviteVerified ?
-                <form onSubmit={handleVerifyInvite} className="space-y-5 mt-8">
-                    <div className="space-y-2">
-                      <Label htmlFor="signup-invite-code" className="text-foreground text-[11px] tracking-[0.1em] uppercase">Invite Code</Label>
-                      <Input id="signup-invite-code" type="text" inputMode="numeric" maxLength={4} placeholder="Enter invite code" value={inviteCode} onChange={(e) => {setInviteCode(e.target.value);setInviteError(false);}} required />
-                      {inviteError && <p className="text-destructive text-sm">Invalid invite code</p>}
-                    </div>
-                    <Button type="submit" className="w-full rounded-full h-12 text-[11px] font-sans tracking-[0.1em] uppercase">VERIFY CODE</Button>
-                  </form> :
-
-                <form onSubmit={handleSignup} className="space-y-5 mt-8">
-                    <div className="space-y-2">
-                      <Label htmlFor="signup-email" className="text-foreground text-[11px] tracking-[0.1em] uppercase">Email</Label>
-                      <Input id="signup-email" type="email" placeholder="Enter your email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="signup-password" className="text-foreground text-[11px] tracking-[0.1em] uppercase">Password</Label>
-                      <Input id="signup-password" type="password" placeholder="Create a password (min 6)" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} />
-                    </div>
-                    <Button type="submit" className="w-full rounded-full h-12 text-[11px] font-sans tracking-[0.1em] uppercase" disabled={loading}>{loading ? "Creating account..." : "Create Account"}</Button>
-                  </form>
-                }
-              </TabsContent>
-            </Tabs>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* ═══════ HERO ═══════ */}
-      <section className="pt-20">
-        <div className="grid lg:grid-cols-12 min-h-[90vh]">
-          {/* Left — 7 cols */}
-          <div className="lg:col-span-7 bg-secondary relative flex items-center px-8 lg:px-16 py-24 lg:py-0">
-            <motion.div
-              initial={{ opacity: 0, y: 40 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.9, ease: "easeOut" }}
-              className="relative z-10 max-w-xl">
-              
-              <span className="text-[11px] font-sans font-bold tracking-[0.3em] uppercase mb-8 block" style={{ color: '#9CA3AF' }}>
-
-              </span>
-              <h1 className="font-display font-bold text-[3.5rem] sm:text-[5rem] lg:text-[6.5rem] leading-[0.85] tracking-tight uppercase mb-8" style={{ color: '#FFFFFF' }}>
-                Her<br />Game.<br />
-                <span className="text-primary">Her</span><br />
-                <span className="text-primary">Community.</span>
-              </h1>
-              <p className="text-base font-sans font-medium text-muted-foreground leading-relaxed mb-10 max-w-[480px]">
-                The media platform built for women who live and breathe sports. Discover community events, connect with fans, and watch exclusive sports content curated for you.
-              </p>
-              <div className="flex flex-col sm:flex-row items-start gap-4">
-                <Button onClick={openAuthModal} className="rounded-full bg-primary text-primary-foreground hover:bg-primary/90 px-8 py-5 text-[11px] font-sans font-bold tracking-[0.2em] uppercase h-auto">
-                  Join Loverball <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-                <Button onClick={openAuthModal} variant="outline" className="rounded-full border-2 border-foreground/30 text-foreground bg-transparent hover:bg-foreground/5 px-8 py-5 text-[11px] font-sans font-bold tracking-[0.2em] uppercase h-auto">
-                  Find Events
-                </Button>
+      {/* ============ HERO ============ */}
+      <header
+        className="relative min-h-[100svh] flex flex-col"
+        style={{
+          backgroundImage: `linear-gradient(180deg, rgba(10,10,10,0.55) 0%, rgba(10,10,10,0.85) 60%, rgba(10,10,10,1) 100%), url(${heroImage})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center 25%",
+        }}
+      >
+        <div className="flex-1 flex items-end pb-20 pt-28 md:pt-32">
+          <div className="max-w-7xl w-full mx-auto px-5 md:px-10">
+            <div className="max-w-4xl">
+              <div className="mb-6">
+                <Slug>Members only · Est. 2026 · Los Angeles</Slug>
               </div>
-            </motion.div>
-          </div>
 
-          {/* Right — 5 cols */}
-          <motion.div
-            initial={{ opacity: 0, x: 40 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.9, delay: 0.2 }}
-            className="lg:col-span-5 bg-card relative flex items-center justify-center py-24 lg:py-0 px-8 overflow-hidden">
-            
-            <div className="relative w-full max-w-md h-[500px] lg:h-[600px]">
-              <motion.div initial={{ opacity: 0, rotate: -8, scale: 0.9 }} animate={{ opacity: 1, rotate: -6, scale: 1 }} transition={{ duration: 0.8, delay: 0.4 }} className="absolute left-0 bottom-12 w-[55%] z-10">
-                <div className="rounded-[20px] overflow-hidden" style={{ boxShadow: '0 12px 40px rgba(0,0,0,0.5)' }}>
-                  <img src={athletesImage} alt="Women athletes" className="w-full aspect-[3/4] object-cover" />
-                </div>
-              </motion.div>
-              <motion.div initial={{ opacity: 0, y: 30, scale: 0.9 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ duration: 0.8, delay: 0.5 }} className="absolute left-[20%] top-4 w-[60%] z-20">
-                <div className="rounded-[20px] overflow-hidden" style={{ boxShadow: '0 12px 40px rgba(0,0,0,0.5)' }}>
-                  <img src={heroImage} alt="Women sports fans" className="w-full aspect-[3/4] object-cover object-[center_30%]" />
-                </div>
-              </motion.div>
-              <motion.div initial={{ opacity: 0, rotate: 8, scale: 0.9 }} animate={{ opacity: 1, rotate: 5, scale: 1 }} transition={{ duration: 0.8, delay: 0.6 }} className="absolute right-0 bottom-16 w-[50%] z-10">
-                <div className="rounded-[20px] overflow-hidden" style={{ boxShadow: '0 12px 40px rgba(0,0,0,0.5)' }}>
-                  <img src={fansImage} alt="Fans celebrating" className="w-full aspect-[3/4] object-cover" />
-                </div>
-              </motion.div>
+              <h1
+                style={{
+                  fontFamily: fonts.serif,
+                  fontStyle: "italic",
+                  fontWeight: 500,
+                  fontSize: "clamp(44px, 7vw, 96px)",
+                  lineHeight: 0.95,
+                  letterSpacing: "-0.02em",
+                  color: C.text,
+                  margin: 0,
+                }}
+              >
+                The members-only<br />
+                home for <span style={{ color: C.raspberry }}>female sports fandom.</span>
+              </h1>
+
+              <p
+                className="mt-8 max-w-2xl"
+                style={{
+                  fontFamily: fonts.sans,
+                  fontSize: "clamp(15px, 1.6vw, 18px)",
+                  lineHeight: 1.55,
+                  color: C.text,
+                  fontWeight: 400,
+                }}
+              >
+                Watch the game. Connect with your people. Loverball is the room
+                female sports fans have been waiting for — built around stories,
+                watch parties, and the kind of community that finally gets it.
+              </p>
+
+              <div className="mt-10 flex flex-wrap gap-3">
+                <PrimaryBtn onClick={goJoin}>Join the club — free</PrimaryBtn>
+                <OutlineBtn onClick={() => navigate("/feed")}>Browse this week's drop</OutlineBtn>
+              </div>
+
+              <div className="mt-8">
+                <Mono>Built by women who've been in the group chat the whole time</Mono>
+              </div>
             </div>
-          </motion.div>
+          </div>
         </div>
-      </section>
 
-      {/* ═══════ SCROLLING TICKER ═══════ */}
-      <div className="bg-primary py-3.5 overflow-hidden">
-        <div className="marquee-track">
-          {[...tickerItems, ...tickerItems].map((item, i) =>
-          <span key={i} className="text-primary-foreground font-display text-sm font-bold tracking-[0.15em] uppercase flex items-center gap-8">
-              {item} <span className="text-primary-foreground/40">+</span>
+        {/* Live ticker */}
+        <div
+          className="w-full"
+          style={{
+            background: "rgba(10,10,10,0.6)",
+            borderTop: `0.5px solid ${C.border}`,
+            borderBottom: `0.5px solid ${C.border}`,
+            backdropFilter: "blur(8px)",
+          }}
+        >
+          <div className="max-w-7xl mx-auto px-5 md:px-10 py-3 flex items-center gap-4 overflow-x-auto whitespace-nowrap">
+            <span
+              style={{
+                fontFamily: fonts.mono, fontSize: 10, letterSpacing: "0.22em",
+                color: C.raspberry, textTransform: "uppercase",
+                display: "inline-flex", alignItems: "center", gap: 6,
+              }}
+            >
+              <span style={{ width: 6, height: 6, borderRadius: 999, background: C.raspberry, display: "inline-block" }} />
+              Live ticker
             </span>
-          )}
-        </div>
-      </div>
-
-      {/* ═══════ EXPLORE / CATEGORY CARDS ═══════ */}
-      <section id="explore" className="section-spacing bg-background">
-        <div className="max-w-[1280px] mx-auto px-8">
-          <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} viewport={{ once: true }} className="text-center section-gap">
-            <h2 className="font-display text-[2.5rem] lg:text-[3.5rem] leading-none tracking-tight text-foreground uppercase font-bold">
-              Explore Loverball
-            </h2>
-          </motion.div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8">
-            {featureCards.map((card, i) =>
-            <motion.div
-              key={card.title}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: i * 0.1 }}
-              viewport={{ once: true }}
-              onClick={openAuthModal}
-              className="cursor-pointer group">
-              
-                <div className="bg-card rounded-[20px] p-6 h-full transition-all duration-300 hover:scale-[1.03] border border-border/20" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.3)' }}>
-                  <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-primary/15 mb-6">
-                    <card.icon className="w-7 h-7 text-primary" />
-                  </div>
-                  <h3 className="font-display text-xl uppercase text-foreground mb-3 tracking-wide font-bold">{card.title}</h3>
-                  <p className="text-muted-foreground text-sm font-medium leading-relaxed">{card.desc}</p>
-                </div>
-              </motion.div>
-            )}
+            <Mono color={C.text} size={11}>Arsenal vs Chelsea · Sun 7am PT</Mono>
+            <span style={{ color: C.muted }}>·</span>
+            <Mono color={C.muted} size={11}>Watch party at The Cock &amp; Bull</Mono>
+            <span style={{ color: C.muted }}>·</span>
+            <Mono color={C.gold} size={11}>Members RSVP'd: 23</Mono>
           </div>
         </div>
-      </section>
+      </header>
 
-      {/* ═══════ TRENDING NOW ═══════ */}
-      <section id="trending" className="section-spacing bg-secondary">
-        <div className="max-w-[1280px] mx-auto px-8">
-          <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ duration: 0.8 }} viewport={{ once: true }} className="flex items-end justify-between section-gap">
-            <h2 className="font-display text-[2.5rem] lg:text-[3.5rem] leading-none tracking-tight text-foreground uppercase font-bold">Trending Now</h2>
-            <Zap className="w-8 h-8 text-primary hidden md:block" />
-          </motion.div>
-
-          <TrendingNews onAuthRequired={openAuthModal} />
-        </div>
-      </section>
-
-      {/* ═══════ EVENTS NEAR YOU ═══════ */}
-      <section id="events" className="section-spacing bg-background">
-        <div className="max-w-[1280px] mx-auto px-8">
-          <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ duration: 0.8 }} viewport={{ once: true }} className="flex items-end justify-between section-gap">
-            <h2 className="font-display text-[2.5rem] lg:text-[3.5rem] leading-none tracking-tight text-foreground uppercase font-bold">Events Near You</h2>
-            <Button onClick={openAuthModal} className="hidden md:flex rounded-full px-6 py-2.5 text-[11px] font-sans font-bold tracking-[0.2em] uppercase h-auto">
-              View All <ArrowRight className="ml-2 h-3.5 w-3.5" />
-            </Button>
-          </motion.div>
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
-            {nearbyEvents.map((event, i) =>
-            <motion.div
-              key={event.title}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: i * 0.08 }}
-              viewport={{ once: true }}
-              onClick={openAuthModal}
-              className="cursor-pointer group">
-              
-                <div className="bg-card rounded-[20px] p-6 h-full border border-border/20 transition-all duration-300 hover:scale-[1.02]" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.3)' }}>
-                  <div className="flex items-center gap-3 mb-5">
-                    <div className="bg-primary/10 rounded-xl px-3 py-2 text-center">
-                      <span className="font-display text-lg text-primary font-bold block leading-none">{event.date.split(" ")[0]}</span>
-                      <span className="font-display text-2xl text-primary font-bold block leading-none">{event.date.split(" ")[1]}</span>
-                    </div>
-                    <span className="text-[10px] font-sans font-bold tracking-[0.15em] uppercase text-primary bg-primary/10 px-2.5 py-1 rounded-full">{event.type}</span>
-                  </div>
-                  <h3 className="font-sans font-bold text-foreground text-base mb-4 group-hover:text-primary transition-colors duration-300 leading-snug">{event.title}</h3>
-                  <div className="space-y-2">
-                    <p className="text-sm text-muted-foreground flex items-center gap-1.5">
-                      <Clock className="w-3.5 h-3.5 text-primary/60" /> {event.time}
-                    </p>
-                    <p className="text-sm text-muted-foreground flex items-center gap-1.5">
-                      <MapPin className="w-3.5 h-3.5 text-primary/60" /> {event.venue}
-                    </p>
-                  </div>
-                </div>
-              </motion.div>
-            )}
+      {/* ============ THE DAILY FEED ============ */}
+      <section className="max-w-7xl mx-auto px-5 md:px-10 py-20 md:py-28">
+        <div className="flex items-baseline justify-between mb-10">
+          <div className="flex items-center gap-3">
+            <Slug>The Daily Feed</Slug>
+            <span style={{ width: 32, height: 1, background: C.raspberry, display: "inline-block" }} />
           </div>
-
-          <div className="mt-10 md:hidden text-center">
-            <Button onClick={openAuthModal} className="rounded-full px-6 py-2.5 text-[11px] font-sans font-bold tracking-[0.2em] uppercase h-auto">
-              View All Events
-            </Button>
-          </div>
+          <PinkLink onClick={() => navigate("/feed")}>
+            Read the full feed <ArrowRight size={14} />
+          </PinkLink>
         </div>
-      </section>
 
-      {/* ═══════ SOCIAL CTA ═══════ */}
-      <section className="section-spacing bg-primary">
-        <div className="max-w-[900px] mx-auto px-8">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.97 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-            className="text-center">
-            
-            <div className="inline-flex items-center gap-2 bg-primary-foreground/20 rounded-full px-5 py-2 mb-8">
-              <Sparkles className="w-4 h-4 text-primary-foreground" />
-              <span className="text-[11px] font-sans font-bold tracking-[0.2em] uppercase text-primary-foreground">New Match Waiting</span>
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-5">
+          {/* Large featured */}
+          <article
+            className="md:col-span-7 group"
+            style={{ background: C.surface, border: `0.5px solid ${C.border}`, borderRadius: 4, overflow: "hidden" }}
+          >
+            <div
+              className="w-full"
+              style={{
+                aspectRatio: "16/10",
+                backgroundImage: `url(${featuredImage})`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+              }}
+            />
+            <div className="p-7 md:p-9">
+              <Chip>Featured</Chip>
+              <h3
+                className="mt-5"
+                style={{
+                  fontFamily: fonts.serif, fontStyle: "italic", fontWeight: 500,
+                  fontSize: "clamp(26px, 3.4vw, 38px)", lineHeight: 1.1, color: C.text,
+                  letterSpacing: "-0.015em",
+                }}
+              >
+                Inside the room where the WNBA's next era is being written.
+              </h3>
+              <div className="mt-6 flex items-center gap-3 flex-wrap">
+                <Mono color={C.muted} size={11}>By the editorial team</Mono>
+                <span style={{ color: C.muted }}>·</span>
+                <Mono color={C.muted} size={11}>Published · Nov 14, 2026</Mono>
+                <span style={{ color: C.muted }}>·</span>
+                <Mono color={C.muted} size={11}>9 min read</Mono>
+              </div>
             </div>
-            <h2 className="font-display text-[2.5rem] lg:text-[4rem] leading-[0.9] tracking-tight text-primary-foreground uppercase font-bold mb-6">
-              Someone Just Liked<br />Your Profile!
-            </h2>
-            <p className="text-base font-sans text-primary-foreground/70 leading-relaxed mb-10 max-w-md mx-auto">
-              3 new fans match your sports vibe. See who's out there.
-            </p>
-            <Button onClick={openAuthModal} className="rounded-full bg-background text-foreground hover:bg-background/90 px-10 py-5 text-[11px] font-sans font-bold tracking-[0.2em] uppercase h-auto">
-              Discover Matches <Heart className="ml-2 h-4 w-4" />
-            </Button>
-          </motion.div>
+          </article>
+
+          {/* Two stacked small */}
+          <div className="md:col-span-5 flex flex-col gap-5">
+            {[
+              { tag: "Match recap", title: "Angel City held it down. Here's how.", read: "5 min read" },
+              { tag: "Profile", title: "The case for Caitlin, and the people who made it.", read: "7 min read" },
+            ].map((c, i) => (
+              <article
+                key={i}
+                className="flex-1 group flex flex-col"
+                style={{ background: C.surface, border: `0.5px solid ${C.border}`, borderRadius: 4, overflow: "hidden" }}
+              >
+                <div
+                  style={{
+                    aspectRatio: "16/9",
+                    background:
+                      i === 0
+                        ? `linear-gradient(135deg, ${C.raspberry}44, ${C.surface})`
+                        : `linear-gradient(135deg, ${C.gold}44, ${C.surface})`,
+                  }}
+                />
+                <div className="p-5 md:p-6 flex flex-col gap-3 flex-1">
+                  <Mono color={i === 0 ? C.raspberry : C.gold}>{c.tag}</Mono>
+                  <h4
+                    style={{
+                      fontFamily: fonts.sans, fontWeight: 500,
+                      fontSize: 18, lineHeight: 1.25, color: C.text, margin: 0,
+                    }}
+                  >
+                    {c.title}
+                  </h4>
+                  <div className="mt-auto"><Mono color={C.muted} size={10}>{c.read}</Mono></div>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+
+        <div className="mt-8">
+          <Mono>Published weekly · Free to read · Members get it first</Mono>
         </div>
       </section>
 
-      {/* ═══════ ABOUT / MISSION ═══════ */}
-      <section className="bg-card">
-        <div className="grid lg:grid-cols-2">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="px-8 lg:px-16 py-24 lg:py-28 flex flex-col justify-center">
-            
-            <span className="text-[11px] font-sans font-bold tracking-[0.3em] uppercase text-muted-foreground mb-6">Our Mission</span>
-            <h2 className="font-display text-[2.5rem] lg:text-[3.5rem] leading-[0.85] tracking-tight text-foreground uppercase mb-8 font-bold">
-              Giving Women Fans<br />A Home in Sports
-            </h2>
-            <p className="text-base text-muted-foreground leading-relaxed mb-10 max-w-md font-medium">
-              Loverball exists to give women fans a home in sports — more representation, more access to live experiences, and more real friendships built around the teams they love.
-            </p>
-            <button onClick={openAuthModal} className="rounded-full border border-foreground/30 text-foreground bg-transparent hover:bg-foreground/5 transition-all duration-300 px-7 py-3.5 text-[11px] font-sans font-bold tracking-[0.2em] uppercase w-fit flex items-center gap-3">
-              Join Loverball <ArrowRight className="h-3.5 w-3.5" />
-            </button>
-          </motion.div>
-          <motion.div initial={{ opacity: 0, scale: 0.97 }} whileInView={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8, delay: 0.1 }} viewport={{ once: true }} className="relative min-h-[400px] lg:min-h-0">
-            <img src={philosophyImage} alt="Loverball community" className="w-full h-full object-cover" />
-          </motion.div>
+      {/* ============ TWO VERBS ============ */}
+      <section className="max-w-7xl mx-auto px-5 md:px-10 py-20 md:py-28" style={{ borderTop: `0.5px solid ${C.border}` }}>
+        <div className="mb-14 max-w-3xl">
+          <Slug>The two verbs</Slug>
+          <h2
+            className="mt-5"
+            style={{
+              fontFamily: fonts.serif, fontStyle: "italic", fontWeight: 500,
+              fontSize: "clamp(38px, 5.5vw, 64px)", lineHeight: 1, letterSpacing: "-0.02em", color: C.text, margin: 0,
+            }}
+          >
+            Two things, done right.
+          </h2>
+          <p className="mt-6" style={{ color: C.muted, fontSize: 17, lineHeight: 1.55 }}>
+            Everything Loverball does is in service of one of these.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+          {[
+            {
+              chip: "01 · Watch",
+              title: "Every story. Every game. Every angle.",
+              body:
+                "Match recaps that skip the offside explainer. Player profiles that go past the press conference. Live watch parties at hand-picked LA bars. Stadium meetups for Angel City, Sparks, and Sol games. Plus exclusive on-platform video — interviews, breakdowns, and the kind of storytelling you won't find anywhere else.",
+              features: [
+                "Sports stories · weekly",
+                "Watch parties · live",
+                "Stadium meetups · season-long",
+                "Exclusive video · members only",
+              ],
+              caption: "Stories free to read. Events first to members.",
+              link: "See what's on this week",
+              to: "/feed",
+            },
+            {
+              chip: "02 · Connect",
+              title: "Your starting XI is already here.",
+              body:
+                "We use smart matching to introduce you to women who ride for your teams, watch the way you watch, and live close enough to actually meet. No swiping. No cold DMs. Just your people, drafted to your XI — with built-in openers so the first message isn't on you. Plus members-only group chats by team, by city, and by vibe.",
+              features: [
+                "Smart matching · AI-curated",
+                "Mutual draft · no thirsty DMs",
+                "Group chats · by team & city",
+                "Members-only mixers · monthly",
+              ],
+              caption: "Three drafts a week. Make them count.",
+              link: "Find your team",
+              to: "/club",
+            },
+          ].map((card) => (
+            <article
+              key={card.chip}
+              className="p-7 md:p-10 flex flex-col"
+              style={{ background: C.surface, border: `0.5px solid ${C.border}`, borderRadius: 4 }}
+            >
+              <div><Chip>{card.chip}</Chip></div>
+              <h3
+                className="mt-6"
+                style={{
+                  fontFamily: fonts.serif, fontStyle: "italic", fontWeight: 500,
+                  fontSize: "clamp(28px, 3.4vw, 42px)", lineHeight: 1.05, color: C.text,
+                  letterSpacing: "-0.015em",
+                }}
+              >
+                {card.title}
+              </h3>
+              <p className="mt-6" style={{ color: C.text, fontSize: 16, lineHeight: 1.65, opacity: 0.85 }}>
+                {card.body}
+              </p>
+              <div className="mt-7 flex flex-wrap gap-2">
+                {card.features.map((f) => (
+                  <span
+                    key={f}
+                    style={{
+                      fontFamily: fonts.mono, fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase",
+                      color: C.text, background: C.surfaceHi, border: `0.5px solid ${C.border}`,
+                      padding: "8px 12px", borderRadius: 4,
+                    }}
+                  >
+                    ▸ {f}
+                  </span>
+                ))}
+              </div>
+              <div className="mt-8"><Mono>{card.caption}</Mono></div>
+              <div className="mt-5"><PinkLink onClick={() => navigate(card.to)}>{card.link} <ArrowRight size={14} /></PinkLink></div>
+            </article>
+          ))}
         </div>
       </section>
 
-      {/* ═══════ TESTIMONIALS ═══════ */}
-      <section className="bg-secondary section-spacing">
-        <div className="max-w-[1280px] mx-auto px-8">
-          <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ duration: 0.8 }} viewport={{ once: true }}>
-            <h2 className="font-display text-[2.5rem] lg:text-[3rem] leading-none tracking-tight text-muted-foreground uppercase block mb-12">What They Say</h2>
-            <div className="grid md:grid-cols-3 gap-8">
+      {/* ============ A WEEK IN LOVERBALL ============ */}
+      <section className="max-w-7xl mx-auto px-5 md:px-10 py-20 md:py-28" style={{ borderTop: `0.5px solid ${C.border}` }}>
+        <div className="mb-14 max-w-3xl">
+          <Slug>The schedule</Slug>
+          <h2
+            className="mt-5"
+            style={{
+              fontFamily: fonts.serif, fontStyle: "italic", fontWeight: 500,
+              fontSize: "clamp(34px, 5vw, 56px)", lineHeight: 1, letterSpacing: "-0.02em", color: C.text, margin: 0,
+            }}
+          >
+            Here's what a week as a member looks like.
+          </h2>
+          <p className="mt-6" style={{ color: C.muted, fontSize: 17, lineHeight: 1.55 }}>
+            Watch and connect, every day, on your schedule.
+          </p>
+        </div>
+
+        <ol className="flex flex-col">
+          {[
+            { day: "Mon", verb: "Watch", body: "Coffee with the Monday recap. Everything that happened over the weekend, in your inbox by 8am." },
+            { day: "Wed", verb: "Connect", body: "Three new members drafted to your XI. The AI surfaces women who ride for your teams, in your city." },
+            { day: "Fri", verb: "Watch", body: "Pre-game drop: this weekend's matchups, where Loverball members are gathering, and the bars to RSVP to." },
+            { day: "Sat", verb: "Watch + Connect", body: "Live watch party at the right bar with the right crowd. Group chat open. Screenshots flying." },
+            { day: "Sun", verb: "Watch", body: "Post-game deep dives. Player breakdowns. The full editorial drop while you nurse your hangover." },
+          ].map((row, i, arr) => (
+            <li
+              key={row.day}
+              className="grid grid-cols-[80px_1fr] md:grid-cols-[160px_120px_1fr] gap-4 md:gap-8 py-7"
+              style={{ borderBottom: i === arr.length - 1 ? "none" : `0.5px solid ${C.border}` }}
+            >
+              <div>
+                <span style={{ fontFamily: fonts.mono, fontSize: 13, letterSpacing: "0.22em", textTransform: "uppercase", color: C.text }}>
+                  {row.day}
+                </span>
+              </div>
+              <div className="hidden md:block">
+                <Mono color={C.raspberry} size={11}>{row.verb}</Mono>
+              </div>
+              <div>
+                <div className="md:hidden mb-2"><Mono color={C.raspberry} size={10}>{row.verb}</Mono></div>
+                <p
+                  style={{
+                    fontFamily: fonts.serif, fontStyle: "italic", fontWeight: 400,
+                    fontSize: "clamp(18px, 2.2vw, 24px)", lineHeight: 1.4, color: C.text, margin: 0,
+                  }}
+                >
+                  {row.body}
+                </p>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      {/* ============ PROBLEM / PULL QUOTE ============ */}
+      <section style={{ background: C.surface }} className="py-24 md:py-32">
+        <div className="max-w-4xl mx-auto px-5 md:px-10">
+          <div style={{ position: "relative" }}>
+            <span
+              aria-hidden
+              style={{
+                fontFamily: fonts.serif, fontStyle: "italic", fontWeight: 500,
+                color: C.raspberry, fontSize: "clamp(120px, 18vw, 220px)",
+                lineHeight: 0.8, position: "absolute", top: -20, left: -8, opacity: 0.95,
+              }}
+            >
+              "
+            </span>
+            <blockquote
+              className="relative pl-10 md:pl-20"
+              style={{
+                fontFamily: fonts.serif, fontStyle: "italic", fontWeight: 500,
+                fontSize: "clamp(28px, 4vw, 48px)", lineHeight: 1.15, color: C.text,
+                letterSpacing: "-0.015em", margin: 0,
+              }}
+            >
+              Female sports fans spend billions. And still get nothing built for them.
+            </blockquote>
+          </div>
+
+          <p
+            className="mt-12 max-w-2xl"
+            style={{ color: C.text, fontSize: 17, lineHeight: 1.65, opacity: 0.85 }}
+          >
+            Sports media talks past us. Apps treat us like a marketing demo. Watch parties feel
+            like we crashed someone else's. The group chat is great — but it ends at five women.
+          </p>
+
+          <p
+            className="mt-10"
+            style={{
+              fontFamily: fonts.serif, fontStyle: "italic", fontWeight: 500,
+              color: C.raspberry, fontSize: "clamp(22px, 2.6vw, 30px)",
+              letterSpacing: "-0.01em", margin: 0,
+            }}
+          >
+            So we built the room ourselves. Members only.
+          </p>
+        </div>
+      </section>
+
+      {/* ============ THE PASS / TIERS ============ */}
+      <section className="max-w-7xl mx-auto px-5 md:px-10 py-20 md:py-28">
+        <div className="mb-14 max-w-3xl">
+          <Slug>The Pass</Slug>
+          <h2
+            className="mt-5"
+            style={{
+              fontFamily: fonts.serif, fontStyle: "italic", fontWeight: 500,
+              fontSize: "clamp(38px, 5.5vw, 64px)", lineHeight: 1, letterSpacing: "-0.02em", color: C.text, margin: 0,
+            }}
+          >
+            Pick your level. Cancel anytime.
+          </h2>
+          <div className="mt-6"><Mono>Every tier is a membership. Choose yours.</Mono></div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+          {[
+            {
+              name: "Free",
+              tagline: "For the curious fan.",
+              price: "$0",
+              priceMeta: "Always",
+              features: [
+                "Every Loverball story, free to read",
+                "Browse upcoming events",
+                "Create your fan profile",
+              ],
+              cta: "Sign up free",
+              fine: "No credit card. 30 seconds.",
+              accent: null,
+            },
+            {
+              name: "Insider",
+              tagline: "For the fan who shows up.",
+              price: "$15",
+              priceMeta: "Per month",
+              chip: "Most members pick this",
+              features: [
+                "Everything in Free, plus:",
+                "Access to all Loverball watch parties & events",
+                "The Starting XI matching feature",
+                "Exclusive on-platform video content",
+                "Insider-only newsletter & group chats",
+                "Member discounts on tickets & merch",
+              ],
+              cta: "Become an Insider",
+              fine: "First 7 days free. Cancel anytime.",
+              accent: C.raspberry,
+            },
+            {
+              name: "All-Access",
+              tagline: "For the fan who runs the group chat.",
+              price: "$35",
+              priceMeta: "Per month",
+              features: [
+                "Everything in Insider, plus:",
+                "Priority RSVP to sold-out events",
+                "Members-only mixers & athlete panels",
+                "Behind-the-scenes content & interviews",
+                "Quarterly Loverball merch drop",
+                "First invites to brand partner activations",
+              ],
+              cta: "Go All-Access",
+              fine: "Limited spots each month. Founding member pricing.",
+              accent: C.gold,
+            },
+          ].map((tier) => {
+            const borderWidth = tier.accent ? "2px" : "0.5px";
+            const borderColor = tier.accent || C.border;
+            return (
+              <article
+                key={tier.name}
+                className="relative p-7 md:p-9 flex flex-col"
+                style={{
+                  background: C.surface,
+                  border: `${borderWidth} solid ${borderColor}`,
+                  borderRadius: 4,
+                }}
+              >
+                {tier.chip && (
+                  <div className="absolute -top-3 left-7"><Chip>{tier.chip}</Chip></div>
+                )}
+                <div className="flex items-baseline justify-between">
+                  <h3
+                    style={{
+                      fontFamily: fonts.serif, fontStyle: "italic", fontWeight: 500,
+                      fontSize: 28, color: tier.accent || C.text, margin: 0, letterSpacing: "-0.01em",
+                    }}
+                  >
+                    {tier.name}
+                  </h3>
+                  <div className="text-right">
+                    <div style={{ fontFamily: fonts.serif, fontStyle: "italic", fontSize: 28, color: C.text, lineHeight: 1 }}>{tier.price}</div>
+                    <div className="mt-1"><Mono color={C.muted} size={9}>{tier.priceMeta}</Mono></div>
+                  </div>
+                </div>
+
+                <p className="mt-3" style={{ color: C.muted, fontSize: 14, lineHeight: 1.5 }}>{tier.tagline}</p>
+
+                <div
+                  className="my-6"
+                  style={{ height: 1, background: C.border }}
+                />
+
+                <ul className="flex flex-col gap-3 flex-1">
+                  {tier.features.map((f, i) => (
+                    <li
+                      key={i}
+                      className="flex items-start gap-3"
+                      style={{ fontSize: 14, color: C.text, lineHeight: 1.5 }}
+                    >
+                      <span style={{ color: tier.accent || C.raspberry, marginTop: 2 }}>✓</span>
+                      <span>{f}</span>
+                    </li>
+                  ))}
+                </ul>
+
+                <button
+                  onClick={goJoin}
+                  className="mt-8 inline-flex items-center justify-center gap-2 transition-all hover:opacity-90 active:scale-[0.98]"
+                  style={{
+                    background: tier.accent === C.gold ? C.gold : C.raspberry,
+                    color: tier.accent === C.gold ? "#0a0a0a" : "#fff",
+                    fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.16em", textTransform: "uppercase",
+                    padding: "14px 22px", borderRadius: 999, fontWeight: 500,
+                  }}
+                >
+                  {tier.cta} <ArrowRight size={14} />
+                </button>
+                <div className="mt-4 text-center"><Mono color={C.muted} size={9}>{tier.fine}</Mono></div>
+              </article>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* ============ TESTIMONIALS / THE CLUB SAYS ============ */}
+      <section
+        className="py-20 md:py-28"
+        style={{ borderTop: `0.5px solid ${C.border}` }}
+      >
+        <div className="max-w-7xl mx-auto px-5 md:px-10">
+          <div className="mb-14 max-w-3xl">
+            <Slug>The club says</Slug>
+            <h2
+              className="mt-5"
+              style={{
+                fontFamily: fonts.serif, fontStyle: "italic", fontWeight: 500,
+                fontSize: "clamp(34px, 5vw, 56px)", lineHeight: 1, letterSpacing: "-0.02em", color: C.text, margin: 0,
+              }}
+            >
+              The members who get it.
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-5">
+            {/* Large */}
+            <article
+              className="md:col-span-7 p-8 md:p-12"
+              style={{ background: C.surface, border: `0.5px solid ${C.border}`, borderRadius: 4, position: "relative" }}
+            >
+              <span
+                aria-hidden
+                style={{
+                  fontFamily: fonts.serif, fontStyle: "italic", fontWeight: 500,
+                  color: C.raspberry, fontSize: "clamp(80px, 12vw, 140px)",
+                  lineHeight: 0.8, position: "absolute", top: 0, left: 18, opacity: 0.95,
+                }}
+              >
+                "
+              </span>
+              <blockquote
+                className="relative pt-10 md:pt-14"
+                style={{
+                  fontFamily: fonts.serif, fontStyle: "italic", fontWeight: 500,
+                  fontSize: "clamp(22px, 2.6vw, 30px)", lineHeight: 1.3, color: C.text,
+                  letterSpacing: "-0.01em", margin: 0,
+                }}
+              >
+                I've watched Arsenal alone for ten years. Loverball found me five women in LA who actually understand why I'm screaming at 7am.
+              </blockquote>
+              <div className="mt-8"><Mono color={C.muted} size={11}>Insider member · Arsenal FC · Los Angeles</Mono></div>
+            </article>
+
+            <div className="md:col-span-5 flex flex-col gap-5">
               {[
-              { quote: "Finally a sports community that gets me.", name: "Alicia", detail: "Lakers fan" },
-              { quote: "I met my best friends at a Loverball watch party.", name: "Dani", detail: "WNBA superfan" },
-              { quote: "The content here actually speaks to women fans.", name: "Maria", detail: "Soccer obsessed" }].
-              map((t, i) =>
-              <motion.div key={t.name} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: i * 0.1 }} viewport={{ once: true }} className="bg-card rounded-[20px] p-8 border border-border/20" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.3)' }}>
-                  <p className="font-elegant text-xl lg:text-2xl text-foreground leading-relaxed mb-6">"{t.quote}"</p>
-                  <p className="text-[11px] font-sans font-bold tracking-[0.2em] uppercase text-muted-foreground">— {t.name}, {t.detail}</p>
-                </motion.div>
-              )}
+                {
+                  q: "I joined for the stories and stayed for the watch parties. It's the only sports community I've ever actually used.",
+                  byline: "All-Access member · Angel City FC · Los Angeles",
+                },
+                {
+                  q: "Walked into my first Loverball watch party not knowing anyone. Left with a group chat I'm still in.",
+                  byline: "Insider member · LA Sparks · Los Angeles",
+                },
+              ].map((t, i) => (
+                <article
+                  key={i}
+                  className="p-6 md:p-7 flex-1"
+                  style={{ background: C.surface, border: `0.5px solid ${C.border}`, borderRadius: 4 }}
+                >
+                  <p
+                    style={{
+                      fontFamily: fonts.serif, fontStyle: "italic", fontWeight: 400,
+                      fontSize: 18, lineHeight: 1.4, color: C.text, margin: 0,
+                    }}
+                  >
+                    "{t.q}"
+                  </p>
+                  <div className="mt-5"><Mono color={C.muted} size={10}>{t.byline}</Mono></div>
+                </article>
+              ))}
             </div>
-          </motion.div>
+          </div>
+
+          <div className="mt-10 text-center">
+            <Mono color={C.gold}>★★★★★ "Finally." — what we hear most</Mono>
+          </div>
         </div>
       </section>
 
-      {/* ═══════ FINAL CTA ═══════ */}
-      <section className="py-28 lg:py-36 bg-card relative overflow-hidden">
-        <div className="absolute inset-0 flex items-center justify-center opacity-[0.03]">
-          <span className="font-script text-[14rem] lg:text-[20rem] text-foreground leading-none whitespace-nowrap">join us</span>
-        </div>
-        <div className="max-w-[900px] mx-auto px-8 text-center relative z-10">
-          <motion.div initial={{ opacity: 0, scale: 0.97 }} whileInView={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8 }} viewport={{ once: true }}>
-            <span className="font-display text-[3.5rem] sm:text-[4.5rem] lg:text-[6rem] leading-[0.85] tracking-tight text-primary uppercase block mb-8">
-              Ready To<br />Join?
-            </span>
-            <p className="text-lg font-sans text-muted-foreground mb-12 max-w-lg mx-auto leading-relaxed">
-              Be part of the community redefining women's sports fandom. Your game. Your community. Your story.
+      {/* ============ MANIFESTO ============ */}
+      <section
+        className="relative py-24 md:py-32"
+        style={{
+          background: C.surface,
+          backgroundImage: `radial-gradient(ellipse at top, ${C.raspberry}22, transparent 60%)`,
+        }}
+      >
+        <div className="max-w-3xl mx-auto px-5 md:px-10">
+          <Slug>From the editors</Slug>
+          <h2
+            className="mt-6"
+            style={{
+              fontFamily: fonts.serif, fontStyle: "italic", fontWeight: 500,
+              fontSize: "clamp(38px, 6vw, 72px)", lineHeight: 0.98, letterSpacing: "-0.02em", color: C.text, margin: 0,
+            }}
+          >
+            Women's sports isn't having a moment.
+          </h2>
+          <p
+            className="mt-5"
+            style={{
+              fontFamily: fonts.serif, fontStyle: "italic", fontWeight: 500,
+              color: C.raspberry, fontSize: "clamp(24px, 3.2vw, 36px)",
+              letterSpacing: "-0.01em", margin: 0, lineHeight: 1.1,
+            }}
+          >
+            We've been the moment.
+          </p>
+
+          <div className="mt-10 flex flex-col gap-6" style={{ maxWidth: 600 }}>
+            <p style={{ color: C.text, fontSize: 17, lineHeight: 1.7, opacity: 0.9 }}>
+              We knew Sam Kerr before the World Cup. Watched Caitlin Clark in college. Argued
+              about Arteta's lineup at 6am. Sat in half-empty stands for Angel City's opener.
+              Texted our friends through every WNBA Finals overtime.
             </p>
-            <Button size="lg" onClick={openAuthModal} className="rounded-full text-[11px] font-sans font-bold tracking-[0.2em] uppercase px-12 py-7 h-auto">
-              Join Loverball <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-          </motion.div>
+            <p style={{ color: C.text, fontSize: 17, lineHeight: 1.7, opacity: 0.9 }}>
+              We've been here. We've been loud. We've been everywhere except in the rooms
+              built for us.
+            </p>
+          </div>
+
+          <p
+            className="mt-12"
+            style={{
+              fontFamily: fonts.serif, fontStyle: "italic", fontWeight: 500,
+              color: C.raspberry, fontSize: "clamp(26px, 3.6vw, 42px)",
+              letterSpacing: "-0.015em", margin: 0, lineHeight: 1.1,
+            }}
+          >
+            Loverball is that room. Members only.
+          </p>
+
+          <div className="mt-10"><Mono>— The Loverball editorial team</Mono></div>
         </div>
       </section>
 
-      {/* ═══════ FOOTER ═══════ */}
-      <footer className="py-16 bg-secondary border-t border-border/20">
-        <div className="max-w-[1280px] mx-auto px-8">
-          <div className="mb-16 pb-12 border-b border-border/20">
-            <div className="max-w-md mx-auto text-center">
-              <h3 className="font-display text-2xl uppercase tracking-wide text-foreground mb-4">Stay In The Loop</h3>
-              <p className="text-muted-foreground text-sm mb-6">Get the latest on events, content drops, and community updates.</p>
-              <form onSubmit={(e) => {e.preventDefault();toast({ title: "Subscribed!", description: "You'll hear from us soon." });setNewsletterEmail("");}} className="flex gap-2">
-                <Input type="email" placeholder="Enter your email" value={newsletterEmail} onChange={(e) => setNewsletterEmail(e.target.value)} required className="flex-1 rounded-full h-12" />
-                <Button type="submit" className="rounded-full px-6 h-12">
-                  <Mail className="h-4 w-4" />
-                </Button>
+      {/* ============ FINAL CTA ============ */}
+      <section className="max-w-5xl mx-auto px-5 md:px-10 py-24 md:py-32 text-center">
+        <h2
+          style={{
+            fontFamily: fonts.serif, fontStyle: "italic", fontWeight: 500,
+            fontSize: "clamp(34px, 5.5vw, 64px)", lineHeight: 1.05, letterSpacing: "-0.02em",
+            color: C.text, margin: 0,
+          }}
+        >
+          The members-only home for female sports fandom.<br />
+          <span style={{ color: C.raspberry }}>Your seat is open.</span>
+        </h2>
+
+        <div className="mt-10 flex flex-wrap gap-3 justify-center">
+          <PrimaryBtn onClick={goJoin}>Join Loverball — free forever</PrimaryBtn>
+          <OutlineBtn onClick={goJoin}>Try Insider — first week free</OutlineBtn>
+        </div>
+
+        <div className="mt-8"><Mono>Cancel anytime · Built in LA · Made for everywhere</Mono></div>
+      </section>
+
+      {/* ============ NEWSLETTER + FOOTER ============ */}
+      <footer style={{ borderTop: `0.5px solid ${C.border}` }}>
+        <div className="max-w-7xl mx-auto px-5 md:px-10 py-20">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-12 mb-16">
+            <div className="md:col-span-7">
+              <Slug>The weekly drop</Slug>
+              <h3
+                className="mt-5"
+                style={{
+                  fontFamily: fonts.serif, fontStyle: "italic", fontWeight: 500,
+                  fontSize: "clamp(28px, 4vw, 44px)", lineHeight: 1, color: C.text, margin: 0,
+                  letterSpacing: "-0.015em",
+                }}
+              >
+                Get the weekly drop.
+              </h3>
+              <p className="mt-4 max-w-md" style={{ color: C.muted, fontSize: 16, lineHeight: 1.55 }}>
+                Stories, schedules, and group chat previews. One email. Sundays. Unsubscribe whenever.
+              </p>
+
+              <form
+                onSubmit={(e) => { e.preventDefault(); goJoin(); }}
+                className="mt-7 flex gap-2 max-w-md"
+              >
+                <input
+                  type="email"
+                  required
+                  placeholder="your@email.com"
+                  value={newsletterEmail}
+                  onChange={(e) => setNewsletterEmail(e.target.value)}
+                  className="flex-1 px-4 py-3 outline-none"
+                  style={{
+                    background: C.surface, color: C.text,
+                    border: `0.5px solid ${C.borderStrong}`, borderRadius: 999,
+                    fontFamily: fonts.sans, fontSize: 14,
+                  }}
+                />
+                <button
+                  type="submit"
+                  style={{
+                    background: C.raspberry, color: "#fff",
+                    fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.16em", textTransform: "uppercase",
+                    padding: "12px 22px", borderRadius: 999,
+                  }}
+                >
+                  Subscribe
+                </button>
               </form>
             </div>
+
+            <div className="md:col-span-5 grid grid-cols-2 gap-8">
+              {[
+                { h: "Read", items: [["About", "/"], ["Watch", "/feed"], ["Connect", "/club"]] },
+                { h: "Club", items: [["Events", "/events"], ["The Pass", "/membership"], ["Contact", "/"]] },
+              ].map((col) => (
+                <div key={col.h} className="flex flex-col gap-3">
+                  <Mono color={C.muted} size={10}>{col.h}</Mono>
+                  {col.items.map(([label, to]) => (
+                    <Link
+                      key={label}
+                      to={to}
+                      style={{ fontFamily: fonts.sans, fontSize: 14, color: C.text }}
+                      className="hover:text-[#D4537E] transition-colors"
+                    >
+                      {label}
+                    </Link>
+                  ))}
+                </div>
+              ))}
+            </div>
           </div>
-          <div className="grid lg:grid-cols-12 gap-12 items-start mb-12">
-            <div className="lg:col-span-4">
-              <img src={loverballLogo} alt="Loverball — Women's Sports Community" className="w-[130px] h-auto brightness-0 invert mb-6" />
-              <p className="text-muted-foreground text-sm leading-relaxed max-w-xs">
-                A community platform for women who love sports. Born in Los Angeles.
+
+          <div
+            className="pt-10 flex flex-col md:flex-row md:items-end justify-between gap-8"
+            style={{ borderTop: `0.5px solid ${C.border}` }}
+          >
+            <div>
+              <div
+                style={{
+                  fontFamily: fonts.serif, fontStyle: "italic", fontWeight: 500,
+                  fontSize: "clamp(36px, 5vw, 56px)", lineHeight: 1, color: C.text,
+                  letterSpacing: "-0.02em",
+                }}
+              >
+                Loverball
+              </div>
+              <p className="mt-3 max-w-md" style={{ color: C.muted, fontSize: 14, lineHeight: 1.55 }}>
+                The members-only home for female sports fandom.
               </p>
             </div>
-            <div className="lg:col-span-2 lg:col-start-7">
-              <p className="text-muted-foreground/50 text-[11px] font-sans font-bold tracking-[0.2em] uppercase mb-4">Platform</p>
-              <nav className="space-y-3">
-                <button onClick={openAuthModal} className="block text-sm text-muted-foreground hover:text-foreground transition-colors duration-300 bg-transparent border-none cursor-pointer p-0 text-left">Explore</button>
-                <button onClick={openAuthModal} className="block text-sm text-muted-foreground hover:text-foreground transition-colors duration-300 bg-transparent border-none cursor-pointer p-0 text-left">Trending</button>
-                <button onClick={openAuthModal} className="block text-sm text-muted-foreground hover:text-foreground transition-colors duration-300 bg-transparent border-none cursor-pointer p-0 text-left">Events</button>
-              </nav>
+
+            <div className="flex flex-col md:items-end gap-5">
+              <div className="flex items-center gap-4">
+                {[
+                  { Icon: Instagram, href: "https://instagram.com" },
+                ].map(({ Icon, href }, i) => (
+                  <a
+                    key={i}
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ color: C.text, opacity: 0.7 }}
+                    className="hover:opacity-100 transition-opacity"
+                    aria-label="Loverball on Instagram"
+                  >
+                    <Icon size={20} />
+                  </a>
+                ))}
+              </div>
+              <div className="flex flex-wrap gap-4">
+                {[["Privacy", "/privacy"], ["Terms", "/terms"]].map(([l, h]) => (
+                  <Link key={l} to={h} style={{ fontFamily: fonts.mono, fontSize: 10, letterSpacing: "0.18em", textTransform: "uppercase", color: C.muted }}>{l}</Link>
+                ))}
+              </div>
+              <Mono color={C.muted} size={10}>© 2026 Loverball · Built in LA · Issue 04</Mono>
             </div>
-            <div className="lg:col-span-2">
-              <p className="text-muted-foreground/50 text-[11px] font-sans font-bold tracking-[0.2em] uppercase mb-4">Connect</p>
-              <nav className="space-y-3">
-                <a href="https://www.instagram.com/loverballclub/" target="_blank" rel="noopener noreferrer" className="block text-sm text-muted-foreground hover:text-foreground transition-colors duration-300">Instagram</a>
-                <a href="https://www.tiktok.com/@loverballclub" target="_blank" rel="noopener noreferrer" className="block text-sm text-muted-foreground hover:text-foreground transition-colors duration-300">TikTok</a>
-              </nav>
-            </div>
-            <div className="lg:col-span-2">
-              <p className="text-muted-foreground/50 text-[11px] font-sans font-bold tracking-[0.2em] uppercase mb-4">Legal</p>
-              <nav className="space-y-3">
-                <a href="/privacy" className="block text-sm text-muted-foreground hover:text-foreground transition-colors duration-300">Privacy</a>
-                <a href="/terms" className="block text-sm text-muted-foreground hover:text-foreground transition-colors duration-300">Terms</a>
-                <a href="mailto:hello@loverball.com" className="block text-sm text-muted-foreground hover:text-foreground transition-colors duration-300">Contact</a>
-              </nav>
-            </div>
-          </div>
-          <div className="border-t border-border/20 pt-8">
-            <p className="text-[11px] font-sans tracking-[0.1em] text-muted-foreground/50">© 2026 Loverball. All rights reserved. Built by women, for women.</p>
           </div>
         </div>
-      </footer>
-    </div>);
 
+        {/* Decorative manifesto strip image, very subtle */}
+        <div
+          aria-hidden
+          style={{
+            height: 4,
+            background: `linear-gradient(90deg, ${C.raspberry}, ${C.gold}, ${C.teal})`,
+            opacity: 0.4,
+          }}
+        />
+      </footer>
+    </div>
+  );
 };
 
 export default Index;
