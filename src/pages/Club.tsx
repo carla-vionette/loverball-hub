@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Sparkles } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -144,8 +145,6 @@ const Club: React.FC = () => {
   });
 
   const draftsLeft = Math.max(0, DRAFT_LIMIT - drafted.length);
-  const featured = candidates[0];
-  const rest = candidates.slice(1);
 
   useEffect(() => {
     let cancelled = false;
@@ -251,154 +250,85 @@ const Club: React.FC = () => {
       <main className="md:ml-64 pb-28 md:pb-10 pt-16 md:pt-2">
         <div className="max-w-[440px] md:max-w-2xl mx-auto px-5">
           {/* MASTHEAD */}
-          <header className="pt-3 pb-5">
-            <p
-              className="text-[10px] uppercase mb-2"
+          <header className="pt-4 pb-1">
+            <h1
               style={{
-                fontFamily: "'Space Mono', ui-monospace, monospace",
-                color: C.copper,
-                letterSpacing: "0.22em",
+                fontFamily: "'Playfair Display', Georgia, serif",
+                fontStyle: "italic",
+                fontWeight: 500,
+                fontSize: 38,
+                lineHeight: 1,
+                letterSpacing: "-0.01em",
+                color: C.text,
               }}
             >
-              THE CLUB
-            </p>
-            <div className="flex items-end justify-between gap-3">
-              <h1
-                className="leading-[0.86] tracking-tight"
-                style={{
-                  fontFamily: "'Anton', 'Bebas Neue', sans-serif",
-                  fontSize: 64,
-                  color: C.text,
-                  textTransform: "uppercase",
-                }}
-              >
-                The
-                <br />
-                Roster
-              </h1>
-              <p
-                className="italic text-right pb-1"
-                style={{
-                  fontFamily: "'Playfair Display', Georgia, serif",
-                  fontSize: 16,
-                  color: C.text,
-                  lineHeight: 1.1,
-                  maxWidth: 140,
-                }}
-              >
-                a curated
-                <br />
-                <span style={{ color: C.raspberry }}>starting&nbsp;XI</span>
-              </p>
-            </div>
-
-            <div
-              className="mt-5 pt-3 flex items-center justify-between"
-              style={{ borderTop: `1px solid ${C.border}` }}
-            >
-              <span
-                className="text-[10px] uppercase"
-                style={{
-                  fontFamily: "'Space Mono', ui-monospace, monospace",
-                  color: C.muted,
-                  letterSpacing: "0.2em",
-                }}
-              >
-                Picked for you · Week {weekKey().slice(5)}
-              </span>
-              <button
-                onClick={() => navigate("/club/drafts")}
-                className="text-[10px] uppercase font-semibold"
-                style={{
-                  fontFamily: "'Space Mono', ui-monospace, monospace",
-                  color: C.raspberry,
-                  letterSpacing: "0.18em",
-                }}
-              >
-                {draftsLeft} draft{draftsLeft === 1 ? "" : "s"} left  ›
-              </button>
-            </div>
+              Starting
+              <br />
+              XI.
+            </h1>
           </header>
 
-          {/* DISCOVERY FILTER CHIPS */}
-          <div className="flex flex-wrap gap-1.5 mb-5">
-            {["Team", "City", "Vibe", "Sport", "Events", "Interests"].map((f, i) => (
-              <span
-                key={f}
-                className="text-[10px] font-semibold uppercase px-2.5 py-1 rounded-full"
-                style={{
-                  background: i === 0 ? "rgba(232,39,111,0.12)" : C.chip,
-                  color: i === 0 ? C.raspberry : C.muted,
-                  border: `1px solid ${i === 0 ? "rgba(232,39,111,0.3)" : C.border}`,
-                  letterSpacing: "0.12em",
-                  fontFamily: "Inter, sans-serif",
-                }}
-              >
-                {f}
-              </span>
-            ))}
+          <div
+            className="mt-2 mb-5 pb-3 flex items-end justify-between"
+            style={{ borderBottom: `0.5px solid ${C.borderStrong}` }}
+          >
+            <span
+              className="text-[11px] uppercase"
+              style={{
+                color: C.muted,
+                letterSpacing: "0.05em",
+                fontFamily: "Inter, sans-serif",
+              }}
+            >
+              Picked for you this week
+            </span>
+            <button
+              onClick={() => navigate("/club/drafts")}
+              className="text-[11px] uppercase font-medium"
+              style={{
+                color: C.raspberry,
+                letterSpacing: "0.05em",
+                fontFamily: "Inter, sans-serif",
+              }}
+            >
+              Drafts left: {draftsLeft}
+            </button>
+          </div>
+
+          {/* Surfaced strip */}
+          <div
+            className="mb-5 px-3 py-2.5 rounded-[10px] flex items-center gap-2.5"
+            style={{
+              background: "rgba(232,39,111,0.08)",
+              border: "0.5px solid rgba(232,39,111,0.3)",
+            }}
+          >
+            <Sparkles size={15} color={C.raspberry} />
+            <span
+              className="text-[12px] leading-snug"
+              style={{ color: C.text }}
+            >
+              Surfaced based on your teams, vibes &amp; this week's matchups.
+            </span>
           </div>
 
           {loading ? (
-            <>
-              <FeaturedSkeleton />
-              <SkeletonList />
-            </>
+            <SkeletonList />
           ) : candidates.length === 0 ? (
             <EmptyState />
           ) : (
-            <>
-              {/* FEATURED MEMBER */}
-              {featured && (
-                <FeaturedCard
-                  c={featured}
-                  drafted={drafted.includes(featured.id)}
-                  pending={pending === featured.id}
-                  onDraft={() => handleDraft(featured)}
-                  onOpen={() => navigate(`/members/${featured.id}`)}
+            <ul className="space-y-3.5">
+              {candidates.map((c) => (
+                <MemberCard
+                  key={c.id}
+                  c={c}
+                  drafted={drafted.includes(c.id)}
+                  pending={pending === c.id}
+                  onDraft={() => handleDraft(c)}
+                  onOpen={() => navigate(`/members/${c.id}`)}
                 />
-              )}
-
-              {/* SECTION HEADING */}
-              {rest.length > 0 && (
-                <div className="flex items-end justify-between mt-7 mb-3">
-                  <h2
-                    style={{
-                      fontFamily: "'Anton', 'Bebas Neue', sans-serif",
-                      fontSize: 24,
-                      letterSpacing: "0.02em",
-                      textTransform: "uppercase",
-                      color: C.text,
-                    }}
-                  >
-                    The Bench
-                  </h2>
-                  <span
-                    className="text-[10px] uppercase pb-1"
-                    style={{
-                      fontFamily: "'Space Mono', ui-monospace, monospace",
-                      color: C.faint,
-                      letterSpacing: "0.18em",
-                    }}
-                  >
-                    {rest.length} more
-                  </span>
-                </div>
-              )}
-
-              <ul className="space-y-3">
-                {rest.map(c => (
-                  <MemberCard
-                    key={c.id}
-                    c={c}
-                    drafted={drafted.includes(c.id)}
-                    pending={pending === c.id}
-                    onDraft={() => handleDraft(c)}
-                    onOpen={() => navigate(`/members/${c.id}`)}
-                  />
-                ))}
-              </ul>
-            </>
+              ))}
+            </ul>
           )}
         </div>
       </main>
@@ -586,19 +516,21 @@ const MemberCard: React.FC<{
   const first = c.name?.split(" ")[0] || "Member";
   const initial = c.name?.split(" ").slice(-1)[0]?.[0] || "";
   const meta = c.teamCityTags.join(" · ").toUpperCase();
+  const vibeShort = c.vibe ? c.vibe.replace(/\s+/g, " ").trim().slice(0, 60) : "";
+  const tagChips = c.identityTags.slice(0, 2);
 
   return (
     <li
-      className="relative rounded-xl p-3 flex gap-3"
+      className="relative p-3.5 flex gap-3"
       style={{
-        background: C.card,
-        border: `1px solid ${C.border}`,
+        background: C.cardElev,
+        borderRadius: 14,
       }}
     >
       <button
         onClick={onOpen}
-        className="shrink-0 rounded-lg overflow-hidden relative"
-        style={{ width: 78, height: 96, background: "#0F0F10" }}
+        className="shrink-0 overflow-hidden relative"
+        style={{ width: 72, height: 88, borderRadius: 10, background: "#0F0F10" }}
         aria-label={`Open ${first}'s profile`}
       >
         {c.profile_photo_url ? (
@@ -614,10 +546,11 @@ const MemberCard: React.FC<{
             className="w-full h-full flex items-center justify-center"
             style={{
               background:
-                "linear-gradient(140deg, rgba(232,39,111,0.18), rgba(216,140,90,0.12))",
-              fontFamily: "'Anton', sans-serif",
-              fontSize: 38,
-              color: "rgba(250,245,233,0.4)",
+                "linear-gradient(135deg, rgba(232,39,111,0.28), rgba(216,140,90,0.18))",
+              fontFamily: "'Playfair Display', Georgia, serif",
+              fontStyle: "italic",
+              fontSize: 34,
+              color: "rgba(250,245,233,0.55)",
             }}
           >
             {first[0]}
@@ -628,24 +561,31 @@ const MemberCard: React.FC<{
       <div className="flex-1 min-w-0 flex flex-col">
         <div className="flex items-start justify-between gap-2">
           <button onClick={onOpen} className="text-left min-w-0">
-            <h3
-              className="leading-[0.95] tracking-tight truncate"
+            <p
+              className="truncate"
               style={{
-                fontFamily: "'Anton', 'Bebas Neue', sans-serif",
-                fontSize: 22,
+                fontFamily: "'Playfair Display', Georgia, serif",
+                fontStyle: "italic",
+                fontWeight: 500,
+                fontSize: 19,
                 color: C.text,
-                textTransform: "uppercase",
+                lineHeight: 1.1,
+                letterSpacing: "-0.01em",
+                margin: 0,
               }}
             >
               {first} {initial && `${initial}.`}
-            </h3>
+            </p>
             {meta && (
               <p
-                className="mt-1 text-[9.5px] font-semibold truncate"
+                className="mt-1 truncate"
                 style={{
-                  color: C.copper,
-                  letterSpacing: "0.16em",
-                  fontFamily: "'Space Mono', monospace",
+                  color: C.raspberry,
+                  fontSize: 10,
+                  letterSpacing: "0.06em",
+                  textTransform: "uppercase",
+                  fontWeight: 500,
+                  fontFamily: "Inter, sans-serif",
                 }}
               >
                 {meta}
@@ -653,35 +593,54 @@ const MemberCard: React.FC<{
             )}
           </button>
           <span
-            className="shrink-0 text-[10px] font-bold uppercase px-2 py-0.5 rounded"
+            className="shrink-0 whitespace-nowrap uppercase"
             style={{
-              color: C.raspberry,
-              background: "rgba(232,39,111,0.1)",
-              border: "1px solid rgba(232,39,111,0.25)",
-              letterSpacing: "0.08em",
+              background: "rgba(250,245,233,0.08)",
+              color: C.text,
+              fontSize: 9,
+              padding: "3px 7px",
+              borderRadius: 20,
+              letterSpacing: "0.04em",
               fontFamily: "Inter, sans-serif",
             }}
           >
-            {c.matchPct}%
+            {c.matchPct}% match
           </span>
         </div>
 
-        {c.vibe && (
+        {vibeShort && (
           <p
-            className="mt-1.5 italic text-[12px] leading-snug line-clamp-2"
+            className="mt-2"
             style={{
-              fontFamily: "'Playfair Display', Georgia, serif",
-              color: C.muted,
+              fontFamily: "'Space Mono', 'Courier New', monospace",
+              fontSize: 11,
+              lineHeight: 1.5,
+              color: "#B8B8B8",
             }}
           >
-            &ldquo;{c.vibe}&rdquo;
+            <span style={{ color: C.muted }}>VIBE:</span> {vibeShort}
           </p>
         )}
 
-        <div className="mt-2 flex items-center justify-between gap-2">
-          <div className="flex flex-wrap gap-1 min-w-0">
-            {c.identityTags.slice(0, 3).map(t => (
-              <VibeTag key={t} label={t} />
+        <div className="mt-2.5 flex items-center justify-between gap-2">
+          <div className="flex gap-1 min-w-0 overflow-hidden">
+            {tagChips.map((t) => (
+              <span
+                key={t}
+                className="uppercase whitespace-nowrap"
+                style={{
+                  background: "rgba(255,255,255,0.06)",
+                  color: "#B8B8B8",
+                  fontSize: 9,
+                  padding: "3px 7px",
+                  borderRadius: 4,
+                  letterSpacing: "0.04em",
+                  fontFamily: "Inter, sans-serif",
+                  fontWeight: 500,
+                }}
+              >
+                {t}
+              </span>
             ))}
           </div>
           <DraftButton drafted={drafted} pending={pending} onClick={onDraft} />
@@ -716,18 +675,18 @@ const DraftButton: React.FC<{
   <button
     onClick={onClick}
     disabled={drafted || pending}
-    className="shrink-0 font-bold uppercase rounded-full transition-opacity"
+    className="shrink-0 uppercase rounded-full transition-opacity"
     style={{
       fontFamily: "Inter, sans-serif",
       fontSize: large ? 11 : 10,
-      letterSpacing: "0.14em",
-      padding: large ? "10px 18px" : "7px 14px",
+      fontWeight: 500,
+      letterSpacing: large ? "0.14em" : "0.1em",
+      padding: large ? "10px 18px" : "6px 14px",
       background: drafted ? "transparent" : C.raspberry,
-      color: drafted ? C.muted : "#0A0A0B",
+      color: drafted ? C.muted : C.text,
       border: drafted ? `1px solid ${C.borderStrong}` : "none",
       opacity: pending ? 0.6 : 1,
-      boxShadow: drafted ? "none" : "0 8px 24px -10px rgba(232,39,111,0.6)",
-      minHeight: large ? 40 : 32,
+      minHeight: large ? 40 : 28,
     }}
   >
     {drafted ? "✓ Drafted" : pending ? "…" : large ? "+ Draft to Roster" : "+ Draft"}
