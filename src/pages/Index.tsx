@@ -99,46 +99,59 @@ const PinkLink = ({ children, onClick }: { children: React.ReactNode; onClick?: 
   </button>
 );
 
-const PrimaryBtn = ({ children, onClick }: { children: React.ReactNode; onClick?: () => void }) => (
-  <button
-    onClick={onClick}
-    className="inline-flex items-center justify-center gap-2 transition-all hover:opacity-90 active:scale-[0.98]"
-    style={{
-      background: C.raspberry,
-      color: "#fff",
-      fontFamily: fonts.mono,
-      fontSize: 12,
-      letterSpacing: "0.16em",
-      textTransform: "uppercase",
-      padding: "16px 26px",
-      borderRadius: 999,
-      fontWeight: 500,
-    }}
-  >
-    {children}
-  </button>
-);
+type BtnProps = {
+  children: React.ReactNode;
+  onClick?: () => void;
+  href?: string;
+  ariaLabel?: string;
+};
 
-const OutlineBtn = ({ children, onClick }: { children: React.ReactNode; onClick?: () => void }) => (
-  <button
-    onClick={onClick}
-    className="inline-flex items-center justify-center gap-2 transition-all hover:bg-white/5 active:scale-[0.98]"
-    style={{
-      background: "transparent",
-      color: C.text,
-      fontFamily: fonts.mono,
-      fontSize: 12,
-      letterSpacing: "0.16em",
-      textTransform: "uppercase",
-      padding: "15px 26px",
-      borderRadius: 999,
-      border: `1px solid ${C.borderStrong}`,
-      fontWeight: 500,
-    }}
-  >
-    {children}
-  </button>
-);
+const primaryStyle: React.CSSProperties = {
+  background: C.raspberry,
+  color: "#fff",
+  fontFamily: fonts.mono,
+  fontSize: 12,
+  letterSpacing: "0.16em",
+  textTransform: "uppercase",
+  padding: "16px 26px",
+  borderRadius: 999,
+  fontWeight: 500,
+  textDecoration: "none",
+  display: "inline-flex",
+  alignItems: "center",
+  justifyContent: "center",
+  gap: 8,
+};
+
+const outlineStyle: React.CSSProperties = {
+  ...primaryStyle,
+  background: "transparent",
+  color: C.text,
+  padding: "15px 26px",
+  border: `1px solid ${C.borderStrong}`,
+};
+
+const PrimaryBtn = ({ children, onClick, href, ariaLabel }: BtnProps) => {
+  const cls = "transition-all hover:opacity-90 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-black focus-visible:ring-[hsl(340,82%,52%)]";
+  if (href) return <a href={href} aria-label={ariaLabel} className={cls} style={primaryStyle}>{children}</a>;
+  return <button onClick={onClick} aria-label={ariaLabel} className={cls} style={primaryStyle}>{children}</button>;
+};
+
+const OutlineBtn = ({ children, onClick, href, ariaLabel }: BtnProps) => {
+  const cls = "transition-all hover:bg-white/5 hover:border-white/40 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-black focus-visible:ring-[hsl(340,82%,52%)]";
+  if (href) return <a href={href} aria-label={ariaLabel} className={cls} style={outlineStyle}>{children}</a>;
+  return <button onClick={onClick} aria-label={ariaLabel} className={cls} style={outlineStyle}>{children}</button>;
+};
+
+/* ---------- Ticker data (edit to update this week) ---------- */
+type TickerItem = { label: string; detail: string; href: string; accent?: string };
+const TICKER_ITEMS: TickerItem[] = [
+  { label: "Arsenal vs Chelsea", detail: "Sun 7am PT · The Cock & Bull", href: "/events" },
+  { label: "WNBA Finals Watch Party", detail: "Fri 6pm PT · Echo Park", href: "/events", accent: C.gold },
+  { label: "Members RSVP'd: 23", detail: "Tap to join", href: "/events" },
+  { label: "Bears Game Brunch", detail: "Sun 10am PT · Silver Lake", href: "/events" },
+  { label: "Champions League Final", detail: "Sat 12pm PT · Hollywood", href: "/events", accent: C.gold },
+];
 
 /* ---------- Page ---------- */
 
@@ -191,7 +204,7 @@ const Index = () => {
               Loverball
             </span>
             <span className="md:hidden mt-0.5">
-              <Mono size={9}>SPORT STORIES + COMMUNITY</Mono>
+              <Mono size={9}>SPORTS STORIES + COMMUNITY</Mono>
             </span>
           </Link>
 
@@ -342,7 +355,7 @@ const Index = () => {
 
               <div className="mt-10 flex flex-wrap gap-3">
                 <PrimaryBtn onClick={goJoin}>Join the club — free</PrimaryBtn>
-                <OutlineBtn onClick={() => navigate("/feed")}>Browse this week's drop</OutlineBtn>
+                <OutlineBtn href="/feed" ariaLabel="Browse this week's drop on the feed">Browse this week's drop</OutlineBtn>
               </div>
 
               <div className="mt-8">
@@ -352,18 +365,26 @@ const Index = () => {
           </div>
         </div>
 
-        {/* Live ticker */}
+        {/* This week's ticker — scrolling marquee linking to events */}
         <div
-          className="w-full"
+          className="w-full relative"
           style={{
             background: "rgba(10,10,10,0.6)",
             borderTop: `0.5px solid ${C.border}`,
             borderBottom: `0.5px solid ${C.border}`,
             backdropFilter: "blur(8px)",
           }}
+          aria-label="This week's watch parties and events"
         >
-          <div className="max-w-7xl mx-auto px-5 md:px-10 py-3 flex items-center gap-4 overflow-x-auto whitespace-nowrap">
+          <style>{`
+            @keyframes lb-marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+            .lb-marquee-track { animation: lb-marquee 40s linear infinite; }
+            .lb-marquee-wrap:hover .lb-marquee-track { animation-play-state: paused; }
+            @media (prefers-reduced-motion: reduce) { .lb-marquee-track { animation: none; } }
+          `}</style>
+          <div className="max-w-7xl mx-auto px-5 md:px-10 py-3 flex items-center gap-6">
             <span
+              className="shrink-0"
               style={{
                 fontFamily: fonts.mono, fontSize: 10, letterSpacing: "0.22em",
                 color: C.raspberry, textTransform: "uppercase",
@@ -371,13 +392,25 @@ const Index = () => {
               }}
             >
               <span style={{ width: 6, height: 6, borderRadius: 999, background: C.raspberry, display: "inline-block" }} />
-              Live ticker
+              This week
             </span>
-            <Mono color={C.text} size={11}>Arsenal vs Chelsea · Sun 7am PT</Mono>
-            <span style={{ color: C.muted }}>·</span>
-            <Mono color={C.muted} size={11}>Watch party at The Cock &amp; Bull</Mono>
-            <span style={{ color: C.muted }}>·</span>
-            <Mono color={C.gold} size={11}>Members RSVP'd: 23</Mono>
+            <div className="lb-marquee-wrap overflow-hidden flex-1">
+              <div className="lb-marquee-track flex gap-8 whitespace-nowrap" style={{ width: "max-content" }}>
+                {[...TICKER_ITEMS, ...TICKER_ITEMS].map((item, i) => (
+                  <Link
+                    key={i}
+                    to={item.href}
+                    className="inline-flex items-center gap-3 hover:opacity-80 focus-visible:outline-none focus-visible:underline"
+                    style={{ textDecoration: "none" }}
+                  >
+                    <span style={{ fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.16em", textTransform: "uppercase", color: C.text }}>{item.label}</span>
+                    <span style={{ color: C.muted }}>·</span>
+                    <span style={{ fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.16em", textTransform: "uppercase", color: item.accent || C.muted }}>{item.detail}</span>
+                    <span style={{ color: C.muted, marginLeft: 8 }}>•</span>
+                  </Link>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </header>
@@ -1079,7 +1112,7 @@ const Index = () => {
                   <Link key={l} to={h} style={{ fontFamily: fonts.mono, fontSize: 10, letterSpacing: "0.18em", textTransform: "uppercase", color: C.muted }}>{l}</Link>
                 ))}
               </div>
-              <Mono color={C.muted} size={10}>© 2026 Loverball · Built in LA · SPORT STORIES + COMMUNITY</Mono>
+              <Mono color={C.muted} size={10}>© 2026 Loverball · Built in LA · SPORTS STORIES + COMMUNITY</Mono>
             </div>
           </div>
         </div>
