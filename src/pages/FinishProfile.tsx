@@ -190,7 +190,7 @@ const FinishProfile = () => {
       if (!skipAll) {
         go(TOTAL_STEPS + 1, 1); // done screen
       } else {
-        navigate("/watch");
+        navigate(consumeRedirect());
       }
     } catch (err: any) {
       toast({ title: "Couldn't save", description: err.message, variant: "destructive" });
