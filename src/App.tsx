@@ -27,7 +27,7 @@ const Members = lazy(() => import("./pages/Members"));
 const MemberProfile = lazy(() => import("./pages/MemberProfile"));
 const Profile = lazy(() => import("./pages/Profile"));
 const EditProfile = lazy(() => import("./pages/EditProfile"));
-const ProfileInterests = lazy(() => import("./pages/ProfileInterests"));
+
 const Onboarding = lazy(() => import("./pages/Onboarding"));
 const Horoscope = lazy(() => import("./pages/Horoscope"));
 const Settings = lazy(() => import("./pages/Settings"));
@@ -118,7 +118,7 @@ const App = () => (
                 <Route path="/members/:id" element={<ProtectedRoute><MemberProfile /></ProtectedRoute>} />
                 <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
                 <Route path="/profile/edit" element={<ProtectedRoute><EditProfile /></ProtectedRoute>} />
-                <Route path="/profile/interests" element={<ProtectedRoute><ProfileInterests /></ProtectedRoute>} />
+                <Route path="/profile/interests" element={<Navigate to="/profile/edit" replace />} />
 
                 {/* Profile-linked utilities */}
                 <Route path="/finish-profile" element={<ProtectedRoute><FinishProfile /></ProtectedRoute>} />
