@@ -479,6 +479,40 @@ const EventDetail = () => {
     );
   }
 
+  if (!authLoading && !user) {
+    return (
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6 text-center">
+        <div className="max-w-sm space-y-5">
+          {event.image_url && (
+            <div className="aspect-[16/10] rounded-2xl overflow-hidden">
+              <img src={event.image_url} alt={event.title} className="w-full h-full object-cover" />
+            </div>
+          )}
+          <h1 className="font-display text-2xl uppercase tracking-tight">{event.title}</h1>
+          <p className="text-sm text-muted-foreground">
+            {format(new Date(event.event_date), "EEE, MMM d, yyyy")}
+            {event.venue_name ? ` · ${event.venue_name}` : event.city ? ` · ${event.city}` : ""}
+          </p>
+          <div className="rounded-2xl border border-border bg-card p-5 space-y-3">
+            <Lock className="w-6 h-6 mx-auto text-primary" />
+            <p className="text-sm leading-relaxed">
+              Sign up to view event details, RSVP, and join the Loverball community.
+            </p>
+            <div className="space-y-2 pt-1">
+              <Button className="w-full rounded-full bg-primary text-primary-foreground h-11" onClick={() => navigate('/signup')}>
+                Sign Up — It's Free
+              </Button>
+              <Button variant="outline" className="w-full rounded-full h-11" onClick={() => navigate('/auth')}>
+                I already have an account
+              </Button>
+            </div>
+          </div>
+          <button onClick={() => navigate('/events')} className="text-xs text-muted-foreground hover:text-foreground">← Back to events</button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div ref={gestureRef} className="min-h-screen bg-background">
       {/* Confetti Animation */}
