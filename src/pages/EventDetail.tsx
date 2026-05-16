@@ -499,10 +499,10 @@ const EventDetail = () => {
               Sign up to view event details, RSVP, and join the Loverball community.
             </p>
             <div className="space-y-2 pt-1">
-              <Button className="w-full rounded-full bg-primary text-primary-foreground h-11" onClick={() => navigate('/signup')}>
+              <Button className="w-full rounded-full bg-primary text-primary-foreground h-11" onClick={() => { sessionStorage.setItem('postAuthRedirect', `/event/${id}`); navigate('/signup'); }}>
                 Sign Up — It's Free
               </Button>
-              <Button variant="outline" className="w-full rounded-full h-11" onClick={() => navigate('/auth')}>
+              <Button variant="outline" className="w-full rounded-full h-11" onClick={() => { sessionStorage.setItem('postAuthRedirect', `/event/${id}`); navigate(`/auth?redirect=${encodeURIComponent(`/event/${id}`)}`); }}>
                 I already have an account
               </Button>
             </div>

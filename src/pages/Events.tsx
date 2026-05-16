@@ -79,13 +79,19 @@ const Events = () => {
   const { user } = useAuth();
   const { toast } = useToast();
 
+  const [gateEventId, setGateEventId] = useState<string | null>(null);
+  const openGate = (id: string) => {
+    sessionStorage.setItem("postAuthRedirect", `/event/${id}`);
+    setGateEventId(id);
+    setGateOpen(true);
+  };
   const openTile = (id: string) => {
     if (user) goTo(`/event/${id}`);
-    else setGateOpen(true);
+    else openGate(id);
   };
   const requestRsvp = (id: string) => {
     if (user) setRsvpId(id);
-    else setGateOpen(true);
+    else openGate(id);
   };
 
   // Check if user is an approved creator/team/org account
@@ -411,7 +417,7 @@ const Events = () => {
                         ) : (
                           <div className="pt-2 flex items-center justify-between gap-2">
                             <p className="text-[11px] text-muted-foreground leading-snug">Sign up to see who's going & RSVP</p>
-                            <Button size="sm" className="rounded-full text-xs h-8 px-4 bg-primary text-primary-foreground" onClick={e => { e.stopPropagation(); setGateOpen(true); }}>Unlock</Button>
+                            <Button size="sm" className="rounded-full text-xs h-8 px-4 bg-primary text-primary-foreground" onClick={e => { e.stopPropagation(); openGate(ev.id); }}>Unlock</Button>
                           </div>
                         )}
                       </CardContent>
@@ -453,17 +459,17 @@ const Events = () => {
         <Dialog open={gateOpen} onOpenChange={setGateOpen}>
           <DialogContent className="sm:max-w-md text-center">
             <DialogHeader>
-              <DialogTitle className="font-display text-2xl uppercase tracking-tight">Join the Community</DialogTitle>
+              <DialogTitle className="font-display text-2xl uppercase tracking-tight">Your people are already here</DialogTitle>
             </DialogHeader>
             <div className="space-y-4 pt-2">
               <p className="text-sm text-muted-foreground leading-relaxed">
-                Sign up to view event details, RSVP, and join the Loverball community of women who live for sports.
+                Sign up in seconds to see who's going, join the event chat, and meet other women going.
               </p>
               <div className="space-y-2 pt-2">
                 <Button className="w-full rounded-full bg-primary text-primary-foreground h-11" onClick={() => goTo('/signup')}>
                   Sign Up — It's Free
                 </Button>
-                <Button variant="outline" className="w-full rounded-full h-11" onClick={() => goTo('/auth')}>
+                <Button variant="outline" className="w-full rounded-full h-11" onClick={() => goTo(`/auth?redirect=${encodeURIComponent(gateEventId ? `/event/${gateEventId}` : '/events')}`)}>
                   I already have an account
                 </Button>
               </div>

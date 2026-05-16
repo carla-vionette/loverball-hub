@@ -28,6 +28,12 @@ const slideVariants = {
   exit: (dir: number) => ({ x: dir > 0 ? -60 : 60, opacity: 0 }),
 };
 
+const consumeRedirect = () => {
+  const r = sessionStorage.getItem("postAuthRedirect");
+  if (r) sessionStorage.removeItem("postAuthRedirect");
+  return r || "/watch";
+};
+
 const FinishProfile = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -184,7 +190,7 @@ const FinishProfile = () => {
       if (!skipAll) {
         go(TOTAL_STEPS + 1, 1); // done screen
       } else {
-        navigate("/watch");
+        navigate(consumeRedirect());
       }
     } catch (err: any) {
       toast({ title: "Couldn't save", description: err.message, variant: "destructive" });
@@ -261,7 +267,7 @@ const FinishProfile = () => {
                 </Button>
                 <button
                   type="button"
-                  onClick={() => navigate("/watch")}
+                  onClick={() => navigate(consumeRedirect())}
                   className="w-full text-sm text-foreground/40 hover:text-foreground/70 transition-colors py-2"
                 >
                   Skip for now
@@ -546,7 +552,7 @@ const FinishProfile = () => {
                 </p>
               </div>
               <Button
-                onClick={() => navigate("/watch")}
+                onClick={() => navigate(consumeRedirect())}
                 className="w-full h-14 text-base rounded-2xl font-semibold gap-2 group"
               >
                 Enter Loverball
