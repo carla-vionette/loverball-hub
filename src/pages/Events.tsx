@@ -79,13 +79,19 @@ const Events = () => {
   const { user } = useAuth();
   const { toast } = useToast();
 
+  const [gateEventId, setGateEventId] = useState<string | null>(null);
+  const openGate = (id: string) => {
+    sessionStorage.setItem("postAuthRedirect", `/event/${id}`);
+    setGateEventId(id);
+    setGateOpen(true);
+  };
   const openTile = (id: string) => {
     if (user) goTo(`/event/${id}`);
-    else setGateOpen(true);
+    else openGate(id);
   };
   const requestRsvp = (id: string) => {
     if (user) setRsvpId(id);
-    else setGateOpen(true);
+    else openGate(id);
   };
 
   // Check if user is an approved creator/team/org account
