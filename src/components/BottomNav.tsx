@@ -92,20 +92,6 @@ const BottomNav = () => {
             </Link>
           );
         })}
-        <span
-          className="absolute right-3 bottom-1.5 pointer-events-none"
-          style={{
-            color: "#d88c5a",
-            fontFamily: "'Inter', system-ui, sans-serif",
-            fontWeight: 800,
-            fontSize: 8,
-            letterSpacing: "1.5px",
-            textTransform: "uppercase",
-            opacity: 0.7,
-          }}
-        >
-          Vol. 1
-        </span>
       </div>
     </nav>
   );
