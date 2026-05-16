@@ -335,7 +335,7 @@ const Events = () => {
                 return (
                   <React.Fragment key={ev.id}>
                     <Card className="overflow-hidden group cursor-pointer hover:shadow-lg transition-all"
-                      onClick={() => goTo(`/event/${ev.id}`)}>
+                      onClick={() => openTile(ev.id)}>
                       <div className="relative h-44 overflow-hidden">
                         {ev.image_url ? (
                           <img src={ev.image_url} alt={ev.title} loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
