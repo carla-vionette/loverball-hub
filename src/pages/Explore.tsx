@@ -228,7 +228,7 @@ const NewsArticleCard = ({ article }: { article: FeedArticle }) => {
           <p className="text-[10px] text-muted-foreground leading-relaxed line-clamp-2 mb-2 flex-1">{summary}</p>
           <div className="flex items-center justify-between mt-auto">
             {article.source && <p className="text-[9px] text-muted-foreground uppercase tracking-wider font-semibold">{article.source}</p>}
-            <span className="text-[10px] font-semibold text-accent flex items-center gap-1 group-hover:gap-1.5 transition-all ml-auto">Read More <ExternalLink className="w-2.5 h-2.5" /></span>
+            <span className="text-[10px] font-semibold text-accent flex items-center gap-1 group-hover:gap-1.5 transition-all ml-auto">Read full article <ExternalLink className="w-2.5 h-2.5" /></span>
           </div>
         </div>
       </Card>
