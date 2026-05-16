@@ -28,6 +28,7 @@ const MemberProfile = lazy(() => import("./pages/MemberProfile"));
 const Profile = lazy(() => import("./pages/Profile"));
 const EditProfile = lazy(() => import("./pages/EditProfile"));
 const Club = lazy(() => import("./pages/Club"));
+const ClubDrafts = lazy(() => import("./pages/ClubDrafts"));
 
 const Onboarding = lazy(() => import("./pages/Onboarding"));
 const Horoscope = lazy(() => import("./pages/Horoscope"));
