@@ -354,82 +354,6 @@ const Profile = () => {
               </motion.div>
             )}
 
-            {/* WHERE TO WATCH (moved up) */}
-            <motion.div variants={staggerItem}>
-              <Card className="rounded-2xl overflow-hidden">
-                <CardHeader className="pb-2 pt-4 px-5">
-                  <CardTitle className="text-sm font-medium tracking-wider uppercase text-foreground/50 flex items-center gap-2">
-                    <Tv className="w-4 h-4 text-primary" /> Where to Watch
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="px-5 pb-5">
-                  <ProfileWhereToWatch />
-                </CardContent>
-              </Card>
-            </motion.div>
-
-            {/* LIVE / RECENT SCORES - COLLAPSIBLE */}
-            <motion.div variants={staggerItem}>
-              <Collapsible open={scoresOpen} onOpenChange={setScoresOpen}>
-                <Card className="rounded-2xl overflow-hidden">
-                  <CollapsibleTrigger asChild>
-                    <button className="w-full pt-4 px-5 pb-2 flex items-center justify-between cursor-pointer hover:bg-foreground/[0.03] transition-colors">
-                      <span className="text-sm font-medium tracking-wider uppercase text-foreground/50 flex items-center gap-2">
-                        <Radio className="w-4 h-4 text-[#FF5D2E]" /> Live &amp; Recent Scores
-                      </span>
-                      <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform duration-200 ${scoresOpen ? 'rotate-180' : ''}`} />
-                    </button>
-                  </CollapsibleTrigger>
-                  <CollapsibleContent>
-                    <CardContent className="px-5 pb-5 pt-2">
-                      <ProfileScores />
-                    </CardContent>
-                  </CollapsibleContent>
-                </Card>
-              </Collapsible>
-            </motion.div>
-
-            {/* GREETING + DATE */}
-            <motion.div variants={staggerItem} className="glass-card rounded-2xl p-5">
-              <p className="text-lg font-sans text-foreground">{greeting}, <span className="text-primary font-semibold">{userName}</span></p>
-              <p className="text-sm text-muted-foreground mt-1">{formattedDate} · {formattedTime}</p>
-            </motion.div>
-
-            {/* POINTS & STREAK */}
-            <motion.div variants={staggerItem}>
-              <PointsStreakCard />
-            </motion.div>
-
-
-            {/* DAILY HOROSCOPE SNIPPET */}
-            <motion.div variants={staggerItem}>
-              <div className="rounded-2xl p-4 border-2 border-primary/30 bg-primary/5">
-                {zodiac ? (
-                  <div className="flex items-start gap-3">
-                    <span className="text-3xl mt-0.5">{zodiac.symbol}</span>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold text-foreground">{zodiac.name}</p>
-                      {horoscopeLoading ? (
-                        <p className="text-xs text-muted-foreground mt-1 animate-pulse">Loading your forecast…</p>
-                      ) : (
-                        <p className="text-xs text-foreground/70 leading-relaxed mt-1 line-clamp-3">
-                          {liveHoroscope || HOROSCOPE_MESSAGES[zodiac.name]}
-                        </p>
-                      )}
-                      <Button variant="link" className="px-0 mt-1 text-primary h-auto text-xs gap-1" onClick={() => goTo("/horoscope")}>
-                        Full Horoscope <ChevronRight className="w-3 h-3" />
-                      </Button>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="flex items-center gap-3">
-                    <span className="text-2xl">✨</span>
-                    <p className="text-xs text-muted-foreground">Add your birthday in <button className="text-primary underline" onClick={() => goTo("/profile/edit")}>Edit Profile</button> to see your daily horoscope.</p>
-                  </div>
-                )}
-              </div>
-            </motion.div>
-
             {/* MY INTERESTS LINK */}
             <motion.div variants={staggerItem}>
               <div className="glass-card rounded-2xl cursor-pointer hover:border-primary/30 transition-colors p-4 flex items-center justify-between" onClick={() => goTo("/profile/interests")}>
@@ -438,6 +362,44 @@ const Profile = () => {
                   <p className="text-sm text-muted-foreground">Teams, sports, experiences & more</p>
                 </div>
                 <ChevronRight className="w-5 h-5 text-muted-foreground" />
+              </div>
+            </motion.div>
+
+            {/* GREETING + DATE */}
+            <motion.div variants={staggerItem} className="glass-card rounded-2xl p-5">
+              <p className="text-lg font-sans text-foreground">{greeting}, <span className="text-primary font-semibold">{userName}</span></p>
+              <p className="text-sm text-muted-foreground mt-1">{formattedDate} · {formattedTime}</p>
+            </motion.div>
+
+
+            {/* DAILY HOROSCOPE SNIPPET — compact */}
+            <motion.div variants={staggerItem}>
+              <div className="rounded-2xl px-4 py-3 border border-primary/30 bg-primary/5">
+                {zodiac ? (
+                  <div className="flex items-center gap-3">
+                    <span className="text-2xl">{zodiac.symbol}</span>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between gap-2">
+                        <p className="text-xs font-semibold text-foreground">{zodiac.name}</p>
+                        <button onClick={() => goTo("/horoscope")} className="text-[11px] text-primary flex items-center gap-0.5 flex-shrink-0">
+                          Full <ChevronRight className="w-3 h-3" />
+                        </button>
+                      </div>
+                      {horoscopeLoading ? (
+                        <p className="text-[11px] text-muted-foreground mt-0.5 animate-pulse">Loading…</p>
+                      ) : (
+                        <p className="text-[11px] text-foreground/70 leading-snug mt-0.5 line-clamp-2">
+                          {liveHoroscope || HOROSCOPE_MESSAGES[zodiac.name]}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-3">
+                    <span className="text-xl">✨</span>
+                    <p className="text-[11px] text-muted-foreground">Add your birthday in <button className="text-primary underline" onClick={() => goTo("/profile/edit")}>Edit Profile</button> for your daily horoscope.</p>
+                  </div>
+                )}
               </div>
             </motion.div>
 
@@ -555,6 +517,41 @@ const Profile = () => {
                 userTeams={[...(profile.favorite_teams_players || []), ...((profile as any).favorite_la_teams || [])]}
                 userCity={profile.city}
               />
+            </motion.div>
+
+            {/* WHERE TO WATCH (under My Sports Feed) */}
+            <motion.div variants={staggerItem}>
+              <Card className="rounded-2xl overflow-hidden">
+                <CardHeader className="pb-2 pt-4 px-5">
+                  <CardTitle className="text-sm font-medium tracking-wider uppercase text-foreground/50 flex items-center gap-2">
+                    <Tv className="w-4 h-4 text-primary" /> Where to Watch
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="px-5 pb-5">
+                  <ProfileWhereToWatch />
+                </CardContent>
+              </Card>
+            </motion.div>
+
+            {/* LIVE / RECENT SCORES - COLLAPSIBLE */}
+            <motion.div variants={staggerItem}>
+              <Collapsible open={scoresOpen} onOpenChange={setScoresOpen}>
+                <Card className="rounded-2xl overflow-hidden">
+                  <CollapsibleTrigger asChild>
+                    <button className="w-full pt-4 px-5 pb-2 flex items-center justify-between cursor-pointer hover:bg-foreground/[0.03] transition-colors">
+                      <span className="text-sm font-medium tracking-wider uppercase text-foreground/50 flex items-center gap-2">
+                        <Radio className="w-4 h-4 text-[#FF5D2E]" /> Live &amp; Recent Scores
+                      </span>
+                      <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform duration-200 ${scoresOpen ? 'rotate-180' : ''}`} />
+                    </button>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent>
+                    <CardContent className="px-5 pb-5 pt-2">
+                      <ProfileScores />
+                    </CardContent>
+                  </CollapsibleContent>
+                </Card>
+              </Collapsible>
             </motion.div>
 
 
