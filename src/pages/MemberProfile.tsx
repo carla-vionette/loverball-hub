@@ -567,32 +567,41 @@ const MemberProfile = () => {
             match.sameCity) && (
             <section className="mb-6">
               <Eyebrow label="You both" />
-              <ul className="space-y-2.5">
+              <div className="flex flex-col gap-2">
                 {match.sameCity && profile.city && (
-                  <li className="flex items-center gap-2.5">
-                    <Beer size={15} color={C.raspberry} />
-                    <span style={{ fontSize: 13.5, color: C.text }}>
+                  <div
+                    className="flex items-center gap-2.5 rounded-lg px-3 py-2.5"
+                    style={{ background: C.card }}
+                  >
+                    <Beer size={16} color={C.raspberry} />
+                    <span style={{ fontSize: 12.5, color: C.text }}>
                       Based in {profile.city}
                     </span>
-                  </li>
+                  </div>
                 )}
                 {match.sharedSports[0] && (
-                  <li className="flex items-center gap-2.5">
-                    <Calendar size={15} color={C.raspberry} />
-                    <span style={{ fontSize: 13.5, color: C.text }}>
+                  <div
+                    className="flex items-center gap-2.5 rounded-lg px-3 py-2.5"
+                    style={{ background: C.card }}
+                  >
+                    <Calendar size={16} color={C.raspberry} />
+                    <span style={{ fontSize: 12.5, color: C.text }}>
                       Watch the same {match.sharedSports[0]} fixtures
                     </span>
-                  </li>
+                  </div>
                 )}
                 {match.sharedTeams.length > 0 && (
-                  <li className="flex items-center gap-2.5">
-                    <Users size={15} color={C.raspberry} />
-                    <span style={{ fontSize: 13.5, color: C.text }}>
+                  <div
+                    className="flex items-center gap-2.5 rounded-lg px-3 py-2.5"
+                    style={{ background: C.card }}
+                  >
+                    <Users size={16} color={C.raspberry} />
+                    <span style={{ fontSize: 12.5, color: C.text }}>
                       Ride for {match.sharedTeams.slice(0, 2).join(" & ")}
                     </span>
-                  </li>
+                  </div>
                 )}
-              </ul>
+              </div>
             </section>
           )}
 
