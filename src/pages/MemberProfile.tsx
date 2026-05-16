@@ -386,11 +386,22 @@ const MemberProfile = () => {
               Member
             </span>
             <button
-              className="p-1.5 -mr-1.5 rounded-full"
-              style={{ color: C.muted }}
-              aria-label="More"
+              onClick={handleDraft}
+              disabled={isDrafted || pending}
+              className="rounded-full uppercase font-bold transition-opacity active:opacity-80 disabled:opacity-60"
+              style={{
+                fontFamily: "'Space Mono', monospace",
+                fontSize: 10,
+                letterSpacing: "0.18em",
+                padding: "7px 14px",
+                background: isDrafted ? "transparent" : C.raspberry,
+                color: isDrafted ? C.muted : "#0A0A0B",
+                border: isDrafted ? `1px solid ${C.borderStrong}` : "none",
+                boxShadow: isDrafted ? "none" : "0 8px 20px -8px rgba(232,39,111,0.55)",
+              }}
+              aria-label="Draft to your XI"
             >
-              <MoreHorizontal size={20} />
+              {isDrafted ? "✓ Drafted" : pending ? "…" : "+ Draft"}
             </button>
           </div>
 
