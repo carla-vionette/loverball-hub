@@ -78,7 +78,19 @@ export default function Signup() {
       }
       setStep("verify");
     } catch (err: any) {
-      toast({ title: "Couldn't send code", description: err.message, variant: "destructive" });
+      const msg = String(err?.message || "");
+      const isCarrier = /unsupported carrier|not a mobile number|invalid.*phone|sms.*not.*supported|landline/i.test(msg);
+      if (method === "phone" && isCarrier) {
+        toast({
+          title: "That number can't receive our code",
+          description: "Your carrier isn't supported yet. Switching you to email — way more reliable.",
+          variant: "destructive",
+        });
+        setMethod("email");
+        setContact("");
+      } else {
+        toast({ title: "Couldn't send code", description: msg || "Try again in a moment.", variant: "destructive" });
+      }
     } finally {
       setLoading(false);
     }
