@@ -9,6 +9,7 @@ const MobileHeader = () => {
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const hideGlobalSearch = pathname.startsWith('/members') || pathname.startsWith('/profile');
+  const isClub = pathname.startsWith('/club');
   const [totalItems, setTotalItems] = useState(0);
 
   useEffect(() => {
