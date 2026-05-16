@@ -345,7 +345,7 @@ const Index = () => {
 
               <div className="mt-10 flex flex-wrap gap-3">
                 <PrimaryBtn onClick={goJoin}>Join the club — free</PrimaryBtn>
-                <OutlineBtn onClick={() => navigate("/feed")}>Browse this week's drop</OutlineBtn>
+                <OutlineBtn href="/feed" ariaLabel="Browse this week's drop on the feed">Browse this week's drop</OutlineBtn>
               </div>
 
               <div className="mt-8">
@@ -355,18 +355,26 @@ const Index = () => {
           </div>
         </div>
 
-        {/* Live ticker */}
+        {/* This week's ticker — scrolling marquee linking to events */}
         <div
-          className="w-full"
+          className="w-full relative"
           style={{
             background: "rgba(10,10,10,0.6)",
             borderTop: `0.5px solid ${C.border}`,
             borderBottom: `0.5px solid ${C.border}`,
             backdropFilter: "blur(8px)",
           }}
+          aria-label="This week's watch parties and events"
         >
-          <div className="max-w-7xl mx-auto px-5 md:px-10 py-3 flex items-center gap-4 overflow-x-auto whitespace-nowrap">
+          <style>{`
+            @keyframes lb-marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+            .lb-marquee-track { animation: lb-marquee 40s linear infinite; }
+            .lb-marquee-wrap:hover .lb-marquee-track { animation-play-state: paused; }
+            @media (prefers-reduced-motion: reduce) { .lb-marquee-track { animation: none; } }
+          `}</style>
+          <div className="max-w-7xl mx-auto px-5 md:px-10 py-3 flex items-center gap-6">
             <span
+              className="shrink-0"
               style={{
                 fontFamily: fonts.mono, fontSize: 10, letterSpacing: "0.22em",
                 color: C.raspberry, textTransform: "uppercase",
@@ -374,13 +382,25 @@ const Index = () => {
               }}
             >
               <span style={{ width: 6, height: 6, borderRadius: 999, background: C.raspberry, display: "inline-block" }} />
-              Live ticker
+              This week
             </span>
-            <Mono color={C.text} size={11}>Arsenal vs Chelsea · Sun 7am PT</Mono>
-            <span style={{ color: C.muted }}>·</span>
-            <Mono color={C.muted} size={11}>Watch party at The Cock &amp; Bull</Mono>
-            <span style={{ color: C.muted }}>·</span>
-            <Mono color={C.gold} size={11}>Members RSVP'd: 23</Mono>
+            <div className="lb-marquee-wrap overflow-hidden flex-1">
+              <div className="lb-marquee-track flex gap-8 whitespace-nowrap" style={{ width: "max-content" }}>
+                {[...TICKER_ITEMS, ...TICKER_ITEMS].map((item, i) => (
+                  <Link
+                    key={i}
+                    to={item.href}
+                    className="inline-flex items-center gap-3 hover:opacity-80 focus-visible:outline-none focus-visible:underline"
+                    style={{ textDecoration: "none" }}
+                  >
+                    <span style={{ fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.16em", textTransform: "uppercase", color: C.text }}>{item.label}</span>
+                    <span style={{ color: C.muted }}>·</span>
+                    <span style={{ fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.16em", textTransform: "uppercase", color: item.accent || C.muted }}>{item.detail}</span>
+                    <span style={{ color: C.muted, marginLeft: 8 }}>•</span>
+                  </Link>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </header>
