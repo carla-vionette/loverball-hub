@@ -204,7 +204,7 @@ const Index = () => {
               Loverball
             </span>
             <span className="md:hidden mt-0.5">
-              <Mono size={9}>SPORT STORIES + COMMUNITY</Mono>
+              <Mono size={9}>SPORTS STORIES + COMMUNITY</Mono>
             </span>
           </Link>
 
@@ -1112,7 +1112,7 @@ const Index = () => {
                   <Link key={l} to={h} style={{ fontFamily: fonts.mono, fontSize: 10, letterSpacing: "0.18em", textTransform: "uppercase", color: C.muted }}>{l}</Link>
                 ))}
               </div>
-              <Mono color={C.muted} size={10}>© 2026 Loverball · Built in LA · SPORT STORIES + COMMUNITY</Mono>
+              <Mono color={C.muted} size={10}>© 2026 Loverball · Built in LA · SPORTS STORIES + COMMUNITY</Mono>
             </div>
           </div>
         </div>
