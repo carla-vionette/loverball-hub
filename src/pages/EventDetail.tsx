@@ -853,6 +853,60 @@ const EventDetail = () => {
                 coHostIds={event.co_host_ids as string[] | undefined}
               />
 
+              {/* Social proof: Who's going + Join chat (high on page) */}
+              <div className="mb-6 rounded-2xl border border-primary/20 bg-primary/5 p-4">
+                <div className="flex items-center justify-between mb-3">
+                  <div>
+                    <p className="font-semibold text-sm text-foreground">
+                      {attendeeCounts.yes > 0
+                        ? `${attendeeCounts.yes} going${attendeeCounts.maybe > 0 ? ` · ${attendeeCounts.maybe} maybe` : ''}`
+                        : 'Be the first one going'}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {attendees.length > 0 ? 'Real women, real plans.' : 'Start the group chat below.'}
+                    </p>
+                  </div>
+                  {attendees.length > 0 && (
+                    <button
+                      onClick={() => setShowAttendeeList(true)}
+                      className="flex -space-x-2 hover:opacity-80 transition-opacity"
+                      aria-label="See who's going"
+                    >
+                      {attendees.slice(0, 5).map((a) => (
+                        <Avatar key={a.id} className="w-9 h-9 border-2 border-background">
+                          <AvatarImage src={a.profile?.profile_photo_url || undefined} />
+                          <AvatarFallback className="bg-primary/10 text-primary text-xs">
+                            {a.profile?.name?.charAt(0).toUpperCase() || '?'}
+                          </AvatarFallback>
+                        </Avatar>
+                      ))}
+                      {attendees.length > 5 && (
+                        <div className="w-9 h-9 rounded-full bg-muted border-2 border-background flex items-center justify-center text-[11px] font-medium">
+                          +{attendees.length - 5}
+                        </div>
+                      )}
+                    </button>
+                  )}
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="flex-1 rounded-full"
+                    onClick={() => setShowAttendeeList(true)}
+                  >
+                    <Users className="w-4 h-4 mr-1.5" /> See who's going
+                  </Button>
+                  <Button
+                    size="sm"
+                    className="flex-1 rounded-full"
+                    onClick={() => document.getElementById('event-chat')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+                  >
+                    <MessageCircle className="w-4 h-4 mr-1.5" /> Join chat
+                  </Button>
+                </div>
+              </div>
+
               {/* Where to Watch */}
               <WhereToWatch eventCity={event.city} eventType={event.event_type} />
 
