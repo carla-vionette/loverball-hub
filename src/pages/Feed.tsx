@@ -185,11 +185,17 @@ const Feed = () => {
           </div>
 
           <div className="flex items-center justify-between">
-            <img
-              src={loverballLogo}
-              alt="Loverball logo"
-              className="h-20 w-auto object-contain brightness-0 invert"
-            />
+            <a
+              href="/"
+              aria-label="Back to Loverball home"
+              className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E8276F] rounded"
+            >
+              <img
+                src={loverballLogo}
+                alt="Loverball — back to home"
+                className="h-20 w-auto object-contain brightness-0 invert"
+              />
+            </a>
 
             <div className="flex items-center gap-1 p-1 rounded-full" style={{ background: "rgba(20,20,21,0.6)", border: "1px solid rgba(255,255,255,0.08)", backdropFilter: "blur(12px)" }}>
               {[
