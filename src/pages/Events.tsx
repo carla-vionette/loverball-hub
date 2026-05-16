@@ -79,6 +79,15 @@ const Events = () => {
   const { user } = useAuth();
   const { toast } = useToast();
 
+  const openTile = (id: string) => {
+    if (user) goTo(`/event/${id}`);
+    else setGateOpen(true);
+  };
+  const requestRsvp = (id: string) => {
+    if (user) setRsvpId(id);
+    else setGateOpen(true);
+  };
+
   // Check if user is an approved creator/team/org account
   useEffect(() => {
     if (!user) return;
