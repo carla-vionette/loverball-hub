@@ -165,6 +165,7 @@ const ProfileFollowCounts = ({ userId, onClickFollowers, onClickFollowing }: { u
 
 const Profile = () => {
   const [teamsOpen, setTeamsOpen] = useState(false);
+  const [scoresOpen, setScoresOpen] = useState(false);
   const [recEventsOpen, setRecEventsOpen] = useState(false);
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [rsvpEvents, setRsvpEvents] = useState<RSVPEvent[]>([]);
@@ -353,18 +354,39 @@ const Profile = () => {
               </motion.div>
             )}
 
-            {/* LIVE / RECENT SCORES */}
+            {/* WHERE TO WATCH (moved up) */}
             <motion.div variants={staggerItem}>
               <Card className="rounded-2xl overflow-hidden">
                 <CardHeader className="pb-2 pt-4 px-5">
                   <CardTitle className="text-sm font-medium tracking-wider uppercase text-foreground/50 flex items-center gap-2">
-                    <Radio className="w-4 h-4 text-[#FF5D2E]" /> Live &amp; Recent Scores
+                    <Tv className="w-4 h-4 text-primary" /> Where to Watch
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="px-5 pb-5">
-                  <ProfileScores />
+                  <ProfileWhereToWatch />
                 </CardContent>
               </Card>
+            </motion.div>
+
+            {/* LIVE / RECENT SCORES - COLLAPSIBLE */}
+            <motion.div variants={staggerItem}>
+              <Collapsible open={scoresOpen} onOpenChange={setScoresOpen}>
+                <Card className="rounded-2xl overflow-hidden">
+                  <CollapsibleTrigger asChild>
+                    <button className="w-full pt-4 px-5 pb-2 flex items-center justify-between cursor-pointer hover:bg-foreground/[0.03] transition-colors">
+                      <span className="text-sm font-medium tracking-wider uppercase text-foreground/50 flex items-center gap-2">
+                        <Radio className="w-4 h-4 text-[#FF5D2E]" /> Live &amp; Recent Scores
+                      </span>
+                      <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform duration-200 ${scoresOpen ? 'rotate-180' : ''}`} />
+                    </button>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent>
+                    <CardContent className="px-5 pb-5 pt-2">
+                      <ProfileScores />
+                    </CardContent>
+                  </CollapsibleContent>
+                </Card>
+              </Collapsible>
             </motion.div>
 
             {/* GREETING + DATE */}
@@ -418,12 +440,6 @@ const Profile = () => {
                 <ChevronRight className="w-5 h-5 text-muted-foreground" />
               </div>
             </motion.div>
-
-            {/* BADGE SHELF */}
-            <motion.div variants={staggerItem}>
-              <BadgeShelf />
-            </motion.div>
-
 
             {/* FAVORITE TEAMS PERFORMANCE - COLLAPSIBLE */}
             <motion.div variants={staggerItem}>
@@ -541,19 +557,6 @@ const Profile = () => {
               />
             </motion.div>
 
-            {/* WHERE TO WATCH */}
-            <motion.div variants={staggerItem}>
-              <Card className="rounded-2xl overflow-hidden">
-                <CardHeader className="pb-2 pt-4 px-5">
-                  <CardTitle className="text-sm font-medium tracking-wider uppercase text-foreground/50 flex items-center gap-2">
-                    <Tv className="w-4 h-4 text-primary" /> Where to Watch
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="px-5 pb-5">
-                  <ProfileWhereToWatch />
-                </CardContent>
-              </Card>
-            </motion.div>
 
             {/* RECOMMENDED EVENTS - COLLAPSIBLE */}
             {suggestedEvents.length > 0 && (
