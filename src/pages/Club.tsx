@@ -251,154 +251,85 @@ const Club: React.FC = () => {
       <main className="md:ml-64 pb-28 md:pb-10 pt-16 md:pt-2">
         <div className="max-w-[440px] md:max-w-2xl mx-auto px-5">
           {/* MASTHEAD */}
-          <header className="pt-3 pb-5">
-            <p
-              className="text-[10px] uppercase mb-2"
+          <header className="pt-4 pb-1">
+            <h1
               style={{
-                fontFamily: "'Space Mono', ui-monospace, monospace",
-                color: C.copper,
-                letterSpacing: "0.22em",
+                fontFamily: "'Playfair Display', Georgia, serif",
+                fontStyle: "italic",
+                fontWeight: 500,
+                fontSize: 38,
+                lineHeight: 1,
+                letterSpacing: "-0.01em",
+                color: C.text,
               }}
             >
-              THE CLUB
-            </p>
-            <div className="flex items-end justify-between gap-3">
-              <h1
-                className="leading-[0.86] tracking-tight"
-                style={{
-                  fontFamily: "'Anton', 'Bebas Neue', sans-serif",
-                  fontSize: 64,
-                  color: C.text,
-                  textTransform: "uppercase",
-                }}
-              >
-                The
-                <br />
-                Roster
-              </h1>
-              <p
-                className="italic text-right pb-1"
-                style={{
-                  fontFamily: "'Playfair Display', Georgia, serif",
-                  fontSize: 16,
-                  color: C.text,
-                  lineHeight: 1.1,
-                  maxWidth: 140,
-                }}
-              >
-                a curated
-                <br />
-                <span style={{ color: C.raspberry }}>starting&nbsp;XI</span>
-              </p>
-            </div>
-
-            <div
-              className="mt-5 pt-3 flex items-center justify-between"
-              style={{ borderTop: `1px solid ${C.border}` }}
-            >
-              <span
-                className="text-[10px] uppercase"
-                style={{
-                  fontFamily: "'Space Mono', ui-monospace, monospace",
-                  color: C.muted,
-                  letterSpacing: "0.2em",
-                }}
-              >
-                Picked for you · Week {weekKey().slice(5)}
-              </span>
-              <button
-                onClick={() => navigate("/club/drafts")}
-                className="text-[10px] uppercase font-semibold"
-                style={{
-                  fontFamily: "'Space Mono', ui-monospace, monospace",
-                  color: C.raspberry,
-                  letterSpacing: "0.18em",
-                }}
-              >
-                {draftsLeft} draft{draftsLeft === 1 ? "" : "s"} left  ›
-              </button>
-            </div>
+              Starting
+              <br />
+              XI.
+            </h1>
           </header>
 
-          {/* DISCOVERY FILTER CHIPS */}
-          <div className="flex flex-wrap gap-1.5 mb-5">
-            {["Team", "City", "Vibe", "Sport", "Events", "Interests"].map((f, i) => (
-              <span
-                key={f}
-                className="text-[10px] font-semibold uppercase px-2.5 py-1 rounded-full"
-                style={{
-                  background: i === 0 ? "rgba(232,39,111,0.12)" : C.chip,
-                  color: i === 0 ? C.raspberry : C.muted,
-                  border: `1px solid ${i === 0 ? "rgba(232,39,111,0.3)" : C.border}`,
-                  letterSpacing: "0.12em",
-                  fontFamily: "Inter, sans-serif",
-                }}
-              >
-                {f}
-              </span>
-            ))}
+          <div
+            className="mt-2 mb-5 pb-3 flex items-end justify-between"
+            style={{ borderBottom: `0.5px solid ${C.borderStrong}` }}
+          >
+            <span
+              className="text-[11px] uppercase"
+              style={{
+                color: C.muted,
+                letterSpacing: "0.05em",
+                fontFamily: "Inter, sans-serif",
+              }}
+            >
+              Picked for you this week
+            </span>
+            <button
+              onClick={() => navigate("/club/drafts")}
+              className="text-[11px] uppercase font-medium"
+              style={{
+                color: C.raspberry,
+                letterSpacing: "0.05em",
+                fontFamily: "Inter, sans-serif",
+              }}
+            >
+              Drafts left: {draftsLeft}
+            </button>
+          </div>
+
+          {/* Surfaced strip */}
+          <div
+            className="mb-5 px-3 py-2.5 rounded-[10px] flex items-center gap-2.5"
+            style={{
+              background: "rgba(232,39,111,0.08)",
+              border: "0.5px solid rgba(232,39,111,0.3)",
+            }}
+          >
+            <Sparkles size={15} color={C.raspberry} />
+            <span
+              className="text-[12px] leading-snug"
+              style={{ color: C.text }}
+            >
+              Surfaced based on your teams, vibes &amp; this week's matchups.
+            </span>
           </div>
 
           {loading ? (
-            <>
-              <FeaturedSkeleton />
-              <SkeletonList />
-            </>
+            <SkeletonList />
           ) : candidates.length === 0 ? (
             <EmptyState />
           ) : (
-            <>
-              {/* FEATURED MEMBER */}
-              {featured && (
-                <FeaturedCard
-                  c={featured}
-                  drafted={drafted.includes(featured.id)}
-                  pending={pending === featured.id}
-                  onDraft={() => handleDraft(featured)}
-                  onOpen={() => navigate(`/members/${featured.id}`)}
+            <ul className="space-y-3.5">
+              {candidates.map((c) => (
+                <MemberCard
+                  key={c.id}
+                  c={c}
+                  drafted={drafted.includes(c.id)}
+                  pending={pending === c.id}
+                  onDraft={() => handleDraft(c)}
+                  onOpen={() => navigate(`/members/${c.id}`)}
                 />
-              )}
-
-              {/* SECTION HEADING */}
-              {rest.length > 0 && (
-                <div className="flex items-end justify-between mt-7 mb-3">
-                  <h2
-                    style={{
-                      fontFamily: "'Anton', 'Bebas Neue', sans-serif",
-                      fontSize: 24,
-                      letterSpacing: "0.02em",
-                      textTransform: "uppercase",
-                      color: C.text,
-                    }}
-                  >
-                    The Bench
-                  </h2>
-                  <span
-                    className="text-[10px] uppercase pb-1"
-                    style={{
-                      fontFamily: "'Space Mono', ui-monospace, monospace",
-                      color: C.faint,
-                      letterSpacing: "0.18em",
-                    }}
-                  >
-                    {rest.length} more
-                  </span>
-                </div>
-              )}
-
-              <ul className="space-y-3">
-                {rest.map(c => (
-                  <MemberCard
-                    key={c.id}
-                    c={c}
-                    drafted={drafted.includes(c.id)}
-                    pending={pending === c.id}
-                    onDraft={() => handleDraft(c)}
-                    onOpen={() => navigate(`/members/${c.id}`)}
-                  />
-                ))}
-              </ul>
-            </>
+              ))}
+            </ul>
           )}
         </div>
       </main>
