@@ -267,7 +267,7 @@ const FinishProfile = () => {
                 </Button>
                 <button
                   type="button"
-                  onClick={() => navigate("/watch")}
+                  onClick={() => navigate(consumeRedirect())}
                   className="w-full text-sm text-foreground/40 hover:text-foreground/70 transition-colors py-2"
                 >
                   Skip for now
