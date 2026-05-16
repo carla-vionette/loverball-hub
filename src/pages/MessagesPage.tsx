@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import BottomNav from '@/components/BottomNav';
 import DesktopNav from '@/components/DesktopNav';
 import MobileHeader from '@/components/MobileHeader';
+import EditorialMasthead from '@/components/layout/EditorialMasthead';
 import EventPreviewCard from '@/components/EventPreviewCard';
 import LinkPreviewCard from '@/components/LinkPreviewCard';
 import { Button } from '@/components/ui/button';
