@@ -143,6 +143,16 @@ const OutlineBtn = ({ children, onClick, href, ariaLabel }: BtnProps) => {
   return <button onClick={onClick} aria-label={ariaLabel} className={cls} style={outlineStyle}>{children}</button>;
 };
 
+/* ---------- Ticker data (edit to update this week) ---------- */
+type TickerItem = { label: string; detail: string; href: string; accent?: string };
+const TICKER_ITEMS: TickerItem[] = [
+  { label: "Arsenal vs Chelsea", detail: "Sun 7am PT · The Cock & Bull", href: "/events" },
+  { label: "WNBA Finals Watch Party", detail: "Fri 6pm PT · Echo Park", href: "/events", accent: C.gold },
+  { label: "Members RSVP'd: 23", detail: "Tap to join", href: "/events" },
+  { label: "Bears Game Brunch", detail: "Sun 10am PT · Silver Lake", href: "/events" },
+  { label: "Champions League Final", detail: "Sat 12pm PT · Hollywood", href: "/events", accent: C.gold },
+];
+
 /* ---------- Page ---------- */
 
 const Index = () => {
