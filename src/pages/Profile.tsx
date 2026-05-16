@@ -293,14 +293,14 @@ const Profile = () => {
         <div className="max-w-4xl mx-auto px-4 pt-2">
           <motion.div variants={staggerContainer} initial="hidden" animate="show" className="space-y-6">
 
-            {/* PROFILE HERO - Compact */}
+            {/* ───── IDENTITY HERO ───── */}
             <motion.div variants={staggerItem} className="relative md:rounded-2xl overflow-hidden">
               <div className="absolute inset-0 bg-gradient-to-b from-primary/15 via-background/40 to-background z-10" />
-              <div className="relative z-20 px-4 pt-4 pb-5 md:px-8 md:pt-6 md:pb-6">
-                <div className="flex flex-col items-center text-center gap-3">
+              <div className="relative z-20 px-4 pt-4 pb-6 md:px-8 md:pt-6 md:pb-8">
+                <div className="flex flex-col items-center text-center gap-4">
                   <div className="relative">
                     <div className="absolute -inset-1.5 rounded-full bg-gradient-to-br from-primary/30 to-accent/30 blur-md" />
-                    <Avatar className="relative w-20 h-20 md:w-24 md:h-24 border-[3px] border-primary/50">
+                    <Avatar className="relative w-24 h-24 md:w-28 md:h-28 border-[3px] border-primary/50">
                       {profile.profile_photo_url ? (
                         <AvatarImage src={profile.profile_photo_url} alt={profile.name} className="object-cover" />
                       ) : null}
@@ -308,74 +308,76 @@ const Profile = () => {
                     </Avatar>
                   </div>
 
-                  {/* Name & info */}
-                  <div>
-                    <h1 className="text-2xl md:text-4xl font-display text-foreground tracking-tight flex items-center gap-2">
-                      {profile.name}
-                      <MemberBadge tier={profile.membership_tier} size="lg" />
-                    </h1>
-                    {profile.pronouns && <p className="text-sm text-muted-foreground mt-1">{profile.pronouns}</p>}
-                    <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground mt-2">
-                      <MapPin className="w-4 h-4 text-primary flex-shrink-0" />
-                      <span>{locationText}</span>
-                    </div>
-                   </div>
+                  {/* Name */}
+                  <h1 className="text-3xl md:text-4xl font-display text-foreground tracking-tight flex items-center gap-2">
+                    {profile.name}
+                    <MemberBadge tier={profile.membership_tier} size="lg" />
+                  </h1>
 
-                  {/* Follower/Following counts */}
+                  {/* Pronouns */}
+                  {profile.pronouns && (
+                    <p className="text-sm text-muted-foreground -mt-2">{profile.pronouns}</p>
+                  )}
+
+                  {/* City */}
+                  <div className="flex items-center justify-center gap-1.5 text-sm text-muted-foreground -mt-2">
+                    <MapPin className="w-3.5 h-3.5 text-primary flex-shrink-0" />
+                    <span>{locationText}</span>
+                  </div>
+
+                  {/* Followers */}
                   <ProfileFollowCounts userId={profile.id} onClickFollowers={() => setShowFollowersModal('followers')} onClickFollowing={() => setShowFollowersModal('following')} />
 
-                  {/* Quick actions */}
-                  <div className="flex items-center gap-2 flex-wrap justify-center">
-                    <Button onClick={() => goTo("/profile/edit")} size="sm" className="rounded-full bg-primary hover:bg-primary/90 text-primary-foreground gap-1.5 text-xs">
-                      <Edit className="w-3.5 h-3.5" /> Edit Profile
-                    </Button>
-                    <Button variant="outline" size="icon" onClick={() => goTo("/dms")} className="rounded-full border-border/40 text-foreground/70 hover:text-foreground h-8 w-8">
+                  {/* Edit Profile button */}
+                  <Button onClick={() => goTo("/profile/edit")} className="rounded-full bg-primary hover:bg-primary/90 text-primary-foreground gap-2 px-6 h-10 text-xs font-bold tracking-[0.15em] uppercase">
+                    <Edit className="w-3.5 h-3.5" /> Edit Profile
+                  </Button>
+
+                  {/* Secondary actions — subtle */}
+                  <div className="flex items-center gap-2">
+                    <Button variant="ghost" size="icon" onClick={() => goTo("/dms")} className="rounded-full text-foreground/60 hover:text-foreground h-8 w-8">
                       <MessageCircle className="w-3.5 h-3.5" />
                     </Button>
-                    <Button variant="outline" size="icon" onClick={() => goTo("/settings")} className="rounded-full border-border/40 text-foreground/70 hover:text-foreground h-8 w-8">
+                    <Button variant="ghost" size="icon" onClick={() => goTo("/settings")} className="rounded-full text-foreground/60 hover:text-foreground h-8 w-8">
                       <Settings className="w-3.5 h-3.5" />
                     </Button>
-                    <Button variant="outline" size="icon" onClick={handleLogout} className="rounded-full border-border/40 text-destructive hover:text-destructive h-8 w-8">
+                    <Button variant="ghost" size="icon" onClick={handleLogout} className="rounded-full text-destructive/70 hover:text-destructive h-8 w-8">
                       <LogOut className="w-3.5 h-3.5" />
                     </Button>
                   </div>
+
+                  {/* Teams — quick row of favorite team crests */}
+                  {TEAM_PERFORMANCE.length > 0 && (
+                    <div className="w-full pt-2">
+                      <p className="text-[10px] font-bold tracking-[0.2em] uppercase text-foreground/40 mb-2">Teams</p>
+                      <div className="flex items-center justify-center gap-3 flex-wrap">
+                        {TEAM_PERFORMANCE.slice(0, 6).map(team => (
+                          <button
+                            key={team.name}
+                            onClick={() => goTo(`/team/${team.slug}`)}
+                            className="group flex flex-col items-center gap-1"
+                            title={team.name}
+                          >
+                            <div className="w-10 h-10 rounded-full bg-foreground/5 border border-border/30 p-1 flex items-center justify-center group-hover:border-primary/40 transition-colors">
+                              <img src={team.logo} alt={team.name} className="w-full h-full object-contain" onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+                            </div>
+                            <span className="text-[9px] text-muted-foreground group-hover:text-foreground transition-colors max-w-[56px] truncate">{team.name.split(' ').pop()}</span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </motion.div>
 
-            {/* EDIT PROFILE LINK */}
-            <motion.div variants={staggerItem}>
-              <div className="glass-card rounded-2xl cursor-pointer hover:border-primary/30 transition-colors p-4 flex items-center justify-between" onClick={() => goTo("/profile/edit")}>
-                <div>
-                  <p className="font-medium text-foreground">Edit Profile</p>
-                  <p className="text-sm text-muted-foreground">Name, photo, bio, birthday & more</p>
-                </div>
-                <ChevronRight className="w-5 h-5 text-muted-foreground" />
-              </div>
-            </motion.div>
-
-
-
-            {/* BIO - Glassmorphism card */}
-            {profile.bio && (
-              <motion.div variants={staggerItem}>
-                <div className="glass-card rounded-2xl p-5">
-                  <div className="flex items-start gap-3">
-                    <Sparkles className="w-4 h-4 mt-1 text-primary flex-shrink-0" />
-                    <p className="text-sm text-foreground/80 leading-relaxed whitespace-pre-line">{profile.bio}</p>
-                  </div>
-                </div>
-              </motion.div>
-            )}
-
-            {/* GREETING + DATE */}
+            {/* ───── GREETING ───── */}
             <motion.div variants={staggerItem} className="glass-card rounded-2xl p-5">
               <p className="text-lg font-sans text-foreground">{greeting}, <span className="text-primary font-semibold">{userName}</span></p>
               <p className="text-sm text-muted-foreground mt-1">{formattedDate} · {formattedTime}</p>
             </motion.div>
 
-
-            {/* DAILY HOROSCOPE SNIPPET — compact */}
+            {/* ───── DAILY HOROSCOPE ───── */}
             <motion.div variants={staggerItem}>
               <div className="rounded-2xl px-4 py-3 border border-primary/30 bg-primary/5">
                 {zodiac ? (
@@ -383,7 +385,7 @@ const Profile = () => {
                     <span className="text-2xl">{zodiac.symbol}</span>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between gap-2">
-                        <p className="text-xs font-semibold text-foreground">{zodiac.name}</p>
+                        <p className="text-xs font-semibold text-foreground">Daily Horoscope · {zodiac.name}</p>
                         <button onClick={() => goTo("/horoscope")} className="text-[11px] text-primary flex items-center gap-0.5 flex-shrink-0">
                           Full <ChevronRight className="w-3 h-3" />
                         </button>
@@ -406,17 +408,26 @@ const Profile = () => {
               </div>
             </motion.div>
 
-            {/* FAVORITE TEAMS PERFORMANCE - COLLAPSIBLE */}
+            {/* ───── YOUR PERSONAL FEED HEADER ───── */}
+            <motion.div variants={staggerItem} className="pt-2 pb-1 border-b border-border/30">
+              <p className="text-[10px] font-bold tracking-[0.3em] uppercase text-copper">Your Personal Feed</p>
+              <h2 className="mag-title text-foreground" style={{ fontSize: "clamp(32px, 9vw, 44px)", marginTop: 4 }}>
+                Curated for you
+              </h2>
+            </motion.div>
+
+            {/* ───── FAVORITE TEAMS ───── */}
             <motion.div variants={staggerItem}>
               <Collapsible open={teamsOpen} onOpenChange={setTeamsOpen}>
                 <div className="glass-card rounded-2xl overflow-hidden">
                   <CollapsibleTrigger asChild>
-                    <button className="w-full p-5 pb-2 flex items-center justify-between cursor-pointer hover:bg-foreground/[0.03] transition-colors">
-                      <span className="text-sm font-medium tracking-wider uppercase text-foreground/50">Favorite Teams</span>
+                    <button className="w-full p-5 pb-3 flex items-center justify-between cursor-pointer hover:bg-foreground/[0.03] transition-colors">
+                      <span className="text-sm font-medium tracking-wider uppercase text-foreground/60 flex items-center gap-2">
+                        <Shield className="w-3.5 h-3.5 text-primary" strokeWidth={2.5} /> Favorite Teams
+                      </span>
                       <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform duration-200 ${teamsOpen ? 'rotate-180' : ''}`} />
                     </button>
                   </CollapsibleTrigger>
-                  {/* Preview: first 2 teams always visible */}
                   {!teamsOpen && (
                     <div className="divide-y divide-border/30">
                       {TEAM_PERFORMANCE.slice(0, 2).map(team => (
@@ -432,8 +443,6 @@ const Profile = () => {
                               <Badge variant="outline" className="text-[9px] px-1.5 py-0 rounded-full border-border/30">{team.league}</Badge>
                             </div>
                             <p className="text-xs text-muted-foreground mt-0.5">{team.nextGame}</p>
-                            <p className="text-[10px] text-accent mt-0.5 cursor-pointer hover:underline">🎟 Get Tickets · From $28</p>
-                            <p className="text-[10px] text-muted-foreground">📺 Watch: ESPN, League Pass</p>
                           </div>
                           <p className={`text-sm font-sans font-bold ${team.winPct > 0.5 ? "text-accent" : team.winPct > 0 && team.winPct < 0.5 ? "text-destructive" : "text-foreground"}`}>{team.record}</p>
                         </div>
@@ -466,8 +475,6 @@ const Profile = () => {
                             </div>
                             <p className="text-xs text-muted-foreground mt-0.5">{team.leadingScorer}</p>
                             <p className="text-xs text-muted-foreground">{team.nextGame}</p>
-                            <p className="text-[10px] text-accent mt-0.5 cursor-pointer hover:underline">🎟 Get Tickets · From $28</p>
-                            <p className="text-[10px] text-muted-foreground">📺 Watch: ESPN, League Pass</p>
                           </div>
                           <div className="flex flex-col items-end gap-2">
                             <p className={`text-sm font-sans font-bold ${team.winPct > 0.5 ? "text-accent" : team.winPct > 0 && team.winPct < 0.5 ? "text-destructive" : "text-foreground"}`}>{team.record}</p>
@@ -504,14 +511,14 @@ const Profile = () => {
               </Collapsible>
             </motion.div>
 
-            {/* WHERE TO WATCH - COLLAPSIBLE */}
+            {/* ───── WHERE TO WATCH ───── */}
             <motion.div variants={staggerItem}>
               <Collapsible open={watchOpen} onOpenChange={setWatchOpen}>
                 <Card className="rounded-2xl overflow-hidden">
                   <CollapsibleTrigger asChild>
-                    <button className="w-full pt-4 px-5 pb-2 flex items-center justify-between cursor-pointer hover:bg-foreground/[0.03] transition-colors">
-                      <span className="text-sm font-medium tracking-wider uppercase text-foreground/50 flex items-center gap-2">
-                        <Tv className="w-4 h-4 text-primary" /> Where to Watch
+                    <button className="w-full pt-4 px-5 pb-3 flex items-center justify-between cursor-pointer hover:bg-foreground/[0.03] transition-colors">
+                      <span className="text-sm font-medium tracking-wider uppercase text-foreground/60 flex items-center gap-2">
+                        <Tv className="w-3.5 h-3.5 text-primary" /> Where to Watch
                       </span>
                       <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform duration-200 ${watchOpen ? 'rotate-180' : ''}`} />
                     </button>
@@ -525,14 +532,14 @@ const Profile = () => {
               </Collapsible>
             </motion.div>
 
-            {/* LIVE / RECENT SCORES - COLLAPSIBLE */}
+            {/* ───── LIVE & RECENT SCORES ───── */}
             <motion.div variants={staggerItem}>
               <Collapsible open={scoresOpen} onOpenChange={setScoresOpen}>
                 <Card className="rounded-2xl overflow-hidden">
                   <CollapsibleTrigger asChild>
-                    <button className="w-full pt-4 px-5 pb-2 flex items-center justify-between cursor-pointer hover:bg-foreground/[0.03] transition-colors">
-                      <span className="text-sm font-medium tracking-wider uppercase text-foreground/50 flex items-center gap-2">
-                        <Radio className="w-4 h-4 text-[#FF5D2E]" /> Live &amp; Recent Scores
+                    <button className="w-full pt-4 px-5 pb-3 flex items-center justify-between cursor-pointer hover:bg-foreground/[0.03] transition-colors">
+                      <span className="text-sm font-medium tracking-wider uppercase text-foreground/60 flex items-center gap-2">
+                        <Radio className="w-3.5 h-3.5 text-[#FF5D2E]" /> Live &amp; Recent Scores
                       </span>
                       <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform duration-200 ${scoresOpen ? 'rotate-180' : ''}`} />
                     </button>
@@ -546,14 +553,16 @@ const Profile = () => {
               </Collapsible>
             </motion.div>
 
-            {/* RECOMMENDED EVENTS - COLLAPSIBLE */}
+            {/* ───── RECOMMENDED EVENTS ───── */}
             {suggestedEvents.length > 0 && (
               <motion.div variants={staggerItem}>
                 <Collapsible open={recEventsOpen} onOpenChange={setRecEventsOpen}>
                   <div className="glass-card rounded-2xl overflow-hidden">
                     <CollapsibleTrigger asChild>
                       <button className="w-full p-5 pb-3 flex items-center justify-between cursor-pointer hover:bg-foreground/[0.03] transition-colors">
-                        <span className="text-sm font-medium tracking-wider uppercase text-foreground/50">Recommended Events</span>
+                        <span className="text-sm font-medium tracking-wider uppercase text-foreground/60 flex items-center gap-2">
+                          <CalendarHeart className="w-3.5 h-3.5 text-primary" strokeWidth={2.5} /> Recommended Events
+                        </span>
                         <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform duration-200 ${recEventsOpen ? 'rotate-180' : ''}`} />
                       </button>
                     </CollapsibleTrigger>
@@ -575,16 +584,11 @@ const Profile = () => {
               </motion.div>
             )}
 
-            {/* MY SPORTS FEED — Personalized news from news_articles */}
+            {/* ───── CURATED SPORTS NEWS ───── */}
             <motion.div variants={staggerItem} className="space-y-3">
-              <div className="px-1">
-                <span className="mag-eyebrow text-raspberry">{"\n"}</span>
-                <h2 className="mag-title text-foreground" style={{ fontSize: "clamp(40px, 11vw, 56px)", marginTop: 2 }}>
-                  Your Feed
-                </h2>
-                <p className="text-copper text-[11px] mt-1" style={{ fontFamily: "'Inter', system-ui", fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase" }}>
-                  Curated by Loverball
-                </p>
+              <div className="px-1 flex items-center gap-2">
+                <Newspaper className="w-3.5 h-3.5 text-primary" />
+                <span className="text-sm font-medium tracking-wider uppercase text-foreground/60">Curated Sports News</span>
               </div>
               <MySportsFeed
                 userSports={profile.favorite_sports || []}
