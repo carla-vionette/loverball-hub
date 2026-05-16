@@ -16,6 +16,7 @@ import DesktopNav from "@/components/DesktopNav";
 import MobileHeader from "@/components/MobileHeader";
 import AttendeeProfileDrawer from "@/components/AttendeeProfileDrawer";
 import EventSubmissionForm from "@/components/EventSubmissionForm";
+import Seo from "@/components/Seo";
 
 const CATEGORIES = ["All", "watch_party", "game", "panel", "brunch", "networking", "other"];
 const CATEGORY_LABELS: Record<string, string> = {
@@ -262,6 +263,11 @@ const Events = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <Seo
+        title="The Scene — Women's Sports Events | Loverball"
+        description="Watch parties, game days, panels, brunches, and networking meetups for women's sports fans. Discover upcoming Loverball events."
+        path="/events"
+      />
       <MobileHeader /><DesktopNav /><BottomNav />
 
       <main className="md:ml-64 pt-16 md:pt-0 pb-24 md:pb-0">

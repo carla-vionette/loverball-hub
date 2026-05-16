@@ -15,6 +15,7 @@ import { useToast } from "@/hooks/use-toast";
 import MobileHeader from "@/components/MobileHeader";
 import DesktopNav from "@/components/DesktopNav";
 import BottomNav from "@/components/BottomNav";
+import Seo from "@/components/Seo";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 
@@ -285,6 +286,11 @@ const Profile = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <Seo
+        title="Your Profile | Loverball"
+        description="Your Loverball member profile — favorite teams, personalized news, daily horoscope, and live scores."
+        path="/profile"
+      />
       <MobileHeader />
       <DesktopNav />
       <BottomNav />

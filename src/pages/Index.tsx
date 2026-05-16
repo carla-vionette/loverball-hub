@@ -148,7 +148,7 @@ const Index = () => {
               <button onClick={openAuthModal} className="text-[11px] font-sans font-bold tracking-[0.25em] uppercase text-muted-foreground hover:text-foreground transition-colors duration-300 bg-transparent border-none cursor-pointer">Events</button>
             </div>
             <div className="absolute left-1/2 -translate-x-1/2">
-              <img src={loverballLogo} alt="Loverball" className="h-56 w-auto" style={{ filter: 'brightness(0) invert(1)' }} />
+              <img src={loverballLogo} alt="Loverball — Women's Sports Community" className="h-56 w-auto" style={{ filter: 'brightness(0) invert(1)' }} />
             </div>
             <div className="hidden lg:flex items-center gap-10">
               <button onClick={() => isAuthenticated ? navigate("/shop") : openAuthModal()} className="text-[11px] font-sans font-bold tracking-[0.25em] uppercase text-muted-foreground hover:text-foreground transition-colors duration-300 bg-transparent border-none cursor-pointer">Shop</button>
@@ -182,7 +182,7 @@ const Index = () => {
           <div className="p-8 sm:p-10">
             <DialogTitle className="sr-only">Member Access</DialogTitle>
             <div className="flex justify-center mb-8">
-              <img src={loverballLogo} alt="Loverball" className="h-20 w-auto brightness-0 invert" />
+              <img src={loverballLogo} alt="Loverball — Women's Sports Community" className="h-20 w-auto brightness-0 invert" />
             </div>
             <Tabs defaultValue="login" className="w-full">
               <TabsList className="grid w-full grid-cols-2 bg-secondary rounded-full p-1 h-12">
@@ -526,7 +526,7 @@ const Index = () => {
           </div>
           <div className="grid lg:grid-cols-12 gap-12 items-start mb-12">
             <div className="lg:col-span-4">
-              <img src={loverballLogo} alt="Loverball" className="w-[130px] h-auto brightness-0 invert mb-6" />
+              <img src={loverballLogo} alt="Loverball — Women's Sports Community" className="w-[130px] h-auto brightness-0 invert mb-6" />
               <p className="text-muted-foreground text-sm leading-relaxed max-w-xs">
                 A community platform for women who love sports. Born in Los Angeles.
               </p>

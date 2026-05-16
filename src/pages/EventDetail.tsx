@@ -28,6 +28,7 @@ import EarlyAccessBanner from "@/components/EarlyAccessBanner";
 import LockedFeature from "@/components/LockedFeature";
 import EventComments from "@/components/EventComments";
 import EventHostProfile from "@/components/EventHostProfile";
+import Seo from "@/components/Seo";
 import { getUserTier } from "@/services/subscriptionService";
 
 interface Event {
@@ -585,6 +586,33 @@ const EventDetail = () => {
 
   return (
     <div ref={gestureRef} className="min-h-screen bg-background">
+      {event && (
+        <Seo
+          title={`${event.title} | Loverball`}
+          description={(event.description || `${event.title} — Loverball event.`).slice(0, 158)}
+          path={`/event/${event.id}`}
+          image={event.image_url || undefined}
+          type="event"
+          jsonLd={{
+            "@context": "https://schema.org",
+            "@type": "Event",
+            name: event.title,
+            startDate: `${event.event_date}T${event.event_time || "00:00"}`,
+            endDate: event.end_time ? `${event.event_date}T${event.end_time}` : undefined,
+            eventStatus: "https://schema.org/EventScheduled",
+            eventAttendanceMode:
+              event.location_type === "virtual"
+                ? "https://schema.org/OnlineEventAttendanceMode"
+                : "https://schema.org/OfflineEventAttendanceMode",
+            location: event.location_type === "virtual"
+              ? { "@type": "VirtualLocation", url: event.virtual_link || "https://www.loverball.com" }
+              : { "@type": "Place", name: event.venue_name || "TBA", address: event.city || "" },
+            image: event.image_url ? [event.image_url] : undefined,
+            description: event.description || event.title,
+            organizer: { "@type": "Organization", name: "Loverball", url: "https://www.loverball.com/" },
+          }}
+        />
+      )}
       {/* Confetti Animation */}
       <AnimatePresence>
         {showConfetti && (
