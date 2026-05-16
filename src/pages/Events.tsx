@@ -230,11 +230,16 @@ const Events = () => {
 
       <main className="md:ml-64 pt-16 md:pt-0 pb-24 md:pb-0">
         <div className="max-w-6xl mx-auto px-4 md:px-10 py-6">
-          <div className="flex items-center justify-between mb-4">
-            <h1 className="font-display text-2xl md:text-[28px] font-bold uppercase tracking-tight">Events</h1>
+          <div className="flex items-end justify-between mb-6">
+            <div>
+              <span className="mag-eyebrow text-raspberry" style={{ transform: "rotate(-2deg)", display: "inline-block" }}>Curated for you</span>
+              <h1 className="mag-title text-foreground" style={{ fontSize: "clamp(48px, 14vw, 72px)", marginTop: 4 }}>
+                The Scene
+              </h1>
+            </div>
             {user && isApprovedCreator && (
               <Button className="rounded-full gap-2" onClick={() => setShowSubmitForm(true)}>
-                <PlusCircle className="w-4 h-4" /> Submit Event
+                <PlusCircle className="w-4 h-4" /> Submit
               </Button>
             )}
           </div>
