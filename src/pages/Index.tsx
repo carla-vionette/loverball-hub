@@ -99,46 +99,49 @@ const PinkLink = ({ children, onClick }: { children: React.ReactNode; onClick?: 
   </button>
 );
 
-const PrimaryBtn = ({ children, onClick }: { children: React.ReactNode; onClick?: () => void }) => (
-  <button
-    onClick={onClick}
-    className="inline-flex items-center justify-center gap-2 transition-all hover:opacity-90 active:scale-[0.98]"
-    style={{
-      background: C.raspberry,
-      color: "#fff",
-      fontFamily: fonts.mono,
-      fontSize: 12,
-      letterSpacing: "0.16em",
-      textTransform: "uppercase",
-      padding: "16px 26px",
-      borderRadius: 999,
-      fontWeight: 500,
-    }}
-  >
-    {children}
-  </button>
-);
+type BtnProps = {
+  children: React.ReactNode;
+  onClick?: () => void;
+  href?: string;
+  ariaLabel?: string;
+};
 
-const OutlineBtn = ({ children, onClick }: { children: React.ReactNode; onClick?: () => void }) => (
-  <button
-    onClick={onClick}
-    className="inline-flex items-center justify-center gap-2 transition-all hover:bg-white/5 active:scale-[0.98]"
-    style={{
-      background: "transparent",
-      color: C.text,
-      fontFamily: fonts.mono,
-      fontSize: 12,
-      letterSpacing: "0.16em",
-      textTransform: "uppercase",
-      padding: "15px 26px",
-      borderRadius: 999,
-      border: `1px solid ${C.borderStrong}`,
-      fontWeight: 500,
-    }}
-  >
-    {children}
-  </button>
-);
+const primaryStyle: React.CSSProperties = {
+  background: C.raspberry,
+  color: "#fff",
+  fontFamily: fonts.mono,
+  fontSize: 12,
+  letterSpacing: "0.16em",
+  textTransform: "uppercase",
+  padding: "16px 26px",
+  borderRadius: 999,
+  fontWeight: 500,
+  textDecoration: "none",
+  display: "inline-flex",
+  alignItems: "center",
+  justifyContent: "center",
+  gap: 8,
+};
+
+const outlineStyle: React.CSSProperties = {
+  ...primaryStyle,
+  background: "transparent",
+  color: C.text,
+  padding: "15px 26px",
+  border: `1px solid ${C.borderStrong}`,
+};
+
+const PrimaryBtn = ({ children, onClick, href, ariaLabel }: BtnProps) => {
+  const cls = "transition-all hover:opacity-90 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-black focus-visible:ring-[hsl(340,82%,52%)]";
+  if (href) return <a href={href} aria-label={ariaLabel} className={cls} style={primaryStyle}>{children}</a>;
+  return <button onClick={onClick} aria-label={ariaLabel} className={cls} style={primaryStyle}>{children}</button>;
+};
+
+const OutlineBtn = ({ children, onClick, href, ariaLabel }: BtnProps) => {
+  const cls = "transition-all hover:bg-white/5 hover:border-white/40 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-black focus-visible:ring-[hsl(340,82%,52%)]";
+  if (href) return <a href={href} aria-label={ariaLabel} className={cls} style={outlineStyle}>{children}</a>;
+  return <button onClick={onClick} aria-label={ariaLabel} className={cls} style={outlineStyle}>{children}</button>;
+};
 
 /* ---------- Page ---------- */
 
