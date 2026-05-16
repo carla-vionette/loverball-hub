@@ -372,43 +372,34 @@ const Profile = () => {
             </motion.div>
 
 
-            {/* DAILY HOROSCOPE SNIPPET */}
+            {/* DAILY HOROSCOPE SNIPPET — compact */}
             <motion.div variants={staggerItem}>
-              <div className="rounded-2xl p-4 border-2 border-primary/30 bg-primary/5">
+              <div className="rounded-2xl px-4 py-3 border border-primary/30 bg-primary/5">
                 {zodiac ? (
-                  <div className="flex items-start gap-3">
-                    <span className="text-3xl mt-0.5">{zodiac.symbol}</span>
+                  <div className="flex items-center gap-3">
+                    <span className="text-2xl">{zodiac.symbol}</span>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold text-foreground">{zodiac.name}</p>
+                      <div className="flex items-center justify-between gap-2">
+                        <p className="text-xs font-semibold text-foreground">{zodiac.name}</p>
+                        <button onClick={() => goTo("/horoscope")} className="text-[11px] text-primary flex items-center gap-0.5 flex-shrink-0">
+                          Full <ChevronRight className="w-3 h-3" />
+                        </button>
+                      </div>
                       {horoscopeLoading ? (
-                        <p className="text-xs text-muted-foreground mt-1 animate-pulse">Loading your forecast…</p>
+                        <p className="text-[11px] text-muted-foreground mt-0.5 animate-pulse">Loading…</p>
                       ) : (
-                        <p className="text-xs text-foreground/70 leading-relaxed mt-1 line-clamp-3">
+                        <p className="text-[11px] text-foreground/70 leading-snug mt-0.5 line-clamp-2">
                           {liveHoroscope || HOROSCOPE_MESSAGES[zodiac.name]}
                         </p>
                       )}
-                      <Button variant="link" className="px-0 mt-1 text-primary h-auto text-xs gap-1" onClick={() => goTo("/horoscope")}>
-                        Full Horoscope <ChevronRight className="w-3 h-3" />
-                      </Button>
                     </div>
                   </div>
                 ) : (
                   <div className="flex items-center gap-3">
-                    <span className="text-2xl">✨</span>
-                    <p className="text-xs text-muted-foreground">Add your birthday in <button className="text-primary underline" onClick={() => goTo("/profile/edit")}>Edit Profile</button> to see your daily horoscope.</p>
+                    <span className="text-xl">✨</span>
+                    <p className="text-[11px] text-muted-foreground">Add your birthday in <button className="text-primary underline" onClick={() => goTo("/profile/edit")}>Edit Profile</button> for your daily horoscope.</p>
                   </div>
                 )}
-              </div>
-            </motion.div>
-
-            {/* MY INTERESTS LINK */}
-            <motion.div variants={staggerItem}>
-              <div className="glass-card rounded-2xl cursor-pointer hover:border-primary/30 transition-colors p-4 flex items-center justify-between" onClick={() => goTo("/profile/interests")}>
-                <div>
-                  <p className="font-medium text-foreground">My Interests</p>
-                  <p className="text-sm text-muted-foreground">Teams, sports, experiences & more</p>
-                </div>
-                <ChevronRight className="w-5 h-5 text-muted-foreground" />
               </div>
             </motion.div>
 
