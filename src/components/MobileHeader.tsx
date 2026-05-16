@@ -9,6 +9,7 @@ const MobileHeader = () => {
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const hideGlobalSearch = pathname.startsWith('/members') || pathname.startsWith('/profile');
+  const isClub = pathname.startsWith('/club');
   const [totalItems, setTotalItems] = useState(0);
 
   useEffect(() => {
@@ -42,12 +43,12 @@ const MobileHeader = () => {
           <div className="flex-1" />
         ) : (
           <button
-            onClick={() => navigate('/search')}
+            onClick={() => navigate(isClub ? '/friends' : '/search')}
             className="flex-1 flex items-center gap-2 px-4 py-2.5 bg-secondary border border-border/20 text-muted-foreground text-sm rounded-full hover:bg-muted transition-all duration-300 focus-ring tap-target"
-            aria-label="Open search"
+            aria-label={isClub ? 'Search friends' : 'Open search'}
           >
             <Search className="w-4 h-4" aria-hidden="true" />
-            <span>Search...</span>
+            <span>{isClub ? 'Search friends...' : 'Search...'}</span>
           </button>
         )}
 
