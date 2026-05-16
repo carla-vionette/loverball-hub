@@ -596,8 +596,8 @@ const EventDetail = () => {
             "@context": "https://schema.org",
             "@type": "Event",
             name: event.title,
-            startDate: event.start_time || event.event_date,
-            endDate: event.end_time || undefined,
+            startDate: `${event.event_date}T${event.event_time || "00:00"}`,
+            endDate: event.end_time ? `${event.event_date}T${event.end_time}` : undefined,
             eventStatus: "https://schema.org/EventScheduled",
             eventAttendanceMode:
               event.location_type === "virtual"
@@ -605,7 +605,7 @@ const EventDetail = () => {
                 : "https://schema.org/OfflineEventAttendanceMode",
             location: event.location_type === "virtual"
               ? { "@type": "VirtualLocation", url: event.virtual_link || "https://www.loverball.com" }
-              : { "@type": "Place", name: event.location_name || event.location || "TBA", address: event.location_address || event.location || "" },
+              : { "@type": "Place", name: event.venue_name || "TBA", address: event.city || "" },
             image: event.image_url ? [event.image_url] : undefined,
             description: event.description || event.title,
             organizer: { "@type": "Organization", name: "Loverball", url: "https://www.loverball.com/" },
