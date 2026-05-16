@@ -159,8 +159,8 @@ const Index = () => {
   return (
     <div style={{ background: C.bg, color: C.text, fontFamily: fonts.sans }} className="min-h-screen">
       <Seo
-        title="Loverball — The members-only home for female sports fandom."
-        description="Watch the game. Connect with your people. Loverball is the members-only home for female sports fandom — built around stories, watch parties, and the community that finally gets it."
+        title="Loverball — The members-only home for sports fandom."
+        description="Watch the game. Connect with your people. Loverball is the members-only home for sports fandom — built around stories, watch parties, and the community that finally gets it."
         path="/"
       />
 
@@ -321,7 +321,7 @@ const Index = () => {
                 }}
               >
                 The members-only<br />
-                home for <span style={{ color: C.raspberry }}>female sports fandom.</span>
+                home for <span style={{ color: C.raspberry }}>sports fandom.</span>
               </h1>
 
               <p
@@ -335,7 +335,7 @@ const Index = () => {
                 }}
               >
                 Watch the game. Connect with your people. Loverball is the room
-                female sports fans have been waiting for — built around stories,
+                sports fans have been waiting for — built around stories,
                 watch parties, and the kind of community that finally gets it.
               </p>
 
@@ -952,7 +952,7 @@ const Index = () => {
             color: C.text, margin: 0,
           }}
         >
-          The members-only home for female sports fandom.<br />
+          The members-only home for sports fandom.<br />
           <span style={{ color: C.raspberry }}>Your seat is open.</span>
         </h2>
 
@@ -1051,7 +1051,7 @@ const Index = () => {
                 Loverball
               </div>
               <p className="mt-3 max-w-md" style={{ color: C.muted, fontSize: 14, lineHeight: 1.55 }}>
-                The members-only home for female sports fandom.
+                The members-only home for sports fandom.
               </p>
             </div>
 
