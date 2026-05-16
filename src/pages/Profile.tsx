@@ -156,10 +156,53 @@ const staggerItem = {
 
 const ProfileFollowCounts = ({ userId, onClickFollowers, onClickFollowing }: { userId: string; onClickFollowers: () => void; onClickFollowing: () => void }) => {
   const { followerCount, followingCount } = useFollow(userId);
+  const fmt = (n: number) => (n >= 1000 ? `${(n / 1000).toFixed(1)}k` : `${n}`);
   return (
-    <div className="flex items-center gap-4 text-sm">
-      <button onClick={onClickFollowers} className="hover:text-primary transition-colors cursor-pointer"><strong>{followerCount}</strong> <span className="text-muted-foreground">followers</span></button>
-      <button onClick={onClickFollowing} className="hover:text-primary transition-colors cursor-pointer"><strong>{followingCount}</strong> <span className="text-muted-foreground">following</span></button>
+    <div className="flex items-end gap-6">
+      <button onClick={onClickFollowers} className="text-left group">
+        <p
+          className="leading-none"
+          style={{
+            fontFamily: "'Space Mono', monospace",
+            fontWeight: 700,
+            fontSize: 22,
+            color: "#F8F8F8",
+          }}
+        >
+          {fmt(followerCount)}
+        </p>
+        <p
+          className="mt-1 text-[11px]"
+          style={{
+            fontFamily: "'Space Mono', monospace",
+            color: "rgba(248,248,248,0.55)",
+          }}
+        >
+          Followers
+        </p>
+      </button>
+      <button onClick={onClickFollowing} className="text-left group">
+        <p
+          className="leading-none"
+          style={{
+            fontFamily: "'Space Mono', monospace",
+            fontWeight: 700,
+            fontSize: 22,
+            color: "#F8F8F8",
+          }}
+        >
+          {fmt(followingCount)}
+        </p>
+        <p
+          className="mt-1 text-[11px]"
+          style={{
+            fontFamily: "'Space Mono', monospace",
+            color: "rgba(248,248,248,0.55)",
+          }}
+        >
+          Following
+        </p>
+      </button>
     </div>
   );
 };
