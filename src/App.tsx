@@ -120,6 +120,7 @@ const App = () => (
                 <Route path="/members/:id" element={<ProtectedRoute><MemberProfile /></ProtectedRoute>} />
                 <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
                 <Route path="/club" element={<ProtectedRoute><Club /></ProtectedRoute>} />
+                <Route path="/club/drafts" element={<ProtectedRoute><ClubDrafts /></ProtectedRoute>} />
                 <Route path="/profile/edit" element={<ProtectedRoute><EditProfile /></ProtectedRoute>} />
                 <Route path="/profile/interests" element={<Navigate to="/profile/edit" replace />} />
 
