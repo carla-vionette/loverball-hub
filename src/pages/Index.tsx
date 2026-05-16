@@ -6,6 +6,7 @@ import heroImage from "@/assets/hero-women-new.png";
 import featuredImage from "@/assets/landing-athletes.jpg";
 import secondaryImage from "@/assets/landing-fans.jpg";
 import manifestoImage from "@/assets/landing-community.jpg";
+import { INSTAGRAM_URL } from "@/lib/socialLinks";
 
 /* ============================================================
    LOVERBALL — MEMBERS-ONLY LANDING
@@ -151,7 +152,7 @@ const Index = () => {
 
   const navItems: Array<{ label: string; to: string }> = [
     { label: "Watch", to: "/feed" },
-    { label: "Connect", to: "/club" },
+    { label: "Connect", to: "/connect" },
     { label: "Events", to: "/events" },
     { label: "Club", to: "/club" },
   ];
@@ -1016,8 +1017,8 @@ const Index = () => {
 
             <div className="md:col-span-5 grid grid-cols-2 gap-8">
               {[
-                { h: "Read", items: [["About", "/"], ["Watch", "/feed"], ["Connect", "/club"]] },
-                { h: "Club", items: [["Events", "/events"], ["The Pass", "/membership"], ["Contact", "/"]] },
+                { h: "Read", items: [["About", "/about"], ["Watch", "/feed"], ["Connect", "/connect"]] },
+                { h: "Club", items: [["Events", "/events"], ["The Pass", "/membership"], ["Contact", "/contact"]] },
               ].map((col) => (
                 <div key={col.h} className="flex flex-col gap-3">
                   <Mono color={C.muted} size={10}>{col.h}</Mono>
@@ -1058,7 +1059,7 @@ const Index = () => {
             <div className="flex flex-col md:items-end gap-5">
               <div className="flex items-center gap-4">
                 {[
-                  { Icon: Instagram, href: "https://instagram.com" },
+                  { Icon: Instagram, href: INSTAGRAM_URL },
                 ].map(({ Icon, href }, i) => (
                   <a
                     key={i}

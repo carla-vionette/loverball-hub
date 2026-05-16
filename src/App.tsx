@@ -46,6 +46,9 @@ const InviteLanding = lazy(() => import("./pages/InviteLanding"));
 const CheckoutSuccess = lazy(() => import("./pages/CheckoutSuccess"));
 const Terms = lazy(() => import("./pages/Terms"));
 const Privacy = lazy(() => import("./pages/Privacy"));
+const Connect = lazy(() => import("./pages/Connect"));
+const About = lazy(() => import("./pages/About"));
+const Contact = lazy(() => import("./pages/Contact"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 // Admin pages
@@ -111,6 +114,9 @@ const App = () => (
                 <Route path="/privacy" element={<Privacy />} />
                 <Route path="/pricing" element={<PricingPage />} />
                 <Route path="/invite/:code" element={<InviteLanding />} />
+                <Route path="/connect" element={<Connect />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/contact" element={<Contact />} />
 
                 {/* Core tabs: FEED, SCENE, CLUB, PROFILE */}
                 <Route path="/feed" element={<Feed />} />
@@ -161,7 +167,7 @@ const App = () => (
                 <Route path="/community" element={<Navigate to="/members" replace />} />
                 <Route path="/community/:groupId" element={<Navigate to="/members" replace />} />
                 <Route path="/network" element={<Navigate to="/members" replace />} />
-                <Route path="/connect" element={<Navigate to="/friends" replace />} />
+                
                 <Route path="/gather" element={<Navigate to="/events" replace />} />
                 <Route path="/following" element={<Navigate to="/profile" replace />} />
                 <Route path="/shop" element={<Navigate to="/profile" replace />} />
