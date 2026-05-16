@@ -356,29 +356,26 @@ const Profile = () => {
               </div>
             </motion.div>
 
-            {/* ───── GREETING ───── */}
-            <motion.div variants={staggerItem} className="glass-card rounded-2xl p-5">
-              <p className="text-lg font-sans text-foreground">{greeting}, <span className="text-primary font-semibold">{userName}</span></p>
-              <p className="text-sm text-muted-foreground mt-1">{formattedDate} · {formattedTime}</p>
-            </motion.div>
-
-            {/* ───── DAILY HOROSCOPE ───── */}
+            {/* ───── DAILY HOROSCOPE (compact, tap for full) ───── */}
             <motion.div variants={staggerItem}>
-              <div className="rounded-2xl px-4 py-3 border border-primary/30 bg-primary/5">
+              <button
+                onClick={() => goTo("/horoscope")}
+                className="w-full text-left rounded-2xl px-4 py-3 border border-primary/30 bg-primary/5 hover:bg-primary/10 transition-colors"
+              >
                 {zodiac ? (
                   <div className="flex items-center gap-3">
                     <span className="text-2xl">{zodiac.symbol}</span>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between gap-2">
-                        <p className="text-xs font-semibold text-foreground">Daily Horoscope · {zodiac.name}</p>
-                        <button onClick={() => goTo("/horoscope")} className="text-[11px] text-primary flex items-center gap-0.5 flex-shrink-0">
-                          Full <ChevronRight className="w-3 h-3" />
-                        </button>
+                        <p className="text-xs font-semibold text-foreground truncate">
+                          {zodiac.name} · Today
+                        </p>
+                        <ChevronRight className="w-3.5 h-3.5 text-primary flex-shrink-0" />
                       </div>
                       {horoscopeLoading ? (
                         <p className="text-[11px] text-muted-foreground mt-0.5 animate-pulse">Loading…</p>
                       ) : (
-                        <p className="text-[11px] text-foreground/70 leading-snug mt-0.5 line-clamp-2">
+                        <p className="text-[11px] text-foreground/70 leading-snug mt-0.5 line-clamp-1">
                           {liveHoroscope || HOROSCOPE_MESSAGES[zodiac.name]}
                         </p>
                       )}
@@ -387,10 +384,18 @@ const Profile = () => {
                 ) : (
                   <div className="flex items-center gap-3">
                     <span className="text-xl">✨</span>
-                    <p className="text-[11px] text-muted-foreground">Add your birthday in <button className="text-primary underline" onClick={() => goTo("/profile/edit")}>Edit Profile</button> for your daily horoscope.</p>
+                    <p className="text-[11px] text-muted-foreground">
+                      Add your birthday in <span className="text-primary underline">Edit Profile</span> for your daily horoscope.
+                    </p>
                   </div>
                 )}
-              </div>
+              </button>
+            </motion.div>
+
+            {/* ───── GREETING ───── */}
+            <motion.div variants={staggerItem} className="glass-card rounded-2xl p-5">
+              <p className="text-lg font-sans text-foreground">{greeting}, <span className="text-primary font-semibold">{userName}</span></p>
+              <p className="text-sm text-muted-foreground mt-1">{formattedDate} · {formattedTime}</p>
             </motion.div>
 
             {/* ───── YOUR PERSONAL FEED HEADER ───── */}
