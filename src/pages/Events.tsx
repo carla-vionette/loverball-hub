@@ -417,7 +417,7 @@ const Events = () => {
                         ) : (
                           <div className="pt-2 flex items-center justify-between gap-2">
                             <p className="text-[11px] text-muted-foreground leading-snug">Sign up to see who's going & RSVP</p>
-                            <Button size="sm" className="rounded-full text-xs h-8 px-4 bg-primary text-primary-foreground" onClick={e => { e.stopPropagation(); setGateOpen(true); }}>Unlock</Button>
+                            <Button size="sm" className="rounded-full text-xs h-8 px-4 bg-primary text-primary-foreground" onClick={e => { e.stopPropagation(); openGate(ev.id); }}>Unlock</Button>
                           </div>
                         )}
                       </CardContent>
