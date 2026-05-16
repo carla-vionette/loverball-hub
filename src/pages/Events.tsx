@@ -252,6 +252,7 @@ const Events = () => {
       />
       <MobileHeader /><DesktopNav /><BottomNav />
 
+      <main className="md:ml-64 pt-16 md:pt-0 pb-24 md:pb-0">
         <div className="max-w-6xl mx-auto px-5 md:px-10 py-8">
           {/* ── Editorial masthead ── */}
           <div className="mb-8">
