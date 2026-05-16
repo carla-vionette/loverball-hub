@@ -516,19 +516,21 @@ const MemberCard: React.FC<{
   const first = c.name?.split(" ")[0] || "Member";
   const initial = c.name?.split(" ").slice(-1)[0]?.[0] || "";
   const meta = c.teamCityTags.join(" · ").toUpperCase();
+  const vibeShort = c.vibe ? c.vibe.replace(/\s+/g, " ").trim().slice(0, 60) : "";
+  const tagChips = c.identityTags.slice(0, 2);
 
   return (
     <li
-      className="relative rounded-xl p-3 flex gap-3"
+      className="relative p-3.5 flex gap-3"
       style={{
-        background: C.card,
-        border: `1px solid ${C.border}`,
+        background: C.cardElev,
+        borderRadius: 14,
       }}
     >
       <button
         onClick={onOpen}
-        className="shrink-0 rounded-lg overflow-hidden relative"
-        style={{ width: 78, height: 96, background: "#0F0F10" }}
+        className="shrink-0 overflow-hidden relative"
+        style={{ width: 72, height: 88, borderRadius: 10, background: "#0F0F10" }}
         aria-label={`Open ${first}'s profile`}
       >
         {c.profile_photo_url ? (
@@ -544,10 +546,11 @@ const MemberCard: React.FC<{
             className="w-full h-full flex items-center justify-center"
             style={{
               background:
-                "linear-gradient(140deg, rgba(232,39,111,0.18), rgba(216,140,90,0.12))",
-              fontFamily: "'Anton', sans-serif",
-              fontSize: 38,
-              color: "rgba(250,245,233,0.4)",
+                "linear-gradient(135deg, rgba(232,39,111,0.28), rgba(216,140,90,0.18))",
+              fontFamily: "'Playfair Display', Georgia, serif",
+              fontStyle: "italic",
+              fontSize: 34,
+              color: "rgba(250,245,233,0.55)",
             }}
           >
             {first[0]}
@@ -558,24 +561,31 @@ const MemberCard: React.FC<{
       <div className="flex-1 min-w-0 flex flex-col">
         <div className="flex items-start justify-between gap-2">
           <button onClick={onOpen} className="text-left min-w-0">
-            <h3
-              className="leading-[0.95] tracking-tight truncate"
+            <p
+              className="truncate"
               style={{
-                fontFamily: "'Anton', 'Bebas Neue', sans-serif",
-                fontSize: 22,
+                fontFamily: "'Playfair Display', Georgia, serif",
+                fontStyle: "italic",
+                fontWeight: 500,
+                fontSize: 19,
                 color: C.text,
-                textTransform: "uppercase",
+                lineHeight: 1.1,
+                letterSpacing: "-0.01em",
+                margin: 0,
               }}
             >
               {first} {initial && `${initial}.`}
-            </h3>
+            </p>
             {meta && (
               <p
-                className="mt-1 text-[9.5px] font-semibold truncate"
+                className="mt-1 truncate"
                 style={{
-                  color: C.copper,
-                  letterSpacing: "0.16em",
-                  fontFamily: "'Space Mono', monospace",
+                  color: C.raspberry,
+                  fontSize: 10,
+                  letterSpacing: "0.06em",
+                  textTransform: "uppercase",
+                  fontWeight: 500,
+                  fontFamily: "Inter, sans-serif",
                 }}
               >
                 {meta}
@@ -583,35 +593,54 @@ const MemberCard: React.FC<{
             )}
           </button>
           <span
-            className="shrink-0 text-[10px] font-bold uppercase px-2 py-0.5 rounded"
+            className="shrink-0 whitespace-nowrap uppercase"
             style={{
-              color: C.raspberry,
-              background: "rgba(232,39,111,0.1)",
-              border: "1px solid rgba(232,39,111,0.25)",
-              letterSpacing: "0.08em",
+              background: "rgba(250,245,233,0.08)",
+              color: C.text,
+              fontSize: 9,
+              padding: "3px 7px",
+              borderRadius: 20,
+              letterSpacing: "0.04em",
               fontFamily: "Inter, sans-serif",
             }}
           >
-            {c.matchPct}%
+            {c.matchPct}% match
           </span>
         </div>
 
-        {c.vibe && (
+        {vibeShort && (
           <p
-            className="mt-1.5 italic text-[12px] leading-snug line-clamp-2"
+            className="mt-2"
             style={{
-              fontFamily: "'Playfair Display', Georgia, serif",
-              color: C.muted,
+              fontFamily: "'Space Mono', 'Courier New', monospace",
+              fontSize: 11,
+              lineHeight: 1.5,
+              color: "#B8B8B8",
             }}
           >
-            &ldquo;{c.vibe}&rdquo;
+            <span style={{ color: C.muted }}>VIBE:</span> {vibeShort}
           </p>
         )}
 
-        <div className="mt-2 flex items-center justify-between gap-2">
-          <div className="flex flex-wrap gap-1 min-w-0">
-            {c.identityTags.slice(0, 3).map(t => (
-              <VibeTag key={t} label={t} />
+        <div className="mt-2.5 flex items-center justify-between gap-2">
+          <div className="flex gap-1 min-w-0 overflow-hidden">
+            {tagChips.map((t) => (
+              <span
+                key={t}
+                className="uppercase whitespace-nowrap"
+                style={{
+                  background: "rgba(255,255,255,0.06)",
+                  color: "#B8B8B8",
+                  fontSize: 9,
+                  padding: "3px 7px",
+                  borderRadius: 4,
+                  letterSpacing: "0.04em",
+                  fontFamily: "Inter, sans-serif",
+                  fontWeight: 500,
+                }}
+              >
+                {t}
+              </span>
             ))}
           </div>
           <DraftButton drafted={drafted} pending={pending} onClick={onDraft} />
