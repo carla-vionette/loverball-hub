@@ -346,27 +346,6 @@ const Profile = () => {
                     </Button>
                   </div>
 
-                  {/* Teams — quick row of favorite team crests */}
-                  {TEAM_PERFORMANCE.length > 0 && (
-                    <div className="w-full pt-2">
-                      <p className="text-[10px] font-bold tracking-[0.2em] uppercase text-foreground/40 mb-2">Teams</p>
-                      <div className="flex items-center justify-center gap-3 flex-wrap">
-                        {TEAM_PERFORMANCE.slice(0, 6).map(team => (
-                          <button
-                            key={team.name}
-                            onClick={() => goTo(`/team/${team.slug}`)}
-                            className="group flex flex-col items-center gap-1"
-                            title={team.name}
-                          >
-                            <div className="w-10 h-10 rounded-full bg-foreground/5 border border-border/30 p-1 flex items-center justify-center group-hover:border-primary/40 transition-colors">
-                              <img src={team.logo} alt={team.name} className="w-full h-full object-contain" onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} />
-                            </div>
-                            <span className="text-[9px] text-muted-foreground group-hover:text-foreground transition-colors max-w-[56px] truncate">{team.name.split(' ').pop()}</span>
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  )}
                 </div>
               </div>
             </motion.div>
