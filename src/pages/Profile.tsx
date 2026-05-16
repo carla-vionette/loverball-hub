@@ -524,7 +524,16 @@ const Profile = () => {
             </motion.div>
 
             {/* MY SPORTS FEED — Personalized news from news_articles */}
-            <motion.div variants={staggerItem}>
+            <motion.div variants={staggerItem} className="space-y-3">
+              <div className="px-1">
+                <span className="mag-eyebrow text-raspberry">For you</span>
+                <h2 className="mag-title text-foreground" style={{ fontSize: "clamp(40px, 11vw, 56px)", marginTop: 2 }}>
+                  Your Feed
+                </h2>
+                <p className="text-copper text-[11px] mt-1" style={{ fontFamily: "'Inter', system-ui", fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase" }}>
+                  Curated by Loverball
+                </p>
+              </div>
               <MySportsFeed
                 userSports={profile.favorite_sports || []}
                 userTeams={[...(profile.favorite_teams_players || []), ...((profile as any).favorite_la_teams || [])]}
