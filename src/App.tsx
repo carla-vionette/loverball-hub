@@ -125,7 +125,7 @@ const App = () => (
                 <Route path="/members" element={<Navigate to="/club" replace />} />
                 <Route path="/members/:id" element={<ProtectedRoute><MemberProfile /></ProtectedRoute>} />
                 <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-                <Route path="/club" element={<ProtectedRoute><Club /></ProtectedRoute>} />
+                <Route path="/club" element={<Club />} />
                 <Route path="/club/drafts" element={<ProtectedRoute><ClubDrafts /></ProtectedRoute>} />
                 <Route path="/profile/edit" element={<ProtectedRoute><EditProfile /></ProtectedRoute>} />
                 <Route path="/profile/interests" element={<Navigate to="/profile/edit" replace />} />
@@ -141,7 +141,7 @@ const App = () => (
                 <Route path="/dms" element={<ProtectedRoute><DirectMessages /></ProtectedRoute>} />
                 <Route path="/friends" element={<ProtectedRoute><Friends /></ProtectedRoute>} />
                 <Route path="/connections" element={<ProtectedRoute><Connections /></ProtectedRoute>} />
-                <Route path="/membership" element={<ProtectedRoute><Membership /></ProtectedRoute>} />
+                <Route path="/membership" element={<Membership />} />
                 <Route path="/billing" element={<ProtectedRoute><BillingPage /></ProtectedRoute>} />
                 <Route path="/invites" element={<ProtectedRoute><InvitesPage /></ProtectedRoute>} />
                 <Route path="/checkout-success" element={<ProtectedRoute><CheckoutSuccess /></ProtectedRoute>} />
