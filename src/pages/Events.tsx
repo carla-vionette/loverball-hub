@@ -389,22 +389,31 @@ const Events = () => {
                 const cardIndex = idx + 1;
                 const sponsorSlot = cardIndex > 0 && cardIndex % 5 === 0;
 
+                const v = getVariant(ev.event_type);
+                const th = sceneTheme[v];
+
                 return (
                   <React.Fragment key={ev.id}>
-                    <Card className="overflow-hidden group cursor-pointer hover:shadow-lg transition-all"
+                    <Card className="overflow-hidden group cursor-pointer hover:shadow-lg transition-all border-none"
                       onClick={() => openTile(ev.id)}>
-                      <div className="relative h-44 overflow-hidden">
+                      <div className={`relative h-44 overflow-hidden ${th.bg}`}>
                         {ev.image_url ? (
-                          <img src={ev.image_url} alt={ev.title} loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                          <>
+                            <img src={ev.image_url} alt={ev.title} loading="lazy" className="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-500" />
+                            <div className={`absolute inset-0 ${th.bg} mix-blend-multiply opacity-50`} />
+                          </>
                         ) : (
-                          <div className="w-full h-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
-                            <Calendar className="w-10 h-10 text-primary/30" />
+                          <div className={`absolute inset-0 flex items-center justify-center ${th.text}`}>
+                            <Calendar className="w-10 h-10 opacity-50" />
                           </div>
                         )}
-                        {ev.event_type && <Badge className="absolute top-3 left-3 bg-accent text-accent-foreground text-[10px] font-semibold tracking-wider rounded-full">{CATEGORY_LABELS[ev.event_type] || ev.event_type}</Badge>}
-                        {ev.price === 0 && <Badge className="absolute top-3 right-3 bg-primary text-primary-foreground text-[10px] font-semibold rounded-full">Free</Badge>}
+                        <div className="absolute top-3 left-3 flex items-center gap-2">
+                          <Badge className={`${th.badge} text-[10px] font-semibold tracking-wider rounded-full`}>{th.label}</Badge>
+                          {ev.event_type && <span className={`text-[10px] font-semibold tracking-wider uppercase ${th.text} drop-shadow`}>{CATEGORY_LABELS[ev.event_type] || ev.event_type}</span>}
+                        </div>
+                        {ev.price === 0 && <Badge className={`absolute top-3 right-3 ${th.badge} text-[10px] font-semibold rounded-full`}>Free</Badge>}
                         <div className="absolute bottom-3 right-3">
-                          <span className="font-display text-4xl font-bold text-white drop-shadow-lg">{format(new Date(ev.event_date), "d")}</span>
+                          <span className={`font-display text-4xl font-bold drop-shadow-lg ${th.text}`}>{format(new Date(ev.event_date), "d")}</span>
                         </div>
                       </div>
                       <CardContent className="p-4 space-y-2">
