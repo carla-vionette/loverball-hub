@@ -22,117 +22,117 @@
 @layer base {
   :root {
     /* ── Brand ── */
-    --brand: 8 100% 61%;                  /* Coral #FF4D3A */
-    --brand-foreground: 30 33% 95%;
+    --brand: 338 80% 53%;                   /* Raspberry #E8276F */
+    --brand-foreground: 0 0% 97%;
 
-    /* ── Core palette — dark editorial ── */
-    --background: 222 60% 10%;             /* Deep navy #0A1128 */
-    --foreground: 30 33% 95%;              /* Cream #F5F0EB */
+    /* ── Core palette — premium dark editorial ── */
+    --background: 240 6% 4%;                /* #0A0A0B */
+    --foreground: 0 0% 97%;                 /* #F8F8F8 */
 
-    --card: 230 25% 16%;                   /* Dark charcoal #1e2235 */
-    --card-foreground: 30 33% 95%;
+    --bg-secondary: 240 3% 8%;              /* #141415 */
+    --bg-card: 240 4% 11%;                  /* #1A1A1C */
 
-    --popover: 230 25% 16%;
-    --popover-foreground: 30 33% 95%;
+    --card: 240 4% 11%;                     /* #1A1A1C */
+    --card-foreground: 0 0% 97%;
 
-    /* Primary = Coral/Orange-Red */
-    --primary: 8 100% 61%;                /* #FF4D3A */
+    --popover: 240 4% 11%;
+    --popover-foreground: 0 0% 97%;
+
+    /* Primary = Raspberry */
+    --primary: 338 80% 53%;                 /* #E8276F */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 228 30% 14%;              /* Slightly lighter navy #1a1f3a */
-    --secondary-foreground: 30 33% 95%;
+    --secondary: 240 3% 8%;                 /* #141415 */
+    --secondary-foreground: 0 0% 97%;
 
-    --muted: 228 20% 20%;
-    --muted-foreground: 215 14% 65%;       /* Muted gray #9CA3AF */
+    --muted: 240 3% 14%;
+    --muted-foreground: 0 0% 60%;
 
-    /* Accent = Soft warm pink */
-    --accent: 10 100% 74%;                /* #FF8C7C */
+    /* Accent = Copper */
+    --accent: 22 60% 60%;                   /* #D88C5A */
     --accent-foreground: 0 0% 100%;
 
     /* ── Status colors ── */
-    --success: 142 72% 42%;
+    --success: 142 60% 45%;
     --success-foreground: 0 0% 100%;
-    --warning: 45 100% 50%;
+    --warning: 38 92% 55%;
     --warning-foreground: 0 0% 0%;
     --info: 200 80% 55%;
     --info-foreground: 0 0% 100%;
-    --destructive: 0 84% 50%;
+    --destructive: 0 75% 55%;
     --destructive-foreground: 0 0% 100%;
 
-    /* ── Additional brand ── */
-    --coral: 8 100% 61%;                   /* #FF4D3A */
+    /* ── Legacy aliases (kept for compatibility) ── */
+    --coral: 338 80% 53%;
     --coral-foreground: 0 0% 100%;
-    --pale-pink: 10 60% 90%;
-    --pale-pink-foreground: 222 60% 10%;
-    --medium-blue: 210 40% 50%;
+    --pale-pink: 338 50% 88%;
+    --pale-pink-foreground: 240 6% 4%;
+    --medium-blue: 210 30% 50%;
     --medium-blue-foreground: 0 0% 100%;
-    --olive: 174 30% 30%;
+    --olive: 174 20% 30%;
     --olive-foreground: 0 0% 100%;
-    --light-lime: 10 90% 75%;
+    --light-lime: 22 60% 70%;
     --light-lime-foreground: 0 0% 100%;
-    --ticker: 8 100% 61%;                  /* Coral ticker */
+    --ticker: 338 80% 53%;
     --ticker-foreground: 0 0% 100%;
-    --gold: 45 100% 50%;
+    --gold: 38 92% 55%;
     --gold-foreground: 0 0% 0%;
-
-    --terracotta: 8 100% 61%;
+    --terracotta: 22 60% 60%;
     --terracotta-foreground: 0 0% 100%;
-    --warm-beige: 228 30% 14%;
-    --warm-beige-foreground: 30 33% 95%;
-
-    --hot-pink: 350 80% 62%;
+    --warm-beige: 240 3% 8%;
+    --warm-beige-foreground: 0 0% 97%;
+    --hot-pink: 338 80% 53%;
     --hot-pink-foreground: 0 0% 100%;
 
     /* ── Chrome ── */
-    --border: 228 20% 22%;
-    --input: 228 20% 22%;
-    --ring: 8 100% 61%;
+    --border: 0 0% 100%;                    /* used with /8 opacity below */
+    --input: 240 3% 14%;
+    --ring: 338 80% 53%;
 
-    --radius: 1.125rem;
+    --radius: 1rem;
 
     /* ── Design tokens ── */
     --radius-sm: 0.5rem;
-    --radius-md: 1rem;
+    --radius-md: 0.875rem;
     --radius-lg: 1.25rem;
     --radius-xl: 1.75rem;
 
-    --shadow-sm: 0 2px 8px 0 rgba(0, 0, 0, 0.25);
-    --shadow-md: 0 4px 20px -2px rgba(0, 0, 0, 0.35);
-    --shadow-lg: 0 12px 32px -4px rgba(0, 0, 0, 0.4);
-    --shadow-glow: 0 0 24px rgba(255, 77, 58, 0.25);
+    --shadow-sm: 0 2px 8px 0 rgba(0, 0, 0, 0.4);
+    --shadow-md: 0 4px 20px -2px rgba(0, 0, 0, 0.5);
+    --shadow-lg: 0 12px 32px -4px rgba(0, 0, 0, 0.6);
+    --shadow-glow: 0 0 32px rgba(232, 39, 111, 0.25);
 
     --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
     --transition-normal: 300ms cubic-bezier(0.4, 0, 0.2, 1);
     --transition-slow: 400ms cubic-bezier(0.4, 0, 0.2, 1);
 
     /* Gradients */
-    --gradient-warm: linear-gradient(135deg, hsl(8 100% 61%), hsl(10 100% 74%));
-    --gradient-sunset: linear-gradient(135deg, hsl(8 100% 61%), hsl(45 100% 50%));
-    --gradient-cream: linear-gradient(180deg, hsl(222 60% 10%), hsl(228 30% 14%));
-    --gradient-navy: linear-gradient(180deg, hsl(222 60% 10%), hsl(228 25% 12%));
+    --gradient-warm: linear-gradient(135deg, hsl(338 80% 53%), hsl(22 60% 60%));
+    --gradient-sunset: linear-gradient(135deg, hsl(338 80% 53%), hsl(38 92% 55%));
+    --gradient-cream: linear-gradient(180deg, hsl(240 6% 4%), hsl(240 3% 8%));
+    --gradient-navy: linear-gradient(180deg, hsl(240 6% 4%), hsl(240 4% 11%));
   }
 
-  /* Landing page uses same dark theme */
+  /* Border at 8% white opacity */
+  * { border-color: rgba(255, 255, 255, 0.08); }
+
   .landing-theme {
-    --primary: 8 100% 61%;
+    --primary: 338 80% 53%;
     --primary-foreground: 0 0% 100%;
-    --accent: 10 100% 74%;
+    --accent: 22 60% 60%;
     --accent-foreground: 0 0% 100%;
   }
 
-  .dark {
-    /* Already dark by default — no changes needed */
-  }
+  .dark { /* default */ }
 
   .watch-dark {
-    --background: 222 60% 6%;
-    --foreground: 30 33% 95%;
-    --card: 228 25% 10%;
-    --card-foreground: 30 33% 95%;
-    --popover: 228 25% 10%;
-    --popover-foreground: 30 33% 95%;
-    --border: 228 25% 16%;
-    --input: 228 25% 16%;
+    --background: 240 6% 3%;
+    --foreground: 0 0% 97%;
+    --card: 240 4% 9%;
+    --card-foreground: 0 0% 97%;
+    --popover: 240 4% 9%;
+    --popover-foreground: 0 0% 97%;
+    --input: 240 3% 14%;
   }
 }
 
