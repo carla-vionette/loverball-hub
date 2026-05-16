@@ -61,16 +61,11 @@ const MobileHeader = () => {
         </button>
 
         <button
-          onClick={() => navigate('/shop')}
+          onClick={() => navigate('/messages')}
           className="relative p-2.5 hover:bg-secondary rounded-full transition-all duration-300 focus-ring tap-target"
-          aria-label={`Shopping cart${totalItems > 0 ? `, ${totalItems} items` : ''}`}
+          aria-label="Messages"
         >
-          <ShoppingCart className="w-5 h-5 text-foreground" aria-hidden="true" />
-          {totalItems > 0 && (
-            <Badge className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs bg-primary text-primary-foreground" aria-hidden="true">
-              {totalItems}
-            </Badge>
-          )}
+          <MessageCircle className="w-5 h-5 text-foreground" aria-hidden="true" />
         </button>
       </div>
     </header>
