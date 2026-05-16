@@ -156,25 +156,31 @@
     @apply bg-background text-foreground font-sans antialiased text-base leading-relaxed;
   }
 
-  /* Heading hierarchy — Anton condensed display */
+  /* Heading hierarchy — Playfair Display editorial (matches /profile) */
   h1 {
-    font-family: 'Anton', 'Impact', sans-serif;
-    @apply text-[32px] md:text-[48px] lg:text-[64px] font-normal leading-[0.95] uppercase;
-    letter-spacing: -0.01em;
+    font-family: 'Playfair Display', Georgia, serif;
+    font-style: italic;
+    @apply text-[36px] md:text-[52px] lg:text-[64px] font-medium leading-[0.95];
+    letter-spacing: -0.015em;
   }
   h2 {
-    font-family: 'Anton', 'Impact', sans-serif;
-    @apply text-[22px] md:text-[28px] font-normal leading-tight uppercase;
-    letter-spacing: 0.02em;
+    font-family: 'Playfair Display', Georgia, serif;
+    font-style: italic;
+    @apply text-[24px] md:text-[30px] font-medium leading-tight;
+    letter-spacing: -0.005em;
   }
   h3 {
-    font-family: 'Anton', 'Impact', sans-serif;
-    @apply text-xl font-normal leading-tight uppercase;
-    letter-spacing: 0.02em;
+    font-family: 'Playfair Display', Georgia, serif;
+    @apply text-xl font-semibold leading-tight;
+    letter-spacing: -0.005em;
   }
-  h4 { @apply font-sans font-semibold text-lg leading-snug tracking-tight; }
+  h4 { font-family: 'Playfair Display', Georgia, serif; @apply font-semibold text-lg leading-snug; }
   h5 { @apply font-sans font-semibold text-base leading-normal; }
-  h6 { @apply font-sans font-medium text-sm leading-normal; }
+  h6 {
+    font-family: 'Space Mono', ui-monospace, monospace;
+    @apply text-xs font-normal leading-normal uppercase;
+    letter-spacing: 0.12em;
+  }
 
   p {
     @apply text-[15px] leading-[1.6] text-foreground/90;
@@ -281,10 +287,74 @@
     @apply mx-auto px-8 py-12 md:py-20 max-w-3xl;
   }
 
-  /* Section header */
+  /* Section header — editorial (matches /profile) */
   .section-header {
-    font-family: 'Oswald', 'Impact', sans-serif;
-    @apply text-xl font-bold tracking-tight uppercase;
+    font-family: 'Playfair Display', Georgia, serif;
+    font-style: italic;
+    @apply text-2xl md:text-3xl font-medium tracking-tight;
+  }
+
+  /* Profile-system primitives — use these anywhere in the app */
+  .editorial-title {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-style: italic;
+    font-weight: 500;
+    letter-spacing: -0.015em;
+    line-height: 0.95;
+    color: hsl(var(--foreground));
+  }
+  .editorial-title-accent { color: hsl(var(--primary)); font-style: italic; }
+  .editorial-label {
+    font-family: 'Space Mono', ui-monospace, monospace;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: hsl(var(--muted-foreground));
+  }
+  .editorial-meta {
+    font-family: 'Space Mono', ui-monospace, monospace;
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    color: hsl(var(--foreground) / 0.7);
+  }
+  .editorial-divider {
+    height: 0.5px;
+    background: hsl(var(--foreground) / 0.12);
+    width: 100%;
+  }
+  .editorial-cta {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    font-family: 'Space Mono', ui-monospace, monospace;
+    font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase;
+    color: hsl(var(--primary-foreground)); background: hsl(var(--primary));
+    padding: 12px 22px; border-radius: 999px;
+    transition: filter 200ms ease, transform 200ms ease;
+  }
+  .editorial-cta:hover { filter: brightness(1.08); }
+  .editorial-cta:active { transform: scale(0.98); }
+  .editorial-cta-outline {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    font-family: 'Space Mono', ui-monospace, monospace;
+    font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase;
+    color: hsl(var(--foreground)); background: transparent;
+    border: 1px solid hsl(var(--foreground) / 0.2);
+    padding: 11px 22px; border-radius: 999px;
+    transition: background 200ms ease;
+  }
+  .editorial-cta-outline:hover { background: hsl(var(--foreground) / 0.06); }
+  .editorial-chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: 'Space Mono', ui-monospace, monospace;
+    font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: hsl(var(--foreground) / 0.85);
+    background: hsl(var(--card));
+    border: 1px solid hsl(var(--foreground) / 0.08);
+    padding: 6px 10px; border-radius: 6px;
+  }
+  .editorial-card-surface {
+    background: hsl(var(--card));
+    border: 1px solid hsl(var(--foreground) / 0.06);
+    border-radius: 16px;
   }
 
   /* Warm gradient button */
