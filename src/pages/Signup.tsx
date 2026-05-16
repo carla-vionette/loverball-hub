@@ -276,7 +276,11 @@ export default function Signup() {
                 </Button>
                 <Button
                   variant="ghost"
-                  onClick={() => navigate("/watch")}
+                  onClick={() => {
+                    const r = sessionStorage.getItem("postAuthRedirect");
+                    if (r) sessionStorage.removeItem("postAuthRedirect");
+                    navigate(r || "/watch");
+                  }}
                   className="w-full h-12 rounded-2xl text-foreground/60"
                 >
                   Skip for now
