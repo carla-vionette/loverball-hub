@@ -585,6 +585,33 @@ const EventDetail = () => {
 
   return (
     <div ref={gestureRef} className="min-h-screen bg-background">
+      {event && (
+        <Seo
+          title={`${event.title} | Loverball`}
+          description={(event.description || `${event.title} — Loverball event.`).slice(0, 158)}
+          path={`/event/${event.id}`}
+          image={event.image_url || undefined}
+          type="event"
+          jsonLd={{
+            "@context": "https://schema.org",
+            "@type": "Event",
+            name: event.title,
+            startDate: event.start_time || event.event_date,
+            endDate: event.end_time || undefined,
+            eventStatus: "https://schema.org/EventScheduled",
+            eventAttendanceMode:
+              event.location_type === "virtual"
+                ? "https://schema.org/OnlineEventAttendanceMode"
+                : "https://schema.org/OfflineEventAttendanceMode",
+            location: event.location_type === "virtual"
+              ? { "@type": "VirtualLocation", url: event.virtual_link || "https://www.loverball.com" }
+              : { "@type": "Place", name: event.location_name || event.location || "TBA", address: event.location_address || event.location || "" },
+            image: event.image_url ? [event.image_url] : undefined,
+            description: event.description || event.title,
+            organizer: { "@type": "Organization", name: "Loverball", url: "https://www.loverball.com/" },
+          }}
+        />
+      )}
       {/* Confetti Animation */}
       <AnimatePresence>
         {showConfetti && (
