@@ -7,6 +7,7 @@ import MobileHeader from "@/components/MobileHeader";
 import DesktopNav from "@/components/DesktopNav";
 import BottomNav from "@/components/BottomNav";
 import Seo from "@/components/Seo";
+import DraftConfirmModal from "@/components/club/DraftConfirmModal";
 
 // ── Loverball design system (Club, aligned with global tokens) ───────
 const C = {
