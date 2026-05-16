@@ -402,6 +402,14 @@ const Club: React.FC = () => {
           )}
         </div>
       </main>
+
+      <DraftConfirmModal
+        open={confirm.open}
+        memberFirstName={confirm.first}
+        suggestedOpener={confirm.opener}
+        draftsLeft={draftsLeft}
+        onClose={() => setConfirm((s) => ({ ...s, open: false }))}
+      />
     </div>
   );
 };
