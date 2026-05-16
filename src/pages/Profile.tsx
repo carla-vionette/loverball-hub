@@ -584,12 +584,8 @@ const Profile = () => {
               </motion.div>
             )}
 
-            {/* ───── CURATED SPORTS NEWS ───── */}
-            <motion.div variants={staggerItem} className="space-y-3">
-              <div className="px-1 flex items-center gap-2">
-                <Newspaper className="w-3.5 h-3.5 text-primary" />
-                <span className="text-sm font-medium tracking-wider uppercase text-foreground/60">Curated Sports News</span>
-              </div>
+            {/* ───── CURATED SPORTS NEWS / MY SPORTS FEED ───── */}
+            <motion.div variants={staggerItem}>
               <MySportsFeed
                 userSports={profile.favorite_sports || []}
                 userTeams={[...(profile.favorite_teams_players || []), ...((profile as any).favorite_la_teams || [])]}
