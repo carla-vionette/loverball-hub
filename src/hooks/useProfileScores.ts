@@ -97,9 +97,19 @@ function parseTickerItems(items: string[]): GameScore[] {
 }
 
 let _scoreCache: { data: GameScore[]; ts: number } | null = null;
-const CACHE_TTL = 2 * 60 * 1000; // 2 minutes
+const CACHE_TTL = 60 * 1000; // 1 minute for near-real-time
+const POLL_INTERVAL = 30 * 1000; // refresh every 30s while mounted
 
-export function useProfileScores() {
+function matchesFavorites(game: GameScore, favorites: string[]): boolean {
+  if (!favorites.length) return true;
+  const haystack = `${game.homeTeam} ${game.awayTeam}`.toLowerCase();
+  return favorites.some((fav) => {
+    const needle = fav.trim().toLowerCase();
+    return needle.length > 1 && haystack.includes(needle);
+  });
+}
+
+export function useProfileScores(favoriteTeams: string[] = []) {
   const [games, setGames] = useState<GameScore[]>(_scoreCache?.data ?? []);
   const [loading, setLoading] = useState(!_scoreCache);
   const [error, setError] = useState<string | null>(null);
@@ -134,9 +144,13 @@ export function useProfileScores() {
 
   useEffect(() => {
     fetchScores();
-    const interval = setInterval(fetchScores, 2 * 60 * 1000);
+    const interval = setInterval(fetchScores, POLL_INTERVAL);
     return () => clearInterval(interval);
   }, []);
 
-  return { games, loading, error, refetch: fetchScores };
+  const filteredGames = favoriteTeams.length
+    ? games.filter((g) => matchesFavorites(g, favoriteTeams))
+    : games;
+
+  return { games: filteredGames, loading, error, refetch: fetchScores, hasFavorites: favoriteTeams.length > 0 };
 }

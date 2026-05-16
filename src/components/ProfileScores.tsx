@@ -69,8 +69,12 @@ const ScoreCard = ({ game }: { game: GameScore }) => {
   );
 };
 
-const ProfileScores: React.FC = () => {
-  const { games, loading, error, refetch } = useProfileScores();
+interface ProfileScoresProps {
+  favoriteTeams?: string[];
+}
+
+const ProfileScores: React.FC<ProfileScoresProps> = ({ favoriteTeams = [] }) => {
+  const { games, loading, error, refetch, hasFavorites } = useProfileScores(favoriteTeams);
 
   if (loading) {
     return (
@@ -91,10 +95,12 @@ const ProfileScores: React.FC = () => {
       <Card className="p-6 text-center bg-card border-border/30">
         <Radio className="w-8 h-8 text-primary mx-auto mb-3 opacity-60" />
         <p className="text-sm font-semibold text-foreground mb-1">
-          No LA games right now
+          {hasFavorites ? "No games for your favorite teams right now" : "No games right now"}
         </p>
         <p className="text-xs text-muted-foreground">
-          Check back during game days for live scores and results.
+          {hasFavorites
+            ? "We'll show live scores here the moment your teams take the floor."
+            : "Add favorite teams in your profile to see real-time scores here."}
         </p>
       </Card>
     );
