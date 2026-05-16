@@ -269,7 +269,7 @@ const Events = () => {
           {/* FEATURED */}
           {featured && (
             <Card className="overflow-hidden mb-8 group cursor-pointer hover:shadow-lg transition-all"
-              onClick={() => goTo(`/event/${featured.id}`)}>
+              onClick={() => openTile(featured.id)}>
               <div className="relative h-56 md:h-72 overflow-hidden">
                 {featured.image_url ? (
                   <img src={featured.image_url} alt={featured.title} loading="eager" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
