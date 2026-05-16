@@ -408,3 +408,47 @@
     .marquee-track { animation: none; }
   }
 }
+
+/* ============================================================
+   MAGAZINE LAYER — Anton/Playfair/Great Vibes + raspberry/copper
+   ============================================================ */
+@layer utilities {
+  .font-anton { font-family: 'Anton', 'Impact', sans-serif; letter-spacing: 0; line-height: 0.85; text-transform: uppercase; }
+  .font-vibes { font-family: 'Great Vibes', cursive; }
+  .font-playfair-italic { font-family: 'Playfair Display', serif; font-style: italic; font-weight: 800; }
+  .font-inter-mag { font-family: 'Inter', system-ui, sans-serif; }
+
+  .text-raspberry { color: #e8276f; }
+  .text-copper { color: #d88c5a; }
+  .bg-raspberry { background-color: #e8276f; }
+  .bg-copper { background-color: #d88c5a; }
+  .border-copper { border-color: #d88c5a; }
+  .border-raspberry { border-color: #e8276f; }
+
+  .pill-copper {
+    display: inline-block;
+    border: 1px solid #d88c5a;
+    color: #d88c5a;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 800;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 6px 12px;
+    border-radius: 20px;
+  }
+
+  .mag-eyebrow {
+    font-family: 'Great Vibes', cursive;
+    font-size: 28px;
+    line-height: 1;
+    display: block;
+  }
+  .mag-title {
+    font-family: 'Anton', 'Impact', sans-serif;
+    text-transform: uppercase;
+    line-height: 0.85;
+    letter-spacing: 0;
+  }
+}
+

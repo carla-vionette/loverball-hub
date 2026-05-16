@@ -188,7 +188,13 @@ const Members = () => {
       <BottomNav />
       
       <main className="md:ml-64 pt-16 md:pt-0 pb-20 md:pb-0">
-        <div className="h-[calc(100vh-4rem)] md:h-screen flex items-center justify-center p-4">
+        <div className="px-4 pt-2 pb-4 text-center">
+          <span className="mag-eyebrow" style={{ color: "#f8f8f8" }}>The Roster</span>
+          <h1 className="mag-title text-raspberry" style={{ fontSize: "clamp(48px, 14vw, 72px)", marginTop: 2 }}>
+            Find your people
+          </h1>
+        </div>
+        <div className="h-[calc(100vh-12rem)] md:h-screen flex items-center justify-center p-4">
           {hasMoreProfiles && currentProfile ? (
             <div className="w-full max-w-md h-[calc(100vh-8rem)] md:h-[calc(100vh-4rem)]">
               <MemberCard
