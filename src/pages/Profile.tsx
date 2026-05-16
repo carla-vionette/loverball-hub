@@ -295,93 +295,265 @@ const Profile = () => {
       <DesktopNav />
       <BottomNav />
 
-      <main className="md:ml-64 pb-20 md:pb-8 pt-16 md:pt-2">
+      <main
+        className="md:ml-64 pb-20 md:pb-8 pt-16 md:pt-2"
+        style={{ background: "#0A0A0B", color: "#F8F8F8" }}
+      >
         <div className="max-w-4xl mx-auto px-4 pt-2">
-          <motion.div variants={staggerContainer} initial="hidden" animate="show" className="space-y-6">
+          <motion.div variants={staggerContainer} initial="hidden" animate="show" className="space-y-5">
 
-            {/* ───── IDENTITY HERO ───── */}
-            <motion.div variants={staggerItem} className="relative md:rounded-2xl overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-b from-primary/15 via-background/40 to-background z-10" />
-              <div className="relative z-20 px-4 pt-4 pb-6 md:px-8 md:pt-6 md:pb-8">
-                <div className="flex flex-col items-center text-center gap-4">
-                  <div className="relative">
-                    <div className="absolute -inset-1.5 rounded-full bg-gradient-to-br from-primary/30 to-accent/30 blur-md" />
-                    <Avatar className="relative w-24 h-24 md:w-28 md:h-28 border-[3px] border-primary/50">
+            {/* ───── 1. IDENTITY HERO ───── */}
+            <motion.div variants={staggerItem} className="relative md:rounded-3xl overflow-hidden">
+              {/* Editorial ambient wash */}
+              <div
+                className="absolute inset-0 z-0 pointer-events-none"
+                style={{
+                  background:
+                    "radial-gradient(120% 80% at 50% 0%, rgba(232,39,111,0.18) 0%, rgba(216,140,90,0.08) 35%, rgba(10,10,11,0) 70%)",
+                }}
+              />
+              <div className="relative z-10 px-4 pt-5 pb-6 md:px-8 md:pt-8 md:pb-9">
+                <div className="flex flex-col items-center text-center gap-3">
+                  {/* Eyebrow */}
+                  <p
+                    className="text-[10px] uppercase"
+                    style={{
+                      fontFamily: "'Space Mono', ui-monospace, monospace",
+                      letterSpacing: "0.24em",
+                      color: "#D88C5A",
+                    }}
+                  >
+                    Member · Loverball
+                  </p>
+
+                  {/* Avatar */}
+                  <div className="relative mt-1">
+                    <div
+                      className="absolute -inset-[6px] rounded-full blur-md"
+                      style={{
+                        background:
+                          "conic-gradient(from 140deg, rgba(232,39,111,0.55), rgba(216,140,90,0.4), rgba(232,39,111,0.55))",
+                      }}
+                    />
+                    <Avatar
+                      className="relative w-28 h-28 md:w-32 md:h-32"
+                      style={{
+                        border: "2px solid rgba(248,248,248,0.85)",
+                        boxShadow: "0 12px 40px -12px rgba(232,39,111,0.5)",
+                      }}
+                    >
                       {profile.profile_photo_url ? (
                         <AvatarImage src={profile.profile_photo_url} alt={profile.name} className="object-cover" />
                       ) : null}
-                      <AvatarFallback className="bg-primary text-primary-foreground text-3xl font-sans">{initials}</AvatarFallback>
+                      <AvatarFallback
+                        className="text-3xl"
+                        style={{
+                          background: "linear-gradient(140deg, #E8276F, #D88C5A)",
+                          color: "#0A0A0B",
+                          fontFamily: "'Anton', sans-serif",
+                          letterSpacing: "0.02em",
+                        }}
+                      >
+                        {initials}
+                      </AvatarFallback>
                     </Avatar>
                   </div>
 
                   {/* Name */}
-                  <h1 className="text-3xl md:text-4xl font-display text-foreground tracking-tight flex items-center gap-2">
+                  <h1
+                    className="flex items-center gap-2 leading-[0.9]"
+                    style={{
+                      fontFamily: "'Anton', 'Bebas Neue', sans-serif",
+                      fontSize: "clamp(36px, 9vw, 52px)",
+                      textTransform: "uppercase",
+                      color: "#F8F8F8",
+                      marginTop: 4,
+                    }}
+                  >
                     {profile.name}
                     <MemberBadge tier={profile.membership_tier} size="lg" />
                   </h1>
 
-                  {/* Pronouns */}
-                  {profile.pronouns && (
-                    <p className="text-sm text-muted-foreground -mt-2">{profile.pronouns}</p>
-                  )}
-
-                  {/* City */}
-                  <div className="flex items-center justify-center gap-1.5 text-sm text-muted-foreground -mt-2">
-                    <MapPin className="w-3.5 h-3.5 text-primary flex-shrink-0" />
-                    <span>{locationText}</span>
+                  {/* Pronouns + City row */}
+                  <div
+                    className="flex items-center gap-3 text-[12px]"
+                    style={{ color: "rgba(248,248,248,0.72)" }}
+                  >
+                    {profile.pronouns && (
+                      <>
+                        <span
+                          className="italic"
+                          style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+                        >
+                          {profile.pronouns}
+                        </span>
+                        <span style={{ color: "rgba(248,248,248,0.25)" }}>·</span>
+                      </>
+                    )}
+                    <span className="inline-flex items-center gap-1.5">
+                      <MapPin className="w-3.5 h-3.5" style={{ color: "#E8276F" }} />
+                      {locationText}
+                    </span>
                   </div>
 
-                  {/* Followers */}
-                  <ProfileFollowCounts userId={profile.id} onClickFollowers={() => setShowFollowersModal('followers')} onClickFollowing={() => setShowFollowersModal('following')} />
+                  {/* Followers/Following */}
+                  <div
+                    className="mt-1 inline-flex items-center gap-5 px-4 py-2 rounded-full"
+                    style={{
+                      background: "rgba(20,20,21,0.7)",
+                      border: "1px solid rgba(248,248,248,0.08)",
+                      backdropFilter: "blur(12px)",
+                    }}
+                  >
+                    <ProfileFollowCounts
+                      userId={profile.id}
+                      onClickFollowers={() => setShowFollowersModal('followers')}
+                      onClickFollowing={() => setShowFollowersModal('following')}
+                    />
+                  </div>
 
                   {/* Edit Profile button */}
-                  <Button onClick={() => goTo("/profile/edit")} className="rounded-full bg-primary hover:bg-primary/90 text-primary-foreground gap-2 px-6 h-10 text-xs font-bold tracking-[0.15em] uppercase">
+                  <Button
+                    onClick={() => goTo("/profile/edit")}
+                    className="rounded-full gap-2 px-7 h-11 text-[11px] font-bold tracking-[0.18em] uppercase mt-1"
+                    style={{
+                      background: "#E8276F",
+                      color: "#0A0A0B",
+                      fontFamily: "Inter, sans-serif",
+                      boxShadow: "0 10px 28px -10px rgba(232,39,111,0.65)",
+                    }}
+                  >
                     <Edit className="w-3.5 h-3.5" /> Edit Profile
                   </Button>
 
                   {/* Secondary actions — subtle */}
-                  <div className="flex items-center gap-2">
-                    <Button variant="ghost" size="icon" onClick={() => goTo("/dms")} className="rounded-full text-foreground/60 hover:text-foreground h-8 w-8">
-                      <MessageCircle className="w-3.5 h-3.5" />
+                  <div className="flex items-center gap-1 mt-1">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => goTo("/dms")}
+                      className="rounded-full h-9 w-9"
+                      style={{ color: "rgba(248,248,248,0.5)" }}
+                    >
+                      <MessageCircle className="w-4 h-4" />
                     </Button>
-                    <Button variant="ghost" size="icon" onClick={() => goTo("/settings")} className="rounded-full text-foreground/60 hover:text-foreground h-8 w-8">
-                      <Settings className="w-3.5 h-3.5" />
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => goTo("/settings")}
+                      className="rounded-full h-9 w-9"
+                      style={{ color: "rgba(248,248,248,0.5)" }}
+                    >
+                      <Settings className="w-4 h-4" />
                     </Button>
-                    <Button variant="ghost" size="icon" onClick={handleLogout} className="rounded-full text-destructive/70 hover:text-destructive h-8 w-8">
-                      <LogOut className="w-3.5 h-3.5" />
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={handleLogout}
+                      className="rounded-full h-9 w-9"
+                      style={{ color: "rgba(232,39,111,0.7)" }}
+                    >
+                      <LogOut className="w-4 h-4" />
                     </Button>
                   </div>
-
                 </div>
               </div>
+
+              {/* Hairline divider sealing the identity block */}
+              <div
+                className="mx-4 md:mx-8"
+                style={{ borderBottom: "1px solid rgba(248,248,248,0.08)" }}
+              />
             </motion.div>
 
-            {/* ───── GREETING ───── */}
-            <motion.div variants={staggerItem} className="glass-card rounded-2xl p-5">
-              <p className="text-lg font-sans text-foreground">{greeting}, <span className="text-primary font-semibold">{userName}</span></p>
-              <p className="text-sm text-muted-foreground mt-1">{formattedDate} · {formattedTime}</p>
+            {/* ───── 2. GREETING ───── */}
+            <motion.div
+              variants={staggerItem}
+              className="rounded-2xl p-5"
+              style={{
+                background: "#141415",
+                border: "1px solid rgba(248,248,248,0.06)",
+              }}
+            >
+              <p
+                className="text-[10px] uppercase mb-1"
+                style={{
+                  fontFamily: "'Space Mono', monospace",
+                  letterSpacing: "0.22em",
+                  color: "#D88C5A",
+                }}
+              >
+                {formattedDate} · {formattedTime}
+              </p>
+              <p
+                className="leading-[1.05]"
+                style={{
+                  fontFamily: "'Playfair Display', Georgia, serif",
+                  fontSize: 26,
+                  fontStyle: "italic",
+                  color: "#F8F8F8",
+                }}
+              >
+                {greeting},{" "}
+                <span style={{ color: "#E8276F", fontStyle: "normal", fontFamily: "'Anton', sans-serif", letterSpacing: "0.01em" }}>
+                  {userName.toUpperCase()}.
+                </span>
+              </p>
             </motion.div>
 
-            {/* ───── DAILY HOROSCOPE (compact, tap for full) ───── */}
+            {/* ───── 3. DAILY HOROSCOPE (compact, tap for full) ───── */}
             <motion.div variants={staggerItem}>
               <button
                 onClick={() => goTo("/horoscope")}
-                className="w-full text-left rounded-2xl px-4 py-3 border border-primary/30 bg-primary/5 hover:bg-primary/10 transition-colors"
+                className="w-full text-left rounded-2xl px-4 py-3.5 transition-colors"
+                style={{
+                  background:
+                    "linear-gradient(135deg, rgba(232,39,111,0.08) 0%, rgba(216,140,90,0.05) 100%)",
+                  border: "1px solid rgba(232,39,111,0.22)",
+                }}
               >
                 {zodiac ? (
                   <div className="flex items-center gap-3">
-                    <span className="text-2xl">{zodiac.symbol}</span>
+                    <div
+                      className="shrink-0 w-11 h-11 rounded-full flex items-center justify-center"
+                      style={{
+                        background: "rgba(10,10,11,0.6)",
+                        border: "1px solid rgba(232,39,111,0.3)",
+                        fontSize: 22,
+                        color: "#E8276F",
+                      }}
+                    >
+                      {zodiac.symbol}
+                    </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between gap-2">
-                        <p className="text-xs font-semibold text-foreground truncate">
+                        <p
+                          className="text-[10px] uppercase truncate"
+                          style={{
+                            fontFamily: "'Space Mono', monospace",
+                            letterSpacing: "0.2em",
+                            color: "#D88C5A",
+                          }}
+                        >
                           {zodiac.name} · Today
                         </p>
-                        <ChevronRight className="w-3.5 h-3.5 text-primary flex-shrink-0" />
+                        <ChevronRight className="w-3.5 h-3.5 flex-shrink-0" style={{ color: "#E8276F" }} />
                       </div>
                       {horoscopeLoading ? (
-                        <p className="text-[11px] text-muted-foreground mt-0.5 animate-pulse">Loading…</p>
+                        <p
+                          className="text-[12px] mt-1 animate-pulse"
+                          style={{ color: "rgba(248,248,248,0.5)" }}
+                        >
+                          Loading…
+                        </p>
                       ) : (
-                        <p className="text-[11px] text-foreground/70 leading-snug mt-0.5 line-clamp-1">
+                        <p
+                          className="text-[12.5px] leading-snug mt-1 line-clamp-2 italic"
+                          style={{
+                            fontFamily: "'Playfair Display', Georgia, serif",
+                            color: "rgba(248,248,248,0.85)",
+                          }}
+                        >
                           {liveHoroscope || HOROSCOPE_MESSAGES[zodiac.name]}
                         </p>
                       )}
@@ -390,20 +562,43 @@ const Profile = () => {
                 ) : (
                   <div className="flex items-center gap-3">
                     <span className="text-xl">✨</span>
-                    <p className="text-[11px] text-muted-foreground">
-                      Add your birthday in <span className="text-primary underline">Edit Profile</span> for your daily horoscope.
+                    <p className="text-[12px]" style={{ color: "rgba(248,248,248,0.72)" }}>
+                      Add your birthday in{" "}
+                      <span style={{ color: "#E8276F", textDecoration: "underline" }}>Edit Profile</span>{" "}
+                      for your daily horoscope.
                     </p>
                   </div>
                 )}
               </button>
             </motion.div>
 
-            {/* ───── YOUR PERSONAL FEED HEADER ───── */}
-            <motion.div variants={staggerItem} className="pt-2 pb-1 border-b border-border/30">
-              <p className="text-[10px] font-bold tracking-[0.3em] uppercase text-copper">Your Personal Feed</p>
-              <h2 className="mag-title text-foreground" style={{ fontSize: "clamp(32px, 9vw, 44px)", marginTop: 4 }}>
-                Curated for you
+            {/* ───── 4. PERSONAL FEED HEADER ───── */}
+            <motion.div variants={staggerItem} className="pt-4 pb-2">
+              <p
+                className="text-[10px] uppercase"
+                style={{
+                  fontFamily: "'Space Mono', monospace",
+                  letterSpacing: "0.28em",
+                  color: "#D88C5A",
+                }}
+              >
+                Your Personal Feed
+              </p>
+              <h2
+                className="leading-[0.9] mt-2"
+                style={{
+                  fontFamily: "'Anton', 'Bebas Neue', sans-serif",
+                  fontSize: "clamp(34px, 9.5vw, 48px)",
+                  textTransform: "uppercase",
+                  color: "#F8F8F8",
+                }}
+              >
+                Curated <span style={{ fontFamily: "'Playfair Display', serif", fontStyle: "italic", textTransform: "none", color: "#E8276F" }}>for you</span>
               </h2>
+              <div
+                className="mt-3"
+                style={{ borderBottom: "1px solid rgba(248,248,248,0.08)" }}
+              />
             </motion.div>
 
             {/* ───── FAVORITE TEAMS ───── */}
@@ -412,7 +607,7 @@ const Profile = () => {
                 <div className="glass-card rounded-2xl overflow-hidden">
                   <CollapsibleTrigger asChild>
                     <button className="w-full p-5 pb-3 flex items-center justify-between cursor-pointer hover:bg-foreground/[0.03] transition-colors">
-                      <span className="text-sm font-medium tracking-wider uppercase text-foreground/60 flex items-center gap-2">
+                      <span className="text-[15px] flex items-center gap-2.5 lb-section-label">
                         <Shield className="w-3.5 h-3.5 text-primary" strokeWidth={2.5} /> Favorite Teams
                       </span>
                       <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform duration-200 ${teamsOpen ? 'rotate-180' : ''}`} />
@@ -507,7 +702,7 @@ const Profile = () => {
                 <Card className="rounded-2xl overflow-hidden">
                   <CollapsibleTrigger asChild>
                     <button className="w-full pt-4 px-5 pb-3 flex items-center justify-between cursor-pointer hover:bg-foreground/[0.03] transition-colors">
-                      <span className="text-sm font-medium tracking-wider uppercase text-foreground/60 flex items-center gap-2">
+                      <span className="text-[15px] flex items-center gap-2.5 lb-section-label">
                         <Tv className="w-3.5 h-3.5 text-primary" /> Where to Watch
                       </span>
                       <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform duration-200 ${watchOpen ? 'rotate-180' : ''}`} />
@@ -528,7 +723,7 @@ const Profile = () => {
                 <Card className="rounded-2xl overflow-hidden">
                   <CollapsibleTrigger asChild>
                     <button className="w-full pt-4 px-5 pb-3 flex items-center justify-between cursor-pointer hover:bg-foreground/[0.03] transition-colors">
-                      <span className="text-sm font-medium tracking-wider uppercase text-foreground/60 flex items-center gap-2">
+                      <span className="text-[15px] flex items-center gap-2.5 lb-section-label">
                         <Radio className="w-3.5 h-3.5 text-[#FF5D2E]" /> Live &amp; Recent Scores
                       </span>
                       <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform duration-200 ${scoresOpen ? 'rotate-180' : ''}`} />
@@ -550,7 +745,7 @@ const Profile = () => {
                   <div className="glass-card rounded-2xl overflow-hidden">
                     <CollapsibleTrigger asChild>
                       <button className="w-full p-5 pb-3 flex items-center justify-between cursor-pointer hover:bg-foreground/[0.03] transition-colors">
-                        <span className="text-sm font-medium tracking-wider uppercase text-foreground/60 flex items-center gap-2">
+                        <span className="text-[15px] flex items-center gap-2.5 lb-section-label">
                           <CalendarHeart className="w-3.5 h-3.5 text-primary" strokeWidth={2.5} /> Recommended Events
                         </span>
                         <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform duration-200 ${recEventsOpen ? 'rotate-180' : ''}`} />
