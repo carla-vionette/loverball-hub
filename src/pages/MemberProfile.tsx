@@ -621,7 +621,7 @@ const MemberProfile = () => {
               <Eyebrow label="Tags" />
               <div className="flex flex-wrap gap-1.5">
                 {Array.from(new Set(allTags)).slice(0, 12).map((t) => (
-                  <Chip key={t}>{t}</Chip>
+                  <TagChip key={t}>{t}</TagChip>
                 ))}
               </div>
             </section>
