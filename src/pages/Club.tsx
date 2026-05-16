@@ -675,18 +675,18 @@ const DraftButton: React.FC<{
   <button
     onClick={onClick}
     disabled={drafted || pending}
-    className="shrink-0 font-bold uppercase rounded-full transition-opacity"
+    className="shrink-0 uppercase rounded-full transition-opacity"
     style={{
       fontFamily: "Inter, sans-serif",
       fontSize: large ? 11 : 10,
-      letterSpacing: "0.14em",
-      padding: large ? "10px 18px" : "7px 14px",
+      fontWeight: 500,
+      letterSpacing: large ? "0.14em" : "0.1em",
+      padding: large ? "10px 18px" : "6px 14px",
       background: drafted ? "transparent" : C.raspberry,
-      color: drafted ? C.muted : "#0A0A0B",
+      color: drafted ? C.muted : C.text,
       border: drafted ? `1px solid ${C.borderStrong}` : "none",
       opacity: pending ? 0.6 : 1,
-      boxShadow: drafted ? "none" : "0 8px 24px -10px rgba(232,39,111,0.6)",
-      minHeight: large ? 40 : 32,
+      minHeight: large ? 40 : 28,
     }}
   >
     {drafted ? "✓ Drafted" : pending ? "…" : large ? "+ Draft to Roster" : "+ Draft"}
