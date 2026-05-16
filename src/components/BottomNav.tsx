@@ -47,8 +47,8 @@ const BottomNav = () => {
       aria-label="Main navigation"
       style={{
         height: 70,
-        background: "linear-gradient(to top, #050505 60%, rgba(5,5,5,0.85) 100%)",
-        borderTop: "1px solid rgba(255,255,255,0.06)",
+        background: "linear-gradient(to top, #0A1128 60%, rgba(10,17,40,0.92) 100%)",
+        borderTop: "1px solid rgba(255,77,58,0.18)",
       }}
     >
       <div className="relative flex justify-around items-center h-full max-w-lg mx-auto px-2">
@@ -56,7 +56,7 @@ const BottomNav = () => {
           const Icon = item.icon;
           const isActive = item.matches.some(m => pathname === m || (m.endsWith("/") && pathname.startsWith(m)));
           const showBadge = item.path === "/members" && badgeCount > 0;
-          const color = isActive ? "#e8276f" : "rgba(255,255,255,0.5)";
+          const color = isActive ? "#FF4D3A" : "rgba(255,255,255,0.55)";
           return (
             <Link
               key={item.path}
