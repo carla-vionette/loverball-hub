@@ -45,6 +45,42 @@ interface DbEvent {
   event_tags?: string[] | null;
 }
 
+type SceneVariant = "external" | "hosted" | "cultural";
+const variantMap: Record<string, SceneVariant> = {
+  game: "external",
+  watch_party: "external",
+  networking: "hosted",
+  brunch: "hosted",
+  party: "hosted",
+  panel: "cultural",
+  salon: "cultural",
+  other: "cultural",
+};
+const getVariant = (t?: string | null): SceneVariant => (t && variantMap[t]) || "cultural";
+const sceneTheme: Record<SceneVariant, { bg: string; text: string; badge: string; eyebrow: string; label: string }> = {
+  external: {
+    bg: "bg-foreground",
+    text: "text-background",
+    badge: "bg-background text-foreground",
+    eyebrow: "text-background/70",
+    label: "Broadcast",
+  },
+  hosted: {
+    bg: "bg-primary",
+    text: "text-primary-foreground",
+    badge: "bg-primary-foreground text-primary",
+    eyebrow: "text-primary-foreground/80",
+    label: "Hosted",
+  },
+  cultural: {
+    bg: "bg-[hsl(173_58%_39%)]",
+    text: "text-white",
+    badge: "bg-white text-[hsl(173_58%_39%)]",
+    eyebrow: "text-white/80",
+    label: "Cultural",
+  },
+};
+
 const fmtTime = (t: string) => {
   const [h, m] = t.split(":");
   const d = new Date();
@@ -278,29 +314,39 @@ const Events = () => {
           </div>
 
           {/* FEATURED */}
-          {featured && (
-            <Card className="overflow-hidden mb-8 group cursor-pointer hover:shadow-lg transition-all"
+          {featured && (() => {
+            const v = getVariant(featured.event_type);
+            const th = sceneTheme[v];
+            return (
+            <Card className={`overflow-hidden mb-8 group cursor-pointer hover:shadow-lg transition-all border-none ${th.bg} ${th.text}`}
               onClick={() => openTile(featured.id)}>
               <div className="relative h-56 md:h-72 overflow-hidden">
                 {featured.image_url ? (
-                  <img src={featured.image_url} alt={featured.title} loading="eager" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <>
+                    <img src={featured.image_url} alt={featured.title} loading="eager" className="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-500" />
+                    <div className={`absolute inset-0 ${th.bg} mix-blend-multiply opacity-60`} />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+                  </>
                 ) : (
-                  <div className="w-full h-full bg-gradient-to-br from-primary/20 to-accent/20" />
+                  <div className={`w-full h-full ${th.bg}`} />
                 )}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
+                <div className="absolute top-4 left-4">
+                  <span className={`text-[10px] font-bold tracking-[0.2em] uppercase ${th.eyebrow}`}>{th.label} · {CATEGORY_LABELS[featured.event_type || ""] || featured.event_type}</span>
+                </div>
                 <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6">
-                  <Badge className="bg-primary text-primary-foreground text-[10px] font-semibold tracking-wider rounded-full mb-2">Featured Event</Badge>
-                  <h2 className="text-white font-display text-2xl md:text-3xl font-bold uppercase">{featured.title}</h2>
-                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-white/70 text-xs sm:text-sm mt-2">
+                  <Badge className={`${th.badge} text-[10px] font-semibold tracking-wider rounded-full mb-2`}>Featured Event</Badge>
+                  <h2 className={`font-display text-2xl md:text-3xl font-bold uppercase ${th.text}`}>{featured.title}</h2>
+                  <div className={`flex flex-wrap items-center gap-x-3 gap-y-1 text-xs sm:text-sm mt-2 ${th.eyebrow}`}>
                     <span className="flex items-center gap-1"><Calendar className="w-3.5 h-3.5" />{format(new Date(featured.event_date), "MMM d, yyyy")}</span>
                     {featured.event_time && <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5" />{fmtTime(featured.event_time)}</span>}
-                    {(featured.venue_name || featured.city) && <span className="flex items-center gap-1 truncate max-w-[180px]"><MapPin className="w-3.5 h-3.5 text-accent flex-shrink-0" />{featured.venue_name || featured.city}</span>}
+                    {(featured.venue_name || featured.city) && <span className="flex items-center gap-1 truncate max-w-[180px]"><MapPin className="w-3.5 h-3.5 flex-shrink-0" />{featured.venue_name || featured.city}</span>}
                   </div>
-                  <Button className="rounded-full mt-4 bg-primary text-primary-foreground" onClick={e => { e.stopPropagation(); requestRsvp(featured.id); }}>{user ? "RSVP Now" : "Sign Up to RSVP"}</Button>
+                  <Button className={`rounded-full mt-4 ${th.badge} hover:opacity-90`} onClick={e => { e.stopPropagation(); requestRsvp(featured.id); }}>{user ? "RSVP Now" : "Sign Up to RSVP"}</Button>
                 </div>
               </div>
             </Card>
-          )}
+            );
+          })()}
 
           {/* CATEGORY CHIPS */}
           <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-4 -mx-5 px-5 mb-6">
@@ -343,22 +389,31 @@ const Events = () => {
                 const cardIndex = idx + 1;
                 const sponsorSlot = cardIndex > 0 && cardIndex % 5 === 0;
 
+                const v = getVariant(ev.event_type);
+                const th = sceneTheme[v];
+
                 return (
                   <React.Fragment key={ev.id}>
-                    <Card className="overflow-hidden group cursor-pointer hover:shadow-lg transition-all"
+                    <Card className="overflow-hidden group cursor-pointer hover:shadow-lg transition-all border-none"
                       onClick={() => openTile(ev.id)}>
-                      <div className="relative h-44 overflow-hidden">
+                      <div className={`relative h-44 overflow-hidden ${th.bg}`}>
                         {ev.image_url ? (
-                          <img src={ev.image_url} alt={ev.title} loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                          <>
+                            <img src={ev.image_url} alt={ev.title} loading="lazy" className="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-500" />
+                            <div className={`absolute inset-0 ${th.bg} mix-blend-multiply opacity-50`} />
+                          </>
                         ) : (
-                          <div className="w-full h-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
-                            <Calendar className="w-10 h-10 text-primary/30" />
+                          <div className={`absolute inset-0 flex items-center justify-center ${th.text}`}>
+                            <Calendar className="w-10 h-10 opacity-50" />
                           </div>
                         )}
-                        {ev.event_type && <Badge className="absolute top-3 left-3 bg-accent text-accent-foreground text-[10px] font-semibold tracking-wider rounded-full">{CATEGORY_LABELS[ev.event_type] || ev.event_type}</Badge>}
-                        {ev.price === 0 && <Badge className="absolute top-3 right-3 bg-primary text-primary-foreground text-[10px] font-semibold rounded-full">Free</Badge>}
+                        <div className="absolute top-3 left-3 flex items-center gap-2">
+                          <Badge className={`${th.badge} text-[10px] font-semibold tracking-wider rounded-full`}>{th.label}</Badge>
+                          {ev.event_type && <span className={`text-[10px] font-semibold tracking-wider uppercase ${th.text} drop-shadow`}>{CATEGORY_LABELS[ev.event_type] || ev.event_type}</span>}
+                        </div>
+                        {ev.price === 0 && <Badge className={`absolute top-3 right-3 ${th.badge} text-[10px] font-semibold rounded-full`}>Free</Badge>}
                         <div className="absolute bottom-3 right-3">
-                          <span className="font-display text-4xl font-bold text-white drop-shadow-lg">{format(new Date(ev.event_date), "d")}</span>
+                          <span className={`font-display text-4xl font-bold drop-shadow-lg ${th.text}`}>{format(new Date(ev.event_date), "d")}</span>
                         </div>
                       </div>
                       <CardContent className="p-4 space-y-2">
