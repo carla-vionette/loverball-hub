@@ -197,6 +197,58 @@ const Members = () => {
             Find your people
           </h1>
         </div>
+
+        {/* Friend search */}
+        <div className="px-4 max-w-md mx-auto">
+          <div className="relative">
+            <Search className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
+            <Input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search friends by name…"
+              className="pl-10 pr-10 rounded-full bg-secondary border-border/30"
+              aria-label="Search friends"
+            />
+            {query && (
+              <button
+                onClick={() => setQuery('')}
+                className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-muted"
+                aria-label="Clear search"
+              >
+                <X className="w-3.5 h-3.5 text-muted-foreground" />
+              </button>
+            )}
+          </div>
+          {query.trim().length > 0 && (
+            <div className="mt-2 bg-card border border-border/30 rounded-2xl overflow-hidden divide-y divide-border/20">
+              {profiles
+                .filter((p) => p.name?.toLowerCase().includes(query.trim().toLowerCase()))
+                .slice(0, 8)
+                .map((p) => (
+                  <button
+                    key={p.id}
+                    onClick={() => navigate(`/profile/${p.id}`)}
+                    className="w-full flex items-center gap-3 p-3 hover:bg-muted/50 text-left"
+                  >
+                    <Avatar className="w-10 h-10">
+                      <AvatarImage src={p.profile_photo_url || undefined} />
+                      <AvatarFallback className="bg-primary/10 text-primary text-sm">
+                        {p.name?.charAt(0).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm font-semibold truncate">{p.name}</p>
+                      {p.city && <p className="text-xs text-muted-foreground truncate">{p.city}</p>}
+                    </div>
+                  </button>
+                ))}
+              {profiles.filter((p) => p.name?.toLowerCase().includes(query.trim().toLowerCase())).length === 0 && (
+                <p className="p-4 text-center text-xs text-muted-foreground">No members match "{query}".</p>
+              )}
+            </div>
+          )}
+        </div>
+
         <div className="h-[calc(100vh-12rem)] md:h-screen flex items-center justify-center p-4">
           {hasMoreProfiles && currentProfile ? (
             <div className="w-full max-w-md h-[calc(100vh-8rem)] md:h-[calc(100vh-4rem)]">
