@@ -64,6 +64,7 @@ interface AttendeeProfile {
 
 const Events = () => {
   const goTo = (path: string) => { window.location.href = path; };
+  const [gateOpen, setGateOpen] = useState(false);
   const [events, setEvents] = useState<DbEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [category, setCategory] = useState("All");
