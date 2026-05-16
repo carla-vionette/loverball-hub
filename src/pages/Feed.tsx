@@ -5,6 +5,7 @@ import BottomNav from "@/components/BottomNav";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Play } from "lucide-react";
 import Seo from "@/components/Seo";
+import loverballLogo from "@/assets/loverball-script-logo.png";
 
 type FeedTab = "foryou" | "following";
 
@@ -184,19 +185,11 @@ const Feed = () => {
           </div>
 
           <div className="flex items-center justify-between">
-            <h2
-              style={{
-                fontFamily: "'Anton', Impact, sans-serif",
-                fontSize: 30,
-                lineHeight: 0.92,
-                letterSpacing: "0.005em",
-                color: "#F8F8F8",
-                textTransform: "uppercase",
-                margin: 0,
-              }}
-            >
-              Loverball
-            </h2>
+            <img
+              src={loverballLogo}
+              alt="Loverball logo"
+              className="h-8 w-auto object-contain brightness-0 invert"
+            />
 
             <div className="flex items-center gap-1 p-1 rounded-full" style={{ background: "rgba(20,20,21,0.6)", border: "1px solid rgba(255,255,255,0.08)", backdropFilter: "blur(12px)" }}>
               {[
