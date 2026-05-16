@@ -96,18 +96,7 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Check if user is a member (required for network access)
-    const { data: isMember } = await supabaseAdmin.rpc('has_role', {
-      _user_id: user.id,
-      _role: 'member'
-    });
-
-    if (!isMember) {
-      return new Response(
-        JSON.stringify({ error: "Members only feature" }),
-        { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    }
+    // Any authenticated user can view member profiles (sensitive fields stripped below)
 
     // Get user's matches to determine which profiles get full visibility
     const { data: matches } = await supabaseAdmin
