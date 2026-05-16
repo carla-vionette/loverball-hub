@@ -137,6 +137,11 @@ const Club: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [drafted, setDrafted] = useState<string[]>(loadDrafted().ids);
   const [pending, setPending] = useState<string | null>(null);
+  const [confirm, setConfirm] = useState<{ open: boolean; first: string; opener: string }>({
+    open: false,
+    first: "",
+    opener: "",
+  });
 
   const draftsLeft = Math.max(0, DRAFT_LIMIT - drafted.length);
   const featured = candidates[0];
