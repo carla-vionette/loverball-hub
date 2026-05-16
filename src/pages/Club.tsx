@@ -260,7 +260,7 @@ const Club: React.FC = () => {
                 letterSpacing: "0.22em",
               }}
             >
-              Vol. 01 · The Club
+              THE CLUB
             </p>
             <div className="flex items-end justify-between gap-3">
               <h1
