@@ -59,7 +59,7 @@ const Connect = () => {
           A members-only home for sports fans who want more than a comment section. Matching, group chats, and meetups — quiet, vetted, real.
         </p>
         <div className="mt-10 flex flex-wrap gap-4">
-          <PrimaryBtn onClick={() => navigate("/signup")}>Join Loverball <ArrowRight size={14} /></PrimaryBtn>
+          <PrimaryBtn onClick={() => navigate("/auth?mode=signup")}>Join Loverball <ArrowRight size={14} /></PrimaryBtn>
           <Link to="/club" style={{ fontFamily: fonts.mono, fontSize: 12, letterSpacing: "0.16em", textTransform: "uppercase", color: C.raspberry, borderBottom: `1px solid ${C.raspberry}`, paddingBottom: 2, alignSelf: "center" }}>
             What is The Club?
           </Link>

@@ -147,8 +147,8 @@ const Index = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [newsletterEmail, setNewsletterEmail] = useState("");
 
-  const goJoin = () => navigate("/signup");
-  const goSignIn = () => navigate("/auth");
+  const goJoin = () => navigate("/auth?mode=signup");
+  const goSignIn = () => navigate("/auth?mode=signin");
 
   const navItems: Array<{ label: string; to: string }> = [
     { label: "Watch", to: "/feed" },

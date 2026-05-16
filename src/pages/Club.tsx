@@ -84,7 +84,7 @@ const Club = () => {
         </p>
         <div className="mt-10 flex flex-wrap gap-4 items-center">
           <button
-            onClick={() => navigate("/signup")}
+            onClick={() => navigate("/auth?mode=signup")}
             className="inline-flex items-center justify-center gap-2 transition-all hover:opacity-90 active:scale-[0.98]"
             style={{ background: C.raspberry, color: "#fff", fontFamily: fonts.mono, fontSize: 12, letterSpacing: "0.16em", textTransform: "uppercase", padding: "16px 26px", borderRadius: 999, fontWeight: 500 }}
           >
@@ -148,7 +148,7 @@ const Club = () => {
         </p>
         <div className="mt-10 flex flex-wrap gap-4 justify-center">
           <button
-            onClick={() => navigate("/signup")}
+            onClick={() => navigate("/auth?mode=signup")}
             className="inline-flex items-center justify-center gap-2 transition-all hover:opacity-90 active:scale-[0.98]"
             style={{ background: C.raspberry, color: "#fff", fontFamily: fonts.mono, fontSize: 12, letterSpacing: "0.16em", textTransform: "uppercase", padding: "18px 30px", borderRadius: 999, fontWeight: 500 }}
           >
