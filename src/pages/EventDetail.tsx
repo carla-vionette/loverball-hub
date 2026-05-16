@@ -627,355 +627,232 @@ const EventDetail = () => {
         </div>
       </header>
 
-      <main className="pt-16 pb-32">
-        {/* Hero Image */}
-        <div className={`relative h-72 md:h-96 bg-gradient-to-br ${themeClass}`}>
-          {event.image_url ? (
-            <img 
-              src={event.image_url} 
-              alt={event.title}
-              className="w-full h-full object-cover"
-              fetchPriority="high"
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center">
-              <Calendar className="w-24 h-24 text-primary/30" />
-            </div>
-          )}
-          
-          {/* Gradient Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-          
-          {/* Badges */}
-          <div className="absolute top-4 left-4 flex gap-2">
-            {event.event_type && (
-              <Badge className="bg-primary text-white">
-                {eventTypeLabels[event.event_type] || event.event_type}
-              </Badge>
-            )}
-            {event.visibility !== 'public' && (
-              <Badge variant="secondary" className="bg-black/60 text-white border-0">
-                <Lock className="w-3 h-3 mr-1" />
-                {event.visibility === 'members_only' ? 'Members Only' : 'Invite Only'}
-              </Badge>
-            )}
-            {event.location_type === 'virtual' && (
-              <Badge variant="secondary" className="bg-blue-500/80 text-white border-0">
-                <Video className="w-3 h-3 mr-1" />
-                Virtual
-              </Badge>
-            )}
-          </div>
+      {(() => {
+        // Derive scene variant from event_type
+        const variantMap: Record<string, 'external' | 'hosted' | 'cultural'> = {
+          game: 'external', watch_party: 'external',
+          networking: 'hosted', brunch: 'hosted', party: 'hosted',
+          panel: 'cultural', salon: 'cultural', other: 'cultural',
+        };
+        const variant = variantMap[event.event_type || 'other'] || 'cultural';
+        const heroClass =
+          variant === 'external' ? 'bg-foreground text-background' :
+          variant === 'hosted' ? 'bg-primary text-primary-foreground' :
+          'bg-[hsl(173_58%_39%)] text-white';
+        const eyebrowAccent =
+          variant === 'external' ? 'text-primary' :
+          variant === 'hosted' ? 'text-primary-foreground/90' :
+          'text-white/90';
+        const eyebrowLabel =
+          variant === 'external' ? 'LIVE SPORTS · LA' :
+          variant === 'hosted' ? 'HOSTED BY LOVERBALL' :
+          'CULTURE · CURATED BY LOVERBALL';
+        const isGoing = rsvpStatus === 'attending' || rsvpStatus === 'yes';
+        const goingCount = attendeeCounts.yes;
+        const capacityLeft = event.capacity ? event.capacity - goingCount : null;
 
-          {/* Countdown Timer */}
-          {!isEventPast && (countdown.days > 0 || countdown.hours > 0 || countdown.minutes > 0) && (
-            <div className="absolute bottom-4 right-4">
-              <div className="bg-black/70 backdrop-blur-sm rounded-lg px-3 py-2 text-white flex gap-3">
-                {countdown.days > 0 && (
-                  <div className="text-center">
-                    <p className="text-xl font-bold">{countdown.days}</p>
-                    <p className="text-xs text-white/70">days</p>
-                  </div>
+        return (
+        <main className="pt-16 pb-32">
+          <div className="max-w-xl mx-auto px-4 py-4 space-y-3">
+            {/* HERO CARD */}
+            <div className={`relative overflow-hidden rounded-2xl p-4 ${heroClass}`}>
+              <div className="absolute -top-5 -right-5 w-20 h-20 rounded-full bg-primary/20" />
+              <div className="relative">
+                <div className={`flex items-center gap-1.5 mb-2 ${eyebrowAccent}`}>
+                  <span className="w-1.5 h-1.5 rounded-full bg-current inline-block" />
+                  <span className="text-[10px] font-semibold tracking-[0.15em]">{eyebrowLabel}</span>
+                </div>
+                <h1 className="font-display text-2xl leading-tight mb-1">{event.title}</h1>
+                <div className="text-xs opacity-90 mb-2 flex flex-wrap gap-x-3 gap-y-1">
+                  <span className="inline-flex items-center gap-1"><Calendar className="w-3.5 h-3.5" />{format(new Date(event.event_date), 'EEE, MMM d')}{event.event_time ? ` · ${formatTime(event.event_time)}` : ''}</span>
+                  {(event.venue_name || event.city) && (
+                    <span className="inline-flex items-center gap-1"><MapPin className="w-3.5 h-3.5" />{event.venue_name || event.city}</span>
+                  )}
+                </div>
+                {variant === 'external' && (
+                  <span className="inline-block bg-background/10 text-[10px] px-2 py-0.5 rounded">
+                    External event · You bring the ticket
+                  </span>
                 )}
-                <div className="text-center">
-                  <p className="text-xl font-bold">{countdown.hours}</p>
-                  <p className="text-xs text-white/70">hrs</p>
-                </div>
-                <div className="text-center">
-                  <p className="text-xl font-bold">{countdown.minutes}</p>
-                  <p className="text-xs text-white/70">min</p>
-                </div>
+                {variant === 'hosted' && event.capacity && (
+                  <span className="inline-block bg-background/10 text-[10px] px-2 py-0.5 rounded">
+                    {goingCount} of {event.capacity} spots
+                  </span>
+                )}
               </div>
             </div>
-          )}
-        </div>
 
-        {/* Content */}
-        <div className="max-w-4xl mx-auto px-4 -mt-12 relative z-10">
-          <Card className="overflow-hidden">
-            <CardContent className="p-6">
-              <h1 className="text-2xl md:text-3xl font-bold mb-4">{event.title}</h1>
-              
-              {/* Event Details */}
-              <div className="space-y-3 mb-6">
-                <div className="flex items-center gap-3 text-muted-foreground">
-                  <Calendar className="w-5 h-5 flex-shrink-0" />
-                  <span className="text-foreground font-medium">
-                    {format(new Date(event.event_date), 'EEEE, MMMM d, yyyy')}
+            {/* GOING STATUS */}
+            {user && isGoing && (
+              <div className="rounded-xl bg-card border border-border/30 p-3 flex items-center gap-3">
+                <div className="w-7 h-7 rounded-full bg-[hsl(173_58%_39%)] flex items-center justify-center shrink-0">
+                  <Check className="w-4 h-4 text-white" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="text-sm font-semibold">You're going</div>
+                  <div className="text-xs text-muted-foreground">Tap edit to update your plans</div>
+                </div>
+                <button onClick={() => handleRSVP('no')} className="text-xs text-muted-foreground">Edit</button>
+              </div>
+            )}
+
+            {/* HOSTED: host card + pitch quote */}
+            {variant === 'hosted' && (
+              <>
+                {event.host_user_id && (
+                  <div className="rounded-xl bg-card border border-border/30 p-3">
+                    <EventHostProfile hostId={event.host_user_id} coHostIds={event.co_host_ids as string[] | undefined} />
+                  </div>
+                )}
+                {event.description && (
+                  <div className="rounded-xl bg-card border border-border/30 p-3">
+                    <p className="font-serif italic text-sm leading-relaxed border-l-2 border-primary pl-3 whitespace-pre-wrap">
+                      {event.description}
+                    </p>
+                  </div>
+                )}
+              </>
+            )}
+
+            {/* CULTURAL: venue partner + pitch */}
+            {variant === 'cultural' && (
+              <>
+                {(event.venue_name || event.city) && (
+                  <div className="rounded-xl bg-card border border-border/30 p-3 flex items-center gap-2.5">
+                    <MapPin className="w-4 h-4 text-[hsl(173_58%_39%)] shrink-0" />
+                    <div className="flex-1 text-xs text-muted-foreground leading-snug">
+                      At <span className="font-semibold text-foreground">{event.venue_name || event.city}</span>
+                      {event.city && event.venue_name ? ` · ${event.city}` : ''}
+                      {event.location_type !== 'virtual' && ' · you buy the ticket on their site'}
+                    </div>
+                    {event.location_map_url && (
+                      <a href={event.location_map_url} target="_blank" rel="noopener noreferrer">
+                        <ExternalLink className="w-3.5 h-3.5 text-muted-foreground" />
+                      </a>
+                    )}
+                  </div>
+                )}
+                {event.description && (
+                  <div className="rounded-xl bg-card border border-border/30 p-3">
+                    <p className="font-serif italic text-sm leading-relaxed border-l-2 border-[hsl(173_58%_39%)] pl-3 whitespace-pre-wrap">
+                      {event.description}
+                    </p>
+                  </div>
+                )}
+              </>
+            )}
+
+            {/* EXTERNAL: description (if any) */}
+            {variant === 'external' && event.description && (
+              <div className="rounded-xl bg-card border border-border/30 p-3">
+                <p className="text-sm text-muted-foreground whitespace-pre-wrap">{event.description}</p>
+              </div>
+            )}
+
+            {/* WHO ELSE IS GOING */}
+            <div className="rounded-xl bg-card border border-border/30 p-3">
+              <div className="flex justify-between items-baseline mb-2.5">
+                <span className="text-[10px] font-semibold tracking-[0.1em] text-muted-foreground">
+                  {variant === 'hosted' ? 'GOING' : variant === 'cultural' ? 'GOING' : 'WHO ELSE IS GOING'}
+                </span>
+                <span className="text-[11px] font-semibold text-primary">
+                  {variant === 'hosted' && event.capacity
+                    ? `${goingCount} of ${event.capacity} spots`
+                    : `${goingCount} member${goingCount === 1 ? '' : 's'}`}
+                </span>
+              </div>
+              {attendees.length > 0 ? (
+                <button onClick={() => setShowAttendeeList(true)} className="flex -space-x-1.5 mb-2">
+                  {attendees.slice(0, 5).map((a) => (
+                    <Avatar key={a.id} className="w-7 h-7 border-2 border-card">
+                      <AvatarImage src={a.profile?.profile_photo_url || undefined} />
+                      <AvatarFallback className="bg-primary/15 text-primary text-[10px]">
+                        {a.profile?.name?.charAt(0).toUpperCase() || '?'}
+                      </AvatarFallback>
+                    </Avatar>
+                  ))}
+                  {attendees.length > 5 && (
+                    <div className="w-7 h-7 rounded-full bg-muted border-2 border-card flex items-center justify-center text-[10px] font-medium">
+                      +{attendees.length - 5}
+                    </div>
+                  )}
+                </button>
+              ) : (
+                <p className="text-xs text-muted-foreground mb-2">Be one of the first.</p>
+              )}
+
+              {/* Hosted: fan modes mix chips */}
+              {variant === 'hosted' && goingCount > 0 && (
+                <div className="flex gap-1.5 flex-wrap mt-1">
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-[hsl(173_58%_39%)]/10 text-[hsl(173_58%_25%)]">Athletes</span>
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-primary/10 text-primary">New converts</span>
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-muted text-muted-foreground">Vibes</span>
+                </div>
+              )}
+            </div>
+
+            {/* GOING CHAT TEASER */}
+            {isGoing && (
+              <button
+                onClick={() => navigate(`/event/${event.id}/chat`)}
+                className="w-full text-left rounded-xl bg-card border border-border/30 p-3"
+              >
+                <div className="flex justify-between items-center mb-1">
+                  <div className="flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[hsl(173_58%_39%)] inline-block" />
+                    <span className="text-xs font-semibold">Going chat</span>
+                  </div>
+                  <MessageCircle className="w-3.5 h-3.5 text-muted-foreground" />
+                </div>
+                <p className="text-xs italic text-muted-foreground">Join the conversation with everyone going.</p>
+              </button>
+            )}
+
+            {/* HOSTED: pricing band */}
+            {variant === 'hosted' && (
+              <div className="rounded-xl bg-primary/10 p-3">
+                <div className="flex justify-between items-center mb-0.5">
+                  <span className="text-xs font-semibold text-primary">
+                    Your price · {userTier === 'community' ? 'All-Access' : userTier === 'insider' ? 'Insider' : 'Free tier'}
+                  </span>
+                  <span className="text-lg font-bold">
+                    {userTier === 'community' ? '$25' : userTier === 'insider' ? '$35' : '$50'}
                   </span>
                 </div>
-                
-                {event.event_time && (
-                  <div className="flex items-center gap-3 text-muted-foreground">
-                    <Clock className="w-5 h-5 flex-shrink-0" />
-                    <span className="text-foreground font-medium">
-                      {formatTime(event.event_time)}
-                      {event.end_time && ` - ${formatTime(event.end_time)}`}
-                    </span>
-                  </div>
-                )}
-                
-                {(event.venue_name || event.city) && (
-                  <div className="flex items-center gap-3 text-muted-foreground">
-                    <MapPin className="w-5 h-5 flex-shrink-0" />
-                    {event.venue_name?.toLowerCase().includes('weplay') ? (
-                      <a 
-                        href="https://www.weplaystudios.com" 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="text-primary font-medium hover:underline flex items-center gap-1"
-                      >
-                        {event.venue_name}{event.venue_name && event.city ? ', ' : ''}{event.city}
-                        <ExternalLink className="w-3 h-3" />
-                      </a>
-                    ) : (
-                      <span className="text-foreground font-medium">
-                        {event.venue_name}{event.venue_name && event.city ? ', ' : ''}{event.city}
-                      </span>
-                    )}
-                  </div>
-                )}
-
-                {event.location_type === 'virtual' && event.virtual_link && (
-                  <div className="flex items-center gap-3 text-muted-foreground">
-                    <Video className="w-5 h-5 flex-shrink-0" />
-                    <a 
-                      href={event.virtual_link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-primary font-medium hover:underline"
-                    >
-                      Join Virtual Event
-                    </a>
-                  </div>
-                )}
-                
-                {event.capacity && (
-                  <div className="flex items-center gap-3 text-muted-foreground">
-                    <Users className="w-5 h-5 flex-shrink-0" />
-                    <span className="text-foreground font-medium">
-                      {attendeeCounts.yes} going · {event.capacity - attendeeCounts.yes} spots left
-                    </span>
-                  </div>
-                )}
+                <p className="text-[10px] text-muted-foreground">All-Access $25 · Insider $35 · Free tier $50</p>
               </div>
+            )}
 
-              {/* Early Access Banner */}
-              {user && (
-                <EarlyAccessBanner
-                  userTier={userTier}
-                  eventDate={event.event_date}
-                  eventTime={event.event_time}
-                  isExclusive={event.visibility === 'members_only'}
-                />
-              )}
-
-              {/* Check-In Button */}
-              {user && (rsvpStatus === 'attending' || rsvpStatus === 'yes') && (
-                <div className="mb-6">
-                  <EventCheckIn
-                    eventId={event.id}
-                    eventDate={event.event_date}
-                    eventCity={event.city}
-                  />
-                </div>
-              )}
-
-              {/* Going Solo Toggle */}
-              {user && (rsvpStatus === 'attending' || rsvpStatus === 'yes') && event && (
-                <div className="mb-6">
-                  <GoingSoloToggle eventId={event.id} />
-                </div>
-              )}
-
-              {/* Attendee Avatars - locked for free users */}
-              {attendees.length > 0 && (
-                <div className="mb-6">
-                  <p className="text-sm text-muted-foreground mb-2">
-                    {attendeeCounts.yes} going{attendeeCounts.maybe > 0 ? ` · ${attendeeCounts.maybe} maybe` : ''}
-                  </p>
-                  {/* Show first 3 avatars for free, full list locked */}
-                  <button onClick={() => setShowAttendeeList(true)} className="flex -space-x-2 hover:opacity-80 transition-opacity">
-                    {attendees.slice(0, userTier === 'free' ? 3 : 8).map((attendee) => (
-                      <Avatar key={attendee.id} className="w-10 h-10 border-2 border-background">
-                        <AvatarImage src={attendee.profile?.profile_photo_url || undefined} />
-                        <AvatarFallback className="bg-primary/10 text-primary text-sm">
-                          {attendee.profile?.name?.charAt(0).toUpperCase() || '?'}
-                        </AvatarFallback>
-                      </Avatar>
-                    ))}
-                    {attendees.length > (userTier === 'free' ? 3 : 8) && (
-                      <div className="w-10 h-10 rounded-full bg-muted border-2 border-background flex items-center justify-center text-sm font-medium">
-                        +{attendees.length - (userTier === 'free' ? 3 : 8)}
-                      </div>
-                    )}
-                  </button>
-                  {userTier === 'free' ? (
-                    <LockedFeature requiredTier="community" userTier={userTier} message="Unlock with Community — $15/mo">
-                      <p className="text-xs text-primary mt-1">View all attendees →</p>
-                    </LockedFeature>
-                  ) : (
-                    <p className="text-xs text-primary mt-1 cursor-pointer" onClick={() => setShowAttendeeList(true)}>
-                      View all attendees →
-                    </p>
-                  )}
-                </div>
-              )}
-
-              {/* Sport Tags */}
-              {event.sport_tags && event.sport_tags.length > 0 && (
-                <div className="flex flex-wrap gap-2 mb-6">
-                  {event.sport_tags.map((tag) => (
-                    <Badge key={tag} variant="outline">
-                      {tag}
-                    </Badge>
-                  ))}
-                </div>
-              )}
-
-              {/* Event Tags (Solo Friendly, 21+, etc.) */}
-              {event.event_tags && event.event_tags.length > 0 && (
-                <div className="mb-6">
-                  <EventTagBadges tags={event.event_tags} />
-                </div>
-              )}
-
-              {/* Description */}
-              {event.description && (
-                <div className="prose prose-sm max-w-none mb-6">
-                  <p className="text-muted-foreground whitespace-pre-wrap">{event.description}</p>
-                </div>
-              )}
-
-              {/* Host Profile */}
-              <EventHostProfile
-                hostId={event.host_user_id}
-                coHostIds={event.co_host_ids as string[] | undefined}
-              />
-
-              {/* Social proof: Who's going + Join chat (high on page) */}
-              <div className="mb-6 rounded-2xl border border-primary/20 bg-primary/5 p-4">
-                <div className="flex items-center justify-between mb-3">
-                  <div>
-                    <p className="font-semibold text-sm text-foreground">
-                      {attendeeCounts.yes > 0
-                        ? `${attendeeCounts.yes} going${attendeeCounts.maybe > 0 ? ` · ${attendeeCounts.maybe} maybe` : ''}`
-                        : 'Be the first one going'}
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      {attendees.length > 0 ? 'Real women, real plans.' : 'Start the group chat below.'}
-                    </p>
-                  </div>
-                  {attendees.length > 0 && (
-                    <button
-                      onClick={() => setShowAttendeeList(true)}
-                      className="flex -space-x-2 hover:opacity-80 transition-opacity"
-                      aria-label="See who's going"
-                    >
-                      {attendees.slice(0, 5).map((a) => (
-                        <Avatar key={a.id} className="w-9 h-9 border-2 border-background">
-                          <AvatarImage src={a.profile?.profile_photo_url || undefined} />
-                          <AvatarFallback className="bg-primary/10 text-primary text-xs">
-                            {a.profile?.name?.charAt(0).toUpperCase() || '?'}
-                          </AvatarFallback>
-                        </Avatar>
-                      ))}
-                      {attendees.length > 5 && (
-                        <div className="w-9 h-9 rounded-full bg-muted border-2 border-background flex items-center justify-center text-[11px] font-medium">
-                          +{attendees.length - 5}
-                        </div>
-                      )}
-                    </button>
-                  )}
-                </div>
-                <div className="flex gap-2">
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="flex-1 rounded-full"
-                    onClick={() => setShowAttendeeList(true)}
-                  >
-                    <Users className="w-4 h-4 mr-1.5" /> See who's going
-                  </Button>
-                  <Button
-                    size="sm"
-                    className="flex-1 rounded-full"
-                    onClick={() => document.getElementById('event-chat')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
-                  >
-                    <MessageCircle className="w-4 h-4 mr-1.5" /> Join chat
-                  </Button>
-                </div>
+            {/* Supplementary: where to watch / sit / check-in */}
+            {user && isGoing && (
+              <div className="rounded-xl bg-card border border-border/30 p-3">
+                <EventCheckIn eventId={event.id} eventDate={event.event_date} eventCity={event.city} />
               </div>
-
-              {/* Where to Watch */}
+            )}
+            {variant === 'external' && (
               <WhereToWatch eventCity={event.city} eventType={event.event_type} />
+            )}
+            <WhereToSit venueName={event.venue_name} eventType={event.event_type} />
 
-              {/* Where to Sit */}
-              <WhereToSit venueName={event.venue_name} eventType={event.event_type} />
+            {/* You've met */}
+            {user && isGoing && (
+              <YouveMetCard />
+            )}
 
-              {/* Who's Going Section */}
-              {id && <WhosGoing eventId={id} refreshKey={guestRefreshKey} />}
+            {/* Full who's going + comments below the fold */}
+            {id && <WhosGoing eventId={id} refreshKey={guestRefreshKey} />}
+            {id && <EventComments eventId={id} />}
 
-              {/* You've Met Suggestions */}
-              {user && (
-                <div className="mt-6">
-                  <YouveMetCard />
-                </div>
-              )}
-
-              {/* Comments / Hype Section */}
-              {id && (
-                <div className="mb-6">
-                  <EventComments eventId={id} />
-                </div>
-              )}
-
-              {/* Map Embed */}
-              {event.location_map_url && (
-                <div className="mb-6 rounded-lg overflow-hidden border">
-                  <iframe
-                    src={event.location_map_url}
-                    width="100%"
-                    height="200"
-                    style={{ border: 0 }}
-                    allowFullScreen
-                    loading="lazy"
-                    referrerPolicy="no-referrer-when-downgrade"
-                  />
-                </div>
-              )}
-
-              {/* Add to Calendar */}
-              {!isEventPast && (
-                <div className="mb-6">
-                  <Button variant="outline" size="sm" onClick={addToGoogleCalendar}>
-                    <Calendar className="w-4 h-4 mr-2" />
-                    Add to Google Calendar
-                  </Button>
-                </div>
-              )}
-
-              {/* CTA for non-logged in users */}
-              {!user && (
-                <div className="bg-pale-pink rounded-lg p-6 text-center">
-                  <h3 className="text-lg font-semibold mb-2">Join Loverball to RSVP</h3>
-                  <p className="text-sm text-muted-foreground mb-4">
-                    Connect with women who share your passion for sports.
-                  </p>
-                  <div className="flex gap-3 justify-center">
-                    <Button onClick={() => navigate(`/auth?redirect=/event/${id}`)}>
-                      Sign In
-                    </Button>
-                    <Button variant="outline" onClick={() => navigate(`/auth?redirect=/event/${id}`)}>
-                      Join Now
-                    </Button>
-                  </div>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </div>
-      </main>
+            {/* Calendar */}
+            {!isEventPast && (
+              <Button variant="outline" size="sm" onClick={addToGoogleCalendar} className="w-full">
+                <Calendar className="w-4 h-4 mr-2" /> Add to Google Calendar
+              </Button>
+            )}
+          </div>
+        </main>
+        );
+      })()}
 
       {/* Fixed Bottom RSVP Buttons */}
       {user && !isEventPast && (
