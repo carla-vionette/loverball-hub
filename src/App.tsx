@@ -118,7 +118,7 @@ const App = () => (
                 <Route path="/members/:id" element={<ProtectedRoute><MemberProfile /></ProtectedRoute>} />
                 <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
                 <Route path="/profile/edit" element={<ProtectedRoute><EditProfile /></ProtectedRoute>} />
-                <Route path="/profile/interests" element={<ProtectedRoute><ProfileInterests /></ProtectedRoute>} />
+                <Route path="/profile/interests" element={<Navigate to="/profile/edit" replace />} />
 
                 {/* Profile-linked utilities */}
                 <Route path="/finish-profile" element={<ProtectedRoute><FinishProfile /></ProtectedRoute>} />
