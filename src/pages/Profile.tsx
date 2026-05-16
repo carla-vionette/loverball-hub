@@ -343,6 +343,17 @@ const Profile = () => {
               </div>
             </motion.div>
 
+            {/* EDIT PROFILE LINK */}
+            <motion.div variants={staggerItem}>
+              <div className="glass-card rounded-2xl cursor-pointer hover:border-primary/30 transition-colors p-4 flex items-center justify-between" onClick={() => goTo("/profile/edit")}>
+                <div>
+                  <p className="font-medium text-foreground">Edit Profile</p>
+                  <p className="text-sm text-muted-foreground">Name, photo, bio, birthday & more</p>
+                </div>
+                <ChevronRight className="w-5 h-5 text-muted-foreground" />
+              </div>
+            </motion.div>
+
             {/* MY INTERESTS LINK (under Edit Profile) */}
             <motion.div variants={staggerItem}>
               <div className="glass-card rounded-2xl cursor-pointer hover:border-primary/30 transition-colors p-4 flex items-center justify-between" onClick={() => goTo("/profile/interests")}>
