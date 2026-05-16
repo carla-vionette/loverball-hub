@@ -262,6 +262,11 @@ const Events = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <Seo
+        title="The Scene — Women's Sports Events | Loverball"
+        description="Watch parties, game days, panels, brunches, and networking meetups for women's sports fans. Discover upcoming Loverball events."
+        path="/events"
+      />
       <MobileHeader /><DesktopNav /><BottomNav />
 
       <main className="md:ml-64 pt-16 md:pt-0 pb-24 md:pb-0">
