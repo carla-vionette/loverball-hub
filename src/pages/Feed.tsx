@@ -4,6 +4,7 @@ import { FEED_VIDEOS, type FeedVideoItem } from "@/lib/feedVideoData";
 import BottomNav from "@/components/BottomNav";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Play } from "lucide-react";
+import Seo from "@/components/Seo";
 
 type FeedTab = "foryou" | "following";
 
