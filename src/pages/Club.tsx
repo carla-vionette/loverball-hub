@@ -228,7 +228,13 @@ const Club: React.FC = () => {
     const next = [...drafted, c.id];
     setDrafted(next);
     saveDrafted(next);
-    toast.success(`Drafted ${c.name?.split(" ")[0] || "member"} — they'll be notified.`);
+    const first = c.name?.split(" ")[0] || "Member";
+    const opener = c.sharedTeams[0]
+      ? `Saw you ride for ${c.sharedTeams[0]}. Watch party this weekend?`
+      : c.sharedSports[0]
+      ? `Fellow ${c.sharedSports[0]} head — what's your take on the season?`
+      : `Hey ${first} — your profile caught my eye. What are you watching?`;
+    setConfirm({ open: true, first, opener });
   };
 
   return (
