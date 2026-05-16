@@ -64,6 +64,7 @@ interface AttendeeProfile {
 
 const Events = () => {
   const goTo = (path: string) => { window.location.href = path; };
+  const [gateOpen, setGateOpen] = useState(false);
   const [events, setEvents] = useState<DbEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [category, setCategory] = useState("All");
@@ -77,6 +78,15 @@ const Events = () => {
   const [isApprovedCreator, setIsApprovedCreator] = useState(false);
   const { user } = useAuth();
   const { toast } = useToast();
+
+  const openTile = (id: string) => {
+    if (user) goTo(`/event/${id}`);
+    else setGateOpen(true);
+  };
+  const requestRsvp = (id: string) => {
+    if (user) setRsvpId(id);
+    else setGateOpen(true);
+  };
 
   // Check if user is an approved creator/team/org account
   useEffect(() => {
@@ -259,7 +269,7 @@ const Events = () => {
           {/* FEATURED */}
           {featured && (
             <Card className="overflow-hidden mb-8 group cursor-pointer hover:shadow-lg transition-all"
-              onClick={() => goTo(`/event/${featured.id}`)}>
+              onClick={() => openTile(featured.id)}>
               <div className="relative h-56 md:h-72 overflow-hidden">
                 {featured.image_url ? (
                   <img src={featured.image_url} alt={featured.title} loading="eager" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
@@ -275,7 +285,7 @@ const Events = () => {
                     {featured.event_time && <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5" />{fmtTime(featured.event_time)}</span>}
                     {(featured.venue_name || featured.city) && <span className="flex items-center gap-1 truncate max-w-[180px]"><MapPin className="w-3.5 h-3.5 text-accent flex-shrink-0" />{featured.venue_name || featured.city}</span>}
                   </div>
-                  <Button className="rounded-full mt-4 bg-primary text-primary-foreground" onClick={e => { e.stopPropagation(); setRsvpId(featured.id); }}>RSVP Now</Button>
+                  <Button className="rounded-full mt-4 bg-primary text-primary-foreground" onClick={e => { e.stopPropagation(); requestRsvp(featured.id); }}>{user ? "RSVP Now" : "Sign Up to RSVP"}</Button>
                 </div>
               </div>
             </Card>
@@ -325,7 +335,7 @@ const Events = () => {
                 return (
                   <React.Fragment key={ev.id}>
                     <Card className="overflow-hidden group cursor-pointer hover:shadow-lg transition-all"
-                      onClick={() => goTo(`/event/${ev.id}`)}>
+                      onClick={() => openTile(ev.id)}>
                       <div className="relative h-44 overflow-hidden">
                         {ev.image_url ? (
                           <img src={ev.image_url} alt={ev.title} loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
@@ -349,52 +359,61 @@ const Events = () => {
                         {(ev.venue_name || ev.city) && (
                           <p className="text-xs text-muted-foreground flex items-center gap-1"><MapPin className="w-3 h-3 text-accent" />{ev.venue_name}{ev.venue_name && ev.city ? ", " : ""}{ev.city}</p>
                         )}
-                        {ev.event_tags && ev.event_tags.length > 0 && (
-                          <div className="pt-1" onClick={(e) => e.stopPropagation()}>
-                            <EventTagBadges tags={ev.event_tags} size="sm" />
-                          </div>
-                        )}
-                        {/* Attendee avatars */}
-                        {eventAttendees[ev.id]?.length > 0 && (
-                          <div className="flex items-center gap-1 pt-1" onClick={(e) => e.stopPropagation()}>
-                            <div className="flex -space-x-1.5">
-                              {eventAttendees[ev.id].slice(0, 4).map((attendee) => (
-                                <button
-                                  key={attendee.id}
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    setSelectedProfile(attendee);
-                                    setDrawerOpen(true);
-                                  }}
-                                  className="hover:z-10 transition-transform hover:scale-110"
-                                >
-                                  <Avatar className="w-7 h-7 border-2 border-background">
-                                    <AvatarImage src={attendee.profile_photo_url || undefined} />
-                                    <AvatarFallback className="bg-primary/10 text-primary text-[10px]">
-                                      {attendee.name?.charAt(0).toUpperCase()}
-                                    </AvatarFallback>
-                                  </Avatar>
-                                </button>
-                              ))}
+                        {user ? (
+                          <>
+                            {ev.event_tags && ev.event_tags.length > 0 && (
+                              <div className="pt-1" onClick={(e) => e.stopPropagation()}>
+                                <EventTagBadges tags={ev.event_tags} size="sm" />
+                              </div>
+                            )}
+                            {/* Attendee avatars */}
+                            {eventAttendees[ev.id]?.length > 0 && (
+                              <div className="flex items-center gap-1 pt-1" onClick={(e) => e.stopPropagation()}>
+                                <div className="flex -space-x-1.5">
+                                  {eventAttendees[ev.id].slice(0, 4).map((attendee) => (
+                                    <button
+                                      key={attendee.id}
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        setSelectedProfile(attendee);
+                                        setDrawerOpen(true);
+                                      }}
+                                      className="hover:z-10 transition-transform hover:scale-110"
+                                    >
+                                      <Avatar className="w-7 h-7 border-2 border-background">
+                                        <AvatarImage src={attendee.profile_photo_url || undefined} />
+                                        <AvatarFallback className="bg-primary/10 text-primary text-[10px]">
+                                          {attendee.name?.charAt(0).toUpperCase()}
+                                        </AvatarFallback>
+                                      </Avatar>
+                                    </button>
+                                  ))}
+                                </div>
+                                {ct > 4 && (
+                                  <span className="text-[10px] text-muted-foreground ml-1">+{ct - 4}</span>
+                                )}
+                              </div>
+                            )}
+                            <div className="flex items-center justify-between pt-2">
+                              <span className="text-xs text-muted-foreground flex items-center gap-1">
+                                <Users className="w-3 h-3" />{ct}{ev.capacity ? `/${ev.capacity}` : ""}
+                                {spotsLeft !== null && spotsLeft > 0 && spotsLeft <= 5 && (
+                                  <span className="text-destructive ml-1">({spotsLeft} left!)</span>
+                                )}
+                              </span>
+                              {rsvp ? (
+                                <Badge variant="outline" className="text-[10px] rounded-full capitalize text-muted-foreground">{rsvp}</Badge>
+                              ) : (
+                                <Button size="sm" className="rounded-full text-xs h-8 px-4 bg-primary text-primary-foreground" onClick={e => { e.stopPropagation(); setRsvpId(ev.id); }}>RSVP</Button>
+                              )}
                             </div>
-                            {ct > 4 && (
-                              <span className="text-[10px] text-muted-foreground ml-1">+{ct - 4}</span>
-                            )}
+                          </>
+                        ) : (
+                          <div className="pt-2 flex items-center justify-between gap-2">
+                            <p className="text-[11px] text-muted-foreground leading-snug">Sign up to see who's going & RSVP</p>
+                            <Button size="sm" className="rounded-full text-xs h-8 px-4 bg-primary text-primary-foreground" onClick={e => { e.stopPropagation(); setGateOpen(true); }}>Unlock</Button>
                           </div>
                         )}
-                        <div className="flex items-center justify-between pt-2">
-                          <span className="text-xs text-muted-foreground flex items-center gap-1">
-                            <Users className="w-3 h-3" />{ct}{ev.capacity ? `/${ev.capacity}` : ""}
-                            {spotsLeft !== null && spotsLeft > 0 && spotsLeft <= 5 && (
-                              <span className="text-destructive ml-1">({spotsLeft} left!)</span>
-                            )}
-                          </span>
-                          {rsvp ? (
-                            <Badge variant="outline" className="text-[10px] rounded-full capitalize text-muted-foreground">{rsvp}</Badge>
-                          ) : (
-                            <Button size="sm" className="rounded-full text-xs h-8 px-4 bg-primary text-primary-foreground" onClick={e => { e.stopPropagation(); setRsvpId(ev.id); }}>RSVP</Button>
-                          )}
-                        </div>
                       </CardContent>
                     </Card>
                     {/* Sponsor slot every 5th card */}
@@ -429,6 +448,29 @@ const Events = () => {
 
         {/* Event Submission Form */}
         <EventSubmissionForm open={showSubmitForm} onOpenChange={setShowSubmitForm} />
+
+        {/* SIGNUP GATE */}
+        <Dialog open={gateOpen} onOpenChange={setGateOpen}>
+          <DialogContent className="sm:max-w-md text-center">
+            <DialogHeader>
+              <DialogTitle className="font-display text-2xl uppercase tracking-tight">Join the Community</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4 pt-2">
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                Sign up to view event details, RSVP, and join the Loverball community of women who live for sports.
+              </p>
+              <div className="space-y-2 pt-2">
+                <Button className="w-full rounded-full bg-primary text-primary-foreground h-11" onClick={() => goTo('/signup')}>
+                  Sign Up — It's Free
+                </Button>
+                <Button variant="outline" className="w-full rounded-full h-11" onClick={() => goTo('/auth')}>
+                  I already have an account
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+
       </main>
     </div>
   );
