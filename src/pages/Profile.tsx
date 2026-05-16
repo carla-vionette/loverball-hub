@@ -546,7 +546,7 @@ const Profile = () => {
                   </CollapsibleTrigger>
                   <CollapsibleContent>
                     <CardContent className="px-5 pb-5 pt-2">
-                      <ProfileScores />
+                      <ProfileScores favoriteTeams={[...(profile.favorite_teams_players || []), ...((profile as any).favorite_la_teams || [])]} />
                     </CardContent>
                   </CollapsibleContent>
                 </Card>
