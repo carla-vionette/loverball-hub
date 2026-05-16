@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -8,14 +8,19 @@ import DesktopNav from "@/components/DesktopNav";
 import BottomNav from "@/components/BottomNav";
 import Seo from "@/components/Seo";
 
-// ── Scoped editorial palette (Club only) ─────────────────────────────
+// ── Loverball design system (Club, aligned with global tokens) ───────
 const C = {
-  bg: "#0a0a0a",
-  card: "#1A1A1A",
+  bg: "#0A0A0B",
+  card: "#141415",
+  cardElev: "#1A1A1C",
   text: "#FAF5E9",
-  muted: "#B8B8B8",
-  accent: "#D4537E",
-  chip: "#2A2A2A",
+  muted: "#9B9B9F",
+  faint: "#6B6B70",
+  raspberry: "#E8276F",
+  copper: "#D88C5A",
+  border: "rgba(255,255,255,0.08)",
+  borderStrong: "rgba(255,255,255,0.14)",
+  chip: "rgba(255,255,255,0.05)",
 };
 
 const DRAFT_LIMIT = 3;
@@ -37,8 +42,11 @@ type Profile = {
 type Candidate = Profile & {
   matchPct: number;
   sharedTeams: string[];
+  sharedVibes: string[];
+  sharedSports: string[];
   vibe: string;
-  tags: string[];
+  identityTags: string[];
+  teamCityTags: string[];
 };
 
 // ── Compute match score from real overlap ────────────────────────────
@@ -50,7 +58,7 @@ function buildCandidate(me: Profile, them: Profile): Candidate {
   const sharedTeams = theirTeams.filter(t => myTeams.has(t.toLowerCase()));
 
   const mySports = new Set((me.favorite_sports || []).map(s => s.toLowerCase()));
-  const theirSports = (them.favorite_sports || []).filter(s => mySports.has(s.toLowerCase()));
+  const sharedSports = (them.favorite_sports || []).filter(s => mySports.has(s.toLowerCase()));
 
   const myVibes = new Set(
     [...(me.looking_for_tags || []), ...(me.other_interests || [])].map(s => s.toLowerCase())
@@ -60,31 +68,41 @@ function buildCandidate(me: Profile, them: Profile): Candidate {
 
   const sameCity = me.city && them.city && me.city.toLowerCase() === them.city.toLowerCase() ? 1 : 0;
 
-  // Weighted score over a possible-overlap denominator (real, not random)
   const possible =
     Math.min(myTeams.size, theirTeams.length) * 3 +
     Math.min(mySports.size, (them.favorite_sports || []).length) * 2 +
     Math.min(myVibes.size, theirVibesAll.length) * 1 +
     1;
-  const got = sharedTeams.length * 3 + theirSports.length * 2 + sharedVibes.length * 1 + sameCity;
+  const got = sharedTeams.length * 3 + sharedSports.length * 2 + sharedVibes.length * 1 + sameCity;
   const matchPct = Math.max(0, Math.min(99, Math.round((got / possible) * 100)));
 
   const vibe =
     (them.bio && them.bio.trim()) ||
     sharedVibes[0] ||
     theirVibesAll[0] ||
-    theirSports[0] ||
+    sharedSports[0] ||
     "";
 
-  const tags = [
-    ...sharedTeams.slice(0, 1),
+  const identityTags = [
     ...sharedVibes.slice(0, 2),
-    ...theirSports.slice(0, 1),
-  ]
-    .filter(Boolean)
-    .slice(0, 3);
+    ...sharedSports.slice(0, 1),
+  ].filter(Boolean).slice(0, 3);
 
-  return { ...them, matchPct, sharedTeams, vibe, tags };
+  const teamCityTags = [
+    ...sharedTeams.slice(0, 1),
+    ...(them.city ? [them.city] : []),
+  ].filter(Boolean) as string[];
+
+  return {
+    ...them,
+    matchPct,
+    sharedTeams,
+    sharedVibes,
+    sharedSports,
+    vibe,
+    identityTags,
+    teamCityTags,
+  };
 }
 
 // ── Weekly draft counter (Mon-reset) ─────────────────────────────────
@@ -113,13 +131,15 @@ function saveDrafted(ids: string[]) {
 const Club: React.FC = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [me, setMe] = useState<Profile | null>(null);
+  const [, setMe] = useState<Profile | null>(null);
   const [candidates, setCandidates] = useState<Candidate[]>([]);
   const [loading, setLoading] = useState(true);
   const [drafted, setDrafted] = useState<string[]>(loadDrafted().ids);
   const [pending, setPending] = useState<string | null>(null);
 
   const draftsLeft = Math.max(0, DRAFT_LIMIT - drafted.length);
+  const featured = candidates[0];
+  const rest = candidates.slice(1);
 
   useEffect(() => {
     let cancelled = false;
@@ -141,7 +161,6 @@ const Club: React.FC = () => {
       }
       setMe(myRow as Profile);
 
-      // Pull members (exclude self). Limit broad pool; we filter for overlap client-side.
       const { data: rows } = await supabase
         .from("profiles")
         .select(
@@ -150,7 +169,6 @@ const Club: React.FC = () => {
         .neq("id", user.id)
         .limit(200);
 
-      // Exclude existing friendships (any direction)
       const { data: existing } = await supabase
         .from("friendships")
         .select("requester_id,addressee_id")
@@ -166,7 +184,7 @@ const Club: React.FC = () => {
         .map((p: any) => buildCandidate(myRow as Profile, p as Profile))
         .filter(c => c.matchPct > 0)
         .sort((a, b) => b.matchPct - a.matchPct)
-        .slice(0, 8);
+        .slice(0, 9);
 
       if (!cancelled) {
         setCandidates(list);
@@ -218,83 +236,156 @@ const Club: React.FC = () => {
       <DesktopNav />
       <BottomNav />
 
-      <main className="md:ml-64 pb-24 md:pb-10 pt-16 md:pt-2">
-        <div className="max-w-[420px] md:max-w-2xl mx-auto px-5 pt-2">
-          {/* HEADER */}
-          <header className="pt-2 pb-4">
-            <div className="flex items-start justify-between gap-4">
+      <main className="md:ml-64 pb-28 md:pb-10 pt-16 md:pt-2">
+        <div className="max-w-[440px] md:max-w-2xl mx-auto px-5">
+          {/* MASTHEAD */}
+          <header className="pt-3 pb-5">
+            <p
+              className="text-[10px] uppercase mb-2"
+              style={{
+                fontFamily: "'Space Mono', ui-monospace, monospace",
+                color: C.copper,
+                letterSpacing: "0.22em",
+              }}
+            >
+              Vol. 01 · The Club
+            </p>
+            <div className="flex items-end justify-between gap-3">
               <h1
-                className="italic leading-[0.95] tracking-tight"
+                className="leading-[0.86] tracking-tight"
                 style={{
-                  fontFamily: "'Playfair Display', Georgia, serif",
-                  fontSize: 38,
+                  fontFamily: "'Anton', 'Bebas Neue', sans-serif",
+                  fontSize: 64,
                   color: C.text,
+                  textTransform: "uppercase",
                 }}
               >
-                Starting
+                The
                 <br />
-                XI.
+                Roster
               </h1>
-              <span
-                className="mt-2 text-[10px] font-semibold uppercase"
-                style={{ color: C.accent, letterSpacing: "0.18em" }}
+              <p
+                className="italic text-right pb-1"
+                style={{
+                  fontFamily: "'Playfair Display', Georgia, serif",
+                  fontSize: 16,
+                  color: C.text,
+                  lineHeight: 1.1,
+                  maxWidth: 140,
+                }}
               >
-                Find your
+                a curated
                 <br />
-                people
-              </span>
+                <span style={{ color: C.raspberry }}>starting&nbsp;XI</span>
+              </p>
             </div>
 
             <div
               className="mt-5 pt-3 flex items-center justify-between"
-              style={{ borderTop: `1px solid ${C.chip}` }}
+              style={{ borderTop: `1px solid ${C.border}` }}
             >
               <span
                 className="text-[10px] uppercase"
-                style={{ color: C.muted, letterSpacing: "0.18em" }}
+                style={{
+                  fontFamily: "'Space Mono', ui-monospace, monospace",
+                  color: C.muted,
+                  letterSpacing: "0.2em",
+                }}
               >
-                Picked for you this week
+                Picked for you · Week {weekKey().slice(5)}
               </span>
               <span
                 className="text-[10px] uppercase font-semibold"
-                style={{ color: C.accent, letterSpacing: "0.15em" }}
+                style={{
+                  fontFamily: "'Space Mono', ui-monospace, monospace",
+                  color: C.raspberry,
+                  letterSpacing: "0.18em",
+                }}
               >
-                Drafts left: {draftsLeft}
+                {draftsLeft} draft{draftsLeft === 1 ? "" : "s"} left
               </span>
             </div>
           </header>
 
-          {/* AI BANNER */}
-          <div
-            className="rounded-lg px-4 py-3 mb-5"
-            style={{
-              background: "rgba(212,83,126,0.08)",
-              border: `1px solid rgba(212,83,126,0.22)`,
-            }}
-          >
-            <p className="text-[12px] leading-relaxed" style={{ color: C.text }}>
-              Surfaced based on your teams, vibes & this week's matchups.
-            </p>
+          {/* DISCOVERY FILTER CHIPS */}
+          <div className="flex flex-wrap gap-1.5 mb-5">
+            {["Team", "City", "Vibe", "Sport", "Events", "Interests"].map((f, i) => (
+              <span
+                key={f}
+                className="text-[10px] font-semibold uppercase px-2.5 py-1 rounded-full"
+                style={{
+                  background: i === 0 ? "rgba(232,39,111,0.12)" : C.chip,
+                  color: i === 0 ? C.raspberry : C.muted,
+                  border: `1px solid ${i === 0 ? "rgba(232,39,111,0.3)" : C.border}`,
+                  letterSpacing: "0.12em",
+                  fontFamily: "Inter, sans-serif",
+                }}
+              >
+                {f}
+              </span>
+            ))}
           </div>
 
-          {/* FEED */}
           {loading ? (
-            <SkeletonList />
+            <>
+              <FeaturedSkeleton />
+              <SkeletonList />
+            </>
           ) : candidates.length === 0 ? (
             <EmptyState />
           ) : (
-            <ul className="space-y-3">
-              {candidates.map(c => (
-                <MemberCard
-                  key={c.id}
-                  c={c}
-                  drafted={drafted.includes(c.id)}
-                  pending={pending === c.id}
-                  onDraft={() => handleDraft(c)}
-                  onOpen={() => navigate(`/members/${c.id}`)}
+            <>
+              {/* FEATURED MEMBER */}
+              {featured && (
+                <FeaturedCard
+                  c={featured}
+                  drafted={drafted.includes(featured.id)}
+                  pending={pending === featured.id}
+                  onDraft={() => handleDraft(featured)}
+                  onOpen={() => navigate(`/members/${featured.id}`)}
                 />
-              ))}
-            </ul>
+              )}
+
+              {/* SECTION HEADING */}
+              {rest.length > 0 && (
+                <div className="flex items-end justify-between mt-7 mb-3">
+                  <h2
+                    style={{
+                      fontFamily: "'Anton', 'Bebas Neue', sans-serif",
+                      fontSize: 24,
+                      letterSpacing: "0.02em",
+                      textTransform: "uppercase",
+                      color: C.text,
+                    }}
+                  >
+                    The Bench
+                  </h2>
+                  <span
+                    className="text-[10px] uppercase pb-1"
+                    style={{
+                      fontFamily: "'Space Mono', ui-monospace, monospace",
+                      color: C.faint,
+                      letterSpacing: "0.18em",
+                    }}
+                  >
+                    {rest.length} more
+                  </span>
+                </div>
+              )}
+
+              <ul className="space-y-3">
+                {rest.map(c => (
+                  <MemberCard
+                    key={c.id}
+                    c={c}
+                    drafted={drafted.includes(c.id)}
+                    pending={pending === c.id}
+                    onDraft={() => handleDraft(c)}
+                    onOpen={() => navigate(`/members/${c.id}`)}
+                  />
+                ))}
+              </ul>
+            </>
           )}
         </div>
       </main>
@@ -302,7 +393,168 @@ const Club: React.FC = () => {
   );
 };
 
-// ── Member card ──────────────────────────────────────────────────────
+// ── Featured (hero) member card ──────────────────────────────────────
+const FeaturedCard: React.FC<{
+  c: Candidate;
+  drafted: boolean;
+  pending: boolean;
+  onDraft: () => void;
+  onOpen: () => void;
+}> = ({ c, drafted, pending, onDraft, onOpen }) => {
+  const first = c.name?.split(" ")[0] || "Member";
+  const initial = c.name?.split(" ").slice(-1)[0]?.[0] || "";
+
+  return (
+    <article
+      className="relative rounded-2xl overflow-hidden"
+      style={{
+        background: C.cardElev,
+        border: `1px solid ${C.border}`,
+        boxShadow: "0 24px 60px -30px rgba(232,39,111,0.35)",
+      }}
+    >
+      {/* Cinematic portrait */}
+      <button
+        onClick={onOpen}
+        className="block w-full relative"
+        style={{ aspectRatio: "4 / 5", background: "#0F0F10" }}
+        aria-label={`Open ${first}'s profile`}
+      >
+        {c.profile_photo_url ? (
+          <img
+            src={c.profile_photo_url}
+            alt={c.name || "Member"}
+            className="w-full h-full object-cover"
+            loading="lazy"
+            style={{ filter: "saturate(0.92) contrast(1.05)" }}
+          />
+        ) : (
+          <div
+            className="w-full h-full flex items-center justify-center"
+            style={{
+              background:
+                "linear-gradient(140deg, rgba(232,39,111,0.18), rgba(216,140,90,0.14))",
+              fontFamily: "'Anton', sans-serif",
+              fontSize: 120,
+              color: "rgba(250,245,233,0.35)",
+              letterSpacing: "0.02em",
+            }}
+          >
+            {first[0]}
+          </div>
+        )}
+
+        {/* Top eyebrow */}
+        <div className="absolute top-3 left-3 right-3 flex items-start justify-between">
+          <span
+            className="text-[9.5px] font-bold uppercase px-2 py-1 rounded"
+            style={{
+              background: "rgba(10,10,11,0.6)",
+              border: `1px solid ${C.border}`,
+              backdropFilter: "blur(12px)",
+              color: C.copper,
+              letterSpacing: "0.2em",
+              fontFamily: "'Space Mono', monospace",
+            }}
+          >
+            Featured · This Week
+          </span>
+          <span
+            className="text-[10px] font-bold uppercase px-2 py-1 rounded"
+            style={{
+              background: "rgba(232,39,111,0.92)",
+              color: "#0A0A0B",
+              letterSpacing: "0.1em",
+              fontFamily: "Inter, sans-serif",
+            }}
+          >
+            {c.matchPct}% match
+          </span>
+        </div>
+
+        {/* Gradient floor */}
+        <div
+          className="absolute inset-x-0 bottom-0 h-2/3 pointer-events-none"
+          style={{
+            background:
+              "linear-gradient(to top, rgba(10,10,11,0.96) 0%, rgba(10,10,11,0.6) 45%, transparent 100%)",
+          }}
+        />
+
+        {/* Bottom-left identity */}
+        <div className="absolute left-4 right-4 bottom-3">
+          <h3
+            className="leading-[0.92] tracking-tight"
+            style={{
+              fontFamily: "'Anton', 'Bebas Neue', sans-serif",
+              fontSize: 42,
+              color: C.text,
+              textTransform: "uppercase",
+              textShadow: "0 2px 24px rgba(0,0,0,0.6)",
+            }}
+          >
+            {first} {initial && `${initial}.`}
+          </h3>
+          {(c.teamCityTags.length > 0) && (
+            <p
+              className="mt-1 text-[10.5px] font-semibold uppercase"
+              style={{
+                color: C.copper,
+                letterSpacing: "0.18em",
+                fontFamily: "'Space Mono', monospace",
+              }}
+            >
+              {c.teamCityTags.join("  ·  ")}
+            </p>
+          )}
+        </div>
+      </button>
+
+      {/* Body */}
+      <div className="px-4 pt-3 pb-4">
+        {c.vibe && (
+          <p
+            className="italic text-[14.5px] leading-snug line-clamp-3"
+            style={{
+              fontFamily: "'Playfair Display', Georgia, serif",
+              color: C.text,
+            }}
+          >
+            &ldquo;{c.vibe}&rdquo;
+          </p>
+        )}
+
+        {c.identityTags.length > 0 && (
+          <div className="mt-3 flex flex-wrap gap-1.5">
+            {c.identityTags.map(t => (
+              <VibeTag key={t} label={t} accent />
+            ))}
+          </div>
+        )}
+
+        {/* Connection prompt + CTA */}
+        <div
+          className="mt-4 pt-3 flex items-center justify-between gap-3"
+          style={{ borderTop: `1px solid ${C.border}` }}
+        >
+          <p
+            className="text-[11px] leading-tight flex-1"
+            style={{
+              color: C.muted,
+              fontFamily: "'Space Mono', monospace",
+              letterSpacing: "0.04em",
+            }}
+          >
+            <span style={{ color: C.raspberry }}>↳</span> {connectionPrompt(c)}
+          </p>
+          <DraftButton drafted={drafted} pending={pending} onClick={onDraft} large />
+        </div>
+      </div>
+    </article>
+  );
+};
+
+// ── Compact member card ──────────────────────────────────────────────
 const MemberCard: React.FC<{
   c: Candidate;
   drafted: boolean;
@@ -312,18 +564,20 @@ const MemberCard: React.FC<{
 }> = ({ c, drafted, pending, onDraft, onOpen }) => {
   const first = c.name?.split(" ")[0] || "Member";
   const initial = c.name?.split(" ").slice(-1)[0]?.[0] || "";
-  const teamLine = [c.sharedTeams[0], c.city].filter(Boolean).join(" · ").toUpperCase();
+  const meta = c.teamCityTags.join(" · ").toUpperCase();
 
   return (
     <li
       className="relative rounded-xl p-3 flex gap-3"
-      style={{ background: C.card, border: `1px solid ${C.chip}` }}
+      style={{
+        background: C.card,
+        border: `1px solid ${C.border}`,
+      }}
     >
-      {/* Portrait */}
       <button
         onClick={onOpen}
-        className="shrink-0 rounded-lg overflow-hidden"
-        style={{ width: 72, height: 88, background: C.chip }}
+        className="shrink-0 rounded-lg overflow-hidden relative"
+        style={{ width: 78, height: 96, background: "#0F0F10" }}
         aria-label={`Open ${first}'s profile`}
       >
         {c.profile_photo_url ? (
@@ -332,14 +586,17 @@ const MemberCard: React.FC<{
             alt={c.name || "Member"}
             className="w-full h-full object-cover"
             loading="lazy"
+            style={{ filter: "saturate(0.92) contrast(1.05)" }}
           />
         ) : (
           <div
-            className="w-full h-full flex items-center justify-center italic"
+            className="w-full h-full flex items-center justify-center"
             style={{
-              color: C.muted,
-              fontFamily: "'Playfair Display', Georgia, serif",
-              fontSize: 28,
+              background:
+                "linear-gradient(140deg, rgba(232,39,111,0.18), rgba(216,140,90,0.12))",
+              fontFamily: "'Anton', sans-serif",
+              fontSize: 38,
+              color: "rgba(250,245,233,0.4)",
             }}
           >
             {first[0]}
@@ -347,101 +604,147 @@ const MemberCard: React.FC<{
         )}
       </button>
 
-      {/* Right column */}
       <div className="flex-1 min-w-0 flex flex-col">
         <div className="flex items-start justify-between gap-2">
           <button onClick={onOpen} className="text-left min-w-0">
             <h3
-              className="italic truncate"
+              className="leading-[0.95] tracking-tight truncate"
               style={{
-                fontFamily: "'Playfair Display', Georgia, serif",
-                fontSize: 19,
+                fontFamily: "'Anton', 'Bebas Neue', sans-serif",
+                fontSize: 22,
                 color: C.text,
-                lineHeight: 1.15,
+                textTransform: "uppercase",
               }}
             >
               {first} {initial && `${initial}.`}
             </h3>
-            {teamLine && (
+            {meta && (
               <p
-                className="mt-0.5 text-[10px] font-semibold"
-                style={{ color: C.accent, letterSpacing: "0.12em" }}
+                className="mt-1 text-[9.5px] font-semibold truncate"
+                style={{
+                  color: C.copper,
+                  letterSpacing: "0.16em",
+                  fontFamily: "'Space Mono', monospace",
+                }}
               >
-                {teamLine}
+                {meta}
               </p>
             )}
           </button>
           <span
-            className="shrink-0 text-[10px] font-semibold uppercase px-2 py-1 rounded"
+            className="shrink-0 text-[10px] font-bold uppercase px-2 py-0.5 rounded"
             style={{
-              color: C.text,
-              background: "rgba(250,245,233,0.06)",
+              color: C.raspberry,
+              background: "rgba(232,39,111,0.1)",
+              border: "1px solid rgba(232,39,111,0.25)",
               letterSpacing: "0.08em",
+              fontFamily: "Inter, sans-serif",
             }}
           >
-            {c.matchPct}% match
+            {c.matchPct}%
           </span>
         </div>
 
         {c.vibe && (
           <p
-            className="mt-1.5 text-[11.5px] leading-snug line-clamp-2"
+            className="mt-1.5 italic text-[12px] leading-snug line-clamp-2"
             style={{
-              fontFamily:
-                "ui-monospace, 'SF Mono', Menlo, Consolas, 'Courier New', monospace",
+              fontFamily: "'Playfair Display', Georgia, serif",
               color: C.muted,
             }}
           >
-            <span style={{ color: C.text }}>VIBE:</span> {c.vibe}
+            &ldquo;{c.vibe}&rdquo;
           </p>
         )}
 
         <div className="mt-2 flex items-center justify-between gap-2">
-          <div className="flex flex-wrap gap-1.5 min-w-0">
-            {c.tags.map(t => (
-              <span
-                key={t}
-                className="text-[9.5px] font-semibold uppercase px-2 py-0.5 rounded"
-                style={{
-                  background: C.chip,
-                  color: C.text,
-                  letterSpacing: "0.08em",
-                }}
-              >
-                {t}
-              </span>
+          <div className="flex flex-wrap gap-1 min-w-0">
+            {c.identityTags.slice(0, 3).map(t => (
+              <VibeTag key={t} label={t} />
             ))}
           </div>
-          <button
-            onClick={onDraft}
-            disabled={drafted || pending}
-            className="shrink-0 text-[10px] font-bold uppercase px-3 py-1.5 rounded-full transition-opacity"
-            style={{
-              background: drafted ? "transparent" : C.accent,
-              color: drafted ? C.muted : "#0a0a0a",
-              border: drafted ? `1px solid ${C.chip}` : "none",
-              letterSpacing: "0.12em",
-              opacity: pending ? 0.6 : 1,
-              minHeight: 32,
-            }}
-          >
-            {drafted ? "Drafted" : pending ? "…" : "+ Draft"}
-          </button>
+          <DraftButton drafted={drafted} pending={pending} onClick={onDraft} />
         </div>
       </div>
     </li>
   );
 };
 
+// ── Shared bits ──────────────────────────────────────────────────────
+const VibeTag: React.FC<{ label: string; accent?: boolean }> = ({ label, accent }) => (
+  <span
+    className="text-[9.5px] font-semibold uppercase px-2 py-0.5 rounded-full"
+    style={{
+      background: accent ? "rgba(216,140,90,0.1)" : C.chip,
+      color: accent ? C.copper : C.text,
+      border: `1px solid ${accent ? "rgba(216,140,90,0.28)" : C.border}`,
+      letterSpacing: "0.1em",
+      fontFamily: "Inter, sans-serif",
+    }}
+  >
+    {label}
+  </span>
+);
+
+const DraftButton: React.FC<{
+  drafted: boolean;
+  pending: boolean;
+  onClick: () => void;
+  large?: boolean;
+}> = ({ drafted, pending, onClick, large }) => (
+  <button
+    onClick={onClick}
+    disabled={drafted || pending}
+    className="shrink-0 font-bold uppercase rounded-full transition-opacity"
+    style={{
+      fontFamily: "Inter, sans-serif",
+      fontSize: large ? 11 : 10,
+      letterSpacing: "0.14em",
+      padding: large ? "10px 18px" : "7px 14px",
+      background: drafted ? "transparent" : C.raspberry,
+      color: drafted ? C.muted : "#0A0A0B",
+      border: drafted ? `1px solid ${C.borderStrong}` : "none",
+      opacity: pending ? 0.6 : 1,
+      boxShadow: drafted ? "none" : "0 8px 24px -10px rgba(232,39,111,0.6)",
+      minHeight: large ? 40 : 32,
+    }}
+  >
+    {drafted ? "✓ Drafted" : pending ? "…" : large ? "+ Draft to Roster" : "+ Draft"}
+  </button>
+);
+
+function connectionPrompt(c: Candidate): string {
+  if (c.sharedTeams.length > 0)
+    return `You both ride for ${c.sharedTeams[0]}. Open the conversation.`;
+  if (c.sharedVibes.length > 0)
+    return `Shared vibe: ${c.sharedVibes[0]}. Worth a hello.`;
+  if (c.sharedSports.length > 0)
+    return `Both deep on ${c.sharedSports[0]}. Draft her in.`;
+  return "Your scenes overlap. Make the first move.";
+}
+
+const FeaturedSkeleton = () => (
+  <div
+    className="rounded-2xl overflow-hidden animate-pulse"
+    style={{ background: C.cardElev, border: `1px solid ${C.border}` }}
+  >
+    <div style={{ aspectRatio: "4 / 5", background: C.card }} />
+    <div className="p-4 space-y-2">
+      <div className="h-4 w-3/4 rounded" style={{ background: C.card }} />
+      <div className="h-3 w-1/2 rounded" style={{ background: C.card }} />
+    </div>
+  </div>
+);
+
 const SkeletonList = () => (
-  <ul className="space-y-3">
+  <ul className="space-y-3 mt-7">
     {[0, 1, 2, 3].map(i => (
       <li
         key={i}
         className="rounded-xl p-3 flex gap-3 animate-pulse"
-        style={{ background: C.card, border: `1px solid ${C.chip}` }}
+        style={{ background: C.card, border: `1px solid ${C.border}` }}
       >
-        <div className="rounded-lg" style={{ width: 72, height: 88, background: C.chip }} />
+        <div className="rounded-lg" style={{ width: 78, height: 96, background: C.chip }} />
         <div className="flex-1 space-y-2 py-1">
           <div className="h-4 w-2/3 rounded" style={{ background: C.chip }} />
           <div className="h-3 w-1/3 rounded" style={{ background: C.chip }} />
@@ -454,18 +757,36 @@ const SkeletonList = () => (
 
 const EmptyState = () => (
   <div
-    className="rounded-xl px-5 py-10 text-center"
-    style={{ background: C.card, border: `1px solid ${C.chip}` }}
+    className="rounded-2xl px-6 py-12 text-center"
+    style={{ background: C.cardElev, border: `1px solid ${C.border}` }}
   >
     <p
-      className="italic mb-2"
-      style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 20, color: C.text }}
+      className="text-[10px] uppercase mb-3"
+      style={{
+        fontFamily: "'Space Mono', monospace",
+        color: C.copper,
+        letterSpacing: "0.22em",
+      }}
     >
-      No matchups this week.
+      Empty roster
     </p>
-    <p className="text-[12px]" style={{ color: C.muted }}>
-      Add more teams or vibes in <span style={{ color: C.accent }}>Edit Profile</span> and
-      we'll surface your people next reset.
+    <h3
+      className="mb-3 leading-[0.95]"
+      style={{
+        fontFamily: "'Anton', sans-serif",
+        fontSize: 32,
+        color: C.text,
+        textTransform: "uppercase",
+      }}
+    >
+      No matchups
+      <br />
+      this week.
+    </h3>
+    <p className="text-[13px] leading-relaxed" style={{ color: C.muted }}>
+      Add more teams or vibes in{" "}
+      <span style={{ color: C.raspberry }}>Edit Profile</span> and we'll surface
+      your people on the next reset.
     </p>
   </div>
 );
