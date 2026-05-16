@@ -186,6 +186,11 @@ const Members = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <Seo
+        title="Club Members | Loverball"
+        description="Discover and connect with women sports fans in your city. Search the Loverball member roster."
+        path="/members"
+      />
       <MobileHeader />
       <DesktopNav />
       <BottomNav />
