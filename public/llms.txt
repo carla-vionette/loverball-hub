@@ -1,0 +1,20 @@
+# Loverball
+
+> The community platform for women who love sports — events, members, stories, and culture for her game.
+
+Loverball is a Los Angeles–rooted, women-led sports community covering the WNBA, NWSL, NCAA women's basketball, and broader women's sports culture. Members discover events, follow favorite teams, connect with other fans, and read curated sports news.
+
+## Pages
+
+- [Home](/): Brand overview, mission, and member access.
+- [Feed](/feed): Immersive video and content feed for women's sports.
+- [Events / Scene](/events): Upcoming watch parties, meetups, and cultural events.
+- [Club / Members](/members): Member directory and friend search.
+- [Pricing](/pricing): Free, All Access, and The Club membership tiers.
+- [Sign up](/signup): Join with an invite code.
+- [Sign in](/auth): Member login.
+
+## Optional
+
+- [Terms](/terms): Terms of service.
+- [Privacy](/privacy): Privacy policy.
