@@ -181,6 +181,19 @@ const MemberProfile = () => {
           .eq("id", user.id)
           .maybeSingle();
         if (myRow) setMe(myRow as MyProfile);
+
+        // Fetch events this member is attending (going / approved RSVPs on public events)
+        const { data: guestRows } = await supabase
+          .from("event_guests")
+          .select("event_id, status, events!inner(id,title,event_date,venue_name,city,image_url,slug,visibility)")
+          .eq("user_id", id)
+          .in("status", ["going", "approved", "confirmed"]);
+        const upcoming = (guestRows || [])
+          .map((r: any) => r.events)
+          .filter((e: any) => e && e.visibility === "public" && new Date(e.event_date) >= new Date(new Date().toDateString()))
+          .sort((a: any, b: any) => a.event_date.localeCompare(b.event_date))
+          .slice(0, 6);
+        setAttending(upcoming as any);
       } catch {
         /* swallow */
       } finally {
