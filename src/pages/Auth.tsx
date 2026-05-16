@@ -18,7 +18,16 @@ const Auth = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  const [mode, setMode] = useState<AuthMode>("join");
+  const initialMode = ((): AuthMode => {
+    if (searchParams.get('reset') === 'true') return 'reset_password';
+    const m = searchParams.get('mode');
+    if (m === 'signin' || m === 'login') return 'signin';
+    if (m === 'signup' || m === 'join') return 'join';
+    if (searchParams.get('signup') === 'true') return 'join';
+    return 'join';
+  })();
+
+  const [mode, setMode] = useState<AuthMode>(initialMode);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -30,8 +39,11 @@ const Auth = () => {
   const redirectTo = searchParams.get('redirect') || '/watch';
 
   useEffect(() => {
-    if (searchParams.get('reset') === 'true') setMode("reset_password");
-    if (searchParams.get('signup') === 'true') setMode("join");
+    if (searchParams.get('reset') === 'true') { setMode('reset_password'); return; }
+    const m = searchParams.get('mode');
+    if (m === 'signin' || m === 'login') setMode('signin');
+    else if (m === 'signup' || m === 'join') setMode('join');
+    else if (searchParams.get('signup') === 'true') setMode('join');
   }, [searchParams]);
 
   // ── Sign up ──────────────────────────────────────────────────────────
