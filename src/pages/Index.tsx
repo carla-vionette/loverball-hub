@@ -234,7 +234,7 @@ const Index = () => {
                 borderRadius: 999,
               }}
             >
-              Join free
+              JOIN
             </button>
           </div>
 
@@ -285,7 +285,7 @@ const Index = () => {
                   padding: "12px 18px", borderRadius: 999,
                 }}
               >
-                Join free
+                JOIN
               </button>
             </div>
           </div>
