@@ -256,36 +256,33 @@ const Events = () => {
       <main className="md:ml-64 pt-16 md:pt-0 pb-24 md:pb-0">
         <div className="max-w-6xl mx-auto px-5 md:px-10 py-8">
           {/* ── Editorial masthead ── */}
-          <div className="mb-8">
-            <div className="flex items-center gap-2 mb-3">
-              <span style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 10, letterSpacing: "0.22em", color: "#E8276F", textTransform: "uppercase" }}>
-                Vol. 02
-              </span>
-              <span style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 10, letterSpacing: "0.22em", color: "rgba(248,248,248,0.5)", textTransform: "uppercase" }}>
-                · The Scene · {upcomingEvents.length} on deck
-              </span>
-            </div>
-            <div className="flex items-end justify-between gap-4">
-              <div>
-                <span style={{ fontFamily: "'Playfair Display', serif", fontStyle: "italic", fontWeight: 600, fontSize: 16, color: "rgba(248,248,248,0.6)" }}>
-                  selectively assembled
-                </span>
-                <h1 style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: "clamp(56px, 16vw, 92px)", lineHeight: 0.88, color: "#F8F8F8", textTransform: "uppercase", margin: 0, marginTop: 2 }}>
-                  The Scene
-                </h1>
-              </div>
-              {user && isApprovedCreator && (
+          <EditorialMasthead
+            volume="Vol. 02"
+            section="The Scene"
+            meta={`${upcomingEvents.length} on deck`}
+            eyebrow="selectively assembled"
+            title="The Scene"
+            size="lg"
+            rightSlot={
+              user && isApprovedCreator ? (
                 <Button
                   className="rounded-full gap-2 h-10 px-5"
-                  style={{ background: "#E8276F", color: "#fff", fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 700, letterSpacing: "0.06em", fontSize: 11, textTransform: "uppercase" }}
+                  style={{
+                    background: "hsl(var(--primary))",
+                    color: "hsl(var(--primary-foreground))",
+                    fontFamily: "'Space Mono', ui-monospace, monospace",
+                    fontWeight: 400,
+                    letterSpacing: "0.16em",
+                    fontSize: 11,
+                    textTransform: "uppercase",
+                  }}
                   onClick={() => setShowSubmitForm(true)}
                 >
                   <PlusCircle className="w-4 h-4" /> Submit
                 </Button>
-              )}
-            </div>
-            <div className="mt-5 h-px w-full" style={{ background: "rgba(255,255,255,0.08)" }} />
-          </div>
+              ) : undefined
+            }
+          />
 
           {/* Apply to Post CTA for non-approved users */}
           {user && !isApprovedCreator && (
