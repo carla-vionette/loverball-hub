@@ -555,9 +555,7 @@ const MemberProfile = () => {
               <Eyebrow label="Rides for" />
               <div className="flex flex-wrap gap-1.5">
                 {teamsRow.map((t) => (
-                  <Chip key={t} accent>
-                    {t}
-                  </Chip>
+                  <TeamChip key={t}>{t}</TeamChip>
                 ))}
               </div>
             </section>
