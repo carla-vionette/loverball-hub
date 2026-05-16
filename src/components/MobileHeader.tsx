@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Search, ShoppingCart, Bell } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useCartStore } from "@/stores/cartStore";
@@ -7,6 +7,8 @@ import loverballLogo from "@/assets/loverball-new-l-logo.png";
 
 const MobileHeader = () => {
   const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const hideGlobalSearch = pathname.startsWith('/members');
   const [totalItems, setTotalItems] = useState(0);
 
   useEffect(() => {
@@ -36,14 +38,18 @@ const MobileHeader = () => {
           />
         </Link>
 
-        <button
-          onClick={() => navigate('/search')}
-          className="flex-1 flex items-center gap-2 px-4 py-2.5 bg-secondary border border-border/20 text-muted-foreground text-sm rounded-full hover:bg-muted transition-all duration-300 focus-ring tap-target"
-          aria-label="Open search"
-        >
-          <Search className="w-4 h-4" aria-hidden="true" />
-          <span>Search...</span>
-        </button>
+        {hideGlobalSearch ? (
+          <div className="flex-1" />
+        ) : (
+          <button
+            onClick={() => navigate('/search')}
+            className="flex-1 flex items-center gap-2 px-4 py-2.5 bg-secondary border border-border/20 text-muted-foreground text-sm rounded-full hover:bg-muted transition-all duration-300 focus-ring tap-target"
+            aria-label="Open search"
+          >
+            <Search className="w-4 h-4" aria-hidden="true" />
+            <span>Search...</span>
+          </button>
+        )}
 
         <button
           onClick={() => navigate('/settings')}
