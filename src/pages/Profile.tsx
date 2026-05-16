@@ -303,167 +303,232 @@ const Profile = () => {
           <motion.div variants={staggerContainer} initial="hidden" animate="show" className="space-y-5">
 
             {/* ───── 1. IDENTITY HERO ───── */}
-            <motion.div variants={staggerItem} className="relative md:rounded-3xl overflow-hidden">
-              {/* Editorial ambient wash */}
-              <div
-                className="absolute inset-0 z-0 pointer-events-none"
-                style={{
-                  background:
-                    "radial-gradient(120% 80% at 50% 0%, rgba(232,39,111,0.18) 0%, rgba(216,140,90,0.08) 35%, rgba(10,10,11,0) 70%)",
-                }}
-              />
-              <div className="relative z-10 px-4 pt-5 pb-6 md:px-8 md:pt-8 md:pb-9">
-                <div className="flex flex-col items-center text-center gap-3">
-                  {/* Eyebrow */}
+            <motion.div variants={staggerItem} className="relative">
+              {/* Masthead: Profile. + STATUS */}
+              <div className="flex items-start justify-between gap-4 pb-5">
+                <h1
+                  className="leading-[0.85] tracking-tight"
+                  style={{
+                    fontFamily: "'Playfair Display', Georgia, serif",
+                    fontWeight: 800,
+                    fontSize: "clamp(56px, 16vw, 84px)",
+                    color: "#F8F8F8",
+                  }}
+                >
+                  Profile<span style={{ color: "#E8276F" }}>.</span>
+                </h1>
+                <div className="text-right pt-3 shrink-0">
                   <p
                     className="text-[10px] uppercase"
                     style={{
-                      fontFamily: "'Space Mono', ui-monospace, monospace",
-                      letterSpacing: "0.24em",
+                      fontFamily: "'Space Mono', monospace",
+                      letterSpacing: "0.22em",
                       color: "#D88C5A",
                     }}
                   >
-                    Member · Loverball
+                    Status
                   </p>
+                  <p
+                    className="text-[12px] mt-0.5 uppercase inline-flex items-center gap-1.5"
+                    style={{
+                      fontFamily: "'Space Mono', monospace",
+                      letterSpacing: "0.18em",
+                      color: "#F8F8F8",
+                    }}
+                  >
+                    <span
+                      className="inline-block w-1.5 h-1.5 rounded-full"
+                      style={{ background: "#E8276F", boxShadow: "0 0 8px #E8276F" }}
+                    />
+                    Active
+                  </p>
+                </div>
+              </div>
 
-                  {/* Avatar */}
-                  <div className="relative mt-1">
+              {/* Identity card */}
+              <div
+                className="rounded-3xl overflow-hidden relative"
+                style={{
+                  background: "#141415",
+                  border: "1px solid rgba(248,248,248,0.06)",
+                  boxShadow: "0 30px 60px -30px rgba(0,0,0,0.6)",
+                }}
+              >
+                {/* Portrait */}
+                <div
+                  className="relative w-full"
+                  style={{ aspectRatio: "1 / 1.18", background: "#0F0F10" }}
+                >
+                  {profile.profile_photo_url ? (
+                    <img
+                      src={profile.profile_photo_url}
+                      alt={profile.name}
+                      className="w-full h-full object-cover"
+                      style={{ filter: "saturate(0.95) contrast(1.05)" }}
+                    />
+                  ) : (
                     <div
-                      className="absolute -inset-[6px] rounded-full blur-md"
+                      className="w-full h-full flex items-center justify-center"
                       style={{
                         background:
-                          "conic-gradient(from 140deg, rgba(232,39,111,0.55), rgba(216,140,90,0.4), rgba(232,39,111,0.55))",
-                      }}
-                    />
-                    <Avatar
-                      className="relative w-28 h-28 md:w-32 md:h-32"
-                      style={{
-                        border: "2px solid rgba(248,248,248,0.85)",
-                        boxShadow: "0 12px 40px -12px rgba(232,39,111,0.5)",
+                          "linear-gradient(140deg, rgba(232,39,111,0.22), rgba(216,140,90,0.14))",
+                        fontFamily: "'Anton', sans-serif",
+                        fontSize: 140,
+                        color: "rgba(248,248,248,0.5)",
                       }}
                     >
-                      {profile.profile_photo_url ? (
-                        <AvatarImage src={profile.profile_photo_url} alt={profile.name} className="object-cover" />
-                      ) : null}
-                      <AvatarFallback
-                        className="text-3xl"
-                        style={{
-                          background: "linear-gradient(140deg, #E8276F, #D88C5A)",
-                          color: "#0A0A0B",
-                          fontFamily: "'Anton', sans-serif",
-                          letterSpacing: "0.02em",
-                        }}
-                      >
-                        {initials}
-                      </AvatarFallback>
-                    </Avatar>
-                  </div>
+                      {initials[0]}
+                    </div>
+                  )}
 
-                  {/* Name */}
-                  <h1
-                    className="flex items-center gap-2 leading-[0.9]"
-                    style={{
-                      fontFamily: "'Anton', 'Bebas Neue', sans-serif",
-                      fontSize: "clamp(36px, 9vw, 52px)",
-                      textTransform: "uppercase",
-                      color: "#F8F8F8",
-                      marginTop: 4,
-                    }}
-                  >
-                    {profile.name}
-                    <MemberBadge tier={profile.membership_tier} size="lg" />
-                  </h1>
-
-                  {/* Pronouns + City row */}
+                  {/* Bottom gradient */}
                   <div
-                    className="flex items-center gap-3 text-[12px]"
-                    style={{ color: "rgba(248,248,248,0.72)" }}
-                  >
-                    {profile.pronouns && (
-                      <>
-                        <span
-                          className="italic"
-                          style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+                    className="absolute inset-x-0 bottom-0 h-2/5 pointer-events-none"
+                    style={{
+                      background:
+                        "linear-gradient(to top, rgba(20,20,21,0.98) 0%, rgba(20,20,21,0.6) 50%, transparent 100%)",
+                    }}
+                  />
+
+                  {/* Name + meta overlay (bottom-left) */}
+                  <div className="absolute left-5 right-5 bottom-4">
+                    <h2
+                      className="flex items-center gap-2 leading-[0.9] tracking-tight"
+                      style={{
+                        fontFamily: "'Playfair Display', Georgia, serif",
+                        fontWeight: 700,
+                        fontSize: "clamp(34px, 9vw, 44px)",
+                        color: "#F8F8F8",
+                        textShadow: "0 2px 18px rgba(0,0,0,0.55)",
+                      }}
+                    >
+                      {profile.name}
+                      <MemberBadge tier={profile.membership_tier} size="lg" />
+                    </h2>
+                    <p
+                      className="mt-2 text-[11px] uppercase flex items-center gap-2 flex-wrap"
+                      style={{
+                        fontFamily: "'Space Mono', monospace",
+                        letterSpacing: "0.18em",
+                        color: "#E8276F",
+                      }}
+                    >
+                      <span>{locationText}</span>
+                      {profile.pronouns && (
+                        <>
+                          <span style={{ color: "rgba(248,248,248,0.3)" }}>·</span>
+                          <span>{profile.pronouns}</span>
+                        </>
+                      )}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Card body */}
+                <div className="px-5 pt-5 pb-5">
+                  <div
+                    className="pb-4"
+                    style={{ borderBottom: "1px solid rgba(248,248,248,0.08)" }}
+                  />
+
+                  <div className="flex items-start gap-4 pt-4">
+                    <div className="flex-1 min-w-0">
+                      {profile.bio ? (
+                        <p
+                          className="text-[13px] leading-relaxed"
+                          style={{
+                            fontFamily: "'Space Mono', monospace",
+                            color: "rgba(248,248,248,0.78)",
+                          }}
                         >
-                          {profile.pronouns}
-                        </span>
-                        <span style={{ color: "rgba(248,248,248,0.25)" }}>·</span>
-                      </>
-                    )}
-                    <span className="inline-flex items-center gap-1.5">
-                      <MapPin className="w-3.5 h-3.5" style={{ color: "#E8276F" }} />
-                      {locationText}
-                    </span>
+                          <span style={{ color: "#F8F8F8", fontWeight: 700 }}>VIBE:</span>{" "}
+                          {profile.bio}
+                        </p>
+                      ) : (
+                        <p
+                          className="text-[13px] leading-relaxed italic"
+                          style={{
+                            fontFamily: "'Playfair Display', serif",
+                            color: "rgba(248,248,248,0.5)",
+                          }}
+                        >
+                          Add a vibe in Edit Profile.
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Floating + (DMs) */}
+                    <button
+                      onClick={() => goTo("/dms")}
+                      aria-label="Messages"
+                      className="shrink-0 w-11 h-11 rounded-full flex items-center justify-center transition-transform hover:scale-105"
+                      style={{
+                        background: "#D88C5A",
+                        color: "#0A0A0B",
+                        boxShadow: "0 8px 24px -8px rgba(216,140,90,0.55)",
+                      }}
+                    >
+                      <MessageCircle className="w-5 h-5" strokeWidth={2.4} />
+                    </button>
                   </div>
 
-                  {/* Followers/Following */}
-                  <div
-                    className="mt-1 inline-flex items-center gap-5 px-4 py-2 rounded-full"
-                    style={{
-                      background: "rgba(20,20,21,0.7)",
-                      border: "1px solid rgba(248,248,248,0.08)",
-                      backdropFilter: "blur(12px)",
-                    }}
-                  >
+                  {/* Followers / Following + Edit CTA */}
+                  <div className="mt-5 flex items-end justify-between gap-4">
                     <ProfileFollowCounts
                       userId={profile.id}
                       onClickFollowers={() => setShowFollowersModal('followers')}
                       onClickFollowing={() => setShowFollowersModal('following')}
                     />
+
+                    <Button
+                      onClick={() => goTo("/profile/edit")}
+                      className="rounded-xl h-[58px] px-5 text-[11px] font-bold tracking-[0.18em] uppercase leading-[1.15] text-left whitespace-normal"
+                      style={{
+                        background: "#E8276F",
+                        color: "#0A0A0B",
+                        fontFamily: "Inter, sans-serif",
+                        boxShadow: "0 12px 30px -12px rgba(232,39,111,0.7)",
+                        minWidth: 132,
+                      }}
+                    >
+                      Edit<br />Profile
+                    </Button>
                   </div>
 
-                  {/* Edit Profile button */}
-                  <Button
-                    onClick={() => goTo("/profile/edit")}
-                    className="rounded-full gap-2 px-7 h-11 text-[11px] font-bold tracking-[0.18em] uppercase mt-1"
-                    style={{
-                      background: "#E8276F",
-                      color: "#0A0A0B",
-                      fontFamily: "Inter, sans-serif",
-                      boxShadow: "0 10px 28px -10px rgba(232,39,111,0.65)",
-                    }}
+                  {/* Settings + Logout — subtle utility row */}
+                  <div
+                    className="mt-4 pt-3 flex items-center justify-end gap-1"
+                    style={{ borderTop: "1px solid rgba(248,248,248,0.06)" }}
                   >
-                    <Edit className="w-3.5 h-3.5" /> Edit Profile
-                  </Button>
-
-                  {/* Secondary actions — subtle */}
-                  <div className="flex items-center gap-1 mt-1">
                     <Button
                       variant="ghost"
-                      size="icon"
-                      onClick={() => goTo("/dms")}
-                      className="rounded-full h-9 w-9"
-                      style={{ color: "rgba(248,248,248,0.5)" }}
-                    >
-                      <MessageCircle className="w-4 h-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
+                      size="sm"
                       onClick={() => goTo("/settings")}
-                      className="rounded-full h-9 w-9"
-                      style={{ color: "rgba(248,248,248,0.5)" }}
+                      className="h-8 px-3 text-[10px] uppercase rounded-full"
+                      style={{
+                        fontFamily: "'Space Mono', monospace",
+                        letterSpacing: "0.18em",
+                        color: "rgba(248,248,248,0.5)",
+                      }}
                     >
-                      <Settings className="w-4 h-4" />
+                      <Settings className="w-3.5 h-3.5 mr-1.5" /> Settings
                     </Button>
                     <Button
                       variant="ghost"
-                      size="icon"
+                      size="sm"
                       onClick={handleLogout}
-                      className="rounded-full h-9 w-9"
-                      style={{ color: "rgba(232,39,111,0.7)" }}
+                      className="h-8 px-3 text-[10px] uppercase rounded-full"
+                      style={{
+                        fontFamily: "'Space Mono', monospace",
+                        letterSpacing: "0.18em",
+                        color: "rgba(232,39,111,0.75)",
+                      }}
                     >
-                      <LogOut className="w-4 h-4" />
+                      <LogOut className="w-3.5 h-3.5 mr-1.5" /> Log out
                     </Button>
                   </div>
                 </div>
               </div>
-
-              {/* Hairline divider sealing the identity block */}
-              <div
-                className="mx-4 md:mx-8"
-                style={{ borderBottom: "1px solid rgba(248,248,248,0.08)" }}
-              />
             </motion.div>
 
             {/* ───── 2. GREETING ───── */}
