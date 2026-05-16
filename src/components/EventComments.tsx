@@ -227,7 +227,7 @@ const EventComments = ({ eventId }: EventCommentsProps) => {
                   handlePost();
                 }
               }}
-              placeholder="Get hyped! 🔥"
+              placeholder="Say something to the group…"
               maxLength={500}
               className="flex-1 bg-muted/50 rounded-full px-4 py-2 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:ring-2 focus:ring-primary/30"
             />
