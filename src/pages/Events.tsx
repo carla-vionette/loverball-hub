@@ -459,17 +459,17 @@ const Events = () => {
         <Dialog open={gateOpen} onOpenChange={setGateOpen}>
           <DialogContent className="sm:max-w-md text-center">
             <DialogHeader>
-              <DialogTitle className="font-display text-2xl uppercase tracking-tight">Join the Community</DialogTitle>
+              <DialogTitle className="font-display text-2xl uppercase tracking-tight">Your people are already here</DialogTitle>
             </DialogHeader>
             <div className="space-y-4 pt-2">
               <p className="text-sm text-muted-foreground leading-relaxed">
-                Sign up to view event details, RSVP, and join the Loverball community of women who live for sports.
+                Sign up in seconds to see who's going, join the event chat, and meet other women going.
               </p>
               <div className="space-y-2 pt-2">
                 <Button className="w-full rounded-full bg-primary text-primary-foreground h-11" onClick={() => goTo('/signup')}>
                   Sign Up — It's Free
                 </Button>
-                <Button variant="outline" className="w-full rounded-full h-11" onClick={() => goTo('/auth')}>
+                <Button variant="outline" className="w-full rounded-full h-11" onClick={() => goTo(`/auth?redirect=${encodeURIComponent(gateEventId ? `/event/${gateEventId}` : '/events')}`)}>
                   I already have an account
                 </Button>
               </div>
