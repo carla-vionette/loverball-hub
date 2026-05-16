@@ -168,8 +168,8 @@ const EventComments = ({ eventId }: EventCommentsProps) => {
           </div>
         ) : comments.length === 0 ? (
           <div className="text-center py-6">
-            <p className="text-muted-foreground text-sm">No comments yet</p>
-            <p className="text-muted-foreground/60 text-xs mt-1">Be the first to hype this event! 🔥</p>
+            <p className="text-foreground font-medium text-sm">Be the first to start the chat 💬</p>
+            <p className="text-muted-foreground text-xs mt-1">Say hi, share plans, or ask who's going.</p>
           </div>
         ) : (
           <AnimatePresence>
