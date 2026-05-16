@@ -63,12 +63,13 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ["Poppins", "system-ui", "sans-serif"],
-        display: ["Oswald", "Impact", "sans-serif"],
-        script: ["Pacifico", "cursive"],
-        condensed: ["Oswald", "Impact", "sans-serif"],
+        sans: ["Inter", "system-ui", "sans-serif"],
+        display: ["Anton", "Impact", "sans-serif"],
+        script: ["Great Vibes", "Pacifico", "cursive"],
+        condensed: ["Anton", "Impact", "sans-serif"],
         serif: ["Playfair Display", "Georgia", "serif"],
         elegant: ["Playfair Display", "Georgia", "serif"],
+        mono: ["Space Mono", "ui-monospace", "monospace"],
       },
       fontSize: {
         xs: ["0.75rem", { lineHeight: "1rem" }],
