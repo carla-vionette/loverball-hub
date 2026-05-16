@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import BottomNav from '@/components/BottomNav';
 import DesktopNav from '@/components/DesktopNav';
 import MobileHeader from '@/components/MobileHeader';
+import EditorialMasthead from '@/components/layout/EditorialMasthead';
 import EventPreviewCard from '@/components/EventPreviewCard';
 import LinkPreviewCard from '@/components/LinkPreviewCard';
 import { Button } from '@/components/ui/button';
@@ -249,8 +250,14 @@ const MessagesPage = () => {
         <div className="h-full flex">
           {/* Matches List - Hidden on mobile when chat selected */}
           <div className={`w-full md:w-80 border-r border-border bg-card flex flex-col ${selectedMatch ? 'hidden md:flex' : 'flex'}`}>
-            <div className="p-4 border-b border-border">
-              <h1 className="text-xl font-bold">Messages</h1>
+            <div className="px-5 pt-5 pb-3 border-b border-border">
+              <EditorialMasthead
+                volume="Vol. 04"
+                section="Direct"
+                eyebrow="private dispatches"
+                title="Messages"
+                size="md"
+              />
             </div>
             
             <ScrollArea className="flex-1">
