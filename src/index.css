@@ -453,3 +453,14 @@
   }
 }
 
+
+/* Profile section trigger label — editorial style */
+.lb-section-label {
+  font-family: 'Anton', 'Bebas Neue', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #F8F8F8;
+}
+.lb-section-label svg {
+  color: #E8276F;
+}
