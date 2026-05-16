@@ -5,6 +5,7 @@ import BottomNav from "@/components/BottomNav";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Play } from "lucide-react";
 import Seo from "@/components/Seo";
+import loverballLogo from "@/assets/loverball-script-logo.png";
 
 type FeedTab = "foryou" | "following";
 
