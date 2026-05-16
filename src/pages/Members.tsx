@@ -39,6 +39,7 @@ const Members = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [fetchError, setFetchError] = useState<string | null>(null);
+  const [query, setQuery] = useState('');
   const [newMatch, setNewMatch] = useState<MemberProfile | null>(null);
   const { user, isMember } = useAuth();
   const { toast } = useToast();
