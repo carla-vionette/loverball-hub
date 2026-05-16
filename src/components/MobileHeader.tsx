@@ -8,7 +8,7 @@ import loverballLogo from "@/assets/loverball-new-l-logo.png";
 const MobileHeader = () => {
   const navigate = useNavigate();
   const { pathname } = useLocation();
-  const hideGlobalSearch = pathname.startsWith('/members');
+  const hideGlobalSearch = pathname.startsWith('/members') || pathname.startsWith('/profile');
   const [totalItems, setTotalItems] = useState(0);
 
   useEffect(() => {
