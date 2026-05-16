@@ -398,9 +398,8 @@ const MemberProfile = () => {
           <div
             className="relative overflow-hidden mb-5"
             style={{
-              borderRadius: 20,
-              aspectRatio: "4 / 5",
-              maxHeight: 480,
+              borderRadius: 16,
+              height: 280,
               background: "#0F0F10",
               border: `1px solid ${C.border}`,
             }}
