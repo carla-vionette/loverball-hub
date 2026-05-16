@@ -356,6 +356,7 @@ const Profile = () => {
                     fontWeight: 800,
                     fontSize: "clamp(56px, 16vw, 84px)",
                     color: "#F8F8F8",
+                    textTransform: "none",
                   }}
                 >
                   Profile<span style={{ color: "#E8276F" }}>.</span>
