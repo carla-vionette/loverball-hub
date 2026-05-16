@@ -520,18 +520,25 @@ const Profile = () => {
               />
             </motion.div>
 
-            {/* WHERE TO WATCH (under My Sports Feed) */}
+            {/* WHERE TO WATCH - COLLAPSIBLE (under My Sports Feed) */}
             <motion.div variants={staggerItem}>
-              <Card className="rounded-2xl overflow-hidden">
-                <CardHeader className="pb-2 pt-4 px-5">
-                  <CardTitle className="text-sm font-medium tracking-wider uppercase text-foreground/50 flex items-center gap-2">
-                    <Tv className="w-4 h-4 text-primary" /> Where to Watch
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="px-5 pb-5">
-                  <ProfileWhereToWatch />
-                </CardContent>
-              </Card>
+              <Collapsible open={watchOpen} onOpenChange={setWatchOpen}>
+                <Card className="rounded-2xl overflow-hidden">
+                  <CollapsibleTrigger asChild>
+                    <button className="w-full pt-4 px-5 pb-2 flex items-center justify-between cursor-pointer hover:bg-foreground/[0.03] transition-colors">
+                      <span className="text-sm font-medium tracking-wider uppercase text-foreground/50 flex items-center gap-2">
+                        <Tv className="w-4 h-4 text-primary" /> Where to Watch
+                      </span>
+                      <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform duration-200 ${watchOpen ? 'rotate-180' : ''}`} />
+                    </button>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent>
+                    <CardContent className="px-5 pb-5 pt-2">
+                      <ProfileWhereToWatch />
+                    </CardContent>
+                  </CollapsibleContent>
+                </Card>
+              </Collapsible>
             </motion.div>
 
             {/* LIVE / RECENT SCORES - COLLAPSIBLE */}
