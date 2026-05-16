@@ -356,6 +356,12 @@ const Profile = () => {
               </div>
             </motion.div>
 
+            {/* ───── GREETING ───── */}
+            <motion.div variants={staggerItem} className="glass-card rounded-2xl p-5">
+              <p className="text-lg font-sans text-foreground">{greeting}, <span className="text-primary font-semibold">{userName}</span></p>
+              <p className="text-sm text-muted-foreground mt-1">{formattedDate} · {formattedTime}</p>
+            </motion.div>
+
             {/* ───── DAILY HOROSCOPE (compact, tap for full) ───── */}
             <motion.div variants={staggerItem}>
               <button
@@ -390,12 +396,6 @@ const Profile = () => {
                   </div>
                 )}
               </button>
-            </motion.div>
-
-            {/* ───── GREETING ───── */}
-            <motion.div variants={staggerItem} className="glass-card rounded-2xl p-5">
-              <p className="text-lg font-sans text-foreground">{greeting}, <span className="text-primary font-semibold">{userName}</span></p>
-              <p className="text-sm text-muted-foreground mt-1">{formattedDate} · {formattedTime}</p>
             </motion.div>
 
             {/* ───── YOUR PERSONAL FEED HEADER ───── */}
