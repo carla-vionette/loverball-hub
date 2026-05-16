@@ -110,20 +110,42 @@ const Eyebrow: React.FC<{ icon?: React.ReactNode; label: string }> = ({ icon, la
   </div>
 );
 
-const Chip: React.FC<{ children: React.ReactNode; accent?: boolean }> = ({ children, accent }) => (
+// Squared team chip (Rides for)
+const TeamChip: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <span
-    className="text-[9.5px] uppercase font-semibold px-2.5 py-1 rounded-full"
+    className="font-medium"
     style={{
-      background: accent ? "rgba(232,39,111,0.1)" : C.chip,
-      color: accent ? C.raspberry : C.text,
-      border: `1px solid ${accent ? "rgba(232,39,111,0.28)" : C.border}`,
-      letterSpacing: "0.14em",
+      background: C.card,
+      border: `1px solid rgba(255,255,255,0.07)`,
+      color: C.text,
+      fontSize: 11,
+      padding: "6px 10px",
+      borderRadius: 6,
       fontFamily: "Inter, sans-serif",
     }}
   >
     {children}
   </span>
 );
+
+// Small square tag chip (uppercase letter-spaced)
+const TagChip: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <span
+    className="uppercase font-semibold"
+    style={{
+      background: "rgba(255,255,255,0.06)",
+      color: "#B8B8B8",
+      fontSize: 9,
+      padding: "4px 8px",
+      borderRadius: 4,
+      letterSpacing: "0.12em",
+      fontFamily: "Inter, sans-serif",
+    }}
+  >
+    {children}
+  </span>
+);
+
 
 const MemberProfile = () => {
   const { id } = useParams<{ id: string }>();
@@ -376,9 +398,8 @@ const MemberProfile = () => {
           <div
             className="relative overflow-hidden mb-5"
             style={{
-              borderRadius: 20,
-              aspectRatio: "4 / 5",
-              maxHeight: 480,
+              borderRadius: 16,
+              height: 280,
               background: "#0F0F10",
               border: `1px solid ${C.border}`,
             }}
@@ -533,9 +554,7 @@ const MemberProfile = () => {
               <Eyebrow label="Rides for" />
               <div className="flex flex-wrap gap-1.5">
                 {teamsRow.map((t) => (
-                  <Chip key={t} accent>
-                    {t}
-                  </Chip>
+                  <TeamChip key={t}>{t}</TeamChip>
                 ))}
               </div>
             </section>
@@ -547,32 +566,41 @@ const MemberProfile = () => {
             match.sameCity) && (
             <section className="mb-6">
               <Eyebrow label="You both" />
-              <ul className="space-y-2.5">
+              <div className="flex flex-col gap-2">
                 {match.sameCity && profile.city && (
-                  <li className="flex items-center gap-2.5">
-                    <Beer size={15} color={C.raspberry} />
-                    <span style={{ fontSize: 13.5, color: C.text }}>
+                  <div
+                    className="flex items-center gap-2.5 rounded-lg px-3 py-2.5"
+                    style={{ background: C.card }}
+                  >
+                    <Beer size={16} color={C.raspberry} />
+                    <span style={{ fontSize: 12.5, color: C.text }}>
                       Based in {profile.city}
                     </span>
-                  </li>
+                  </div>
                 )}
                 {match.sharedSports[0] && (
-                  <li className="flex items-center gap-2.5">
-                    <Calendar size={15} color={C.raspberry} />
-                    <span style={{ fontSize: 13.5, color: C.text }}>
+                  <div
+                    className="flex items-center gap-2.5 rounded-lg px-3 py-2.5"
+                    style={{ background: C.card }}
+                  >
+                    <Calendar size={16} color={C.raspberry} />
+                    <span style={{ fontSize: 12.5, color: C.text }}>
                       Watch the same {match.sharedSports[0]} fixtures
                     </span>
-                  </li>
+                  </div>
                 )}
                 {match.sharedTeams.length > 0 && (
-                  <li className="flex items-center gap-2.5">
-                    <Users size={15} color={C.raspberry} />
-                    <span style={{ fontSize: 13.5, color: C.text }}>
+                  <div
+                    className="flex items-center gap-2.5 rounded-lg px-3 py-2.5"
+                    style={{ background: C.card }}
+                  >
+                    <Users size={16} color={C.raspberry} />
+                    <span style={{ fontSize: 12.5, color: C.text }}>
                       Ride for {match.sharedTeams.slice(0, 2).join(" & ")}
                     </span>
-                  </li>
+                  </div>
                 )}
-              </ul>
+              </div>
             </section>
           )}
 
@@ -601,7 +629,7 @@ const MemberProfile = () => {
               <Eyebrow label="Tags" />
               <div className="flex flex-wrap gap-1.5">
                 {Array.from(new Set(allTags)).slice(0, 12).map((t) => (
-                  <Chip key={t}>{t}</Chip>
+                  <TagChip key={t}>{t}</TagChip>
                 ))}
               </div>
             </section>
