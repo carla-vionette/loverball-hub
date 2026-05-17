@@ -7,6 +7,7 @@ import { ArrowRight, ArrowLeft, Mail, CheckCircle2 } from "lucide-react";
 import loverballLogo from "@/assets/loverball-script-logo.png";
 import WelcomeSplash from "@/components/WelcomeSplash";
 import { C, fonts } from "@/lib/editorialTheme";
+import { isAuthEmailRateLimitError } from "@/lib/authErrors";
 
 const LIVE_SITE_URL = 'https://loverball-hub.lovable.app';
 
@@ -225,7 +226,14 @@ const Auth = () => {
       if (data.user && !data.session) setMode("confirm");
       else if (data.user && data.session) navigate("/finish-profile");
     } catch (err: any) {
-      toast({ title: "Hmm, something went wrong", description: err.message, variant: "destructive" });
+      const message = err?.message ?? "";
+      toast({
+        title: isAuthEmailRateLimitError(message) ? "Email confirmations are temporarily delayed" : "Hmm, something went wrong",
+        description: isAuthEmailRateLimitError(message)
+          ? "Email signups are being throttled right now. Use Google for immediate access, or try email again in a little bit."
+          : message,
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }
@@ -302,14 +310,21 @@ const Auth = () => {
     if (!email) return;
     setResendLoading(true);
     try {
-      await supabase.auth.resend({
+      const { error } = await supabase.auth.resend({
         type: 'signup',
         email,
         options: { emailRedirectTo: `${LIVE_SITE_URL}/finish-profile` },
       });
+      if (error) throw error;
       toast({ title: "Sent! Check your inbox." });
-    } catch {
-      toast({ title: "Couldn't resend", variant: "destructive" });
+    } catch (err: any) {
+      toast({
+        title: isAuthEmailRateLimitError(err?.message) ? "Resend is temporarily delayed" : "Couldn't resend",
+        description: isAuthEmailRateLimitError(err?.message)
+          ? "Confirmation emails are being throttled right now. Use Google for immediate access, or try again shortly."
+          : undefined,
+        variant: "destructive",
+      });
     } finally {
       setResendLoading(false);
     }

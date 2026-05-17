@@ -6,6 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Loader2, ArrowLeft } from "lucide-react";
 import { C, fonts } from "@/lib/editorialTheme";
+import { lovable } from "@/integrations/lovable";
+import { isAuthEmailRateLimitError } from "@/lib/authErrors";
 
 export type RsvpIntent = "attending" | "waitlisted" | "canceled";
 
@@ -60,6 +62,22 @@ const EventRSVPDialog = ({
   const [error, setError] = useState<string | null>(null);
   const [sent, setSent] = useState(false);
 
+  const handleGoogleAuth = async () => {
+    setLoading(true);
+    setError(null);
+    persistIntent();
+    try {
+      const result = await lovable.auth.signInWithOAuth("google", {
+        redirect_uri: `${window.location.origin}/e/${eventId}`,
+      });
+      if (result.error) throw result.error;
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Couldn't start Google sign-in.";
+      setError(msg);
+      setLoading(false);
+    }
+  };
+
   const persistIntent = () => {
     try {
       localStorage.setItem(`pending_rsvp_${eventId}`, intent);
@@ -110,6 +128,8 @@ const EventRSVPDialog = ({
           if (msg.includes("registered") || msg.includes("exists")) {
             setMode("signin");
             setError("You already have an account. Sign in to RSVP.");
+          } else if (isAuthEmailRateLimitError(err.message)) {
+            setError("Email confirmation is temporarily delayed. Continue with Google to RSVP right away, or try email again a little later.");
           } else {
             setError(err.message);
           }
@@ -229,6 +249,18 @@ const EventRSVPDialog = ({
                   ? "Create your account to RSVP and get event updates."
                   : "Sign in to save your RSVP."}
               </p>
+
+              {mode === "signup" && (
+                <Button
+                  type="button"
+                  onClick={handleGoogleAuth}
+                  disabled={loading}
+                  className="w-full h-12 rounded-full text-xs uppercase tracking-[0.2em] border mb-3"
+                  style={{ background: "transparent", color: C.text, borderColor: C.borderStrong, fontFamily: fonts.mono }}
+                >
+                  Continue with Google
+                </Button>
+              )}
 
               <form onSubmit={handleSubmit} className="space-y-3" noValidate>
                 {mode === "signup" && (
