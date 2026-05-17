@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import loverballLogo from "@/assets/loverball-script-logo.png";
+import { isAuthEmailRateLimitError } from "@/lib/authErrors";
 
 type Method = "email" | "phone";
 type Step = "details" | "verify" | "done";
@@ -88,6 +89,12 @@ export default function Signup() {
         });
         setMethod("email");
         setContact("");
+      } else if (method === "email" && isAuthEmailRateLimitError(msg)) {
+        toast({
+          title: "Email confirmations are temporarily delayed",
+          description: "Try the phone option instead, or retry email in a little bit.",
+          variant: "destructive",
+        });
       } else {
         toast({ title: "Couldn't send code", description: msg || "Try again in a moment.", variant: "destructive" });
       }
