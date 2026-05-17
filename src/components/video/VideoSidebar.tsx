@@ -3,7 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import scriptLogo from "@/assets/loverball-script-logo.png";
 
 const navItems = [
-  { icon: Home, label: "For You", path: "/watch" },
+  { icon: Home, label: "Feed", path: "/watch" },
   { icon: Search, label: "Search", path: "/watch/search" },
 ];
 
