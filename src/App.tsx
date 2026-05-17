@@ -123,6 +123,7 @@ const App = () => (
                 <Route path="/feed" element={<Feed />} />
                 <Route path="/events" element={<Events />} />
                 <Route path="/event/:id" element={<EventDetail />} />
+                <Route path="/e/:id" element={<EventPublic />} />
                 <Route path="/members" element={<Navigate to="/club" replace />} />
                 <Route path="/members/:id" element={<ProtectedRoute><MemberProfile /></ProtectedRoute>} />
                 <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
