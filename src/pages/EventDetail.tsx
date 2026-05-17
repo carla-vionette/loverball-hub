@@ -386,7 +386,7 @@ const EventDetail = () => {
   // Rich link previews require server-side OG tags which SPAs can't provide directly
   // For now, use the direct event URL - users will see the event page
   const getShareUrl = () => {
-    return `https://loverball-hub.lovable.app/event/${event?.id}`;
+    return `https://www.loverball.com/e/${event?.id}`;
   };
 
   const getFormattedShareText = () => {
