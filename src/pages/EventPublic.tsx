@@ -1,0 +1,330 @@
+import { useEffect, useState, useCallback } from "react";
+import { useParams, Link, useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
+import { useToast } from "@/hooks/use-toast";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Calendar, Clock, MapPin, Share2, Copy, Mail, Loader2, ArrowLeft } from "lucide-react";
+import { format } from "date-fns";
+import loverballLogo from "@/assets/loverball-script-logo.png";
+import { C, fonts } from "@/lib/editorialTheme";
+
+const SITE = "https://www.loverball.com";
+
+interface PublicEvent {
+  id: string;
+  title: string;
+  description: string | null;
+  image_url: string | null;
+  event_date: string;
+  event_time: string | null;
+  venue_name: string | null;
+  city: string | null;
+  visibility: string;
+  host_user_id: string | null;
+}
+
+const formatTime = (t: string) => {
+  const [h, m] = t.split(":");
+  const d = new Date();
+  d.setHours(parseInt(h), parseInt(m));
+  return format(d, "h:mm a");
+};
+
+const EventPublic = () => {
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const { user, isMember } = useAuth();
+  const { toast } = useToast();
+  const [event, setEvent] = useState<PublicEvent | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [inviteOpen, setInviteOpen] = useState(false);
+  const [inviteEmails, setInviteEmails] = useState("");
+  const [inviteMsg, setInviteMsg] = useState("");
+  const [sending, setSending] = useState(false);
+
+  useEffect(() => {
+    if (!id) return;
+    (async () => {
+      const { data } = await supabase
+        .from("events")
+        .select("id, title, description, image_url, event_date, event_time, venue_name, city, visibility, host_user_id")
+        .eq("id", id)
+        .maybeSingle();
+      setEvent(data as PublicEvent | null);
+      setLoading(false);
+    })();
+  }, [id]);
+
+  const publicUrl = `${SITE}/e/${id}`;
+  const isHost = !!user && !!event && event.host_user_id === user.id;
+
+  const dateStr = event ? format(new Date(event.event_date + "T00:00:00"), "EEE, MMM d, yyyy") : "";
+  const timeStr = event?.event_time ? formatTime(event.event_time) : "";
+  const locStr = [event?.venue_name, event?.city].filter(Boolean).join(", ");
+  const shortDesc = event?.description
+    ? event.description.replace(/\s+/g, " ").trim().slice(0, 180)
+    : `Join us ${dateStr}${timeStr ? ` at ${timeStr}` : ""}${locStr ? ` — ${locStr}` : ""}`;
+  const ogImage = event?.image_url || `${SITE}/og-image.png`;
+  const ogTitle = event ? `${event.title} · Loverball` : "Loverball Event";
+
+  const handleShare = useCallback(async () => {
+    if (!event) return;
+    const shareText = `${event.title} — ${dateStr}${timeStr ? ` @ ${timeStr}` : ""}`;
+    if (typeof navigator.share === "function") {
+      try {
+        await navigator.share({ title: event.title, text: shareText, url: publicUrl });
+        return;
+      } catch { /* user cancelled */ }
+    }
+    try {
+      await navigator.clipboard.writeText(publicUrl);
+      toast({ title: "Link copied", description: "Share it anywhere." });
+    } catch {
+      toast({ title: "Couldn't copy", description: publicUrl, variant: "destructive" });
+    }
+  }, [event, dateStr, timeStr, publicUrl, toast]);
+
+  const handleRSVP = () => {
+    const dest = `/event/${id}`;
+    if (!user) {
+      navigate(`/auth?mode=signup&redirect=${encodeURIComponent(dest)}`);
+      return;
+    }
+    navigate(dest);
+  };
+
+  const handleSendInvites = async () => {
+    if (!event) return;
+    const emails = inviteEmails
+      .split(/[,\s\n;]+/)
+      .map((e) => e.trim().toLowerCase())
+      .filter((e) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e));
+    if (emails.length === 0) {
+      toast({ title: "No valid emails", description: "Add at least one email address.", variant: "destructive" });
+      return;
+    }
+    setSending(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("send-event-invite", {
+        body: { eventId: event.id, emails, message: inviteMsg.trim() || null },
+      });
+      if (error) throw error;
+      toast({ title: "Invites sent", description: `${data?.sent ?? emails.length} email${emails.length === 1 ? "" : "s"} delivered.` });
+      setInviteOpen(false);
+      setInviteEmails("");
+      setInviteMsg("");
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : "Try again in a moment.";
+      toast({ title: "Couldn't send invites", description: msg, variant: "destructive" });
+    } finally {
+      setSending(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center" style={{ background: C.bg }}>
+        <Loader2 className="w-6 h-6 animate-spin" style={{ color: C.raspberry }} />
+      </div>
+    );
+  }
+
+  if (!event) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center px-6 text-center gap-4" style={{ background: C.bg, color: C.text }}>
+        <h1 style={{ fontFamily: fonts.serif, fontStyle: "italic", fontSize: 32 }}>Event not found</h1>
+        <Link to="/events" className="underline" style={{ color: C.raspberry }}>Browse upcoming events</Link>
+      </div>
+    );
+  }
+
+  return (
+    <>
+      <Helmet>
+        <title>{ogTitle}</title>
+        <meta name="description" content={shortDesc} />
+        <link rel="canonical" href={publicUrl} />
+        <meta property="og:type" content="event" />
+        <meta property="og:site_name" content="Loverball" />
+        <meta property="og:url" content={publicUrl} />
+        <meta property="og:title" content={ogTitle} />
+        <meta property="og:description" content={shortDesc} />
+        <meta property="og:image" content={ogImage} />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content={publicUrl} />
+        <meta name="twitter:title" content={ogTitle} />
+        <meta name="twitter:description" content={shortDesc} />
+        <meta name="twitter:image" content={ogImage} />
+      </Helmet>
+
+      <div className="min-h-[100dvh]" style={{ background: C.bg, color: C.text, fontFamily: fonts.sans }}>
+        {/* Top bar */}
+        <header className="flex items-center justify-between px-5 py-4 border-b" style={{ borderColor: C.border }}>
+          <Link to="/" aria-label="Loverball home" className="flex items-center gap-2">
+            <img src={loverballLogo} alt="Loverball" className="h-9 w-auto" />
+          </Link>
+          <button
+            onClick={() => navigate(-1)}
+            className="text-xs uppercase tracking-[0.2em] flex items-center gap-1.5 opacity-70 hover:opacity-100"
+            style={{ fontFamily: fonts.mono }}
+          >
+            <ArrowLeft className="w-3.5 h-3.5" /> Back
+          </button>
+        </header>
+
+        <main className="max-w-2xl mx-auto px-5 pb-24 pt-6">
+          {/* Hero image */}
+          <div
+            className="w-full aspect-[1.91/1] rounded-2xl overflow-hidden mb-6"
+            style={{ background: `linear-gradient(135deg, ${C.surface}, ${C.surfaceHi})` }}
+          >
+            {event.image_url ? (
+              <img src={event.image_url} alt={event.title} className="w-full h-full object-cover" />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center">
+                <span style={{ fontFamily: fonts.serif, fontStyle: "italic", color: C.raspberry, fontSize: 64 }}>L</span>
+              </div>
+            )}
+          </div>
+
+          {/* Title */}
+          <h1
+            className="mb-5"
+            style={{ fontFamily: fonts.serif, fontStyle: "italic", fontSize: "clamp(32px, 6vw, 48px)", lineHeight: 1.05 }}
+          >
+            {event.title}
+          </h1>
+
+          {/* Meta */}
+          <div className="flex flex-col gap-3 mb-7" style={{ color: C.muted }}>
+            <div className="flex items-center gap-3">
+              <Calendar className="w-4 h-4" style={{ color: C.raspberry }} />
+              <span>{dateStr}</span>
+            </div>
+            {timeStr && (
+              <div className="flex items-center gap-3">
+                <Clock className="w-4 h-4" style={{ color: C.raspberry }} />
+                <span>{timeStr}</span>
+              </div>
+            )}
+            {locStr && (
+              <div className="flex items-center gap-3">
+                <MapPin className="w-4 h-4" style={{ color: C.raspberry }} />
+                <span>{locStr}</span>
+              </div>
+            )}
+          </div>
+
+          {/* Description */}
+          {event.description && (
+            <p className="mb-8 whitespace-pre-line" style={{ color: C.text, lineHeight: 1.7, opacity: 0.92 }}>
+              {event.description}
+            </p>
+          )}
+
+          {/* Primary CTA */}
+          <div className="flex flex-col gap-3 mb-4">
+            <Button
+              onClick={handleRSVP}
+              className="w-full h-12 rounded-full text-sm uppercase tracking-[0.2em] font-semibold border-0"
+              style={{ background: C.raspberry, color: "#fff", fontFamily: fonts.mono }}
+            >
+              RSVP with Loverball
+            </Button>
+
+            <div className="flex gap-2">
+              <Button
+                onClick={handleShare}
+                variant="outline"
+                className="flex-1 h-11 rounded-full text-xs uppercase tracking-[0.2em] bg-transparent"
+                style={{ borderColor: C.borderStrong, color: C.text, fontFamily: fonts.mono }}
+              >
+                <Share2 className="w-3.5 h-3.5 mr-2" /> Share event
+              </Button>
+              <Button
+                onClick={() => { navigator.clipboard.writeText(publicUrl); toast({ title: "Link copied" }); }}
+                variant="outline"
+                className="h-11 px-4 rounded-full bg-transparent"
+                style={{ borderColor: C.borderStrong, color: C.text }}
+                aria-label="Copy event link"
+              >
+                <Copy className="w-3.5 h-3.5" />
+              </Button>
+            </div>
+
+            {(isHost || isMember) && (
+              <Button
+                onClick={() => setInviteOpen(true)}
+                variant="outline"
+                className="w-full h-11 rounded-full text-xs uppercase tracking-[0.2em] bg-transparent"
+                style={{ borderColor: C.borderStrong, color: C.text, fontFamily: fonts.mono }}
+              >
+                <Mail className="w-3.5 h-3.5 mr-2" /> Send invite by email
+              </Button>
+            )}
+          </div>
+
+          <p className="text-xs mt-8 text-center" style={{ color: C.muted, fontFamily: fonts.mono, letterSpacing: "0.15em" }}>
+            POWERED BY LOVERBALL · HER GAME. HER COMMUNITY.
+          </p>
+        </main>
+      </div>
+
+      {/* Invite dialog */}
+      <Dialog open={inviteOpen} onOpenChange={setInviteOpen}>
+        <DialogContent className="border-0" style={{ background: C.surface, color: C.text }}>
+          <DialogHeader>
+            <DialogTitle style={{ fontFamily: fonts.serif, fontStyle: "italic", fontSize: 24 }}>
+              Invite by email
+            </DialogTitle>
+            <DialogDescription style={{ color: C.muted }}>
+              They'll get a branded invite with the event details and an RSVP button.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-3">
+            <div>
+              <label className="text-xs uppercase tracking-[0.2em] block mb-2" style={{ fontFamily: fonts.mono, color: C.muted }}>
+                Email addresses
+              </label>
+              <Textarea
+                value={inviteEmails}
+                onChange={(e) => setInviteEmails(e.target.value)}
+                placeholder="friend@email.com, another@email.com"
+                rows={3}
+                style={{ background: C.bg, borderColor: C.borderStrong, color: C.text }}
+              />
+            </div>
+            <div>
+              <label className="text-xs uppercase tracking-[0.2em] block mb-2" style={{ fontFamily: fonts.mono, color: C.muted }}>
+                Personal note (optional)
+              </label>
+              <Input
+                value={inviteMsg}
+                onChange={(e) => setInviteMsg(e.target.value)}
+                placeholder="Hope you can make it!"
+                style={{ background: C.bg, borderColor: C.borderStrong, color: C.text }}
+              />
+            </div>
+            <Button
+              onClick={handleSendInvites}
+              disabled={sending}
+              className="w-full h-11 rounded-full text-xs uppercase tracking-[0.2em] border-0"
+              style={{ background: C.raspberry, color: "#fff", fontFamily: fonts.mono }}
+            >
+              {sending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Send invites"}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
+  );
+};
+
+export default EventPublic;
