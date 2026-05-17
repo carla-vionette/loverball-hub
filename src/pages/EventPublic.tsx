@@ -434,6 +434,17 @@ const EventPublic = () => {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Event-contextual signup / sign-in for RSVP */}
+      <EventRSVPDialog
+        open={authOpen}
+        onOpenChange={setAuthOpen}
+        eventId={event.id}
+        eventTitle={event.title}
+        eventImage={event.image_url}
+        intent={authIntent}
+        onAuthed={applyRsvp}
+      />
     </>
   );
 };
