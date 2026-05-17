@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { supabase } from "@/integrations/supabase/client";
@@ -8,10 +8,11 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Calendar, Clock, MapPin, Share2, Copy, Mail, Loader2, ArrowLeft } from "lucide-react";
+import { Calendar, Clock, MapPin, Share2, Copy, Mail, Loader2, ArrowLeft, Check, HelpCircle, X } from "lucide-react";
 import { format } from "date-fns";
 import loverballLogo from "@/assets/loverball-script-logo.png";
 import { C, fonts } from "@/lib/editorialTheme";
+import EventRSVPDialog, { RsvpIntent } from "@/components/EventRSVPDialog";
 
 const SITE = "https://www.loverball.com";
 
@@ -46,6 +47,11 @@ const EventPublic = () => {
   const [inviteEmails, setInviteEmails] = useState("");
   const [inviteMsg, setInviteMsg] = useState("");
   const [sending, setSending] = useState(false);
+  const [authOpen, setAuthOpen] = useState(false);
+  const [authIntent, setAuthIntent] = useState<RsvpIntent>("attending");
+  const [rsvpStatus, setRsvpStatus] = useState<RsvpIntent | null>(null);
+  const [rsvping, setRsvping] = useState(false);
+  const pendingAppliedRef = useRef(false);
 
   useEffect(() => {
     if (!id) return;
@@ -89,13 +95,74 @@ const EventPublic = () => {
     }
   }, [event, dateStr, timeStr, publicUrl, toast]);
 
-  const handleRSVP = () => {
-    const dest = `/event/${id}`;
+  const applyRsvp = useCallback(
+    async (status: RsvpIntent) => {
+      if (!id) return;
+      const { data: { user: u } } = await supabase.auth.getUser();
+      if (!u) return;
+      setRsvping(true);
+      try {
+        const { error } = await supabase
+          .from("event_rsvps")
+          .upsert(
+            { event_id: id, user_id: u.id, status },
+            { onConflict: "event_id,user_id" }
+          );
+        if (error) throw error;
+        if (status === "attending") {
+          await supabase
+            .from("event_guests")
+            .upsert({ event_id: id, user_id: u.id, status: "going" }, { onConflict: "event_id,user_id" });
+        } else {
+          await supabase.from("event_guests").delete().eq("event_id", id).eq("user_id", u.id);
+        }
+        setRsvpStatus(status);
+        try { localStorage.removeItem(`pending_rsvp_${id}`); } catch { /* ignore */ }
+        const label = status === "attending" ? "You're in" : status === "waitlisted" ? "Marked as Maybe" : "Marked as Can't go";
+        toast({ title: label, description: status === "attending" ? "We'll send you reminders." : undefined });
+      } catch (err: unknown) {
+        const msg = err instanceof Error ? err.message : "Try again in a moment.";
+        toast({ title: "Couldn't save RSVP", description: msg, variant: "destructive" });
+      } finally {
+        setRsvping(false);
+      }
+    },
+    [id, toast]
+  );
+
+  // Load existing RSVP & apply any pending intent that was stored before auth
+  useEffect(() => {
+    if (!id || !user) return;
+    (async () => {
+      const { data } = await supabase
+        .from("event_rsvps")
+        .select("status")
+        .eq("event_id", id)
+        .eq("user_id", user.id)
+        .maybeSingle();
+      const existing = (data?.status as RsvpIntent | undefined) ?? null;
+      if (existing) setRsvpStatus(existing);
+
+      if (pendingAppliedRef.current) return;
+      try {
+        const pending = localStorage.getItem(`pending_rsvp_${id}`) as RsvpIntent | null;
+        if (pending && pending !== existing) {
+          pendingAppliedRef.current = true;
+          await applyRsvp(pending);
+        } else if (pending) {
+          localStorage.removeItem(`pending_rsvp_${id}`);
+        }
+      } catch { /* ignore */ }
+    })();
+  }, [id, user, applyRsvp]);
+
+  const handleRSVPIntent = async (status: RsvpIntent) => {
     if (!user) {
-      navigate(`/auth?mode=signup&redirect=${encodeURIComponent(dest)}`);
+      setAuthIntent(status);
+      setAuthOpen(true);
       return;
     }
-    navigate(dest);
+    await applyRsvp(status);
   };
 
   const handleSendInvites = async () => {
@@ -229,17 +296,61 @@ const EventPublic = () => {
             </p>
           )}
 
-          {/* Primary CTA */}
-          <div className="flex flex-col gap-3 mb-4">
-            <Button
-              onClick={handleRSVP}
-              className="w-full h-12 rounded-full text-sm uppercase tracking-[0.2em] font-semibold border-0"
-              style={{ background: C.raspberry, color: "#fff", fontFamily: fonts.mono }}
-            >
-              RSVP with Loverball
-            </Button>
+          {/* RSVP — Partiful-style intent buttons */}
+          <div className="mb-4">
+            {rsvpStatus && (
+              <div
+                className="flex items-center gap-2 mb-3 px-4 py-3 rounded-xl"
+                style={{
+                  background: "rgba(212,83,126,0.08)",
+                  border: `1px solid ${C.raspberry}44`,
+                }}
+              >
+                <Check className="w-4 h-4" style={{ color: C.raspberry }} />
+                <span style={{ color: C.text, fontSize: 14 }}>
+                  {rsvpStatus === "attending"
+                    ? "You're in. We'll send reminders."
+                    : rsvpStatus === "waitlisted"
+                    ? "You're down as Maybe."
+                    : "You said Can't go. Thanks for letting us know."}
+                </span>
+              </div>
+            )}
 
-            <div className="flex gap-2">
+            <div
+              className="text-[10px] uppercase tracking-[0.25em] mb-2"
+              style={{ fontFamily: fonts.mono, color: C.muted }}
+            >
+              {rsvpStatus ? "Change your RSVP" : "Are you in?"}
+            </div>
+            <div className="grid grid-cols-3 gap-2">
+              {([
+                { key: "attending", label: "Going", Icon: Check },
+                { key: "waitlisted", label: "Maybe", Icon: HelpCircle },
+                { key: "canceled", label: "Can't go", Icon: X },
+              ] as const).map(({ key, label, Icon }) => {
+                const active = rsvpStatus === key;
+                return (
+                  <Button
+                    key={key}
+                    onClick={() => handleRSVPIntent(key)}
+                    disabled={rsvping}
+                    className="h-14 rounded-2xl text-xs uppercase tracking-[0.18em] font-semibold border flex flex-col gap-1"
+                    style={{
+                      background: active ? C.raspberry : "transparent",
+                      color: active ? "#fff" : C.text,
+                      borderColor: active ? C.raspberry : C.borderStrong,
+                      fontFamily: fonts.mono,
+                    }}
+                  >
+                    <Icon className="w-4 h-4" />
+                    {label}
+                  </Button>
+                );
+              })}
+            </div>
+
+            <div className="flex gap-2 mt-4">
               <Button
                 onClick={handleShare}
                 variant="outline"
@@ -263,7 +374,7 @@ const EventPublic = () => {
               <Button
                 onClick={() => setInviteOpen(true)}
                 variant="outline"
-                className="w-full h-11 rounded-full text-xs uppercase tracking-[0.2em] bg-transparent"
+                className="w-full h-11 rounded-full text-xs uppercase tracking-[0.2em] bg-transparent mt-2"
                 style={{ borderColor: C.borderStrong, color: C.text, fontFamily: fonts.mono }}
               >
                 <Mail className="w-3.5 h-3.5 mr-2" /> Send invite by email
@@ -323,6 +434,17 @@ const EventPublic = () => {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Event-contextual signup / sign-in for RSVP */}
+      <EventRSVPDialog
+        open={authOpen}
+        onOpenChange={setAuthOpen}
+        eventId={event.id}
+        eventTitle={event.title}
+        eventImage={event.image_url}
+        intent={authIntent}
+        onAuthed={applyRsvp}
+      />
     </>
   );
 };
