@@ -47,6 +47,11 @@ const EventPublic = () => {
   const [inviteEmails, setInviteEmails] = useState("");
   const [inviteMsg, setInviteMsg] = useState("");
   const [sending, setSending] = useState(false);
+  const [authOpen, setAuthOpen] = useState(false);
+  const [authIntent, setAuthIntent] = useState<RsvpIntent>("attending");
+  const [rsvpStatus, setRsvpStatus] = useState<RsvpIntent | null>(null);
+  const [rsvping, setRsvping] = useState(false);
+  const pendingAppliedRef = useRef(false);
 
   useEffect(() => {
     if (!id) return;
