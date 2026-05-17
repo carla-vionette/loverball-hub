@@ -44,10 +44,10 @@ const CheckoutSuccess = () => {
                   Continue Shopping
                 </Button>
               </Link>
-              <Link to="/home">
+              <Link to="/feed">
                 <Button variant="outline" className="w-full rounded-full" size="lg">
                   <ArrowLeft className="w-4 h-4 mr-2" />
-                  Back to Home
+                  Back to Feed
                 </Button>
               </Link>
             </div>

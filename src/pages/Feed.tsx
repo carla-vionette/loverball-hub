@@ -42,9 +42,9 @@ const EmptyState = () => (
       <Play className="w-10 h-10 text-white/40" />
     </div>
     <h2 className="text-white text-lg font-semibold">No videos yet</h2>
-    <p className="text-white/50 text-sm text-center max-w-[260px]">
-      Videos from creators you follow will appear here. Explore the For You tab to discover content.
-    </p>
+      <p className="text-white/50 text-sm text-center max-w-[260px]">
+        Videos from creators you follow will appear here. Explore the Feed to discover content.
+      </p>
   </div>
 );
 
