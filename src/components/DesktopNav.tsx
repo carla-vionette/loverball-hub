@@ -7,7 +7,7 @@ import GlobalSearch from "@/components/GlobalSearch";
 import loverballLogo from "@/assets/loverball-script-logo.png";
 
 const mainNavItems = [
-  { icon: Play, label: "Watch", path: "/feed" },
+  { icon: Play, label: "Watch", path: "/watch" },
   { icon: Newspaper, label: "Feed", path: "/feed" },
   { icon: CalendarDays, label: "Events", path: "/events" },
   { icon: ShoppingBag, label: "Shop", path: "/shop" },
