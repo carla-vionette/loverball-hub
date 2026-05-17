@@ -315,12 +315,15 @@ const Auth = () => {
     }
   };
 
-  // ── Google OAuth ─────────────────────────────────────────────────────
+  // ── Google OAuth (Lovable Cloud managed) ─────────────────────────────
   const handleGoogleAuth = async () => {
-    await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: { redirectTo: `${LIVE_SITE_URL}/finish-profile` },
+    const { lovable } = await import('@/integrations/lovable/index');
+    const result = await lovable.auth.signInWithOAuth('google', {
+      redirect_uri: `${LIVE_SITE_URL}/finish-profile`,
     });
+    if (result.error) {
+      toast({ title: 'Google sign-in failed', description: result.error.message, variant: 'destructive' });
+    }
   };
 
   const pageBg: React.CSSProperties = {
