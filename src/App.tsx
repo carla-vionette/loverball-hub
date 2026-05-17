@@ -23,6 +23,7 @@ const FinishProfile = lazy(() => import("./pages/FinishProfile"));
 const Feed = lazy(() => import("./pages/Feed"));
 const Events = lazy(() => import("./pages/Events"));
 const EventDetail = lazy(() => import("./pages/EventDetail"));
+const EventPublic = lazy(() => import("./pages/EventPublic"));
 
 const MemberProfile = lazy(() => import("./pages/MemberProfile"));
 const Profile = lazy(() => import("./pages/Profile"));
