@@ -131,7 +131,7 @@ Deno.serve(async (req: Request) => {
       }
     }
     
-    const eventUrl = `${baseUrl}/event/${event.id}`;
+    const eventUrl = `${baseUrl}/e/${event.id}`;
 
     console.log(`OG Title: ${ogTitle}`);
     console.log(`OG Description: ${ogDescription}`);
