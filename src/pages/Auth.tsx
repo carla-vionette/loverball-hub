@@ -1,17 +1,168 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, ArrowLeft, Mail, CheckCircle2 } from "lucide-react";
 import loverballLogo from "@/assets/loverball-script-logo.png";
 import WelcomeSplash from "@/components/WelcomeSplash";
+import { C, fonts } from "@/lib/editorialTheme";
 
 const LIVE_SITE_URL = 'https://loverball-hub.lovable.app';
 
 type AuthMode = "join" | "signin" | "confirm" | "reset_sent" | "reset_password";
+
+/* ─── Editorial styled input ─── */
+const EditorialInput = (props: React.ComponentProps<"input">) => (
+  <input
+    {...props}
+    style={{
+      fontFamily: fonts.sans,
+      fontSize: 16,
+      height: 56,
+      width: "100%",
+      padding: "0 20px",
+      borderRadius: 16,
+      border: `1px solid ${C.borderStrong}`,
+      background: C.surface,
+      color: C.text,
+      outline: "none",
+      transition: "border-color 180ms ease, box-shadow 180ms ease",
+      ...props.style,
+    }}
+    className={`placeholder:text-[#B8B8B8]/40 focus-visible:border-[#D4537E] focus-visible:ring-1 focus-visible:ring-[#D4537E]/30 ${props.className ?? ""}`}
+  />
+);
+
+/* ─── Editorial primary pill button ─── */
+const EditorialBtn = ({
+  children,
+  type = "button",
+  disabled,
+  onClick,
+  loading,
+}: {
+  children: React.ReactNode;
+  type?: "button" | "submit";
+  disabled?: boolean;
+  onClick?: () => void;
+  loading?: boolean;
+}) => (
+  <button
+    type={type}
+    disabled={disabled || loading}
+    onClick={onClick}
+    style={{
+      fontFamily: fonts.mono,
+      fontSize: 12,
+      letterSpacing: "0.16em",
+      textTransform: "uppercase",
+      fontWeight: 500,
+      borderRadius: 999,
+      height: 56,
+      width: "100%",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: 8,
+      background: C.raspberry,
+      color: "#fff",
+      border: "none",
+      boxShadow: "0 8px 24px -10px rgba(212,83,126,0.55)",
+      cursor: disabled || loading ? "not-allowed" : "pointer",
+      opacity: disabled || loading ? 0.6 : 1,
+      transition: "all 180ms ease",
+    }}
+    className="hover:opacity-95 active:scale-[0.98]"
+  >
+    {loading ? "One sec…" : children}
+    {!loading && <ArrowRight size={14} />}
+  </button>
+);
+
+/* ─── Editorial outline pill button (Google) ─── */
+const EditorialOutlineBtn = ({
+  children,
+  onClick,
+}: {
+  children: React.ReactNode;
+  onClick?: () => void;
+}) => (
+  <button
+    type="button"
+    onClick={onClick}
+    style={{
+      fontFamily: fonts.mono,
+      fontSize: 12,
+      letterSpacing: "0.14em",
+      textTransform: "uppercase",
+      fontWeight: 500,
+      borderRadius: 999,
+      height: 56,
+      width: "100%",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: 12,
+      background: "transparent",
+      color: C.text,
+      border: `1px solid ${C.borderStrong}`,
+      cursor: "pointer",
+      transition: "all 180ms ease",
+    }}
+    className="hover:bg-white/5 active:scale-[0.98]"
+  >
+    {children}
+  </button>
+);
+
+/* ─── Serif display heading ─── */
+const AuthH1 = ({ children }: { children: React.ReactNode }) => (
+  <h1
+    style={{
+      fontFamily: fonts.serif,
+      fontStyle: "italic",
+      fontWeight: 500,
+      fontSize: "clamp(32px, 6vw, 48px)",
+      lineHeight: 1.0,
+      letterSpacing: "-0.02em",
+      color: C.text,
+      textAlign: "center",
+    }}
+  >
+    {children}
+  </h1>
+);
+
+/* ─── Body text ─── */
+const AuthBody = ({
+  children,
+  muted = false,
+  center = false,
+}: {
+  children: React.ReactNode;
+  muted?: boolean;
+  center?: boolean;
+}) => (
+  <p
+    style={{
+      fontFamily: fonts.sans,
+      fontSize: 16,
+      lineHeight: 1.6,
+      color: muted ? C.muted : C.text,
+      textAlign: center ? "center" : "left",
+    }}
+  >
+    {children}
+  </p>
+);
+
+/* ─── Mono label ─── */
+const Mono = ({ children, color = C.muted }: { children: React.ReactNode; color?: string }) => (
+  <span style={{ fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.22em", textTransform: "uppercase", color }}>
+    {children}
+  </span>
+);
 
 const Auth = () => {
   const [searchParams] = useSearchParams();
@@ -60,9 +211,7 @@ const Auth = () => {
 
     setLoading(true);
     try {
-      // Generate a secure random password — user sets one only if they want via reset flow
       const tempPassword = crypto.randomUUID();
-
       const { error, data } = await supabase.auth.signUp({
         email: email.trim().toLowerCase(),
         password: tempPassword,
@@ -73,14 +222,8 @@ const Auth = () => {
       });
 
       if (error) throw error;
-
-      if (data.user && !data.session) {
-        // Email confirmation required
-        setMode("confirm");
-      } else if (data.user && data.session) {
-        // Auto-confirmed (dev/magic link configs)
-        navigate("/finish-profile");
-      }
+      if (data.user && !data.session) setMode("confirm");
+      else if (data.user && data.session) navigate("/finish-profile");
     } catch (err: any) {
       toast({ title: "Hmm, something went wrong", description: err.message, variant: "destructive" });
     } finally {
@@ -97,7 +240,6 @@ const Auth = () => {
         email: email.trim().toLowerCase(),
         password,
       });
-
       if (error) throw error;
 
       const { data: profile } = await supabase
@@ -181,13 +323,29 @@ const Auth = () => {
     });
   };
 
+  const pageBg: React.CSSProperties = {
+    background: C.bg,
+    minHeight: "100vh",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: "48px 20px",
+  };
+
+  const dividerStyle: React.CSSProperties = {
+    flex: 1,
+    height: 1,
+    background: C.border,
+  };
+
   return (
     <>
       {splashName && pendingRedirect && (
         <WelcomeSplash name={splashName} onDismiss={() => navigate(pendingRedirect)} />
       )}
 
-      <div className="min-h-screen bg-background flex flex-col items-center justify-center px-5 py-12">
+      <div style={pageBg}>
         {/* Logo */}
         <motion.div
           initial={{ opacity: 0, y: -12 }}
@@ -212,70 +370,54 @@ const Auth = () => {
                 className="space-y-8"
               >
                 <div className="text-center space-y-2">
-                  <h1 className="text-3xl font-sans font-semibold text-foreground leading-tight">
-                    Join Loverball
-                  </h1>
-                  <p className="text-muted-foreground text-base">
-                    Sign up in seconds.
-                  </p>
+                  <AuthH1>Join Loverball</AuthH1>
+                  <AuthBody muted center>Sign up in seconds.</AuthBody>
                 </div>
 
                 <form onSubmit={handleSignUp} className="space-y-4">
-                  <Input
+                  <EditorialInput
                     type="text"
                     placeholder="Your name"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     required
                     autoFocus
-                    className="h-14 text-base rounded-2xl border-border/60 bg-background placeholder:text-foreground/30 focus:border-primary"
                   />
-                  <Input
+                  <EditorialInput
                     type="email"
                     placeholder="Email address"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
-                    className="h-14 text-base rounded-2xl border-border/60 bg-background placeholder:text-foreground/30 focus:border-primary"
                   />
-
-                  <Button
-                    type="submit"
-                    disabled={loading}
-                    className="w-full h-14 text-base rounded-2xl font-semibold gap-2 group"
-                  >
-                    {loading ? "One sec..." : "Continue"}
-                    {!loading && <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />}
-                  </Button>
+                  <EditorialBtn type="submit" loading={loading}>
+                    Continue
+                  </EditorialBtn>
                 </form>
 
                 <div className="relative flex items-center gap-4">
-                  <div className="flex-1 h-px bg-border/40" />
-                  <span className="text-xs text-foreground/40 uppercase tracking-wider">or</span>
-                  <div className="flex-1 h-px bg-border/40" />
+                  <div style={dividerStyle} />
+                  <Mono>or</Mono>
+                  <div style={dividerStyle} />
                 </div>
 
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={handleGoogleAuth}
-                  className="w-full h-14 rounded-2xl border-border/60 text-sm font-medium gap-3"
-                >
-                  <svg className="h-5 w-5" viewBox="0 0 24 24">
+                <EditorialOutlineBtn onClick={handleGoogleAuth}>
+                  <svg className="h-5 w-5" viewBox="0 0 24 24" style={{ flexShrink: 0 }}>
                     <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
                     <path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
                     <path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
                     <path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
                   </svg>
                   Continue with Google
-                </Button>
+                </EditorialOutlineBtn>
 
-                <p className="text-center text-sm text-foreground/50">
+                <p style={{ fontFamily: fonts.sans, fontSize: 14, textAlign: "center", color: C.muted }}>
                   Already a member?{" "}
                   <button
                     type="button"
                     onClick={() => setMode("signin")}
-                    className="text-primary font-semibold hover:underline"
+                    style={{ color: C.raspberry, fontWeight: 600, borderBottom: `1px solid ${C.raspberry}`, paddingBottom: 1 }}
+                    className="hover:opacity-80 transition-opacity"
                   >
                     Sign in
                   </button>
@@ -297,27 +439,43 @@ const Auth = () => {
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   transition={{ type: "spring", delay: 0.15, stiffness: 220, damping: 18 }}
-                  className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto"
+                  className="w-20 h-20 rounded-full flex items-center justify-center mx-auto"
+                  style={{ background: `${C.raspberry}18` }}
                 >
-                  <Mail className="w-9 h-9 text-primary" />
+                  <Mail className="w-9 h-9" style={{ color: C.raspberry }} />
                 </motion.div>
 
                 <div className="space-y-3">
-                  <h2 className="text-2xl font-sans font-semibold text-foreground">You're almost in.</h2>
-                  <p className="text-muted-foreground text-base leading-relaxed">
+                  <h2
+                    style={{
+                      fontFamily: fonts.serif,
+                      fontStyle: "italic",
+                      fontWeight: 500,
+                      fontSize: 28,
+                      lineHeight: 1.1,
+                      color: C.text,
+                    }}
+                  >
+                    You're almost in.
+                  </h2>
+                  <AuthBody muted center>
                     Check your email at{" "}
-                    <span className="font-semibold text-foreground">{email}</span>{" "}
+                    <span style={{ fontWeight: 600, color: C.text }}>{email}</span>{" "}
                     to confirm and finish setting up.
-                  </p>
+                  </AuthBody>
                 </div>
 
-                <div className="bg-muted/40 rounded-2xl px-5 py-4 text-sm text-foreground/60 leading-relaxed">
+                <div
+                  className="rounded-2xl px-5 py-4 text-sm leading-relaxed"
+                  style={{ background: C.surface, color: C.muted }}
+                >
                   Didn't get it? Check spam, or{" "}
                   <button
                     type="button"
                     onClick={handleResend}
                     disabled={resendLoading}
-                    className="text-primary font-semibold hover:underline"
+                    style={{ color: C.raspberry, fontWeight: 600, borderBottom: `1px solid ${C.raspberry}` }}
+                    className="hover:opacity-80 transition-opacity"
                   >
                     {resendLoading ? "Sending…" : "resend the email"}
                   </button>
@@ -326,9 +484,10 @@ const Auth = () => {
                 <button
                   type="button"
                   onClick={() => setMode("join")}
-                  className="text-sm text-foreground/40 hover:text-foreground/70 transition-colors flex items-center gap-1.5 mx-auto"
+                  style={{ fontFamily: fonts.sans, fontSize: 14, color: C.muted, display: "flex", alignItems: "center", gap: 6, margin: "0 auto" }}
+                  className="hover:text-[#FAF5E9] transition-colors"
                 >
-                  <ArrowLeft className="w-3.5 h-3.5" />
+                  <ArrowLeft size={14} />
                   Use a different email
                 </button>
               </motion.div>
@@ -345,27 +504,25 @@ const Auth = () => {
                 className="space-y-8"
               >
                 <div className="text-center space-y-2">
-                  <h1 className="text-3xl font-sans font-semibold text-foreground">Welcome back</h1>
-                  <p className="text-muted-foreground text-base">Sign in to your account.</p>
+                  <AuthH1>Welcome back</AuthH1>
+                  <AuthBody muted center>Sign in to your account.</AuthBody>
                 </div>
 
                 <form onSubmit={handleSignIn} className="space-y-4">
-                  <Input
+                  <EditorialInput
                     type="email"
                     placeholder="Email address"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
                     autoFocus
-                    className="h-14 text-base rounded-2xl border-border/60 bg-background placeholder:text-foreground/30"
                   />
-                  <Input
+                  <EditorialInput
                     type="password"
                     placeholder="Password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
-                    className="h-14 text-base rounded-2xl border-border/60 bg-background placeholder:text-foreground/30"
                   />
 
                   <div className="text-right">
@@ -373,49 +530,41 @@ const Auth = () => {
                       type="button"
                       onClick={handleForgotPassword}
                       disabled={loading}
-                      className="text-sm text-primary hover:underline"
+                      style={{ fontFamily: fonts.sans, fontSize: 14, color: C.raspberry }}
+                      className="hover:opacity-80 transition-opacity"
                     >
                       Forgot password?
                     </button>
                   </div>
 
-                  <Button
-                    type="submit"
-                    disabled={loading}
-                    className="w-full h-14 text-base rounded-2xl font-semibold gap-2 group"
-                  >
-                    {loading ? "Signing in…" : "Sign in"}
-                    {!loading && <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />}
-                  </Button>
+                  <EditorialBtn type="submit" loading={loading}>
+                    Sign in
+                  </EditorialBtn>
                 </form>
 
                 <div className="relative flex items-center gap-4">
-                  <div className="flex-1 h-px bg-border/40" />
-                  <span className="text-xs text-foreground/40 uppercase tracking-wider">or</span>
-                  <div className="flex-1 h-px bg-border/40" />
+                  <div style={dividerStyle} />
+                  <Mono>or</Mono>
+                  <div style={dividerStyle} />
                 </div>
 
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={handleGoogleAuth}
-                  className="w-full h-14 rounded-2xl border-border/60 text-sm font-medium gap-3"
-                >
-                  <svg className="h-5 w-5" viewBox="0 0 24 24">
+                <EditorialOutlineBtn onClick={handleGoogleAuth}>
+                  <svg className="h-5 w-5" viewBox="0 0 24 24" style={{ flexShrink: 0 }}>
                     <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
                     <path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
                     <path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
                     <path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
                   </svg>
                   Continue with Google
-                </Button>
+                </EditorialOutlineBtn>
 
-                <p className="text-center text-sm text-foreground/50">
+                <p style={{ fontFamily: fonts.sans, fontSize: 14, textAlign: "center", color: C.muted }}>
                   New here?{" "}
                   <button
                     type="button"
                     onClick={() => { setMode("join"); setPassword(""); }}
-                    className="text-primary font-semibold hover:underline"
+                    style={{ color: C.raspberry, fontWeight: 600, borderBottom: `1px solid ${C.raspberry}`, paddingBottom: 1 }}
+                    className="hover:opacity-80 transition-opacity"
                   >
                     Join Loverball
                   </button>
@@ -432,21 +581,36 @@ const Auth = () => {
                 transition={{ duration: 0.3 }}
                 className="text-center space-y-6"
               >
-                <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
-                  <CheckCircle2 className="w-9 h-9 text-primary" />
+                <div
+                  className="w-20 h-20 rounded-full flex items-center justify-center mx-auto"
+                  style={{ background: `${C.raspberry}18` }}
+                >
+                  <CheckCircle2 className="w-9 h-9" style={{ color: C.raspberry }} />
                 </div>
                 <div className="space-y-2">
-                  <h2 className="text-2xl font-sans font-semibold">Check your inbox</h2>
-                  <p className="text-muted-foreground">
-                    We sent a reset link to <span className="font-semibold text-foreground">{email}</span>.
-                  </p>
+                  <h2
+                    style={{
+                      fontFamily: fonts.serif,
+                      fontStyle: "italic",
+                      fontWeight: 500,
+                      fontSize: 28,
+                      lineHeight: 1.1,
+                      color: C.text,
+                    }}
+                  >
+                    Check your inbox
+                  </h2>
+                  <AuthBody muted center>
+                    We sent a reset link to <span style={{ fontWeight: 600, color: C.text }}>{email}</span>.
+                  </AuthBody>
                 </div>
                 <button
                   type="button"
                   onClick={() => setMode("signin")}
-                  className="text-sm text-foreground/40 hover:text-foreground/70 transition-colors flex items-center gap-1.5 mx-auto"
+                  style={{ fontFamily: fonts.sans, fontSize: 14, color: C.muted, display: "flex", alignItems: "center", gap: 6, margin: "0 auto" }}
+                  className="hover:text-[#FAF5E9] transition-colors"
                 >
-                  <ArrowLeft className="w-3.5 h-3.5" />
+                  <ArrowLeft size={14} />
                   Back to sign in
                 </button>
               </motion.div>
@@ -462,12 +626,12 @@ const Auth = () => {
                 className="space-y-8"
               >
                 <div className="text-center space-y-2">
-                  <h1 className="text-3xl font-sans font-semibold">Set a new password</h1>
-                  <p className="text-muted-foreground">Make it something you'll remember.</p>
+                  <AuthH1>Set a new password</AuthH1>
+                  <AuthBody muted center>Make it something you'll remember.</AuthBody>
                 </div>
 
                 <form onSubmit={handleResetPassword} className="space-y-4">
-                  <Input
+                  <EditorialInput
                     type="password"
                     placeholder="New password"
                     value={password}
@@ -475,15 +639,10 @@ const Auth = () => {
                     required
                     minLength={6}
                     autoFocus
-                    className="h-14 text-base rounded-2xl border-border/60 bg-background placeholder:text-foreground/30"
                   />
-                  <Button
-                    type="submit"
-                    disabled={loading}
-                    className="w-full h-14 text-base rounded-2xl font-semibold"
-                  >
-                    {loading ? "Updating…" : "Update password"}
-                  </Button>
+                  <EditorialBtn type="submit" loading={loading}>
+                    Update password
+                  </EditorialBtn>
                 </form>
               </motion.div>
             )}
@@ -492,11 +651,22 @@ const Auth = () => {
         </div>
 
         {/* Footer */}
-        <p className="mt-12 text-xs text-foreground/30 text-center max-w-xs">
+        <p
+          style={{
+            fontFamily: fonts.sans,
+            fontSize: 12,
+            color: C.muted,
+            textAlign: "center",
+            maxWidth: 320,
+            marginTop: 48,
+            lineHeight: 1.5,
+          }}
+          className="opacity-50"
+        >
           By joining, you agree to our{" "}
-          <button onClick={() => navigate("/terms")} className="hover:underline">Terms</button>
+          <button onClick={() => navigate("/terms")} style={{ color: C.text }} className="hover:opacity-80 transition-opacity">Terms</button>
           {" "}and{" "}
-          <button onClick={() => navigate("/privacy")} className="hover:underline">Privacy Policy</button>.
+          <button onClick={() => navigate("/privacy")} style={{ color: C.text }} className="hover:opacity-80 transition-opacity">Privacy Policy</button>.
         </p>
       </div>
     </>
