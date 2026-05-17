@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { supabase } from "@/integrations/supabase/client";
@@ -8,10 +8,11 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Calendar, Clock, MapPin, Share2, Copy, Mail, Loader2, ArrowLeft } from "lucide-react";
+import { Calendar, Clock, MapPin, Share2, Copy, Mail, Loader2, ArrowLeft, Check, HelpCircle, X } from "lucide-react";
 import { format } from "date-fns";
 import loverballLogo from "@/assets/loverball-script-logo.png";
 import { C, fonts } from "@/lib/editorialTheme";
+import EventRSVPDialog, { RsvpIntent } from "@/components/EventRSVPDialog";
 
 const SITE = "https://www.loverball.com";
 
