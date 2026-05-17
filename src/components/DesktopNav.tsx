@@ -1,13 +1,12 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { User, Search, CalendarDays, Settings, ShoppingBag, Play, Newspaper, Shield, Users } from "lucide-react";
+import { User, Search, CalendarDays, Settings, ShoppingBag, Newspaper, Shield, Users } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import GlobalSearch from "@/components/GlobalSearch";
 import loverballLogo from "@/assets/loverball-script-logo.png";
 
 const mainNavItems = [
-  { icon: Play, label: "Watch", path: "/watch" },
   { icon: Newspaper, label: "Feed", path: "/feed" },
   { icon: CalendarDays, label: "Events", path: "/events" },
   { icon: ShoppingBag, label: "Shop", path: "/shop" },
