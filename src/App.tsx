@@ -23,6 +23,7 @@ const FinishProfile = lazy(() => import("./pages/FinishProfile"));
 const Feed = lazy(() => import("./pages/Feed"));
 const Events = lazy(() => import("./pages/Events"));
 const EventDetail = lazy(() => import("./pages/EventDetail"));
+const EventPublic = lazy(() => import("./pages/EventPublic"));
 
 const MemberProfile = lazy(() => import("./pages/MemberProfile"));
 const Profile = lazy(() => import("./pages/Profile"));
@@ -122,6 +123,7 @@ const App = () => (
                 <Route path="/feed" element={<Feed />} />
                 <Route path="/events" element={<Events />} />
                 <Route path="/event/:id" element={<EventDetail />} />
+                <Route path="/e/:id" element={<EventPublic />} />
                 <Route path="/members" element={<Navigate to="/club" replace />} />
                 <Route path="/members/:id" element={<ProtectedRoute><MemberProfile /></ProtectedRoute>} />
                 <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
