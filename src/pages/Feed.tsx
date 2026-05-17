@@ -2,6 +2,7 @@ import { useRef, useState, useEffect, useCallback } from "react";
 import FeedVideoPlayer from "@/components/video/FeedVideoPlayer";
 import { FEED_VIDEOS, type FeedVideoItem } from "@/lib/feedVideoData";
 import BottomNav from "@/components/BottomNav";
+import DesktopNav from "@/components/DesktopNav";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Play } from "lucide-react";
 import Seo from "@/components/Seo";
@@ -130,7 +131,10 @@ const Feed = () => {
   const isEmpty = !isLoading && currentVideos.length === 0;
 
   return (
-    <div className="fixed inset-0 bg-black z-30">
+    <>
+      <DesktopNav />
+      <div className="fixed inset-0 md:left-64 bg-black z-30">
+
       <Seo
         title="Video Feed | Loverball"
         description="Watch the latest women's sports videos, highlights, and creator content — the Loverball immersive feed."
@@ -261,9 +265,10 @@ const Feed = () => {
         )}
       </div>
 
-      {/* Bottom nav */}
+      {/* Bottom nav (mobile only) */}
       <BottomNav />
     </div>
+    </>
   );
 };
 
