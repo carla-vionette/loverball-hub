@@ -1013,6 +1013,16 @@ const EventDetail = () => {
                   {getShareUrl()}
                 </p>
               </div>
+
+              {/* Open public page (host email invites live there) */}
+              <Button
+                variant="outline"
+                className="w-full"
+                onClick={() => { setShowShareDialog(false); navigate(`/e/${event.id}`); }}
+              >
+                <ExternalLink className="w-4 h-4 mr-2" />
+                Open public page & send email invites
+              </Button>
             </div>
           )}
         </DialogContent>
