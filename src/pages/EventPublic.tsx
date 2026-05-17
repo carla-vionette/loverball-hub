@@ -95,13 +95,74 @@ const EventPublic = () => {
     }
   }, [event, dateStr, timeStr, publicUrl, toast]);
 
-  const handleRSVP = () => {
-    const dest = `/event/${id}`;
+  const applyRsvp = useCallback(
+    async (status: RsvpIntent) => {
+      if (!id) return;
+      const { data: { user: u } } = await supabase.auth.getUser();
+      if (!u) return;
+      setRsvping(true);
+      try {
+        const { error } = await supabase
+          .from("event_rsvps")
+          .upsert(
+            { event_id: id, user_id: u.id, status },
+            { onConflict: "event_id,user_id" }
+          );
+        if (error) throw error;
+        if (status === "attending") {
+          await supabase
+            .from("event_guests")
+            .upsert({ event_id: id, user_id: u.id, status: "going" }, { onConflict: "event_id,user_id" });
+        } else {
+          await supabase.from("event_guests").delete().eq("event_id", id).eq("user_id", u.id);
+        }
+        setRsvpStatus(status);
+        try { localStorage.removeItem(`pending_rsvp_${id}`); } catch { /* ignore */ }
+        const label = status === "attending" ? "You're in" : status === "waitlisted" ? "Marked as Maybe" : "Marked as Can't go";
+        toast({ title: label, description: status === "attending" ? "We'll send you reminders." : undefined });
+      } catch (err: unknown) {
+        const msg = err instanceof Error ? err.message : "Try again in a moment.";
+        toast({ title: "Couldn't save RSVP", description: msg, variant: "destructive" });
+      } finally {
+        setRsvping(false);
+      }
+    },
+    [id, toast]
+  );
+
+  // Load existing RSVP & apply any pending intent that was stored before auth
+  useEffect(() => {
+    if (!id || !user) return;
+    (async () => {
+      const { data } = await supabase
+        .from("event_rsvps")
+        .select("status")
+        .eq("event_id", id)
+        .eq("user_id", user.id)
+        .maybeSingle();
+      const existing = (data?.status as RsvpIntent | undefined) ?? null;
+      if (existing) setRsvpStatus(existing);
+
+      if (pendingAppliedRef.current) return;
+      try {
+        const pending = localStorage.getItem(`pending_rsvp_${id}`) as RsvpIntent | null;
+        if (pending && pending !== existing) {
+          pendingAppliedRef.current = true;
+          await applyRsvp(pending);
+        } else if (pending) {
+          localStorage.removeItem(`pending_rsvp_${id}`);
+        }
+      } catch { /* ignore */ }
+    })();
+  }, [id, user, applyRsvp]);
+
+  const handleRSVPIntent = async (status: RsvpIntent) => {
     if (!user) {
-      navigate(`/auth?mode=signup&redirect=${encodeURIComponent(dest)}`);
+      setAuthIntent(status);
+      setAuthOpen(true);
       return;
     }
-    navigate(dest);
+    await applyRsvp(status);
   };
 
   const handleSendInvites = async () => {
