@@ -52,6 +52,11 @@ const About = lazy(() => import("./pages/About"));
 const Contact = lazy(() => import("./pages/Contact"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
+// ── Landing site pages ──
+const HowItWorks = lazy(() => import("./pages/HowItWorks"));
+const Features = lazy(() => import("./pages/Features"));
+const Join = lazy(() => import("./pages/Join"));
+
 // Admin pages
 const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
 const AdminEventEditor = lazy(() => import("./pages/AdminEventEditor"));
@@ -118,6 +123,12 @@ const App = () => (
                 <Route path="/connect" element={<Connect />} />
                 <Route path="/about" element={<About />} />
                 <Route path="/contact" element={<Contact />} />
+
+                {/* Landing site */}
+                <Route path="/how-it-works" element={<HowItWorks />} />
+                <Route path="/features" element={<Features />} />
+                <Route path="/join" element={<Join />} />
+                <Route path="/download" element={<Join />} />
 
                 {/* Core tabs: FEED, SCENE, CLUB, PROFILE */}
                 <Route path="/feed" element={<Feed />} />
