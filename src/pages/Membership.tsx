@@ -225,7 +225,7 @@ const Membership = () => {
           The members-only home for sports fandom.
         </H2>
         <div className="mt-10 flex flex-wrap gap-4 justify-center">
-          <PrimaryBtn onClick={goSignup}>Become an Insider</PrimaryBtn>
+          <PrimaryBtn onClick={goSignup}>Go All-Access</PrimaryBtn>
           <SecondaryBtn to="/club">Tour the Club</SecondaryBtn>
         </div>
       </section>
