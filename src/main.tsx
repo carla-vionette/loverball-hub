@@ -7,9 +7,7 @@ import "./index.css";
 if ("serviceWorker" in navigator) {
   if (import.meta.env.PROD) {
     window.addEventListener("load", () => {
-      navigator.serviceWorker
-        .register(`${import.meta.env.BASE_URL}sw.js`)
-        .catch(() => {});
+      navigator.serviceWorker.register("/sw.js").catch(() => {});
     });
   } else {
     navigator.serviceWorker.getRegistrations().then((registrations) => {
