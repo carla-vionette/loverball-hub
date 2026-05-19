@@ -100,7 +100,7 @@ const TIERS = [
     price: "$0",
     cadence: "forever",
     blurb: "A taste of the club.",
-    features: ["Ad-Supported editorial stories & scores", "Public watch parties", "Group chat preview"],
+    features: ["Ad-Supported editorial stories & scores", "Priority RSVPs to members-only events", "Group chat preview"],
     cta: "Join Free",
   },
   {
