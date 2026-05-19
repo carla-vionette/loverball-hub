@@ -256,7 +256,7 @@ const Index = () => {
                 letterSpacing: "-0.03em", color: C.text,
               }}
             >
-              For women<br/>who live sports<br/><span style={{ color: C.raspberry }}>loudly.</span>
+              Her Game.<br/>Her Community.
             </h1>
             <p className="mt-8 max-w-xl" style={{ color: C.muted, fontSize: 19, lineHeight: 1.55 }}>
               Loverball brings together events, members, stories, and culture for women who love sports.
