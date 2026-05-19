@@ -5,6 +5,10 @@ import { componentTagger } from "lovable-tagger";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
+  // Relative base so the built bundle loads correctly whether it is served
+  // from the site root (production) or a proxied subpath (preview/sandbox
+  // deploys). Absolute "/assets/..." paths break under subpath hosting.
+  base: "./",
   server: {
     host: "::",
     port: 8080,
