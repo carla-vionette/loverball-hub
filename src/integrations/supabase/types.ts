@@ -645,9 +645,9 @@ export type Database = {
         Row: {
           created_at: string
           event_id: string
+          guest_name: string | null
+          guest_phone: string | null
           id: string
-          name: string | null
-          phone: string | null
           plus_ones: number | null
           status: string
           user_id: string
@@ -655,9 +655,9 @@ export type Database = {
         Insert: {
           created_at?: string
           event_id: string
+          guest_name?: string | null
+          guest_phone?: string | null
           id?: string
-          name?: string | null
-          phone?: string | null
           plus_ones?: number | null
           status?: string
           user_id: string
@@ -665,9 +665,9 @@ export type Database = {
         Update: {
           created_at?: string
           event_id?: string
+          guest_name?: string | null
+          guest_phone?: string | null
           id?: string
-          name?: string | null
-          phone?: string | null
           plus_ones?: number | null
           status?: string
           user_id?: string
