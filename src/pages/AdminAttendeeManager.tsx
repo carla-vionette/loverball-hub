@@ -212,8 +212,8 @@ const AdminAttendeeManager = () => {
           event_id: id,
           user_id: placeholderUserId,
           status: newAttendeeStatus,
-          name: newAttendeeName.trim(),
-          phone: newAttendeePhone.trim() || null,
+          guest_name: newAttendeeName.trim(),
+          guest_phone: newAttendeePhone.trim() || null,
           plus_ones: parseInt(newAttendeePlusOnes) || 0,
         });
 
