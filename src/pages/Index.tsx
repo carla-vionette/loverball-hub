@@ -1,540 +1,176 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
 import { Seo } from "@/components/Seo";
-import { Menu, X, Instagram, Check, ArrowRight, BookOpen, CalendarHeart, Users } from "lucide-react";
-import heroImage from "@/assets/hero-women-new.png";
-import { INSTAGRAM_URL } from "@/lib/socialLinks";
+import { ArrowRight, Users, Flame, CalendarHeart, Radio } from "lucide-react";
+import LandingLayout from "@/components/landing/LandingLayout";
+import Eyebrow from "@/components/landing/Eyebrow";
+import DisplayHeading from "@/components/landing/DisplayHeading";
+import Marker from "@/components/landing/Marker";
+import BrandButton from "@/components/landing/BrandButton";
+import FeatureCard from "@/components/landing/FeatureCard";
+import PhoneMockup from "@/components/landing/PhoneMockup";
+import StatsMarquee from "@/components/landing/StatsMarquee";
+import { DerbyDayScreen, MatchingScreen, FeedScreen } from "@/components/landing/PhoneScreens";
 
-/* ============================================================
-   LOVERBALL — HOMEPAGE
-   Conversion-first. Clear, editorial, female-forward.
-   ============================================================ */
-
-const C = {
-  bg: "#0a0a0a",
-  surface: "#161616",
-  surfaceHi: "#1F1F1F",
-  text: "#FAF5E9",
-  muted: "#B8B8B8",
-  raspberry: "#D4537E",
-  gold: "#E8B86A",
-  border: "rgba(250, 245, 233, 0.08)",
-  borderStrong: "rgba(250, 245, 233, 0.15)",
-};
-
-const fonts = {
-  serif: "'Playfair Display', Georgia, serif",
-  sans: "'Inter', system-ui, sans-serif",
-  mono: "'Space Mono', ui-monospace, 'JetBrains Mono', monospace",
-};
-
-const Mono = ({ children, color = C.muted, size = 11 }: { children: React.ReactNode; color?: string; size?: number }) => (
-  <span style={{ fontFamily: fonts.mono, fontSize: size, letterSpacing: "0.16em", textTransform: "uppercase", color }}>{children}</span>
-);
-
-const Slug = ({ children, color = C.raspberry }: { children: React.ReactNode; color?: string }) => (
-  <span style={{ fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.22em", textTransform: "uppercase", color }}>{children}</span>
-);
-
-/* ---------- Buttons (single primary, single secondary) ---------- */
-
-const PrimaryCTA = ({ children, onClick, full = false }: { children: React.ReactNode; onClick: () => void; full?: boolean }) => (
-  <button
-    onClick={onClick}
-    style={{
-      background: C.raspberry, color: "#fff",
-      fontFamily: fonts.mono, fontSize: 12, letterSpacing: "0.16em", textTransform: "uppercase",
-      padding: "16px 28px", borderRadius: 999, fontWeight: 500,
-      boxShadow: "0 10px 28px -12px rgba(212,83,126,0.6)",
-      width: full ? "100%" : undefined,
-      transition: "transform 160ms ease, opacity 160ms ease",
-    }}
-    className="hover:-translate-y-0.5 hover:opacity-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4537E] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0a0a]"
-  >
-    {children}
-  </button>
-);
-
-const SecondaryCTA = ({ children, to, full = false }: { children: React.ReactNode; to: string; full?: boolean }) => (
-  <Link
-    to={to}
-    style={{
-      background: "transparent", color: C.text, border: `1px solid ${C.borderStrong}`,
-      fontFamily: fonts.mono, fontSize: 12, letterSpacing: "0.16em", textTransform: "uppercase",
-      padding: "15px 27px", borderRadius: 999, fontWeight: 500,
-      display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 8,
-      width: full ? "100%" : undefined,
-    }}
-    className="hover:bg-white/5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4537E] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0a0a]"
-  >
-    {children}
-  </Link>
-);
-
-/* ---------- Data ---------- */
-
-const BENEFITS = [
-  {
-    Icon: BookOpen,
-    eyebrow: "Sports stories",
-    title: "Stories that get it.",
-    body: "Smart, culturally fluent coverage of women's and pro sports — written for fans who actually watch.",
-  },
-  {
-    Icon: CalendarHeart,
-    eyebrow: "Watch parties & events",
-    title: "Real-life, in real venues.",
-    body: "LA watch parties, stadium meetups, and members-only mixers — show up, sit together, scream at the screen.",
-  },
-  {
-    Icon: Users,
-    eyebrow: "Fan matching & community",
-    title: "Find your people.",
-    body: "Smart matching by team, city, and vibe. Group chats, city crews, and the friends you've been looking for.",
-  },
+const MARQUEE = [
+  "Sparks host Fever",
+  "Angel City vs Wave",
+  "JuJu Watkins · 38 pts",
+  "Brink doubles up",
+  "UCLA women top 4",
+  "Angel City Pride Night",
+  "LA28 women's hoops",
+  "Sparks throwback kits",
+  "Sky stack the bench",
+  "Liberty home stand",
+  "Thorns sellout",
+  "USWNT camp opens",
 ];
-
-const TIERS = [
-  {
-    name: "Free",
-    price: "$0",
-    cadence: "forever",
-    blurb: "A taste of the club.",
-    features: ["Join core events for free", "Ad-supported editorial stories & scores", "Group chat preview"],
-    cta: "Join Free",
-  },
-  {
-    name: "All-Access",
-    price: "$35",
-    cadence: "/ month",
-    blurb: "The full members-only home.",
-    features: [
-      "Everything in Free",
-      "Unlimited group chats",
-      "Smart fan matching",
-      "Members-only events",
-      "Private city crews",
-      "Priority event invites",
-      "Mixers, away-game travel, and merch drops",
-    ],
-    cta: "Go All-Access",
-    highlight: true,
-  },
-];
-
-const QUOTES = [
-  {
-    q: "I finally have somewhere to scream about a 4th quarter without explaining myself.",
-    name: "Maya R.",
-    meta: "Member · LA",
-  },
-  {
-    q: "Met three of my closest friends at a Loverball watch party. We now travel for away games.",
-    name: "Priya S.",
-    meta: "All-Access · LA",
-  },
-  {
-    q: "It's the rare community that's actually about the sport — and the women who love it.",
-    name: "Jordan T.",
-    meta: "Member · NYC",
-  },
-];
-
-/* ---------- Page ---------- */
 
 const Index = () => {
-  const navigate = useNavigate();
-  const [mobileOpen, setMobileOpen] = useState(false);
-
-  const goJoin = () => navigate("/auth?mode=signup");
-  const goSignIn = () => navigate("/auth?mode=signin");
-
-  const navItems = [
-    { label: "Watch", to: "/feed" },
-    { label: "Connect", to: "/connect" },
-    { label: "Events", to: "/events" },
-    { label: "Club", to: "/club" },
-  ];
-
   return (
-    <div style={{ background: C.bg, color: C.text, fontFamily: fonts.sans }} className="min-h-screen">
+    <LandingLayout>
       <Seo
-        title="Loverball — brings together events, members, stories, and culture"
-        description="Loverball brings together events, members, stories, and culture for women who love sports."
+        title="Loverball — Find your teammate. Feel the game."
+        description="Loverball is where women sports fans match on fandom, build squads, and RSVP to watch parties. WNBA, NWSL, USWNT, women's college — all in one place."
         path="/"
       />
 
-      {/* ============ STICKY NAV ============ */}
-      <nav
-        className="fixed top-0 inset-x-0 z-50"
-        style={{
-          background: "rgba(10, 10, 10, 0.85)",
-          backdropFilter: "blur(16px)",
-          WebkitBackdropFilter: "blur(16px)",
-          borderBottom: `0.5px solid ${C.border}`,
-        }}
-      >
-        <div className="max-w-7xl mx-auto px-5 md:px-10 py-4 flex items-center justify-between">
-          <Link to="/" className="flex items-center">
-            <span style={{ fontFamily: fonts.serif, fontStyle: "italic", fontWeight: 500, fontSize: 22, color: C.text, letterSpacing: "-0.01em" }}>
-              Loverball
-            </span>
-          </Link>
-
-          <div className="hidden md:flex items-center gap-8">
-            {navItems.map((n) => (
-              <Link
-                key={n.label}
-                to={n.to}
-                style={{ fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.18em", textTransform: "uppercase", color: C.text }}
-                className="hover:text-[#D4537E] transition-colors"
-              >
-                {n.label}
-              </Link>
-            ))}
-          </div>
-
-          <div className="hidden md:flex items-center gap-5">
-            <button onClick={goSignIn} style={{ fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.18em", textTransform: "uppercase", color: C.muted }} className="hover:text-[#FAF5E9] transition-colors">
-              Sign in
-            </button>
-            <button
-              onClick={goJoin}
-              style={{ background: C.raspberry, color: "#fff", fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.16em", textTransform: "uppercase", padding: "10px 18px", borderRadius: 999 }}
-            >
-              Join Free
-            </button>
-          </div>
-
-          <button className="md:hidden p-2 -mr-2" onClick={() => setMobileOpen(!mobileOpen)} aria-label="Toggle menu">
-            {mobileOpen ? <X size={22} /> : <Menu size={22} />}
-          </button>
+      {/* ───────────────── Hero ───────────────── */}
+      <section className="relative overflow-hidden border-b border-lb-border">
+        {/* Watermark */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -right-6 -top-10 select-none font-display text-[28vw] leading-none text-white/[0.025] md:text-[20vw]"
+        >
+          94%
         </div>
 
-        {mobileOpen && (
-          <div className="md:hidden px-5 pb-5 pt-2 flex flex-col gap-4" style={{ borderTop: `0.5px solid ${C.border}` }}>
-            {navItems.map((n) => (
-              <Link
-                key={n.label}
-                to={n.to}
-                onClick={() => setMobileOpen(false)}
-                style={{ fontFamily: fonts.mono, fontSize: 12, letterSpacing: "0.18em", textTransform: "uppercase", color: C.text }}
-              >
-                {n.label}
-              </Link>
-            ))}
-            <div className="flex gap-3 pt-2">
-              <button
-                onClick={() => { setMobileOpen(false); goSignIn(); }}
-                className="flex-1"
-                style={{ fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.16em", textTransform: "uppercase", color: C.text, padding: "11px 18px", borderRadius: 999, border: `1px solid ${C.borderStrong}` }}
-              >
-                Sign in
-              </button>
-              <button
-                onClick={() => { setMobileOpen(false); goJoin(); }}
-                className="flex-1"
-                style={{ background: C.raspberry, color: "#fff", fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.16em", textTransform: "uppercase", padding: "12px 18px", borderRadius: 999 }}
-              >
-                Join Free
-              </button>
-            </div>
-          </div>
-        )}
-      </nav>
+        <div className="relative mx-auto max-w-7xl px-4 pt-10 md:pt-16 lg:px-8 lg:pt-20">
+          <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-12 lg:gap-8">
+            {/* Left */}
+            <div className="lg:col-span-6">
+              <Eyebrow color="orange">Featured Match · Live now</Eyebrow>
 
-      {/* ============ HERO ============ */}
-      <section className="pt-32 md:pt-40 pb-20 md:pb-28 px-5 md:px-10">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
-          <div className="lg:col-span-7">
-            <Slug>A members community · Built in LA</Slug>
-            <h1
-              className="mt-6"
-              style={{
-                fontFamily: fonts.serif, fontStyle: "italic", fontWeight: 500,
-                fontSize: "clamp(48px, 8vw, 104px)", lineHeight: 0.96,
-                letterSpacing: "-0.03em", color: C.text,
-              }}
-            >
-              Her Game.<br/>Her Community.
-            </h1>
-            <p className="mt-8 max-w-xl" style={{ color: C.muted, fontSize: 19, lineHeight: 1.55 }}>
-              Loverball brings together events, members, stories, and culture for women who love sports.
-            </p>
+              <DisplayHeading size="xl" className="mt-5 text-white">
+                <span className="block">Find your</span>
+                <span className="block"><Marker color="lime">teammate.</Marker></span>
+                <span className="block">
+                  Feel the <span className="text-lb-orange">game.</span>
+                </span>
+              </DisplayHeading>
 
-            <div className="mt-10 flex flex-wrap gap-3">
-              <PrimaryCTA onClick={goJoin}>Join Loverball Free</PrimaryCTA>
-              <SecondaryCTA to="/membership">See Membership <ArrowRight size={14} /></SecondaryCTA>
-            </div>
+              <p className="mt-6 max-w-xl text-base md:text-lg leading-relaxed text-lb-muted font-body">
+                Match with die-hard women's sports fans who run the same teams.
+                Debate Sue vs Diana. RSVP to watch parties. Roll deep on match
+                day. No more watching the WNBA Finals alone in your living room.
+              </p>
 
-            <p className="mt-6" style={{ fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.16em", textTransform: "uppercase", color: C.muted }}>
-              Built in LA · For women who live sports loudly
-            </p>
-          </div>
+              <div className="mt-8 flex flex-wrap items-center gap-3">
+                <BrandButton to="/join" size="lg" variant="primary">
+                  Join free <ArrowRight size={16} />
+                </BrandButton>
+                <BrandButton to="/how-it-works" size="lg" variant="ghost">
+                  How it works
+                </BrandButton>
+              </div>
 
-          <div className="lg:col-span-5">
-            <div
-              className="relative overflow-hidden"
-              style={{ borderRadius: 12, aspectRatio: "4/5", background: C.surface, border: `0.5px solid ${C.border}` }}
-            >
-              <img src={heroImage} alt="Women sports fans at a Loverball watch party" className="w-full h-full object-cover" />
-              <div
-                aria-hidden
-                className="absolute inset-0"
-                style={{ background: "linear-gradient(180deg, transparent 55%, rgba(10,10,10,0.7) 100%)" }}
-              />
-              <div className="absolute bottom-5 left-5 right-5 flex items-center justify-between">
-                <Mono color="#fff" size={10}>Members watch party · LA</Mono>
-                <span style={{ background: C.raspberry, color: "#fff", borderRadius: 999, padding: "4px 10px", fontFamily: fonts.mono, fontSize: 10, letterSpacing: "0.16em", textTransform: "uppercase" }}>
-                  Live weekly
+              <div className="mt-8 flex flex-wrap items-center gap-3 text-xs uppercase tracking-[0.18em] text-lb-muted font-condensed">
+                <span className="inline-flex items-center gap-2">
+                  <span className="h-2 w-2 rounded-full bg-lime" />
+                  Free to join
+                </span>
+                <span className="inline-flex items-center gap-2">
+                  <span className="h-2 w-2 rounded-full bg-pink" />
+                  WNBA · NWSL · USWNT
+                </span>
+                <span className="inline-flex items-center gap-2">
+                  <span className="h-2 w-2 rounded-full bg-lb-orange" />
+                  Built for women fans
                 </span>
               </div>
             </div>
-          </div>
-        </div>
-      </section>
 
-      {/* ============ WHAT YOU GET ============ */}
-      <section className="px-5 md:px-10 py-20 md:py-28" style={{ borderTop: `0.5px solid ${C.border}` }}>
-        <div className="max-w-7xl mx-auto">
-          <div className="max-w-2xl mb-14">
-            <Slug>What you get</Slug>
-            <h2
-              className="mt-5"
-              style={{
-                fontFamily: fonts.serif, fontStyle: "italic", fontWeight: 500,
-                fontSize: "clamp(36px, 5vw, 60px)", lineHeight: 1, letterSpacing: "-0.02em", color: C.text,
-              }}
-            >
-              Three things, done right.
-            </h2>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {BENEFITS.map(({ Icon, eyebrow, title, body }) => (
-              <article
-                key={eyebrow}
-                className="p-8"
-                style={{ background: C.surface, border: `0.5px solid ${C.border}`, borderRadius: 12 }}
-              >
-                <div
-                  className="inline-flex items-center justify-center mb-6"
-                  style={{ width: 44, height: 44, borderRadius: 12, background: `${C.raspberry}1A`, color: C.raspberry }}
-                >
-                  <Icon size={20} strokeWidth={1.75} />
-                </div>
-                <Mono color={C.muted} size={10}>{eyebrow}</Mono>
-                <h3
-                  className="mt-3"
-                  style={{
-                    fontFamily: fonts.serif, fontStyle: "italic", fontWeight: 500,
-                    fontSize: 26, lineHeight: 1.15, letterSpacing: "-0.015em", color: C.text,
-                  }}
-                >
-                  {title}
-                </h3>
-                <p className="mt-4" style={{ color: C.muted, fontSize: 15, lineHeight: 1.6 }}>{body}</p>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ============ MEMBERSHIP ============ */}
-      <section className="px-5 md:px-10 py-20 md:py-28" style={{ borderTop: `0.5px solid ${C.border}` }}>
-        <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-14">
-            <div className="max-w-2xl">
-              <Slug>Membership</Slug>
-              <h2
-                className="mt-5"
-                style={{
-                  fontFamily: fonts.serif, fontStyle: "italic", fontWeight: 500,
-                  fontSize: "clamp(36px, 5vw, 60px)", lineHeight: 1, letterSpacing: "-0.02em", color: C.text,
-                }}
-              >
-                Pick your pass.
-              </h2>
-              <p className="mt-5 max-w-md" style={{ color: C.muted, fontSize: 16, lineHeight: 1.6 }}>
-                Start free. Upgrade to All-Access when you're ready for the full members-only home.
-              </p>
-            </div>
-            <Link to="/membership" style={{ fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.16em", textTransform: "uppercase", color: C.raspberry }} className="inline-flex items-center gap-2 hover:opacity-80">
-              Compare all features <ArrowRight size={12} />
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-            {TIERS.map((t) => {
-              const hi = !!t.highlight;
-              return (
-                <article
-                  key={t.name}
-                  className="relative p-8 flex flex-col"
-                  style={{
-                    background: hi ? `linear-gradient(180deg, ${C.raspberry}12 0%, ${C.surface} 60%)` : C.surface,
-                    border: hi ? `1.5px solid ${C.raspberry}` : `0.5px solid ${C.border}`,
-                    borderRadius: 12,
-                    boxShadow: hi ? `0 24px 60px -28px ${C.raspberry}99` : "none",
-                  }}
-                >
-                  {hi && (
-                    <div
-                      className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1.5"
-                      style={{
-                        background: C.raspberry, color: "#fff",
-                        fontFamily: fonts.mono, fontSize: 10, letterSpacing: "0.18em",
-                        textTransform: "uppercase", borderRadius: 999, fontWeight: 600,
-                      }}
-                    >
-                      Most popular
-                    </div>
-                  )}
-                  <Mono color={hi ? C.raspberry : C.muted}>{t.name}</Mono>
-                  <div className="mt-5 flex items-baseline gap-2">
-                    <span style={{ fontFamily: fonts.serif, fontStyle: "italic", fontWeight: 500, fontSize: 56, lineHeight: 1, letterSpacing: "-0.02em", color: C.text }}>{t.price}</span>
-                    <Mono>{t.cadence}</Mono>
-                  </div>
-                  <p className="mt-3" style={{ color: C.muted, fontSize: 14, lineHeight: 1.55 }}>{t.blurb}</p>
-
-                  <ul className="mt-7 space-y-3 flex-1">
-                    {t.features.map((f) => (
-                      <li key={f} className="flex items-start gap-3" style={{ fontFamily: fonts.sans, fontSize: 14, lineHeight: 1.55, color: C.text }}>
-                        <Check size={16} color={hi ? C.raspberry : C.gold} strokeWidth={2.25} className="mt-0.5 shrink-0" />
-                        <span>{f}</span>
-                      </li>
-                    ))}
-                  </ul>
-
-                  <div className="mt-8">
-                    {hi ? (
-                      <PrimaryCTA onClick={goJoin} full>{t.cta}</PrimaryCTA>
-                    ) : (
-                      <SecondaryCTA to="/auth?mode=signup" full>{t.cta}</SecondaryCTA>
-                    )}
-                  </div>
-                </article>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* ============ SOCIAL PROOF ============ */}
-      <section className="px-5 md:px-10 py-20 md:py-28" style={{ borderTop: `0.5px solid ${C.border}` }}>
-        <div className="max-w-7xl mx-auto">
-          <div className="max-w-2xl mb-14">
-            <Slug>Members</Slug>
-            <h2
-              className="mt-5"
-              style={{
-                fontFamily: fonts.serif, fontStyle: "italic", fontWeight: 500,
-                fontSize: "clamp(36px, 5vw, 60px)", lineHeight: 1, letterSpacing: "-0.02em", color: C.text,
-              }}
-            >
-              The room you've been looking for.
-            </h2>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {QUOTES.map((q, i) => (
-              <figure
-                key={i}
-                className="p-8 flex flex-col"
-                style={{ background: C.surface, border: `0.5px solid ${C.border}`, borderRadius: 12 }}
-              >
-                <span style={{ fontFamily: fonts.serif, fontStyle: "italic", color: C.raspberry, fontSize: 48, lineHeight: 0.6 }}>“</span>
-                <blockquote
-                  className="mt-3 flex-1"
-                  style={{ fontFamily: fonts.serif, fontStyle: "italic", fontSize: 22, lineHeight: 1.3, color: C.text, letterSpacing: "-0.01em" }}
-                >
-                  {q.q}
-                </blockquote>
-                <figcaption className="mt-6">
-                  <div style={{ fontFamily: fonts.sans, fontSize: 14, color: C.text, fontWeight: 500 }}>{q.name}</div>
-                  <Mono size={10}>{q.meta}</Mono>
-                </figcaption>
-              </figure>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ============ FINAL CTA ============ */}
-      <section className="px-5 md:px-10 py-24 md:py-32 text-center" style={{ borderTop: `0.5px solid ${C.border}` }}>
-        <div className="max-w-3xl mx-auto">
-          <Slug>Join</Slug>
-          <h2
-            className="mt-5"
-            style={{
-              fontFamily: fonts.serif, fontStyle: "italic", fontWeight: 500,
-              fontSize: "clamp(40px, 6vw, 80px)", lineHeight: 1, letterSpacing: "-0.02em", color: C.text,
-            }}
-          >
-            Sports are better with the right people.
-          </h2>
-          <p className="mt-6 max-w-xl mx-auto" style={{ color: C.muted, fontSize: 17, lineHeight: 1.6 }}>
-            Free to join. Upgrade to All-Access for unlimited group chats, smart matching, and members-only events.
-          </p>
-          <div className="mt-10 flex flex-wrap gap-3 justify-center">
-            <PrimaryCTA onClick={goJoin}>Join Loverball Free</PrimaryCTA>
-            <SecondaryCTA to="/events">View Upcoming Events</SecondaryCTA>
-          </div>
-        </div>
-      </section>
-
-      {/* ============ FOOTER ============ */}
-      <footer style={{ borderTop: `0.5px solid ${C.border}` }}>
-        <div className="max-w-7xl mx-auto px-5 md:px-10 py-16">
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-12 mb-14">
-            <div className="md:col-span-6">
-              <div style={{ fontFamily: fonts.serif, fontStyle: "italic", fontWeight: 500, fontSize: "clamp(36px, 5vw, 52px)", lineHeight: 1, color: C.text, letterSpacing: "-0.02em" }}>
-                Loverball
+            {/* Right — phone trio */}
+            <div className="lg:col-span-6">
+              <div className="relative mx-auto flex items-end justify-center gap-3 md:gap-6 lg:gap-4">
+                <PhoneMockup tilt={-6} className="scale-[0.82] md:scale-90" ariaLabel="Derby Day watch party screen">
+                  <DerbyDayScreen />
+                </PhoneMockup>
+                <PhoneMockup raise={28} className="scale-[0.9] md:scale-100" ariaLabel="Match preview with 94% match">
+                  <MatchingScreen />
+                </PhoneMockup>
+                <PhoneMockup tilt={6} className="scale-[0.82] md:scale-90" ariaLabel="Women's sports feed">
+                  <FeedScreen />
+                </PhoneMockup>
               </div>
-              <p className="mt-3 max-w-md" style={{ color: C.muted, fontSize: 14, lineHeight: 1.55 }}>
-                A members community for women sports fans. Built in LA.
-              </p>
-            </div>
-
-            <div className="md:col-span-6 grid grid-cols-2 gap-8">
-              {[
-                { h: "Loverball", items: [["About", "/about"], ["Membership", "/membership"], ["Contact", "/contact"]] },
-                { h: "Explore", items: [["Watch", "/feed"], ["Events", "/events"], ["Club", "/club"]] },
-              ].map((col) => (
-                <div key={col.h} className="flex flex-col gap-3">
-                  <Mono color={C.muted} size={10}>{col.h}</Mono>
-                  {col.items.map(([label, to]) => (
-                    <Link
-                      key={label}
-                      to={to}
-                      style={{ fontFamily: fonts.sans, fontSize: 14, color: C.text }}
-                      className="hover:text-[#D4537E] transition-colors"
-                    >
-                      {label}
-                    </Link>
-                  ))}
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="pt-8 flex flex-col md:flex-row md:items-center justify-between gap-6" style={{ borderTop: `0.5px solid ${C.border}` }}>
-            <Mono color={C.muted} size={10}>© 2026 Loverball · Built in LA</Mono>
-            <div className="flex items-center gap-5">
-              <a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer" style={{ color: C.text, opacity: 0.7 }} className="hover:opacity-100 transition-opacity" aria-label="Loverball on Instagram">
-                <Instagram size={18} />
-              </a>
-              {[["Privacy", "/privacy"], ["Terms", "/terms"]].map(([l, h]) => (
-                <Link key={l} to={h} style={{ fontFamily: fonts.mono, fontSize: 10, letterSpacing: "0.18em", textTransform: "uppercase", color: C.muted }} className="hover:text-[#FAF5E9] transition-colors">
-                  {l}
-                </Link>
-              ))}
             </div>
           </div>
         </div>
-        <div aria-hidden style={{ height: 3, background: `linear-gradient(90deg, ${C.raspberry}, ${C.gold})`, opacity: 0.5 }} />
-      </footer>
-    </div>
+
+        {/* Marquee band */}
+        <div className="mt-12 md:mt-16">
+          <StatsMarquee items={MARQUEE} color="lime" />
+        </div>
+      </section>
+
+      {/* ───────────────── Why Loverball ───────────────── */}
+      <section className="border-b border-lb-border">
+        <div className="mx-auto max-w-7xl px-4 py-20 md:py-28 lg:px-8">
+          <div className="grid grid-cols-1 items-end gap-8 md:grid-cols-12">
+            <div className="md:col-span-7">
+              <Eyebrow color="pink">Why Loverball</Eyebrow>
+              <DisplayHeading size="lg" className="mt-4 text-white">
+                Built for the{" "}
+                <Marker color="pink">die-hards.</Marker>
+              </DisplayHeading>
+            </div>
+            <p className="md:col-span-5 text-base md:text-lg leading-relaxed text-lb-muted font-body">
+              Other apps treat women's sports like a side quest. We don't.
+              Loverball is the squad layer for the fans who already know JuJu's
+              shooting form and what Candace did in '08.
+            </p>
+          </div>
+
+          <div className="mt-12 grid grid-cols-1 gap-4 md:grid-cols-2">
+            <FeatureCard
+              icon={<Flame size={20} />}
+              accent="orange"
+              title="Fandom-first matching"
+              body="Your fandom fingerprint — favorite teams, hated rivals, hot takes — is the match. Sky stans go with Sky stans. Aces fans get filtered to the back."
+            />
+            <FeatureCard
+              icon={<Users size={20} />}
+              accent="pink"
+              title="Squads, not strangers"
+              body="Build a crew of fans you actually want to watch with. Roll five-deep into the bar for the Thorns derby. Group chat included."
+            />
+            <FeatureCard
+              icon={<Radio size={20} />}
+              accent="lime"
+              title="Live every game"
+              body="Reactions, hot takes, scoreboard chatter — all live, all women's sports. WNBA. NWSL. USWNT. Women's college. The full slate."
+            />
+            <FeatureCard
+              icon={<CalendarHeart size={20} />}
+              accent="pink"
+              title="RSVP in two taps"
+              body="Watch parties by your team, your city, your vibe. Hit RSVP. Show up. Lose your voice yelling at the ref."
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* ───────────────── CTA strip ───────────────── */}
+      <section className="relative overflow-hidden bg-lb-orange">
+        <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-6 px-4 py-14 md:flex-row md:items-center md:py-16 lg:px-8">
+          <DisplayHeading size="md" className="text-white">
+            Game day ready?
+          </DisplayHeading>
+          <BrandButton to="/join" variant="lime" size="lg">
+            Join Loverball <ArrowRight size={16} />
+          </BrandButton>
+        </div>
+      </section>
+    </LandingLayout>
   );
 };
 
