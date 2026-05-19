@@ -396,7 +396,7 @@ const Friends = () => {
 
   const renderFriendsListPanel = (className = "") => (
     <div className={className}>
-      <Tabs defaultValue="friends">
+      <Tabs defaultValue="suggestions">
         <TabsList className="w-full grid grid-cols-3">
           <TabsTrigger value="friends" className="text-xs">
             <MessageCircle className="w-3.5 h-3.5 mr-1" />
