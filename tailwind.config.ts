@@ -64,8 +64,7 @@ export default {
     extend: {
       fontFamily: {
         sans: ["Inter", "system-ui", "sans-serif"],
-        body: ["Inter", "system-ui", "sans-serif"],
-        display: ["'Archivo Black'", "Anton", "Impact", "sans-serif"],
+        display: ["Anton", "Impact", "sans-serif"],
         script: ["Great Vibes", "Pacifico", "cursive"],
         condensed: ["Anton", "Impact", "sans-serif"],
         serif: ["Playfair Display", "Georgia", "serif"],
@@ -174,22 +173,6 @@ export default {
         card: {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
-        },
-        /* Loverball landing palette */
-        "lb-bg": "#0a0a0a",
-        "lb-bg-secondary": "#141414",
-        "lb-bg-tertiary": "#1c1c1c",
-        "lb-border": "#2a2a2a",
-        "lb-fg": "#ffffff",
-        "lb-muted": "#b8b8b8",
-        "lb-orange": "#F04E23",
-        pink: {
-          DEFAULT: "#E86BB0",
-          foreground: "#0a0a0a",
-        },
-        lime: {
-          DEFAULT: "#E6F25A",
-          foreground: "#0a0a0a",
         },
       },
       borderRadius: {
