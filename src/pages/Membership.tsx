@@ -32,7 +32,7 @@ const TIERS: Tier[] = [
     price: "$0",
     cadence: "forever",
     tagline: "A taste of the club. Read, watch, look around.",
-    features: ["Editorial stories & scores", "Public watch parties", "Limited group chat preview", "Profile + 1 fan circle"],
+    features: ["Ad-Supported editorial stories & scores", "Public watch parties", "Limited group chat preview", "Profile + 1 fan circle"],
     cta: "Create account",
   },
   {
@@ -55,7 +55,7 @@ const TIERS: Tier[] = [
 ];
 
 const COMPARE = [
-  { label: "Editorial stories & scores", free: true, insider: true, all: true },
+  { label: "Ad-Supported editorial stories & scores", free: true, insider: true, all: true },
   { label: "Fan matching", free: false, insider: true, all: true },
   { label: "Group chats", free: "Preview", insider: "Unlimited", all: "Unlimited" },
   { label: "City crews", free: false, insider: true, all: true },
