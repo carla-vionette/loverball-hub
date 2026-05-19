@@ -356,7 +356,7 @@ const Index = () => {
                 Pick your pass.
               </h2>
               <p className="mt-5 max-w-md" style={{ color: C.muted, fontSize: 16, lineHeight: 1.6 }}>
-                Start free. Upgrade when you're ready for the full members-only home.
+                Start free. Upgrade to All-Access when you're ready for the full members-only home.
               </p>
             </div>
             <Link to="/membership" style={{ fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.16em", textTransform: "uppercase", color: C.raspberry }} className="inline-flex items-center gap-2 hover:opacity-80">
