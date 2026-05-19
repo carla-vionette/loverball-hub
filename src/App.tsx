@@ -3,7 +3,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
+import AppRouter from "@/components/AppRouter";
 import { AuthProvider } from "@/hooks/useAuth";
 
 import { ErrorBoundary } from "@/components/ui/error-boundary";
@@ -102,7 +103,7 @@ const PageTracker = () => {
 const App = () => (
   <ErrorBoundary>
     <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
+      <AppRouter>
         <AuthProvider>
           <TooltipProvider>
             <Toaster />
@@ -198,7 +199,7 @@ const App = () => (
             </Suspense>
           </TooltipProvider>
         </AuthProvider>
-      </BrowserRouter>
+      </AppRouter>
     </QueryClientProvider>
   </ErrorBoundary>
 );
