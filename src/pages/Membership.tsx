@@ -32,7 +32,7 @@ const TIERS: Tier[] = [
     price: "$0",
     cadence: "forever",
     tagline: "A taste of the club. Read, watch, look around.",
-    features: ["Ad-Supported editorial stories & scores", "Public watch parties", "Limited group chat preview", "Profile + 1 fan circle"],
+    features: ["Ad-Supported editorial stories & scores", "Priority RSVPs to members-only events", "Limited group chat preview", "Profile + 1 fan circle"],
     cta: "Create account",
   },
   {
