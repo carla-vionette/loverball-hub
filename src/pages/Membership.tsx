@@ -32,44 +32,45 @@ const TIERS: Tier[] = [
     price: "$0",
     cadence: "forever",
     tagline: "A taste of the club. Read, watch, look around.",
-    features: ["Ad-Supported editorial stories & scores", "Priority RSVPs to members-only events", "Limited group chat preview", "Profile + 1 fan circle"],
+    features: ["Join core events for free", "Ad-supported editorial stories & scores", "Group chat preview"],
     cta: "Create account",
-  },
-  {
-    name: "Insider",
-    price: "$15",
-    cadence: "per month",
-    tagline: "The members-only home, unlocked.",
-    features: ["Everything in Free", "Unlimited group chats", "Smart fan matching", "RSVP to all members-only events", "Private city crews"],
-    cta: "Become an Insider",
-    highlight: true,
   },
   {
     name: "All-Access",
     price: "$35",
     cadence: "per month",
-    tagline: "Front-row everything. The full Loverball pass.",
-    features: ["Everything in Insider", "Priority event invites", "Members-only mixers & away-game travel", "Loverball merch drops", "Direct line to the team"],
+    tagline: "The full members-only home.",
+    features: [
+      "Everything in Free",
+      "Unlimited group chats",
+      "Smart fan matching",
+      "Members-only events",
+      "Private city crews",
+      "Priority event invites",
+      "Mixers, away-game travel, and merch drops",
+    ],
     cta: "Go All-Access",
+    highlight: true,
   },
 ];
 
 const COMPARE = [
-  { label: "Ad-Supported editorial stories & scores", free: true, insider: true, all: true },
-  { label: "Fan matching", free: false, insider: true, all: true },
-  { label: "Group chats", free: "Preview", insider: "Unlimited", all: "Unlimited" },
-  { label: "City crews", free: false, insider: true, all: true },
-  { label: "Members-only events", free: false, insider: true, all: "Priority" },
-  { label: "Mixers & away-game travel", free: false, insider: false, all: true },
-  { label: "Merch drops", free: false, insider: false, all: true },
+  { label: "Ad-supported editorial stories & scores", free: true, all: true },
+  { label: "Join core events for free", free: true, all: true },
+  { label: "Group chats", free: "Preview", all: "Unlimited" },
+  { label: "Smart fan matching", free: false, all: true },
+  { label: "Members-only events", free: false, all: true },
+  { label: "Private city crews", free: false, all: true },
+  { label: "Priority event invites", free: false, all: true },
+  { label: "Mixers, away-game travel, and merch drops", free: false, all: true },
 ] as const;
 
 const FAQS = [
   { q: "Who is Loverball for?", a: "Sports fans who want a serious community — built around watch parties, group chats, fan matching, and IRL meetups. Headquartered in LA, members worldwide." },
   { q: "Can I cancel anytime?", a: "Yes. Memberships are month-to-month. Cancel from your billing settings — no calls, no friction." },
-  { q: "What's the difference between Insider and All-Access?", a: "Insider unlocks the full members-only community. All-Access adds priority event invites, mixers, away-game travel, and merch drops." },
+  { q: "What does All-Access include?", a: "All-Access unlocks the full members-only community: unlimited group chats, smart fan matching, members-only events, private city crews, priority event invites, mixers, away-game travel, and merch drops." },
   { q: "Do I need an invite code?", a: "Yes — Loverball is invite-only during this season. Use your code at signup, or join the waitlist." },
-  { q: "Is there a free option?", a: "Free accounts can read editorial, view public watch parties, and preview the community. Matching, group chats, and events require Insider or higher." },
+  { q: "Is there a free option?", a: "Free accounts can read editorial, join core events, and preview the community. Smart matching, unlimited group chats, and members-only events require All-Access." },
 ];
 
 const Membership = () => {
@@ -81,7 +82,7 @@ const Membership = () => {
     <div style={{ background: C.bg, color: C.text, fontFamily: fonts.sans }} className="min-h-screen">
       <Seo
         title="Choose your pass — Loverball Membership"
-        description="Choose your Loverball pass. Free, Insider, or All-Access — the members-only home for sports fandom."
+        description="Choose your Loverball pass. Free or All-Access — the members-only home for sports fandom."
         path="/membership"
       />
 
@@ -92,13 +93,13 @@ const Membership = () => {
         <Slug>Membership · Choose your pass</Slug>
         <H1 className="mt-6">Pick your<br/>Loverball pass.</H1>
         <Body muted size={18} className="mt-8 max-w-xl">
-          Three ways in. All built around the same idea — sports are better with the right people.
+          Start free. Upgrade to All-Access when you're ready for the full members-only home.
         </Body>
       </section>
 
       {/* Pricing tiers */}
       <section className="px-6 md:px-12 pb-24 max-w-6xl">
-        <div className="grid md:grid-cols-3 gap-6">
+        <div className="grid md:grid-cols-2 gap-6 max-w-4xl">
           {TIERS.map((t) => {
             const hi = !!t.highlight;
             return (
@@ -177,15 +178,14 @@ const Membership = () => {
               <tr style={{ borderBottom: `0.5px solid ${C.borderStrong}` }}>
                 <th className="text-left py-4"><Mono>Feature</Mono></th>
                 <th className="text-left py-4"><Mono>Free</Mono></th>
-                <th className="text-left py-4"><Mono color={C.raspberry}>Insider</Mono></th>
-                <th className="text-left py-4"><Mono color={C.gold}>All-Access</Mono></th>
+                <th className="text-left py-4"><Mono color={C.raspberry}>All-Access</Mono></th>
               </tr>
             </thead>
             <tbody>
               {COMPARE.map((row) => (
                 <tr key={row.label} style={{ borderBottom: `0.5px solid ${C.border}` }}>
                   <td className="py-4 pr-4" style={{ fontFamily: fonts.sans, fontSize: 15, color: C.text }}>{row.label}</td>
-                  {[row.free, row.insider, row.all].map((v, i) => (
+                  {[row.free, row.all].map((v, i) => (
                     <td key={i} className="py-4 pr-4" style={{ fontFamily: fonts.sans, fontSize: 14, color: C.muted }}>
                       {v === true ? <Check size={16} color={C.raspberry} /> : v === false ? <Minus size={16} color={C.border} /> : <span style={{ color: C.text }}>{v}</span>}
                     </td>
@@ -225,7 +225,7 @@ const Membership = () => {
           The members-only home for sports fandom.
         </H2>
         <div className="mt-10 flex flex-wrap gap-4 justify-center">
-          <PrimaryBtn onClick={goSignup}>Become an Insider</PrimaryBtn>
+          <PrimaryBtn onClick={goSignup}>Go All-Access</PrimaryBtn>
           <SecondaryBtn to="/club">Tour the Club</SecondaryBtn>
         </div>
       </section>
