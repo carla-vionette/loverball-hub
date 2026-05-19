@@ -126,7 +126,7 @@ const QUOTES = [
   {
     q: "I finally have somewhere to scream about a 4th quarter without explaining myself.",
     name: "Maya R.",
-    meta: "Insider · LA",
+    meta: "Member · LA",
   },
   {
     q: "Met three of my closest friends at a Loverball watch party. We now travel for away games.",
@@ -136,7 +136,7 @@ const QUOTES = [
   {
     q: "It's the rare community that's actually about the sport — and the women who love it.",
     name: "Jordan T.",
-    meta: "Insider · NYC",
+    meta: "Member · NYC",
   },
 ];
 
