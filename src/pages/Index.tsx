@@ -474,7 +474,7 @@ const Index = () => {
             Sports are better with the right people.
           </h2>
           <p className="mt-6 max-w-xl mx-auto" style={{ color: C.muted, fontSize: 17, lineHeight: 1.6 }}>
-            Free to join. Insider when you want unlimited group chats, smart matching, and every members-only event.
+            Free to join. Upgrade to All-Access for unlimited group chats, smart matching, and members-only events.
           </p>
           <div className="mt-10 flex flex-wrap gap-3 justify-center">
             <PrimaryCTA onClick={goJoin}>Join Loverball Free</PrimaryCTA>
