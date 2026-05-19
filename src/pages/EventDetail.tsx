@@ -174,7 +174,7 @@ const EventDetail = () => {
 
     // Cleanup on unmount
     return () => {
-      document.title = 'Loverball | Her Game. Her Community. Her Platform.';
+      document.title = 'Loverball';
     };
   }, [event]);
 
