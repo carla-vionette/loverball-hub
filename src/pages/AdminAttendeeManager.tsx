@@ -116,8 +116,8 @@ const AdminAttendeeManager = () => {
           status,
           user_id,
           plus_ones,
-          name,
-          phone,
+          guest_name,
+          guest_phone,
           created_at,
           profile:profiles (
             name,
@@ -131,19 +131,19 @@ const AdminAttendeeManager = () => {
 
       if (error) throw error;
 
-      const transformedData = (data || []).map(item => ({
+      const transformedData = (data || []).map((item: any) => ({
         id: item.id,
         status: item.status,
         user_id: item.user_id,
         plus_ones: item.plus_ones,
-        name: item.name,
-        phone: item.phone,
+        name: item.guest_name,
+        phone: item.guest_phone,
         created_at: item.created_at,
         profile: item.profile ? {
-          name: (item.profile as any).name,
-          city: (item.profile as any).city,
-          profile_photo_url: (item.profile as any).profile_photo_url,
-          instagram_url: (item.profile as any).instagram_url,
+          name: item.profile.name,
+          city: item.profile.city,
+          profile_photo_url: item.profile.profile_photo_url,
+          instagram_url: item.profile.instagram_url,
         } : null
       }));
 
