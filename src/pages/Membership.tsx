@@ -82,7 +82,7 @@ const Membership = () => {
     <div style={{ background: C.bg, color: C.text, fontFamily: fonts.sans }} className="min-h-screen">
       <Seo
         title="Choose your pass — Loverball Membership"
-        description="Choose your Loverball pass. Free, Insider, or All-Access — the members-only home for sports fandom."
+        description="Choose your Loverball pass. Free or All-Access — the members-only home for sports fandom."
         path="/membership"
       />
 
@@ -93,7 +93,7 @@ const Membership = () => {
         <Slug>Membership · Choose your pass</Slug>
         <H1 className="mt-6">Pick your<br/>Loverball pass.</H1>
         <Body muted size={18} className="mt-8 max-w-xl">
-          Three ways in. All built around the same idea — sports are better with the right people.
+          Start free. Upgrade to All-Access when you're ready for the full members-only home.
         </Body>
       </section>
 
