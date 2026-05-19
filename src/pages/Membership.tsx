@@ -99,7 +99,7 @@ const Membership = () => {
 
       {/* Pricing tiers */}
       <section className="px-6 md:px-12 pb-24 max-w-6xl">
-        <div className="grid md:grid-cols-3 gap-6">
+        <div className="grid md:grid-cols-2 gap-6 max-w-4xl">
           {TIERS.map((t) => {
             const hi = !!t.highlight;
             return (
