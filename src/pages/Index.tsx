@@ -100,25 +100,25 @@ const TIERS = [
     price: "$0",
     cadence: "forever",
     blurb: "A taste of the club.",
-    features: ["Ad-Supported editorial stories & scores", "Priority RSVPs to members-only events", "Group chat preview"],
+    features: ["Join core events for free", "Ad-supported editorial stories & scores", "Group chat preview"],
     cta: "Join Free",
-  },
-  {
-    name: "Insider",
-    price: "$15",
-    cadence: "/ month",
-    blurb: "The members-only home, unlocked.",
-    features: ["Everything in Free", "Unlimited group chats", "Smart fan matching", "All members-only events", "Private city crews"],
-    cta: "Become an Insider",
-    highlight: true,
   },
   {
     name: "All-Access",
     price: "$35",
     cadence: "/ month",
-    blurb: "Front-row everything.",
-    features: ["Everything in Insider", "Priority event invites", "Mixers & away-game travel", "Loverball merch drops"],
+    blurb: "The full members-only home.",
+    features: [
+      "Everything in Free",
+      "Unlimited group chats",
+      "Smart fan matching",
+      "Members-only events",
+      "Private city crews",
+      "Priority event invites",
+      "Mixers, away-game travel, and merch drops",
+    ],
     cta: "Go All-Access",
+    highlight: true,
   },
 ];
 
@@ -126,7 +126,7 @@ const QUOTES = [
   {
     q: "I finally have somewhere to scream about a 4th quarter without explaining myself.",
     name: "Maya R.",
-    meta: "Insider · LA",
+    meta: "Member · LA",
   },
   {
     q: "Met three of my closest friends at a Loverball watch party. We now travel for away games.",
@@ -136,7 +136,7 @@ const QUOTES = [
   {
     q: "It's the rare community that's actually about the sport — and the women who love it.",
     name: "Jordan T.",
-    meta: "Insider · NYC",
+    meta: "Member · NYC",
   },
 ];
 
@@ -356,7 +356,7 @@ const Index = () => {
                 Pick your pass.
               </h2>
               <p className="mt-5 max-w-md" style={{ color: C.muted, fontSize: 16, lineHeight: 1.6 }}>
-                Start free. Upgrade when you're ready for the full members-only home.
+                Start free. Upgrade to All-Access when you're ready for the full members-only home.
               </p>
             </div>
             <Link to="/membership" style={{ fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.16em", textTransform: "uppercase", color: C.raspberry }} className="inline-flex items-center gap-2 hover:opacity-80">
@@ -364,7 +364,7 @@ const Index = () => {
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
             {TIERS.map((t) => {
               const hi = !!t.highlight;
               return (
@@ -474,7 +474,7 @@ const Index = () => {
             Sports are better with the right people.
           </h2>
           <p className="mt-6 max-w-xl mx-auto" style={{ color: C.muted, fontSize: 17, lineHeight: 1.6 }}>
-            Free to join. Insider when you want unlimited group chats, smart matching, and every members-only event.
+            Free to join. Upgrade to All-Access for unlimited group chats, smart matching, and members-only events.
           </p>
           <div className="mt-10 flex flex-wrap gap-3 justify-center">
             <PrimaryCTA onClick={goJoin}>Join Loverball Free</PrimaryCTA>
