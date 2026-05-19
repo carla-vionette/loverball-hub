@@ -841,13 +841,13 @@ const EventDetail = () => {
               <div className="rounded-xl bg-primary/10 p-3">
                 <div className="flex justify-between items-center mb-0.5">
                   <span className="text-xs font-semibold text-primary">
-                    Your price · {userTier === 'community' ? 'All-Access' : userTier === 'insider' ? 'Insider' : 'Free tier'}
+                    Your price · {userTier === 'community' || userTier === 'insider' ? 'All-Access' : 'Free tier'}
                   </span>
                   <span className="text-lg font-bold">
-                    {userTier === 'community' ? '$25' : userTier === 'insider' ? '$35' : '$50'}
+                    {userTier === 'community' || userTier === 'insider' ? '$25' : '$50'}
                   </span>
                 </div>
-                <p className="text-[10px] text-muted-foreground">All-Access $25 · Insider $35 · Free tier $50</p>
+                <p className="text-[10px] text-muted-foreground">All-Access $25 · Free tier $50</p>
               </div>
             )}
 
