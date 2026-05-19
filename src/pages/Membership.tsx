@@ -178,15 +178,14 @@ const Membership = () => {
               <tr style={{ borderBottom: `0.5px solid ${C.borderStrong}` }}>
                 <th className="text-left py-4"><Mono>Feature</Mono></th>
                 <th className="text-left py-4"><Mono>Free</Mono></th>
-                <th className="text-left py-4"><Mono color={C.raspberry}>Insider</Mono></th>
-                <th className="text-left py-4"><Mono color={C.gold}>All-Access</Mono></th>
+                <th className="text-left py-4"><Mono color={C.raspberry}>All-Access</Mono></th>
               </tr>
             </thead>
             <tbody>
               {COMPARE.map((row) => (
                 <tr key={row.label} style={{ borderBottom: `0.5px solid ${C.border}` }}>
                   <td className="py-4 pr-4" style={{ fontFamily: fonts.sans, fontSize: 15, color: C.text }}>{row.label}</td>
-                  {[row.free, row.insider, row.all].map((v, i) => (
+                  {[row.free, row.all].map((v, i) => (
                     <td key={i} className="py-4 pr-4" style={{ fontFamily: fonts.sans, fontSize: 14, color: C.muted }}>
                       {v === true ? <Check size={16} color={C.raspberry} /> : v === false ? <Minus size={16} color={C.border} /> : <span style={{ color: C.text }}>{v}</span>}
                     </td>
