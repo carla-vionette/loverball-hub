@@ -159,8 +159,8 @@ const Index = () => {
   return (
     <div style={{ background: C.bg, color: C.text, fontFamily: fonts.sans }} className="min-h-screen">
       <Seo
-        title="Loverball — A members community for women sports fans"
-        description="Loverball is a members community for women sports fans — stories, watch parties, and the people who actually get it. Built in LA. Join free."
+        title="Loverball — brings together events, members, stories, and culture"
+        description="Loverball brings together events, members, stories, and culture for women who love sports."
         path="/"
       />
 
@@ -259,7 +259,7 @@ const Index = () => {
               For women<br/>who live sports<br/><span style={{ color: C.raspberry }}>loudly.</span>
             </h1>
             <p className="mt-8 max-w-xl" style={{ color: C.muted, fontSize: 19, lineHeight: 1.55 }}>
-              Loverball is a members community for women sports fans — built around great stories, real-life watch parties, and the people who actually get it.
+              Loverball brings together events, members, stories, and culture for women who love sports.
             </p>
 
             <div className="mt-10 flex flex-wrap gap-3">
