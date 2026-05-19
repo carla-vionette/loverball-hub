@@ -68,9 +68,9 @@ const COMPARE = [
 const FAQS = [
   { q: "Who is Loverball for?", a: "Sports fans who want a serious community — built around watch parties, group chats, fan matching, and IRL meetups. Headquartered in LA, members worldwide." },
   { q: "Can I cancel anytime?", a: "Yes. Memberships are month-to-month. Cancel from your billing settings — no calls, no friction." },
-  { q: "What's the difference between Insider and All-Access?", a: "Insider unlocks the full members-only community. All-Access adds priority event invites, mixers, away-game travel, and merch drops." },
+  { q: "What does All-Access include?", a: "All-Access unlocks the full members-only community: unlimited group chats, smart fan matching, members-only events, private city crews, priority event invites, mixers, away-game travel, and merch drops." },
   { q: "Do I need an invite code?", a: "Yes — Loverball is invite-only during this season. Use your code at signup, or join the waitlist." },
-  { q: "Is there a free option?", a: "Free accounts can read editorial, view public watch parties, and preview the community. Matching, group chats, and events require Insider or higher." },
+  { q: "Is there a free option?", a: "Free accounts can read editorial, join core events, and preview the community. Smart matching, unlimited group chats, and members-only events require All-Access." },
 ];
 
 const Membership = () => {
