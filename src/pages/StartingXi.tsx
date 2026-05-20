@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Sparkles } from "lucide-react";
 import Seo from "@/components/Seo";
 import BottomNav from "@/components/BottomNav";
+import EditorialMasthead from "@/components/layout/EditorialMasthead";
 import DraftConfirmModal from "@/components/club/DraftConfirmModal";
 import MutualDraftCelebration from "@/components/club/MutualDraftCelebration";
 import {
