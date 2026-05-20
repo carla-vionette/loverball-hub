@@ -4,7 +4,7 @@ import { Seo } from "@/components/Seo";
 import { Check, Minus, ChevronDown, Sparkles, Loader2 } from "lucide-react";
 import { C, fonts } from "@/lib/editorialTheme";
 import { H1, H2, H3, Body, Slug, Mono, PrimaryBtn, SecondaryBtn, TertiaryLink } from "@/components/editorial/primitives";
-import SiteNav from "@/components/SiteNav";
+
 import { useAuth } from "@/hooks/useAuth";
 import { createCheckoutSession } from "@/services/subscriptionService";
 import { toast } from "sonner";

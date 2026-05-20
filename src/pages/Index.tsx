@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Seo } from "@/components/Seo";
 import { Instagram, Check, ArrowRight, BookOpen, CalendarHeart, Users } from "lucide-react";
 import heroImage from "@/assets/hero-women-new.png";
-import SiteNav from "@/components/SiteNav";
+
 import WhatsHappeningNow from "@/components/WhatsHappeningNow";
 import StoriesSection from "@/components/StoriesSection";
 import { INSTAGRAM_URL } from "@/lib/socialLinks";

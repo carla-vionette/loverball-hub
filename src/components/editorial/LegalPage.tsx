@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { C, fonts } from "@/lib/editorialTheme";
 import { H1, H2, Body, Slug, Mono } from "@/components/editorial/primitives";
-import SiteNav from "@/components/SiteNav";
+
 
 
 export const LegalSection = ({ title, children }: { title: string; children: ReactNode }) => (

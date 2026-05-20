@@ -4,7 +4,7 @@ import { Instagram, Mail, MapPin } from "lucide-react";
 import { C, fonts } from "@/lib/editorialTheme";
 import { INSTAGRAM_URL } from "@/lib/socialLinks";
 import { H1, Body, Slug, Mono } from "@/components/editorial/primitives";
-import SiteNav from "@/components/SiteNav";
+
 
 const CONTACT_EMAIL = "hello@loverball.com";
 
