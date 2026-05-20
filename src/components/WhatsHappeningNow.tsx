@@ -51,23 +51,25 @@ const WhatsHappeningNow = () => {
 
       if (user) {
         const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
-        const [{ count: pending }, { count: recent }, { data: profile }] = await Promise.all([
-          supabase
-            .from("matches")
-            .select("id", { count: "exact", head: true })
-            .eq("addressee_id", user.id)
-            .eq("status", "pending"),
-          supabase
-            .from("matches")
-            .select("id", { count: "exact", head: true })
-            .or(`requester_id.eq.${user.id},addressee_id.eq.${user.id}`)
-            .gte("created_at", sevenDaysAgo),
-          supabase.from("profiles").select("city").eq("id", user.id).maybeSingle(),
-        ]);
+        const pendingRes = await supabase
+          .from("matches")
+          .select("id", { count: "exact", head: true })
+          .eq("addressee_id", user.id)
+          .eq("status", "pending");
+        const recentRes = await supabase
+          .from("matches")
+          .select("id", { count: "exact", head: true })
+          .or(`requester_id.eq.${user.id},addressee_id.eq.${user.id}`)
+          .gte("created_at", sevenDaysAgo);
+        const profileRes = await supabase
+          .from("profiles")
+          .select("city")
+          .eq("id", user.id)
+          .maybeSingle();
         setClub({
-          pendingMatches: pending ?? 0,
-          recentMatches: recent ?? 0,
-          city: (profile as any)?.city ?? null,
+          pendingMatches: pendingRes.count ?? 0,
+          recentMatches: recentRes.count ?? 0,
+          city: (profileRes.data as any)?.city ?? null,
         });
       }
 
