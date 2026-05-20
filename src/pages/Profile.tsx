@@ -780,6 +780,67 @@ const Profile = () => {
                 </Collapsible>
               </motion.div>
 
+              {/* MY EVENTS — user's RSVPs */}
+              <motion.div variants={staggerItem}>
+                <div className="rounded-2xl overflow-hidden" style={{ background: PANEL, border: PANEL_BORDER }}>
+                  <div className="p-5 pb-3 flex items-center justify-between">
+                    <span className="text-[13px] uppercase flex items-center gap-2.5"
+                      style={{ fontFamily: "'Space Mono', monospace", letterSpacing: "0.2em", color: "#FAF5E9", fontWeight: 500 }}>
+                      <Ticket className="w-3.5 h-3.5" style={{ color: PINK }} strokeWidth={2.5} /> My Events
+                    </span>
+                    <button
+                      onClick={() => goTo("/events")}
+                      className="text-[11px] uppercase"
+                      style={{ fontFamily: "'Space Mono', monospace", letterSpacing: "0.18em", color: PINK }}
+                    >
+                      Browse all →
+                    </button>
+                  </div>
+                  <div className="px-5 pb-5">
+                    {rsvpEvents.length === 0 ? (
+                      <div className="py-8 text-center rounded-xl" style={{ background: "rgba(255,255,255,0.02)", border: "1px dashed rgba(255,255,255,0.08)" }}>
+                        <Calendar className="w-6 h-6 mx-auto mb-2" style={{ color: "rgba(250,245,233,0.35)" }} />
+                        <p className="text-[13px] mb-3" style={{ color: "rgba(250,245,233,0.55)" }}>You haven't RSVP'd to any events yet.</p>
+                        <button
+                          onClick={() => goTo("/events")}
+                          className="text-[11px] uppercase"
+                          style={{ fontFamily: "'Space Mono', monospace", letterSpacing: "0.18em", color: PINK }}
+                        >
+                          Find an event →
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="grid sm:grid-cols-2 gap-4">
+                        {rsvpEvents.slice(0, 4).map(r => r.event && (
+                          <div key={r.id} className="rounded-xl p-4 cursor-pointer transition-colors hover:bg-white/[0.04]"
+                            style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)" }}
+                            onClick={() => goTo(`/event/${r.event!.id}`)}>
+                            {r.event.image_url ? (
+                              <img src={r.event.image_url} alt={r.event.title} className="w-full h-32 object-cover rounded-lg mb-3" />
+                            ) : (
+                              <div className="w-full h-32 rounded-lg mb-3 flex items-center justify-center"
+                                style={{ background: "linear-gradient(135deg, rgba(233,30,99,0.18), rgba(216,140,90,0.10))" }}>
+                                <Calendar className="w-8 h-8" style={{ color: PINK }} />
+                              </div>
+                            )}
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className="text-[9px] uppercase px-2 py-0.5 rounded-full"
+                                style={{ background: r.status === "going" || r.status === "attended" ? "rgba(240,78,35,0.18)" : "rgba(255,255,255,0.06)", color: r.status === "going" || r.status === "attended" ? PINK : "rgba(250,245,233,0.6)", fontFamily: "'Space Mono', monospace", letterSpacing: "0.12em" }}>
+                                {r.status}
+                              </span>
+                            </div>
+                            <p className="font-medium" style={{ color: "#FAF5E9" }}>{r.event.title}</p>
+                            <p className="text-sm" style={{ color: "rgba(250,245,233,0.55)" }}>
+                              {r.event.venue_name || r.event.city || "Location TBD"} • {format(new Date(r.event.event_date), "MMM d")}
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </motion.div>
+
               {/* RECOMMENDED EVENTS (collapsed) */}
               {suggestedEvents.length > 0 && (
                 <motion.div variants={staggerItem}>
