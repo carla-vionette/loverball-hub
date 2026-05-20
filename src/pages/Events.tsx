@@ -319,7 +319,7 @@ const Events = () => {
                 className="px-5 py-2 rounded-full transition-all"
                 style={{
                   background: tab === t.k ? "#F04E23" : "transparent",
-                  color: tab === t.k ? "#fff" : "rgba(248,248,248,0.6)",
+                  color: tab === t.k ? "#E6F25A" : "rgba(248,248,248,0.6)",
                   fontFamily: "'Inter', system-ui, sans-serif",
                   fontWeight: 700,
                   fontSize: 11,
