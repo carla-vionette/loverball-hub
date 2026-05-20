@@ -320,7 +320,9 @@ const StartingXi: React.FC = () => {
         path="/club/xi"
       />
 
-      <main className="max-w-[440px] mx-auto px-5 pt-8 pb-36">
+      <SiteNav />
+
+      <main className="max-w-[440px] mx-auto px-5 pt-24 md:pt-28 pb-36">
         {/* Header */}
         <header className="flex items-start justify-between gap-4">
           <h1
