@@ -68,7 +68,7 @@ const MemberCard: React.FC<{ m: Member; onDraft: () => void; disabled: boolean; 
   const navigate = useNavigate();
   return (
     <article
-      onClick={() => navigate(`/club/xi/${m.id}`)}
+      onClick={() => navigate(`/members/${m.id}`)}
       className="flex gap-3 p-3 cursor-pointer transition-colors hover:bg-[#141414] active:bg-[#141414]"
       style={{
         background: C.card,
