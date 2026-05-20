@@ -502,7 +502,7 @@ const Events = () => {
 
                       <div className="p-4 space-y-3">
                         <h3 className="line-clamp-2"
-                          style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: 18, lineHeight: 1.05, color: "#F8F8F8", textTransform: "uppercase", letterSpacing: "0.01em", margin: 0 }}>
+                          style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: 18, lineHeight: 1.05, color: "#E6F25A", textTransform: "uppercase", letterSpacing: "0.01em", margin: 0 }}>
                           {ev.title}
                         </h3>
                         <div className="flex flex-wrap items-center gap-x-3 gap-y-1"
