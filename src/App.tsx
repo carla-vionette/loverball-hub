@@ -30,6 +30,9 @@ const Profile = lazy(() => import("./pages/Profile"));
 const EditProfile = lazy(() => import("./pages/EditProfile"));
 const Club = lazy(() => import("./pages/Club"));
 const ClubDrafts = lazy(() => import("./pages/ClubDrafts"));
+const StartingXi = lazy(() => import("./pages/StartingXi"));
+const StartingXiProfile = lazy(() => import("./pages/StartingXiProfile"));
+const StartingXiIncoming = lazy(() => import("./pages/StartingXiIncoming"));
 
 const Onboarding = lazy(() => import("./pages/Onboarding"));
 const Horoscope = lazy(() => import("./pages/Horoscope"));
@@ -129,6 +132,9 @@ const App = () => (
                 <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
                 <Route path="/club" element={<Club />} />
                 <Route path="/club/drafts" element={<ProtectedRoute><ClubDrafts /></ProtectedRoute>} />
+                <Route path="/club/xi" element={<ProtectedRoute><StartingXi /></ProtectedRoute>} />
+                <Route path="/club/xi/incoming" element={<ProtectedRoute><StartingXiIncoming /></ProtectedRoute>} />
+                <Route path="/club/xi/:id" element={<ProtectedRoute><StartingXiProfile /></ProtectedRoute>} />
                 <Route path="/profile/edit" element={<ProtectedRoute><EditProfile /></ProtectedRoute>} />
                 <Route path="/profile/interests" element={<Navigate to="/profile/edit" replace />} />
 

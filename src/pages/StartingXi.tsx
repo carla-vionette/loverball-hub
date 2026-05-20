@@ -1,0 +1,329 @@
+import React, { useEffect, useMemo, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { Sparkles } from "lucide-react";
+import Seo from "@/components/Seo";
+import DraftConfirmModal from "@/components/club/DraftConfirmModal";
+import MutualDraftCelebration from "@/components/club/MutualDraftCelebration";
+import {
+  MOCK_MEMBERS,
+  loadDrafts,
+  saveDrafts,
+  type Member,
+} from "@/lib/startingXiData";
+
+const C = {
+  bg: "#0a0a0a",
+  card: "#1A1A1A",
+  cardHi: "#2A2A2A",
+  text: "#FAF5E9",
+  muted: "#B8B8B8",
+  pink: "#D4537E",
+  gold: "#E8B86A",
+  border: "rgba(250, 245, 233, 0.08)",
+  borderHi: "rgba(250, 245, 233, 0.15)",
+};
+
+const mono = { fontFamily: "'JetBrains Mono', ui-monospace, monospace" } as const;
+const serif = { fontFamily: "'Playfair Display', Georgia, serif", fontStyle: "italic" as const };
+const sans = { fontFamily: "Inter, system-ui, sans-serif" } as const;
+
+const Label: React.FC<{ children: React.ReactNode; color?: string; size?: number }> = ({
+  children,
+  color = C.muted,
+  size = 10,
+}) => (
+  <span
+    className="uppercase"
+    style={{ ...mono, color, fontSize: size, letterSpacing: "0.18em", fontWeight: 500 }}
+  >
+    {children}
+  </span>
+);
+
+const Chip: React.FC<{ children: React.ReactNode; pink?: boolean }> = ({ children, pink }) => (
+  <span
+    className="uppercase inline-flex items-center"
+    style={{
+      ...mono,
+      fontSize: 9,
+      letterSpacing: "0.18em",
+      color: pink ? C.pink : C.muted,
+      background: C.cardHi,
+      padding: "5px 9px",
+      borderRadius: 999,
+      fontWeight: 500,
+    }}
+  >
+    {children}
+  </span>
+);
+
+const MemberCard: React.FC<{ m: Member; onDraft: () => void; disabled: boolean; alreadyDrafted: boolean }> = ({
+  m,
+  onDraft,
+  disabled,
+  alreadyDrafted,
+}) => {
+  const navigate = useNavigate();
+  return (
+    <article
+      onClick={() => navigate(`/club/xi/${m.id}`)}
+      className="flex gap-3 p-3 cursor-pointer transition-colors hover:bg-[#141414] active:bg-[#141414]"
+      style={{
+        background: C.card,
+        border: `0.5px solid ${C.border}`,
+        borderRadius: 14,
+      }}
+    >
+      <img
+        src={m.photo}
+        alt={m.name}
+        loading="lazy"
+        className="object-cover flex-shrink-0"
+        style={{ width: 72, height: 88, borderRadius: 10 }}
+      />
+      <div className="flex-1 min-w-0">
+        <div className="flex items-start justify-between gap-2">
+          <h3 style={{ ...serif, fontSize: 19, color: C.text, lineHeight: 1.1 }}>{m.name}</h3>
+          <span
+            className="uppercase whitespace-nowrap"
+            style={{
+              ...mono,
+              fontSize: 9,
+              letterSpacing: "0.14em",
+              color: C.text,
+              background: "rgba(250, 245, 233, 0.08)",
+              padding: "3px 7px",
+              borderRadius: 6,
+              fontWeight: 500,
+            }}
+          >
+            {m.match}% Match
+          </span>
+        </div>
+        <p
+          className="uppercase mt-1"
+          style={{ ...mono, fontSize: 10, letterSpacing: "0.16em", color: C.pink, fontWeight: 500 }}
+        >
+          {m.team} · {m.city}
+        </p>
+        <p
+          className="mt-1.5 truncate"
+          style={{
+            fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+            fontSize: 11,
+            color: C.muted,
+            letterSpacing: "0.01em",
+          }}
+        >
+          VIBE: {m.vibe}
+        </p>
+
+        <div className="mt-2.5 flex items-center justify-between gap-2">
+          <div className="flex flex-wrap gap-1.5 min-w-0">
+            {m.tags.slice(0, 3).map((t) => (
+              <Chip key={t}>{t}</Chip>
+            ))}
+          </div>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              if (!disabled && !alreadyDrafted) onDraft();
+            }}
+            disabled={disabled || alreadyDrafted}
+            className="uppercase whitespace-nowrap transition-opacity active:opacity-80"
+            style={{
+              ...sans,
+              fontSize: 10,
+              fontWeight: 500,
+              letterSpacing: "0.16em",
+              color: alreadyDrafted ? C.muted : "#0a0a0a",
+              background: alreadyDrafted ? C.cardHi : C.pink,
+              padding: "7px 12px",
+              borderRadius: 999,
+              opacity: disabled ? 0.4 : 1,
+            }}
+          >
+            {alreadyDrafted ? "Drafted" : "+ Draft"}
+          </button>
+        </div>
+      </div>
+    </article>
+  );
+};
+
+const FloatingNav: React.FC = () => {
+  const tabs = [
+    { key: "feed", label: "Feed", to: "/feed" },
+    { key: "irl", label: "IRL", to: "/events" },
+    { key: "club", label: "Club", to: "/club/xi", active: true },
+    { key: "pass", label: "Pass", to: "/membership" },
+  ];
+  return (
+    <nav
+      className="fixed left-1/2 -translate-x-1/2 z-40 flex items-center"
+      style={{
+        bottom: "max(16px, env(safe-area-inset-bottom))",
+        background: C.card,
+        border: `0.5px solid ${C.pink}`,
+        borderRadius: 30,
+        padding: "8px 6px",
+      }}
+    >
+      {tabs.map((t) => (
+        <Link
+          key={t.key}
+          to={t.to}
+          className="relative flex flex-col items-center uppercase"
+          style={{
+            ...mono,
+            fontSize: 10,
+            letterSpacing: "0.22em",
+            color: t.active ? C.pink : C.muted,
+            padding: "6px 14px",
+            fontWeight: 500,
+          }}
+        >
+          {t.label}
+          {t.active && (
+            <span
+              style={{
+                marginTop: 3,
+                width: 4,
+                height: 4,
+                borderRadius: 999,
+                background: C.pink,
+              }}
+            />
+          )}
+        </Link>
+      ))}
+    </nav>
+  );
+};
+
+const StartingXi: React.FC = () => {
+  const [state, setState] = useState(loadDrafts);
+  const [confirm, setConfirm] = useState<Member | null>(null);
+  const [celebrate, setCelebrate] = useState<Member | null>(null);
+
+  useEffect(() => {
+    saveDrafts(state);
+  }, [state]);
+
+  const handleDraft = (m: Member) => {
+    if (state.draftsLeft <= 0) return;
+    if (state.drafted.includes(m.id)) return;
+    setState((s) => ({
+      draftsLeft: Math.max(0, s.draftsLeft - 1),
+      drafted: [...s.drafted, m.id],
+    }));
+    setConfirm(m);
+  };
+
+  // Demo loop: after closing the confirmation, simulate mutual draft after a short beat
+  const handleConfirmClose = () => {
+    const m = confirm;
+    setConfirm(null);
+    if (m) {
+      setTimeout(() => setCelebrate(m), 600);
+    }
+  };
+
+  const members = useMemo(() => MOCK_MEMBERS, []);
+
+  return (
+    <div style={{ background: C.bg, color: C.text, ...sans }} className="min-h-screen">
+      <Seo
+        title="Starting XI — The Club | Loverball"
+        description="An AI-curated discovery feed for the women who ride for your teams. Members-only."
+        path="/club/xi"
+      />
+
+      <main className="max-w-[440px] mx-auto px-5 pt-8 pb-36">
+        {/* Header */}
+        <header className="flex items-start justify-between gap-4">
+          <h1
+            style={{
+              ...serif,
+              fontSize: 38,
+              lineHeight: 0.95,
+              letterSpacing: "-0.01em",
+              color: C.text,
+              fontWeight: 500,
+            }}
+          >
+            Starting<br />XI.
+          </h1>
+          <Label color={C.muted} size={10}>Find your people</Label>
+        </header>
+        <div style={{ height: 0.5, background: C.border, marginTop: 18 }} />
+
+        {/* Sub-header */}
+        <div className="flex items-center justify-between mt-4">
+          <Label color={C.muted}>Picked for you this week</Label>
+          <Label color={C.pink}>
+            Drafts left: {state.draftsLeft}
+          </Label>
+        </div>
+
+        {/* Featured strip */}
+        <div
+          className="mt-4 flex items-start gap-2.5 p-3"
+          style={{
+            background: "rgba(212, 83, 126, 0.08)",
+            border: "0.5px solid rgba(212, 83, 126, 0.35)",
+            borderRadius: 12,
+          }}
+        >
+          <Sparkles size={14} color={C.pink} className="mt-0.5 flex-shrink-0" strokeWidth={1.5} />
+          <p style={{ fontSize: 12.5, lineHeight: 1.5, color: C.text }}>
+            Surfaced based on your teams, vibes &amp; this week's matchups.
+          </p>
+        </div>
+
+        {/* Feed */}
+        <ul className="mt-5 space-y-3">
+          {members.map((m) => (
+            <li key={m.id}>
+              <MemberCard
+                m={m}
+                onDraft={() => handleDraft(m)}
+                disabled={state.draftsLeft <= 0}
+                alreadyDrafted={state.drafted.includes(m.id)}
+              />
+            </li>
+          ))}
+        </ul>
+
+        {state.draftsLeft === 0 && (
+          <p className="mt-6 text-center" style={{ ...mono, fontSize: 10, letterSpacing: "0.2em", color: C.muted }}>
+            Drafts reset Monday
+          </p>
+        )}
+      </main>
+
+      <FloatingNav />
+
+      <DraftConfirmModal
+        open={!!confirm}
+        memberFirstName={confirm?.firstName || ""}
+        suggestedOpener={confirm?.opener}
+        draftsLeft={state.draftsLeft}
+        onClose={handleConfirmClose}
+      />
+
+      <MutualDraftCelebration
+        open={!!celebrate}
+        themPhotoUrl={celebrate?.photo}
+        themFirstName={celebrate?.firstName || ""}
+        themInitial={celebrate?.firstName?.[0]}
+        upcomingHint={celebrate?.upcoming}
+        onClose={() => setCelebrate(null)}
+        onSayHi={() => setCelebrate(null)}
+      />
+    </div>
+  );
+};
+
+export default StartingXi;
