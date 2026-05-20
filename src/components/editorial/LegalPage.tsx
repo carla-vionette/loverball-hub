@@ -3,17 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { C, fonts } from "@/lib/editorialTheme";
 import { H1, H2, Body, Slug, Mono } from "@/components/editorial/primitives";
+import SiteNav from "@/components/SiteNav";
 
-const NavBar = () => (
-  <header className="px-6 md:px-12 pt-10 pb-6 flex items-center justify-between" style={{ borderBottom: `0.5px solid ${C.border}` }}>
-    <Link to="/" style={{ fontFamily: fonts.serif, fontStyle: "italic", fontSize: 28, letterSpacing: "-0.02em", color: C.text }}>Loverball</Link>
-    <nav className="hidden md:flex items-center gap-8">
-      {[["Watch","/feed"],["Connect","/connect"],["Events","/events"],["Club","/club"]].map(([l,h]) => (
-        <Link key={l} to={h} style={{ fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.2em", textTransform: "uppercase", color: C.muted }}>{l}</Link>
-      ))}
-    </nav>
-  </header>
-);
 
 export const LegalSection = ({ title, children }: { title: string; children: ReactNode }) => (
   <section className="space-y-4">
