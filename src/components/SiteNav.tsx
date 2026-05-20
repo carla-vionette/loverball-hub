@@ -69,17 +69,20 @@ const SiteNav = () => {
         </Link>
 
         <div className="hidden md:flex items-center gap-7 xl:gap-9">
-          {NAV_ITEMS.map(([label, to]) => (
-            <Link
-              key={label}
-              to={to}
-              aria-current={isActive(to) ? "page" : undefined}
-              style={{ ...linkStyle, color: isActive(to) ? C.text : C.muted }}
-              className="transition-colors hover:!text-[#FAF5E9]"
-            >
-              {label}
-            </Link>
-          ))}
+          {NAV_ITEMS.map(([label, to]) => {
+            const active = isActive(to);
+            return (
+              <Link
+                key={label}
+                to={to}
+                aria-current={active ? "page" : undefined}
+                style={{ ...linkStyle, color: active ? "#E6F25A" : C.muted }}
+                className="transition-colors hover:!text-[#F7F7F2]"
+              >
+                {label}
+              </Link>
+            );
+          })}
         </div>
 
         <div className="hidden md:flex items-center gap-4">
