@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Send, Loader2, MessageCircle, Inbox as InboxIcon } from "lucide-react";
 import BottomNav from "@/components/BottomNav";
 import { format } from "date-fns";
+import { sendSmsToUser } from "@/lib/smsNotifications";
 
 interface ThreadProfile {
   id: string;
