@@ -480,46 +480,7 @@ const Profile = () => {
 
                 {/* Body — stats + actions */}
                 <div className="px-5 pt-5 pb-5">
-                  {/* Stats row 2×2 */}
-                  <div className="grid grid-cols-4 gap-2">
-                    {[
-                      { label: "Events", value: eventsAttended },
-                      { label: "Friends", value: null as number | null },
-                      { label: "Posts", value: null as number | null },
-                      { label: "Following", value: null as number | null },
-                    ].map((s, i) => (
-                      <div
-                        key={s.label}
-                        className="rounded-xl px-2 py-3 text-center"
-                        style={{
-                          background: "rgba(255,255,255,0.02)",
-                          border: "1px solid rgba(255,255,255,0.05)",
-                        }}
-                      >
-                        <p
-                          className="leading-none"
-                          style={{
-                            fontFamily: "'Playfair Display', serif",
-                            fontWeight: 700,
-                            fontSize: 22,
-                            color: s.value === null ? "rgba(250,245,233,0.35)" : "#FAF5E9",
-                          }}
-                        >
-                          {s.value === null ? "—" : s.value}
-                        </p>
-                        <p
-                          className="mt-1.5 text-[9.5px] uppercase"
-                          style={{
-                            fontFamily: "'Space Mono', monospace",
-                            letterSpacing: "0.16em",
-                            color: "rgba(250,245,233,0.5)",
-                          }}
-                        >
-                          {s.label}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
+                  {/* Stats grid removed per request */}
 
                   {/* Bio */}
                   {profile.bio && (
