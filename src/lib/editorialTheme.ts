@@ -4,9 +4,11 @@ export const C = {
   surfaceHi: "#2A2A2A",
   text: "#FAF5E9",
   muted: "#B8B8B8",
-  raspberry: "#D4537E",
-  gold: "#E8B86A",
-  teal: "#4ECDC4",
+  raspberry: "#F04E23",   // Vermilion
+  gold: "#E6F25A",        // Neon Yellow (legacy alias)
+  neon: "#E6F25A",
+  pink: "#E86BB0",        // Hot Pink
+  teal: "#E86BB0",        // legacy alias
   border: "rgba(250, 245, 233, 0.08)",
   borderStrong: "rgba(250, 245, 233, 0.15)",
 };
