@@ -387,7 +387,7 @@ const Auth = () => {
                 className="space-y-8"
               >
                 <div className="text-center space-y-2">
-                  <AuthH1>Join us!</AuthH1>
+                  <AuthH1>JOIN US!</AuthH1>
                   <AuthBody muted center>Sign up in seconds.</AuthBody>
                 </div>
 
@@ -583,7 +583,7 @@ const Auth = () => {
                     style={{ color: C.raspberry, fontWeight: 600, borderBottom: `1px solid ${C.raspberry}`, paddingBottom: 1 }}
                     className="hover:opacity-80 transition-opacity"
                   >
-                    Join us!
+                    JOIN US!
                   </button>
                 </p>
               </motion.div>
