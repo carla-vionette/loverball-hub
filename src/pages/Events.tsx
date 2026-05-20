@@ -223,7 +223,18 @@ const Events = () => {
   const pastEvents = events.filter(e => e.event_date < todayStr).reverse();
 
   const baseEvents = tab === "upcoming" ? upcomingEvents : pastEvents;
-  const filtered = category === "All" ? baseEvents : baseEvents.filter(e => e.event_type === category);
+  const categoryFiltered = category === "All" ? baseEvents : baseEvents.filter(e => e.event_type === category);
+  const q = searchQuery.trim().toLowerCase();
+  const filtered = q
+    ? categoryFiltered.filter(e =>
+        e.title.toLowerCase().includes(q) ||
+        (e.city && e.city.toLowerCase().includes(q)) ||
+        (e.venue_name && e.venue_name.toLowerCase().includes(q)) ||
+        (e.description && e.description.toLowerCase().includes(q)) ||
+        (e.sport_tags && e.sport_tags.some((t: string) => t.toLowerCase().includes(q))) ||
+        (e.event_tags && e.event_tags.some((t: string) => t.toLowerCase().includes(q)))
+      )
+    : categoryFiltered;
 
   const featured = tab === "upcoming" && upcomingEvents.length
     ? upcomingEvents.reduce((closest, ev) => {
