@@ -178,10 +178,8 @@ const Index = () => {
         }}
       >
         <div className="max-w-7xl mx-auto px-5 md:px-10 py-4 flex items-center justify-between">
-          <Link to="/" className="flex items-center">
-            <span style={{ fontFamily: fonts.serif, fontStyle: "italic", fontWeight: 500, fontSize: 22, color: C.text, letterSpacing: "-0.01em" }}>
-              Loverball
-            </span>
+          <Link to="/" className="flex items-center" aria-label="Loverball home">
+            <img src={navLogo} alt="Loverball" style={{ height: 36, width: "auto", display: "block" }} />
           </Link>
 
           <div className="hidden md:flex items-center gap-8">
