@@ -20,7 +20,7 @@ const C = {
   bg: "#0a0a0a",
   card: "#1A1A1A",
   cardHi: "#2A2A2A",
-  text: "#FAF5E9",
+  text: "#E6F25A",
   muted: "#B8B8B8",
   pink: "#E86BB0",
   gold: "#E6F25A",
@@ -109,7 +109,7 @@ const MemberCard: React.FC<{ m: Member; onDraft: () => void; disabled: boolean; 
       )}
       <div className="flex-1 min-w-0">
         <div className="flex items-start justify-between gap-2">
-          <h3 style={{ ...serif, fontSize: 19, color: C.text, lineHeight: 1.1 }}>{m.name}</h3>
+          <h3 style={{ ...serif, fontSize: 19, color: C.raspberry, lineHeight: 1.1 }}>{m.name}</h3>
         </div>
         <p
           className="uppercase mt-1"
@@ -334,7 +334,7 @@ const StartingXi: React.FC = () => {
               fontSize: "clamp(44px, 11vw, 72px)",
               lineHeight: 0.9,
               letterSpacing: "-0.01em",
-              color: C.text,
+              color: C.raspberry,
               fontWeight: 400,
               textTransform: "uppercase",
             }}
