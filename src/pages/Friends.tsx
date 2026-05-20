@@ -14,8 +14,6 @@ import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import AttendeeProfileDrawer from "@/components/AttendeeProfileDrawer";
 import BottomNav from "@/components/BottomNav";
-import DesktopNav from "@/components/DesktopNav";
-import MobileHeader from "@/components/MobileHeader";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { format } from "date-fns";
 
@@ -609,11 +607,9 @@ const Friends = () => {
   // ─── Desktop: Split panel layout ───
   return (
     <div className="min-h-screen bg-background">
-      <MobileHeader />
-      <DesktopNav />
       <BottomNav />
 
-      <main className="md:ml-16 xl:ml-64 pb-24 md:pb-0">
+      <main className="pb-24 md:pb-0">
         {/* Mobile layout */}
         <div className="md:hidden">
           <header className="sticky top-0 z-40 bg-background/90 backdrop-blur-sm border-b border-border">

@@ -2,9 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import DesktopNav from "@/components/DesktopNav";
 import BottomNav from "@/components/BottomNav";
-import MobileHeader from "@/components/MobileHeader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Loader2, MessageCircle, Send, ArrowLeft } from "lucide-react";
@@ -309,9 +307,6 @@ const DirectMessages = () => {
 
   return (
     <div className="min-h-screen bg-background pb-24 md:pb-0 md:pl-64">
-      <DesktopNav />
-      <MobileHeader />
-
       <main className="container mx-auto px-0 md:px-4 py-0 md:py-6 max-w-5xl">
         {loading ? (
           <PageSkeleton variant="list" count={8} />

@@ -4,8 +4,6 @@ import { Seo } from "@/components/Seo";
 import { Tv, Users, MessagesSquare, MapPin, Gift, Sparkles, ArrowRight } from "lucide-react";
 import { C, fonts } from "@/lib/editorialTheme";
 import { H1, H2, H3, Body, Slug, Mono, PrimaryBtn, SecondaryBtn } from "@/components/editorial/primitives";
-import MobileHeader from "@/components/MobileHeader";
-import DesktopNav from "@/components/DesktopNav";
 import BottomNav from "@/components/BottomNav";
 import { loadDrafts, MOCK_MEMBERS, type Member } from "@/lib/startingXiData";
 import ClubMessagesInbox from "@/components/club/ClubMessagesInbox";
@@ -43,9 +41,9 @@ const Club = () => {
         path="/club"
       />
 
-      <MobileHeader /><DesktopNav /><BottomNav />
+ <BottomNav />
 
-      <main className="md:ml-16 xl:ml-64 pt-16 md:pt-0 pb-24 md:pb-0">
+      <main className="pb-24 md:pb-0">
         {/* Header */}
         <section className="max-w-7xl mx-auto px-5 md:px-10 pt-24 md:pt-32 pb-10">
           <Slug>The Club</Slug>
