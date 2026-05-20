@@ -246,7 +246,8 @@ export default function ProfileInbox() {
           ) : previewNotifs.length === 0 ? (
             <div className="px-5 py-10 text-center">
               <Bell size={24} className="mx-auto mb-3" style={{ color: "rgba(250,245,233,0.35)" }} />
-              <p className="text-[13px]" style={{ color: "rgba(250,245,233,0.55)" }}>You're all caught up.</p>
+              <p className="text-[13px]" style={{ color: "rgba(250,245,233,0.75)" }}>Nothing new yet — but the season's just getting started.</p>
+              <p className="text-[12px] mt-1" style={{ color: "rgba(250,245,233,0.45)" }}>Follow a few people to start seeing activity here.</p>
             </div>
           ) : (
             <ul>
