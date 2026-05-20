@@ -208,10 +208,11 @@ const ProfileFollowCounts = ({ userId, onClickFollowers, onClickFollowing }: { u
 };
 
 const Profile = () => {
-  const [teamsOpen, setTeamsOpen] = useState(false);
-  const [scoresOpen, setScoresOpen] = useState(false);
+  const [teamsOpen, setTeamsOpen] = useState(true);
+  const [scoresOpen, setScoresOpen] = useState(true);
   const [watchOpen, setWatchOpen] = useState(false);
   const [recEventsOpen, setRecEventsOpen] = useState(false);
+  const [feedFilter, setFeedFilter] = useState<string>("All");
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [rsvpEvents, setRsvpEvents] = useState<RSVPEvent[]>([]);
   const [suggestedEvents, setSuggestedEvents] = useState<SuggestedEvent[]>([]);
