@@ -213,6 +213,7 @@ const Profile = () => {
   const [teamsOpen, setTeamsOpen] = useState(true);
   const [scoresOpen, setScoresOpen] = useState(true);
   const [watchOpen, setWatchOpen] = useState(false);
+  const [eventsOpen, setEventsOpen] = useState(true);
   const [recEventsOpen, setRecEventsOpen] = useState(false);
   const [feedFilter, setFeedFilter] = useState<string>("All");
   const [profile, setProfile] = useState<ProfileData | null>(null);
