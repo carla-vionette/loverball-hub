@@ -109,11 +109,17 @@ const Settings = () => {
       // Load user's favorite teams
       const { data: profile } = await supabase
         .from("profiles")
-        .select("favorite_la_teams")
+        .select("favorite_la_teams, in_app_notifications_enabled, sms_notifications_enabled, email_notifications_enabled, phone")
         .eq("id", user.id)
         .single();
 
       setUserTeams(profile?.favorite_la_teams || []);
+      setChannels({
+        in_app: profile?.in_app_notifications_enabled ?? true,
+        sms: profile?.sms_notifications_enabled ?? true,
+        email: profile?.email_notifications_enabled ?? true,
+        phone: profile?.phone || "",
+      });
     } catch (err) {
       // Preferences load error handled silently
     } finally {
