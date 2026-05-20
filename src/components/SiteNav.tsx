@@ -157,7 +157,7 @@ const SiteNav = () => {
                   className="flex-1"
                   style={{ ...pillStyle, background: C.raspberry, color: "#fff" }}
                 >
-                  Join Free
+                  JOIN US!
                 </button>
               </>
             )}
