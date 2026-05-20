@@ -16,12 +16,20 @@ import navLogo from "@/assets/loverball-logo.png";
  * Tokens, type, spacing and active states are identical everywhere.
  */
 
-const NAV_ITEMS: Array<[string, string]> = [
+const PUBLIC_NAV_ITEMS: Array<[string, string]> = [
   ["Watch", "/feed"],
   ["Events", "/events"],
   ["Club", "/club/xi"],
   ["Membership", "/membership"],
   ["About", "/about"],
+];
+
+const MEMBER_NAV_ITEMS: Array<[string, string]> = [
+  ["Watch", "/feed"],
+  ["Events", "/events"],
+  ["Club", "/club/xi"],
+  ["Friends", "/friends"],
+  ["Membership", "/membership"],
 ];
 
 const linkStyle = {
@@ -45,6 +53,7 @@ const SiteNav = () => {
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const navItems = user ? MEMBER_NAV_ITEMS : PUBLIC_NAV_ITEMS;
 
   const isActive = (to: string) =>
     to === "/" ? pathname === "/" : pathname === to || pathname.startsWith(to + "/");
@@ -70,7 +79,7 @@ const SiteNav = () => {
         </Link>
 
         <div className="hidden md:flex items-center gap-7 xl:gap-9">
-          {NAV_ITEMS.map(([label, to]) => {
+          {navItems.map(([label, to]) => {
             const active = isActive(to);
             return (
               <Link
@@ -127,7 +136,7 @@ const SiteNav = () => {
           className="md:hidden px-5 pb-5 pt-3 flex flex-col gap-4"
           style={{ borderTop: `0.5px solid ${C.border}` }}
         >
-          {NAV_ITEMS.map(([label, to]) => (
+          {navItems.map(([label, to]) => (
             <Link
               key={label}
               to={to}
