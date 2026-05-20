@@ -30,6 +30,7 @@ import loverballLogo from "@/assets/loverball-script-logo.png";
 import MobileHeader from "@/components/MobileHeader";
 import DesktopNav from "@/components/DesktopNav";
 import BottomNav from "@/components/BottomNav";
+import { useAuth } from "@/hooks/useAuth";
 
 const EditProfile = () => {
   const [step, setStep] = useState(1);
@@ -38,6 +39,7 @@ const EditProfile = () => {
   const [userId, setUserId] = useState<string | null>(null);
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { user, loading: authLoading } = useAuth();
 
   // Form state
   const [name, setName] = useState("");
@@ -60,7 +62,7 @@ const EditProfile = () => {
 
   useEffect(() => {
     const loadProfile = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
+      if (authLoading) return;
       if (!user) {
         navigate("/auth");
         return;
@@ -97,7 +99,7 @@ const EditProfile = () => {
       setComfortLevel(profile.event_comfort_level || "");
       setParticipation(profile.participation_preferences || []);
       // Fetch sensitive data separately
-      const { data: sensitive } = await supabase.from("profiles_sensitive" as any).select("phone_number").eq("id", (await supabase.auth.getUser()).data.user?.id).maybeSingle();
+      const { data: sensitive } = await supabase.from("profiles_sensitive" as any).select("phone_number").eq("id", user.id).maybeSingle();
       setPhoneNumber((sensitive as any)?.phone_number || "");
       setSmsNotifications(profile.sms_notifications_enabled ?? true);
       setProfilePhotoPreview(profile.profile_photo_url || null);
@@ -106,7 +108,7 @@ const EditProfile = () => {
     };
     
     loadProfile();
-  }, [navigate]);
+  }, [authLoading, navigate, user]);
 
   const totalSteps = 5;
   const progress = (step / totalSteps) * 100;
