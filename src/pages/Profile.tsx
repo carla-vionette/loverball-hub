@@ -354,35 +354,6 @@ const Profile = () => {
       >
         <div className="max-w-[1400px] mx-auto px-4 md:px-8 pt-2">
 
-          {/* ───── PAGE MASTHEAD ───── */}
-          <motion.div
-            variants={staggerItem}
-            initial="hidden"
-            animate="show"
-            className="pb-6 flex items-end justify-between gap-4"
-          >
-            <h1
-              className="leading-[0.85] tracking-tight"
-              style={{
-                fontFamily: "'Playfair Display', Georgia, serif",
-                fontWeight: 800,
-                fontSize: "clamp(48px, 8vw, 88px)",
-                color: "#FAF5E9",
-              }}
-            >
-              Profile<span style={{ color: PINK }}>.</span>
-            </h1>
-            <p
-              className="hidden md:block text-[10px] uppercase mb-3"
-              style={{
-                fontFamily: "'Space Mono', monospace",
-                letterSpacing: "0.24em",
-                color: "rgba(250,245,233,0.45)",
-              }}
-            >
-              {formattedDate} · {formattedTime}
-            </p>
-          </motion.div>
 
           {/* ───── 2-COLUMN GRID (40 / 60 @ lg+) ───── */}
           <motion.div
