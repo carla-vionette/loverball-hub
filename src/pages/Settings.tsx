@@ -276,6 +276,59 @@ const Settings = () => {
 
           {/* Notifications Tab */}
           <TabsContent value="notifications" className="space-y-6">
+            {/* Notification channels */}
+            <Card className="rounded-2xl border-border/50">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <Smartphone className="h-5 w-5" /> Notification Channels
+                </CardTitle>
+                <p className="text-sm text-muted-foreground">Choose how Loverball reaches you</p>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium">In-app notifications</p>
+                    <p className="text-xs text-muted-foreground">Bell badge & realtime alerts</p>
+                  </div>
+                  <Switch
+                    checked={channels.in_app}
+                    onCheckedChange={(v) => setChannels((c) => ({ ...c, in_app: v }))}
+                  />
+                </div>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium">SMS notifications</p>
+                    <p className="text-xs text-muted-foreground">Texts via Twilio. Reply STOP to opt out.</p>
+                  </div>
+                  <Switch
+                    checked={channels.sms}
+                    onCheckedChange={(v) => setChannels((c) => ({ ...c, sms: v }))}
+                  />
+                </div>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium">Email notifications</p>
+                    <p className="text-xs text-muted-foreground">Digest & important updates</p>
+                  </div>
+                  <Switch
+                    checked={channels.email}
+                    onCheckedChange={(v) => setChannels((c) => ({ ...c, email: v }))}
+                  />
+                </div>
+                <div className="pt-2 space-y-1.5">
+                  <Label htmlFor="phone-input" className="text-sm">Phone number (for SMS)</Label>
+                  <Input
+                    id="phone-input"
+                    type="tel"
+                    placeholder="+15551234567"
+                    value={channels.phone}
+                    onChange={(e) => setChannels((c) => ({ ...c, phone: e.target.value }))}
+                  />
+                  <p className="text-[11px] text-muted-foreground">E.164 format, e.g. +1 for US.</p>
+                </div>
+              </CardContent>
+            </Card>
+
             {/* Favorite teams section */}
             {favoriteTeams.length > 0 && (
               <Card className="rounded-2xl border-border/50">
