@@ -202,6 +202,7 @@ const Index = () => {
 
             <div className="mt-10 flex flex-wrap gap-3">
                <PrimaryCTA onClick={goJoin}>JOIN US!</PrimaryCTA>
+              <SecondaryCTA to="/auth?mode=signin">Sign In <ArrowRight size={14} /></SecondaryCTA>
               <SecondaryCTA to="/membership">See Membership <ArrowRight size={14} /></SecondaryCTA>
             </div>
 
