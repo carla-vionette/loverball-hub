@@ -1,21 +1,21 @@
-import { useState, useEffect, useRef } from "react ";
-import { useNavigate } from "react-router-dom ";
-import { supabase } from "@/integrations/supabase/client ";
-import { Button } from "@/components/ui/button ";
-import { Input } from "@/components/ui/input ";
-import { Label } from "@/components/ui/label ";
-import { useToast } from "@/hooks/use-toast ";
-import { Progress } from "@/components/ui/progress ";
-import { Badge } from "@/components/ui/badge ";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar ";
+import { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useToast } from "@/hooks/use-toast";
+import { Progress } from "@/components/ui/progress";
+import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select ";
-import { Checkbox } from "@/components/ui/checkbox ";
+} from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   PRONOUN_OPTIONS,
   CITY_OPTIONS,
@@ -24,11 +24,13 @@ import {
   INTERESTS_OPTIONS,
   COMFORT_LEVEL_OPTIONS,
   PARTICIPATION_OPTIONS,
-} from "@/lib/onboardingOptions ";
-import { X, Camera, Loader2, ArrowLeft } from "lucide-react ";
-import loverballLogo from "@/assets/loverball-script-logo.png ";
-import BottomNav from "@/components/BottomNav ";
-import { useAuth } from "@/hooks/useAuth ";
+} from "@/lib/onboardingOptions";
+import { X, Camera, Loader2, ArrowLeft } from "lucide-react";
+import loverballLogo from "@/assets/loverball-script-logo.png";
+import MobileHeader from "@/components/MobileHeader";
+import DesktopNav from "@/components/DesktopNav";
+import BottomNav from "@/components/BottomNav";
+import { useAuth } from "@/hooks/useAuth";
 
 const EditProfile = () => {
   const [step, setStep] = useState(1);
@@ -62,7 +64,7 @@ const EditProfile = () => {
     const loadProfile = async () => {
       if (authLoading) return;
       if (!user) {
-        navigate("/auth ");
+        navigate("/auth");
         return;
       }
       
@@ -70,18 +72,18 @@ const EditProfile = () => {
       
       // Fetch existing profile
       const { data: profile, error } = await supabase
-        .from("profiles ")
+        .from("profiles")
         .select("*")
-        .eq("id ", user.id)
+        .eq("id", user.id)
         .maybeSingle();
       
       if (error) {
-        navigate("/onboarding ");
+        navigate("/onboarding");
         return;
       }
       
       if (!profile) {
-        navigate("/onboarding ");
+        navigate("/onboarding");
         return;
       }
       
@@ -97,7 +99,7 @@ const EditProfile = () => {
       setComfortLevel(profile.event_comfort_level || "");
       setParticipation(profile.participation_preferences || []);
       // Fetch sensitive data separately
-      const { data: sensitive } = await supabase.from("profiles_sensitive " as any).select("phone_number ").eq("id ", user.id).maybeSingle();
+      const { data: sensitive } = await supabase.from("profiles_sensitive" as any).select("phone_number").eq("id", user.id).maybeSingle();
       setPhoneNumber((sensitive as any)?.phone_number || "");
       setSmsNotifications(profile.sms_notifications_enabled ?? true);
       setProfilePhotoPreview(profile.profile_photo_url || null);
@@ -135,9 +137,9 @@ const EditProfile = () => {
     if (file) {
       if (file.size > 5 * 1024 * 1024) {
         toast({
-          title:"File too large ",
-          description:"Please select an image under 5MB ",
-          variant:"destructive ",
+          title: "File too large",
+          description: "Please select an image under 5MB",
+          variant: "destructive",
         });
         return;
       }
@@ -167,9 +169,9 @@ const EditProfile = () => {
       return data.publicUrl;
     } catch (error: any) {
       toast({
-        title:"Photo upload failed ",
+        title: "Photo upload failed",
         description: error.message,
-        variant:"destructive ",
+        variant: "destructive",
       });
       return null;
     } finally {
@@ -178,8 +180,8 @@ const EditProfile = () => {
   };
 
   const generateBio = () => {
-    const sportsList = favoriteSports.slice(0, 2).join(" &");
-    const interestsList = interests.slice(0, 2).join(",");
+    const sportsList = favoriteSports.slice(0, 2).join(" & ");
+    const interestsList = interests.slice(0, 2).join(", ");
     const teamText = favTeams[0] ? `${favTeams[0]} fan` : `${sportsList} enthusiast`;
     const locationText = city ? `in ${city}` : "";
     
@@ -199,7 +201,7 @@ const EditProfile = () => {
         photoUrl = await uploadProfilePhoto();
       }
       
-      const { error } = await supabase.from("profiles ").update({
+      const { error } = await supabase.from("profiles").update({
         name,
         pronouns,
         city,
@@ -213,10 +215,10 @@ const EditProfile = () => {
         bio,
         profile_photo_url: photoUrl,
         sms_notifications_enabled: smsNotifications,
-      }).eq("id ", userId);
+      }).eq("id", userId);
 
       // Update sensitive data separately
-      await supabase.from("profiles_sensitive " as any).upsert({
+      await supabase.from("profiles_sensitive" as any).upsert({
         id: userId,
         phone_number: phoneNumber || null,
       } as any);
@@ -224,16 +226,16 @@ const EditProfile = () => {
       if (error) throw error;
 
       toast({
-        title:"Profile updated!",
-        description:"Your changes have been saved.",
+        title: "Profile updated!",
+        description: "Your changes have been saved.",
       });
       
-      navigate("/profile ");
+      navigate("/profile");
     } catch (error: any) {
       toast({
-        title:"Error ",
+        title: "Error",
         description: error.message,
-        variant:"destructive ",
+        variant: "destructive",
       });
     } finally {
       setLoading(false);
@@ -259,29 +261,31 @@ const EditProfile = () => {
 
   if (initialLoading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center ">
-        <Loader2 className="h-8 w-8 animate-spin text-primary " />
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background ">
+    <div className="min-h-screen bg-background">
+      <MobileHeader />
+      <DesktopNav />
       <BottomNav />
 
-      <main className="pb-20 md:pb-8">
+      <main className="md:ml-16 xl:ml-64 pb-20 md:pb-8 pt-20 md:pt-8">
         <div className="max-w-2xl mx-auto px-4">
           {/* Header */}
           <div className="mb-8">
             <Button 
-              variant="ghost " 
-              onClick={() => navigate("/profile ")}
+              variant="ghost" 
+              onClick={() => navigate("/profile")}
               className="mb-4 -ml-2"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Profile
             </Button>
-            <p className="text-primary text-sm font-medium tracking-widest mb-4 uppercase ">Step {step} of {totalSteps}</p>
+            <p className="text-primary text-sm font-medium tracking-widest mb-4 uppercase">Step {step} of {totalSteps}</p>
             <h1 className="text-3xl sm:text-4xl font-sans font-normal text-foreground mb-4">Edit your profile</h1>
             <Progress value={progress} className="h-1" />
           </div>
@@ -295,47 +299,47 @@ const EditProfile = () => {
                   <Label className="text-xs tracking-wider uppercase text-foreground/60">Profile Photo</Label>
                   <div 
                     onClick={() => fileInputRef.current?.click()}
-                    className="relative cursor-pointer group "
+                    className="relative cursor-pointer group"
                   >
-                    <Avatar className="w-24 h-24 border-2 border-dashed border-foreground/20 group-hover:border-primary transition-colors ">
+                    <Avatar className="w-24 h-24 border-2 border-dashed border-foreground/20 group-hover:border-primary transition-colors">
                       {profilePhotoPreview ? (
-                        <AvatarImage src={profilePhotoPreview} alt="Preview " className="object-cover " />
+                        <AvatarImage src={profilePhotoPreview} alt="Preview" className="object-cover" />
                       ) : (
-                        <AvatarFallback className="bg-background ">
+                        <AvatarFallback className="bg-background">
                           <Camera className="w-8 h-8 text-foreground/40" />
                         </AvatarFallback>
                       )}
                     </Avatar>
-                    <div className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity ">
-                      <Camera className="w-6 h-6 text-white " />
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Camera className="w-6 h-6 text-white" />
                     </div>
                   </div>
                   <input
                     ref={fileInputRef}
-                    type="file "
+                    type="file"
                     accept="image/*"
                     onChange={handlePhotoSelect}
-                    className="hidden "
+                    className="hidden"
                   />
                   <p className="text-xs text-foreground/40">Click to upload (max 5MB)</p>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="name " className="text-xs tracking-wider uppercase text-foreground/60">Name *</Label>
+                  <Label htmlFor="name" className="text-xs tracking-wider uppercase text-foreground/60">Name *</Label>
                   <Input
-                    id="name "
+                    id="name"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    placeholder="Your name "
-                    className="rounded-none h-12 border-border bg-background "
+                    placeholder="Your name"
+                    className="rounded-none h-12 border-border bg-background"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="pronouns " className="text-xs tracking-wider uppercase text-foreground/60">Pronouns</Label>
+                  <Label htmlFor="pronouns" className="text-xs tracking-wider uppercase text-foreground/60">Pronouns</Label>
                   <Select value={pronouns} onValueChange={setPronouns}>
                     <SelectTrigger className="bg-background rounded-none h-12">
-                      <SelectValue placeholder="Select pronouns " />
+                      <SelectValue placeholder="Select pronouns" />
                     </SelectTrigger>
                     <SelectContent className="bg-background z-50">
                       {PRONOUN_OPTIONS.map((option) => (
@@ -348,12 +352,12 @@ const EditProfile = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="city " className="text-xs tracking-wider uppercase text-foreground/60">City *</Label>
+                  <Label htmlFor="city" className="text-xs tracking-wider uppercase text-foreground/60">City *</Label>
                   <Select value={city} onValueChange={setCity}>
                     <SelectTrigger className="bg-background rounded-none h-12">
-                      <SelectValue placeholder="Select city " />
+                      <SelectValue placeholder="Select city" />
                     </SelectTrigger>
-                    <SelectContent className="bg-background z-50 max-h-60 overflow-y-auto ">
+                    <SelectContent className="bg-background z-50 max-h-60 overflow-y-auto">
                       {CITY_OPTIONS.map((option) => (
                         <SelectItem key={option} value={option}>
                           {option}
@@ -373,7 +377,7 @@ const EditProfile = () => {
                   <Label className="text-xs tracking-wider uppercase text-foreground/60">Favorite Sports * (select all that apply)</Label>
                   <div className="grid grid-cols-2 gap-3">
                     {SPORTS_OPTIONS.map((sport) => (
-                      <div key={sport} className="flex items-center space-x-3 p-3 bg-background border border-border hover:border-primary transition-colors cursor-pointer " onClick={() => toggleArrayItem(favoriteSports, sport, setFavoriteSports)}>
+                      <div key={sport} className="flex items-center space-x-3 p-3 bg-background border border-border hover:border-primary transition-colors cursor-pointer" onClick={() => toggleArrayItem(favoriteSports, sport, setFavoriteSports)}>
                         <Checkbox
                           id={`sport-${sport}`}
                           checked={favoriteSports.includes(sport)}
@@ -381,7 +385,7 @@ const EditProfile = () => {
                             toggleArrayItem(favoriteSports, sport, setFavoriteSports)
                           }
                         />
-                        <label htmlFor={`sport-${sport}`} className="text-sm cursor-pointer ">
+                        <label htmlFor={`sport-${sport}`} className="text-sm cursor-pointer">
                           {sport}
                         </label>
                       </div>
@@ -390,26 +394,26 @@ const EditProfile = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="teams " className="text-xs tracking-wider uppercase text-foreground/60">Favorite Teams & Players</Label>
+                  <Label htmlFor="teams" className="text-xs tracking-wider uppercase text-foreground/60">Favorite Teams & Players</Label>
                   <div className="flex gap-2">
                     <Input
-                      id="teams "
+                      id="teams"
                       value={teamsInput}
                       onChange={(e) => setTeamsInput(e.target.value)}
-                      placeholder="e.g., Lakers, LeBron, USWNT "
-                      onKeyPress={(e) => e.key ==="Enter " && (e.preventDefault(), addTeam())}
-                      className="rounded-none h-12 border-border bg-background "
+                      placeholder="e.g., Lakers, LeBron, USWNT"
+                      onKeyPress={(e) => e.key === "Enter" && (e.preventDefault(), addTeam())}
+                      className="rounded-none h-12 border-border bg-background"
                     />
-                    <Button type="button " onClick={addTeam} className="rounded-none h-12 px-6">
+                    <Button type="button" onClick={addTeam} className="rounded-none h-12 px-6">
                       ADD
                     </Button>
                   </div>
                   <div className="flex flex-wrap gap-2 mt-3">
                     {favTeams.map((team) => (
-                      <Badge key={team} variant="secondary " className="gap-1 rounded-none px-3 py-1">
+                      <Badge key={team} variant="secondary" className="gap-1 rounded-none px-3 py-1">
                         {team}
                         <X
-                          className="h-3 w-3 cursor-pointer "
+                          className="h-3 w-3 cursor-pointer"
                           onClick={() => removeTeam(team)}
                         />
                       </Badge>
@@ -426,7 +430,7 @@ const EditProfile = () => {
                   <Label className="text-xs tracking-wider uppercase text-foreground/60">How do you like to experience sports? * (select all that apply)</Label>
                   <div className="grid grid-cols-1 gap-3">
                     {EXPERIENCE_OPTIONS.map((exp) => (
-                      <div key={exp} className="flex items-center space-x-3 p-3 bg-background border border-border hover:border-primary transition-colors cursor-pointer " onClick={() => toggleArrayItem(experienceTypes, exp, setExperienceTypes)}>
+                      <div key={exp} className="flex items-center space-x-3 p-3 bg-background border border-border hover:border-primary transition-colors cursor-pointer" onClick={() => toggleArrayItem(experienceTypes, exp, setExperienceTypes)}>
                         <Checkbox
                           id={`exp-${exp}`}
                           checked={experienceTypes.includes(exp)}
@@ -434,7 +438,7 @@ const EditProfile = () => {
                             toggleArrayItem(experienceTypes, exp, setExperienceTypes)
                           }
                         />
-                        <label htmlFor={`exp-${exp}`} className="text-sm cursor-pointer ">
+                        <label htmlFor={`exp-${exp}`} className="text-sm cursor-pointer">
                           {exp}
                         </label>
                       </div>
@@ -451,7 +455,7 @@ const EditProfile = () => {
                   <Label className="text-xs tracking-wider uppercase text-foreground/60">What else are you into? * (select all that apply)</Label>
                   <div className="grid grid-cols-2 gap-3">
                     {INTERESTS_OPTIONS.map((interest) => (
-                      <div key={interest} className="flex items-center space-x-3 p-3 bg-background border border-border hover:border-primary transition-colors cursor-pointer " onClick={() => toggleArrayItem(interests, interest, setInterests)}>
+                      <div key={interest} className="flex items-center space-x-3 p-3 bg-background border border-border hover:border-primary transition-colors cursor-pointer" onClick={() => toggleArrayItem(interests, interest, setInterests)}>
                         <Checkbox
                           id={`interest-${interest}`}
                           checked={interests.includes(interest)}
@@ -459,7 +463,7 @@ const EditProfile = () => {
                             toggleArrayItem(interests, interest, setInterests)
                           }
                         />
-                        <label htmlFor={`interest-${interest}`} className="text-sm cursor-pointer ">
+                        <label htmlFor={`interest-${interest}`} className="text-sm cursor-pointer">
                           {interest}
                         </label>
                       </div>
@@ -476,7 +480,7 @@ const EditProfile = () => {
                   <Label className="text-xs tracking-wider uppercase text-foreground/60">What's your comfort level with in-person events? *</Label>
                   <Select value={comfortLevel} onValueChange={setComfortLevel}>
                     <SelectTrigger className="bg-background rounded-none h-12">
-                      <SelectValue placeholder="Select comfort level " />
+                      <SelectValue placeholder="Select comfort level" />
                     </SelectTrigger>
                     <SelectContent className="bg-background z-50">
                       {COMFORT_LEVEL_OPTIONS.map((option) => (
@@ -492,7 +496,7 @@ const EditProfile = () => {
                   <Label className="text-xs tracking-wider uppercase text-foreground/60">What do you want to do? * (select all that apply)</Label>
                   <div className="grid grid-cols-1 gap-3">
                     {PARTICIPATION_OPTIONS.map((option) => (
-                      <div key={option} className="flex items-center space-x-3 p-3 bg-background border border-border hover:border-primary transition-colors cursor-pointer " onClick={() => toggleArrayItem(participation, option, setParticipation)}>
+                      <div key={option} className="flex items-center space-x-3 p-3 bg-background border border-border hover:border-primary transition-colors cursor-pointer" onClick={() => toggleArrayItem(participation, option, setParticipation)}>
                         <Checkbox
                           id={`participation-${option}`}
                           checked={participation.includes(option)}
@@ -500,7 +504,7 @@ const EditProfile = () => {
                             toggleArrayItem(participation, option, setParticipation)
                           }
                         />
-                        <label htmlFor={`participation-${option}`} className="text-sm cursor-pointer ">
+                        <label htmlFor={`participation-${option}`} className="text-sm cursor-pointer">
                           {option}
                         </label>
                       </div>
@@ -509,24 +513,24 @@ const EditProfile = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="phone " className="text-xs tracking-wider uppercase text-foreground/60">Phone Number (for event updates)</Label>
+                  <Label htmlFor="phone" className="text-xs tracking-wider uppercase text-foreground/60">Phone Number (for event updates)</Label>
                   <Input
-                    id="phone "
-                    type="tel "
+                    id="phone"
+                    type="tel"
                     value={phoneNumber}
                     onChange={(e) => setPhoneNumber(e.target.value)}
                     placeholder="(555) 123-4567"
-                    className="rounded-none h-12 border-border bg-background "
+                    className="rounded-none h-12 border-border bg-background"
                   />
                 </div>
 
-                <div className="flex items-center space-x-3 p-3 bg-background border border-border ">
+                <div className="flex items-center space-x-3 p-3 bg-background border border-border">
                   <Checkbox
-                    id="sms "
+                    id="sms"
                     checked={smsNotifications}
                     onCheckedChange={(checked) => setSmsNotifications(checked as boolean)}
                   />
-                  <label htmlFor="sms " className="text-sm cursor-pointer ">
+                  <label htmlFor="sms" className="text-sm cursor-pointer">
                     I want to receive SMS updates about events
                   </label>
                 </div>
@@ -537,9 +541,9 @@ const EditProfile = () => {
             <div className="flex gap-4 pt-6">
               {step > 1 && (
                 <Button
-                  variant="outline "
+                  variant="outline"
                   onClick={() => setStep(step - 1)}
-                  className="flex-1 h-12 rounded-none "
+                  className="flex-1 h-12 rounded-none"
                 >
                   Back
                 </Button>
@@ -549,7 +553,7 @@ const EditProfile = () => {
                 <Button
                   onClick={() => setStep(step + 1)}
                   disabled={!canProceed()}
-                  className="flex-1 h-12 rounded-none "
+                  className="flex-1 h-12 rounded-none"
                 >
                   Continue
                 </Button>
@@ -557,14 +561,15 @@ const EditProfile = () => {
                 <Button
                   onClick={handleSubmit}
                   disabled={!canProceed() || loading || uploadingPhoto}
-                  className="flex-1 h-12 rounded-none "
+                  className="flex-1 h-12 rounded-none"
                 >
                   {loading || uploadingPhoto ? (
                     <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin " />
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                       Saving...
                     </>
-                  ) : ("Save Changes "
+                  ) : (
+                    "Save Changes"
                   )}
                 </Button>
               )}

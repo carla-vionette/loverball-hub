@@ -1,13 +1,15 @@
-import React, { useState, useEffect, useRef } from "react ";
-import { Link } from "react-router-dom ";
-import { supabase } from "@/integrations/supabase/client ";
-import { useAuth } from "@/hooks/useAuth ";
-import BottomNav from "@/components/BottomNav ";
-import { Button } from "@/components/ui/button ";
-import { Input } from "@/components/ui/input ";
-import { Loader2, MessageCircle, Send, ArrowLeft } from "lucide-react ";
-import PageSkeleton from "@/components/PageSkeleton ";
-import { cn } from "@/lib/utils ";
+import React, { useState, useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
+import DesktopNav from "@/components/DesktopNav";
+import BottomNav from "@/components/BottomNav";
+import MobileHeader from "@/components/MobileHeader";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Loader2, MessageCircle, Send, ArrowLeft } from "lucide-react";
+import PageSkeleton from "@/components/PageSkeleton";
+import { cn } from "@/lib/utils";
 
 interface MatchWithProfile {
   matchId: string;
@@ -50,7 +52,7 @@ const DirectMessages = () => {
 
       const channel = supabase
         .channel(`chat-${activeChat.chatId}`)
-        .on("postgres_changes ", { event:"INSERT ", schema:"public ", table:"messages ", filter: `chat_id=eq.${activeChat.chatId}` }, (payload) => {
+        .on("postgres_changes", { event: "INSERT", schema: "public", table: "messages", filter: `chat_id=eq.${activeChat.chatId}` }, (payload) => {
           setMessages(prev => [...prev, payload.new as ChatMessage]);
         })
         .subscribe();
@@ -60,27 +62,27 @@ const DirectMessages = () => {
   }, [activeChat?.chatId]);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior:"smooth " });
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
   const fetchConversations = async () => {
     if (!user) return;
     try {
       const { data: matches, error: matchErr } = await supabase
-        .from("matches ").select("id, user_a_id, user_b_id, status ")
+        .from("matches").select("id, user_a_id, user_b_id, status")
         .or(`user_a_id.eq.${user.id},user_b_id.eq.${user.id}`)
-        .eq("status ","active ");
+        .eq("status", "active");
 
       if (matchErr) throw matchErr;
       if (!matches || matches.length === 0) { setConversations([]); setLoading(false); return; }
 
       const matchIds = matches.map((m) => m.id);
-      const { data: chats } = await supabase.from("chats ").select("id, match_id ").in("match_id ", matchIds);
+      const { data: chats } = await supabase.from("chats").select("id, match_id").in("match_id", matchIds);
 
       const otherUserIds = matches.map((m) => m.user_a_id === user.id ? m.user_b_id : m.user_a_id);
       // Fetch profiles securely via RPC (avoids exposing sensitive columns)
       const profilePromises = otherUserIds.map(async (id) => {
-        const { data } = await supabase.rpc("get_safe_profile ", { profile_id: id });
+        const { data } = await supabase.rpc("get_safe_profile", { profile_id: id });
         if (data) {
           const profile = typeof data === 'string' ? JSON.parse(data) : data;
           return { id: profile.id, name: profile.name, profile_photo_url: profile.profile_photo_url };
@@ -93,12 +95,12 @@ const DirectMessages = () => {
       let latestMessages: Record<string, { content: string; created_at: string; read_at: string | null }> = {};
 
       if (chatIds.length > 0) {
-        const { data: msgs } = await supabase.from("messages ").select("chat_id, content, created_at, read_at, sender_id ")
-          .in("chat_id ", chatIds).order("created_at ", { ascending: false });
+        const { data: msgs } = await supabase.from("messages").select("chat_id, content, created_at, read_at, sender_id")
+          .in("chat_id", chatIds).order("created_at", { ascending: false });
 
         msgs?.forEach((msg) => {
           if (!latestMessages[msg.chat_id]) {
-            latestMessages[msg.chat_id] = { content: msg.content, created_at: msg.created_at, read_at: msg.sender_id !== user.id ? msg.read_at :"read " };
+            latestMessages[msg.chat_id] = { content: msg.content, created_at: msg.created_at, read_at: msg.sender_id !== user.id ? msg.read_at : "read" };
           }
         });
       }
@@ -110,7 +112,7 @@ const DirectMessages = () => {
         const lastMsg = chat ? latestMessages[chat.id] : null;
         return {
           matchId: match.id, chatId: chat?.id || "", otherUserId,
-          otherUserName: profile?.name || "User ", otherUserPhoto: profile?.profile_photo_url || null,
+          otherUserName: profile?.name || "User", otherUserPhoto: profile?.profile_photo_url || null,
           lastMessage: lastMsg?.content || null, lastMessageAt: lastMsg?.created_at || null, unread: lastMsg?.read_at === null,
         };
       });
@@ -134,7 +136,7 @@ const DirectMessages = () => {
     setMessagesLoading(true);
     try {
       const { data, error } = await supabase
-        .from("messages ").select("*").eq("chat_id ", chatId).order("created_at ", { ascending: true });
+        .from("messages").select("*").eq("chat_id", chatId).order("created_at", { ascending: true });
       if (error) throw error;
       setMessages(data || []);
     } catch (err) {
@@ -148,7 +150,7 @@ const DirectMessages = () => {
     if (!messageText.trim() || !activeChat?.chatId || !user || sending) return;
     setSending(true);
     try {
-      const { error } = await supabase.from("messages ").insert({
+      const { error } = await supabase.from("messages").insert({
         chat_id: activeChat.chatId, sender_id: user.id, content: messageText.trim(),
       });
       if (error) throw error;
@@ -165,7 +167,7 @@ const DirectMessages = () => {
     const now = new Date();
     const diffMs = now.getTime() - d.getTime();
     const diffMins = Math.floor(diffMs / 60000);
-    if (diffMins < 1) return "now ";
+    if (diffMins < 1) return "now";
     if (diffMins < 60) return `${diffMins}m`;
     const diffHrs = Math.floor(diffMins / 60);
     if (diffHrs < 24) return `${diffHrs}h`;
@@ -176,21 +178,21 @@ const DirectMessages = () => {
 
   const formatMessageTime = (dateStr: string) => {
     const d = new Date(dateStr);
-    return d.toLocaleTimeString("en-US ", { hour:"numeric ", minute:"2-digit " });
+    return d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
   };
 
   // Conversation list component
   const ConversationList = ({ className }: { className?: string }) => (
-    <div className={cn("flex flex-col h-full ", className)}>
+    <div className={cn("flex flex-col h-full", className)}>
       <h1 className="text-2xl font-sans font-semibold p-4 pb-3 flex-shrink-0">Messages</h1>
-      <div className="flex-1 overflow-y-auto ">
+      <div className="flex-1 overflow-y-auto">
         {conversations.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 text-center px-4">
             <div className="w-16 h-16 bg-accent/20 rounded-full flex items-center justify-center mb-4">
-              <MessageCircle className="h-8 w-8 text-accent-foreground " />
+              <MessageCircle className="h-8 w-8 text-accent-foreground" />
             </div>
             <h2 className="text-lg font-sans font-semibold mb-1">No messages yet</h2>
-            <p className="text-muted-foreground text-sm max-w-xs ">
+            <p className="text-muted-foreground text-sm max-w-xs">
               Match with members through events and your profile to start chatting!
             </p>
           </div>
@@ -200,25 +202,26 @@ const DirectMessages = () => {
               <button
                 key={convo.matchId}
                 onClick={() => setActiveChat(convo)}
-                className={cn("w-full flex items-center gap-3 p-3 rounded-xl transition-colors text-left ",
-                  activeChat?.chatId === convo.chatId ?"bg-primary/10 border border-primary/20" :"hover:bg-secondary/50"
+                className={cn(
+                  "w-full flex items-center gap-3 p-3 rounded-xl transition-colors text-left",
+                  activeChat?.chatId === convo.chatId ? "bg-primary/10 border border-primary/20" : "hover:bg-secondary/50"
                 )}
               >
                 <div className="w-11 h-11 rounded-full bg-secondary/50 overflow-hidden flex-shrink-0">
                   {convo.otherUserPhoto ? (
-                    <img src={convo.otherUserPhoto} alt={convo.otherUserName} className="w-full h-full object-cover " />
+                    <img src={convo.otherUserPhoto} alt={convo.otherUserName} className="w-full h-full object-cover" />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-muted-foreground text-sm font-semibold ">
+                    <div className="w-full h-full flex items-center justify-center text-muted-foreground text-sm font-semibold">
                       {convo.otherUserName[0]}
                     </div>
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between ">
-                    <span className={cn("text-sm truncate ", convo.unread ?"font-semibold " :"font-medium ")}>{convo.otherUserName}</span>
+                  <div className="flex items-center justify-between">
+                    <span className={cn("text-sm truncate", convo.unread ? "font-semibold" : "font-medium")}>{convo.otherUserName}</span>
                     {convo.lastMessageAt && <span className="text-[11px] text-muted-foreground flex-shrink-0 ml-2">{formatTime(convo.lastMessageAt)}</span>}
                   </div>
-                  <p className={cn("text-xs truncate ", convo.unread ?"text-foreground font-medium " :"text-muted-foreground ")}>
+                  <p className={cn("text-xs truncate", convo.unread ? "text-foreground font-medium" : "text-muted-foreground")}>
                     {convo.lastMessage || "Say hello 👋"}
                   </p>
                 </div>
@@ -235,37 +238,37 @@ const DirectMessages = () => {
   const ChatView = () => {
     if (!activeChat) {
       return (
-        <div className="hidden md:flex flex-col items-center justify-center h-full text-center text-muted-foreground ">
+        <div className="hidden md:flex flex-col items-center justify-center h-full text-center text-muted-foreground">
           <MessageCircle className="w-12 h-12 mb-3 opacity-30" />
-          <p className="text-sm ">Select a conversation to start chatting</p>
+          <p className="text-sm">Select a conversation to start chatting</p>
         </div>
       );
     }
 
     return (
-      <div className="flex flex-col h-full ">
+      <div className="flex flex-col h-full">
         {/* Chat header */}
         <div className="flex items-center gap-3 p-4 border-b border-border flex-shrink-0">
-          <Button variant="ghost " size="icon " className="md:hidden rounded-full " onClick={() => setActiveChat(null)}>
+          <Button variant="ghost" size="icon" className="md:hidden rounded-full" onClick={() => setActiveChat(null)}>
             <ArrowLeft className="w-5 h-5" />
           </Button>
           <div className="w-9 h-9 rounded-full bg-secondary/50 overflow-hidden flex-shrink-0">
             {activeChat.otherUserPhoto ? (
-              <img src={activeChat.otherUserPhoto} alt={activeChat.otherUserName} className="w-full h-full object-cover " />
+              <img src={activeChat.otherUserPhoto} alt={activeChat.otherUserName} className="w-full h-full object-cover" />
             ) : (
-              <div className="w-full h-full flex items-center justify-center text-muted-foreground text-sm font-semibold ">
+              <div className="w-full h-full flex items-center justify-center text-muted-foreground text-sm font-semibold">
                 {activeChat.otherUserName[0]}
               </div>
             )}
           </div>
-          <span className="font-semibold text-sm ">{activeChat.otherUserName}</span>
+          <span className="font-semibold text-sm">{activeChat.otherUserName}</span>
         </div>
 
         {/* Messages */}
         <div className="flex-1 overflow-y-auto p-4 space-y-3">
           {messagesLoading ? (
             <div className="flex items-center justify-center py-10">
-              <Loader2 className="h-6 w-6 animate-spin text-primary " />
+              <Loader2 className="h-6 w-6 animate-spin text-primary" />
             </div>
           ) : messages.length === 0 ? (
             <p className="text-center text-muted-foreground text-sm py-10">No messages yet. Say hello! 👋</p>
@@ -273,10 +276,10 @@ const DirectMessages = () => {
             messages.map((msg) => {
               const isOwn = msg.sender_id === user?.id;
               return (
-                <div key={msg.id} className={cn("flex ", isOwn ?"justify-end " :"justify-start ")}>
-                  <div className={cn("max-w-[75%] rounded-2xl px-4 py-2.5", isOwn ?"bg-primary text-primary-foreground " :"bg-muted text-foreground ")}>
-                    <p className="text-sm ">{msg.content}</p>
-                    <p className={cn("text-[10px] mt-1", isOwn ?"text-primary-foreground/60" :"text-muted-foreground ")}>{formatMessageTime(msg.created_at)}</p>
+                <div key={msg.id} className={cn("flex", isOwn ? "justify-end" : "justify-start")}>
+                  <div className={cn("max-w-[75%] rounded-2xl px-4 py-2.5", isOwn ? "bg-primary text-primary-foreground" : "bg-muted text-foreground")}>
+                    <p className="text-sm">{msg.content}</p>
+                    <p className={cn("text-[10px] mt-1", isOwn ? "text-primary-foreground/60" : "text-muted-foreground")}>{formatMessageTime(msg.created_at)}</p>
                   </div>
                 </div>
               );
@@ -292,10 +295,10 @@ const DirectMessages = () => {
               value={messageText}
               onChange={(e) => setMessageText(e.target.value)}
               placeholder="Type a message..."
-              onKeyDown={(e) => e.key ==="Enter " && !e.shiftKey && handleSend()}
-              className="rounded-full "
+              onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && handleSend()}
+              className="rounded-full"
             />
-            <Button size="icon " onClick={handleSend} disabled={!messageText.trim() || sending} className="rounded-full flex-shrink-0">
+            <Button size="icon" onClick={handleSend} disabled={!messageText.trim() || sending} className="rounded-full flex-shrink-0">
               <Send className="w-4 h-4" />
             </Button>
           </div>
@@ -306,21 +309,26 @@ const DirectMessages = () => {
 
   return (
     <div className="min-h-screen bg-background pb-24 md:pb-0 md:pl-64">
-      <main className="container mx-auto px-0 md:px-4 py-0 md:py-6 max-w-5xl ">
+      <DesktopNav />
+      <MobileHeader />
+
+      <main className="container mx-auto px-0 md:px-4 py-0 md:py-6 max-w-5xl">
         {loading ? (
-          <PageSkeleton variant="list " count={8} />
+          <PageSkeleton variant="list" count={8} />
         ) : (
-          <div className="flex h-[calc(100vh-8rem)] md:h-[calc(100vh-6rem)] border border-border/30 rounded-none md:rounded-2xl overflow-hidden bg-card ">
+          <div className="flex h-[calc(100vh-8rem)] md:h-[calc(100vh-6rem)] border border-border/30 rounded-none md:rounded-2xl overflow-hidden bg-card">
             {/* Left panel - conversation list */}
-            <div className={cn("w-full md:w-[35%] border-r border-border/30",
-              activeChat ?"hidden md:flex " :"flex "
+            <div className={cn(
+              "w-full md:w-[35%] border-r border-border/30",
+              activeChat ? "hidden md:flex" : "flex"
             )}>
-              <ConversationList className="w-full " />
+              <ConversationList className="w-full" />
             </div>
 
             {/* Right panel - active chat */}
-            <div className={cn("w-full md:w-[65%]",
-              !activeChat ?"hidden md:flex " :"flex "
+            <div className={cn(
+              "w-full md:w-[65%]",
+              !activeChat ? "hidden md:flex" : "flex"
             )}>
               <ChatView />
             </div>

@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import BottomNav from '@/components/BottomNav';
+import DesktopNav from '@/components/DesktopNav';
+import MobileHeader from '@/components/MobileHeader';
 import EditorialMasthead from '@/components/layout/EditorialMasthead';
 import EventPreviewCard from '@/components/EventPreviewCard';
 import LinkPreviewCard from '@/components/LinkPreviewCard';
@@ -48,7 +50,12 @@ interface Message {
   read_at?: string | null;
 }
 
-const conversationStarters = ["What's been the highlight of your sports journey so far?","If you could attend any sporting event in history, which would it be?","What's your hot take that would get you booed at a sports bar?","What's a skill outside of sports that you're secretly proud of?","If you could have dinner with any athlete, past or present, who would it be?",
+const conversationStarters = [
+  "What's been the highlight of your sports journey so far?",
+  "If you could attend any sporting event in history, which would it be?",
+  "What's your hot take that would get you booed at a sports bar?",
+  "What's a skill outside of sports that you're secretly proud of?",
+  "If you could have dinner with any athlete, past or present, who would it be?",
 ];
 
 const MessagesPage = () => {
@@ -227,27 +234,29 @@ const MessagesPage = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center ">
-        <Loader2 className="w-8 h-8 animate-spin text-primary " />
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background ">
+    <div className="min-h-screen bg-background">
+      <MobileHeader />
+      <DesktopNav />
       <BottomNav />
       
-      <main className="pb-20 md:pb-0 h-screen ">
-        <div className="h-full flex ">
+      <main className="md:ml-16 xl:ml-64 pt-16 md:pt-0 pb-20 md:pb-0 h-screen">
+        <div className="h-full flex">
           {/* Matches List - Hidden on mobile when chat selected */}
           <div className={`w-full md:w-80 border-r border-border bg-card flex flex-col ${selectedMatch ? 'hidden md:flex' : 'flex'}`}>
-            <div className="px-5 pt-5 pb-3 border-b border-border ">
+            <div className="px-5 pt-5 pb-3 border-b border-border">
               <EditorialMasthead
                 volume="Vol. 04"
-                section="Direct "
-                eyebrow="private dispatches "
-                title="Messages "
-                size="md "
+                section="Direct"
+                eyebrow="private dispatches"
+                title="Messages"
+                size="md"
               />
             </div>
             
@@ -255,7 +264,7 @@ const MessagesPage = () => {
               {matches.length > 0 ? (
                 matches.map((match) => {
                   // Determine if this conversation has unread messages
-                  // For now, we'll consider conversations without a last_message as "new/unread "
+                  // For now, we'll consider conversations without a last_message as "new/unread"
                   const isUnread = !match.last_message;
                   
                   // Format relative timestamp
@@ -288,7 +297,7 @@ const MessagesPage = () => {
                       {/* Unread indicator */}
                       <div className="w-2 flex-shrink-0">
                         {isUnread && (
-                          <div className="w-2 h-2 rounded-full bg-primary " />
+                          <div className="w-2 h-2 rounded-full bg-primary" />
                         )}
                       </div>
                       
@@ -297,7 +306,7 @@ const MessagesPage = () => {
                           <img 
                             src={match.other_user.profile_photo_url} 
                             alt={match.other_user.name}
-                            className="w-full h-full object-cover "
+                            className="w-full h-full object-cover"
                           />
                         ) : (
                           <span className="text-lg font-bold text-primary/50">
@@ -319,7 +328,7 @@ const MessagesPage = () => {
                             {match.last_message.content}
                           </p>
                         ) : (
-                          <p className="text-sm text-primary font-medium italic ">
+                          <p className="text-sm text-primary font-medium italic">
                             New connection! Say hello 👋
                           </p>
                         )}
@@ -328,14 +337,14 @@ const MessagesPage = () => {
                   );
                 })
               ) : (
-                <div className="p-6 text-center ">
+                <div className="p-6 text-center">
                   <MessageCircle className="w-12 h-12 mx-auto text-muted-foreground mb-3" />
-                  <p className="text-muted-foreground ">
+                  <p className="text-muted-foreground">
                     No conversations yet.
                   </p>
                   <Button 
                     className="mt-4" 
-                    variant="outline "
+                    variant="outline"
                     onClick={() => navigate('/club/xi')}
                   >
                     Find Connections
@@ -352,23 +361,23 @@ const MessagesPage = () => {
                 {/* Chat Header */}
                 <div className="p-4 border-b border-border flex items-center gap-3">
                   <Button
-                    variant="ghost "
-                    size="icon "
-                    className="md:hidden "
+                    variant="ghost"
+                    size="icon"
+                    className="md:hidden"
                     onClick={() => setSelectedMatch(null)}
                   >
                     <ArrowLeft className="w-5 h-5" />
                   </Button>
                   <div 
-                    className="flex items-center gap-3 cursor-pointer "
+                    className="flex items-center gap-3 cursor-pointer"
                     onClick={() => navigate(`/members/${selectedMatch.other_user.id}`)}
                   >
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center overflow-hidden ">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center overflow-hidden">
                       {selectedMatch.other_user.profile_photo_url ? (
                         <img 
                           src={selectedMatch.other_user.profile_photo_url} 
                           alt={selectedMatch.other_user.name}
-                          className="w-full h-full object-cover "
+                          className="w-full h-full object-cover"
                         />
                       ) : (
                         <span className="font-bold text-primary/50">
@@ -377,9 +386,9 @@ const MessagesPage = () => {
                       )}
                     </div>
                     <div>
-                      <p className="font-semibold ">{selectedMatch.other_user.name}</p>
+                      <p className="font-semibold">{selectedMatch.other_user.name}</p>
                       {selectedMatch.other_user.primary_role && (
-                        <p className="text-sm text-muted-foreground ">
+                        <p className="text-sm text-muted-foreground">
                           {selectedMatch.other_user.primary_role}
                         </p>
                       )}
@@ -395,7 +404,7 @@ const MessagesPage = () => {
                         Start the conversation! Here's a conversation starter:
                       </p>
                       <Button 
-                        variant="outline " 
+                        variant="outline" 
                         onClick={getRandomStarter}
                         className="gap-2"
                       >
@@ -476,12 +485,12 @@ const MessagesPage = () => {
                     disabled={sendingMessage}
                   />
                   <Button 
-                    type="submit " 
-                    size="icon " 
+                    type="submit" 
+                    size="icon" 
                     disabled={sendingMessage || !newMessage.trim()}
                   >
                     {sendingMessage ? (
-                      <Loader2 className="w-4 h-4 animate-spin " />
+                      <Loader2 className="w-4 h-4 animate-spin" />
                     ) : (
                       <Send className="w-4 h-4" />
                     )}
@@ -489,11 +498,11 @@ const MessagesPage = () => {
                 </form>
               </>
             ) : (
-              <div className="flex-1 flex items-center justify-center ">
-                <div className="text-center ">
+              <div className="flex-1 flex items-center justify-center">
+                <div className="text-center">
                   <MessageCircle className="w-16 h-16 mx-auto text-muted-foreground mb-4" />
                   <p className="text-xl font-semibold mb-2">Select a conversation</p>
-                  <p className="text-muted-foreground ">
+                  <p className="text-muted-foreground">
                     Choose a conversation to start chatting
                   </p>
                 </div>
