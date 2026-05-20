@@ -208,6 +208,110 @@
    ============================================================ */
 
 @layer components {
+  /* ============================================================
+     LOVERBALL UNIFIED COMPONENT LAYER — single source of truth
+     Use these classes everywhere instead of ad-hoc styling.
+     ============================================================ */
+
+  /* — Buttons — */
+  .lb-btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold uppercase tracking-wider transition-all duration-200;
+    background: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
+    letter-spacing: 0.08em;
+    min-height: 44px;
+  }
+  .lb-btn-primary:hover { filter: brightness(1.08); transform: translateY(-1px); }
+  .lb-btn-primary:focus-visible { outline: 2px solid hsl(var(--accent)); outline-offset: 2px; }
+
+  .lb-btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold uppercase tracking-wider transition-all duration-200;
+    background: hsl(var(--bg-card));
+    color: hsl(var(--foreground));
+    border: 1.5px solid hsl(var(--accent));
+    letter-spacing: 0.08em;
+    min-height: 44px;
+  }
+  .lb-btn-secondary:hover { background: hsl(var(--accent) / 0.12); }
+
+  .lb-btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium transition-all;
+    color: hsl(var(--foreground) / 0.75);
+  }
+  .lb-btn-ghost:hover { color: hsl(var(--foreground)); background: hsl(var(--foreground) / 0.06); }
+
+  /* — Cards — */
+  .lb-card {
+    background: hsl(var(--bg-card));
+    border: 1px solid hsl(var(--border));
+    border-radius: var(--radius);
+    transition: transform 200ms ease, border-color 200ms ease;
+  }
+  .lb-card:hover { border-color: hsl(var(--foreground) / 0.18); }
+
+  .lb-card-event {
+    background: hsl(var(--bg-card));
+    border: 1px solid hsl(var(--border));
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  /* — Badge / pill — */
+  .lb-pill {
+    @apply inline-flex items-center gap-1.5 px-3 py-1 text-[11px] font-semibold uppercase;
+    border-radius: var(--radius-pill);
+    letter-spacing: 0.12em;
+    background: hsl(var(--bg-card));
+    color: hsl(var(--foreground));
+    border: 1px solid hsl(var(--border));
+  }
+  .lb-pill-pink {
+    background: hsl(var(--accent) / 0.16);
+    color: hsl(var(--accent));
+    border-color: hsl(var(--accent) / 0.4);
+  }
+  .lb-pill-neon {
+    background: hsl(var(--warning) / 0.16);
+    color: hsl(var(--warning));
+    border-color: hsl(var(--warning) / 0.4);
+  }
+  .lb-pill-orange {
+    background: hsl(var(--primary) / 0.18);
+    color: hsl(var(--primary));
+    border-color: hsl(var(--primary) / 0.5);
+  }
+
+  /* — Stats & section labels — */
+  .lb-stat {
+    font-family: 'Anton', 'Oswald', Impact, sans-serif;
+    color: hsl(var(--warning));               /* neon yellow for stats */
+    @apply text-4xl leading-none;
+    letter-spacing: 0.01em;
+  }
+  .lb-section-label {
+    font-family: 'Space Mono', ui-monospace, monospace;
+    color: hsl(var(--warning));               /* neon for section labels */
+    @apply text-[11px] font-bold uppercase;
+    letter-spacing: 0.16em;
+  }
+  .lb-eyebrow {
+    font-family: 'Space Mono', ui-monospace, monospace;
+    color: hsl(var(--foreground) / 0.5);
+    @apply text-[11px] font-medium uppercase;
+    letter-spacing: 0.18em;
+  }
+
+  /* — Forms — */
+  .lb-input {
+    @apply w-full rounded-xl px-4 py-3 text-base transition-all;
+    background: hsl(var(--input));
+    color: hsl(var(--foreground));
+    border: 1px solid hsl(var(--border));
+    min-height: 44px;
+  }
+  .lb-input:focus { outline: 2px solid hsl(var(--accent)); outline-offset: 1px; border-color: transparent; }
+
+  /* — Legacy helpers (kept for backward compat) — */
   .editorial-underline {
     @apply relative inline-block;
   }
@@ -215,6 +319,7 @@
     content: '';
     @apply absolute bottom-0 left-0 w-full h-[3px] bg-primary rounded-full;
   }
+
 
   .pill-button {
     @apply px-8 py-3 rounded-full text-sm font-semibold uppercase transition-all duration-300;
