@@ -343,6 +343,19 @@ const Events = () => {
             ))}
           </div>
 
+          {/* Search bar */}
+          <div className="mb-7 relative">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Input
+              type="text"
+              placeholder="Search events, cities, venues..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10 pr-4 py-3 rounded-full bg-muted/60 border-border/20 text-foreground placeholder:text-muted-foreground/60 focus-visible:ring-primary/40"
+              style={{ fontFamily: "'Inter', system-ui, sans-serif", fontSize: 14 }}
+            />
+          </div>
+
           {/* FEATURED — cinematic */}
           {featured && (() => {
             const th = eventTheme[getVariant(featured.event_type)];
