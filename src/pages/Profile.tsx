@@ -407,7 +407,7 @@ const Profile = () => {
                 {/* Hero photo */}
                 <div
                   className="relative w-full"
-                  style={{ height: "min(480px, 60vh)", background: "#0F0F10" }}
+                  style={{ height: "min(320px, 40vh)", background: "#0F0F10" }}
                 >
                   {profile.profile_photo_url ? (
                     <img
