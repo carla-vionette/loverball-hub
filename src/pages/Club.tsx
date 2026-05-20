@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Seo } from "@/components/Seo";
-import { Tv, Users, MessagesSquare, MapPin, Gift, Sparkles, ArrowRight } from "lucide-react";
+import { Tv, Users, MessagesSquare, MapPin, Gift, Sparkles, ArrowRight, Search } from "lucide-react";
 import { C, fonts } from "@/lib/editorialTheme";
 import { H1, H2, H3, Body, Slug, Mono, PrimaryBtn, SecondaryBtn } from "@/components/editorial/primitives";
 import BottomNav from "@/components/BottomNav";
