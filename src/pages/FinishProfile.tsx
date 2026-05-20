@@ -32,7 +32,7 @@ const slideVariants = {
 const consumeRedirect = () => {
   const r = sessionStorage.getItem("postAuthRedirect");
   if (r) sessionStorage.removeItem("postAuthRedirect");
-  return r || "/watch";
+  return r || "/feed";
 };
 
 const FinishProfile = () => {
