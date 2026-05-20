@@ -66,7 +66,7 @@ const MobileHeader = () => {
           className="relative p-2.5 hover:bg-secondary rounded-full transition-all duration-300 focus-ring tap-target"
           aria-label="Messages"
         >
-          <MessageCircle className="w-5 h-5 text-foreground" aria-hidden="true" />
+          <MessageCircle className="w-5 h-5" style={{ color: "#E86BB0" }} aria-hidden="true" />
         </button>
       </div>
     </header>
