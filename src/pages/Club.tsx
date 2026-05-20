@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Seo } from "@/components/Seo";
-import { Tv, Users, MessagesSquare, MapPin, Gift, Sparkles, ArrowRight } from "lucide-react";
+import { Tv, Users, MessagesSquare, MapPin, Gift, Sparkles, ArrowRight, Search } from "lucide-react";
 import { C, fonts } from "@/lib/editorialTheme";
 import { H1, H2, H3, Body, Slug, Mono, PrimaryBtn, SecondaryBtn } from "@/components/editorial/primitives";
 import BottomNav from "@/components/BottomNav";
@@ -22,6 +22,7 @@ const Club = () => {
   const navigate = useNavigate();
   const [connections, setConnections] = useState<Member[]>([]);
   const [curated, setCurated] = useState<Member[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     const { drafted } = loadDrafts();
@@ -245,48 +246,97 @@ const Club = () => {
                 </button>
               </div>
 
-              {connections.length === 0 ? (
+              {/* Search bar */}
+              <div className="mb-6">
                 <div
-                  className="rounded-[20px] p-10 md:p-14 text-center"
-                  style={{ background: C.surface, border: `1px dashed ${C.border}` }}
+                  className="flex items-center gap-3 rounded-full px-4 py-3"
+                  style={{ background: C.surface, border: `1px solid ${C.border}` }}
                 >
-                  <Sparkles size={28} color={C.gold} strokeWidth={1.25} className="mx-auto" />
-                  <H3 className="mt-5">No connections drafted yet</H3>
-                  <Body muted size={15} className="mt-3 max-w-md mx-auto">
-                    Your Starting XI is empty. Open the draft to pick the members you want in your lineup this week.
-                  </Body>
-                  <div className="mt-7 flex justify-center">
-                    <PrimaryBtn onClick={() => navigate("/club/xi")}>Open Starting XI</PrimaryBtn>
-                  </div>
-                </div>
-              ) : (
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
-                  {connections.map((m) => (
-                    <article
-                      key={m.id}
-                      onClick={() => navigate(`/members/${m.id}`)}
-                      className="cursor-pointer rounded-[20px] overflow-hidden transition-transform hover:-translate-y-1"
-                      style={{ background: C.surface, border: `1px solid ${C.border}` }}
+                  <Search size={16} color={C.muted} />
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search by name, team, city..."
+                    className="flex-1 bg-transparent outline-none text-sm"
+                    style={{ color: C.text, fontFamily: fonts.sans }}
+                  />
+                  {searchQuery && (
+                    <button
+                      onClick={() => setSearchQuery("")}
+                      className="text-xs hover:opacity-80 transition-opacity"
+                      style={{ color: C.muted }}
                     >
-                      <div className="aspect-[4/5] overflow-hidden" style={{ background: C.bg }}>
-                        <img src={m.photo} alt={m.name} loading="lazy" className="w-full h-full object-cover" />
-                      </div>
-                      <div className="p-4">
-                        <Mono color={C.raspberry} size={10}>{m.match}% MATCH</Mono>
-                        <H3 className="mt-2" style={{ fontSize: 20 }}>{m.name}</H3>
-                        <Body muted size={13} className="mt-1 line-clamp-1">{m.team} · {m.city}</Body>
-                        <button
-                          onClick={(e) => { e.stopPropagation(); navigate("/messages"); }}
-                          className="mt-4 inline-flex items-center gap-2 text-xs px-3 py-2 rounded-full transition-colors"
-                          style={{ background: C.bg, color: C.text, border: `1px solid ${C.border}`, fontFamily: fonts.mono, letterSpacing: "0.08em", textTransform: "uppercase" }}
-                        >
-                          <MessagesSquare size={12} /> Message
-                        </button>
-                      </div>
-                    </article>
-                  ))}
+                      Clear
+                    </button>
+                  )}
                 </div>
-              )}
+              </div>
+
+              {(() => {
+                const q = searchQuery.trim().toLowerCase();
+                const filtered = q
+                  ? connections.filter((m) =>
+                      m.name.toLowerCase().includes(q) ||
+                      m.team.toLowerCase().includes(q) ||
+                      m.city.toLowerCase().includes(q) ||
+                      m.vibe.toLowerCase().includes(q) ||
+                      m.teams.some((t) => t.toLowerCase().includes(q)) ||
+                      m.tags.some((t) => t.toLowerCase().includes(q))
+                    )
+                  : connections;
+
+                if (filtered.length === 0) {
+                  return (
+                    <div
+                      className="rounded-[20px] p-10 md:p-14 text-center"
+                      style={{ background: C.surface, border: `1px dashed ${C.border}` }}
+                    >
+                      <Sparkles size={28} color={C.gold} strokeWidth={1.25} className="mx-auto" />
+                      <H3 className="mt-5">{q ? "No matches found" : "No connections drafted yet"}</H3>
+                      <Body muted size={15} className="mt-3 max-w-md mx-auto">
+                        {q
+                          ? "Try a different search term or clear the filter."
+                          : "Your Starting XI is empty. Open the draft to pick the members you want in your lineup this week."}
+                      </Body>
+                      {!q && (
+                        <div className="mt-7 flex justify-center">
+                          <PrimaryBtn onClick={() => navigate("/club/xi")}>Open Starting XI</PrimaryBtn>
+                        </div>
+                      )}
+                    </div>
+                  );
+                }
+
+                return (
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+                    {filtered.map((m) => (
+                      <article
+                        key={m.id}
+                        onClick={() => navigate(`/members/${m.id}`)}
+                        className="cursor-pointer rounded-[20px] overflow-hidden transition-transform hover:-translate-y-1"
+                        style={{ background: C.surface, border: `1px solid ${C.border}` }}
+                      >
+                        <div className="aspect-[4/5] overflow-hidden" style={{ background: C.bg }}>
+                          <img src={m.photo} alt={m.name} loading="lazy" className="w-full h-full object-cover" />
+                        </div>
+                        <div className="p-4">
+                          <Mono color={C.raspberry} size={10}>{m.match}% MATCH</Mono>
+                          <H3 className="mt-2" style={{ fontSize: 20 }}>{m.name}</H3>
+                          <Body muted size={13} className="mt-1 line-clamp-1">{m.team} · {m.city}</Body>
+                          <button
+                            onClick={(e) => { e.stopPropagation(); navigate("/messages"); }}
+                            className="mt-4 inline-flex items-center gap-2 text-xs px-3 py-2 rounded-full transition-colors"
+                            style={{ background: C.bg, color: C.text, border: `1px solid ${C.border}`, fontFamily: fonts.mono, letterSpacing: "0.08em", textTransform: "uppercase" }}
+                          >
+                            <MessagesSquare size={12} /> Message
+                          </button>
+                        </div>
+                      </article>
+                    ))}
+                  </div>
+                );
+              })()}
 
               <div className="mt-12">
                 <ClubMessagesInbox />
