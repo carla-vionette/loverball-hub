@@ -81,10 +81,30 @@ const FAQS = [
 
 const Membership = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [open, setOpen] = useState<number | null>(0);
-  const goSignup = () => navigate("/auth?mode=signup");
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const goSignup = () => navigate("/auth?mode=signup&redirect=/membership");
 
-  return (
+  const goCheckout = async () => {
+    if (!user) {
+      navigate("/auth?mode=signup&redirect=/membership&checkout=all-access");
+      return;
+    }
+    setCheckoutLoading(true);
+    try {
+      const url = await createCheckoutSession("local");
+      window.location.href = url;
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Checkout unavailable");
+      setCheckoutLoading(false);
+    }
+  };
+
+  const handleTierCta = (tierName: string) => {
+    if (tierName === "Free") return goSignup();
+    return goCheckout();
+  };
     <div style={{ background: C.bg, color: C.text, fontFamily: fonts.sans }} className="min-h-screen">
       <Seo
         title="Choose your pass — Loverball Membership"
