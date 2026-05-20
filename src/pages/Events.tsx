@@ -460,7 +460,7 @@ const Events = () => {
                 style={{ background: "rgba(240,78,35,0.1)", border: "1px solid rgba(240,78,35,0.25)" }}>
                 <Calendar className="w-9 h-9" style={{ color: "#F04E23" }} />
               </div>
-              <h2 style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: 22, color: "#E6F25A", textTransform: "uppercase", letterSpacing: "0.02em", margin: 0 }}>
+              <h2 style={{ fontFamily: "'Playfair Display', serif", fontStyle: "italic", fontWeight: 500, fontSize: 28, color: "#E6F25A", letterSpacing: "-0.02em", margin: 0 }}>
                 {searchQuery.trim()
                   ? "No events match your search"
                   : tab === "upcoming" ? "No upcoming events" : "No past events"}
