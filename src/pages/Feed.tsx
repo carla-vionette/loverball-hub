@@ -205,6 +205,7 @@ const Feed = () => {
               {[
                 { key: "following" as const, label: "Following" },
                 { key: "foryou" as const, label: "For You" },
+                { key: "stories" as const, label: "Stories" },
               ].map((t) => {
                 const active = activeTab === t.key;
                 return (
