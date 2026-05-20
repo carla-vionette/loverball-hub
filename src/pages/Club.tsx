@@ -46,6 +46,30 @@ const Club = () => {
       <main className="pb-24 md:pb-0">
         {/* Header */}
         <section className="max-w-7xl mx-auto px-5 md:px-10 pt-24 md:pt-32 pb-10">
+          <div className="flex items-center gap-2 mb-4">
+            <span
+              style={{
+                fontFamily: "'Space Mono', ui-monospace, monospace",
+                fontSize: 11,
+                letterSpacing: "0.22em",
+                color: C.raspberry,
+                textTransform: "uppercase",
+              }}
+            >
+              Vol. 03
+            </span>
+            <span
+              style={{
+                fontFamily: "'Space Mono', ui-monospace, monospace",
+                fontSize: 11,
+                letterSpacing: "0.22em",
+                color: C.muted,
+                textTransform: "uppercase",
+              }}
+            >
+              · Club{connections.length ? ` · ${connections.length} connected` : ""}
+            </span>
+          </div>
           <Slug>The Club</Slug>
           <H1 className="mt-6" style={{ fontSize: "clamp(40px, 7vw, 96px)", lineHeight: 0.95 }}>
             The members-only home<br/>for women's sports fans.
