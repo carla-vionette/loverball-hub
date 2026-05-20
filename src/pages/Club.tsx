@@ -41,6 +41,7 @@ const Club = () => {
 
       <MobileHeader /><DesktopNav /><BottomNav />
 
+      <main className="md:ml-16 xl:ml-64 pt-16 md:pt-0 pb-24 md:pb-0">
       <section className="max-w-7xl mx-auto px-5 md:px-10 pt-32 md:pt-40 pb-20">
         <Slug>The Club</Slug>
         <H1 className="mt-6" style={{ fontSize: "clamp(48px, 9vw, 128px)", lineHeight: 0.92 }}>
