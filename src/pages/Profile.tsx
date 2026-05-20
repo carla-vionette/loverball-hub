@@ -557,97 +557,178 @@ const Profile = () => {
             {/* ═══════════ RIGHT COLUMN — ACTIVITY ═══════════ */}
             <div className="space-y-6 min-w-0">
 
+              {/* ═══════════ 1. YOUR ACTIVITY (top priority) ═══════════ */}
               <motion.div variants={staggerItem}>
+                <div className="mb-3 flex items-end justify-between gap-3">
+                  <div className="min-w-0">
+                    <p
+                      className="text-[10px] uppercase"
+                      style={{
+                        fontFamily: "'Space Mono', monospace",
+                        letterSpacing: "0.26em",
+                        color: "#D88C5A",
+                      }}
+                    >
+                      Your activity
+                    </p>
+                    <h2
+                      className="leading-[0.95] mt-1.5"
+                      style={{
+                        fontFamily: "'Playfair Display', Georgia, serif",
+                        fontWeight: 700,
+                        fontSize: "clamp(28px, 3.4vw, 38px)",
+                        color: "#FAF5E9",
+                      }}
+                    >
+                      What's <span style={{ fontStyle: "italic", color: PINK }}>new</span>.
+                    </h2>
+                    <p className="mt-1.5 text-[12.5px]" style={{ color: "rgba(250,245,233,0.55)" }}>
+                      {greeting}, <span style={{ color: "#FAF5E9", fontWeight: 500 }}>{userName}</span>. Here's what you missed.
+                    </p>
+                  </div>
+                </div>
                 <ProfileInbox />
               </motion.div>
 
-
-              {/* Top row: section header + horoscope right widget */}
-              <motion.div
-                variants={staggerItem}
-                className="flex flex-col md:flex-row items-start gap-4 md:gap-6"
-              >
-                <div className="flex-1 min-w-0">
-                  <p
-                    className="text-[10px] uppercase"
-                    style={{
-                      fontFamily: "'Space Mono', monospace",
-                      letterSpacing: "0.26em",
-                      color: "#D88C5A",
-                    }}
-                  >
-                    Your personal feed
-                  </p>
-                  <h2
-                    className="leading-[0.95] mt-2"
-                    style={{
-                      fontFamily: "'Playfair Display', Georgia, serif",
-                      fontWeight: 700,
-                      fontSize: "clamp(34px, 4.4vw, 52px)",
-                      color: "#FAF5E9",
-                    }}
-                  >
-                    Curated{" "}
-                    <span style={{ fontStyle: "italic", color: PINK }}>for you</span>.
-                  </h2>
-                  <p className="mt-2 text-[13px]" style={{ color: "rgba(250,245,233,0.55)" }}>
-                    {greeting},{" "}
-                    <span style={{ color: "#FAF5E9", fontWeight: 500 }}>{userName}</span>. Here's what's on tonight.
-                  </p>
+              {/* ═══════════ 2. MY EVENTS ═══════════ */}
+              <motion.div variants={staggerItem}>
+                <div className="rounded-2xl overflow-hidden" style={{ background: PANEL, border: PANEL_BORDER }}>
+                  <div className="p-5 pb-3 flex items-center justify-between">
+                    <span className="text-[13px] uppercase flex items-center gap-2.5"
+                      style={{ fontFamily: "'Space Mono', monospace", letterSpacing: "0.2em", color: "#FAF5E9", fontWeight: 500 }}>
+                      <Ticket className="w-3.5 h-3.5" style={{ color: PINK }} strokeWidth={2.5} /> My Events
+                    </span>
+                    <button
+                      onClick={() => goTo("/events")}
+                      className="text-[11px] uppercase"
+                      style={{ fontFamily: "'Space Mono', monospace", letterSpacing: "0.18em", color: PINK }}
+                    >
+                      Browse all →
+                    </button>
+                  </div>
+                  <div className="px-5 pb-5">
+                    {rsvpEvents.length === 0 ? (
+                      <div className="py-10 px-4 text-center rounded-xl"
+                        style={{ background: "linear-gradient(135deg, rgba(233,30,99,0.08), rgba(216,140,90,0.04))", border: "1px dashed rgba(233,30,99,0.22)" }}>
+                        <div className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3"
+                          style={{ background: "rgba(233,30,99,0.15)" }}>
+                          <Calendar className="w-5 h-5" style={{ color: PINK }} />
+                        </div>
+                        <p className="text-[14px] mb-1" style={{ color: "#FAF5E9", fontFamily: "'Playfair Display', serif", fontStyle: "italic" }}>
+                          No events on your calendar yet.
+                        </p>
+                        <p className="text-[12px] mb-4" style={{ color: "rgba(250,245,233,0.55)" }}>
+                          Watch parties, tailgates, and meetups happen weekly. Find one near you.
+                        </p>
+                        <button onClick={() => goTo("/events")}
+                          className="text-[11px] uppercase font-bold tracking-[0.16em] px-4 py-2 rounded-full"
+                          style={{ background: PINK, color: "#0a0a0a", fontFamily: "Inter, sans-serif" }}>
+                          Explore events
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="grid sm:grid-cols-2 gap-4">
+                        {rsvpEvents.slice(0, 4).map(r => r.event && (
+                          <div key={r.id} className="rounded-xl p-4 cursor-pointer transition-colors hover:bg-white/[0.04]"
+                            style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)" }}
+                            onClick={() => goTo(`/event/${r.event!.id}`)}>
+                            {r.event.image_url ? (
+                              <img src={r.event.image_url} alt={r.event.title} className="w-full h-32 object-cover rounded-lg mb-3" />
+                            ) : (
+                              <div className="w-full h-32 rounded-lg mb-3 flex items-center justify-center"
+                                style={{ background: "linear-gradient(135deg, rgba(233,30,99,0.18), rgba(216,140,90,0.10))" }}>
+                                <Calendar className="w-8 h-8" style={{ color: PINK }} />
+                              </div>
+                            )}
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className="text-[9px] uppercase px-2 py-0.5 rounded-full"
+                                style={{ background: r.status === "going" || r.status === "attended" ? "rgba(240,78,35,0.18)" : "rgba(255,255,255,0.06)", color: r.status === "going" || r.status === "attended" ? PINK : "rgba(250,245,233,0.6)", fontFamily: "'Space Mono', monospace", letterSpacing: "0.12em" }}>
+                                {r.status}
+                              </span>
+                            </div>
+                            <p className="font-medium" style={{ color: "#FAF5E9" }}>{r.event.title}</p>
+                            <p className="text-sm" style={{ color: "rgba(250,245,233,0.55)" }}>
+                              {r.event.venue_name || r.event.city || "Location TBD"} • {format(new Date(r.event.event_date), "MMM d")}
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 </div>
-
-                {/* Horoscope right-rail widget — 300px */}
-                {zodiac && (
-                  <button
-                    onClick={() => goTo("/horoscope")}
-                    className="w-full md:w-[300px] shrink-0 text-left rounded-2xl p-4 transition-colors hover:bg-white/[0.02]"
-                    style={{
-                      background: "linear-gradient(135deg, rgba(233,30,99,0.10), rgba(216,140,90,0.05))",
-                      border: "1px solid rgba(233,30,99,0.25)",
-                    }}
-                  >
-                    <div className="flex items-center gap-3">
-                      <div
-                        className="shrink-0 w-10 h-10 rounded-full flex items-center justify-center"
-                        style={{
-                          background: "rgba(10,10,11,0.6)",
-                          border: "1px solid rgba(233,30,99,0.3)",
-                          fontSize: 20,
-                          color: PINK,
-                        }}
-                      >
-                        {zodiac.symbol}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p
-                          className="text-[9.5px] uppercase truncate"
-                          style={{
-                            fontFamily: "'Space Mono', monospace",
-                            letterSpacing: "0.2em",
-                            color: "#D88C5A",
-                          }}
-                        >
-                          {zodiac.name} · Today
-                        </p>
-                        <p
-                          className="text-[12px] leading-snug mt-1 line-clamp-2 italic"
-                          style={{
-                            fontFamily: "'Playfair Display', Georgia, serif",
-                            color: "rgba(250,245,233,0.85)",
-                          }}
-                        >
-                          {horoscopeLoading
-                            ? "Reading the stars…"
-                            : liveHoroscope || HOROSCOPE_MESSAGES[zodiac.name]}
-                        </p>
-                      </div>
-                      <ChevronRight className="w-3.5 h-3.5 shrink-0" style={{ color: PINK }} />
-                    </div>
-                  </button>
-                )}
               </motion.div>
 
-              {/* FAVORITE TEAMS (default expanded) */}
+              {/* ═══════════ 3. FRIENDS ACTIVITY ═══════════ */}
+              <motion.div variants={staggerItem}>
+                <div className="rounded-2xl p-5" style={{ background: PANEL, border: PANEL_BORDER }}>
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="text-[13px] uppercase flex items-center gap-2.5"
+                      style={{ fontFamily: "'Space Mono', monospace", letterSpacing: "0.2em", color: "#FAF5E9", fontWeight: 500 }}>
+                      <Users className="w-3.5 h-3.5" style={{ color: PINK }} /> Friends Activity
+                    </span>
+                    <button onClick={() => goTo("/friends")}
+                      className="text-[10px] uppercase tracking-[0.18em]"
+                      style={{ color: PINK, fontFamily: "'Space Mono', monospace" }}>
+                      View all
+                    </button>
+                  </div>
+                  <div className="flex flex-col items-center justify-center py-10 px-4 rounded-xl text-center"
+                    style={{ background: "linear-gradient(135deg, rgba(233,30,99,0.08), rgba(216,140,90,0.04))", border: "1px dashed rgba(233,30,99,0.22)" }}>
+                    <div className="w-12 h-12 rounded-full flex items-center justify-center mb-3"
+                      style={{ background: "rgba(233,30,99,0.15)" }}>
+                      <Users className="w-5 h-5" style={{ color: PINK }} />
+                    </div>
+                    <p className="text-[14px] mb-1" style={{ color: "#FAF5E9", fontFamily: "'Playfair Display', serif", fontStyle: "italic" }}>
+                      Your circle is quiet for now.
+                    </p>
+                    <p className="text-[12px] mb-4" style={{ color: "rgba(250,245,233,0.55)" }}>
+                      Add a few friends to see their check-ins, RSVPs, and posts the moment they happen.
+                    </p>
+                    <button onClick={() => goTo("/friends")}
+                      className="text-[11px] uppercase font-bold tracking-[0.16em] px-4 py-2 rounded-full"
+                      style={{ background: PINK, color: "#0a0a0a", fontFamily: "Inter, sans-serif" }}>
+                      Find friends
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* ═══════════ 4. COMMUNITIES ═══════════ */}
+              <motion.div variants={staggerItem}>
+                <div className="rounded-2xl p-5" style={{ background: PANEL, border: PANEL_BORDER }}>
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="text-[13px] uppercase flex items-center gap-2.5"
+                      style={{ fontFamily: "'Space Mono', monospace", letterSpacing: "0.2em", color: "#FAF5E9", fontWeight: 500 }}>
+                      <MessageCircle className="w-3.5 h-3.5" style={{ color: PINK }} /> Communities
+                    </span>
+                    <button onClick={() => goTo("/club")}
+                      className="text-[10px] uppercase tracking-[0.18em]"
+                      style={{ color: PINK, fontFamily: "'Space Mono', monospace" }}>
+                      Explore
+                    </button>
+                  </div>
+                  <div className="flex flex-col items-center justify-center py-10 px-4 rounded-xl text-center"
+                    style={{ background: "linear-gradient(135deg, rgba(233,30,99,0.08), rgba(216,140,90,0.04))", border: "1px dashed rgba(233,30,99,0.22)" }}>
+                    <div className="w-12 h-12 rounded-full flex items-center justify-center mb-3"
+                      style={{ background: "rgba(233,30,99,0.15)" }}>
+                      <Heart className="w-5 h-5" style={{ color: PINK }} />
+                    </div>
+                    <p className="text-[14px] mb-1" style={{ color: "#FAF5E9", fontFamily: "'Playfair Display', serif", fontStyle: "italic" }}>
+                      You haven't joined a group yet.
+                    </p>
+                    <p className="text-[12px] mb-4" style={{ color: "rgba(250,245,233,0.55)" }}>
+                      Team chats, city crews, and fan circles are waiting in The Club.
+                    </p>
+                    <button onClick={() => goTo("/club")}
+                      className="text-[11px] uppercase font-bold tracking-[0.16em] px-4 py-2 rounded-full"
+                      style={{ background: PINK, color: "#0a0a0a", fontFamily: "Inter, sans-serif" }}>
+                      Browse groups
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* ═══════════ 5. FAVORITE TEAMS (collapsed by default below social) ═══════════ */}
               <motion.div variants={staggerItem}>
                 <Collapsible open={teamsOpen} onOpenChange={setTeamsOpen}>
                   <div className="rounded-2xl overflow-hidden" style={{ background: PANEL, border: PANEL_BORDER }}>
@@ -697,7 +778,7 @@ const Profile = () => {
                 </Collapsible>
               </motion.div>
 
-              {/* LIVE & RECENT SCORES (default expanded) */}
+              {/* ═══════════ 6. LIVE & RECENT SCORES ═══════════ */}
               <motion.div variants={staggerItem}>
                 <Collapsible open={scoresOpen} onOpenChange={setScoresOpen}>
                   <div className="rounded-2xl overflow-hidden" style={{ background: PANEL, border: PANEL_BORDER }}>
@@ -719,7 +800,7 @@ const Profile = () => {
                 </Collapsible>
               </motion.div>
 
-              {/* WHERE TO WATCH (collapsed) */}
+              {/* ═══════════ 7. WHERE TO WATCH (collapsed) ═══════════ */}
               <motion.div variants={staggerItem}>
                 <Collapsible open={watchOpen} onOpenChange={setWatchOpen}>
                   <div className="rounded-2xl overflow-hidden" style={{ background: PANEL, border: PANEL_BORDER }}>
@@ -741,68 +822,7 @@ const Profile = () => {
                 </Collapsible>
               </motion.div>
 
-              {/* MY EVENTS — user's RSVPs */}
-              <motion.div variants={staggerItem}>
-                <div className="rounded-2xl overflow-hidden" style={{ background: PANEL, border: PANEL_BORDER }}>
-                  <div className="p-5 pb-3 flex items-center justify-between">
-                    <span className="text-[13px] uppercase flex items-center gap-2.5"
-                      style={{ fontFamily: "'Space Mono', monospace", letterSpacing: "0.2em", color: "#FAF5E9", fontWeight: 500 }}>
-                      <Ticket className="w-3.5 h-3.5" style={{ color: PINK }} strokeWidth={2.5} /> My Events
-                    </span>
-                    <button
-                      onClick={() => goTo("/events")}
-                      className="text-[11px] uppercase"
-                      style={{ fontFamily: "'Space Mono', monospace", letterSpacing: "0.18em", color: PINK }}
-                    >
-                      Browse all →
-                    </button>
-                  </div>
-                  <div className="px-5 pb-5">
-                    {rsvpEvents.length === 0 ? (
-                      <div className="py-8 text-center rounded-xl" style={{ background: "rgba(255,255,255,0.02)", border: "1px dashed rgba(255,255,255,0.08)" }}>
-                        <Calendar className="w-6 h-6 mx-auto mb-2" style={{ color: "rgba(250,245,233,0.35)" }} />
-                        <p className="text-[13px] mb-3" style={{ color: "rgba(250,245,233,0.55)" }}>You haven't RSVP'd to any events yet.</p>
-                        <button
-                          onClick={() => goTo("/events")}
-                          className="text-[11px] uppercase"
-                          style={{ fontFamily: "'Space Mono', monospace", letterSpacing: "0.18em", color: PINK }}
-                        >
-                          Find an event →
-                        </button>
-                      </div>
-                    ) : (
-                      <div className="grid sm:grid-cols-2 gap-4">
-                        {rsvpEvents.slice(0, 4).map(r => r.event && (
-                          <div key={r.id} className="rounded-xl p-4 cursor-pointer transition-colors hover:bg-white/[0.04]"
-                            style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)" }}
-                            onClick={() => goTo(`/event/${r.event!.id}`)}>
-                            {r.event.image_url ? (
-                              <img src={r.event.image_url} alt={r.event.title} className="w-full h-32 object-cover rounded-lg mb-3" />
-                            ) : (
-                              <div className="w-full h-32 rounded-lg mb-3 flex items-center justify-center"
-                                style={{ background: "linear-gradient(135deg, rgba(233,30,99,0.18), rgba(216,140,90,0.10))" }}>
-                                <Calendar className="w-8 h-8" style={{ color: PINK }} />
-                              </div>
-                            )}
-                            <div className="flex items-center gap-2 mb-1">
-                              <span className="text-[9px] uppercase px-2 py-0.5 rounded-full"
-                                style={{ background: r.status === "going" || r.status === "attended" ? "rgba(240,78,35,0.18)" : "rgba(255,255,255,0.06)", color: r.status === "going" || r.status === "attended" ? PINK : "rgba(250,245,233,0.6)", fontFamily: "'Space Mono', monospace", letterSpacing: "0.12em" }}>
-                                {r.status}
-                              </span>
-                            </div>
-                            <p className="font-medium" style={{ color: "#FAF5E9" }}>{r.event.title}</p>
-                            <p className="text-sm" style={{ color: "rgba(250,245,233,0.55)" }}>
-                              {r.event.venue_name || r.event.city || "Location TBD"} • {format(new Date(r.event.event_date), "MMM d")}
-                            </p>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </motion.div>
-
-              {/* RECOMMENDED EVENTS (collapsed) */}
+              {/* ═══════════ 8. RECOMMENDED EVENTS (collapsed) ═══════════ */}
               {suggestedEvents.length > 0 && (
                 <motion.div variants={staggerItem}>
                   <Collapsible open={recEventsOpen} onOpenChange={setRecEventsOpen}>
@@ -843,111 +863,105 @@ const Profile = () => {
                 </motion.div>
               )}
 
-              {/* FRIENDS ACTIVITY (new) */}
-              <motion.div variants={staggerItem}>
-                <div className="rounded-2xl p-5" style={{ background: PANEL, border: PANEL_BORDER }}>
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="text-[13px] uppercase flex items-center gap-2.5"
-                      style={{ fontFamily: "'Space Mono', monospace", letterSpacing: "0.2em", color: "#FAF5E9", fontWeight: 500 }}>
-                      <Users className="w-3.5 h-3.5" style={{ color: PINK }} /> Friends Activity
-                    </span>
-                    <button onClick={() => goTo("/friends")}
-                      className="text-[10px] uppercase tracking-[0.18em]"
-                      style={{ color: PINK, fontFamily: "'Space Mono', monospace" }}>
-                      View all
-                    </button>
-                  </div>
-                  <div className="flex flex-col items-center justify-center py-10 px-4 rounded-xl text-center"
-                    style={{ background: "linear-gradient(135deg, rgba(233,30,99,0.08), rgba(216,140,90,0.04))", border: "1px dashed rgba(233,30,99,0.22)" }}>
-                    <div className="w-12 h-12 rounded-full flex items-center justify-center mb-3"
-                      style={{ background: "rgba(233,30,99,0.15)" }}>
-                      <Users className="w-5 h-5" style={{ color: PINK }} />
-                    </div>
-                    <p className="text-[14px] mb-1" style={{ color: "#FAF5E9", fontFamily: "'Playfair Display', serif", fontStyle: "italic" }}>
-                      No friend activity yet.
-                    </p>
-                    <p className="text-[12px] mb-4" style={{ color: "rgba(250,245,233,0.55)" }}>
-                      Add friends and you'll see their check-ins, RSVPs, and posts here.
-                    </p>
-                    <button onClick={() => goTo("/friends")}
-                      className="text-[11px] uppercase font-bold tracking-[0.16em] px-4 py-2 rounded-full"
-                      style={{ background: PINK, color: "#0a0a0a", fontFamily: "Inter, sans-serif" }}>
-                      Find friends
-                    </button>
-                  </div>
-                </div>
-              </motion.div>
-
-              {/* COMMUNITIES (new) */}
-              <motion.div variants={staggerItem}>
-                <div className="rounded-2xl p-5" style={{ background: PANEL, border: PANEL_BORDER }}>
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="text-[13px] uppercase flex items-center gap-2.5"
-                      style={{ fontFamily: "'Space Mono', monospace", letterSpacing: "0.2em", color: "#FAF5E9", fontWeight: 500 }}>
-                      <MessageCircle className="w-3.5 h-3.5" style={{ color: PINK }} /> Communities
-                    </span>
-                    <button onClick={() => goTo("/club")}
-                      className="text-[10px] uppercase tracking-[0.18em]"
-                      style={{ color: PINK, fontFamily: "'Space Mono', monospace" }}>
-                      Explore
-                    </button>
-                  </div>
-                  <div className="flex flex-col items-center justify-center py-10 px-4 rounded-xl text-center"
-                    style={{ background: "linear-gradient(135deg, rgba(233,30,99,0.08), rgba(216,140,90,0.04))", border: "1px dashed rgba(233,30,99,0.22)" }}>
-                    <div className="w-12 h-12 rounded-full flex items-center justify-center mb-3"
-                      style={{ background: "rgba(233,30,99,0.15)" }}>
-                      <Heart className="w-5 h-5" style={{ color: PINK }} />
-                    </div>
-                    <p className="text-[14px] mb-1" style={{ color: "#FAF5E9", fontFamily: "'Playfair Display', serif", fontStyle: "italic" }}>
-                      Not in any communities yet.
-                    </p>
-                    <p className="text-[12px] mb-4" style={{ color: "rgba(250,245,233,0.55)" }}>
-                      Join team chats, city crews, and fan circles in The Club.
-                    </p>
-                    <button onClick={() => goTo("/club")}
-                      className="text-[11px] uppercase font-bold tracking-[0.16em] px-4 py-2 rounded-full"
-                      style={{ background: PINK, color: "#0a0a0a", fontFamily: "Inter, sans-serif" }}>
-                      Browse groups
-                    </button>
-                  </div>
-                </div>
-              </motion.div>
-
-              {/* MY SPORTS FEED with filter chips above */}
-              <motion.div variants={staggerItem}>
-                <div className="mb-3 -mx-1 px-1 overflow-x-auto scrollbar-none">
-                  <div className="flex gap-2 min-w-max">
-                    {FEED_FILTERS.map((f) => {
-                      const active = feedFilter === f;
-                      return (
-                        <button
-                          key={f}
-                          onClick={() => setFeedFilter(f)}
-                          className="text-[11px] uppercase font-bold tracking-[0.16em] h-9 px-4 rounded-full transition-colors whitespace-nowrap"
+              {/* ═══════════ 9. HOROSCOPE (compact widget) ═══════════ */}
+              {zodiac && (
+                <motion.div variants={staggerItem}>
+                  <button
+                    onClick={() => goTo("/horoscope")}
+                    className="w-full text-left rounded-2xl p-4 transition-colors hover:bg-white/[0.02]"
+                    style={{
+                      background: "linear-gradient(135deg, rgba(233,30,99,0.10), rgba(216,140,90,0.05))",
+                      border: "1px solid rgba(233,30,99,0.25)",
+                    }}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div
+                        className="shrink-0 w-10 h-10 rounded-full flex items-center justify-center"
+                        style={{
+                          background: "rgba(10,10,11,0.6)",
+                          border: "1px solid rgba(233,30,99,0.3)",
+                          fontSize: 20,
+                          color: PINK,
+                        }}
+                      >
+                        {zodiac.symbol}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p
+                          className="text-[9.5px] uppercase truncate"
                           style={{
-                            background: active ? PINK : "rgba(255,255,255,0.04)",
-                            color: active ? "#0a0a0a" : "rgba(250,245,233,0.7)",
-                            border: active ? "1px solid transparent" : "1px solid rgba(255,255,255,0.08)",
-                            fontFamily: "Inter, sans-serif",
+                            fontFamily: "'Space Mono', monospace",
+                            letterSpacing: "0.2em",
+                            color: "#D88C5A",
                           }}
                         >
-                          {f}
-                        </button>
-                      );
-                    })}
+                          {zodiac.name} · Today
+                        </p>
+                        <p
+                          className="text-[12px] leading-snug mt-1 line-clamp-2 italic"
+                          style={{
+                            fontFamily: "'Playfair Display', Georgia, serif",
+                            color: "rgba(250,245,233,0.85)",
+                          }}
+                        >
+                          {horoscopeLoading
+                            ? "Reading the stars…"
+                            : liveHoroscope || HOROSCOPE_MESSAGES[zodiac.name]}
+                        </p>
+                      </div>
+                      <ChevronRight className="w-3.5 h-3.5 shrink-0" style={{ color: PINK }} />
+                    </div>
+                  </button>
+                </motion.div>
+              )}
+
+              {/* ═══════════ 10. SPORTS FEED PREVIEW (deprioritized) ═══════════ */}
+              <motion.div variants={staggerItem}>
+                <div className="rounded-2xl overflow-hidden" style={{ background: PANEL, border: PANEL_BORDER }}>
+                  <div className="p-5 pb-3 flex items-center justify-between">
+                    <div className="min-w-0">
+                      <span className="text-[13px] uppercase flex items-center gap-2.5"
+                        style={{ fontFamily: "'Space Mono', monospace", letterSpacing: "0.2em", color: "#FAF5E9", fontWeight: 500 }}>
+                        <Radio className="w-3.5 h-3.5" style={{ color: PINK }} /> From your sports
+                      </span>
+                      <p className="text-[11px] mt-1.5" style={{ color: "rgba(250,245,233,0.5)" }}>
+                        A quick read. Full feed lives on Explore.
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => goTo("/explore")}
+                      className="text-[11px] uppercase shrink-0"
+                      style={{ fontFamily: "'Space Mono', monospace", letterSpacing: "0.18em", color: PINK }}
+                    >
+                      Full feed →
+                    </button>
+                  </div>
+                  <div className="px-5 pb-5 pt-2 max-h-[520px] overflow-hidden relative">
+                    <MySportsFeed
+                      userSports={profile.favorite_sports || []}
+                      userTeams={[...(profile.favorite_teams_players || []), ...((profile as any).favorite_la_teams || [])]}
+                      userCity={profile.city}
+                    />
+                    <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-24"
+                      style={{ background: "linear-gradient(to bottom, transparent, rgba(10,10,11,0.95))" }} />
+                  </div>
+                  <div className="px-5 pb-5 -mt-2 relative">
+                    <button
+                      onClick={() => goTo("/explore")}
+                      className="w-full h-10 rounded-xl text-[11px] uppercase font-bold tracking-[0.16em]"
+                      style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", color: "#FAF5E9", fontFamily: "Inter, sans-serif" }}
+                    >
+                      View the full sports feed
+                    </button>
                   </div>
                 </div>
-                <MySportsFeed
-                  userSports={profile.favorite_sports || []}
-                  userTeams={[...(profile.favorite_teams_players || []), ...((profile as any).favorite_la_teams || [])]}
-                  userCity={profile.city}
-                />
               </motion.div>
 
             </div>
           </motion.div>
         </div>
       </main>
+
 
       {/* Logout Confirmation Dialog */}
       <AlertDialog open={showLogoutConfirm} onOpenChange={setShowLogoutConfirm}>
