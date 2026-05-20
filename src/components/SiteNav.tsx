@@ -67,10 +67,10 @@ const SiteNav = () => {
       role="navigation"
       aria-label="Primary"
       style={{
-        background: "rgba(11, 11, 11, 0.85)",
+        background: "rgba(11, 11, 11, 0.9)",
         backdropFilter: "blur(16px)",
         WebkitBackdropFilter: "blur(16px)",
-        borderBottom: `0.5px solid ${C.border}`,
+        borderBottom: `1px solid #E86BB0`,
       }}
     >
       <div className="max-w-7xl mx-auto px-5 md:px-10 py-4 flex items-center justify-between gap-6">
