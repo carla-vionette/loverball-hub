@@ -1,15 +1,15 @@
-import { useState, useMemo, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Seo } from "@/components/Seo";
-import { Tv, Users, MessagesSquare, MapPin, Gift, Sparkles, Search, ArrowRight } from "lucide-react";
+import { Tv, Users, MessagesSquare, MapPin, Gift, Sparkles, ArrowRight } from "lucide-react";
 import { C, fonts } from "@/lib/editorialTheme";
-import { H1, H2, H3, Body, Slug, Mono, PrimaryBtn, SecondaryBtn, TertiaryLink } from "@/components/editorial/primitives";
+import { H1, H2, H3, Body, Slug, Mono, PrimaryBtn, SecondaryBtn } from "@/components/editorial/primitives";
 import MobileHeader from "@/components/MobileHeader";
 import DesktopNav from "@/components/DesktopNav";
 import BottomNav from "@/components/BottomNav";
 import { loadDrafts, MOCK_MEMBERS, type Member } from "@/lib/startingXiData";
 import ClubMessagesInbox from "@/components/club/ClubMessagesInbox";
-
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 const PILLARS = [
   { Icon: Tv, chip: "Watch parties", h: "Watch the game with your people.", p: "Members-only watch parties, both IRL and in private chat rooms. Live reactions, hot takes, post-game debriefs — without the chaos of public timelines." },
@@ -22,195 +22,229 @@ const PILLARS = [
 
 const Club = () => {
   const navigate = useNavigate();
-  const goSignup = () => navigate("/auth?mode=signup");
-  const [query, setQuery] = useState("");
   const [connections, setConnections] = useState<Member[]>([]);
+  const [curated, setCurated] = useState<Member[]>([]);
 
   useEffect(() => {
     const { drafted } = loadDrafts();
     setConnections(drafted.map((id) => MOCK_MEMBERS.find((m) => m.id === id)).filter(Boolean) as Member[]);
+    // 3 curated weekly matches: top matches not already drafted
+    const available = MOCK_MEMBERS.filter((m) => !drafted.includes(m.id))
+      .sort((a, b) => b.match - a.match)
+      .slice(0, 3);
+    setCurated(available);
   }, []);
-
-  const filteredPillars = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    if (!q) return PILLARS;
-    return PILLARS.filter(({ chip, h, p }) =>
-      `${chip} ${h} ${p}`.toLowerCase().includes(q)
-    );
-  }, [query]);
-
 
   return (
     <div style={{ background: C.bg, color: C.text, fontFamily: fonts.sans }} className="min-h-screen">
       <Seo
         title="The Club — Loverball"
-        description="The Club is the members-only home for women's sports fans. Watch parties, fan matching, group chats, city crews, and members-only perks."
+        description="Members-only home for women's sports fans. Curated matches, connections, group chats, and city crews."
         path="/club"
       />
 
       <MobileHeader /><DesktopNav /><BottomNav />
 
       <main className="md:ml-16 xl:ml-64 pt-16 md:pt-0 pb-24 md:pb-0">
-      <section className="max-w-7xl mx-auto px-5 md:px-10 pt-32 md:pt-40 pb-20">
-        <Slug>The Club</Slug>
-        <H1 className="mt-6" style={{ fontSize: "clamp(48px, 9vw, 128px)", lineHeight: 0.92 }}>
-          The members-only home<br/>for women's sports fans.
-        </H1>
-        <Body muted size={18} className="mt-8 max-w-xl">
-          A private club for the watch parties, group chats, city crews, and friendships that the rest of the internet keeps flattening. Vetted, quiet, real.
-        </Body>
-        <div className="mt-10 flex flex-wrap gap-4 items-center">
-          <PrimaryBtn onClick={() => navigate("/club/xi")}>My Connections</PrimaryBtn>
-          <SecondaryBtn onClick={() => navigate("/messages")}>Messages</SecondaryBtn>
-          <TertiaryLink to="/events">Upcoming events</TertiaryLink>
-          <TertiaryLink to="/membership">See passes</TertiaryLink>
-        </div>
-      </section>
-
-      <section className="max-w-7xl mx-auto px-5 md:px-10 pb-16">
-        <div className="flex items-end justify-between gap-4 mb-8">
-          <div>
-            <Slug>Your Starting XI</Slug>
-            <H2 className="mt-3">My Connections</H2>
+        {/* Header */}
+        <section className="max-w-7xl mx-auto px-5 md:px-10 pt-24 md:pt-32 pb-10">
+          <Slug>The Club</Slug>
+          <H1 className="mt-6" style={{ fontSize: "clamp(40px, 7vw, 96px)", lineHeight: 0.95 }}>
+            The members-only home<br/>for women's sports fans.
+          </H1>
+          <div className="mt-8 flex flex-wrap gap-3 items-center">
+            <PrimaryBtn onClick={() => navigate("/club/xi")}>My Connections</PrimaryBtn>
+            <SecondaryBtn onClick={() => navigate("/messages")}>Messages</SecondaryBtn>
           </div>
-          <button
-            onClick={() => navigate("/club/xi")}
-            className="inline-flex items-center gap-2 text-sm hover:opacity-80 transition-opacity"
-            style={{ color: C.raspberry, fontFamily: fonts.mono, letterSpacing: "0.08em", textTransform: "uppercase" }}
-          >
-            Draft more <ArrowRight size={14} />
-          </button>
-        </div>
+        </section>
 
-        {connections.length === 0 ? (
-          <div
-            className="rounded-[20px] p-10 md:p-14 text-center"
-            style={{ background: C.surface, border: `1px dashed ${C.border}` }}
-          >
-            <Sparkles size={28} color={C.gold} strokeWidth={1.25} className="mx-auto" />
-            <H3 className="mt-5">No connections drafted yet</H3>
-            <Body muted size={15} className="mt-3 max-w-md mx-auto">
-              Your Starting XI is empty. Open the draft to pick the members you want in your lineup this week.
-            </Body>
-            <div className="mt-7 flex justify-center">
-              <PrimaryBtn onClick={() => navigate("/club/xi")}>Open Starting XI</PrimaryBtn>
-            </div>
-          </div>
-        ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
-            {connections.map((m) => (
-              <article
-                key={m.id}
-                onClick={() => navigate(`/members/${m.id}`)}
-                className="cursor-pointer rounded-[20px] overflow-hidden transition-transform hover:-translate-y-1"
-                style={{ background: C.surface, border: `1px solid ${C.border}` }}
-              >
-                <div className="aspect-[4/5] overflow-hidden" style={{ background: C.bg }}>
-                  <img src={m.photo} alt={m.name} loading="lazy" className="w-full h-full object-cover" />
-                </div>
-                <div className="p-4">
-                  <Mono color={C.raspberry} size={10}>{m.match}% MATCH</Mono>
-                  <H3 className="mt-2" style={{ fontSize: 20 }}>{m.name}</H3>
-                  <Body muted size={13} className="mt-1 line-clamp-1">{m.team} · {m.city}</Body>
-                  <button
-                    onClick={(e) => { e.stopPropagation(); navigate("/messages"); }}
-                    className="mt-4 inline-flex items-center gap-2 text-xs px-3 py-2 rounded-full transition-colors"
-                    style={{ background: C.bg, color: C.text, border: `1px solid ${C.border}`, fontFamily: fonts.mono, letterSpacing: "0.08em", textTransform: "uppercase" }}
-                  >
-                    <MessagesSquare size={12} /> Message
-                  </button>
-                </div>
-              </article>
-            ))}
-          </div>
-        )}
-      </section>
-
-      <ClubMessagesInbox />
-
-      <section className="max-w-7xl mx-auto px-5 md:px-10 pb-24">
-        <div
-          className="mb-10 flex items-center gap-3 px-5 py-3 rounded-full"
-          style={{ background: C.surface, border: `1px solid ${C.border}` }}
-        >
-          <Search size={18} color={C.muted} aria-hidden="true" />
-          <input
-            type="search"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search the Club — watch parties, crews, perks…"
-            aria-label="Search the Club"
-            className="flex-1 bg-transparent outline-none text-base placeholder:opacity-60"
-            style={{ color: C.text, fontFamily: fonts.sans }}
-          />
-        </div>
-
-        {filteredPillars.length === 0 ? (
-          <div className="text-center py-16" style={{ color: C.muted }}>
-            <Body muted size={16}>No matches for "{query}".</Body>
-          </div>
-        ) : (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredPillars.map(({ Icon, chip, h, p }) => (
-              <article
-                key={chip}
-                className="p-8 md:p-10 rounded-[20px] transition-all duration-300 hover:-translate-y-1"
-                style={{ background: C.surface, border: `1px solid ${C.border}` }}
-              >
-                <Mono color={C.raspberry}>{chip}</Mono>
-                <div className="mt-6"><Icon size={28} color={C.gold} strokeWidth={1.25} /></div>
-                <H3 className="mt-6">{h}</H3>
-                <Body muted size={15} className="mt-4">{p}</Body>
-              </article>
-            ))}
-          </div>
-        )}
-      </section>
-
-
-      <section className="max-w-7xl mx-auto px-5 md:px-10 py-24">
-        <div className="grid md:grid-cols-12 gap-10 items-start">
-          <div className="md:col-span-4"><Slug>Member perks</Slug></div>
-          <div className="md:col-span-8">
-            <H2>The room you've been looking for.</H2>
-            <ul className="mt-10 space-y-5" style={{ fontFamily: fonts.sans, fontSize: 17, lineHeight: 1.6, color: C.text }}>
+        {/* Tabs */}
+        <section className="max-w-7xl mx-auto px-5 md:px-10 pb-20">
+          <Tabs defaultValue="matches" className="w-full">
+            <TabsList
+              className="h-auto p-1 mb-10 inline-flex gap-1"
+              style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 999 }}
+            >
               {[
-                "Priority RSVP to every members-only event",
-                "Curated fan matches three times a week",
-                "Private city crews and away-game travel",
-                "Members-only mixers, dinners, and bar takeovers",
-                "Merch drops and partner perks",
-                "A direct line to the Loverball team",
-              ].map((p) => (
-                <li key={p} className="flex items-start gap-4">
-                  <span style={{ color: C.raspberry, fontFamily: fonts.mono, fontSize: 11, marginTop: 6 }}>—</span>
-                  <span>{p}</span>
-                </li>
+                { v: "matches", label: "This Week's Matches" },
+                { v: "connections", label: "My Connections" },
+                { v: "inside", label: "Inside the Club" },
+              ].map((t) => (
+                <TabsTrigger
+                  key={t.v}
+                  value={t.v}
+                  className="rounded-full px-5 py-2.5 text-sm data-[state=active]:shadow-none"
+                  style={{ fontFamily: fonts.mono, letterSpacing: "0.06em", textTransform: "uppercase" }}
+                >
+                  {t.label}
+                </TabsTrigger>
               ))}
-            </ul>
-          </div>
-        </div>
-      </section>
+            </TabsList>
 
-      <section className="max-w-7xl mx-auto px-5 md:px-10 py-24 text-center" style={{ borderTop: `0.5px solid ${C.border}` }}>
-        <Slug>Join</Slug>
-        <H2 className="mt-4 mx-auto max-w-3xl" style={{ fontSize: "clamp(40px, 6vw, 80px)" }}>
-          A members-only home for sports fandom.
-        </H2>
-        <Body muted size={16} className="mt-6 mx-auto max-w-md">
-          The Club is invite-only this season. Bring your code, or join the waitlist.
-        </Body>
-        <div className="mt-10 flex flex-wrap gap-4 justify-center">
-          <PrimaryBtn onClick={goSignup}>Join the Club</PrimaryBtn>
-          <SecondaryBtn to="/membership">Compare passes</SecondaryBtn>
-        </div>
-      </section>
+            {/* ---- MATCHES ---- */}
+            <TabsContent value="matches" className="mt-0">
+              <div className="flex items-end justify-between gap-4 mb-6">
+                <div>
+                  <Slug>Curated for you</Slug>
+                  <H2 className="mt-3">Three matches this week.</H2>
+                  <Body muted size={15} className="mt-3 max-w-xl">
+                    Hand-picked by your teams, your city, and your rituals. New drops every Monday.
+                  </Body>
+                </div>
+              </div>
 
-      <footer className="max-w-7xl mx-auto px-5 md:px-10 py-10" style={{ borderTop: `0.5px solid ${C.border}` }}>
-        <Mono size={10}>© 2026 Loverball · Built in LA</Mono>
-      </footer>
+              {curated.length === 0 ? (
+                <div
+                  className="rounded-[20px] p-10 text-center"
+                  style={{ background: C.surface, border: `1px dashed ${C.border}` }}
+                >
+                  <Body muted size={15}>No new matches this week. Check back Monday.</Body>
+                </div>
+              ) : (
+                <div className="grid md:grid-cols-3 gap-6">
+                  {curated.map((m) => (
+                    <article
+                      key={m.id}
+                      onClick={() => navigate(`/members/${m.id}`)}
+                      className="cursor-pointer rounded-[20px] overflow-hidden transition-transform hover:-translate-y-1"
+                      style={{ background: C.surface, border: `1px solid ${C.border}` }}
+                    >
+                      <div className="aspect-[4/5] overflow-hidden" style={{ background: C.bg }}>
+                        <img src={m.photo} alt={m.name} loading="lazy" className="w-full h-full object-cover" />
+                      </div>
+                      <div className="p-5">
+                        <Mono color={C.raspberry} size={10}>{m.match}% MATCH</Mono>
+                        <H3 className="mt-2" style={{ fontSize: 22 }}>{m.name}</H3>
+                        <Body muted size={13} className="mt-1 line-clamp-1">{m.team} · {m.city}</Body>
+                        <Body size={14} className="mt-3 line-clamp-2" style={{ fontFamily: fonts.mono }}>
+                          {m.vibe}
+                        </Body>
+                        <div className="mt-5 flex items-center gap-2">
+                          <button
+                            onClick={(e) => { e.stopPropagation(); navigate("/club/xi"); }}
+                            className="flex-1 inline-flex items-center justify-center gap-2 text-xs px-3 py-2.5 rounded-full transition-colors"
+                            style={{ background: C.raspberry, color: "#fff", fontFamily: fonts.mono, letterSpacing: "0.08em", textTransform: "uppercase" }}
+                          >
+                            Draft
+                          </button>
+                          <button
+                            onClick={(e) => { e.stopPropagation(); navigate(`/members/${m.id}`); }}
+                            className="inline-flex items-center gap-1 text-xs px-3 py-2.5 rounded-full transition-colors"
+                            style={{ background: C.bg, color: C.text, border: `1px solid ${C.border}`, fontFamily: fonts.mono, letterSpacing: "0.08em", textTransform: "uppercase" }}
+                          >
+                            View
+                          </button>
+                        </div>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              )}
+            </TabsContent>
+
+            {/* ---- CONNECTIONS ---- */}
+            <TabsContent value="connections" className="mt-0">
+              <div className="flex items-end justify-between gap-4 mb-6">
+                <div>
+                  <Slug>Your Starting XI</Slug>
+                  <H2 className="mt-3">My Connections</H2>
+                </div>
+                <button
+                  onClick={() => navigate("/club/xi")}
+                  className="inline-flex items-center gap-2 text-sm hover:opacity-80 transition-opacity"
+                  style={{ color: C.raspberry, fontFamily: fonts.mono, letterSpacing: "0.08em", textTransform: "uppercase" }}
+                >
+                  Draft more <ArrowRight size={14} />
+                </button>
+              </div>
+
+              {connections.length === 0 ? (
+                <div
+                  className="rounded-[20px] p-10 md:p-14 text-center"
+                  style={{ background: C.surface, border: `1px dashed ${C.border}` }}
+                >
+                  <Sparkles size={28} color={C.gold} strokeWidth={1.25} className="mx-auto" />
+                  <H3 className="mt-5">No connections drafted yet</H3>
+                  <Body muted size={15} className="mt-3 max-w-md mx-auto">
+                    Your Starting XI is empty. Open the draft to pick the members you want in your lineup this week.
+                  </Body>
+                  <div className="mt-7 flex justify-center">
+                    <PrimaryBtn onClick={() => navigate("/club/xi")}>Open Starting XI</PrimaryBtn>
+                  </div>
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+                  {connections.map((m) => (
+                    <article
+                      key={m.id}
+                      onClick={() => navigate(`/members/${m.id}`)}
+                      className="cursor-pointer rounded-[20px] overflow-hidden transition-transform hover:-translate-y-1"
+                      style={{ background: C.surface, border: `1px solid ${C.border}` }}
+                    >
+                      <div className="aspect-[4/5] overflow-hidden" style={{ background: C.bg }}>
+                        <img src={m.photo} alt={m.name} loading="lazy" className="w-full h-full object-cover" />
+                      </div>
+                      <div className="p-4">
+                        <Mono color={C.raspberry} size={10}>{m.match}% MATCH</Mono>
+                        <H3 className="mt-2" style={{ fontSize: 20 }}>{m.name}</H3>
+                        <Body muted size={13} className="mt-1 line-clamp-1">{m.team} · {m.city}</Body>
+                        <button
+                          onClick={(e) => { e.stopPropagation(); navigate("/messages"); }}
+                          className="mt-4 inline-flex items-center gap-2 text-xs px-3 py-2 rounded-full transition-colors"
+                          style={{ background: C.bg, color: C.text, border: `1px solid ${C.border}`, fontFamily: fonts.mono, letterSpacing: "0.08em", textTransform: "uppercase" }}
+                        >
+                          <MessagesSquare size={12} /> Message
+                        </button>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              )}
+
+              <div className="mt-12">
+                <ClubMessagesInbox />
+              </div>
+            </TabsContent>
+
+            {/* ---- INSIDE THE CLUB ---- */}
+            <TabsContent value="inside" className="mt-0">
+              <div className="mb-8">
+                <Slug>What's inside</Slug>
+                <H2 className="mt-3">Everything the Club includes.</H2>
+              </div>
+
+              <ul
+                className="rounded-[20px] overflow-hidden"
+                style={{ background: C.surface, border: `1px solid ${C.border}` }}
+              >
+                {PILLARS.map(({ Icon, chip, h, p }, i) => (
+                  <li
+                    key={chip}
+                    className="flex items-start gap-5 md:gap-7 p-6 md:p-8"
+                    style={{ borderTop: i === 0 ? "none" : `0.5px solid ${C.border}` }}
+                  >
+                    <div
+                      className="flex-shrink-0 flex items-center justify-center rounded-full"
+                      style={{ background: C.bg, border: `1px solid ${C.border}`, width: 56, height: 56 }}
+                    >
+                      <Icon size={22} color={C.gold} strokeWidth={1.25} />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <Mono color={C.raspberry} size={10}>{chip}</Mono>
+                      <H3 className="mt-2" style={{ fontSize: 22 }}>{h}</H3>
+                      <Body muted size={15} className="mt-2">{p}</Body>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </TabsContent>
+          </Tabs>
+        </section>
+
+        <footer className="max-w-7xl mx-auto px-5 md:px-10 py-10" style={{ borderTop: `0.5px solid ${C.border}` }}>
+          <Mono size={10}>© 2026 Loverball · Built in LA</Mono>
+        </footer>
       </main>
-
     </div>
   );
 };
