@@ -3,7 +3,9 @@ import { Seo } from "@/components/Seo";
 import { Tv, Users, MessagesSquare, MapPin, Gift, Sparkles } from "lucide-react";
 import { C, fonts } from "@/lib/editorialTheme";
 import { H1, H2, H3, Body, Slug, Mono, PrimaryBtn, SecondaryBtn, TertiaryLink } from "@/components/editorial/primitives";
-import SiteNav from "@/components/SiteNav";
+import MobileHeader from "@/components/MobileHeader";
+import DesktopNav from "@/components/DesktopNav";
+import BottomNav from "@/components/BottomNav";
 
 
 const PILLARS = [
