@@ -1,4 +1,4 @@
-import React, { useState, useEffect, createContext, useContext, ReactNode } from 'react';
+import React, { useState, useEffect, createContext, useContext, ReactNode, useCallback } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -23,7 +23,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
   const [role, setRole] = useState<AppRole | null>(null);
 
-  const fetchUserRole = async (userId: string) => {
+  const fetchUserRole = useCallback(async (userId: string) => {
     const { data, error } = await supabase
       .from('user_roles')
       .select('role')
@@ -34,7 +34,22 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       return null;
     }
     return data?.role as AppRole | null;
-  };
+  }, []);
+
+  const applySession = useCallback(async (nextSession: Session | null) => {
+    setSession(nextSession);
+    setUser(nextSession?.user ?? null);
+
+    if (!nextSession?.user) {
+      setRole(null);
+      setLoading(false);
+      return;
+    }
+
+    const nextRole = await fetchUserRole(nextSession.user.id);
+    setRole(nextRole);
+    setLoading(false);
+  }, [fetchUserRole]);
 
   const refreshRole = async () => {
     if (user) {
@@ -44,42 +59,52 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   useEffect(() => {
-    // Set up auth state listener FIRST
+    let mounted = true;
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-        
-        // Defer role fetch to avoid deadlock
-        if (session?.user) {
-          setTimeout(() => {
-            fetchUserRole(session.user.id).then(setRole);
-          }, 0);
-        } else {
-          setRole(null);
-        }
-        
-        setLoading(false);
+      (_event, nextSession) => {
+        if (!mounted) return;
+        void applySession(nextSession);
       }
     );
 
-    // THEN check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      
-      if (session?.user) {
-        fetchUserRole(session.user.id).then((r) => {
-          setRole(r);
-          setLoading(false);
-        });
+    supabase.auth.getSession().then(({ data: { session: initialSession } }) => {
+      if (!mounted) return;
+      void applySession(initialSession);
+    });
+
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
+  }, [applySession]);
+
+  useEffect(() => {
+    const syncFromStorage = async () => {
+      const hasStoredSession = Object.keys(localStorage).some((key) =>
+        key.startsWith('sb-') && key.endsWith('-auth-token')
+      );
+
+      if (!hasStoredSession || user || session) {
+        return;
+      }
+
+      const { data: { session: recoveredSession } } = await supabase.auth.getSession();
+      if (recoveredSession) {
+        await applySession(recoveredSession);
       } else {
         setLoading(false);
       }
-    });
+    };
 
-    return () => subscription.unsubscribe();
-  }, []);
+    void syncFromStorage();
+    const handleFocus = () => {
+      void syncFromStorage();
+    };
+
+    window.addEventListener('focus', handleFocus);
+    return () => window.removeEventListener('focus', handleFocus);
+  }, [applySession, session, user]);
 
   const signOut = async () => {
     await supabase.auth.signOut();
