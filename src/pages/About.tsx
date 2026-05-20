@@ -10,7 +10,7 @@ const About = () => (
     <Seo title="About — Loverball" description="Loverball is the members-only home for sports fandom. Built in Los Angeles for the fans who finally want a place that gets it." path="/about" />
     <SiteNav />
 
-    <section className="px-6 md:px-12 pt-16 md:pt-24 pb-12 max-w-4xl">
+    <section className="px-6 md:px-12 pt-32 md:pt-40 pb-12 max-w-4xl">
       <Slug>About</Slug>
       <H1 className="mt-6">A members-only home for sports fandom.</H1>
     </section>
