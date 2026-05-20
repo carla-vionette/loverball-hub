@@ -868,57 +868,8 @@ const Profile = () => {
                 </motion.div>
               )}
 
-              {/* ═══════════ 9. HOROSCOPE (compact widget) ═══════════ */}
-              {zodiac && (
-                <motion.div variants={staggerItem}>
-                  <button
-                    onClick={() => goTo("/horoscope")}
-                    className="w-full text-left rounded-2xl p-4 transition-colors hover:bg-white/[0.02]"
-                    style={{
-                      background: "linear-gradient(135deg, rgba(233,30,99,0.10), rgba(216,140,90,0.05))",
-                      border: "1px solid rgba(233,30,99,0.25)",
-                    }}
-                  >
-                    <div className="flex items-center gap-3">
-                      <div
-                        className="shrink-0 w-10 h-10 rounded-full flex items-center justify-center"
-                        style={{
-                          background: "rgba(10,10,11,0.6)",
-                          border: "1px solid rgba(233,30,99,0.3)",
-                          fontSize: 20,
-                          color: PINK,
-                        }}
-                      >
-                        {zodiac.symbol}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p
-                          className="text-[9.5px] uppercase truncate"
-                          style={{
-                            fontFamily: "'Space Mono', monospace",
-                            letterSpacing: "0.2em",
-                            color: "#D88C5A",
-                          }}
-                        >
-                          {zodiac.name} · Today
-                        </p>
-                        <p
-                          className="text-[12px] leading-snug mt-1 line-clamp-2 italic"
-                          style={{
-                            fontFamily: "'Playfair Display', Georgia, serif",
-                            color: "rgba(250,245,233,0.85)",
-                          }}
-                        >
-                          {horoscopeLoading
-                            ? "Reading the stars…"
-                            : liveHoroscope || HOROSCOPE_MESSAGES[zodiac.name]}
-                        </p>
-                      </div>
-                      <ChevronRight className="w-3.5 h-3.5 shrink-0" style={{ color: PINK }} />
-                    </div>
-                  </button>
-                </motion.div>
-              )}
+
+
 
               {/* ═══════════ 10. SPORTS FEED PREVIEW (deprioritized) ═══════════ */}
               <motion.div variants={staggerItem}>
