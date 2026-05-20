@@ -206,38 +206,39 @@ export default function ProfileInbox() {
 
   return (
     <section
-      className="rounded-3xl overflow-hidden"
+      className="rounded-2xl overflow-hidden"
       style={{ background: PANEL, border: BORDER, fontFamily: "'Inter', system-ui, sans-serif" }}
     >
       <Tabs defaultValue="notifications">
-        <div className="flex items-center justify-between gap-4 px-5 pt-5 flex-wrap">
+        <div className="flex items-center justify-between gap-2 px-4 pt-3 pb-1 flex-wrap">
           <p
-            className="text-[10px] uppercase"
-            style={{ fontFamily: "'Space Mono', monospace", letterSpacing: "0.26em", color: "#D88C5A" }}
+            className="text-[9px] uppercase"
+            style={{ fontFamily: "'Space Mono', monospace", letterSpacing: "0.24em", color: "#D88C5A" }}
           >
             Inbox
           </p>
-          <TabsList className="bg-transparent gap-1 p-0 h-auto flex-wrap">
+          <TabsList className="bg-transparent gap-0.5 p-0 h-auto flex-wrap">
             <TabsTrigger value="notifications" className={tabTriggerBase} style={{ color: "rgba(250,245,233,0.65)" }}>
-              <Bell size={12} /> Alerts {unreadNotifs > 0 && (
+              <Bell size={11} /> Alerts {unreadNotifs > 0 && (
                 <span className="ml-1 px-1.5 rounded-full text-[9px]" style={{ background: PINK, color: "#fff" }}>{unreadNotifs}</span>
               )}
             </TabsTrigger>
             <TabsTrigger value="messages" className={tabTriggerBase} style={{ color: "rgba(250,245,233,0.65)" }}>
-              <MessageCircle size={12} /> Messages {unreadMsgs > 0 && (
+              <MessageCircle size={11} /> Messages {unreadMsgs > 0 && (
                 <span className="ml-1 px-1.5 rounded-full text-[9px]" style={{ background: PINK, color: "#fff" }}>{unreadMsgs}</span>
               )}
             </TabsTrigger>
             <TabsTrigger value="friends" className={tabTriggerBase} style={{ color: "rgba(250,245,233,0.65)" }}>
-              <Users size={12} /> Friends {pendingReq > 0 && (
+              <Users size={11} /> Friends {pendingReq > 0 && (
                 <span className="ml-1 px-1.5 rounded-full text-[9px]" style={{ background: PINK, color: "#fff" }}>{pendingReq}</span>
               )}
             </TabsTrigger>
             <TabsTrigger value="activity" className={tabTriggerBase} style={{ color: "rgba(250,245,233,0.65)" }}>
-              <Activity size={12} /> Activity
+              <Activity size={11} /> Activity
             </TabsTrigger>
           </TabsList>
         </div>
+
 
         {/* ALERTS */}
         <TabsContent value="notifications" className="mt-4">
