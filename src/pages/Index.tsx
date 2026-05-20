@@ -4,6 +4,7 @@ import { Seo } from "@/components/Seo";
 import { Instagram, Check, ArrowRight, BookOpen, CalendarHeart, Users } from "lucide-react";
 import heroImage from "@/assets/hero-women-new.png";
 import SiteNav from "@/components/SiteNav";
+import WhatsHappeningNow from "@/components/WhatsHappeningNow";
 import { INSTAGRAM_URL } from "@/lib/socialLinks";
 
 /* ============================================================
