@@ -9,8 +9,6 @@ import WelcomeSplash from "@/components/WelcomeSplash";
 import { C, fonts } from "@/lib/editorialTheme";
 import { isAuthEmailRateLimitError } from "@/lib/authErrors";
 
-const LIVE_SITE_URL = 'https://loverball-hub.lovable.app';
-
 type AuthMode = "join" | "signin" | "confirm" | "reset_sent" | "reset_password";
 
 /* ─── Editorial styled input ─── */
@@ -188,7 +186,8 @@ const Auth = () => {
   const [splashName, setSplashName] = useState<string | null>(null);
   const [pendingRedirect, setPendingRedirect] = useState<string | null>(null);
 
-  const redirectTo = searchParams.get('redirect') || '/watch';
+  const redirectTo = searchParams.get('redirect') || '/feed';
+  const authOrigin = window.location.origin;
 
   useEffect(() => {
     if (searchParams.get('reset') === 'true') { setMode('reset_password'); return; }
@@ -218,7 +217,7 @@ const Auth = () => {
         password: tempPassword,
         options: {
           data: { name: name.trim() },
-          emailRedirectTo: `${LIVE_SITE_URL}/finish-profile`,
+          emailRedirectTo: `${authOrigin}/finish-profile`,
         },
       });
 
@@ -278,7 +277,7 @@ const Auth = () => {
     setLoading(true);
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
-        redirectTo: `${LIVE_SITE_URL}/auth?reset=true`,
+        redirectTo: `${authOrigin}/auth?reset=true`,
       });
       if (error) throw error;
       setMode("reset_sent");
@@ -297,7 +296,7 @@ const Auth = () => {
       const { error } = await supabase.auth.updateUser({ password });
       if (error) throw error;
       toast({ title: "Password updated!" });
-      navigate("/watch");
+      navigate("/feed");
     } catch (err: any) {
       toast({ title: "Error", description: err.message, variant: "destructive" });
     } finally {
@@ -313,7 +312,7 @@ const Auth = () => {
       const { error } = await supabase.auth.resend({
         type: 'signup',
         email,
-        options: { emailRedirectTo: `${LIVE_SITE_URL}/finish-profile` },
+        options: { emailRedirectTo: `${authOrigin}/finish-profile` },
       });
       if (error) throw error;
       toast({ title: "Sent! Check your inbox." });
@@ -334,7 +333,7 @@ const Auth = () => {
   const handleGoogleAuth = async () => {
     const { lovable } = await import('@/integrations/lovable/index');
     const result = await lovable.auth.signInWithOAuth('google', {
-      redirect_uri: `${LIVE_SITE_URL}/finish-profile`,
+      redirect_uri: `${authOrigin}/finish-profile`,
     });
     if (result.error) {
       toast({ title: 'Google sign-in failed', description: result.error.message, variant: 'destructive' });
