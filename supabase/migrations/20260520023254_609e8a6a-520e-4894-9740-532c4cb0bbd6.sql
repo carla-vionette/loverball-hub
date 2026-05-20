@@ -1,0 +1,1 @@
+UPDATE public.events SET title = 'LA Sparks vs. Phoenix Mercury Cigar Lounge Watch Party' WHERE id = 'c6432f1b-1115-413f-bd4c-f0c82c1e577a';
