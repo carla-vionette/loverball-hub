@@ -166,6 +166,10 @@ export default {
           DEFAULT: "hsl(var(--hot-pink))",
           foreground: "hsl(var(--hot-pink-foreground))",
         },
+        neon: {
+          DEFAULT: "hsl(var(--neon))",
+          foreground: "hsl(var(--neon-foreground))",
+        },
         popover: {
           DEFAULT: "hsl(var(--popover))",
           foreground: "hsl(var(--popover-foreground))",
