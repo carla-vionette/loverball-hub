@@ -237,35 +237,39 @@ const Feed = () => {
       </div>
 
       {/* Video container */}
-      <div
-        ref={containerRef}
-        className="h-full overflow-y-scroll snap-y snap-mandatory scrollbar-hide"
-      >
-        {isLoading ? (
-          <>
-            <FeedSkeleton />
-            <FeedSkeleton />
-          </>
-        ) : isEmpty ? (
-          <EmptyState />
-        ) : (
-          currentVideos.map((video, index) => (
-            <div
-              key={video.id}
-              ref={(el) => setVideoRef(el, index)}
-              data-index={index}
-              className="h-screen w-full snap-start snap-always"
-            >
-              <FeedVideoPlayer
-                video={video}
-                isActive={index === activeIndex}
-                isMuted={isMuted}
-                onToggleMute={() => setIsMuted(!isMuted)}
-              />
-            </div>
-          ))
-        )}
-      </div>
+      {activeTab === "stories" ? (
+        <FeedStoriesPanel />
+      ) : (
+        <div
+          ref={containerRef}
+          className="h-full overflow-y-scroll snap-y snap-mandatory scrollbar-hide"
+        >
+          {isLoading ? (
+            <>
+              <FeedSkeleton />
+              <FeedSkeleton />
+            </>
+          ) : isEmpty ? (
+            <EmptyState />
+          ) : (
+            currentVideos.map((video, index) => (
+              <div
+                key={video.id}
+                ref={(el) => setVideoRef(el, index)}
+                data-index={index}
+                className="h-screen w-full snap-start snap-always"
+              >
+                <FeedVideoPlayer
+                  video={video}
+                  isActive={index === activeIndex}
+                  isMuted={isMuted}
+                  onToggleMute={() => setIsMuted(!isMuted)}
+                />
+              </div>
+            ))
+          )}
+        </div>
+      )}
 
       {/* Bottom nav (mobile only) */}
       <BottomNav />
