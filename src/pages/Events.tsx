@@ -595,7 +595,7 @@ const Events = () => {
               <span style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 10, letterSpacing: "0.22em", color: "#E6F25A", textTransform: "uppercase" }}>
                 Confirm your seat
               </span>
-              <DialogTitle style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: 30, lineHeight: 0.95, color: "#F8F8F8", textTransform: "uppercase", letterSpacing: "0.01em", marginTop: 4 }}>
+              <DialogTitle style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: 30, lineHeight: 0.95, color: "#E6F25A", textTransform: "uppercase", letterSpacing: "0.01em", marginTop: 4 }}>
                 RSVP
               </DialogTitle>
             </DialogHeader>
