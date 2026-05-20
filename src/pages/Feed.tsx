@@ -8,7 +8,7 @@ import { Play } from "lucide-react";
 import Seo from "@/components/Seo";
 import loverballLogo from "@/assets/loverball-script-logo.png";
 
-type FeedTab = "foryou" | "following";
+type FeedTab = "foryou" | "following" | "stories";
 
 const FeedSkeleton = () => (
   <div className="h-screen w-full bg-black flex flex-col items-center justify-center gap-4 snap-start">
