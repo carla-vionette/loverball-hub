@@ -1,21 +1,19 @@
-import { useState, useEffect } from "react";
-import DesktopNav from "@/components/DesktopNav";
-import BottomNav from "@/components/BottomNav";
-import MobileHeader from "@/components/MobileHeader";
-import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Slider } from "@/components/ui/slider";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/hooks/useAuth";
-import { toast } from "sonner";
-import { Loader2, Bell, Eye, EyeOff, MapPin, Save, Smartphone } from "lucide-react";
-import { Label } from "@/components/ui/label";
-import { LA_PRO_TEAMS, LA_D1_COLLEGES } from "@/lib/laTeamsConfig";
-import { SPORTS_OPTIONS } from "@/lib/onboardingOptions";
+import { useState, useEffect } from"react";
+import BottomNav from"@/components/BottomNav";
+import { Button } from"@/components/ui/button";
+import { Switch } from"@/components/ui/switch";
+import { Input } from"@/components/ui/input";
+import { Badge } from"@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from"@/components/ui/tabs";
+import { Card, CardContent, CardHeader, CardTitle } from"@/components/ui/card";
+import { Slider } from"@/components/ui/slider";
+import { supabase } from"@/integrations/supabase/client";
+import { useAuth } from"@/hooks/useAuth";
+import { toast } from"sonner";
+import { Loader2, Bell, Eye, EyeOff, MapPin, Save, Smartphone } from"lucide-react";
+import { Label } from"@/components/ui/label";
+import { LA_PRO_TEAMS, LA_D1_COLLEGES } from"@/lib/laTeamsConfig";
+import { SPORTS_OPTIONS } from"@/lib/onboardingOptions";
 
 interface NotificationPref {
   id?: string;
@@ -36,18 +34,11 @@ interface FeedPrefs {
 }
 
 const ALL_TEAMS = [
-  ...LA_PRO_TEAMS.map(t => ({ key: t.shortName, name: t.name, league: t.league, type: "team" as const })),
-  ...LA_D1_COLLEGES.map(t => ({ key: t.shortName, name: t.name, league: t.conference, type: "team" as const })),
+  ...LA_PRO_TEAMS.map(t => ({ key: t.shortName, name: t.name, league: t.league, type:"team" as const })),
+  ...LA_D1_COLLEGES.map(t => ({ key: t.shortName, name: t.name, league: t.conference, type:"team" as const })),
 ];
 
-const EVENT_TYPES = [
-  "Watch Party",
-  "Mixer",
-  "Panel",
-  "Pickup Game",
-  "Tournament",
-  "Networking",
-  "Viewing Party",
+const EVENT_TYPES = ["Watch Party","Mixer","Panel","Pickup Game","Tournament","Networking","Viewing Party",
 ];
 
 const Settings = () => {
@@ -58,8 +49,8 @@ const Settings = () => {
   const [feedPrefs, setFeedPrefs] = useState<FeedPrefs>({
     hidden_sports: [],
     hidden_event_types: [],
-    home_venue: "",
-    home_neighborhood: "",
+    home_venue:"",
+    home_neighborhood:"",
     preferred_distance_miles: 25,
   });
   const [userTeams, setUserTeams] = useState<string[]>([]);
@@ -67,7 +58,7 @@ const Settings = () => {
     in_app: true,
     sms: true,
     email: true,
-    phone: "",
+    phone:"",
   });
 
   useEffect(() => {
@@ -100,8 +91,8 @@ const Settings = () => {
         setFeedPrefs({
           hidden_sports: fPrefs.hidden_sports || [],
           hidden_event_types: fPrefs.hidden_event_types || [],
-          home_venue: fPrefs.home_venue || "",
-          home_neighborhood: fPrefs.home_neighborhood || "",
+          home_venue: fPrefs.home_venue ||"",
+          home_neighborhood: fPrefs.home_neighborhood ||"",
           preferred_distance_miles: fPrefs.preferred_distance_miles || 25,
         });
       }
@@ -118,7 +109,7 @@ const Settings = () => {
         in_app: profile?.in_app_notifications_enabled ?? true,
         sms: profile?.sms_notifications_enabled ?? true,
         email: profile?.email_notifications_enabled ?? true,
-        phone: profile?.phone || "",
+        phone: profile?.phone ||"",
       });
     } catch (err) {
       // Preferences load error handled silently
@@ -185,7 +176,7 @@ const Settings = () => {
       if (prefsToUpsert.length > 0) {
         const { error: nError } = await supabase
           .from("notification_preferences")
-          .upsert(prefsToUpsert, { onConflict: "user_id,preference_type,preference_key" });
+          .upsert(prefsToUpsert, { onConflict:"user_id,preference_type,preference_key" });
         if (nError) throw nError;
       }
 
@@ -199,7 +190,7 @@ const Settings = () => {
           home_venue: feedPrefs.home_venue || null,
           home_neighborhood: feedPrefs.home_neighborhood || null,
           preferred_distance_miles: feedPrefs.preferred_distance_miles,
-        }, { onConflict: "user_id" });
+        }, { onConflict:"user_id" });
 
       if (fError) throw fError;
 
@@ -232,8 +223,6 @@ const Settings = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-background pb-20 md:pb-0 md:pl-64">
-        <MobileHeader />
-        <DesktopNav />
         <div className="flex items-center justify-center py-20">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
@@ -246,10 +235,7 @@ const Settings = () => {
 
   return (
     <div className="min-h-screen bg-background pb-20 md:pb-0 md:pl-64">
-      <MobileHeader />
-      <DesktopNav />
-
-      <main className="container mx-auto px-4 pt-20 md:pt-8 py-8 pb-20 md:pb-8 max-w-3xl">
+      <main className="container mx-auto px-4 py-8 pb-20 md:pb-8 max-w-3xl">
         <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-3xl font-bold text-foreground">Settings</h1>
@@ -352,28 +338,28 @@ const Settings = () => {
                             <span className="text-xs text-muted-foreground">Game reminders</span>
                             <Switch
                               checked={pref.game_reminders}
-                              onCheckedChange={(v) => updateNotifPref("team", team.key, "game_reminders", v)}
+                              onCheckedChange={(v) => updateNotifPref("team", team.key,"game_reminders", v)}
                             />
                           </div>
                           <div className="flex items-center justify-between">
                             <span className="text-xs text-muted-foreground">Event alerts</span>
                             <Switch
                               checked={pref.event_alerts}
-                              onCheckedChange={(v) => updateNotifPref("team", team.key, "event_alerts", v)}
+                              onCheckedChange={(v) => updateNotifPref("team", team.key,"event_alerts", v)}
                             />
                           </div>
                           <div className="flex items-center justify-between">
                             <span className="text-xs text-muted-foreground">News updates</span>
                             <Switch
                               checked={pref.news_updates}
-                              onCheckedChange={(v) => updateNotifPref("team", team.key, "news_updates", v)}
+                              onCheckedChange={(v) => updateNotifPref("team", team.key,"news_updates", v)}
                             />
                           </div>
                           <div className="flex items-center justify-between">
                             <span className="text-xs text-muted-foreground">SMS alerts</span>
                             <Switch
                               checked={pref.sms_enabled}
-                              onCheckedChange={(v) => updateNotifPref("team", team.key, "sms_enabled", v)}
+                              onCheckedChange={(v) => updateNotifPref("team", team.key,"sms_enabled", v)}
                             />
                           </div>
                         </div>
@@ -399,15 +385,15 @@ const Settings = () => {
                       return (
                         <Badge
                           key={team.key}
-                          variant={isActive ? "default" : "outline"}
+                          variant={isActive ?"default" :"outline"}
                           className="cursor-pointer rounded-full px-3 py-1.5 text-xs transition-colors"
                           onClick={() => {
                             if (isActive) {
-                              updateNotifPref("team", team.key, "game_reminders", false);
-                              updateNotifPref("team", team.key, "event_alerts", false);
+                              updateNotifPref("team", team.key,"game_reminders", false);
+                              updateNotifPref("team", team.key,"event_alerts", false);
                             } else {
-                              updateNotifPref("team", team.key, "game_reminders", true);
-                              updateNotifPref("team", team.key, "event_alerts", true);
+                              updateNotifPref("team", team.key,"game_reminders", true);
+                              updateNotifPref("team", team.key,"event_alerts", true);
                             }
                           }}
                         >
@@ -427,10 +413,10 @@ const Settings = () => {
               </CardHeader>
               <CardContent className="space-y-4">
                 {[
-                  { key: "new_messages", label: "New messages", desc: "DMs and group chat messages" },
-                  { key: "event_reminders", label: "Event reminders", desc: "Reminders for RSVP'd events" },
-                  { key: "connection_requests", label: "Connection requests", desc: "When someone wants to connect" },
-                  { key: "weekly_recap", label: "Weekly recap", desc: "Your week in sports summary" },
+                  { key:"new_messages", label:"New messages", desc:"DMs and group chat messages" },
+                  { key:"event_reminders", label:"Event reminders", desc:"Reminders for RSVP'd events" },
+                  { key:"connection_requests", label:"Connection requests", desc:"When someone wants to connect" },
+                  { key:"weekly_recap", label:"Weekly recap", desc:"Your week in sports summary" },
                 ].map(item => {
                   const pref = getOrCreatePref("general", item.key);
                   return (
@@ -441,7 +427,7 @@ const Settings = () => {
                       </div>
                       <Switch
                         checked={pref.event_alerts}
-                        onCheckedChange={(v) => updateNotifPref("general", item.key, "event_alerts", v)}
+                        onCheckedChange={(v) => updateNotifPref("general", item.key,"event_alerts", v)}
                       />
                     </div>
                   );
@@ -461,12 +447,12 @@ const Settings = () => {
               </CardHeader>
               <CardContent>
                 <div className="flex flex-wrap gap-2">
-                  {SPORTS_OPTIONS.filter(s => s !== "Other").map(sport => {
+                  {SPORTS_OPTIONS.filter(s => s !=="Other").map(sport => {
                     const isHidden = feedPrefs.hidden_sports.includes(sport);
                     return (
                       <Badge
                         key={sport}
-                        variant={isHidden ? "destructive" : "outline"}
+                        variant={isHidden ?"destructive" :"outline"}
                         className="cursor-pointer rounded-full px-3 py-1.5 text-xs transition-colors"
                         onClick={() => toggleHiddenSport(sport)}
                       >
@@ -491,7 +477,7 @@ const Settings = () => {
                     return (
                       <Badge
                         key={type}
-                        variant={isHidden ? "destructive" : "outline"}
+                        variant={isHidden ?"destructive" :"outline"}
                         className="cursor-pointer rounded-full px-3 py-1.5 text-xs transition-colors"
                         onClick={() => toggleHiddenEventType(type)}
                       >

@@ -1,14 +1,12 @@
-import { useState, useEffect, useMemo } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import BottomNav from "@/components/BottomNav";
-import DesktopNav from "@/components/DesktopNav";
-import MobileHeader from "@/components/MobileHeader";
-import Seo from "@/components/Seo";
-import DraftConfirmModal from "@/components/club/DraftConfirmModal";
-import { fetchProfileById } from "@/lib/profileApi";
-import { useAuth } from "@/hooks/useAuth";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
+import { useState, useEffect, useMemo } from"react";
+import { useParams, useNavigate } from"react-router-dom";
+import BottomNav from"@/components/BottomNav";
+import Seo from"@/components/Seo";
+import DraftConfirmModal from"@/components/club/DraftConfirmModal";
+import { fetchProfileById } from"@/lib/profileApi";
+import { useAuth } from"@/hooks/useAuth";
+import { supabase } from"@/integrations/supabase/client";
+import { toast } from"sonner";
 import {
   ChevronLeft,
   MoreHorizontal,
@@ -17,24 +15,24 @@ import {
   Calendar,
   Users,
   Loader2,
-} from "lucide-react";
+} from"lucide-react";
 
 const C = {
-  bg: "#0A0A0B",
-  card: "#141415",
-  cardElev: "#1A1A1C",
-  text: "#FAF5E9",
-  muted: "#9B9B9F",
-  faint: "#6B6B70",
-  raspberry: "#E8276F",
-  copper: "#D88C5A",
-  border: "rgba(255,255,255,0.08)",
-  borderStrong: "rgba(255,255,255,0.14)",
-  chip: "rgba(255,255,255,0.05)",
+  bg:"#0A0A0B",
+  card:"#141415",
+  cardElev:"#1A1A1C",
+  text:"#FAF5E9",
+  muted:"#9B9B9F",
+  faint:"#6B6B70",
+  raspberry:"#E8276F",
+  copper:"#D88C5A",
+  border:"rgba(255,255,255,0.08)",
+  borderStrong:"rgba(255,255,255,0.14)",
+  chip:"rgba(255,255,255,0.05)",
 };
 
 const DRAFT_LIMIT = 3;
-const DRAFTS_KEY = "loverball.club.drafts";
+const DRAFTS_KEY ="loverball.club.drafts";
 
 interface MemberProfileData {
   id: string;
@@ -89,9 +87,9 @@ function saveDrafted(ids: string[]) {
 }
 
 function fmtJoined(iso?: string | null): string {
-  if (!iso) return "Recently";
+  if (!iso) return"Recently";
   const d = new Date(iso);
-  return `Joined ${d.toLocaleString("en-US", { month: "short", year: "numeric" })}`;
+  return `Joined ${d.toLocaleString("en-US", { month:"short", year:"numeric" })}`;
 }
 
 const Eyebrow: React.FC<{ icon?: React.ReactNode; label: string }> = ({ icon, label }) => (
@@ -100,8 +98,8 @@ const Eyebrow: React.FC<{ icon?: React.ReactNode; label: string }> = ({ icon, la
     <span
       className="text-[9.5px] uppercase font-bold"
       style={{
-        fontFamily: "'Space Mono', monospace",
-        letterSpacing: "0.24em",
+        fontFamily:"'Space Mono', monospace",
+        letterSpacing:"0.24em",
         color: C.copper,
       }}
     >
@@ -119,9 +117,9 @@ const TeamChip: React.FC<{ children: React.ReactNode }> = ({ children }) => (
       border: `1px solid rgba(255,255,255,0.07)`,
       color: C.text,
       fontSize: 11,
-      padding: "6px 10px",
+      padding:"6px 10px",
       borderRadius: 6,
-      fontFamily: "Inter, sans-serif",
+      fontFamily:"Inter, sans-serif",
     }}
   >
     {children}
@@ -133,13 +131,13 @@ const TagChip: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <span
     className="uppercase font-semibold"
     style={{
-      background: "rgba(255,255,255,0.06)",
-      color: "#B8B8B8",
+      background:"rgba(255,255,255,0.06)",
+      color:"#B8B8B8",
       fontSize: 9,
-      padding: "4px 8px",
+      padding:"4px 8px",
       borderRadius: 4,
-      letterSpacing: "0.12em",
-      fontFamily: "Inter, sans-serif",
+      letterSpacing:"0.12em",
+      fontFamily:"Inter, sans-serif",
     }}
   >
     {children}
@@ -175,8 +173,7 @@ const MemberProfile = () => {
         setProfile(data as MemberProfileData);
         const { data: myRow } = await supabase
           .from("profiles")
-          .select(
-            "id,city,favorite_la_teams,favorite_teams_players,favorite_sports,looking_for_tags,other_interests"
+          .select("id,city,favorite_la_teams,favorite_teams_players,favorite_sports,looking_for_tags,other_interests"
           )
           .eq("id", user.id)
           .maybeSingle();
@@ -187,10 +184,10 @@ const MemberProfile = () => {
           .from("event_guests")
           .select("event_id, status, events!inner(id,title,event_date,venue_name,city,image_url,slug,visibility)")
           .eq("user_id", id)
-          .in("status", ["going", "approved", "confirmed"]);
+          .in("status", ["going","approved","confirmed"]);
         const upcoming = (guestRows || [])
           .map((r: any) => r.events)
-          .filter((e: any) => e && e.visibility === "public" && new Date(e.event_date) >= new Date(new Date().toDateString()))
+          .filter((e: any) => e && e.visibility ==="public" && new Date(e.event_date) >= new Date(new Date().toDateString()))
           .sort((a: any, b: any) => a.event_date.localeCompare(b.event_date))
           .slice(0, 6);
         setAttending(upcoming as any);
@@ -273,8 +270,8 @@ const MemberProfile = () => {
   }, [profile, match]);
 
   const opener = useMemo(() => {
-    if (!profile) return "";
-    const first = profile.name?.split(" ")[0] || "her";
+    if (!profile) return"";
+    const first = profile.name?.split("")[0] ||"her";
     if (match.sharedTeams[0])
       return `Saw you ride for ${match.sharedTeams[0]}. Watch party this weekend?`;
     if (match.sharedSports[0])
@@ -295,7 +292,7 @@ const MemberProfile = () => {
     const { error } = await supabase.from("friendships").insert({
       requester_id: user.id,
       addressee_id: id,
-      status: "pending",
+      status:"pending",
       mutual_teams: match.sharedTeams,
     });
     setPending(false);
@@ -329,8 +326,8 @@ const MemberProfile = () => {
         <div>
           <h2
             style={{
-              fontFamily: "'Playfair Display', Georgia, serif",
-              fontStyle: "italic",
+              fontFamily:"'Playfair Display', Georgia, serif",
+              fontStyle:"italic",
               fontSize: 28,
             }}
           >
@@ -340,11 +337,11 @@ const MemberProfile = () => {
             onClick={() => navigate("/club")}
             className="mt-4 rounded-full px-5 py-2.5 uppercase font-bold"
             style={{
-              fontFamily: "Inter, sans-serif",
+              fontFamily:"Inter, sans-serif",
               fontSize: 11,
-              letterSpacing: "0.16em",
+              letterSpacing:"0.16em",
               background: C.raspberry,
-              color: "#0A0A0B",
+              color:"#0A0A0B",
             }}
           >
             Back to Club
@@ -354,8 +351,8 @@ const MemberProfile = () => {
     );
   }
 
-  const first = profile.name?.split(" ")[0] || "Member";
-  const initial = profile.name?.split(" ").slice(-1)[0]?.[0] || "";
+  const first = profile.name?.split("")[0] ||"Member";
+  const initial = profile.name?.split("").slice(-1)[0]?.[0] ||"";
   const teamsRow = [
     ...(profile.favorite_la_teams || []),
     ...(profile.favorite_teams_players || []),
@@ -373,11 +370,9 @@ const MemberProfile = () => {
         description={profile.bio || `Member profile on Loverball.`}
         path={`/members/${id}`}
       />
-      <MobileHeader />
-      <DesktopNav />
       <BottomNav />
 
-      <main className="md:ml-16 xl:ml-64 pt-16 md:pt-2" style={{ paddingBottom: 120 }}>
+      <main className="" style={{ paddingBottom: 120 }}>
         <div className="max-w-[440px] md:max-w-2xl mx-auto px-5">
           {/* Top bar */}
           <div className="flex items-center justify-between py-3">
@@ -392,8 +387,8 @@ const MemberProfile = () => {
             <span
               className="text-[10px] uppercase font-bold"
               style={{
-                fontFamily: "'Space Mono', monospace",
-                letterSpacing: "0.32em",
+                fontFamily:"'Space Mono', monospace",
+                letterSpacing:"0.32em",
                 color: C.muted,
               }}
             >
@@ -404,18 +399,18 @@ const MemberProfile = () => {
               disabled={isDrafted || pending}
               className="rounded-full uppercase font-bold transition-opacity active:opacity-80 disabled:opacity-60"
               style={{
-                fontFamily: "'Space Mono', monospace",
+                fontFamily:"'Space Mono', monospace",
                 fontSize: 10,
-                letterSpacing: "0.18em",
-                padding: "7px 14px",
-                background: isDrafted ? "transparent" : C.raspberry,
-                color: isDrafted ? C.muted : "#0A0A0B",
-                border: isDrafted ? `1px solid ${C.borderStrong}` : "none",
-                boxShadow: isDrafted ? "none" : "0 8px 20px -8px rgba(232,39,111,0.55)",
+                letterSpacing:"0.18em",
+                padding:"7px 14px",
+                background: isDrafted ?"transparent" : C.raspberry,
+                color: isDrafted ? C.muted :"#0A0A0B",
+                border: isDrafted ? `1px solid ${C.borderStrong}` :"none",
+                boxShadow: isDrafted ?"none" :"0 8px 20px -8px rgba(232,39,111,0.55)",
               }}
               aria-label="Draft to your XI"
             >
-              {isDrafted ? "✓ Drafted" : pending ? "…" : "+ Draft"}
+              {isDrafted ?"✓ Drafted" : pending ?"…" :"+ Draft"}
             </button>
           </div>
 
@@ -425,7 +420,7 @@ const MemberProfile = () => {
             style={{
               borderRadius: 16,
               height: 280,
-              background: "#0F0F10",
+              background:"#0F0F10",
               border: `1px solid ${C.border}`,
             }}
           >
@@ -434,17 +429,16 @@ const MemberProfile = () => {
                 src={profile.profile_photo_url}
                 alt={profile.name}
                 className="w-full h-full object-cover"
-                style={{ filter: "saturate(0.92) contrast(1.05)" }}
+                style={{ filter:"saturate(0.92) contrast(1.05)" }}
               />
             ) : (
               <div
                 className="w-full h-full flex items-center justify-center"
                 style={{
-                  background:
-                    "linear-gradient(140deg, rgba(232,39,111,0.18), rgba(216,140,90,0.14))",
-                  fontFamily: "'Anton', sans-serif",
+                  background:"linear-gradient(140deg, rgba(232,39,111,0.18), rgba(216,140,90,0.14))",
+                  fontFamily:"'Anton', sans-serif",
                   fontSize: 140,
-                  color: "rgba(250,245,233,0.35)",
+                  color:"rgba(250,245,233,0.35)",
                 }}
               >
                 {first[0]}
@@ -456,17 +450,17 @@ const MemberProfile = () => {
               <div
                 className="absolute top-3 right-3 flex items-center gap-1.5 px-2.5 py-1.5 rounded-full"
                 style={{
-                  background: "rgba(10,10,11,0.55)",
-                  border: "1px solid rgba(250,245,233,0.18)",
-                  backdropFilter: "blur(14px)",
+                  background:"rgba(10,10,11,0.55)",
+                  border:"1px solid rgba(250,245,233,0.18)",
+                  backdropFilter:"blur(14px)",
                 }}
               >
                 <Sparkles size={11} color={C.raspberry} />
                 <span
                   className="text-[10px] uppercase font-bold"
                   style={{
-                    fontFamily: "Inter, sans-serif",
-                    letterSpacing: "0.14em",
+                    fontFamily:"Inter, sans-serif",
+                    letterSpacing:"0.14em",
                     color: C.text,
                   }}
                 >
@@ -479,9 +473,8 @@ const MemberProfile = () => {
             <div
               className="absolute inset-x-0 bottom-0 pointer-events-none"
               style={{
-                height: "60%",
-                background:
-                  "linear-gradient(to top, rgba(10,10,11,0.96) 0%, rgba(10,10,11,0.55) 50%, transparent 100%)",
+                height:"60%",
+                background:"linear-gradient(to top, rgba(10,10,11,0.96) 0%, rgba(10,10,11,0.55) 50%, transparent 100%)",
               }}
             />
 
@@ -489,13 +482,13 @@ const MemberProfile = () => {
             <div className="absolute left-4 right-4 bottom-4">
               <h1
                 style={{
-                  fontFamily: "'Playfair Display', Georgia, serif",
-                  fontStyle: "italic",
+                  fontFamily:"'Playfair Display', Georgia, serif",
+                  fontStyle:"italic",
                   fontSize: 34,
                   lineHeight: 1.0,
                   color: C.text,
-                  letterSpacing: "-0.015em",
-                  textShadow: "0 2px 20px rgba(0,0,0,0.5)",
+                  letterSpacing:"-0.015em",
+                  textShadow:"0 2px 20px rgba(0,0,0,0.5)",
                 }}
               >
                 {first} {initial && `${initial}.`}
@@ -505,21 +498,21 @@ const MemberProfile = () => {
                   <span
                     className="text-[10px] uppercase font-bold"
                     style={{
-                      fontFamily: "'Space Mono', monospace",
+                      fontFamily:"'Space Mono', monospace",
                       color: C.raspberry,
-                      letterSpacing: "0.2em",
+                      letterSpacing:"0.2em",
                     }}
                   >
                     {teamsRow[0]}
-                    {profile.city ? ` · ${profile.city.toUpperCase()}` : ""}
+                    {profile.city ? ` · ${profile.city.toUpperCase()}` :""}
                   </span>
                 )}
                 <span
                   className="text-[10px]"
                   style={{
-                    fontFamily: "'Space Mono', monospace",
+                    fontFamily:"'Space Mono', monospace",
                     color: C.faint,
-                    letterSpacing: "0.16em",
+                    letterSpacing:"0.16em",
                   }}
                 >
                   {fmtJoined(profile.created_at)}
@@ -533,8 +526,8 @@ const MemberProfile = () => {
             <section
               className="rounded-2xl p-4 mb-5"
               style={{
-                background: "rgba(232,39,111,0.06)",
-                border: "1px solid rgba(232,39,111,0.22)",
+                background:"rgba(232,39,111,0.06)",
+                border:"1px solid rgba(232,39,111,0.22)",
               }}
             >
               <Eyebrow
@@ -562,7 +555,7 @@ const MemberProfile = () => {
               <Eyebrow label="Vibe" />
               <p
                 style={{
-                  fontFamily: "'Space Mono', ui-monospace, monospace",
+                  fontFamily:"'Space Mono', ui-monospace, monospace",
                   fontSize: 13,
                   lineHeight: 1.65,
                   color: C.text,
@@ -621,7 +614,7 @@ const MemberProfile = () => {
                   >
                     <Users size={16} color={C.raspberry} />
                     <span style={{ fontSize: 12.5, color: C.text }}>
-                      Ride for {match.sharedTeams.slice(0, 2).join(" & ")}
+                      Ride for {match.sharedTeams.slice(0, 2).join(" &")}
                     </span>
                   </div>
                 )}
@@ -636,7 +629,7 @@ const MemberProfile = () => {
               <div className="flex flex-col gap-2">
                 {attending.map((e) => {
                   const d = new Date(e.event_date);
-                  const dateLbl = d.toLocaleString("en-US", { month: "short", day: "numeric" });
+                  const dateLbl = d.toLocaleString("en-US", { month:"short", day:"numeric" });
                   return (
                     <button
                       key={e.id}
@@ -654,10 +647,10 @@ const MemberProfile = () => {
                       >
                         {!e.image_url && (
                           <>
-                            <span style={{ fontFamily: "'Space Mono', monospace", fontSize: 9, letterSpacing: "0.18em", color: C.copper }}>
-                              {d.toLocaleString("en-US", { month: "short" }).toUpperCase()}
+                            <span style={{ fontFamily:"'Space Mono', monospace", fontSize: 9, letterSpacing:"0.18em", color: C.copper }}>
+                              {d.toLocaleString("en-US", { month:"short" }).toUpperCase()}
                             </span>
-                            <span style={{ fontFamily: "'Playfair Display', Georgia, serif", fontStyle: "italic", fontSize: 20, lineHeight: 1, color: C.text }}>
+                            <span style={{ fontFamily:"'Playfair Display', Georgia, serif", fontStyle:"italic", fontSize: 20, lineHeight: 1, color: C.text }}>
                               {d.getDate()}
                             </span>
                           </>
@@ -666,15 +659,15 @@ const MemberProfile = () => {
                       <div className="flex-1 min-w-0">
                         <div
                           className="truncate"
-                          style={{ fontFamily: "'Playfair Display', Georgia, serif", fontStyle: "italic", fontSize: 15, color: C.text, lineHeight: 1.15 }}
+                          style={{ fontFamily:"'Playfair Display', Georgia, serif", fontStyle:"italic", fontSize: 15, color: C.text, lineHeight: 1.15 }}
                         >
                           {e.title}
                         </div>
                         <div
                           className="truncate mt-1"
-                          style={{ fontFamily: "'Space Mono', monospace", fontSize: 10, letterSpacing: "0.12em", color: C.muted, textTransform: "uppercase" }}
+                          style={{ fontFamily:"'Space Mono', monospace", fontSize: 10, letterSpacing:"0.12em", color: C.muted, textTransform:"uppercase" }}
                         >
-                          {dateLbl}{e.venue_name ? ` · ${e.venue_name}` : e.city ? ` · ${e.city}` : ""}
+                          {dateLbl}{e.venue_name ? ` · ${e.venue_name}` : e.city ? ` · ${e.city}` :""}
                         </div>
                       </div>
                     </button>
@@ -696,7 +689,7 @@ const MemberProfile = () => {
             >
               <p
                 className="text-[12.5px] leading-relaxed"
-                style={{ color: C.muted, fontStyle: "italic", fontFamily: "'Playfair Display', Georgia, serif" }}
+                style={{ color: C.muted, fontStyle:"italic", fontFamily:"'Playfair Display', Georgia, serif" }}
               >
                 Activity will surface here as {first} shows up around the league.
               </p>
@@ -720,32 +713,31 @@ const MemberProfile = () => {
       {/* Sticky bottom CTA */}
       <div
         className="fixed inset-x-0 bottom-0 md:left-64 z-40"
-        style={{ pointerEvents: "none" }}
+        style={{ pointerEvents:"none" }}
       >
         <div
           className="h-16"
           style={{
-            background:
-              "linear-gradient(to top, rgba(10,10,11,1) 30%, rgba(10,10,11,0) 100%)",
+            background:"linear-gradient(to top, rgba(10,10,11,1) 30%, rgba(10,10,11,0) 100%)",
           }}
         />
         <div
           className="px-5 pt-2 pb-5"
-          style={{ background: C.bg, pointerEvents: "auto" }}
+          style={{ background: C.bg, pointerEvents:"auto" }}
         >
           <div className="max-w-[440px] md:max-w-2xl mx-auto flex gap-2.5">
             <button
               onClick={() => navigate(-1)}
               className="rounded-full uppercase font-bold transition-opacity active:opacity-80"
               style={{
-                fontFamily: "Inter, sans-serif",
+                fontFamily:"Inter, sans-serif",
                 fontSize: 11,
-                letterSpacing: "0.16em",
-                padding: "14px 18px",
-                background: "transparent",
+                letterSpacing:"0.16em",
+                padding:"14px 18px",
+                background:"transparent",
                 color: C.text,
                 border: `1px solid ${C.borderStrong}`,
-                flex: "0 0 33%",
+                flex:"0 0 33%",
               }}
             >
               Pass
@@ -755,20 +747,20 @@ const MemberProfile = () => {
               disabled={isDrafted || pending}
               className="flex-1 rounded-full uppercase font-bold transition-opacity active:opacity-80"
               style={{
-                fontFamily: "Inter, sans-serif",
+                fontFamily:"Inter, sans-serif",
                 fontSize: 12,
-                letterSpacing: "0.18em",
-                padding: "14px 18px",
-                background: isDrafted ? "transparent" : C.raspberry,
-                color: isDrafted ? C.muted : "#0A0A0B",
-                border: isDrafted ? `1px solid ${C.borderStrong}` : "none",
+                letterSpacing:"0.18em",
+                padding:"14px 18px",
+                background: isDrafted ?"transparent" : C.raspberry,
+                color: isDrafted ? C.muted :"#0A0A0B",
+                border: isDrafted ? `1px solid ${C.borderStrong}` :"none",
                 opacity: pending ? 0.6 : 1,
                 boxShadow: isDrafted
-                  ? "none"
-                  : "0 16px 36px -12px rgba(232,39,111,0.6)",
+                  ?"none"
+                  :"0 16px 36px -12px rgba(232,39,111,0.6)",
               }}
             >
-              {isDrafted ? "✓ Drafted" : pending ? "…" : "+ Draft to your XI"}
+              {isDrafted ?"✓ Drafted" : pending ?"…" :"+ Draft to your XI"}
             </button>
           </div>
         </div>

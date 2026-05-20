@@ -1,37 +1,35 @@
-import { useState, useEffect, useCallback } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import BottomNav from "@/components/BottomNav";
-import DesktopNav from "@/components/DesktopNav";
-import MobileHeader from "@/components/MobileHeader";
-import { Card, CardContent } from "@/components/ui/card";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Badge } from "@/components/ui/badge";
-import { motion } from "framer-motion";
-import { Share2, RefreshCw, Loader2, Calendar } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect, useCallback } from"react";
+import { supabase } from"@/integrations/supabase/client";
+import BottomNav from"@/components/BottomNav";
+import { Card, CardContent } from"@/components/ui/card";
+import { Tabs, TabsList, TabsTrigger } from"@/components/ui/tabs";
+import { Skeleton } from"@/components/ui/skeleton";
+import { Badge } from"@/components/ui/badge";
+import { motion } from"framer-motion";
+import { Share2, RefreshCw, Loader2, Calendar } from"lucide-react";
+import { Button } from"@/components/ui/button";
+import { useNavigate } from"react-router-dom";
 
 const SIGNS: Record<string, { symbol: string; element: string; dates: string }> = {
-  Aries: { symbol: "♈", element: "fire", dates: "Mar 21 – Apr 19" },
-  Taurus: { symbol: "♉", element: "earth", dates: "Apr 20 – May 20" },
-  Gemini: { symbol: "♊", element: "air", dates: "May 21 – Jun 20" },
-  Cancer: { symbol: "♋", element: "water", dates: "Jun 21 – Jul 22" },
-  Leo: { symbol: "♌", element: "fire", dates: "Jul 23 – Aug 22" },
-  Virgo: { symbol: "♍", element: "earth", dates: "Aug 23 – Sep 22" },
-  Libra: { symbol: "♎", element: "air", dates: "Sep 23 – Oct 22" },
-  Scorpio: { symbol: "♏", element: "water", dates: "Oct 23 – Nov 21" },
-  Sagittarius: { symbol: "♐", element: "fire", dates: "Nov 22 – Dec 21" },
-  Capricorn: { symbol: "♑", element: "earth", dates: "Dec 22 – Jan 19" },
-  Aquarius: { symbol: "♒", element: "air", dates: "Jan 20 – Feb 18" },
-  Pisces: { symbol: "♓", element: "water", dates: "Feb 19 – Mar 20" },
+  Aries: { symbol:"♈", element:"fire", dates:"Mar 21 – Apr 19" },
+  Taurus: { symbol:"♉", element:"earth", dates:"Apr 20 – May 20" },
+  Gemini: { symbol:"♊", element:"air", dates:"May 21 – Jun 20" },
+  Cancer: { symbol:"♋", element:"water", dates:"Jun 21 – Jul 22" },
+  Leo: { symbol:"♌", element:"fire", dates:"Jul 23 – Aug 22" },
+  Virgo: { symbol:"♍", element:"earth", dates:"Aug 23 – Sep 22" },
+  Libra: { symbol:"♎", element:"air", dates:"Sep 23 – Oct 22" },
+  Scorpio: { symbol:"♏", element:"water", dates:"Oct 23 – Nov 21" },
+  Sagittarius: { symbol:"♐", element:"fire", dates:"Nov 22 – Dec 21" },
+  Capricorn: { symbol:"♑", element:"earth", dates:"Dec 22 – Jan 19" },
+  Aquarius: { symbol:"♒", element:"air", dates:"Jan 20 – Feb 18" },
+  Pisces: { symbol:"♓", element:"water", dates:"Feb 19 – Mar 20" },
 };
 
 const ELEMENT_BORDER: Record<string, string> = {
-  fire: "border-accent/30",
-  earth: "border-emerald-500/30",
-  air: "border-primary/30",
-  water: "border-blue-500/30",
+  fire:"border-accent/30",
+  earth:"border-emerald-500/30",
+  air:"border-primary/30",
+  water:"border-blue-500/30",
 };
 
 function getZodiacFromBirthday(birthday: string | null): string | null {
@@ -46,17 +44,17 @@ function getZodiacFromBirthday(birthday: string | null): string | null {
     ["Libra", 9, 23, 10, 22], ["Scorpio", 10, 23, 11, 21], ["Sagittarius", 11, 22, 12, 21],
   ];
   for (const [name, sm, sd, em, ed] of ranges) {
-    if (name === "Capricorn") {
+    if (name ==="Capricorn") {
       if ((m === 12 && d >= 22) || (m === 1 && d <= 19)) return name;
     } else if ((m === sm && d >= sd) || (m === em && d <= ed)) return name;
   }
-  return "Capricorn";
+  return"Capricorn";
 }
 
 const sessionCache = new Map<string, { data: any; ts: number }>();
 const SESSION_TTL = 3_600_000;
 
-type Period = "daily" | "weekly" | "monthly";
+type Period ="daily" |"weekly" |"monthly";
 
 const Horoscope = () => {
   const navigate = useNavigate();
@@ -142,11 +140,9 @@ const Horoscope = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <MobileHeader />
-      <DesktopNav />
       <BottomNav />
 
-      <main className="md:ml-16 xl:ml-64 pb-20 md:pb-8 pt-20 md:pt-8 px-4">
+      <main className="pb-20 md:pb-8 px-4">
         <div className="max-w-2xl mx-auto space-y-6">
 
           {/* Header */}
@@ -231,7 +227,7 @@ const Horoscope = () => {
                   ) : horoscope ? (
                     <>
                       <p className="text-xs text-muted-foreground capitalize">
-                        {period} forecast{horoscopeDate ? ` · ${horoscopeDate}` : ""}
+                        {period} forecast{horoscopeDate ? ` · ${horoscopeDate}` :""}
                       </p>
                       <p className="text-foreground leading-relaxed text-sm">{horoscope}</p>
                       <Button variant="ghost" size="sm" onClick={handleShare} className="gap-1.5 text-xs text-muted-foreground px-0">

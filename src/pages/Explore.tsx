@@ -1,16 +1,14 @@
-import React, { useState, useRef, useCallback, useEffect } from "react";
-import { Search, Users, CheckCircle, Play, ChevronLeft, ChevronRight, Clock, Calendar, MapPin, Newspaper, ExternalLink, Tv, Mic } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { Card } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import BottomNav from "@/components/BottomNav";
-import DesktopNav from "@/components/DesktopNav";
-import MobileHeader from "@/components/MobileHeader";
-import TeamFollowSection from "@/components/TeamFollowSection";
-import { supabase } from "@/integrations/supabase/client";
-import { format, formatDistanceToNow } from "date-fns";
-import { getSportEmoji, getSportColor, getCategoryEmoji, generateSummary } from "@/services/newsArticleService";
+import React, { useState, useRef, useCallback, useEffect } from"react";
+import { Search, Users, CheckCircle, Play, ChevronLeft, ChevronRight, Clock, Calendar, MapPin, Newspaper, ExternalLink, Tv, Mic } from"lucide-react";
+import { Input } from"@/components/ui/input";
+import { Badge } from"@/components/ui/badge";
+import { Card } from"@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from"@/components/ui/avatar";
+import BottomNav from"@/components/BottomNav";
+import TeamFollowSection from"@/components/TeamFollowSection";
+import { supabase } from"@/integrations/supabase/client";
+import { format, formatDistanceToNow } from"date-fns";
+import { getSportEmoji, getSportColor, getCategoryEmoji, generateSummary } from"@/services/newsArticleService";
 
 const formatFollowers = (n: number) => {
   if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
@@ -32,10 +30,10 @@ interface DbChannel {
   follower_count: number;
 }
 
-const CHANNEL_CATEGORIES = ["All", "Teams", "Creators", "Official"];
+const CHANNEL_CATEGORIES = ["All","Teams","Creators","Official"];
 
 // ─── Scroll Row ───
-const ScrollRow = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => {
+const ScrollRow = ({ children, className ="" }: { children: React.ReactNode; className?: string }) => {
   const ref = useRef<HTMLDivElement>(null);
   const [canLeft, setCanLeft] = useState(false);
   const [canRight, setCanRight] = useState(true);
@@ -57,8 +55,8 @@ const ScrollRow = ({ children, className = "" }: { children: React.ReactNode; cl
     return () => { el.removeEventListener("scroll", check); ro.disconnect(); };
   }, [check]);
 
-  const scroll = (dir: "left" | "right") => {
-    ref.current?.scrollBy({ left: dir === "left" ? -280 : 280, behavior: "smooth" });
+  const scroll = (dir:"left" |"right") => {
+    ref.current?.scrollBy({ left: dir ==="left" ? -280 : 280, behavior:"smooth" });
   };
 
   return (
@@ -86,21 +84,21 @@ const FollowButton = ({ compact = false }: { compact?: boolean }) => {
   return (
     <button
       onClick={(e) => { e.preventDefault(); e.stopPropagation(); setFollowing(!following); }}
-      className={`rounded-full text-xs font-semibold transition-all duration-200 ${compact ? "px-3 py-1" : "px-4 py-1.5"} ${
+      className={`rounded-full text-xs font-semibold transition-all duration-200 ${compact ?"px-3 py-1" :"px-4 py-1.5"} ${
         following
-          ? "bg-secondary text-muted-foreground border border-border"
-          : "bg-accent text-accent-foreground hover:bg-accent/90"
+          ?"bg-secondary text-muted-foreground border border-border"
+          :"bg-accent text-accent-foreground hover:bg-accent/90"
       }`}
     >
-      {following ? "Following" : "Follow"}
+      {following ?"Following" :"Follow"}
     </button>
   );
 };
 
 // ─── Channel Card ───
 const ChannelCard = ({ channel }: { channel: DbChannel }) => {
-  const initials = channel.channel_name.split(" ").map(w => w[0]).join("").slice(0, 2);
-  const typeColor = channel.channel_type === "team" ? "bg-accent" : channel.channel_type === "creator" ? "bg-primary" : "bg-primary";
+  const initials = channel.channel_name.split("").map(w => w[0]).join("").slice(0, 2);
+  const typeColor = channel.channel_type ==="team" ?"bg-accent" : channel.channel_type ==="creator" ?"bg-primary" :"bg-primary";
 
   return (
     <a href={`/channel/${channel.slug}`} className="block">
@@ -142,7 +140,7 @@ const ChannelCard = ({ channel }: { channel: DbChannel }) => {
 
 // ─── Compact Creator Card ───
 const CreatorCard = ({ channel }: { channel: DbChannel }) => {
-  const initials = channel.channel_name.split(" ").map(w => w[0]).join("").slice(0, 2);
+  const initials = channel.channel_name.split("").map(w => w[0]).join("").slice(0, 2);
 
   return (
     <a href={`/channel/${channel.slug}`} className="flex-shrink-0 w-[160px] block">
@@ -184,23 +182,23 @@ interface FeedArticle {
 }
 
 const FALLBACK_GRADIENTS: Record<string, string> = {
-  basketball: "from-orange-500 to-amber-600",
-  soccer: "from-emerald-500 to-green-600",
-  football: "from-amber-800 to-yellow-700",
-  tennis: "from-lime-500 to-green-500",
-  hockey: "from-blue-500 to-cyan-600",
-  default: "from-accent to-primary",
+  basketball:"from-orange-500 to-amber-600",
+  soccer:"from-emerald-500 to-green-600",
+  football:"from-amber-800 to-yellow-700",
+  tennis:"from-lime-500 to-green-500",
+  hockey:"from-blue-500 to-cyan-600",
+  default:"from-accent to-primary",
 };
 
 const NewsArticleCard = ({ article }: { article: FeedArticle }) => {
-  const primarySport = article.sport_tags?.[0] || "";
+  const primarySport = article.sport_tags?.[0] ||"";
   const emoji = getSportEmoji(primarySport);
   const catEmoji = getCategoryEmoji(article.category, primarySport);
   const sportColor = getSportColor(primarySport);
   const gradient = FALLBACK_GRADIENTS[primarySport.toLowerCase()] || FALLBACK_GRADIENTS.default;
   const summary = article.summary || generateSummary(article.title, article.source);
   const timeAgo = (() => {
-    try { return formatDistanceToNow(new Date(article.created_at), { addSuffix: true }); } catch { return ""; }
+    try { return formatDistanceToNow(new Date(article.created_at), { addSuffix: true }); } catch { return""; }
   })();
 
   return (
@@ -212,16 +210,16 @@ const NewsArticleCard = ({ article }: { article: FeedArticle }) => {
           ) : (
             <div className={`w-full h-full bg-gradient-to-br ${gradient} flex flex-col items-center justify-center gap-1.5 p-3`}>
               <span className="text-4xl drop-shadow-lg">{emoji}</span>
-              <span className="text-background/90 text-[9px] font-bold uppercase tracking-widest text-center line-clamp-1">{primarySport || article.category || "Sports"}</span>
+              <span className="text-background/90 text-[9px] font-bold uppercase tracking-widest text-center line-clamp-1">{primarySport || article.category ||"Sports"}</span>
             </div>
           )}
           {primarySport && (
-            <div className="absolute top-2 left-2 w-7 h-7 rounded-full flex items-center justify-center text-xs shadow-md" style={{ backgroundColor: sportColor + "E6" }}>{emoji}</div>
+            <div className="absolute top-2 left-2 w-7 h-7 rounded-full flex items-center justify-center text-xs shadow-md" style={{ backgroundColor: sportColor +"E6" }}>{emoji}</div>
           )}
         </div>
         <div className="p-3 flex flex-col flex-1">
           <div className="flex items-center gap-2 mb-1.5">
-            <Badge variant="secondary" className="text-[10px] font-semibold px-2 py-0 rounded-full capitalize">{catEmoji} {primarySport || article.category || "Sports"}</Badge>
+            <Badge variant="secondary" className="text-[10px] font-semibold px-2 py-0 rounded-full capitalize">{catEmoji} {primarySport || article.category ||"Sports"}</Badge>
             <span className="text-[10px] text-muted-foreground flex items-center gap-0.5"><Clock className="w-2.5 h-2.5" /> {timeAgo}</span>
           </div>
           <h3 className="font-semibold text-xs text-foreground leading-snug line-clamp-2 group-hover:text-accent transition-colors mb-1">{article.title}</h3>
@@ -258,13 +256,13 @@ const Explore = () => {
         const { data, error } = await supabase
           .from("creator_channels")
           .select("id, channel_name, slug, description, channel_type, league, sport_focus, avatar_url, verified, follower_count")
-          .eq("status", "active")
+          .eq("status","active")
           .order("channel_name");
         if (error) throw error;
         const channels = (data || []) as DbChannel[];
         setAllChannels(channels);
-        setTeamChannels(channels.filter(c => c.channel_type === "team"));
-        setCreatorChannels(channels.filter(c => c.channel_type === "creator"));
+        setTeamChannels(channels.filter(c => c.channel_type ==="team"));
+        setCreatorChannels(channels.filter(c => c.channel_type ==="creator"));
       } catch {
         // silently handle
       } finally {
@@ -296,7 +294,7 @@ const Explore = () => {
     }
     const timer = setTimeout(async () => {
       const [eventsRes, usersRes] = await Promise.all([
-        supabase.from("events").select("id, title, event_date, event_time, city, event_type, sport_tags, image_url").eq("status", "published").or(`title.ilike.%${search}%,city.ilike.%${search}%`).limit(5),
+        supabase.from("events").select("id, title, event_date, event_time, city, event_type, sport_tags, image_url").eq("status","published").or(`title.ilike.%${search}%,city.ilike.%${search}%`).limit(5),
         supabase.from("profiles").select("id, name, profile_photo_url, city").ilike("name", `%${search}%`).limit(5),
       ]);
       setSearchEvents(eventsRes.data || []);
@@ -308,13 +306,13 @@ const Explore = () => {
   // Filter channels by search and category
   const filteredChannels = allChannels.filter(ch => {
     const matchFilter =
-      channelFilter === "All" ||
-      (channelFilter === "Teams" && ch.channel_type === "team") ||
-      (channelFilter === "Creators" && ch.channel_type === "creator") ||
-      (channelFilter === "Official" && ch.channel_type === "loverball_official");
+      channelFilter ==="All" ||
+      (channelFilter ==="Teams" && ch.channel_type ==="team") ||
+      (channelFilter ==="Creators" && ch.channel_type ==="creator") ||
+      (channelFilter ==="Official" && ch.channel_type ==="loverball_official");
     const matchSearch = !search || ch.channel_name.toLowerCase().includes(search.toLowerCase()) ||
-      (ch.slug || "").toLowerCase().includes(search.toLowerCase()) ||
-      (ch.description || "").toLowerCase().includes(search.toLowerCase());
+      (ch.slug ||"").toLowerCase().includes(search.toLowerCase()) ||
+      (ch.description ||"").toLowerCase().includes(search.toLowerCase());
     return matchFilter && matchSearch;
   });
 
@@ -323,11 +321,9 @@ const Explore = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <MobileHeader />
-      <DesktopNav />
       <BottomNav />
 
-      <main className="md:ml-16 xl:ml-64 pt-16 md:pt-0 pb-24 md:pb-0">
+      <main className="pb-24 md:pb-0">
         <div className="max-w-3xl mx-auto px-5 md:px-10 py-6">
           <h1 className="font-display text-2xl md:text-[28px] font-bold uppercase tracking-tight mb-5">Discover</h1>
 
@@ -345,7 +341,7 @@ const Explore = () => {
                 key={cat}
                 onClick={() => setChannelFilter(cat)}
                 className={`px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-200 ${
-                  channelFilter === cat ? "bg-primary text-primary-foreground shadow-sm scale-105" : "border border-foreground/20 text-foreground hover:bg-secondary"
+                  channelFilter === cat ?"bg-primary text-primary-foreground shadow-sm scale-105" :"border border-foreground/20 text-foreground hover:bg-secondary"
                 }`}
               >
                 {cat}
@@ -372,7 +368,7 @@ const Explore = () => {
                             <div className="flex-1 min-w-0">
                               <p className="font-semibold text-sm text-foreground truncate">{ev.title}</p>
                               <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                                <span>{format(new Date(ev.event_date), "MMM d")}</span>
+                                <span>{format(new Date(ev.event_date),"MMM d")}</span>
                                 {ev.city && <span className="flex items-center gap-0.5"><MapPin className="w-3 h-3" />{ev.city}</span>}
                               </div>
                             </div>
@@ -407,10 +403,10 @@ const Explore = () => {
           )}
 
           {/* Channel results when filtering */}
-          {(isSearching || channelFilter !== "All") && (
+          {(isSearching || channelFilter !=="All") && (
             <section className="mb-8">
               <h2 className="font-display text-lg font-semibold uppercase tracking-wide mb-3">
-                {channelFilter === "All" ? "Channels" : channelFilter} ({filteredChannels.length})
+                {channelFilter ==="All" ?"Channels" : channelFilter} ({filteredChannels.length})
               </h2>
               {filteredChannels.length === 0 ? (
                 <div className="text-center py-12 text-muted-foreground">
@@ -426,7 +422,7 @@ const Explore = () => {
           )}
 
           {/* Default browse view */}
-          {!isSearching && channelFilter === "All" && (
+          {!isSearching && channelFilter ==="All" && (
             <>
               {/* Teams Section */}
               <TeamFollowSection />

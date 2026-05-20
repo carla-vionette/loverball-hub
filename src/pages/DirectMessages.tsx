@@ -1,15 +1,13 @@
-import React, { useState, useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/hooks/useAuth";
-import DesktopNav from "@/components/DesktopNav";
-import BottomNav from "@/components/BottomNav";
-import MobileHeader from "@/components/MobileHeader";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Loader2, MessageCircle, Send, ArrowLeft } from "lucide-react";
-import PageSkeleton from "@/components/PageSkeleton";
-import { cn } from "@/lib/utils";
+import React, { useState, useEffect, useRef } from"react";
+import { Link } from"react-router-dom";
+import { supabase } from"@/integrations/supabase/client";
+import { useAuth } from"@/hooks/useAuth";
+import BottomNav from"@/components/BottomNav";
+import { Button } from"@/components/ui/button";
+import { Input } from"@/components/ui/input";
+import { Loader2, MessageCircle, Send, ArrowLeft } from"lucide-react";
+import PageSkeleton from"@/components/PageSkeleton";
+import { cn } from"@/lib/utils";
 
 interface MatchWithProfile {
   matchId: string;
@@ -52,7 +50,7 @@ const DirectMessages = () => {
 
       const channel = supabase
         .channel(`chat-${activeChat.chatId}`)
-        .on("postgres_changes", { event: "INSERT", schema: "public", table: "messages", filter: `chat_id=eq.${activeChat.chatId}` }, (payload) => {
+        .on("postgres_changes", { event:"INSERT", schema:"public", table:"messages", filter: `chat_id=eq.${activeChat.chatId}` }, (payload) => {
           setMessages(prev => [...prev, payload.new as ChatMessage]);
         })
         .subscribe();
@@ -62,7 +60,7 @@ const DirectMessages = () => {
   }, [activeChat?.chatId]);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    messagesEndRef.current?.scrollIntoView({ behavior:"smooth" });
   }, [messages]);
 
   const fetchConversations = async () => {
@@ -71,7 +69,7 @@ const DirectMessages = () => {
       const { data: matches, error: matchErr } = await supabase
         .from("matches").select("id, user_a_id, user_b_id, status")
         .or(`user_a_id.eq.${user.id},user_b_id.eq.${user.id}`)
-        .eq("status", "active");
+        .eq("status","active");
 
       if (matchErr) throw matchErr;
       if (!matches || matches.length === 0) { setConversations([]); setLoading(false); return; }
@@ -100,7 +98,7 @@ const DirectMessages = () => {
 
         msgs?.forEach((msg) => {
           if (!latestMessages[msg.chat_id]) {
-            latestMessages[msg.chat_id] = { content: msg.content, created_at: msg.created_at, read_at: msg.sender_id !== user.id ? msg.read_at : "read" };
+            latestMessages[msg.chat_id] = { content: msg.content, created_at: msg.created_at, read_at: msg.sender_id !== user.id ? msg.read_at :"read" };
           }
         });
       }
@@ -111,8 +109,8 @@ const DirectMessages = () => {
         const chat = chats?.find((c) => c.match_id === match.id);
         const lastMsg = chat ? latestMessages[chat.id] : null;
         return {
-          matchId: match.id, chatId: chat?.id || "", otherUserId,
-          otherUserName: profile?.name || "User", otherUserPhoto: profile?.profile_photo_url || null,
+          matchId: match.id, chatId: chat?.id ||"", otherUserId,
+          otherUserName: profile?.name ||"User", otherUserPhoto: profile?.profile_photo_url || null,
           lastMessage: lastMsg?.content || null, lastMessageAt: lastMsg?.created_at || null, unread: lastMsg?.read_at === null,
         };
       });
@@ -167,7 +165,7 @@ const DirectMessages = () => {
     const now = new Date();
     const diffMs = now.getTime() - d.getTime();
     const diffMins = Math.floor(diffMs / 60000);
-    if (diffMins < 1) return "now";
+    if (diffMins < 1) return"now";
     if (diffMins < 60) return `${diffMins}m`;
     const diffHrs = Math.floor(diffMins / 60);
     if (diffHrs < 24) return `${diffHrs}h`;
@@ -178,7 +176,7 @@ const DirectMessages = () => {
 
   const formatMessageTime = (dateStr: string) => {
     const d = new Date(dateStr);
-    return d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+    return d.toLocaleTimeString("en-US", { hour:"numeric", minute:"2-digit" });
   };
 
   // Conversation list component
@@ -202,9 +200,8 @@ const DirectMessages = () => {
               <button
                 key={convo.matchId}
                 onClick={() => setActiveChat(convo)}
-                className={cn(
-                  "w-full flex items-center gap-3 p-3 rounded-xl transition-colors text-left",
-                  activeChat?.chatId === convo.chatId ? "bg-primary/10 border border-primary/20" : "hover:bg-secondary/50"
+                className={cn("w-full flex items-center gap-3 p-3 rounded-xl transition-colors text-left",
+                  activeChat?.chatId === convo.chatId ?"bg-primary/10 border border-primary/20" :"hover:bg-secondary/50"
                 )}
               >
                 <div className="w-11 h-11 rounded-full bg-secondary/50 overflow-hidden flex-shrink-0">
@@ -218,11 +215,11 @@ const DirectMessages = () => {
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between">
-                    <span className={cn("text-sm truncate", convo.unread ? "font-semibold" : "font-medium")}>{convo.otherUserName}</span>
+                    <span className={cn("text-sm truncate", convo.unread ?"font-semibold" :"font-medium")}>{convo.otherUserName}</span>
                     {convo.lastMessageAt && <span className="text-[11px] text-muted-foreground flex-shrink-0 ml-2">{formatTime(convo.lastMessageAt)}</span>}
                   </div>
-                  <p className={cn("text-xs truncate", convo.unread ? "text-foreground font-medium" : "text-muted-foreground")}>
-                    {convo.lastMessage || "Say hello 👋"}
+                  <p className={cn("text-xs truncate", convo.unread ?"text-foreground font-medium" :"text-muted-foreground")}>
+                    {convo.lastMessage ||"Say hello 👋"}
                   </p>
                 </div>
                 {convo.unread && <span className="w-2.5 h-2.5 bg-primary rounded-full flex-shrink-0" />}
@@ -276,10 +273,10 @@ const DirectMessages = () => {
             messages.map((msg) => {
               const isOwn = msg.sender_id === user?.id;
               return (
-                <div key={msg.id} className={cn("flex", isOwn ? "justify-end" : "justify-start")}>
-                  <div className={cn("max-w-[75%] rounded-2xl px-4 py-2.5", isOwn ? "bg-primary text-primary-foreground" : "bg-muted text-foreground")}>
+                <div key={msg.id} className={cn("flex", isOwn ?"justify-end" :"justify-start")}>
+                  <div className={cn("max-w-[75%] rounded-2xl px-4 py-2.5", isOwn ?"bg-primary text-primary-foreground" :"bg-muted text-foreground")}>
                     <p className="text-sm">{msg.content}</p>
-                    <p className={cn("text-[10px] mt-1", isOwn ? "text-primary-foreground/60" : "text-muted-foreground")}>{formatMessageTime(msg.created_at)}</p>
+                    <p className={cn("text-[10px] mt-1", isOwn ?"text-primary-foreground/60" :"text-muted-foreground")}>{formatMessageTime(msg.created_at)}</p>
                   </div>
                 </div>
               );
@@ -295,7 +292,7 @@ const DirectMessages = () => {
               value={messageText}
               onChange={(e) => setMessageText(e.target.value)}
               placeholder="Type a message..."
-              onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && handleSend()}
+              onKeyDown={(e) => e.key ==="Enter" && !e.shiftKey && handleSend()}
               className="rounded-full"
             />
             <Button size="icon" onClick={handleSend} disabled={!messageText.trim() || sending} className="rounded-full flex-shrink-0">
@@ -309,26 +306,21 @@ const DirectMessages = () => {
 
   return (
     <div className="min-h-screen bg-background pb-24 md:pb-0 md:pl-64">
-      <DesktopNav />
-      <MobileHeader />
-
       <main className="container mx-auto px-0 md:px-4 py-0 md:py-6 max-w-5xl">
         {loading ? (
           <PageSkeleton variant="list" count={8} />
         ) : (
           <div className="flex h-[calc(100vh-8rem)] md:h-[calc(100vh-6rem)] border border-border/30 rounded-none md:rounded-2xl overflow-hidden bg-card">
             {/* Left panel - conversation list */}
-            <div className={cn(
-              "w-full md:w-[35%] border-r border-border/30",
-              activeChat ? "hidden md:flex" : "flex"
+            <div className={cn("w-full md:w-[35%] border-r border-border/30",
+              activeChat ?"hidden md:flex" :"flex"
             )}>
               <ConversationList className="w-full" />
             </div>
 
             {/* Right panel - active chat */}
-            <div className={cn(
-              "w-full md:w-[65%]",
-              !activeChat ? "hidden md:flex" : "flex"
+            <div className={cn("w-full md:w-[65%]",
+              !activeChat ?"hidden md:flex" :"flex"
             )}>
               <ChatView />
             </div>

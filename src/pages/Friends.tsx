@@ -1,23 +1,21 @@
-import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/hooks/useAuth";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft, Users, Clock, Check, Loader2, MessageCircle, Send, X, ChevronRight, Sparkles, Trophy } from "lucide-react";
-import AddFriendButton from "@/components/AddFriendButton";
-import { EmptyState } from "@/components/ui/empty-state";
-import { useNavigate } from "react-router-dom";
-import { useToast } from "@/hooks/use-toast";
-import AttendeeProfileDrawer from "@/components/AttendeeProfileDrawer";
-import BottomNav from "@/components/BottomNav";
-import DesktopNav from "@/components/DesktopNav";
-import MobileHeader from "@/components/MobileHeader";
-import { useIsMobile } from "@/hooks/use-mobile";
-import { format } from "date-fns";
+import { useState, useEffect } from"react";
+import { supabase } from"@/integrations/supabase/client";
+import { useAuth } from"@/hooks/useAuth";
+import { Avatar, AvatarFallback, AvatarImage } from"@/components/ui/avatar";
+import { Button } from"@/components/ui/button";
+import { Badge } from"@/components/ui/badge";
+import { Card, CardContent } from"@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from"@/components/ui/tabs";
+import { Textarea } from"@/components/ui/textarea";
+import { ArrowLeft, Users, Clock, Check, Loader2, MessageCircle, Send, X, ChevronRight, Sparkles, Trophy } from"lucide-react";
+import AddFriendButton from"@/components/AddFriendButton";
+import { EmptyState } from"@/components/ui/empty-state";
+import { useNavigate } from"react-router-dom";
+import { useToast } from"@/hooks/use-toast";
+import AttendeeProfileDrawer from"@/components/AttendeeProfileDrawer";
+import BottomNav from"@/components/BottomNav";
+import { useIsMobile } from"@/hooks/use-mobile";
+import { format } from"date-fns";
 
 interface FriendProfile {
   id: string;
@@ -69,9 +67,8 @@ const Friends = () => {
     if (!user) return;
     const channel = supabase
       .channel("friends-dm-updates")
-      .on(
-        "postgres_changes",
-        { event: "INSERT", schema: "public", table: "direct_messages" },
+      .on("postgres_changes",
+        { event:"INSERT", schema:"public", table:"direct_messages" },
         (payload) => {
           const msg = payload.new as any;
           if (chatOpen && (msg.sender_id === chatOpen || msg.receiver_id === chatOpen)) {
@@ -92,13 +89,13 @@ const Friends = () => {
     const { data: accepted } = await supabase
       .from("friendships")
       .select("id, requester_id, addressee_id, status, created_at")
-      .eq("status", "accepted")
+      .eq("status","accepted")
       .or(`requester_id.eq.${user.id},addressee_id.eq.${user.id}`);
 
     const { data: pending } = await supabase
       .from("friendships")
       .select("id, requester_id, addressee_id, status, created_at")
-      .eq("status", "pending")
+      .eq("status","pending")
       .eq("addressee_id", user.id);
 
     const friendIds = new Set<string>();
@@ -185,10 +182,10 @@ const Friends = () => {
     setActing(friendshipId);
     const { error } = await supabase
       .from("friendships")
-      .update({ status: "accepted" })
+      .update({ status:"accepted" })
       .eq("id", friendshipId);
     if (!error) {
-      toast({ title: "Accepted!", description: `You and ${friendName} are now friends.` });
+      toast({ title:"Accepted!", description: `You and ${friendName} are now friends.` });
       fetchAll();
     }
     setActing(null);
@@ -231,7 +228,7 @@ const Friends = () => {
       message: msg,
     });
     if (error) {
-      toast({ title: "Error", description: "Could not send message.", variant: "destructive" });
+      toast({ title:"Error", description:"Could not send message.", variant:"destructive" });
     } else {
       setMessageText("");
       const { sendSmsToUser } = await import("@/lib/smsNotifications");
@@ -242,7 +239,7 @@ const Friends = () => {
 
   // ─── Inline JSX helpers (NOT components — avoids hook issues) ───
 
-  const renderChatPanel = (className = "") => {
+  const renderChatPanel = (className ="") => {
     if (!chatOpen || !chatFriend) {
       return (
         <div className={`flex flex-col items-center justify-center text-center text-muted-foreground ${className}`}>
@@ -270,7 +267,7 @@ const Friends = () => {
           <h2 className="text-base font-bold truncate">{chatFriend.name}</h2>
         </div>
 
-        <div className={`flex-1 overflow-y-auto px-4 py-4 space-y-3 ${isMobile ? "pb-28" : ""}`}>
+        <div className={`flex-1 overflow-y-auto px-4 py-4 space-y-3 ${isMobile ?"pb-28" :""}`}>
           {chatLoading ? (
             <div className="flex justify-center py-12">
               <Loader2 className="w-6 h-6 animate-spin text-primary" />
@@ -284,17 +281,17 @@ const Friends = () => {
             messages.map((msg) => {
               const isMe = msg.sender_id === user?.id;
               return (
-                <div key={msg.id} className={`flex ${isMe ? "justify-end" : "justify-start"}`}>
+                <div key={msg.id} className={`flex ${isMe ?"justify-end" :"justify-start"}`}>
                   <div
                     className={`max-w-[75%] px-3.5 py-2.5 rounded-2xl text-sm ${
                       isMe
-                        ? "bg-primary text-primary-foreground rounded-br-md"
-                        : "bg-secondary text-foreground rounded-bl-md"
+                        ?"bg-primary text-primary-foreground rounded-br-md"
+                        :"bg-secondary text-foreground rounded-bl-md"
                     }`}
                   >
                     <p>{msg.message}</p>
-                    <p className={`text-[10px] mt-1 ${isMe ? "text-primary-foreground/60" : "text-muted-foreground"}`}>
-                      {format(new Date(msg.created_at), "h:mm a")}
+                    <p className={`text-[10px] mt-1 ${isMe ?"text-primary-foreground/60" :"text-muted-foreground"}`}>
+                      {format(new Date(msg.created_at),"h:mm a")}
                     </p>
                   </div>
                 </div>
@@ -303,13 +300,13 @@ const Friends = () => {
           )}
         </div>
 
-        <div className={`border-t border-border p-3 shrink-0 bg-background safe-area-pb ${isMobile ? "sticky bottom-0 z-20" : ""}`}>
+        <div className={`border-t border-border p-3 shrink-0 bg-background safe-area-pb ${isMobile ?"sticky bottom-0 z-20" :""}`}>
           <div className="flex gap-2">
             <Textarea
               placeholder="Type a message…"
               value={messageText}
               onChange={(e) => setMessageText(e.target.value)}
-              onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSend(); } }}
+              onKeyDown={(e) => { if (e.key ==="Enter" && !e.shiftKey) { e.preventDefault(); handleSend(); } }}
               className="min-h-[44px] max-h-[120px] resize-none text-sm flex-1"
               maxLength={1000}
             />
@@ -340,7 +337,7 @@ const Friends = () => {
         .from("event_guests")
         .select("event_id")
         .eq("user_id", user.id)
-        .eq("status", "going");
+        .eq("status","going");
 
       const eventIds = (myEvents || []).map((e) => e.event_id);
       const candidateIds = new Set<string>();
@@ -350,7 +347,7 @@ const Friends = () => {
           .from("event_guests")
           .select("user_id")
           .in("event_id", eventIds)
-          .eq("status", "going")
+          .eq("status","going")
           .neq("user_id", user.id)
           .limit(50);
         (coAttendees || []).forEach((c) => candidateIds.add(c.user_id));
@@ -397,7 +394,7 @@ const Friends = () => {
     fetchSuggestions();
   }, [user?.id, friends.length, pendingReceived.length]);
 
-  const renderFriendsListPanel = (className = "") => (
+  const renderFriendsListPanel = (className ="") => (
     <div className={className}>
       <Tabs defaultValue="suggestions">
         <TabsList className="w-full grid grid-cols-3">
@@ -437,7 +434,7 @@ const Friends = () => {
               return (
                 <Card
                   key={f.id}
-                  className={`cursor-pointer hover:bg-secondary/50 transition-colors ${f.unreadCount ? "border-primary/30" : ""} ${isSelected ? "bg-primary/5 border-primary/40" : ""}`}
+                  className={`cursor-pointer hover:bg-secondary/50 transition-colors ${f.unreadCount ?"border-primary/30" :""} ${isSelected ?"bg-primary/5 border-primary/40" :""}`}
                   onClick={() => f.friend_profile && openChat(f.friend_profile)}
                 >
                   <CardContent className="flex items-center gap-3 p-3">
@@ -445,7 +442,7 @@ const Friends = () => {
                       <Avatar className="w-12 h-12">
                         <AvatarImage src={f.friend_profile?.profile_photo_url || undefined} />
                         <AvatarFallback className="bg-primary/10 text-primary font-semibold">
-                          {f.friend_profile?.name?.charAt(0).toUpperCase() || "?"}
+                          {f.friend_profile?.name?.charAt(0).toUpperCase() ||"?"}
                         </AvatarFallback>
                       </Avatar>
                       {(f.unreadCount || 0) > 0 && (
@@ -464,8 +461,8 @@ const Friends = () => {
                         )}
                       </div>
                       {f.lastMessage ? (
-                        <p className={`text-xs truncate ${f.unreadCount ? "text-foreground font-medium" : "text-muted-foreground"}`}>
-                          {f.lastMessage.sender_id === user?.id ? "You: " : ""}
+                        <p className={`text-xs truncate ${f.unreadCount ?"text-foreground font-medium" :"text-muted-foreground"}`}>
+                          {f.lastMessage.sender_id === user?.id ?"You:" :""}
                           {f.lastMessage.message}
                         </p>
                       ) : (
@@ -475,7 +472,7 @@ const Friends = () => {
                     <div className="flex flex-col items-end gap-1 shrink-0">
                       {f.lastMessage && (
                         <span className="text-[10px] text-muted-foreground">
-                          {format(new Date(f.lastMessage.created_at), "MMM d")}
+                          {format(new Date(f.lastMessage.created_at),"MMM d")}
                         </span>
                       )}
                       <ChevronRight className="w-4 h-4 text-muted-foreground" />
@@ -513,7 +510,7 @@ const Friends = () => {
                   >
                     <AvatarImage src={f.friend_profile?.profile_photo_url || undefined} />
                     <AvatarFallback className="bg-primary/10 text-primary font-semibold">
-                      {f.friend_profile?.name?.charAt(0).toUpperCase() || "?"}
+                      {f.friend_profile?.name?.charAt(0).toUpperCase() ||"?"}
                     </AvatarFallback>
                   </Avatar>
                   <div className="flex-1 min-w-0">
@@ -523,10 +520,10 @@ const Friends = () => {
                   <Button
                     size="sm"
                     className="rounded-full text-xs bg-primary hover:bg-primary/90"
-                    onClick={() => handleAccept(f.id, f.friend_profile?.name || "User")}
+                    onClick={() => handleAccept(f.id, f.friend_profile?.name ||"User")}
                     disabled={acting === f.id}
                   >
-                    {acting === f.id ? <Loader2 className="w-4 h-4 animate-spin" /> : "Accept"}
+                    {acting === f.id ? <Loader2 className="w-4 h-4 animate-spin" /> :"Accept"}
                   </Button>
                   <Button
                     variant="outline"
@@ -534,7 +531,7 @@ const Friends = () => {
                     className="rounded-full text-xs"
                     onClick={async () => {
                       setActing(f.id);
-                      await supabase.from("friendships").update({ status: "declined" }).eq("id", f.id);
+                      await supabase.from("friendships").update({ status:"declined" }).eq("id", f.id);
                       fetchAll();
                       setActing(null);
                     }}
@@ -572,7 +569,7 @@ const Friends = () => {
                   <div className="flex-1 min-w-0">
                     <p className="font-semibold text-foreground truncate">{profile.name}</p>
                     <p className="text-xs text-muted-foreground truncate">
-                      {profile.city || profile.primary_role || "Sports fan"}
+                      {profile.city || profile.primary_role ||"Sports fan"}
                     </p>
                     {profile.favorite_sports && profile.favorite_sports.length > 0 && (
                       <div className="flex gap-1 mt-1">
@@ -609,11 +606,9 @@ const Friends = () => {
   // ─── Desktop: Split panel layout ───
   return (
     <div className="min-h-screen bg-background">
-      <MobileHeader />
-      <DesktopNav />
       <BottomNav />
 
-      <main className="md:ml-16 xl:ml-64 pb-24 md:pb-0">
+      <main className="pb-24 md:pb-0">
         {/* Mobile layout */}
         <div className="md:hidden">
           <header className="sticky top-0 z-40 bg-background/90 backdrop-blur-sm border-b border-border">

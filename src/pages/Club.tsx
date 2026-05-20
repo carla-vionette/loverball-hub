@@ -1,23 +1,21 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { Seo } from "@/components/Seo";
-import { Tv, Users, MessagesSquare, MapPin, Gift, Sparkles, ArrowRight } from "lucide-react";
-import { C, fonts } from "@/lib/editorialTheme";
-import { H1, H2, H3, Body, Slug, Mono, PrimaryBtn, SecondaryBtn } from "@/components/editorial/primitives";
-import MobileHeader from "@/components/MobileHeader";
-import DesktopNav from "@/components/DesktopNav";
-import BottomNav from "@/components/BottomNav";
-import { loadDrafts, MOCK_MEMBERS, type Member } from "@/lib/startingXiData";
-import ClubMessagesInbox from "@/components/club/ClubMessagesInbox";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { useState, useEffect } from"react";
+import { useNavigate } from"react-router-dom";
+import { Seo } from"@/components/Seo";
+import { Tv, Users, MessagesSquare, MapPin, Gift, Sparkles, ArrowRight } from"lucide-react";
+import { C, fonts } from"@/lib/editorialTheme";
+import { H1, H2, H3, Body, Slug, Mono, PrimaryBtn, SecondaryBtn } from"@/components/editorial/primitives";
+import BottomNav from"@/components/BottomNav";
+import { loadDrafts, MOCK_MEMBERS, type Member } from"@/lib/startingXiData";
+import ClubMessagesInbox from"@/components/club/ClubMessagesInbox";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from"@/components/ui/tabs";
 
 const PILLARS = [
-  { Icon: Tv, chip: "Watch parties", h: "Watch the game with your people.", p: "Members-only watch parties, both IRL and in private chat rooms. Live reactions, hot takes, post-game debriefs — without the chaos of public timelines." },
-  { Icon: Sparkles, chip: "Fan matching", h: "Smart matches, not swipes.", p: "Three curated drafts a week, built around the teams you love, the games you watch, and the city you live in. Make the introductions count." },
-  { Icon: MessagesSquare, chip: "Group chats", h: "Rooms by team & moment.", p: "Private group chats organized by team, sport, and ritual. The game-thread energy you actually want — vetted, members-only, on-topic." },
-  { Icon: MapPin, chip: "City crews", h: "Find your local lineup.", p: "City crews for the cities Loverball lives in. LA first, then everywhere members show up. Bar takeovers, away-game travel, post-game dinners." },
-  { Icon: Users, chip: "Fan circles", h: "Small rooms, real friendships.", p: "Members-only circles built around fandoms and rituals. Quiet onboarding so new members land in a real conversation, not a stadium of strangers." },
-  { Icon: Gift, chip: "Perks", h: "Members-only everything.", p: "Priority event invites, mixers, merch drops, partner discounts, and a direct line to the team. The good stuff is reserved for the people in the room." },
+  { Icon: Tv, chip:"Watch parties", h:"Watch the game with your people.", p:"Members-only watch parties, both IRL and in private chat rooms. Live reactions, hot takes, post-game debriefs — without the chaos of public timelines." },
+  { Icon: Sparkles, chip:"Fan matching", h:"Smart matches, not swipes.", p:"Three curated drafts a week, built around the teams you love, the games you watch, and the city you live in. Make the introductions count." },
+  { Icon: MessagesSquare, chip:"Group chats", h:"Rooms by team & moment.", p:"Private group chats organized by team, sport, and ritual. The game-thread energy you actually want — vetted, members-only, on-topic." },
+  { Icon: MapPin, chip:"City crews", h:"Find your local lineup.", p:"City crews for the cities Loverball lives in. LA first, then everywhere members show up. Bar takeovers, away-game travel, post-game dinners." },
+  { Icon: Users, chip:"Fan circles", h:"Small rooms, real friendships.", p:"Members-only circles built around fandoms and rituals. Quiet onboarding so new members land in a real conversation, not a stadium of strangers." },
+  { Icon: Gift, chip:"Perks", h:"Members-only everything.", p:"Priority event invites, mixers, merch drops, partner discounts, and a direct line to the team. The good stuff is reserved for the people in the room." },
 ];
 
 const Club = () => {
@@ -43,13 +41,13 @@ const Club = () => {
         path="/club"
       />
 
-      <MobileHeader /><DesktopNav /><BottomNav />
+      <BottomNav />
 
-      <main className="md:ml-16 xl:ml-64 pt-16 md:pt-0 pb-24 md:pb-0">
+      <main className="pb-24 md:pb-0">
         {/* Header */}
         <section className="max-w-7xl mx-auto px-5 md:px-10 pt-24 md:pt-32 pb-10">
           <Slug>The Club</Slug>
-          <H1 className="mt-6" style={{ fontSize: "clamp(40px, 7vw, 96px)", lineHeight: 0.95 }}>
+          <H1 className="mt-6" style={{ fontSize:"clamp(40px, 7vw, 96px)", lineHeight: 0.95 }}>
             The members-only home<br/>for women's sports fans.
           </H1>
           <div className="mt-8 flex flex-wrap gap-3 items-center">
@@ -66,15 +64,15 @@ const Club = () => {
               style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 999 }}
             >
               {[
-                { v: "matches", label: "This Week's Matches" },
-                { v: "connections", label: "My Connections" },
-                { v: "inside", label: "Inside the Club" },
+                { v:"matches", label:"This Week's Matches" },
+                { v:"connections", label:"My Connections" },
+                { v:"inside", label:"Inside the Club" },
               ].map((t) => (
                 <TabsTrigger
                   key={t.v}
                   value={t.v}
                   className="rounded-full px-5 py-2.5 text-sm data-[state=active]:shadow-none"
-                  style={{ fontFamily: fonts.mono, letterSpacing: "0.06em", textTransform: "uppercase" }}
+                  style={{ fontFamily: fonts.mono, letterSpacing:"0.06em", textTransform:"uppercase" }}
                 >
                   {t.label}
                 </TabsTrigger>
@@ -123,14 +121,14 @@ const Club = () => {
                           <button
                             onClick={(e) => { e.stopPropagation(); navigate("/club/xi"); }}
                             className="flex-1 inline-flex items-center justify-center gap-2 text-xs px-3 py-2.5 rounded-full transition-colors"
-                            style={{ background: C.raspberry, color: "#fff", fontFamily: fonts.mono, letterSpacing: "0.08em", textTransform: "uppercase" }}
+                            style={{ background: C.raspberry, color:"#fff", fontFamily: fonts.mono, letterSpacing:"0.08em", textTransform:"uppercase" }}
                           >
                             Draft
                           </button>
                           <button
                             onClick={(e) => { e.stopPropagation(); navigate(`/members/${m.id}`); }}
                             className="inline-flex items-center gap-1 text-xs px-3 py-2.5 rounded-full transition-colors"
-                            style={{ background: C.bg, color: C.text, border: `1px solid ${C.border}`, fontFamily: fonts.mono, letterSpacing: "0.08em", textTransform: "uppercase" }}
+                            style={{ background: C.bg, color: C.text, border: `1px solid ${C.border}`, fontFamily: fonts.mono, letterSpacing:"0.08em", textTransform:"uppercase" }}
                           >
                             View
                           </button>
@@ -152,7 +150,7 @@ const Club = () => {
                 <button
                   onClick={() => navigate("/club/xi")}
                   className="inline-flex items-center gap-2 text-sm hover:opacity-80 transition-opacity"
-                  style={{ color: C.raspberry, fontFamily: fonts.mono, letterSpacing: "0.08em", textTransform: "uppercase" }}
+                  style={{ color: C.raspberry, fontFamily: fonts.mono, letterSpacing:"0.08em", textTransform:"uppercase" }}
                 >
                   Draft more <ArrowRight size={14} />
                 </button>
@@ -191,7 +189,7 @@ const Club = () => {
                         <button
                           onClick={(e) => { e.stopPropagation(); navigate("/messages"); }}
                           className="mt-4 inline-flex items-center gap-2 text-xs px-3 py-2 rounded-full transition-colors"
-                          style={{ background: C.bg, color: C.text, border: `1px solid ${C.border}`, fontFamily: fonts.mono, letterSpacing: "0.08em", textTransform: "uppercase" }}
+                          style={{ background: C.bg, color: C.text, border: `1px solid ${C.border}`, fontFamily: fonts.mono, letterSpacing:"0.08em", textTransform:"uppercase" }}
                         >
                           <MessagesSquare size={12} /> Message
                         </button>
@@ -221,7 +219,7 @@ const Club = () => {
                   <li
                     key={chip}
                     className="flex items-start gap-5 md:gap-7 p-6 md:p-8"
-                    style={{ borderTop: i === 0 ? "none" : `0.5px solid ${C.border}` }}
+                    style={{ borderTop: i === 0 ?"none" : `0.5px solid ${C.border}` }}
                   >
                     <div
                       className="flex-shrink-0 flex items-center justify-center rounded-full"

@@ -2,8 +2,6 @@ import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import BottomNav from '@/components/BottomNav';
 import Seo from '@/components/Seo';
-import DesktopNav from '@/components/DesktopNav';
-import MobileHeader from '@/components/MobileHeader';
 import MemberCard from '@/components/MemberCard';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
@@ -155,10 +153,8 @@ const Members = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-background">
-        <MobileHeader />
-        <DesktopNav />
         <BottomNav />
-        <main className="md:ml-16 xl:ml-64 pt-16 md:pt-0 pb-20 md:pb-0">
+        <main className="pb-20 md:pb-0">
           <PageSkeleton variant="cards" count={4} />
         </main>
       </div>
@@ -168,12 +164,10 @@ const Members = () => {
   if (fetchError) {
     return (
       <div className="min-h-screen bg-background">
-        <MobileHeader />
-        <DesktopNav />
         <BottomNav />
-        <main className="md:ml-16 xl:ml-64 pt-16 md:pt-0 pb-20 md:pb-0">
+        <main className="pb-20 md:pb-0">
           <PageError
-            variant={!navigator.onLine ? "network" : "generic"}
+            variant={!navigator.onLine ?"network" :"generic"}
             message={fetchError}
             onRetry={() => { setLoading(true); fetchProfiles(); }}
           />
@@ -192,14 +186,12 @@ const Members = () => {
         description="Discover and connect with women sports fans in your city. Search the Loverball member roster."
         path="/members"
       />
-      <MobileHeader />
-      <DesktopNav />
       <BottomNav />
       
-      <main className="md:ml-16 xl:ml-64 pt-16 md:pt-0 pb-20 md:pb-0">
+      <main className="pb-20 md:pb-0">
         <div className="px-4 pt-2 pb-4 text-center">
-          <span className="mag-eyebrow" style={{ color: "#f8f8f8" }}>The Roster</span>
-          <h1 className="mag-title text-raspberry" style={{ fontSize: "clamp(48px, 14vw, 72px)", marginTop: 2 }}>
+          <span className="mag-eyebrow" style={{ color:"#f8f8f8" }}>The Roster</span>
+          <h1 className="mag-title text-raspberry" style={{ fontSize:"clamp(48px, 14vw, 72px)", marginTop: 2 }}>
             Find your people
           </h1>
         </div>
@@ -249,7 +241,7 @@ const Members = () => {
                   </button>
                 ))}
               {profiles.filter((p) => p.name?.toLowerCase().includes(query.trim().toLowerCase())).length === 0 && (
-                <p className="p-4 text-center text-xs text-muted-foreground">No members match "{query}".</p>
+                <p className="p-4 text-center text-xs text-muted-foreground">No members match"{query}".</p>
               )}
             </div>
           )}
