@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Calendar, MapPin, ArrowRight } from "lucide-react";
+import { Calendar, MapPin, ArrowRight, Users } from "lucide-react";
 
 interface NextEvent {
   id: string;
@@ -9,6 +9,12 @@ interface NextEvent {
   event_date: string;
   event_time: string | null;
   venue_name: string | null;
+  city: string | null;
+}
+
+interface ClubActivity {
+  pendingMatches: number;
+  recentMatches: number;
   city: string | null;
 }
 
@@ -22,12 +28,13 @@ const formatDate = (date: string, time: string | null) => {
 
 const WhatsHappeningNow = () => {
   const [event, setEvent] = useState<NextEvent | null>(null);
+  const [club, setClub] = useState<ClubActivity | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     (async () => {
       const today = new Date().toISOString().split("T")[0];
-      const { data } = await supabase
+      const eventPromise = supabase
         .from("events")
         .select("id, title, event_date, event_time, venue_name, city")
         .eq("status", "published")
@@ -36,14 +43,52 @@ const WhatsHappeningNow = () => {
         .order("event_time", { ascending: true })
         .limit(1)
         .maybeSingle();
-      setEvent(data as NextEvent | null);
+
+      const { data: { user } } = await supabase.auth.getUser();
+
+      const [{ data: eventData }] = await Promise.all([eventPromise]);
+      setEvent(eventData as NextEvent | null);
+
+      if (user) {
+        const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+        const [{ count: pending }, { count: recent }, { data: profile }] = await Promise.all([
+          supabase
+            .from("matches")
+            .select("id", { count: "exact", head: true })
+            .eq("addressee_id", user.id)
+            .eq("status", "pending"),
+          supabase
+            .from("matches")
+            .select("id", { count: "exact", head: true })
+            .or(`requester_id.eq.${user.id},addressee_id.eq.${user.id}`)
+            .gte("created_at", sevenDaysAgo),
+          supabase.from("profiles").select("city").eq("id", user.id).maybeSingle(),
+        ]);
+        setClub({
+          pendingMatches: pending ?? 0,
+          recentMatches: recent ?? 0,
+          city: (profile as any)?.city ?? null,
+        });
+      }
+
       setLoading(false);
     })();
   }, []);
 
-  if (loading || !event) return null;
+  if (loading) return null;
+  if (!event && !club) return null;
 
-  const location = [event.venue_name, event.city].filter(Boolean).join(" · ");
+  const location = event ? [event.venue_name, event.city].filter(Boolean).join(" · ") : "";
+
+  const clubMessage = club
+    ? club.pendingMatches > 0
+      ? `${club.pendingMatches} new fan match${club.pendingMatches === 1 ? "" : "es"} waiting`
+      : club.recentMatches > 0
+        ? club.city
+          ? `Your ${club.city} crew has new activity`
+          : "Your crew has new activity"
+        : null
+    : null;
 
   return (
     <section className="max-w-7xl mx-auto mt-16 px-5 md:px-10">
