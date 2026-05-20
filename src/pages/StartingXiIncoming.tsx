@@ -10,11 +10,11 @@ const C = {
   bg: "#0a0a0a",
   text: "#FAF5E9",
   muted: "#B8B8B8",
-  pink: "#D4537E",
+  pink: "#E86BB0",
 };
 
 const mono = { fontFamily: "'JetBrains Mono', ui-monospace, monospace" } as const;
-const serif = { fontFamily: "'Playfair Display', Georgia, serif", fontStyle: "italic" as const };
+const serif = { fontFamily: "'Inter', system-ui, sans-serif" } as const;
 
 // State B: "What Chloe sees" — a preview of an incoming draft from the user (Carla).
 // Demo-only standalone screen. In production this lives in the recipient's notifications tray.
