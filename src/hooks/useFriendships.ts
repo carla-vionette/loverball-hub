@@ -67,6 +67,9 @@ export function useFriendships(): FriendshipActions {
       mutual_teams: mutualTeams,
     });
     if (!error) {
+      // Fire-and-forget SMS (in-app notif handled by DB trigger)
+      const { sendSmsToUser } = await import("@/lib/smsNotifications");
+      sendSmsToUser(targetId, "Someone just connected with you on Loverball. Open the app to see who.");
       await refresh();
       return true;
     }

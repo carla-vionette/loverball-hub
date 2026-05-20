@@ -224,15 +224,18 @@ const Friends = () => {
   const handleSend = async () => {
     if (!user || !chatOpen || !messageText.trim()) return;
     setSending(true);
+    const msg = messageText.trim();
     const { error } = await supabase.from("direct_messages").insert({
       sender_id: user.id,
       receiver_id: chatOpen,
-      message: messageText.trim(),
+      message: msg,
     });
     if (error) {
       toast({ title: "Error", description: "Could not send message.", variant: "destructive" });
     } else {
       setMessageText("");
+      const { sendSmsToUser } = await import("@/lib/smsNotifications");
+      sendSmsToUser(chatOpen, `New Loverball message: ${msg.slice(0, 120)}`);
     }
     setSending(false);
   };
