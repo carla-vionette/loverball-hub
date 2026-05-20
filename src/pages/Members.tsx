@@ -2,6 +2,8 @@ import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import BottomNav from '@/components/BottomNav';
 import Seo from '@/components/Seo';
+import DesktopNav from '@/components/DesktopNav';
+import MobileHeader from '@/components/MobileHeader';
 import MemberCard from '@/components/MemberCard';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
@@ -152,10 +154,12 @@ const Members = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background ">
+      <div className="min-h-screen bg-background">
+        <MobileHeader />
+        <DesktopNav />
         <BottomNav />
-        <main className="pb-20 md:pb-0">
-          <PageSkeleton variant="cards " count={4} />
+        <main className="md:ml-16 xl:ml-64 pt-16 md:pt-0 pb-20 md:pb-0">
+          <PageSkeleton variant="cards" count={4} />
         </main>
       </div>
     );
@@ -163,11 +167,13 @@ const Members = () => {
 
   if (fetchError) {
     return (
-      <div className="min-h-screen bg-background ">
+      <div className="min-h-screen bg-background">
+        <MobileHeader />
+        <DesktopNav />
         <BottomNav />
-        <main className="pb-20 md:pb-0">
+        <main className="md:ml-16 xl:ml-64 pt-16 md:pt-0 pb-20 md:pb-0">
           <PageError
-            variant={!navigator.onLine ?"network " :"generic "}
+            variant={!navigator.onLine ? "network" : "generic"}
             message={fetchError}
             onRetry={() => { setLoading(true); fetchProfiles(); }}
           />
@@ -180,40 +186,42 @@ const Members = () => {
   const hasMoreProfiles = currentIndex < profiles.length;
 
   return (
-    <div className="min-h-screen bg-background ">
+    <div className="min-h-screen bg-background">
       <Seo
-        title="Club Members | Loverball "
+        title="Club Members | Loverball"
         description="Discover and connect with women sports fans in your city. Search the Loverball member roster."
-        path="/members "
+        path="/members"
       />
+      <MobileHeader />
+      <DesktopNav />
       <BottomNav />
       
-      <main className="pb-20 md:pb-0">
-        <div className="px-4 pt-2 pb-4 text-center ">
-          <span className="mag-eyebrow " style={{ color:"#f8f8f8 " }}>The Roster</span>
-          <h1 className="mag-title text-raspberry " style={{ fontSize:"clamp(48px, 14vw, 72px)", marginTop: 2 }}>
+      <main className="md:ml-16 xl:ml-64 pt-16 md:pt-0 pb-20 md:pb-0">
+        <div className="px-4 pt-2 pb-4 text-center">
+          <span className="mag-eyebrow" style={{ color: "#f8f8f8" }}>The Roster</span>
+          <h1 className="mag-title text-raspberry" style={{ fontSize: "clamp(48px, 14vw, 72px)", marginTop: 2 }}>
             Find your people
           </h1>
         </div>
 
         {/* Friend search */}
-        <div className="px-4 max-w-md mx-auto ">
-          <div className="relative ">
-            <Search className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground " aria-hidden="true " />
+        <div className="px-4 max-w-md mx-auto">
+          <div className="relative">
+            <Search className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
             <Input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search friends by name…"
               className="pl-10 pr-10 rounded-full bg-secondary border-border/30"
-              aria-label="Search friends "
+              aria-label="Search friends"
             />
             {query && (
               <button
                 onClick={() => setQuery('')}
-                className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-muted "
-                aria-label="Clear search "
+                className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-muted"
+                aria-label="Clear search"
               >
-                <X className="w-3.5 h-3.5 text-muted-foreground " />
+                <X className="w-3.5 h-3.5 text-muted-foreground" />
               </button>
             )}
           </div>
@@ -226,22 +234,22 @@ const Members = () => {
                   <button
                     key={p.id}
                     onClick={() => navigate(`/profile/${p.id}`)}
-                    className="w-full flex items-center gap-3 p-3 hover:bg-muted/50 text-left "
+                    className="w-full flex items-center gap-3 p-3 hover:bg-muted/50 text-left"
                   >
                     <Avatar className="w-10 h-10">
                       <AvatarImage src={p.profile_photo_url || undefined} />
-                      <AvatarFallback className="bg-primary/10 text-primary text-sm ">
+                      <AvatarFallback className="bg-primary/10 text-primary text-sm">
                         {p.name?.charAt(0).toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
                     <div className="min-w-0 flex-1">
-                      <p className="text-sm font-semibold truncate ">{p.name}</p>
-                      {p.city && <p className="text-xs text-muted-foreground truncate ">{p.city}</p>}
+                      <p className="text-sm font-semibold truncate">{p.name}</p>
+                      {p.city && <p className="text-xs text-muted-foreground truncate">{p.city}</p>}
                     </div>
                   </button>
                 ))}
               {profiles.filter((p) => p.name?.toLowerCase().includes(query.trim().toLowerCase())).length === 0 && (
-                <p className="p-4 text-center text-xs text-muted-foreground ">No members match "{query}".</p>
+                <p className="p-4 text-center text-xs text-muted-foreground">No members match "{query}".</p>
               )}
             </div>
           )}
@@ -257,19 +265,19 @@ const Members = () => {
               />
             </div>
           ) : (
-            <div className="text-center max-w-sm mx-auto ">
+            <div className="text-center max-w-sm mx-auto">
               <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
-                <Users className="w-8 h-8 text-muted-foreground " />
+                <Users className="w-8 h-8 text-muted-foreground" />
               </div>
               <h2 className="text-2xl font-bold mb-2">You've seen everyone!</h2>
               <p className="text-muted-foreground mb-6">
                 Check back later for new members joining the community.
               </p>
               <div className="flex flex-col gap-3">
-                <Button onClick={() => navigate('/messages')} className="rounded-full ">
+                <Button onClick={() => navigate('/messages')} className="rounded-full">
                   View Your Matches
                 </Button>
-                <Button variant="outline " onClick={() => { setCurrentIndex(0); setLoading(true); fetchProfiles(); }} className="rounded-full ">
+                <Button variant="outline" onClick={() => { setCurrentIndex(0); setLoading(true); fetchProfiles(); }} className="rounded-full">
                   Refresh
                 </Button>
               </div>
@@ -289,7 +297,7 @@ const Members = () => {
             </p>
             <div className="space-y-3">
               <Button 
-                className="w-full " 
+                className="w-full" 
                 onClick={() => {
                   closeMatchModal();
                   navigate('/messages');
@@ -298,8 +306,8 @@ const Members = () => {
                 Send a Message
               </Button>
               <Button 
-                variant="outline " 
-                className="w-full "
+                variant="outline" 
+                className="w-full"
                 onClick={closeMatchModal}
               >
                 Keep Swiping
