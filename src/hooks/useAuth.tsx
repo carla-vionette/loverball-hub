@@ -74,8 +74,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       (event, nextSession) => {
         if (!mounted) return;
 
-        if (!bootstrapped && event === 'INITIAL_SESSION' && !nextSession && hasStoredSessionToken()) {
-          return;
+        // Never treat missing session as signed-out unless the user
+        // explicitly logged out. This keeps users signed in across
+        // reloads, tab restarts, and transient refresh failures.
+        if (!nextSession) {
+          const intentional = typeof window !== 'undefined' &&
+            window.sessionStorage.getItem('lb-intentional-signout') === '1';
+
+          if (!intentional && hasStoredSessionToken()) {
+            // Stored token exists — wait for autoRefresh to recover.
+            return;
+          }
+
+          if (!bootstrapped && event === 'INITIAL_SESSION') {
+            return;
+          }
         }
 
         void applySession(nextSession);
@@ -86,6 +99,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (!mounted) return;
 
       bootstrapped = true;
+      if (!initialSession && hasStoredSessionToken()) {
+        // Stored token but session not yet hydrated — try a refresh
+        // instead of flipping to signed-out state.
+        const { data } = await supabase.auth.refreshSession();
+        await applySession(data.session ?? null);
+        return;
+      }
       await applySession(initialSession);
     });
 
@@ -96,10 +116,22 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, [applySession, hasStoredSessionToken]);
 
   const signOut = async () => {
-    await supabase.auth.signOut();
-    setUser(null);
-    setSession(null);
-    setRole(null);
+    if (typeof window !== 'undefined') {
+      window.sessionStorage.setItem('lb-intentional-signout', '1');
+    }
+    try {
+      await supabase.auth.signOut();
+    } finally {
+      setUser(null);
+      setSession(null);
+      setRole(null);
+      if (typeof window !== 'undefined') {
+        // Clear flag shortly after so future sign-ins behave normally.
+        setTimeout(() => {
+          window.sessionStorage.removeItem('lb-intentional-signout');
+        }, 1000);
+      }
+    }
   };
 
   const value: AuthContextType = {
