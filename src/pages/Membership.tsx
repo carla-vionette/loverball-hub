@@ -105,6 +105,8 @@ const Membership = () => {
     if (tierName === "Free") return goSignup();
     return goCheckout();
   };
+
+  return (
     <div style={{ background: C.bg, color: C.text, fontFamily: fonts.sans }} className="min-h-screen">
       <Seo
         title="Choose your pass — Loverball Membership"
