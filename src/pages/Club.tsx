@@ -51,9 +51,9 @@ const Club = () => {
           A private club for the watch parties, group chats, city crews, and friendships that the rest of the internet keeps flattening. Vetted, quiet, real.
         </Body>
         <div className="mt-10 flex flex-wrap gap-4 items-center">
-          <PrimaryBtn onClick={() => navigate("/events")}>See Upcoming Events</PrimaryBtn>
-          <SecondaryBtn onClick={goSignup}>Join the Community</SecondaryBtn>
-          <TertiaryLink to="/club/xi">Open Starting XI</TertiaryLink>
+          <PrimaryBtn onClick={() => navigate("/club/xi")}>My Connections</PrimaryBtn>
+          <SecondaryBtn onClick={() => navigate("/messages")}>Messages</SecondaryBtn>
+          <TertiaryLink to="/events">Upcoming events</TertiaryLink>
           <TertiaryLink to="/membership">See passes</TertiaryLink>
         </div>
       </section>
