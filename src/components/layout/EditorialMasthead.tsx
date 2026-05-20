@@ -61,7 +61,7 @@ const EditorialMasthead = ({
             textTransform: "uppercase",
           }}
         >
-          · {section}
+          {section}
           {meta ? ` · ${meta}` : ""}
         </span>
       </div>
