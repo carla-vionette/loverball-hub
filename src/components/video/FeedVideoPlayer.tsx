@@ -241,13 +241,22 @@ const FeedVideoPlayer = ({ video, isActive, isMuted, onToggleMute }: FeedVideoPl
           className="relative mb-1"
           aria-label={following ? video.channelName : `Follow ${video.channelName}`}
         >
-          <img
-            src={video.channelAvatar}
-            alt={video.channelName}
-            loading="lazy"
-            className="w-10 h-12 object-cover"
-            style={{ borderRadius: 6, border: "1px solid rgba(255,255,255,0.18)" }}
-          />
+          <div
+            aria-label={video.channelName}
+            className="w-10 h-12 flex items-center justify-center"
+            style={{
+              background: "#E8276F",
+              borderRadius: 6,
+              border: "1px solid rgba(255,255,255,0.18)",
+              color: "#fff",
+              fontFamily: "'Anton', Impact, sans-serif",
+              fontSize: 18,
+              letterSpacing: "0.02em",
+              textTransform: "uppercase",
+            }}
+          >
+            {video.channelName?.charAt(0) ?? "L"}
+          </div>
           {!following && (
             <span
               className="absolute -bottom-2 left-1/2 -translate-x-1/2 px-1.5 py-[2px] rounded-sm leading-none"
