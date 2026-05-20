@@ -2,14 +2,14 @@ import React from "react";
 import { Sparkles } from "lucide-react";
 
 const C = {
-  card: "#141415",
-  cardElev: "#1A1A1C",
+  card: "#1A1A1A",
+  cardElev: "#2A2A2A",
   text: "#FAF5E9",
-  muted: "#9B9B9F",
+  muted: "#B8B8B8",
   faint: "#6B6B70",
-  raspberry: "#E8276F",
-  copper: "#D88C5A",
-  border: "rgba(255,255,255,0.08)",
+  raspberry: "#F04E23",
+  copper: "#E6F25A",
+  border: "rgba(250, 245, 233, 0.08)",
 };
 
 export interface IncomingDraftCardProps {

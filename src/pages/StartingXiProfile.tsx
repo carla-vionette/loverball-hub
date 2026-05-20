@@ -12,14 +12,14 @@ const C = {
   cardHi: "#2A2A2A",
   text: "#FAF5E9",
   muted: "#B8B8B8",
-  pink: "#D4537E",
-  gold: "#E8B86A",
+  pink: "#E86BB0",
+  gold: "#E6F25A",
   border: "rgba(250, 245, 233, 0.08)",
   borderHi: "rgba(250, 245, 233, 0.15)",
 };
 const mono = { fontFamily: "'JetBrains Mono', ui-monospace, monospace" } as const;
-const serif = { fontFamily: "'Playfair Display', Georgia, serif", fontStyle: "italic" as const };
-const sans = { fontFamily: "Inter, system-ui, sans-serif" } as const;
+const serif = { fontFamily: "'Inter', system-ui, sans-serif" } as const;
+const sans = { fontFamily: "'Inter', system-ui, sans-serif" } as const;
 
 const Label: React.FC<{ children: React.ReactNode; color?: string }> = ({ children, color = C.muted }) => (
   <span
