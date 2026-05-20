@@ -12,6 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import BottomNav from "@/components/BottomNav";
+import { Input } from "@/components/ui/input";
 import AttendeeProfileDrawer from "@/components/AttendeeProfileDrawer";
 import EventSubmissionForm from "@/components/EventSubmissionForm";
 import Seo from "@/components/Seo";
