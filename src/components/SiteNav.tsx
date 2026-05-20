@@ -128,7 +128,7 @@ const SiteNav = () => {
               key={label}
               to={to}
               onClick={() => setMobileOpen(false)}
-              style={{ ...linkStyle, color: isActive(to) ? C.text : C.muted, fontSize: 12 }}
+              style={{ ...linkStyle, color: isActive(to) ? "#E6F25A" : C.muted, fontSize: 12 }}
             >
               {label}
             </Link>
