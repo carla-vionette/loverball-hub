@@ -327,12 +327,13 @@ const StartingXi: React.FC = () => {
         <header className="flex items-start justify-between gap-4">
           <h1
             style={{
-              ...serif,
+              fontFamily: "'Oswald', system-ui, sans-serif",
               fontSize: 38,
               lineHeight: 0.95,
               letterSpacing: "-0.01em",
               color: C.text,
               fontWeight: 500,
+              textTransform: "uppercase",
             }}
           >
             Starting<br />XI.
