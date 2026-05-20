@@ -39,7 +39,7 @@ interface Props {
 }
 
 const WhosGoing = ({ eventId, refreshKey }: Props) => {
-  const { user } = useAuth();
+  const { user, isMember } = useAuth();
   const [guests, setGuests] = useState<EventGuest[]>([]);
   const [selectedProfile, setSelectedProfile] = useState<GuestProfile | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
