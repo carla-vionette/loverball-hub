@@ -397,7 +397,7 @@ const StartingXi: React.FC = () => {
         )}
       </main>
 
-      <FloatingNav />
+      
 
       <DraftConfirmModal
         open={!!confirm}
