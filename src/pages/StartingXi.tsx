@@ -85,21 +85,6 @@ const MemberCard: React.FC<{ m: Member; onDraft: () => void; disabled: boolean; 
       <div className="flex-1 min-w-0">
         <div className="flex items-start justify-between gap-2">
           <h3 style={{ ...serif, fontSize: 19, color: C.text, lineHeight: 1.1 }}>{m.name}</h3>
-          <span
-            className="uppercase whitespace-nowrap"
-            style={{
-              ...mono,
-              fontSize: 9,
-              letterSpacing: "0.14em",
-              color: C.text,
-              background: "rgba(250, 245, 233, 0.08)",
-              padding: "3px 7px",
-              borderRadius: 6,
-              fontWeight: 500,
-            }}
-          >
-            {m.match}% Match
-          </span>
         </div>
         <p
           className="uppercase mt-1"
