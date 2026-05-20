@@ -592,7 +592,7 @@ const Events = () => {
         <Dialog open={!!rsvpId} onOpenChange={() => setRsvpId(null)}>
           <DialogContent className="sm:max-w-sm rounded-3xl" style={{ background: "#141415", border: "1px solid rgba(255,255,255,0.08)" }}>
             <DialogHeader>
-              <span style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 10, letterSpacing: "0.22em", color: "#F04E23", textTransform: "uppercase" }}>
+              <span style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 10, letterSpacing: "0.22em", color: "#E6F25A", textTransform: "uppercase" }}>
                 Confirm your seat
               </span>
               <DialogTitle style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: 30, lineHeight: 0.95, color: "#F8F8F8", textTransform: "uppercase", letterSpacing: "0.01em", marginTop: 4 }}>
