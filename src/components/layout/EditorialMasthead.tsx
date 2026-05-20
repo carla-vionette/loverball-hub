@@ -86,13 +86,14 @@ const EditorialMasthead = ({
           )}
           <h1
             style={{
-              fontFamily: "'Anton', Impact, sans-serif",
+              fontFamily: "'Playfair Display', serif",
+              fontStyle: "italic",
+              fontWeight: 500,
               fontSize: titleSize,
-              lineHeight: 0.88,
+              lineHeight: 0.92,
               color: "hsl(var(--foreground))",
-              textTransform: "uppercase",
               margin: 0,
-              letterSpacing: "0.005em",
+              letterSpacing: "-0.02em",
             }}
           >
             {title}
