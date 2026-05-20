@@ -20,7 +20,7 @@ const C = {
   bg: "#0a0a0a",
   card: "#1A1A1A",
   cardHi: "#2A2A2A",
-  text: "#FAF5E9",
+  text: "#E6F25A",
   muted: "#B8B8B8",
   pink: "#E86BB0",
   gold: "#E6F25A",
