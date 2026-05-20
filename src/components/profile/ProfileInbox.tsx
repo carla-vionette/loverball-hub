@@ -210,7 +210,7 @@ export default function ProfileInbox() {
       style={{ background: PANEL, border: BORDER, fontFamily: "'Inter', system-ui, sans-serif" }}
     >
       <Tabs defaultValue="notifications">
-        <div className="flex items-center justify-between gap-2 px-4 pt-3 pb-1 flex-wrap">
+        <div className="flex items-center justify-between gap-2 px-3 pt-2 pb-1 flex-wrap">
           <p
             className="text-[9px] uppercase"
             style={{ fontFamily: "'Space Mono', monospace", letterSpacing: "0.24em", color: "#D88C5A" }}
@@ -243,9 +243,9 @@ export default function ProfileInbox() {
         {/* ALERTS */}
         <TabsContent value="notifications" className="mt-2">
           {loading ? (
-            <div className="px-4 py-5 text-center text-[13px]" style={{ color: "rgba(250,245,233,0.55)" }}>Loading…</div>
+            <div className="px-3 py-3 text-center text-[13px]" style={{ color: "rgba(250,245,233,0.55)" }}>Loading…</div>
           ) : previewNotifs.length === 0 ? (
-            <div className="px-4 py-6 text-center">
+            <div className="px-3 py-4 text-center">
               <Bell size={24} className="mx-auto mb-3" style={{ color: "rgba(250,245,233,0.35)" }} />
               <p className="text-[13px]" style={{ color: "rgba(250,245,233,0.75)" }}>Nothing new yet — but the season's just getting started.</p>
               <p className="text-[12px] mt-1" style={{ color: "rgba(250,245,233,0.45)" }}>Follow a few people to start seeing activity here.</p>
@@ -256,10 +256,10 @@ export default function ProfileInbox() {
                 <li
                   key={n.id}
                   onClick={() => n.link && navigate(n.link)}
-                  className="flex items-start gap-3 px-4 py-2 cursor-pointer transition-colors hover:bg-white/[0.03]"
+                  className="flex items-start gap-3 px-3 py-1.5 cursor-pointer transition-colors hover:bg-white/[0.03]"
                   style={{ borderTop: i === 0 ? "none" : BORDER }}
                 >
-                  <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: "rgba(240,78,35,0.12)", color: PINK }}>
+                  <div className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: "rgba(240,78,35,0.12)", color: PINK }}>
                     <Bell size={14} />
                   </div>
                   <div className="flex-1 min-w-0">
@@ -280,7 +280,7 @@ export default function ProfileInbox() {
                 await supabase.from("notifications").update({ is_read: true }).eq("user_id", user.id).eq("is_read", false);
                 setNotifications(prev => prev.map(n => ({ ...n, is_read: true })));
               }}
-              className="w-full flex items-center justify-center gap-2 py-2.5 text-[11px] uppercase transition-colors hover:bg-white/[0.03]"
+              className="w-full flex items-center justify-center gap-2 py-2 text-[10px] uppercase transition-colors hover:bg-white/[0.03]"
               style={{ borderTop: BORDER, fontFamily: "'Space Mono', monospace", letterSpacing: "0.18em", color: PINK }}
             >
               Mark all read
@@ -291,9 +291,9 @@ export default function ProfileInbox() {
         {/* MESSAGES */}
         <TabsContent value="messages" className="mt-2">
           {loading ? (
-            <div className="px-4 py-5 text-center text-[13px]" style={{ color: "rgba(250,245,233,0.55)" }}>Loading…</div>
+            <div className="px-3 py-3 text-center text-[13px]" style={{ color: "rgba(250,245,233,0.55)" }}>Loading…</div>
           ) : previewMsgs.length === 0 ? (
-            <div className="px-4 py-6 text-center">
+            <div className="px-3 py-4 text-center">
               <MessageCircle size={24} className="mx-auto mb-3" style={{ color: "rgba(250,245,233,0.35)" }} />
               <p className="text-[13px]" style={{ color: "rgba(250,245,233,0.55)" }}>No conversations yet.</p>
             </div>
@@ -303,10 +303,10 @@ export default function ProfileInbox() {
                 <li
                   key={c.chatId || c.otherUserId}
                   onClick={() => navigate("/dms")}
-                  className="flex items-center gap-3 px-4 py-2 cursor-pointer transition-colors hover:bg-white/[0.03]"
+                  className="flex items-center gap-3 px-3 py-1.5 cursor-pointer transition-colors hover:bg-white/[0.03]"
                   style={{ borderTop: i === 0 ? "none" : BORDER }}
                 >
-                  <div className="w-9 h-9 rounded-full overflow-hidden flex-shrink-0" style={{ background: "#0F0F10", border: BORDER }}>
+                  <div className="w-7 h-7 rounded-full overflow-hidden flex-shrink-0" style={{ background: "#0F0F10", border: BORDER }}>
                     {c.otherUserPhoto ? (
                       <img src={c.otherUserPhoto} alt={c.otherUserName} loading="lazy" className="w-full h-full object-cover" />
                     ) : (
@@ -329,7 +329,7 @@ export default function ProfileInbox() {
           )}
           <button
             onClick={() => navigate("/dms")}
-            className="w-full flex items-center justify-center gap-2 py-2.5 text-[11px] uppercase transition-colors hover:bg-white/[0.03]"
+            className="w-full flex items-center justify-center gap-2 py-2 text-[10px] uppercase transition-colors hover:bg-white/[0.03]"
             style={{ borderTop: BORDER, fontFamily: "'Space Mono', monospace", letterSpacing: "0.18em", color: PINK }}
           >
             Open inbox <ArrowRight size={12} />
@@ -339,9 +339,9 @@ export default function ProfileInbox() {
         {/* FRIENDS */}
         <TabsContent value="friends" className="mt-2">
           {loading ? (
-            <div className="px-4 py-5 text-center text-[13px]" style={{ color: "rgba(250,245,233,0.55)" }}>Loading…</div>
+            <div className="px-3 py-3 text-center text-[13px]" style={{ color: "rgba(250,245,233,0.55)" }}>Loading…</div>
           ) : previewFriends.length === 0 ? (
-            <div className="px-4 py-6 text-center">
+            <div className="px-3 py-4 text-center">
               <Users size={24} className="mx-auto mb-3" style={{ color: "rgba(250,245,233,0.35)" }} />
               <p className="text-[13px] mb-3" style={{ color: "rgba(250,245,233,0.55)" }}>No friends yet.</p>
               <button onClick={() => navigate("/friends")} className="text-[11px] uppercase" style={{ fontFamily: "'Space Mono', monospace", letterSpacing: "0.18em", color: PINK }}>
@@ -354,10 +354,10 @@ export default function ProfileInbox() {
                 <li
                   key={f.id}
                   onClick={() => navigate(`/members/${f.id}`)}
-                  className="flex items-center gap-3 px-4 py-2 cursor-pointer transition-colors hover:bg-white/[0.03]"
+                  className="flex items-center gap-3 px-3 py-1.5 cursor-pointer transition-colors hover:bg-white/[0.03]"
                   style={{ borderTop: i === 0 ? "none" : BORDER }}
                 >
-                  <div className="w-9 h-9 rounded-full overflow-hidden flex-shrink-0" style={{ background: "#0F0F10", border: BORDER }}>
+                  <div className="w-7 h-7 rounded-full overflow-hidden flex-shrink-0" style={{ background: "#0F0F10", border: BORDER }}>
                     {f.photo ? (
                       <img src={f.photo} alt={f.name} loading="lazy" className="w-full h-full object-cover" />
                     ) : (
@@ -383,7 +383,7 @@ export default function ProfileInbox() {
           )}
           <button
             onClick={() => navigate("/friends")}
-            className="w-full flex items-center justify-center gap-2 py-2.5 text-[11px] uppercase transition-colors hover:bg-white/[0.03]"
+            className="w-full flex items-center justify-center gap-2 py-2 text-[10px] uppercase transition-colors hover:bg-white/[0.03]"
             style={{ borderTop: BORDER, fontFamily: "'Space Mono', monospace", letterSpacing: "0.18em", color: PINK }}
           >
             Manage friends <ArrowRight size={12} />
@@ -393,9 +393,9 @@ export default function ProfileInbox() {
         {/* ACTIVITY */}
         <TabsContent value="activity" className="mt-2">
           {loading ? (
-            <div className="px-4 py-5 text-center text-[13px]" style={{ color: "rgba(250,245,233,0.55)" }}>Loading…</div>
+            <div className="px-3 py-3 text-center text-[13px]" style={{ color: "rgba(250,245,233,0.55)" }}>Loading…</div>
           ) : activity.length === 0 ? (
-            <div className="px-4 py-6 text-center">
+            <div className="px-3 py-4 text-center">
               <Activity size={24} className="mx-auto mb-3" style={{ color: "rgba(250,245,233,0.35)" }} />
               <p className="text-[13px]" style={{ color: "rgba(250,245,233,0.55)" }}>No activity yet.</p>
             </div>
@@ -405,10 +405,10 @@ export default function ProfileInbox() {
                 <li
                   key={a.id}
                   onClick={() => navigate(a.link)}
-                  className="flex items-start gap-3 px-4 py-2 cursor-pointer transition-colors hover:bg-white/[0.03]"
+                  className="flex items-start gap-3 px-3 py-1.5 cursor-pointer transition-colors hover:bg-white/[0.03]"
                   style={{ borderTop: i === 0 ? "none" : BORDER }}
                 >
-                  <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: "rgba(240,78,35,0.12)", color: PINK }}>
+                  <div className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: "rgba(240,78,35,0.12)", color: PINK }}>
                     <Activity size={14} />
                   </div>
                   <div className="flex-1 min-w-0">

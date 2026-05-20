@@ -683,40 +683,6 @@ const Profile = () => {
                 </div>
               </motion.div>
 
-              {/* ═══════════ 3. FRIENDS ACTIVITY ═══════════ */}
-              <motion.div variants={staggerItem}>
-                <div className="rounded-2xl p-5" style={{ background: PANEL, border: PANEL_BORDER }}>
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="text-[13px] uppercase flex items-center gap-2.5"
-                      style={{ fontFamily: "'Space Mono', monospace", letterSpacing: "0.2em", color: "#FAF5E9", fontWeight: 500 }}>
-                      <Users className="w-3.5 h-3.5" style={{ color: PINK }} /> Friends Activity
-                    </span>
-                    <button onClick={() => goTo("/friends")}
-                      className="text-[10px] uppercase tracking-[0.18em]"
-                      style={{ color: PINK, fontFamily: "'Space Mono', monospace" }}>
-                      View all
-                    </button>
-                  </div>
-                  <div className="flex flex-col items-center justify-center py-10 px-4 rounded-xl text-center"
-                    style={{ background: "linear-gradient(135deg, rgba(233,30,99,0.08), rgba(216,140,90,0.04))", border: "1px dashed rgba(233,30,99,0.22)" }}>
-                    <div className="w-12 h-12 rounded-full flex items-center justify-center mb-3"
-                      style={{ background: "rgba(233,30,99,0.15)" }}>
-                      <Users className="w-5 h-5" style={{ color: PINK }} />
-                    </div>
-                    <p className="text-[14px] mb-1" style={{ color: "#FAF5E9", fontFamily: "'Playfair Display', serif", fontStyle: "italic" }}>
-                      Your circle is quiet for now.
-                    </p>
-                    <p className="text-[12px] mb-4" style={{ color: "rgba(250,245,233,0.55)" }}>
-                      Add a few friends to see their check-ins, RSVPs, and posts the moment they happen.
-                    </p>
-                    <button onClick={() => goTo("/friends")}
-                      className="text-[11px] uppercase font-bold tracking-[0.16em] px-4 py-2 rounded-full"
-                      style={{ background: PINK, color: "#0a0a0a", fontFamily: "Inter, sans-serif" }}>
-                      Find friends
-                    </button>
-                  </div>
-                </div>
-              </motion.div>
 
 
 
