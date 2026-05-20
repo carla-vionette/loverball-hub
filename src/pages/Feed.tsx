@@ -197,7 +197,7 @@ const Feed = () => {
               <img
                 src={loverballLogo}
                 alt="Loverball — back to home"
-                className="h-20 w-auto object-contain brightness-0 invert"
+                className="h-10 sm:h-14 md:h-20 w-auto object-contain brightness-0 invert"
               />
             </a>
 
