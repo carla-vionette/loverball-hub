@@ -3,17 +3,8 @@ import { Seo } from "@/components/Seo";
 import { Users, MessagesSquare, Sparkles, MapPin } from "lucide-react";
 import { C, fonts } from "@/lib/editorialTheme";
 import { H1, H3, Body, Slug, Mono, PrimaryBtn, TertiaryLink } from "@/components/editorial/primitives";
+import SiteNav from "@/components/SiteNav";
 
-const NavBar = () => (
-  <header className="px-6 md:px-12 pt-10 pb-6 flex items-center justify-between" style={{ borderBottom: `0.5px solid ${C.border}` }}>
-    <Link to="/" style={{ fontFamily: fonts.serif, fontStyle: "italic", fontSize: 28, letterSpacing: "-0.02em", color: C.text }}>Loverball</Link>
-    <nav className="hidden md:flex items-center gap-8">
-      {[["Watch","/feed"],["Connect","/connect"],["EVENTS","/events"],["Club","/club"]].map(([l,h]) => (
-        <Link key={l} to={h} style={{ fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.2em", textTransform: "uppercase", color: l === "Connect" ? C.text : C.muted }}>{l}</Link>
-      ))}
-    </nav>
-  </header>
-);
 
 const PILLARS = [
   { Icon: Sparkles, chip: "Matching", h: "Smart matches, not swipes", p: "Curated by the teams you love, the games you watch, and the city you live in. Three drafts a week — make them count." },
