@@ -80,6 +80,71 @@ const Club = () => {
           </div>
         </section>
 
+        {/* Current roster */}
+        <section className="max-w-7xl mx-auto px-5 md:px-10 pb-2">
+          <div className="flex items-end justify-between gap-4 mb-5">
+            <div>
+              <Slug>Current roster</Slug>
+              <H3 className="mt-2" style={{ fontSize: 22 }}>
+                Your friends {connections.length ? `· ${connections.length}` : ""}
+              </H3>
+            </div>
+            <button
+              onClick={() => navigate("/club/xi")}
+              className="inline-flex items-center gap-2 text-xs hover:opacity-80 transition-opacity"
+              style={{ color: C.raspberry, fontFamily: fonts.mono, letterSpacing: "0.08em", textTransform: "uppercase" }}
+            >
+              Manage <ArrowRight size={12} />
+            </button>
+          </div>
+
+          {connections.length === 0 ? (
+            <div
+              className="rounded-[20px] p-6 flex items-center justify-between gap-4"
+              style={{ background: C.surface, border: `1px dashed ${C.border}` }}
+            >
+              <Body muted size={14}>No friends drafted yet. Build your roster from this week's matches.</Body>
+              <button
+                onClick={() => navigate("/club/xi")}
+                className="inline-flex items-center gap-2 text-xs px-4 py-2 rounded-full whitespace-nowrap"
+                style={{ background: C.raspberry, color: "#fff", fontFamily: fonts.mono, letterSpacing: "0.08em", textTransform: "uppercase" }}
+              >
+                Draft
+              </button>
+            </div>
+          ) : (
+            <div className="flex gap-3 overflow-x-auto pb-2 -mx-1 px-1" style={{ scrollbarWidth: "thin" }}>
+              {connections.map((m) => (
+                <div
+                  key={m.id}
+                  className="flex-shrink-0 flex flex-col items-center gap-2"
+                  style={{ width: 84 }}
+                >
+                  <button
+                    onClick={() => navigate(`/members/${m.id}`)}
+                    className="relative rounded-full overflow-hidden transition-transform hover:-translate-y-0.5"
+                    style={{ width: 64, height: 64, border: `1px solid ${C.border}` }}
+                    aria-label={`View ${m.name}`}
+                  >
+                    <img src={m.photo} alt={m.name} loading="lazy" className="w-full h-full object-cover" />
+                  </button>
+                  <div className="w-full text-center truncate" style={{ fontFamily: fonts.mono, fontSize: 10, letterSpacing: "0.06em", color: C.text }}>
+                    {m.name.split(" ")[0]}
+                  </div>
+                  <button
+                    onClick={() => navigate(`/messages?member=${m.id}`)}
+                    className="inline-flex items-center justify-center rounded-full"
+                    style={{ width: 28, height: 28, background: C.surface, border: `1px solid ${C.border}`, color: C.raspberry }}
+                    aria-label={`Message ${m.name}`}
+                  >
+                    <MessagesSquare size={13} />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+
         {/* Tabs */}
         <section className="max-w-7xl mx-auto px-5 md:px-10 pb-20">
           <Tabs defaultValue="matches" className="w-full">
