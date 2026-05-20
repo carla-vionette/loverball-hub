@@ -328,8 +328,16 @@ const Profile = () => {
   const formattedDate = currentTime.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" });
   const formattedTime = currentTime.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
 
+  const handle = `@${(profile.name?.split(" ")[0] || "member").toLowerCase().replace(/[^a-z0-9]/g, "")}`;
+  const eventsAttended = rsvpEvents.filter(r => r.status === "going" || r.status === "attended").length;
+  const FEED_FILTERS = ["All", "NBA", "WNBA", "NWSL", "NFL", "MLB", "Soccer"];
+
+  const PINK = "#E91E63";
+  const PANEL = "#141415";
+  const PANEL_BORDER = "1px solid rgba(255,255,255,0.06)";
+
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen" style={{ background: "#0A0A0B" }}>
       <Seo
         title="Your Profile | Loverball"
         description="Your Loverball member profile — favorite teams, personalized news, daily horoscope, and live scores."
@@ -340,128 +348,123 @@ const Profile = () => {
       <BottomNav />
 
       <main
-        className="md:ml-64 pb-20 md:pb-8 pt-16 md:pt-2"
+        className="md:ml-16 xl:ml-64 pb-20 md:pb-10 pt-16 md:pt-4 transition-[margin] duration-200"
         style={{ background: "#0A0A0B", color: "#F8F8F8" }}
       >
-        <div className="max-w-4xl mx-auto px-4 pt-2">
-          <motion.div variants={staggerContainer} initial="hidden" animate="show" className="space-y-5">
+        <div className="max-w-[1400px] mx-auto px-4 md:px-8 pt-2">
 
-            {/* ───── 1. IDENTITY HERO ───── */}
-            <motion.div variants={staggerItem} className="relative">
-              {/* Masthead: Profile. + STATUS */}
-              <div className="flex items-start justify-between gap-4 pb-5">
-                <h1
-                  className="leading-[0.85] tracking-tight"
-                  style={{
-                    fontFamily: "'Playfair Display', Georgia, serif",
-                    fontWeight: 800,
-                    fontSize: "clamp(56px, 16vw, 84px)",
-                    color: "#F8F8F8",
-                    textTransform: "none",
-                  }}
-                >
-                  Profile<span style={{ color: "#E8276F" }}>.</span>
-                </h1>
-                <div className="text-right pt-3 shrink-0">
-                  <p
-                    className="text-[10px] uppercase"
-                    style={{
-                      fontFamily: "'Space Mono', monospace",
-                      letterSpacing: "0.22em",
-                      color: "#D88C5A",
-                    }}
-                  >
-                    Status
-                  </p>
-                  <p
-                    className="text-[12px] mt-0.5 uppercase inline-flex items-center gap-1.5"
-                    style={{
-                      fontFamily: "'Space Mono', monospace",
-                      letterSpacing: "0.18em",
-                      color: "#F8F8F8",
-                    }}
-                  >
-                    <span
-                      className="inline-block w-1.5 h-1.5 rounded-full"
-                      style={{ background: "#E8276F", boxShadow: "0 0 8px #E8276F" }}
-                    />
-                    Active
-                  </p>
-                </div>
-              </div>
+          {/* ───── PAGE MASTHEAD ───── */}
+          <motion.div
+            variants={staggerItem}
+            initial="hidden"
+            animate="show"
+            className="pb-6 flex items-end justify-between gap-4"
+          >
+            <h1
+              className="leading-[0.85] tracking-tight"
+              style={{
+                fontFamily: "'Playfair Display', Georgia, serif",
+                fontWeight: 800,
+                fontSize: "clamp(48px, 8vw, 88px)",
+                color: "#F8F8F8",
+              }}
+            >
+              Profile<span style={{ color: PINK }}>.</span>
+            </h1>
+            <p
+              className="hidden md:block text-[10px] uppercase mb-3"
+              style={{
+                fontFamily: "'Space Mono', monospace",
+                letterSpacing: "0.24em",
+                color: "rgba(248,248,248,0.45)",
+              }}
+            >
+              {formattedDate} · {formattedTime}
+            </p>
+          </motion.div>
 
-              {/* Identity card */}
+          {/* ───── 2-COLUMN GRID (40 / 60 @ lg+) ───── */}
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            animate="show"
+            className="grid grid-cols-1 lg:grid-cols-[2fr_3fr] gap-6 lg:gap-8 items-start"
+          >
+
+            {/* ═══════════ LEFT COLUMN — IDENTITY ═══════════ */}
+            <motion.aside variants={staggerItem} className="lg:sticky lg:top-6">
               <div
-                className="rounded-3xl overflow-hidden relative"
-                style={{
-                  background: "#141415",
-                  border: "1px solid rgba(248,248,248,0.06)",
-                  boxShadow: "0 30px 60px -30px rgba(0,0,0,0.6)",
-                }}
+                className="relative rounded-3xl overflow-hidden"
+                style={{ background: PANEL, border: PANEL_BORDER }}
               >
-                {/* Portrait */}
+                {/* Hero photo */}
                 <div
                   className="relative w-full"
-                  style={{ aspectRatio: "1 / 1.18", background: "#0F0F10" }}
+                  style={{ height: "min(480px, 60vh)", background: "#0F0F10" }}
                 >
                   {profile.profile_photo_url ? (
                     <img
                       src={profile.profile_photo_url}
                       alt={profile.name}
                       className="w-full h-full object-cover"
-                      style={{ filter: "saturate(0.95) contrast(1.05)" }}
+                      style={{ filter: "saturate(0.95) contrast(1.04)" }}
                     />
                   ) : (
                     <div
                       className="w-full h-full flex items-center justify-center"
                       style={{
-                        background:
-                          "linear-gradient(140deg, rgba(232,39,111,0.22), rgba(216,140,90,0.14))",
-                        fontFamily: "'Anton', sans-serif",
+                        background: "linear-gradient(140deg, rgba(233,30,99,0.18), rgba(216,140,90,0.10))",
+                        fontFamily: "'Playfair Display', serif",
                         fontSize: 140,
-                        color: "rgba(248,248,248,0.5)",
+                        fontWeight: 800,
+                        color: "rgba(248,248,248,0.45)",
                       }}
                     >
                       {initials[0]}
                     </div>
                   )}
 
-                  {/* Bottom gradient */}
-                  <div
-                    className="absolute inset-x-0 bottom-0 h-2/5 pointer-events-none"
-                    style={{
-                      background:
-                        "linear-gradient(to top, rgba(20,20,21,0.98) 0%, rgba(20,20,21,0.6) 50%, transparent 100%)",
-                    }}
-                  />
+                  {/* Tier badge — top right */}
+                  <div className="absolute top-4 right-4">
+                    <MemberBadge tier={profile.membership_tier} size="md" />
+                  </div>
 
-                  {/* Name + meta overlay (bottom-left) */}
-                  <div className="absolute left-5 right-5 bottom-4">
+                  {/* Glassmorphism overlay */}
+                  <div
+                    className="absolute left-4 right-4 bottom-4 rounded-2xl px-5 py-4"
+                    style={{
+                      background: "rgba(10,10,11,0.55)",
+                      backdropFilter: "blur(18px) saturate(140%)",
+                      WebkitBackdropFilter: "blur(18px) saturate(140%)",
+                      border: "1px solid rgba(255,255,255,0.10)",
+                    }}
+                  >
                     <h2
-                      className="flex items-center gap-2 leading-[0.9] tracking-tight"
+                      className="leading-[0.95] tracking-tight"
                       style={{
                         fontFamily: "'Playfair Display', Georgia, serif",
                         fontWeight: 700,
-                        fontSize: "clamp(34px, 9vw, 44px)",
-                        color: "#F8F8F8",
-                        textShadow: "0 2px 18px rgba(0,0,0,0.55)",
+                        fontSize: "clamp(26px, 3vw, 34px)",
+                        color: "#FFFFFF",
                       }}
                     >
                       {profile.name}
-                      <MemberBadge tier={profile.membership_tier} size="lg" />
                     </h2>
                     <p
-                      className="mt-2 text-[11px] uppercase flex items-center gap-2 flex-wrap"
+                      className="mt-1 flex items-center gap-2 flex-wrap text-[12px]"
                       style={{
                         fontFamily: "'Space Mono', monospace",
-                        letterSpacing: "0.18em",
-                        color: "#E8276F",
+                        color: "rgba(248,248,248,0.75)",
                       }}
                     >
-                      <span>{locationText}</span>
+                      <span style={{ color: PINK }}>{handle}</span>
+                      <span style={{ color: "rgba(255,255,255,0.25)" }}>·</span>
+                      <span className="inline-flex items-center gap-1">
+                        <MapPin className="w-3 h-3" /> {locationText}
+                      </span>
                       {profile.pronouns && (
                         <>
-                          <span style={{ color: "rgba(248,248,248,0.3)" }}>·</span>
+                          <span style={{ color: "rgba(255,255,255,0.25)" }}>·</span>
                           <span>{profile.pronouns}</span>
                         </>
                       )}
@@ -469,176 +472,183 @@ const Profile = () => {
                   </div>
                 </div>
 
-                {/* Card body */}
+                {/* Body — stats + actions */}
                 <div className="px-5 pt-5 pb-5">
-                  <div
-                    className="pb-4"
-                    style={{ borderBottom: "1px solid rgba(248,248,248,0.08)" }}
-                  />
-
-                  <div className="flex items-start gap-4 pt-4">
-                    <div className="flex-1 min-w-0">
-                      {profile.bio ? (
+                  {/* Stats row 2×2 */}
+                  <div className="grid grid-cols-4 gap-2">
+                    {[
+                      { label: "Events", value: eventsAttended },
+                      { label: "Friends", value: null as number | null },
+                      { label: "Posts", value: null as number | null },
+                      { label: "Following", value: null as number | null },
+                    ].map((s, i) => (
+                      <div
+                        key={s.label}
+                        className="rounded-xl px-2 py-3 text-center"
+                        style={{
+                          background: "rgba(255,255,255,0.02)",
+                          border: "1px solid rgba(255,255,255,0.05)",
+                        }}
+                      >
                         <p
-                          className="text-[13px] leading-relaxed"
-                          style={{
-                            fontFamily: "'Space Mono', monospace",
-                            color: "rgba(248,248,248,0.78)",
-                          }}
-                        >
-                          <span style={{ color: "#F8F8F8", fontWeight: 700 }}>VIBE:</span>{" "}
-                          {profile.bio}
-                        </p>
-                      ) : (
-                        <p
-                          className="text-[13px] leading-relaxed italic"
+                          className="leading-none"
                           style={{
                             fontFamily: "'Playfair Display', serif",
+                            fontWeight: 700,
+                            fontSize: 22,
+                            color: s.value === null ? "rgba(248,248,248,0.35)" : "#F8F8F8",
+                          }}
+                        >
+                          {s.value === null ? "—" : s.value}
+                        </p>
+                        <p
+                          className="mt-1.5 text-[9.5px] uppercase"
+                          style={{
+                            fontFamily: "'Space Mono', monospace",
+                            letterSpacing: "0.16em",
                             color: "rgba(248,248,248,0.5)",
                           }}
                         >
-                          Add a vibe in Edit Profile.
+                          {s.label}
                         </p>
-                      )}
-                    </div>
-
-                    {/* Floating + (DMs) */}
-                    <button
-                      onClick={() => goTo("/dms")}
-                      aria-label="Messages"
-                      className="shrink-0 w-11 h-11 rounded-full flex items-center justify-center transition-transform hover:scale-105"
-                      style={{
-                        background: "#D88C5A",
-                        color: "#0A0A0B",
-                        boxShadow: "0 8px 24px -8px rgba(216,140,90,0.55)",
-                      }}
-                    >
-                      <MessageCircle className="w-5 h-5" strokeWidth={2.4} />
-                    </button>
+                      </div>
+                    ))}
                   </div>
 
-                  {/* Followers / Following + Edit CTA */}
-                  <div className="mt-5 flex items-end justify-between gap-4">
-                    <ProfileFollowCounts
-                      userId={profile.id}
-                      onClickFollowers={() => setShowFollowersModal('followers')}
-                      onClickFollowing={() => setShowFollowersModal('following')}
-                    />
+                  {/* Bio */}
+                  {profile.bio && (
+                    <p
+                      className="mt-4 text-[13px] leading-relaxed"
+                      style={{
+                        fontFamily: "'Space Mono', monospace",
+                        color: "rgba(248,248,248,0.72)",
+                      }}
+                    >
+                      <span style={{ color: "#F8F8F8", fontWeight: 700 }}>VIBE:</span>{" "}
+                      {profile.bio}
+                    </p>
+                  )}
 
+                  {/* Action buttons */}
+                  <div className="mt-5 flex items-center gap-2">
                     <Button
                       onClick={() => goTo("/profile/edit")}
-                      className="rounded-xl h-[58px] px-5 text-[11px] font-bold tracking-[0.18em] uppercase leading-[1.15] text-left whitespace-normal"
+                      className="flex-1 rounded-xl h-11 text-[11px] font-bold tracking-[0.16em] uppercase"
                       style={{
-                        background: "#E8276F",
+                        background: PINK,
                         color: "#0A0A0B",
                         fontFamily: "Inter, sans-serif",
-                        boxShadow: "0 12px 30px -12px rgba(232,39,111,0.7)",
-                        minWidth: 132,
+                        boxShadow: "0 10px 28px -12px rgba(233,30,99,0.65)",
                       }}
                     >
-                      Edit<br />Profile
+                      Edit Profile
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={() => goTo("/dms")}
+                      aria-label="Messages"
+                      className="w-11 h-11 p-0 rounded-xl shrink-0"
+                      style={{
+                        background: "transparent",
+                        border: "1px solid rgba(255,255,255,0.12)",
+                        color: "#F8F8F8",
+                      }}
+                    >
+                      <MessageCircle className="w-4 h-4" />
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={() => goTo("/settings")}
+                      aria-label="Settings"
+                      className="w-11 h-11 p-0 rounded-xl shrink-0"
+                      style={{
+                        background: "transparent",
+                        border: "1px solid rgba(255,255,255,0.12)",
+                        color: "#F8F8F8",
+                      }}
+                    >
+                      <Settings className="w-4 h-4" />
                     </Button>
                   </div>
 
-                  {/* Settings + Logout — subtle utility row */}
-                  <div
-                    className="mt-4 pt-3 flex items-center justify-end gap-1"
-                    style={{ borderTop: "1px solid rgba(248,248,248,0.06)" }}
+                  {/* Subtle logout */}
+                  <button
+                    onClick={handleLogout}
+                    className="w-full mt-3 h-9 rounded-xl text-[10px] uppercase inline-flex items-center justify-center gap-1.5 transition-colors hover:bg-white/[0.04]"
+                    style={{
+                      fontFamily: "'Space Mono', monospace",
+                      letterSpacing: "0.18em",
+                      color: "rgba(248,248,248,0.45)",
+                    }}
                   >
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => goTo("/settings")}
-                      className="h-8 px-3 text-[10px] uppercase rounded-full"
-                      style={{
-                        fontFamily: "'Space Mono', monospace",
-                        letterSpacing: "0.18em",
-                        color: "rgba(248,248,248,0.5)",
-                      }}
-                    >
-                      <Settings className="w-3.5 h-3.5 mr-1.5" /> Settings
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={handleLogout}
-                      className="h-8 px-3 text-[10px] uppercase rounded-full"
-                      style={{
-                        fontFamily: "'Space Mono', monospace",
-                        letterSpacing: "0.18em",
-                        color: "rgba(232,39,111,0.75)",
-                      }}
-                    >
-                      <LogOut className="w-3.5 h-3.5 mr-1.5" /> Log out
-                    </Button>
-                  </div>
+                    <LogOut className="w-3 h-3" /> Log out
+                  </button>
                 </div>
               </div>
-            </motion.div>
+            </motion.aside>
 
-            {/* ───── 2. GREETING ───── */}
-            <motion.div
-              variants={staggerItem}
-              className="rounded-2xl p-5"
-              style={{
-                background: "#141415",
-                border: "1px solid rgba(248,248,248,0.06)",
-              }}
-            >
-              <p
-                className="text-[10px] uppercase mb-1"
-                style={{
-                  fontFamily: "'Space Mono', monospace",
-                  letterSpacing: "0.22em",
-                  color: "#D88C5A",
-                }}
-              >
-                {formattedDate} · {formattedTime}
-              </p>
-              <p
-                className="leading-[1.05]"
-                style={{
-                  fontFamily: "'Playfair Display', Georgia, serif",
-                  fontSize: 26,
-                  fontStyle: "italic",
-                  color: "#F8F8F8",
-                }}
-              >
-                {greeting},{" "}
-                <span style={{ color: "#E8276F", fontStyle: "normal", fontFamily: "'Anton', sans-serif", letterSpacing: "0.01em" }}>
-                  {userName.toUpperCase()}.
-                </span>
-              </p>
-            </motion.div>
+            {/* ═══════════ RIGHT COLUMN — ACTIVITY ═══════════ */}
+            <div className="space-y-6 min-w-0">
 
-            {/* ───── 3. DAILY HOROSCOPE (compact, tap for full) ───── */}
-            <motion.div variants={staggerItem}>
-              <button
-                onClick={() => goTo("/horoscope")}
-                className="w-full text-left rounded-2xl px-4 py-3.5 transition-colors"
-                style={{
-                  background:
-                    "linear-gradient(135deg, rgba(232,39,111,0.08) 0%, rgba(216,140,90,0.05) 100%)",
-                  border: "1px solid rgba(232,39,111,0.22)",
-                }}
+              {/* Top row: section header + horoscope right widget */}
+              <motion.div
+                variants={staggerItem}
+                className="flex flex-col md:flex-row items-start gap-4 md:gap-6"
               >
-                {zodiac ? (
-                  <div className="flex items-center gap-3">
-                    <div
-                      className="shrink-0 w-11 h-11 rounded-full flex items-center justify-center"
-                      style={{
-                        background: "rgba(10,10,11,0.6)",
-                        border: "1px solid rgba(232,39,111,0.3)",
-                        fontSize: 22,
-                        color: "#E8276F",
-                      }}
-                    >
-                      {zodiac.symbol}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between gap-2">
+                <div className="flex-1 min-w-0">
+                  <p
+                    className="text-[10px] uppercase"
+                    style={{
+                      fontFamily: "'Space Mono', monospace",
+                      letterSpacing: "0.26em",
+                      color: "#D88C5A",
+                    }}
+                  >
+                    Your personal feed
+                  </p>
+                  <h2
+                    className="leading-[0.95] mt-2"
+                    style={{
+                      fontFamily: "'Playfair Display', Georgia, serif",
+                      fontWeight: 700,
+                      fontSize: "clamp(34px, 4.4vw, 52px)",
+                      color: "#F8F8F8",
+                    }}
+                  >
+                    Curated{" "}
+                    <span style={{ fontStyle: "italic", color: PINK }}>for you</span>.
+                  </h2>
+                  <p className="mt-2 text-[13px]" style={{ color: "rgba(248,248,248,0.55)" }}>
+                    {greeting},{" "}
+                    <span style={{ color: "#F8F8F8", fontWeight: 500 }}>{userName}</span>. Here's what's on tonight.
+                  </p>
+                </div>
+
+                {/* Horoscope right-rail widget — 300px */}
+                {zodiac && (
+                  <button
+                    onClick={() => goTo("/horoscope")}
+                    className="w-full md:w-[300px] shrink-0 text-left rounded-2xl p-4 transition-colors hover:bg-white/[0.02]"
+                    style={{
+                      background: "linear-gradient(135deg, rgba(233,30,99,0.10), rgba(216,140,90,0.05))",
+                      border: "1px solid rgba(233,30,99,0.25)",
+                    }}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div
+                        className="shrink-0 w-10 h-10 rounded-full flex items-center justify-center"
+                        style={{
+                          background: "rgba(10,10,11,0.6)",
+                          border: "1px solid rgba(233,30,99,0.3)",
+                          fontSize: 20,
+                          color: PINK,
+                        }}
+                      >
+                        {zodiac.symbol}
+                      </div>
+                      <div className="flex-1 min-w-0">
                         <p
-                          className="text-[10px] uppercase truncate"
+                          className="text-[9.5px] uppercase truncate"
                           style={{
                             fontFamily: "'Space Mono', monospace",
                             letterSpacing: "0.2em",
@@ -647,248 +657,261 @@ const Profile = () => {
                         >
                           {zodiac.name} · Today
                         </p>
-                        <ChevronRight className="w-3.5 h-3.5 flex-shrink-0" style={{ color: "#E8276F" }} />
-                      </div>
-                      {horoscopeLoading ? (
                         <p
-                          className="text-[12px] mt-1 animate-pulse"
-                          style={{ color: "rgba(248,248,248,0.5)" }}
-                        >
-                          Loading…
-                        </p>
-                      ) : (
-                        <p
-                          className="text-[12.5px] leading-snug mt-1 line-clamp-2 italic"
+                          className="text-[12px] leading-snug mt-1 line-clamp-2 italic"
                           style={{
                             fontFamily: "'Playfair Display', Georgia, serif",
                             color: "rgba(248,248,248,0.85)",
                           }}
                         >
-                          {liveHoroscope || HOROSCOPE_MESSAGES[zodiac.name]}
+                          {horoscopeLoading
+                            ? "Reading the stars…"
+                            : liveHoroscope || HOROSCOPE_MESSAGES[zodiac.name]}
                         </p>
-                      )}
+                      </div>
+                      <ChevronRight className="w-3.5 h-3.5 shrink-0" style={{ color: PINK }} />
                     </div>
-                  </div>
-                ) : (
-                  <div className="flex items-center gap-3">
-                    <span className="text-xl">✨</span>
-                    <p className="text-[12px]" style={{ color: "rgba(248,248,248,0.72)" }}>
-                      Add your birthday in{" "}
-                      <span style={{ color: "#E8276F", textDecoration: "underline" }}>Edit Profile</span>{" "}
-                      for your daily horoscope.
-                    </p>
-                  </div>
+                  </button>
                 )}
-              </button>
-            </motion.div>
+              </motion.div>
 
-            {/* ───── 4. PERSONAL FEED HEADER ───── */}
-            <motion.div variants={staggerItem} className="pt-4 pb-2">
-              <p
-                className="text-[10px] uppercase"
-                style={{
-                  fontFamily: "'Space Mono', monospace",
-                  letterSpacing: "0.28em",
-                  color: "#D88C5A",
-                }}
-              >
-                Your Personal Feed
-              </p>
-              <h2
-                className="leading-[0.9] mt-2"
-                style={{
-                  fontFamily: "'Anton', 'Bebas Neue', sans-serif",
-                  fontSize: "clamp(34px, 9.5vw, 48px)",
-                  textTransform: "uppercase",
-                  color: "#F8F8F8",
-                }}
-              >
-                Curated <span style={{ fontFamily: "'Playfair Display', serif", fontStyle: "italic", textTransform: "none", color: "#E8276F" }}>for you</span>
-              </h2>
-              <div
-                className="mt-3"
-                style={{ borderBottom: "1px solid rgba(248,248,248,0.08)" }}
-              />
-            </motion.div>
-
-            {/* ───── FAVORITE TEAMS ───── */}
-            <motion.div variants={staggerItem}>
-              <Collapsible open={teamsOpen} onOpenChange={setTeamsOpen}>
-                <div className="glass-card rounded-2xl overflow-hidden">
-                  <CollapsibleTrigger asChild>
-                    <button className="w-full p-5 pb-3 flex items-center justify-between cursor-pointer hover:bg-foreground/[0.03] transition-colors">
-                      <span className="text-[15px] flex items-center gap-2.5 lb-section-label">
-                        <Shield className="w-3.5 h-3.5 text-primary" strokeWidth={2.5} /> Favorite Teams
-                      </span>
-                      <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform duration-200 ${teamsOpen ? 'rotate-180' : ''}`} />
-                    </button>
-                  </CollapsibleTrigger>
-                  {!teamsOpen && (
-                    <div className="divide-y divide-border/30">
-                      {TEAM_PERFORMANCE.slice(0, 2).map(team => (
-                        <div
-                          key={team.name}
-                          className="flex items-center gap-3 px-5 py-4 hover:bg-foreground/[0.03] transition-colors cursor-pointer group"
-                          onClick={() => goTo(`/team/${team.slug}`)}
-                        >
-                          <img src={team.logo} alt={team.name} className="w-10 h-10 object-contain rounded-lg bg-foreground/5 p-0.5" onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} />
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2">
-                              <span className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">{team.name}</span>
-                              <Badge variant="outline" className="text-[9px] px-1.5 py-0 rounded-full border-border/30">{team.league}</Badge>
-                            </div>
-                            <p className="text-xs text-muted-foreground mt-0.5">{team.nextGame}</p>
-                          </div>
-                          <p className={`text-sm font-sans font-bold ${team.winPct > 0.5 ? "text-accent" : team.winPct > 0 && team.winPct < 0.5 ? "text-destructive" : "text-foreground"}`}>{team.record}</p>
-                        </div>
-                      ))}
-                      {TEAM_PERFORMANCE.length > 2 && (
-                        <div className="px-5 py-2 text-center">
-                          <span className="text-xs text-muted-foreground">+{TEAM_PERFORMANCE.length - 2} more teams</span>
-                        </div>
-                      )}
-                    </div>
-                  )}
-                  <CollapsibleContent>
-                    <div className="divide-y divide-border/30">
-                      {TEAM_PERFORMANCE.map(team => (
-                        <div
-                          key={team.name}
-                          className="flex items-center gap-3 px-5 py-4 hover:bg-foreground/[0.03] transition-colors cursor-pointer group"
-                          onClick={() => goTo(`/team/${team.slug}`)}
-                        >
-                          <img src={team.logo} alt={team.name} className="w-10 h-10 object-contain rounded-lg bg-foreground/5 p-0.5" onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} />
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2">
-                              <span className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">{team.name}</span>
-                              <Badge variant="outline" className="text-[9px] px-1.5 py-0 rounded-full border-border/30">{team.league}</Badge>
-                              {team.injuryNote && (
-                                <span title={team.injuryNote}>
-                                  <AlertTriangle className="w-3.5 h-3.5 text-amber-500" />
-                                </span>
-                              )}
-                            </div>
-                            <p className="text-xs text-muted-foreground mt-0.5">{team.leadingScorer}</p>
-                            <p className="text-xs text-muted-foreground">{team.nextGame}</p>
-                          </div>
-                          <div className="flex flex-col items-end gap-2">
-                            <p className={`text-sm font-sans font-bold ${team.winPct > 0.5 ? "text-accent" : team.winPct > 0 && team.winPct < 0.5 ? "text-destructive" : "text-foreground"}`}>{team.record}</p>
-                            {team.last5.length > 0 && (
-                              <div className="flex gap-0.5">
-                                {team.last5.map((win, i) => <div key={i} className={`w-2 h-2 rounded-full ${win ? "bg-accent" : "bg-destructive/60"}`} />)}
-                              </div>
-                            )}
-                            {team.nextGame !== "Offseason" && !team.nextGame.startsWith("Season") && (
-                              <div className="flex gap-1.5">
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  className="h-6 text-[10px] px-2 rounded-full gap-1 border-border/30"
-                                  onClick={(e) => { e.stopPropagation(); window.open(team.ticketUrl || getTeamTicketsUrl(team.name), '_blank'); }}
-                                >
-                                  <Ticket className="w-3 h-3" /> Tickets
-                                </Button>
-                                <Button
-                                  size="sm"
-                                  className="h-6 text-[10px] px-2 rounded-full gap-1"
-                                  onClick={(e) => { e.stopPropagation(); window.open(team.watchUrl || getTeamWatchUrl(team.name), '_blank'); }}
-                                >
-                                  <Play className="w-3 h-3" /> Watch
-                                </Button>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </CollapsibleContent>
-                </div>
-              </Collapsible>
-            </motion.div>
-
-            {/* ───── WHERE TO WATCH ───── */}
-            <motion.div variants={staggerItem}>
-              <Collapsible open={watchOpen} onOpenChange={setWatchOpen}>
-                <Card className="rounded-2xl overflow-hidden">
-                  <CollapsibleTrigger asChild>
-                    <button className="w-full pt-4 px-5 pb-3 flex items-center justify-between cursor-pointer hover:bg-foreground/[0.03] transition-colors">
-                      <span className="text-[15px] flex items-center gap-2.5 lb-section-label">
-                        <Tv className="w-3.5 h-3.5 text-primary" /> Where to Watch
-                      </span>
-                      <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform duration-200 ${watchOpen ? 'rotate-180' : ''}`} />
-                    </button>
-                  </CollapsibleTrigger>
-                  <CollapsibleContent>
-                    <CardContent className="px-5 pb-5 pt-2">
-                      <ProfileWhereToWatch />
-                    </CardContent>
-                  </CollapsibleContent>
-                </Card>
-              </Collapsible>
-            </motion.div>
-
-            {/* ───── LIVE & RECENT SCORES ───── */}
-            <motion.div variants={staggerItem}>
-              <Collapsible open={scoresOpen} onOpenChange={setScoresOpen}>
-                <Card className="rounded-2xl overflow-hidden">
-                  <CollapsibleTrigger asChild>
-                    <button className="w-full pt-4 px-5 pb-3 flex items-center justify-between cursor-pointer hover:bg-foreground/[0.03] transition-colors">
-                      <span className="text-[15px] flex items-center gap-2.5 lb-section-label">
-                        <Radio className="w-3.5 h-3.5 text-[#FF5D2E]" /> Live &amp; Recent Scores
-                      </span>
-                      <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform duration-200 ${scoresOpen ? 'rotate-180' : ''}`} />
-                    </button>
-                  </CollapsibleTrigger>
-                  <CollapsibleContent>
-                    <CardContent className="px-5 pb-5 pt-2">
-                      <ProfileScores favoriteTeams={[...(profile.favorite_teams_players || []), ...((profile as any).favorite_la_teams || [])]} />
-                    </CardContent>
-                  </CollapsibleContent>
-                </Card>
-              </Collapsible>
-            </motion.div>
-
-            {/* ───── RECOMMENDED EVENTS ───── */}
-            {suggestedEvents.length > 0 && (
+              {/* FAVORITE TEAMS (default expanded) */}
               <motion.div variants={staggerItem}>
-                <Collapsible open={recEventsOpen} onOpenChange={setRecEventsOpen}>
-                  <div className="glass-card rounded-2xl overflow-hidden">
+                <Collapsible open={teamsOpen} onOpenChange={setTeamsOpen}>
+                  <div className="rounded-2xl overflow-hidden" style={{ background: PANEL, border: PANEL_BORDER }}>
                     <CollapsibleTrigger asChild>
-                      <button className="w-full p-5 pb-3 flex items-center justify-between cursor-pointer hover:bg-foreground/[0.03] transition-colors">
-                        <span className="text-[15px] flex items-center gap-2.5 lb-section-label">
-                          <CalendarHeart className="w-3.5 h-3.5 text-primary" strokeWidth={2.5} /> Recommended Events
+                      <button className="w-full p-5 pb-3 flex items-center justify-between cursor-pointer hover:bg-white/[0.03] transition-colors">
+                        <span className="text-[13px] uppercase flex items-center gap-2.5"
+                          style={{ fontFamily: "'Space Mono', monospace", letterSpacing: "0.2em", color: "#F8F8F8", fontWeight: 500 }}>
+                          <Shield className="w-3.5 h-3.5" style={{ color: PINK }} strokeWidth={2.5} /> Favorite Teams
                         </span>
-                        <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform duration-200 ${recEventsOpen ? 'rotate-180' : ''}`} />
+                        <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${teamsOpen ? 'rotate-180' : ''}`} style={{ color: "rgba(248,248,248,0.5)" }} />
                       </button>
                     </CollapsibleTrigger>
                     <CollapsibleContent>
-                      <div className="px-5 pb-5">
-                        <div className="grid md:grid-cols-2 gap-4">
-                          {suggestedEvents.map(event => (
-                            <div key={event.id} className="glass-card rounded-xl p-4 cursor-pointer hover:border-primary/30 transition-colors" onClick={() => goTo(`/event/${event.id}`)}>
-                              {event.image_url ? <img src={event.image_url} alt={event.title} className="w-full h-32 object-cover rounded-lg mb-3" /> : <div className="w-full h-32 bg-muted rounded-lg mb-3 flex items-center justify-center"><Calendar className="w-8 h-8 text-muted-foreground" /></div>}
-                              <p className="font-medium text-foreground">{event.title}</p>
-                              <p className="text-sm text-muted-foreground">{event.venue_name || event.city || "Location TBD"} • {format(new Date(event.event_date), "MMM d")}</p>
+                      <div className="divide-y" style={{ borderColor: "rgba(255,255,255,0.05)" }}>
+                        {TEAM_PERFORMANCE.map(team => (
+                          <div
+                            key={team.name}
+                            className="flex items-center gap-3 px-5 py-4 hover:bg-white/[0.03] transition-colors cursor-pointer group"
+                            onClick={() => goTo(`/team/${team.slug}`)}
+                          >
+                            <img src={team.logo} alt={team.name} className="w-10 h-10 object-contain rounded-lg p-0.5" style={{ background: "rgba(255,255,255,0.04)" }} onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2">
+                                <span className="text-sm font-medium text-foreground group-hover:opacity-90 transition-colors" style={{ color: "#F8F8F8" }}>{team.name}</span>
+                                <Badge variant="outline" className="text-[9px] px-1.5 py-0 rounded-full" style={{ borderColor: "rgba(255,255,255,0.12)", color: "rgba(248,248,248,0.65)" }}>{team.league}</Badge>
+                                {team.injuryNote && (
+                                  <span title={team.injuryNote}>
+                                    <AlertTriangle className="w-3.5 h-3.5 text-amber-500" />
+                                  </span>
+                                )}
+                              </div>
+                              <p className="text-xs mt-0.5" style={{ color: "rgba(248,248,248,0.5)" }}>{team.nextGame}</p>
                             </div>
-                          ))}
-                        </div>
+                            <div className="flex flex-col items-end gap-2">
+                              <p className="text-sm font-bold" style={{ color: team.winPct > 0.5 ? "#7DD3A4" : (team.winPct > 0 && team.winPct < 0.5 ? "#F87171" : "#F8F8F8") }}>{team.record}</p>
+                              {team.last5.length > 0 && (
+                                <div className="flex gap-0.5">
+                                  {team.last5.map((win, i) => <div key={i} className="w-1.5 h-1.5 rounded-full" style={{ background: win ? "#7DD3A4" : "rgba(248,113,113,0.6)" }} />)}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        ))}
                       </div>
                     </CollapsibleContent>
                   </div>
                 </Collapsible>
               </motion.div>
-            )}
 
-            {/* ───── CURATED SPORTS NEWS / MY SPORTS FEED ───── */}
-            <motion.div variants={staggerItem}>
-              <MySportsFeed
-                userSports={profile.favorite_sports || []}
-                userTeams={[...(profile.favorite_teams_players || []), ...((profile as any).favorite_la_teams || [])]}
-                userCity={profile.city}
-              />
-            </motion.div>
+              {/* LIVE & RECENT SCORES (default expanded) */}
+              <motion.div variants={staggerItem}>
+                <Collapsible open={scoresOpen} onOpenChange={setScoresOpen}>
+                  <div className="rounded-2xl overflow-hidden" style={{ background: PANEL, border: PANEL_BORDER }}>
+                    <CollapsibleTrigger asChild>
+                      <button className="w-full p-5 pb-3 flex items-center justify-between cursor-pointer hover:bg-white/[0.03] transition-colors">
+                        <span className="text-[13px] uppercase flex items-center gap-2.5"
+                          style={{ fontFamily: "'Space Mono', monospace", letterSpacing: "0.2em", color: "#F8F8F8", fontWeight: 500 }}>
+                          <Radio className="w-3.5 h-3.5" style={{ color: PINK }} /> Live &amp; Recent Scores
+                        </span>
+                        <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${scoresOpen ? 'rotate-180' : ''}`} style={{ color: "rgba(248,248,248,0.5)" }} />
+                      </button>
+                    </CollapsibleTrigger>
+                    <CollapsibleContent>
+                      <div className="px-5 pb-5 pt-2">
+                        <ProfileScores favoriteTeams={[...(profile.favorite_teams_players || []), ...((profile as any).favorite_la_teams || [])]} />
+                      </div>
+                    </CollapsibleContent>
+                  </div>
+                </Collapsible>
+              </motion.div>
 
+              {/* WHERE TO WATCH (collapsed) */}
+              <motion.div variants={staggerItem}>
+                <Collapsible open={watchOpen} onOpenChange={setWatchOpen}>
+                  <div className="rounded-2xl overflow-hidden" style={{ background: PANEL, border: PANEL_BORDER }}>
+                    <CollapsibleTrigger asChild>
+                      <button className="w-full p-5 pb-3 flex items-center justify-between cursor-pointer hover:bg-white/[0.03] transition-colors">
+                        <span className="text-[13px] uppercase flex items-center gap-2.5"
+                          style={{ fontFamily: "'Space Mono', monospace", letterSpacing: "0.2em", color: "#F8F8F8", fontWeight: 500 }}>
+                          <Tv className="w-3.5 h-3.5" style={{ color: PINK }} /> Where to Watch
+                        </span>
+                        <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${watchOpen ? 'rotate-180' : ''}`} style={{ color: "rgba(248,248,248,0.5)" }} />
+                      </button>
+                    </CollapsibleTrigger>
+                    <CollapsibleContent>
+                      <div className="px-5 pb-5 pt-2">
+                        <ProfileWhereToWatch />
+                      </div>
+                    </CollapsibleContent>
+                  </div>
+                </Collapsible>
+              </motion.div>
 
+              {/* RECOMMENDED EVENTS (collapsed) */}
+              {suggestedEvents.length > 0 && (
+                <motion.div variants={staggerItem}>
+                  <Collapsible open={recEventsOpen} onOpenChange={setRecEventsOpen}>
+                    <div className="rounded-2xl overflow-hidden" style={{ background: PANEL, border: PANEL_BORDER }}>
+                      <CollapsibleTrigger asChild>
+                        <button className="w-full p-5 pb-3 flex items-center justify-between cursor-pointer hover:bg-white/[0.03] transition-colors">
+                          <span className="text-[13px] uppercase flex items-center gap-2.5"
+                            style={{ fontFamily: "'Space Mono', monospace", letterSpacing: "0.2em", color: "#F8F8F8", fontWeight: 500 }}>
+                            <CalendarHeart className="w-3.5 h-3.5" style={{ color: PINK }} strokeWidth={2.5} /> Recommended Events
+                          </span>
+                          <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${recEventsOpen ? 'rotate-180' : ''}`} style={{ color: "rgba(248,248,248,0.5)" }} />
+                        </button>
+                      </CollapsibleTrigger>
+                      <CollapsibleContent>
+                        <div className="px-5 pb-5">
+                          <div className="grid sm:grid-cols-2 gap-4">
+                            {suggestedEvents.map(event => (
+                              <div key={event.id} className="rounded-xl p-4 cursor-pointer transition-colors hover:bg-white/[0.04]"
+                                style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)" }}
+                                onClick={() => goTo(`/event/${event.id}`)}>
+                                {event.image_url ? (
+                                  <img src={event.image_url} alt={event.title} className="w-full h-32 object-cover rounded-lg mb-3" />
+                                ) : (
+                                  <div className="w-full h-32 rounded-lg mb-3 flex items-center justify-center"
+                                    style={{ background: "linear-gradient(135deg, rgba(233,30,99,0.18), rgba(216,140,90,0.10))" }}>
+                                    <Calendar className="w-8 h-8" style={{ color: PINK }} />
+                                  </div>
+                                )}
+                                <p className="font-medium" style={{ color: "#F8F8F8" }}>{event.title}</p>
+                                <p className="text-sm" style={{ color: "rgba(248,248,248,0.55)" }}>{event.venue_name || event.city || "Location TBD"} • {format(new Date(event.event_date), "MMM d")}</p>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </CollapsibleContent>
+                    </div>
+                  </Collapsible>
+                </motion.div>
+              )}
+
+              {/* FRIENDS ACTIVITY (new) */}
+              <motion.div variants={staggerItem}>
+                <div className="rounded-2xl p-5" style={{ background: PANEL, border: PANEL_BORDER }}>
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="text-[13px] uppercase flex items-center gap-2.5"
+                      style={{ fontFamily: "'Space Mono', monospace", letterSpacing: "0.2em", color: "#F8F8F8", fontWeight: 500 }}>
+                      <Users className="w-3.5 h-3.5" style={{ color: PINK }} /> Friends Activity
+                    </span>
+                    <button onClick={() => goTo("/friends")}
+                      className="text-[10px] uppercase tracking-[0.18em]"
+                      style={{ color: PINK, fontFamily: "'Space Mono', monospace" }}>
+                      View all
+                    </button>
+                  </div>
+                  <div className="flex flex-col items-center justify-center py-10 px-4 rounded-xl text-center"
+                    style={{ background: "linear-gradient(135deg, rgba(233,30,99,0.08), rgba(216,140,90,0.04))", border: "1px dashed rgba(233,30,99,0.22)" }}>
+                    <div className="w-12 h-12 rounded-full flex items-center justify-center mb-3"
+                      style={{ background: "rgba(233,30,99,0.15)" }}>
+                      <Users className="w-5 h-5" style={{ color: PINK }} />
+                    </div>
+                    <p className="text-[14px] mb-1" style={{ color: "#F8F8F8", fontFamily: "'Playfair Display', serif", fontStyle: "italic" }}>
+                      No friend activity yet.
+                    </p>
+                    <p className="text-[12px] mb-4" style={{ color: "rgba(248,248,248,0.55)" }}>
+                      Add friends and you'll see their check-ins, RSVPs, and posts here.
+                    </p>
+                    <button onClick={() => goTo("/friends")}
+                      className="text-[11px] uppercase font-bold tracking-[0.16em] px-4 py-2 rounded-full"
+                      style={{ background: PINK, color: "#0A0A0B", fontFamily: "Inter, sans-serif" }}>
+                      Find friends
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* COMMUNITIES (new) */}
+              <motion.div variants={staggerItem}>
+                <div className="rounded-2xl p-5" style={{ background: PANEL, border: PANEL_BORDER }}>
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="text-[13px] uppercase flex items-center gap-2.5"
+                      style={{ fontFamily: "'Space Mono', monospace", letterSpacing: "0.2em", color: "#F8F8F8", fontWeight: 500 }}>
+                      <MessageCircle className="w-3.5 h-3.5" style={{ color: PINK }} /> Communities
+                    </span>
+                    <button onClick={() => goTo("/club")}
+                      className="text-[10px] uppercase tracking-[0.18em]"
+                      style={{ color: PINK, fontFamily: "'Space Mono', monospace" }}>
+                      Explore
+                    </button>
+                  </div>
+                  <div className="flex flex-col items-center justify-center py-10 px-4 rounded-xl text-center"
+                    style={{ background: "linear-gradient(135deg, rgba(233,30,99,0.08), rgba(216,140,90,0.04))", border: "1px dashed rgba(233,30,99,0.22)" }}>
+                    <div className="w-12 h-12 rounded-full flex items-center justify-center mb-3"
+                      style={{ background: "rgba(233,30,99,0.15)" }}>
+                      <Heart className="w-5 h-5" style={{ color: PINK }} />
+                    </div>
+                    <p className="text-[14px] mb-1" style={{ color: "#F8F8F8", fontFamily: "'Playfair Display', serif", fontStyle: "italic" }}>
+                      Not in any communities yet.
+                    </p>
+                    <p className="text-[12px] mb-4" style={{ color: "rgba(248,248,248,0.55)" }}>
+                      Join team chats, city crews, and fan circles in The Club.
+                    </p>
+                    <button onClick={() => goTo("/club")}
+                      className="text-[11px] uppercase font-bold tracking-[0.16em] px-4 py-2 rounded-full"
+                      style={{ background: PINK, color: "#0A0A0B", fontFamily: "Inter, sans-serif" }}>
+                      Browse groups
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* MY SPORTS FEED with filter chips above */}
+              <motion.div variants={staggerItem}>
+                <div className="mb-3 -mx-1 px-1 overflow-x-auto scrollbar-none">
+                  <div className="flex gap-2 min-w-max">
+                    {FEED_FILTERS.map((f) => {
+                      const active = feedFilter === f;
+                      return (
+                        <button
+                          key={f}
+                          onClick={() => setFeedFilter(f)}
+                          className="text-[11px] uppercase font-bold tracking-[0.16em] h-9 px-4 rounded-full transition-colors whitespace-nowrap"
+                          style={{
+                            background: active ? PINK : "rgba(255,255,255,0.04)",
+                            color: active ? "#0A0A0B" : "rgba(248,248,248,0.7)",
+                            border: active ? "1px solid transparent" : "1px solid rgba(255,255,255,0.08)",
+                            fontFamily: "Inter, sans-serif",
+                          }}
+                        >
+                          {f}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+                <MySportsFeed
+                  userSports={profile.favorite_sports || []}
+                  userTeams={[...(profile.favorite_teams_players || []), ...((profile as any).favorite_la_teams || [])]}
+                  userCity={profile.city}
+                />
+              </motion.div>
+
+            </div>
           </motion.div>
         </div>
       </main>
