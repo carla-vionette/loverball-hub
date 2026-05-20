@@ -148,17 +148,10 @@ const QUOTES = [
 
 const Index = () => {
   const navigate = useNavigate();
-  const [mobileOpen, setMobileOpen] = useState(false);
-
   const goJoin = () => navigate("/auth?mode=signup");
   const goSignIn = () => navigate("/auth?mode=signin");
 
-  const navItems = [
-    { label: "Watch", to: "/feed" },
-    { label: "Connect", to: "/connect" },
-    { label: "EVENTS", to: "/events" },
-    { label: "Club", to: "/club" },
-  ];
+
 
   return (
     <div style={{ background: C.bg, color: C.text, fontFamily: fonts.sans }} className="min-h-screen">
