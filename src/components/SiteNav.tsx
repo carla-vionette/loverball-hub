@@ -99,16 +99,16 @@ const SiteNav = () => {
           {user ? (
             <>
               <NotificationBell />
-              <Link to="/profile" style={{ ...linkStyle, color: C.muted }} className="transition-colors hover:!text-[#FAF5E9]">
+              <Link to="/profile" style={{ ...linkStyle, color: "#E86BB0" }} className="transition-colors hover:!text-[#E6F25A]">
                 Profile
               </Link>
-              <Link to="/feed" style={{ ...pillStyle, background: C.raspberry, color: "#fff" }}>
+              <Link to="/feed" style={{ ...pillStyle, background: "#F04E23", color: "#E6F25A" }}>
                 Open App
               </Link>
             </>
           ) : (
             <>
-              <button onClick={goSignIn} style={{ ...linkStyle, color: C.muted }} className="transition-colors hover:!text-[#FAF5E9]">
+              <button onClick={goSignIn} style={{ ...linkStyle, color: "#E86BB0" }} className="transition-colors hover:!text-[#E6F25A]">
                 Sign in
               </button>
               <button onClick={goJoin} style={{ ...pillStyle, background: C.raspberry, color: "#fff" }}>
