@@ -461,13 +461,17 @@ const Events = () => {
                 <Calendar className="w-9 h-9" style={{ color: "#F04E23" }} />
               </div>
               <h2 style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: 22, color: "#E6F25A", textTransform: "uppercase", letterSpacing: "0.02em", margin: 0 }}>
-                {tab === "upcoming" ? "No upcoming events" : "No past events"}
+                {searchQuery.trim()
+                  ? "No events match your search"
+                  : tab === "upcoming" ? "No upcoming events" : "No past events"}
               </h2>
               <p className="max-w-sm mx-auto"
                 style={{ fontFamily: "'Playfair Display', serif", fontStyle: "italic", fontSize: 14, color: "rgba(248,248,248,0.55)" }}>
-                {tab === "upcoming"
-                  ? "Curated invitations drop weekly. Stay close."
-                  : "Recaps will appear here after the lights come up."}
+                {searchQuery.trim()
+                  ? "Try a different keyword or city."
+                  : tab === "upcoming"
+                    ? "Curated invitations drop weekly. Stay close."
+                    : "Recaps will appear here after the lights come up."}
               </p>
             </div>
           ) : (
