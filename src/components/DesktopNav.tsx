@@ -62,7 +62,7 @@ const NavItem = ({
         </span>
       )}
     </div>
-    <span className="text-sm hidden xl:inline truncate">{label}</span>
+    <span className="text-sm hidden xl:inline truncate uppercase tracking-wider">{label}</span>
   </Link>
 );
 
