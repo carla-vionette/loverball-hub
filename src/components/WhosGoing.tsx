@@ -114,6 +114,39 @@ const WhosGoing = ({ eventId, refreshKey }: Props) => {
 
   if (guests.length === 0) return null;
 
+  // Non-members: gated prompt with blurred placeholder avatars
+  if (!isMember) {
+    return (
+      <div className="mt-6">
+        <div className="flex items-center gap-2 mb-4">
+          <Users className="w-5 h-5 text-primary" />
+          <h3 className="text-lg font-bold text-foreground">Who's Going</h3>
+          <span className="text-sm text-muted-foreground">({guests.length})</span>
+        </div>
+        <div className="rounded-2xl border border-border bg-secondary/40 p-6">
+          <div className="flex -space-x-3 mb-4 blur-sm pointer-events-none">
+            {Array.from({ length: Math.min(guests.length, 6) }).map((_, i) => (
+              <div
+                key={i}
+                className="w-12 h-12 rounded-full border-2 border-background bg-primary/20"
+              />
+            ))}
+          </div>
+          <p className="text-sm font-medium text-foreground mb-3">
+            Sign up to see who's going
+          </p>
+          <Button
+            size="sm"
+            className="rounded-full"
+            onClick={() => (window.location.href = "/auth")}
+          >
+            Sign up
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <>
       <div className="mt-6">
@@ -143,7 +176,6 @@ const WhosGoing = ({ eventId, refreshKey }: Props) => {
             >
               <div className="relative">
                 <Avatar className="w-14 h-14 border-2 border-primary/20">
-                  <AvatarImage src={guest.profile?.profile_photo_url || undefined} />
                   <AvatarFallback className="bg-primary/10 text-primary font-semibold">
                     {guest.profile?.name?.charAt(0).toUpperCase() || "?"}
                   </AvatarFallback>
