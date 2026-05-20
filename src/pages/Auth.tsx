@@ -440,8 +440,50 @@ const Auth = () => {
                     onChange={(e) => setEmail(e.target.value)}
                     required
                   />
+                  <div className="flex gap-2">
+                    <select
+                      value={countryCode}
+                      onChange={(e) => setCountryCode(e.target.value)}
+                      style={{
+                        fontFamily: fonts.sans,
+                        fontSize: 16,
+                        height: 56,
+                        padding: "0 12px",
+                        borderRadius: 16,
+                        border: `1px solid ${C.borderStrong}`,
+                        background: C.surface,
+                        color: C.text,
+                        outline: "none",
+                        minWidth: 100,
+                      }}
+                      aria-label="Country code"
+                    >
+                      <option value="+1">🇺🇸 +1</option>
+                      <option value="+44">🇬🇧 +44</option>
+                      <option value="+61">🇦🇺 +61</option>
+                      <option value="+33">🇫🇷 +33</option>
+                      <option value="+49">🇩🇪 +49</option>
+                      <option value="+52">🇲🇽 +52</option>
+                      <option value="+34">🇪🇸 +34</option>
+                      <option value="+39">🇮🇹 +39</option>
+                      <option value="+81">🇯🇵 +81</option>
+                      <option value="+91">🇮🇳 +91</option>
+                      <option value="+55">🇧🇷 +55</option>
+                    </select>
+                    <EditorialInput
+                      type="tel"
+                      placeholder="Phone number"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      required
+                      inputMode="tel"
+                    />
+                  </div>
+                  <p style={{ fontFamily: fonts.mono, fontSize: 10, letterSpacing: "0.14em", textTransform: "uppercase", color: C.muted, textAlign: "center" }}>
+                    Free forever · No card required
+                  </p>
                   <EditorialBtn type="submit" loading={loading}>
-                    Continue
+                    Continue free
                   </EditorialBtn>
                 </form>
 
