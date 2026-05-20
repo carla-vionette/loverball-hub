@@ -149,7 +149,7 @@ export default function Signup() {
               className="flex-1 flex flex-col"
             >
               <div className="mb-8">
-                <h1 className="text-4xl font-serif tracking-tight text-foreground">Join Loverball</h1>
+                <h1 className="text-4xl font-serif tracking-tight text-foreground">Join us!</h1>
                 <p className="text-foreground/60 mt-2 text-base">Sign up in seconds.</p>
               </div>
 

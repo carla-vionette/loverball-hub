@@ -36,7 +36,7 @@ const About = () => (
         No bots. No bad-faith trolls. No algorithm dragging you off-topic. Just members, the games, and the people who love them.
       </Body>
       <div className="pt-6 flex flex-wrap gap-4 items-center">
-        <PrimaryBtn to="/auth?mode=signup">Join Loverball</PrimaryBtn>
+        <PrimaryBtn to="/auth?mode=signup">Join us!</PrimaryBtn>
         <TertiaryLink to="/contact">Contact us</TertiaryLink>
       </div>
     </section>
