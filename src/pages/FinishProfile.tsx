@@ -60,6 +60,9 @@ const FinishProfile = () => {
   const [teamInput, setTeamInput] = useState("");
   const [city, setCity] = useState("");
   const [bio, setBio] = useState("");
+  const [phone, setPhone] = useState("");
+  const [countryCode, setCountryCode] = useState("+1");
+  const [existingPhone, setExistingPhone] = useState<string | null>(null);
 
   // Auth guard
   useEffect(() => {
@@ -78,7 +81,7 @@ const FinishProfile = () => {
 
     supabase
       .from("profiles")
-      .select("name, username, city, bio, favorite_sports, favorite_teams_players, profile_photo_url")
+      .select("name, username, city, bio, favorite_sports, favorite_teams_players, profile_photo_url, phone")
       .eq("id", user.id)
       .maybeSingle()
       .then(({ data: profile }) => {
@@ -90,7 +93,10 @@ const FinishProfile = () => {
           if (profile.favorite_sports?.length) setFavoriteSports(profile.favorite_sports);
           if (profile.favorite_teams_players?.length) setFavoriteTeams(profile.favorite_teams_players);
           if (profile.profile_photo_url) setPhotoPreview(profile.profile_photo_url);
+          if (profile.phone) setExistingPhone(profile.phone);
         }
+        const metaPhone = user.user_metadata?.phone as string | undefined;
+        if (metaPhone && !profile?.phone) setExistingPhone(metaPhone);
       });
   }, [authLoading, navigate, user]);
 
@@ -171,6 +177,10 @@ const FinishProfile = () => {
         photoUrl = await uploadPhoto();
       }
 
+      const normalizedPhone = phone.trim()
+        ? `${countryCode}${phone.replace(/\D+/g, "")}`
+        : existingPhone || null;
+
       await supabase.from("profiles").upsert({
         id: userId,
         name: existingName || userEmail.split("@")[0],
@@ -180,6 +190,9 @@ const FinishProfile = () => {
         favorite_sports: favoriteSports.length ? favoriteSports : [],
         favorite_teams_players: favoriteTeams.length ? favoriteTeams : [],
         profile_photo_url: photoUrl,
+        email: userEmail || null,
+        phone: normalizedPhone,
+        membership_tier: "free",
       }, { onConflict: "id" });
 
       // Welcome email fire-and-forget
@@ -259,6 +272,32 @@ const FinishProfile = () => {
                   Welcome to the community. Now let's make your profile so your people can find you.
                 </p>
               </div>
+              {!existingPhone && (
+                <div className="w-full space-y-2 pt-2 text-left">
+                  <label className="text-xs uppercase tracking-wider text-muted-foreground">Phone number (for event SMS)</label>
+                  <div className="flex gap-2">
+                    <select
+                      value={countryCode}
+                      onChange={(e) => setCountryCode(e.target.value)}
+                      className="h-12 px-3 rounded-xl bg-background border border-border text-sm"
+                    >
+                      <option value="+1">🇺🇸 +1</option>
+                      <option value="+44">🇬🇧 +44</option>
+                      <option value="+61">🇦🇺 +61</option>
+                      <option value="+52">🇲🇽 +52</option>
+                      <option value="+33">🇫🇷 +33</option>
+                    </select>
+                    <input
+                      type="tel"
+                      inputMode="tel"
+                      placeholder="Phone number"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      className="flex-1 h-12 px-4 rounded-xl bg-background border border-border text-sm"
+                    />
+                  </div>
+                </div>
+              )}
               <div className="w-full space-y-3 pt-2">
                 <Button
                   onClick={() => go(1, 1)}

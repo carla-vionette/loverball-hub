@@ -180,6 +180,8 @@ const Auth = () => {
   const [mode, setMode] = useState<AuthMode>(initialMode);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [countryCode, setCountryCode] = useState("+1");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [resendLoading, setResendLoading] = useState(false);
@@ -197,6 +199,14 @@ const Auth = () => {
     else if (searchParams.get('signup') === 'true') setMode('join');
   }, [searchParams]);
 
+  // E.164 helpers
+  const normalizePhone = (cc: string, raw: string) => {
+    const digits = raw.replace(/\D+/g, "");
+    if (!digits) return "";
+    return `${cc}${digits}`;
+  };
+  const isValidE164 = (p: string) => /^\+[1-9]\d{6,14}$/.test(p);
+
   // ── Sign up ──────────────────────────────────────────────────────────
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -208,6 +218,11 @@ const Auth = () => {
       toast({ title: "Enter a valid email", variant: "destructive" });
       return;
     }
+    const fullPhone = normalizePhone(countryCode, phone);
+    if (!isValidE164(fullPhone)) {
+      toast({ title: "Enter a valid phone number", description: "Include area code, digits only.", variant: "destructive" });
+      return;
+    }
 
     setLoading(true);
     try {
@@ -216,12 +231,30 @@ const Auth = () => {
         email: email.trim().toLowerCase(),
         password: tempPassword,
         options: {
-          data: { name: name.trim() },
+          data: { name: name.trim(), phone: fullPhone },
           emailRedirectTo: `${authOrigin}/finish-profile`,
         },
       });
 
       if (error) throw error;
+
+      // Persist phone, email, and free membership immediately on the profile (if session present).
+      if (data.user) {
+        await supabase.from("profiles").upsert(
+          {
+            id: data.user.id,
+            name: name.trim(),
+            email: email.trim().toLowerCase(),
+            phone: fullPhone,
+            membership_tier: "free",
+            in_app_notifications_enabled: true,
+            email_notifications_enabled: true,
+            sms_notifications_enabled: true,
+          },
+          { onConflict: "id" },
+        );
+      }
+
       if (data.user && !data.session) setMode("confirm");
       else if (data.user && data.session) navigate("/finish-profile");
     } catch (err: any) {
@@ -407,8 +440,50 @@ const Auth = () => {
                     onChange={(e) => setEmail(e.target.value)}
                     required
                   />
+                  <div className="flex gap-2">
+                    <select
+                      value={countryCode}
+                      onChange={(e) => setCountryCode(e.target.value)}
+                      style={{
+                        fontFamily: fonts.sans,
+                        fontSize: 16,
+                        height: 56,
+                        padding: "0 12px",
+                        borderRadius: 16,
+                        border: `1px solid ${C.borderStrong}`,
+                        background: C.surface,
+                        color: C.text,
+                        outline: "none",
+                        minWidth: 100,
+                      }}
+                      aria-label="Country code"
+                    >
+                      <option value="+1">🇺🇸 +1</option>
+                      <option value="+44">🇬🇧 +44</option>
+                      <option value="+61">🇦🇺 +61</option>
+                      <option value="+33">🇫🇷 +33</option>
+                      <option value="+49">🇩🇪 +49</option>
+                      <option value="+52">🇲🇽 +52</option>
+                      <option value="+34">🇪🇸 +34</option>
+                      <option value="+39">🇮🇹 +39</option>
+                      <option value="+81">🇯🇵 +81</option>
+                      <option value="+91">🇮🇳 +91</option>
+                      <option value="+55">🇧🇷 +55</option>
+                    </select>
+                    <EditorialInput
+                      type="tel"
+                      placeholder="Phone number"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      required
+                      inputMode="tel"
+                    />
+                  </div>
+                  <p style={{ fontFamily: fonts.mono, fontSize: 10, letterSpacing: "0.14em", textTransform: "uppercase", color: C.muted, textAlign: "center" }}>
+                    Free forever · No card required
+                  </p>
                   <EditorialBtn type="submit" loading={loading}>
-                    Continue
+                    Continue free
                   </EditorialBtn>
                 </form>
 
