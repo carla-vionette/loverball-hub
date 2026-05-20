@@ -1,13 +1,14 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { User, CalendarDays, Play, Heart } from "lucide-react";
+import { User, CalendarDays, Play, Heart, Users } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 
 const navItems = [
-  { icon: Play, label: "Feed", path: "/feed", matches: ["/feed", "/home"] },
+  { icon: Play, label: "Watch", path: "/feed", matches: ["/feed", "/home", "/watch"] },
   { icon: CalendarDays, label: "Events", path: "/events", matches: ["/events", "/event/"] },
   { icon: Heart, label: "Club", path: "/club/xi", matches: ["/club/xi", "/club", "/members"] },
+  { icon: Users, label: "Friends", path: "/friends", matches: ["/friends", "/messages"] },
   { icon: User, label: "Profile", path: "/profile", matches: ["/profile"] },
 ];
 
