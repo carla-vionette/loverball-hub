@@ -150,10 +150,13 @@
 
   html {
     scroll-behavior: smooth;
+    overflow-x: hidden;
   }
 
   body {
     @apply bg-background text-foreground font-sans antialiased text-base leading-relaxed;
+    overflow-x: hidden;
+    max-width: 100vw;
   }
 
   /* Heading hierarchy — Playfair Display editorial (matches /profile) */
