@@ -2,7 +2,9 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Sparkles } from "lucide-react";
 import Seo from "@/components/Seo";
-import SiteNav from "@/components/SiteNav";
+import MobileHeader from "@/components/MobileHeader";
+import DesktopNav from "@/components/DesktopNav";
+import BottomNav from "@/components/BottomNav";
 import DraftConfirmModal from "@/components/club/DraftConfirmModal";
 import MutualDraftCelebration from "@/components/club/MutualDraftCelebration";
 import {
@@ -321,7 +323,7 @@ const StartingXi: React.FC = () => {
         path="/club/xi"
       />
 
-      <SiteNav />
+      <MobileHeader /><DesktopNav /><BottomNav />
 
       <main className="max-w-[440px] mx-auto px-5 pt-24 md:pt-28 pb-36">
         {/* Header */}
