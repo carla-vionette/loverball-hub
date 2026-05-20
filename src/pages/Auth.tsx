@@ -180,6 +180,8 @@ const Auth = () => {
   const [mode, setMode] = useState<AuthMode>(initialMode);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [countryCode, setCountryCode] = useState("+1");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [resendLoading, setResendLoading] = useState(false);
@@ -197,6 +199,14 @@ const Auth = () => {
     else if (searchParams.get('signup') === 'true') setMode('join');
   }, [searchParams]);
 
+  // E.164 helpers
+  const normalizePhone = (cc: string, raw: string) => {
+    const digits = raw.replace(/\D+/g, "");
+    if (!digits) return "";
+    return `${cc}${digits}`;
+  };
+  const isValidE164 = (p: string) => /^\+[1-9]\d{6,14}$/.test(p);
+
   // ── Sign up ──────────────────────────────────────────────────────────
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -208,6 +218,11 @@ const Auth = () => {
       toast({ title: "Enter a valid email", variant: "destructive" });
       return;
     }
+    const fullPhone = normalizePhone(countryCode, phone);
+    if (!isValidE164(fullPhone)) {
+      toast({ title: "Enter a valid phone number", description: "Include area code, digits only.", variant: "destructive" });
+      return;
+    }
 
     setLoading(true);
     try {
@@ -216,12 +231,30 @@ const Auth = () => {
         email: email.trim().toLowerCase(),
         password: tempPassword,
         options: {
-          data: { name: name.trim() },
+          data: { name: name.trim(), phone: fullPhone },
           emailRedirectTo: `${authOrigin}/finish-profile`,
         },
       });
 
       if (error) throw error;
+
+      // Persist phone, email, and free membership immediately on the profile (if session present).
+      if (data.user) {
+        await supabase.from("profiles").upsert(
+          {
+            id: data.user.id,
+            name: name.trim(),
+            email: email.trim().toLowerCase(),
+            phone: fullPhone,
+            membership_tier: "free",
+            in_app_notifications_enabled: true,
+            email_notifications_enabled: true,
+            sms_notifications_enabled: true,
+          },
+          { onConflict: "id" },
+        );
+      }
+
       if (data.user && !data.session) setMode("confirm");
       else if (data.user && data.session) navigate("/finish-profile");
     } catch (err: any) {
