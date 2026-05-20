@@ -18,6 +18,7 @@ import navLogo from "@/assets/loverball-logo.png";
 
 const PUBLIC_NAV_ITEMS: Array<[string, string]> = [
   ["Watch", "/feed"],
+  ["Stories", "/feed?tab=stories"],
   ["Events", "/events"],
   ["Club", "/club/xi"],
   ["Membership", "/membership"],
@@ -26,6 +27,7 @@ const PUBLIC_NAV_ITEMS: Array<[string, string]> = [
 
 const MEMBER_NAV_ITEMS: Array<[string, string]> = [
   ["Watch", "/feed"],
+  ["Stories", "/feed?tab=stories"],
   ["Events", "/events"],
   ["Club", "/club/xi"],
   ["Membership", "/membership"],
@@ -50,12 +52,22 @@ const pillStyle = {
 const SiteNav = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const { pathname } = useLocation();
+  const { pathname, search } = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
   const navItems = user ? MEMBER_NAV_ITEMS : PUBLIC_NAV_ITEMS;
 
-  const isActive = (to: string) =>
-    to === "/" ? pathname === "/" : pathname === to || pathname.startsWith(to + "/");
+  const isActive = (to: string) => {
+    const [toPath, toQuery] = to.split("?");
+    const params = new URLSearchParams(search);
+    const tab = params.get("tab");
+    if (toPath === "/feed") {
+      if (pathname !== "/feed" && !pathname.startsWith("/feed/")) return false;
+      // Stories link active only when tab=stories; Watch active otherwise
+      if (toQuery?.includes("tab=stories")) return tab === "stories";
+      return tab !== "stories";
+    }
+    return toPath === "/" ? pathname === "/" : pathname === toPath || pathname.startsWith(toPath + "/");
+  };
 
   const goSignIn = () => navigate("/auth?mode=signin");
   const goJoin = () => navigate("/auth?mode=signup");
