@@ -3,7 +3,9 @@ import { Seo } from "@/components/Seo";
 import { Tv, Users, MessagesSquare, MapPin, Gift, Sparkles } from "lucide-react";
 import { C, fonts } from "@/lib/editorialTheme";
 import { H1, H2, H3, Body, Slug, Mono, PrimaryBtn, SecondaryBtn, TertiaryLink } from "@/components/editorial/primitives";
-import SiteNav from "@/components/SiteNav";
+import MobileHeader from "@/components/MobileHeader";
+import DesktopNav from "@/components/DesktopNav";
+import BottomNav from "@/components/BottomNav";
 
 
 const PILLARS = [
@@ -27,7 +29,7 @@ const Club = () => {
         path="/club"
       />
 
-      <SiteNav />
+      <MobileHeader /><DesktopNav /><BottomNav />
 
       <section className="max-w-7xl mx-auto px-5 md:px-10 pt-32 md:pt-40 pb-20">
         <Slug>The Club</Slug>
