@@ -380,7 +380,7 @@ const Events = () => {
                   {/* Bottom block */}
                   <div className="absolute bottom-0 left-0 right-0 p-5 md:p-7">
                     <h2 className="line-clamp-2"
-                      style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: "clamp(28px, 6vw, 44px)", lineHeight: 0.95, color: "#F8F8F8", textTransform: "uppercase", letterSpacing: "0.005em", margin: 0 }}>
+                      style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: "clamp(28px, 6vw, 44px)", lineHeight: 0.95, color: "#E6F25A", textTransform: "uppercase", letterSpacing: "0.005em", margin: 0 }}>
                       {featured.title}
                     </h2>
                     <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-3"
