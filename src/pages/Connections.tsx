@@ -1,24 +1,22 @@
-import { useState, useEffect, useCallback, useMemo } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/hooks/useAuth";
-import DesktopNav from "@/components/DesktopNav";
-import BottomNav from "@/components/BottomNav";
-import MobileHeader from "@/components/MobileHeader";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Loader2, Heart, X, Users, Sparkles, MapPin, UserPlus, Briefcase } from "lucide-react";
-import PageError from "@/components/PageError";
-import PageSkeleton from "@/components/PageSkeleton";
-import { toast } from "sonner";
-import { motion, AnimatePresence } from "framer-motion";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Card } from "@/components/ui/card";
+import { useState, useEffect, useCallback, useMemo } from"react";
+import { supabase } from"@/integrations/supabase/client";
+import { useAuth } from"@/hooks/useAuth";
+import BottomNav from"@/components/BottomNav";
+import { Button } from"@/components/ui/button";
+import { Badge } from"@/components/ui/badge";
+import { Loader2, Heart, X, Users, Sparkles, MapPin, UserPlus, Briefcase } from"lucide-react";
+import PageError from"@/components/PageError";
+import PageSkeleton from"@/components/PageSkeleton";
+import { toast } from"sonner";
+import { motion, AnimatePresence } from"framer-motion";
+import { Tabs, TabsList, TabsTrigger } from"@/components/ui/tabs";
+import { Avatar, AvatarFallback, AvatarImage } from"@/components/ui/avatar";
+import { Card } from"@/components/ui/card";
 import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
-} from "@/components/ui/hover-card";
+} from"@/components/ui/hover-card";
 
 interface MemberProfile {
   id: string;
@@ -50,7 +48,7 @@ const Connections = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [swiping, setSwiping] = useState(false);
-  const [swipeDirection, setSwipeDirection] = useState<"left" | "right" | null>(null);
+  const [swipeDirection, setSwipeDirection] = useState<"left" |"right" | null>(null);
   const [activeFilter, setActiveFilter] = useState("all");
   const [currentUserProfile, setCurrentUserProfile] = useState<MemberProfile | null>(null);
   const [totalMembers, setTotalMembers] = useState(0);
@@ -79,7 +77,7 @@ const Connections = () => {
   const fetchTotalMembers = async () => {
     const { count } = await supabase
       .from("profiles")
-      .select("id", { count: "exact", head: true });
+      .select("id", { count:"exact", head: true });
     setTotalMembers(count || 0);
   };
 
@@ -117,7 +115,7 @@ const Connections = () => {
       const { data, error } = await supabase
         .from("profiles")
         .select("id, name, bio, profile_photo_url, favorite_sports, other_interests, city, neighborhood, primary_role, favorite_la_teams, favorite_teams_players, age_range")
-        .not("id", "in", `(${excludeIds.join(",")})`)
+        .not("id","in", `(${excludeIds.join(",")})`)
         .limit(50);
 
       if (error) throw error;
@@ -188,16 +186,16 @@ const Connections = () => {
 
   const filteredSuggestions = useMemo(() => {
     let filtered = scoredProfiles.filter(p => !connectedIds.has(p.id));
-    if (activeFilter === "team") {
+    if (activeFilter ==="team") {
       filtered = filtered.filter(p => p.mutualTeams.length > 0 || p.mutualSports.length > 0);
     }
-    if (activeFilter === "location") {
+    if (activeFilter ==="location") {
       filtered = filtered.filter(p => p.sameCity);
     }
     return filtered;
   }, [scoredProfiles, activeFilter, connectedIds]);
 
-  const handleSwipe = useCallback(async (direction: "left" | "right") => {
+  const handleSwipe = useCallback(async (direction:"left" |"right") => {
     if (!user || swiping || currentIndex >= profiles.length) return;
     setSwiping(true);
     setSwipeDirection(direction);
@@ -210,7 +208,7 @@ const Connections = () => {
         direction,
       });
 
-      if (direction === "right") {
+      if (direction ==="right") {
         const { data: mutual } = await supabase
           .from("matches")
           .select("id")
@@ -241,7 +239,7 @@ const Connections = () => {
       await supabase.from("swipes").insert({
         swiper_id: user.id,
         target_user_id: targetId,
-        direction: "right",
+        direction:"right",
       });
 
       const { data: mutual } = await supabase
@@ -275,9 +273,6 @@ const Connections = () => {
 
   return (
     <div className="min-h-screen bg-background pb-24 md:pb-0 md:pl-64">
-      <DesktopNav />
-      <MobileHeader />
-
       <main className="container mx-auto px-4 py-6 max-w-4xl">
         {/* Community Banner */}
         <div className="text-center mb-8">
@@ -304,8 +299,8 @@ const Connections = () => {
                       animate={{
                         opacity: 1,
                         scale: 1,
-                        x: swipeDirection === "left" ? -300 : swipeDirection === "right" ? 300 : 0,
-                        rotate: swipeDirection === "left" ? -15 : swipeDirection === "right" ? 15 : 0,
+                        x: swipeDirection ==="left" ? -300 : swipeDirection ==="right" ? 300 : 0,
+                        rotate: swipeDirection ==="left" ? -15 : swipeDirection ==="right" ? 15 : 0,
                       }}
                       exit={{ opacity: 0 }}
                       transition={{ duration: 0.3 }}
@@ -324,7 +319,7 @@ const Connections = () => {
                           <h2 className="text-2xl font-semibold mb-1">{currentProfile.name}</h2>
                           {currentProfile.city && (
                             <p className="text-white/70 text-sm mb-3">
-                              {currentProfile.neighborhood ? `${currentProfile.neighborhood}, ` : ""}{currentProfile.city}
+                              {currentProfile.neighborhood ? `${currentProfile.neighborhood}, ` :""}{currentProfile.city}
                             </p>
                           )}
                           {currentProfile.bio && <p className="text-white/80 text-sm line-clamp-2 mb-3">{currentProfile.bio}</p>}
@@ -383,7 +378,7 @@ const Connections = () => {
                           ) : (
                             <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/5 to-secondary/10">
                               <span className="text-3xl font-semibold text-primary/40">
-                                {profile.name.split(" ").map(n => n[0]).join("")}
+                                {profile.name.split("").map(n => n[0]).join("")}
                               </span>
                             </div>
                           )}
@@ -429,7 +424,7 @@ const Connections = () => {
                         <Avatar className="w-12 h-12 flex-shrink-0">
                           {profile.profile_photo_url && <AvatarImage src={profile.profile_photo_url} alt={profile.name} />}
                           <AvatarFallback className="bg-primary/10 text-primary text-sm">
-                            {profile.name.split(" ").map(n => n[0]).join("")}
+                            {profile.name.split("").map(n => n[0]).join("")}
                           </AvatarFallback>
                         </Avatar>
                         <div className="flex-1 min-w-0">
@@ -466,7 +461,7 @@ const Connections = () => {
                       )}
                       {profile.mutualFriendsCount > 0 && (
                         <p className="text-xs text-muted-foreground mt-2 flex items-center gap-1">
-                          <Users className="w-3 h-3" /> {profile.mutualFriendsCount} mutual {profile.mutualFriendsCount === 1 ? "friend" : "friends"}
+                          <Users className="w-3 h-3" /> {profile.mutualFriendsCount} mutual {profile.mutualFriendsCount === 1 ?"friend" :"friends"}
                         </p>
                       )}
                     </HoverCardContent>

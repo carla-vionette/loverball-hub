@@ -1,38 +1,36 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { Sparkles } from "lucide-react";
-import Seo from "@/components/Seo";
-import MobileHeader from "@/components/MobileHeader";
-import DesktopNav from "@/components/DesktopNav";
-import BottomNav from "@/components/BottomNav";
-import DraftConfirmModal from "@/components/club/DraftConfirmModal";
-import MutualDraftCelebration from "@/components/club/MutualDraftCelebration";
+import React, { useEffect, useMemo, useState } from"react";
+import { Link, useNavigate } from"react-router-dom";
+import { Sparkles } from"lucide-react";
+import Seo from"@/components/Seo";
+import BottomNav from"@/components/BottomNav";
+import DraftConfirmModal from"@/components/club/DraftConfirmModal";
+import MutualDraftCelebration from"@/components/club/MutualDraftCelebration";
 import {
   loadDrafts,
   saveDrafts,
   type Member,
-} from "@/lib/startingXiData";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/hooks/useAuth";
+} from"@/lib/startingXiData";
+import { supabase } from"@/integrations/supabase/client";
+import { useAuth } from"@/hooks/useAuth";
 
 // Aligned with shared editorialTheme palette so The Club matches the rest of the platform.
 const C = {
-  bg: "#0a0a0a",
-  card: "#1A1A1A",
-  cardHi: "#2A2A2A",
-  text: "#E6F25A",
-  muted: "#B8B8B8",
-  pink: "#E86BB0",
-  gold: "#E6F25A",
-  raspberry: "#F04E23",
-  border: "rgba(250, 245, 233, 0.08)",
-  borderHi: "rgba(250, 245, 233, 0.15)",
+  bg:"#0a0a0a",
+  card:"#1A1A1A",
+  cardHi:"#2A2A2A",
+  text:"#E6F25A",
+  muted:"#B8B8B8",
+  pink:"#E86BB0",
+  gold:"#E6F25A",
+  raspberry:"#F04E23",
+  border:"rgba(250, 245, 233, 0.08)",
+  borderHi:"rgba(250, 245, 233, 0.15)",
 };
 
-const mono = { fontFamily: "'Space Mono', ui-monospace, 'JetBrains Mono', monospace" } as const;
-const serif = { fontFamily: "'Playfair Display', Georgia, serif" } as const;
-const sans = { fontFamily: "'Inter', system-ui, sans-serif" } as const;
-const display = { fontFamily: "'Anton', Impact, sans-serif" } as const;
+const mono = { fontFamily:"'Space Mono', ui-monospace, 'JetBrains Mono', monospace" } as const;
+const serif = { fontFamily:"'Playfair Display', Georgia, serif" } as const;
+const sans = { fontFamily:"'Inter', system-ui, sans-serif" } as const;
+const display = { fontFamily:"'Anton', Impact, sans-serif" } as const;
 
 const Label: React.FC<{ children: React.ReactNode; color?: string; size?: number }> = ({
   children,
@@ -41,7 +39,7 @@ const Label: React.FC<{ children: React.ReactNode; color?: string; size?: number
 }) => (
   <span
     className="uppercase"
-    style={{ ...mono, color, fontSize: size, letterSpacing: "0.18em", fontWeight: 500 }}
+    style={{ ...mono, color, fontSize: size, letterSpacing:"0.18em", fontWeight: 500 }}
   >
     {children}
   </span>
@@ -53,10 +51,10 @@ const Chip: React.FC<{ children: React.ReactNode; pink?: boolean }> = ({ childre
     style={{
       ...mono,
       fontSize: 9,
-      letterSpacing: "0.18em",
+      letterSpacing:"0.18em",
       color: pink ? C.pink : C.muted,
       background: C.cardHi,
-      padding: "5px 9px",
+      padding:"5px 9px",
       borderRadius: 999,
       fontWeight: 500,
     }}
@@ -98,13 +96,13 @@ const MemberCard: React.FC<{ m: Member; onDraft: () => void; disabled: boolean; 
             height: 88,
             borderRadius: 10,
             background: C.pink,
-            color: "#0a0a0a",
-            fontFamily: "'Anton', Impact, sans-serif",
+            color:"#0a0a0a",
+            fontFamily:"'Anton', Impact, sans-serif",
             fontSize: 32,
-            textTransform: "uppercase",
+            textTransform:"uppercase",
           }}
         >
-          {m.firstName?.[0] || "?"}
+          {m.firstName?.[0] ||"?"}
         </div>
       )}
       <div className="flex-1 min-w-0">
@@ -113,17 +111,17 @@ const MemberCard: React.FC<{ m: Member; onDraft: () => void; disabled: boolean; 
         </div>
         <p
           className="uppercase mt-1"
-          style={{ ...mono, fontSize: 10, letterSpacing: "0.16em", color: C.pink, fontWeight: 500 }}
+          style={{ ...mono, fontSize: 10, letterSpacing:"0.16em", color: C.pink, fontWeight: 500 }}
         >
           {m.team} · {m.city}
         </p>
         <p
           className="mt-1.5 truncate"
           style={{
-            fontFamily: "'Poppins', system-ui, sans-serif",
+            fontFamily:"'Poppins', system-ui, sans-serif",
             fontSize: 11,
             color: C.muted,
-            letterSpacing: "0.01em",
+            letterSpacing:"0.01em",
           }}
         >
           VIBE: {m.vibe}
@@ -146,15 +144,15 @@ const MemberCard: React.FC<{ m: Member; onDraft: () => void; disabled: boolean; 
               ...sans,
               fontSize: 10,
               fontWeight: 500,
-              letterSpacing: "0.16em",
-              color: alreadyDrafted ? C.muted : "#0a0a0a",
+              letterSpacing:"0.16em",
+              color: alreadyDrafted ? C.muted :"#0a0a0a",
               background: alreadyDrafted ? C.cardHi : C.pink,
-              padding: "7px 12px",
+              padding:"7px 12px",
               borderRadius: 999,
               opacity: disabled ? 0.4 : 1,
             }}
           >
-            {alreadyDrafted ? "Drafted" : "+ Draft"}
+            {alreadyDrafted ?"Drafted" :"+ Draft"}
           </button>
         </div>
       </div>
@@ -164,20 +162,20 @@ const MemberCard: React.FC<{ m: Member; onDraft: () => void; disabled: boolean; 
 
 const FloatingNav: React.FC = () => {
   const tabs = [
-    { key: "feed", label: "Feed", to: "/feed" },
-    { key: "irl", label: "IRL", to: "/events" },
-    { key: "club", label: "Club", to: "/club/xi", active: true },
-    { key: "pass", label: "Pass", to: "/membership" },
+    { key:"feed", label:"Feed", to:"/feed" },
+    { key:"irl", label:"IRL", to:"/events" },
+    { key:"club", label:"Club", to:"/club/xi", active: true },
+    { key:"pass", label:"Pass", to:"/membership" },
   ];
   return (
     <nav
       className="fixed left-1/2 -translate-x-1/2 z-40 flex items-center"
       style={{
-        bottom: "max(16px, env(safe-area-inset-bottom))",
+        bottom:"max(16px, env(safe-area-inset-bottom))",
         background: C.card,
         border: `0.5px solid ${C.pink}`,
         borderRadius: 30,
-        padding: "8px 6px",
+        padding:"8px 6px",
       }}
     >
       {tabs.map((t) => (
@@ -188,9 +186,9 @@ const FloatingNav: React.FC = () => {
           style={{
             ...mono,
             fontSize: 10,
-            letterSpacing: "0.22em",
+            letterSpacing:"0.22em",
             color: t.active ? C.pink : C.muted,
-            padding: "6px 14px",
+            padding:"6px 14px",
             fontWeight: 500,
           }}
         >
@@ -217,22 +215,22 @@ const profileToMember = (p: any): Member => {
   const teams: string[] = Array.isArray(p.favorite_la_teams) && p.favorite_la_teams.length
     ? p.favorite_la_teams
     : sports;
-  const primaryTeam = teams[0] || sports[0] || "Sports fan";
-  const firstName = (p.name || "Member").split(" ")[0];
-  const bio = (p.bio || "").trim();
+  const primaryTeam = teams[0] || sports[0] ||"Sports fan";
+  const firstName = (p.name ||"Member").split("")[0];
+  const bio = (p.bio ||"").trim();
   const tags = sports.slice(0, 3).map((s: string) => s.toUpperCase());
   return {
     id: p.id,
-    name: p.name || "Member",
+    name: p.name ||"Member",
     firstName,
-    photo: p.profile_photo_url || "",
+    photo: p.profile_photo_url ||"",
     match: 0,
     team: primaryTeam,
-    city: p.city || "",
-    vibe: bio || "New to the Club",
+    city: p.city ||"",
+    vibe: bio ||"New to the Club",
     tags,
     teams,
-    joined: "",
+    joined:"",
     reasons: [],
     vibeLong: bio,
     youBoth: [],
@@ -259,14 +257,14 @@ const StartingXi: React.FC = () => {
     let cancelled = false;
     (async () => {
       // 1) Get viewer's city to drive location matching
-      let myCity = "";
+      let myCity ="";
       if (user?.id) {
         const { data: me } = await supabase
           .from("profiles")
           .select("city")
           .eq("id", user.id)
           .maybeSingle();
-        myCity = (me?.city || "").trim();
+        myCity = (me?.city ||"").trim();
       }
       if (cancelled) return;
       setViewerCity(myCity);
@@ -275,14 +273,14 @@ const StartingXi: React.FC = () => {
       const { data, error } = await supabase
         .from("profiles")
         .select("id, name, bio, city, profile_photo_url, favorite_sports, favorite_la_teams, created_at")
-        .not("name", "is", null)
-        .neq("name", "")
-        .neq("id", user?.id || "00000000-0000-0000-0000-000000000000")
+        .not("name","is", null)
+        .neq("name","")
+        .neq("id", user?.id ||"00000000-0000-0000-0000-000000000000")
         .order("created_at", { ascending: false })
         .limit(120);
       if (cancelled) return;
       if (!error && data) {
-        const norm = (s: string) => (s || "").trim().toLowerCase();
+        const norm = (s: string) => (s ||"").trim().toLowerCase();
         const target = norm(myCity);
         const ranked = [...data].sort((a: any, b: any) => {
           const aMatch = target && norm(a.city) === target ? 1 : 0;
@@ -324,20 +322,20 @@ const StartingXi: React.FC = () => {
         path="/club/xi"
       />
 
-      <MobileHeader /><DesktopNav /><BottomNav />
+      <BottomNav />
 
       <main className="max-w-[440px] mx-auto px-5 pt-24 md:pt-28 pb-36">
         {/* Header */}
         <header className="flex items-start justify-between gap-4">
           <h1
             style={{
-              fontFamily: "'Anton', Impact, sans-serif",
-              fontSize: "clamp(44px, 11vw, 72px)",
+              fontFamily:"'Anton', Impact, sans-serif",
+              fontSize:"clamp(44px, 11vw, 72px)",
               lineHeight: 0.9,
-              letterSpacing: "-0.01em",
+              letterSpacing:"-0.01em",
               color: C.raspberry,
               fontWeight: 400,
-              textTransform: "uppercase",
+              textTransform:"uppercase",
             }}
           >
             Starting<br />XI.
@@ -348,7 +346,7 @@ const StartingXi: React.FC = () => {
 
         {/* Sub-header */}
         <div className="flex items-center justify-between mt-4">
-          <Label color={C.muted}>{viewerCity ? `Near ${viewerCity}` : "Picked for you this week"}</Label>
+          <Label color={C.muted}>{viewerCity ? `Near ${viewerCity}` :"Picked for you this week"}</Label>
           <Label color={C.pink}>
             Drafts left: {state.draftsLeft}
           </Label>
@@ -358,8 +356,8 @@ const StartingXi: React.FC = () => {
         <div
           className="mt-4 flex items-start gap-2.5 p-3"
           style={{
-            background: "rgba(212, 83, 126, 0.08)",
-            border: "0.5px solid rgba(212, 83, 126, 0.35)",
+            background:"rgba(212, 83, 126, 0.08)",
+            border:"0.5px solid rgba(212, 83, 126, 0.35)",
             borderRadius: 12,
           }}
         >
@@ -371,11 +369,11 @@ const StartingXi: React.FC = () => {
 
         {/* Feed */}
         {loading ? (
-          <p className="mt-8 text-center" style={{ ...mono, fontSize: 10, letterSpacing: "0.2em", color: C.muted }}>
+          <p className="mt-8 text-center" style={{ ...mono, fontSize: 10, letterSpacing:"0.2em", color: C.muted }}>
             Loading members…
           </p>
         ) : members.length === 0 ? (
-          <p className="mt-8 text-center" style={{ ...mono, fontSize: 10, letterSpacing: "0.2em", color: C.muted }}>
+          <p className="mt-8 text-center" style={{ ...mono, fontSize: 10, letterSpacing:"0.2em", color: C.muted }}>
             No members yet — invite the first one.
           </p>
         ) : (
@@ -394,7 +392,7 @@ const StartingXi: React.FC = () => {
         )}
 
         {state.draftsLeft === 0 && (
-          <p className="mt-6 text-center" style={{ ...mono, fontSize: 10, letterSpacing: "0.2em", color: C.muted }}>
+          <p className="mt-6 text-center" style={{ ...mono, fontSize: 10, letterSpacing:"0.2em", color: C.muted }}>
             Drafts reset Monday
           </p>
         )}
@@ -404,7 +402,7 @@ const StartingXi: React.FC = () => {
 
       <DraftConfirmModal
         open={!!confirm}
-        memberFirstName={confirm?.firstName || ""}
+        memberFirstName={confirm?.firstName ||""}
         suggestedOpener={confirm?.opener}
         draftsLeft={state.draftsLeft}
         onClose={handleConfirmClose}
@@ -413,7 +411,7 @@ const StartingXi: React.FC = () => {
       <MutualDraftCelebration
         open={!!celebrate}
         themPhotoUrl={celebrate?.photo}
-        themFirstName={celebrate?.firstName || ""}
+        themFirstName={celebrate?.firstName ||""}
         themInitial={celebrate?.firstName?.[0]}
         upcomingHint={celebrate?.upcoming}
         onClose={() => setCelebrate(null)}

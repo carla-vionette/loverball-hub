@@ -1,26 +1,24 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { ChevronLeft } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/hooks/useAuth";
-import MobileHeader from "@/components/MobileHeader";
-import DesktopNav from "@/components/DesktopNav";
-import BottomNav from "@/components/BottomNav";
-import Seo from "@/components/Seo";
-import IncomingDraftCard from "@/components/club/IncomingDraftCard";
-import MutualDraftCelebration from "@/components/club/MutualDraftCelebration";
-import { toast } from "sonner";
+import React, { useEffect, useState } from"react";
+import { useNavigate } from"react-router-dom";
+import { ChevronLeft } from"lucide-react";
+import { supabase } from"@/integrations/supabase/client";
+import { useAuth } from"@/hooks/useAuth";
+import BottomNav from"@/components/BottomNav";
+import Seo from"@/components/Seo";
+import IncomingDraftCard from"@/components/club/IncomingDraftCard";
+import MutualDraftCelebration from"@/components/club/MutualDraftCelebration";
+import { toast } from"sonner";
 
 const C = {
-  bg: "#0a0a0a",
-  card: "#1A1A1A",
-  cardElev: "#2A2A2A",
-  text: "#FAF5E9",
-  muted: "#B8B8B8",
-  faint: "#6B6B70",
-  raspberry: "#F04E23",
-  copper: "#E6F25A",
-  border: "rgba(250, 245, 233, 0.08)",
+  bg:"#0a0a0a",
+  card:"#1A1A1A",
+  cardElev:"#2A2A2A",
+  text:"#FAF5E9",
+  muted:"#B8B8B8",
+  faint:"#6B6B70",
+  raspberry:"#F04E23",
+  copper:"#E6F25A",
+  border:"rgba(250, 245, 233, 0.08)",
 };
 
 type IncomingRow = {
@@ -40,7 +38,7 @@ type IncomingRow = {
 function timeAgo(iso: string): string {
   const diff = Date.now() - new Date(iso).getTime();
   const m = Math.floor(diff / 60000);
-  if (m < 1) return "Now";
+  if (m < 1) return"Now";
   if (m < 60) return `${m}m`;
   const h = Math.floor(m / 60);
   if (h < 24) return `${h}h`;
@@ -61,7 +59,7 @@ const ClubDrafts: React.FC = () => {
     themFirst: string;
     themInitial: string;
     upcomingHint?: string;
-  }>({ open: false, themPhoto: null, themFirst: "", themInitial: "" });
+  }>({ open: false, themPhoto: null, themFirst:"", themInitial:"" });
 
   useEffect(() => {
     let cancelled = false;
@@ -77,7 +75,7 @@ const ClubDrafts: React.FC = () => {
       if (myRow) {
         setMe({
           photo: myRow.profile_photo_url || null,
-          initial: (myRow.name?.[0] || "·").toUpperCase(),
+          initial: (myRow.name?.[0] ||"·").toUpperCase(),
         });
       }
 
@@ -85,7 +83,7 @@ const ClubDrafts: React.FC = () => {
         .from("friendships")
         .select("id, requester_id, mutual_teams, created_at")
         .eq("addressee_id", user.id)
-        .eq("status", "pending")
+        .eq("status","pending")
         .order("created_at", { ascending: false });
 
       const reqIds = (incoming || []).map((r: any) => r.requester_id);
@@ -119,7 +117,7 @@ const ClubDrafts: React.FC = () => {
     setPending(row.id);
     const { error } = await supabase
       .from("friendships")
-      .update({ status: "accepted" })
+      .update({ status:"accepted" })
       .eq("id", row.id);
     setPending(null);
     if (error) {
@@ -127,8 +125,8 @@ const ClubDrafts: React.FC = () => {
       return;
     }
     setRows((prev) => prev.filter((r) => r.id !== row.id));
-    const first = row.requester.name?.split(" ")[0] || "Member";
-    const last = row.requester.name?.split(" ").slice(-1)[0]?.[0] || "·";
+    const first = row.requester.name?.split("")[0] ||"Member";
+    const last = row.requester.name?.split("").slice(-1)[0]?.[0] ||"·";
     const team = row.requester.favorite_la_teams?.[0];
     setCelebration({
       open: true,
@@ -146,11 +144,9 @@ const ClubDrafts: React.FC = () => {
         description="Members who drafted you. Draft back to open the DM."
         path="/club/drafts"
       />
-      <MobileHeader />
-      <DesktopNav />
       <BottomNav />
 
-      <main className="md:ml-16 xl:ml-64 pb-28 md:pb-10 pt-16 md:pt-2">
+      <main className="pb-28 md:pb-10">
         <div className="max-w-[440px] md:max-w-2xl mx-auto px-5">
           {/* Top bar */}
           <div className="flex items-center justify-between py-3">
@@ -165,8 +161,8 @@ const ClubDrafts: React.FC = () => {
             <span
               className="text-[10px] uppercase font-bold"
               style={{
-                fontFamily: "'Poppins', system-ui, sans-serif",
-                letterSpacing: "0.28em",
+                fontFamily:"'Poppins', system-ui, sans-serif",
+                letterSpacing:"0.28em",
                 color: C.muted,
               }}
             >
@@ -180,9 +176,9 @@ const ClubDrafts: React.FC = () => {
             <p
               className="text-[10px] uppercase mb-2"
               style={{
-                fontFamily: "'Poppins', system-ui, sans-serif",
+                fontFamily:"'Poppins', system-ui, sans-serif",
                 color: C.copper,
-                letterSpacing: "0.22em",
+                letterSpacing:"0.22em",
               }}
             >
               They picked you
@@ -190,8 +186,8 @@ const ClubDrafts: React.FC = () => {
             <h1
               className="leading-[0.92] tracking-tight"
               style={{
-                fontFamily: "'Oswald', system-ui, sans-serif",
-                fontStyle: "italic",
+                fontFamily:"'Oswald', system-ui, sans-serif",
+                fontStyle:"italic",
                 fontSize: 42,
                 color: C.text,
               }}
@@ -231,17 +227,17 @@ const ClubDrafts: React.FC = () => {
               <p
                 className="text-[10px] uppercase mb-3"
                 style={{
-                  fontFamily: "'Poppins', system-ui, sans-serif",
+                  fontFamily:"'Poppins', system-ui, sans-serif",
                   color: C.copper,
-                  letterSpacing: "0.22em",
+                  letterSpacing:"0.22em",
                 }}
               >
                 Quiet wire
               </p>
               <h3
                 style={{
-                  fontFamily: "'Oswald', system-ui, sans-serif",
-                  fontStyle: "italic",
+                  fontFamily:"'Oswald', system-ui, sans-serif",
+                  fontStyle:"italic",
                   fontSize: 26,
                   color: C.text,
                   lineHeight: 1.05,
@@ -261,7 +257,7 @@ const ClubDrafts: React.FC = () => {
           ) : (
             <ul className="space-y-3">
               {rows.map((r) => {
-                const first = r.requester?.name?.split(" ")[0] || "Member";
+                const first = r.requester?.name?.split("")[0] ||"Member";
                 const bits: string[] = [];
                 if (r.requester?.favorite_la_teams?.[0])
                   bits.push(r.requester.favorite_la_teams[0]);
@@ -269,8 +265,8 @@ const ClubDrafts: React.FC = () => {
                 const shared = (r.mutual_teams || [])[0];
                 const tail = shared
                   ? `You both ride for ${shared}.`
-                  : "Your scenes overlap.";
-                const context = `${bits.join(" · ")}${bits.length ? " · " : ""}${tail}`;
+                  :"Your scenes overlap.";
+                const context = `${bits.join(" ·")}${bits.length ?" ·" :""}${tail}`;
                 return (
                   <li key={r.id}>
                     <IncomingDraftCard

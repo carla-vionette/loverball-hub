@@ -1,8 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import BottomNav from '@/components/BottomNav';
-import DesktopNav from '@/components/DesktopNav';
-import MobileHeader from '@/components/MobileHeader';
 import EditorialMasthead from '@/components/layout/EditorialMasthead';
 import EventPreviewCard from '@/components/EventPreviewCard';
 import LinkPreviewCard from '@/components/LinkPreviewCard';
@@ -50,12 +48,7 @@ interface Message {
   read_at?: string | null;
 }
 
-const conversationStarters = [
-  "What's been the highlight of your sports journey so far?",
-  "If you could attend any sporting event in history, which would it be?",
-  "What's your hot take that would get you booed at a sports bar?",
-  "What's a skill outside of sports that you're secretly proud of?",
-  "If you could have dinner with any athlete, past or present, who would it be?",
+const conversationStarters = ["What's been the highlight of your sports journey so far?","If you could attend any sporting event in history, which would it be?","What's your hot take that would get you booed at a sports bar?","What's a skill outside of sports that you're secretly proud of?","If you could have dinner with any athlete, past or present, who would it be?",
 ];
 
 const MessagesPage = () => {
@@ -242,11 +235,9 @@ const MessagesPage = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <MobileHeader />
-      <DesktopNav />
       <BottomNav />
       
-      <main className="md:ml-16 xl:ml-64 pt-16 md:pt-0 pb-20 md:pb-0 h-screen">
+      <main className="pb-20 md:pb-0 h-screen">
         <div className="h-full flex">
           {/* Matches List - Hidden on mobile when chat selected */}
           <div className={`w-full md:w-80 border-r border-border bg-card flex flex-col ${selectedMatch ? 'hidden md:flex' : 'flex'}`}>
@@ -264,7 +255,7 @@ const MessagesPage = () => {
               {matches.length > 0 ? (
                 matches.map((match) => {
                   // Determine if this conversation has unread messages
-                  // For now, we'll consider conversations without a last_message as "new/unread"
+                  // For now, we'll consider conversations without a last_message as"new/unread"
                   const isUnread = !match.last_message;
                   
                   // Format relative timestamp

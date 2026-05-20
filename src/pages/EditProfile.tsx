@@ -1,21 +1,21 @@
-import { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { useToast } from "@/hooks/use-toast";
-import { Progress } from "@/components/ui/progress";
-import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useState, useEffect, useRef } from"react";
+import { useNavigate } from"react-router-dom";
+import { supabase } from"@/integrations/supabase/client";
+import { Button } from"@/components/ui/button";
+import { Input } from"@/components/ui/input";
+import { Label } from"@/components/ui/label";
+import { useToast } from"@/hooks/use-toast";
+import { Progress } from"@/components/ui/progress";
+import { Badge } from"@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from"@/components/ui/avatar";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
+} from"@/components/ui/select";
+import { Checkbox } from"@/components/ui/checkbox";
 import {
   PRONOUN_OPTIONS,
   CITY_OPTIONS,
@@ -24,13 +24,11 @@ import {
   INTERESTS_OPTIONS,
   COMFORT_LEVEL_OPTIONS,
   PARTICIPATION_OPTIONS,
-} from "@/lib/onboardingOptions";
-import { X, Camera, Loader2, ArrowLeft } from "lucide-react";
-import loverballLogo from "@/assets/loverball-script-logo.png";
-import MobileHeader from "@/components/MobileHeader";
-import DesktopNav from "@/components/DesktopNav";
-import BottomNav from "@/components/BottomNav";
-import { useAuth } from "@/hooks/useAuth";
+} from"@/lib/onboardingOptions";
+import { X, Camera, Loader2, ArrowLeft } from"lucide-react";
+import loverballLogo from"@/assets/loverball-script-logo.png";
+import BottomNav from"@/components/BottomNav";
+import { useAuth } from"@/hooks/useAuth";
 
 const EditProfile = () => {
   const [step, setStep] = useState(1);
@@ -88,19 +86,19 @@ const EditProfile = () => {
       }
       
       // Populate form with existing data
-      setName(profile.name || "");
-      setPronouns(profile.pronouns || "");
-      setCity(profile.city || "");
+      setName(profile.name ||"");
+      setPronouns(profile.pronouns ||"");
+      setCity(profile.city ||"");
       
       setFavoriteSports(profile.favorite_sports || []);
       setFavTeams(profile.favorite_teams_players || []);
       setExperienceTypes(profile.sports_experience_types || []);
       setInterests(profile.other_interests || []);
-      setComfortLevel(profile.event_comfort_level || "");
+      setComfortLevel(profile.event_comfort_level ||"");
       setParticipation(profile.participation_preferences || []);
       // Fetch sensitive data separately
       const { data: sensitive } = await supabase.from("profiles_sensitive" as any).select("phone_number").eq("id", user.id).maybeSingle();
-      setPhoneNumber((sensitive as any)?.phone_number || "");
+      setPhoneNumber((sensitive as any)?.phone_number ||"");
       setSmsNotifications(profile.sms_notifications_enabled ?? true);
       setProfilePhotoPreview(profile.profile_photo_url || null);
       
@@ -137,9 +135,9 @@ const EditProfile = () => {
     if (file) {
       if (file.size > 5 * 1024 * 1024) {
         toast({
-          title: "File too large",
-          description: "Please select an image under 5MB",
-          variant: "destructive",
+          title:"File too large",
+          description:"Please select an image under 5MB",
+          variant:"destructive",
         });
         return;
       }
@@ -169,9 +167,9 @@ const EditProfile = () => {
       return data.publicUrl;
     } catch (error: any) {
       toast({
-        title: "Photo upload failed",
+        title:"Photo upload failed",
         description: error.message,
-        variant: "destructive",
+        variant:"destructive",
       });
       return null;
     } finally {
@@ -180,10 +178,10 @@ const EditProfile = () => {
   };
 
   const generateBio = () => {
-    const sportsList = favoriteSports.slice(0, 2).join(" & ");
-    const interestsList = interests.slice(0, 2).join(", ");
+    const sportsList = favoriteSports.slice(0, 2).join(" &");
+    const interestsList = interests.slice(0, 2).join(",");
     const teamText = favTeams[0] ? `${favTeams[0]} fan` : `${sportsList} enthusiast`;
-    const locationText = city ? `in ${city}` : "";
+    const locationText = city ? `in ${city}` :"";
     
     return `${teamText} ${locationText} who loves ${sportsList}${interestsList ? `, ${interestsList},` : ''} and connecting with fellow sports fans.`;
   };
@@ -226,16 +224,16 @@ const EditProfile = () => {
       if (error) throw error;
 
       toast({
-        title: "Profile updated!",
-        description: "Your changes have been saved.",
+        title:"Profile updated!",
+        description:"Your changes have been saved.",
       });
       
       navigate("/profile");
     } catch (error: any) {
       toast({
-        title: "Error",
+        title:"Error",
         description: error.message,
-        variant: "destructive",
+        variant:"destructive",
       });
     } finally {
       setLoading(false);
@@ -269,11 +267,9 @@ const EditProfile = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <MobileHeader />
-      <DesktopNav />
       <BottomNav />
 
-      <main className="md:ml-16 xl:ml-64 pb-20 md:pb-8 pt-20 md:pt-8">
+      <main className="pb-20 md:pb-8">
         <div className="max-w-2xl mx-auto px-4">
           {/* Header */}
           <div className="mb-8">
@@ -401,7 +397,7 @@ const EditProfile = () => {
                       value={teamsInput}
                       onChange={(e) => setTeamsInput(e.target.value)}
                       placeholder="e.g., Lakers, LeBron, USWNT"
-                      onKeyPress={(e) => e.key === "Enter" && (e.preventDefault(), addTeam())}
+                      onKeyPress={(e) => e.key ==="Enter" && (e.preventDefault(), addTeam())}
                       className="rounded-none h-12 border-border bg-background"
                     />
                     <Button type="button" onClick={addTeam} className="rounded-none h-12 px-6">
@@ -568,8 +564,7 @@ const EditProfile = () => {
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                       Saving...
                     </>
-                  ) : (
-                    "Save Changes"
+                  ) : ("Save Changes"
                   )}
                 </Button>
               )}
