@@ -10,6 +10,7 @@ import {
   type Member,
 } from "@/lib/startingXiData";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 
 const C = {
   bg: "#0a0a0a",
@@ -235,10 +236,12 @@ const profileToMember = (p: any): Member => {
 };
 
 const StartingXi: React.FC = () => {
+  const { user } = useAuth();
   const [state, setState] = useState(loadDrafts);
   const [confirm, setConfirm] = useState<Member | null>(null);
   const [celebrate, setCelebrate] = useState<Member | null>(null);
   const [members, setMembers] = useState<Member[]>([]);
+  const [viewerCity, setViewerCity] = useState<string>("");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -248,21 +251,44 @@ const StartingXi: React.FC = () => {
   useEffect(() => {
     let cancelled = false;
     (async () => {
+      // 1) Get viewer's city to drive location matching
+      let myCity = "";
+      if (user?.id) {
+        const { data: me } = await supabase
+          .from("profiles")
+          .select("city")
+          .eq("id", user.id)
+          .maybeSingle();
+        myCity = (me?.city || "").trim();
+      }
+      if (cancelled) return;
+      setViewerCity(myCity);
+
+      // 2) Pull a wider pool, then rank by city match
       const { data, error } = await supabase
         .from("profiles")
         .select("id, name, bio, city, profile_photo_url, favorite_sports, favorite_la_teams, created_at")
         .not("name", "is", null)
         .neq("name", "")
+        .neq("id", user?.id || "00000000-0000-0000-0000-000000000000")
         .order("created_at", { ascending: false })
-        .limit(24);
+        .limit(120);
       if (cancelled) return;
       if (!error && data) {
-        setMembers(data.map(profileToMember));
+        const norm = (s: string) => (s || "").trim().toLowerCase();
+        const target = norm(myCity);
+        const ranked = [...data].sort((a: any, b: any) => {
+          const aMatch = target && norm(a.city) === target ? 1 : 0;
+          const bMatch = target && norm(b.city) === target ? 1 : 0;
+          return bMatch - aMatch;
+        });
+        setMembers(ranked.slice(0, 24).map(profileToMember));
       }
       setLoading(false);
     })();
     return () => { cancelled = true; };
-  }, []);
+  }, [user?.id]);
+
 
   const handleDraft = (m: Member) => {
     if (state.draftsLeft <= 0) return;
@@ -312,7 +338,7 @@ const StartingXi: React.FC = () => {
 
         {/* Sub-header */}
         <div className="flex items-center justify-between mt-4">
-          <Label color={C.muted}>Picked for you this week</Label>
+          <Label color={C.muted}>{viewerCity ? `Near ${viewerCity}` : "Picked for you this week"}</Label>
           <Label color={C.pink}>
             Drafts left: {state.draftsLeft}
           </Label>
