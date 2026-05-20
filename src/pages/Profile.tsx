@@ -334,12 +334,15 @@ const Profile = () => {
   const eventsAttended = rsvpEvents.filter(r => r.status === "going" || r.status === "attended").length;
   const FEED_FILTERS = ["All", "NBA", "WNBA", "NWSL", "NFL", "MLB", "Soccer"];
 
-  const PINK = "#E91E63";
-  const PANEL = "#141415";
-  const PANEL_BORDER = "1px solid rgba(255,255,255,0.06)";
+  // Homepage palette (matches src/pages/Index.tsx)
+  const BG = "#0a0a0a";
+  const TEXT = "#FAF5E9";
+  const PINK = "#F04E23";        // Vermilion (homepage primary)
+  const PANEL = "#161616";       // Homepage surface
+  const PANEL_BORDER = "1px solid rgba(250, 245, 233, 0.08)";
 
   return (
-    <div className="min-h-screen" style={{ background: "#0A0A0B" }}>
+    <div className="min-h-screen" style={{ background: BG, fontFamily: "'Inter', system-ui, sans-serif" }}>
       <Seo
         title="Your Profile | Loverball"
         description="Your Loverball member profile — favorite teams, personalized news, daily horoscope, and live scores."
@@ -351,7 +354,7 @@ const Profile = () => {
 
       <main
         className="md:ml-16 xl:ml-64 pb-20 md:pb-10 pt-16 md:pt-4 transition-[margin] duration-200"
-        style={{ background: "#0A0A0B", color: "#F8F8F8" }}
+        style={{ background: BG, color: TEXT, fontFamily: "'Inter', system-ui, sans-serif" }}
       >
         <div className="max-w-[1400px] mx-auto px-4 md:px-8 pt-2">
 
