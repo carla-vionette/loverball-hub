@@ -356,7 +356,7 @@ const Events = () => {
                   {/* eyebrow */}
                   <div className="absolute top-5 left-5 flex items-center gap-2">
                     <span className="px-2.5 py-1 rounded-full"
-                      style={{ background: `${th.accent}22`, border: `1px solid ${th.accent}55`, color: th.accent, fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 700, fontSize: 9, letterSpacing: "0.18em", textTransform: "uppercase" }}>
+                      style={{ background: "rgba(232,107,176,0.15)", border: "1px solid rgba(232,107,176,0.5)", color: "#E86BB0", fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 700, fontSize: 9, letterSpacing: "0.18em", textTransform: "uppercase" }}>
                       {th.label}
                     </span>
                     <span style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 10, letterSpacing: "0.18em", color: "rgba(248,248,248,0.7)", textTransform: "uppercase" }}>
@@ -477,7 +477,7 @@ const Events = () => {
                         {/* Eyebrow */}
                         <div className="absolute top-3 left-3 flex items-center gap-1.5">
                           <span className="px-2 py-0.5 rounded-full"
-                            style={{ background: `${th.accent}22`, border: `1px solid ${th.accent}55`, color: th.accent, fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 700, fontSize: 8.5, letterSpacing: "0.18em", textTransform: "uppercase" }}>
+                            style={{ background: "rgba(232,107,176,0.15)", border: "1px solid rgba(232,107,176,0.5)", color: "#E86BB0", fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 700, fontSize: 8.5, letterSpacing: "0.18em", textTransform: "uppercase" }}>
                             {th.label}
                           </span>
                           {ev.price === 0 && (
