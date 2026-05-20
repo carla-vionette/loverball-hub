@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { Seo } from "@/components/Seo";
 import { C, fonts } from "@/lib/editorialTheme";
 import { H1, Body, Slug, Mono, PrimaryBtn, TertiaryLink } from "@/components/editorial/primitives";
-import SiteNav from "@/components/SiteNav";
+
 
 
 const About = () => (
