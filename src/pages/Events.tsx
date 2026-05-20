@@ -237,7 +237,7 @@ const Events = () => {
     return (
       <div className="min-h-screen bg-background">
         <MobileHeader /><DesktopNav /><BottomNav />
-        <main className="md:ml-64 pt-16 md:pt-0 pb-20 md:pb-0 flex items-center justify-center">
+        <main className="md:ml-16 xl:ml-64 pt-16 md:pt-0 pb-20 md:pb-0 flex items-center justify-center">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </main>
       </div>
@@ -253,7 +253,7 @@ const Events = () => {
       />
       <MobileHeader /><DesktopNav /><BottomNav />
 
-      <main className="md:ml-64 pt-16 md:pt-0 pb-24 md:pb-0">
+      <main className="md:ml-16 xl:ml-64 pt-16 md:pt-0 pb-24 md:pb-0">
         <div className="max-w-6xl mx-auto px-5 md:px-10 py-8">
           {/* ── Editorial masthead ── */}
           <EditorialMasthead

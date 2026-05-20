@@ -17,7 +17,7 @@ const CheckoutSuccess = () => {
       <DesktopNav />
       <BottomNav />
 
-      <main className="md:ml-64 pt-16 md:pt-0 pb-24 md:pb-0 flex items-center justify-center min-h-screen">
+      <main className="md:ml-16 xl:ml-64 pt-16 md:pt-0 pb-24 md:pb-0 flex items-center justify-center min-h-screen">
         <Card className="max-w-md w-full mx-4 border-border/30">
           <CardContent className="pt-10 pb-8 px-8 text-center space-y-6">
             <div className="w-20 h-20 rounded-full bg-success/10 flex items-center justify-center mx-auto">

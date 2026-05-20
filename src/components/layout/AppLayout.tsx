@@ -20,7 +20,7 @@ const AppLayout = ({ children, hideNav = false }: AppLayoutProps) => {
     <div className="min-h-screen bg-background">
       <MobileHeader />
       <DesktopNav />
-      <main className="md:ml-64 pt-[72px] md:pt-0 pb-24 md:pb-0">
+      <main className="md:ml-16 xl:ml-64 pt-[72px] md:pt-0 pb-24 md:pb-0">
         {children}
       </main>
       <BottomNav />

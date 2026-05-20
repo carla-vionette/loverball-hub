@@ -104,7 +104,7 @@ const Leaderboard = () => {
       <DesktopNav />
       <BottomNav />
 
-      <main className="md:ml-64 pb-20 md:pb-8 pt-[92px] md:pt-[48px]">
+      <main className="md:ml-16 xl:ml-64 pb-20 md:pb-8 pt-[92px] md:pt-[48px]">
         <div className="max-w-2xl mx-auto px-4">
           {/* Header */}
           <div className="flex items-center gap-3 mb-6">
