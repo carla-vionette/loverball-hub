@@ -22,6 +22,7 @@ const Club = () => {
   const navigate = useNavigate();
   const [connections, setConnections] = useState<Member[]>([]);
   const [curated, setCurated] = useState<Member[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     const { drafted } = loadDrafts();
