@@ -272,6 +272,32 @@ const FinishProfile = () => {
                   Welcome to the community. Now let's make your profile so your people can find you.
                 </p>
               </div>
+              {!existingPhone && (
+                <div className="w-full space-y-2 pt-2 text-left">
+                  <label className="text-xs uppercase tracking-wider text-muted-foreground">Phone number (for event SMS)</label>
+                  <div className="flex gap-2">
+                    <select
+                      value={countryCode}
+                      onChange={(e) => setCountryCode(e.target.value)}
+                      className="h-12 px-3 rounded-xl bg-background border border-border text-sm"
+                    >
+                      <option value="+1">🇺🇸 +1</option>
+                      <option value="+44">🇬🇧 +44</option>
+                      <option value="+61">🇦🇺 +61</option>
+                      <option value="+52">🇲🇽 +52</option>
+                      <option value="+33">🇫🇷 +33</option>
+                    </select>
+                    <input
+                      type="tel"
+                      inputMode="tel"
+                      placeholder="Phone number"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      className="flex-1 h-12 px-4 rounded-xl bg-background border border-border text-sm"
+                    />
+                  </div>
+                </div>
+              )}
               <div className="w-full space-y-3 pt-2">
                 <Button
                   onClick={() => go(1, 1)}
