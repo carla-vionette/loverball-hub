@@ -56,7 +56,7 @@ const Club = () => {
                 textTransform: "uppercase",
               }}
             >
-              Vol. 03
+              {"\n"}
             </span>
             <span
               style={{
@@ -67,7 +67,7 @@ const Club = () => {
                 textTransform: "uppercase",
               }}
             >
-              · Club{connections.length ? ` · ${connections.length} connected` : ""}
+              Club{connections.length ? ` · ${connections.length} connected` : ""}
             </span>
           </div>
           <Slug>The Club</Slug>
