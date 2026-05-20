@@ -289,7 +289,7 @@ const Events = () => {
             <div className="mb-6 rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center gap-3"
               style={{ background: "rgba(240,78,35,0.06)", border: "1px solid rgba(240,78,35,0.18)" }}>
               <div className="flex-1">
-                <h3 style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: 16, color: "#E86BB0", textTransform: "uppercase", letterSpacing: "0.02em", margin: 0 }}>
+                <h3 style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: 16, color: "#E6F25A", textTransform: "uppercase", letterSpacing: "0.02em", margin: 0 }}>
                   Want to post an event?
                 </h3>
                 <p className="mt-1" style={{ fontFamily: "'Inter', system-ui, sans-serif", fontSize: 12, color: "rgba(248,248,248,0.6)", margin: 0 }}>
