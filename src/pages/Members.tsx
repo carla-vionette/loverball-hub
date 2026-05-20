@@ -158,7 +158,7 @@ const Members = () => {
         <MobileHeader />
         <DesktopNav />
         <BottomNav />
-        <main className="md:ml-64 pt-16 md:pt-0 pb-20 md:pb-0">
+        <main className="md:ml-16 xl:ml-64 pt-16 md:pt-0 pb-20 md:pb-0">
           <PageSkeleton variant="cards" count={4} />
         </main>
       </div>
@@ -171,7 +171,7 @@ const Members = () => {
         <MobileHeader />
         <DesktopNav />
         <BottomNav />
-        <main className="md:ml-64 pt-16 md:pt-0 pb-20 md:pb-0">
+        <main className="md:ml-16 xl:ml-64 pt-16 md:pt-0 pb-20 md:pb-0">
           <PageError
             variant={!navigator.onLine ? "network" : "generic"}
             message={fetchError}
@@ -196,7 +196,7 @@ const Members = () => {
       <DesktopNav />
       <BottomNav />
       
-      <main className="md:ml-64 pt-16 md:pt-0 pb-20 md:pb-0">
+      <main className="md:ml-16 xl:ml-64 pt-16 md:pt-0 pb-20 md:pb-0">
         <div className="px-4 pt-2 pb-4 text-center">
           <span className="mag-eyebrow" style={{ color: "#f8f8f8" }}>The Roster</span>
           <h1 className="mag-title text-raspberry" style={{ fontSize: "clamp(48px, 14vw, 72px)", marginTop: 2 }}>

@@ -150,7 +150,7 @@ const ClubDrafts: React.FC = () => {
       <DesktopNav />
       <BottomNav />
 
-      <main className="md:ml-64 pb-28 md:pb-10 pt-16 md:pt-2">
+      <main className="md:ml-16 xl:ml-64 pb-28 md:pb-10 pt-16 md:pt-2">
         <div className="max-w-[440px] md:max-w-2xl mx-auto px-5">
           {/* Top bar */}
           <div className="flex items-center justify-between py-3">

@@ -610,7 +610,7 @@ const Friends = () => {
       <DesktopNav />
       <BottomNav />
 
-      <main className="md:ml-64 pb-24 md:pb-0">
+      <main className="md:ml-16 xl:ml-64 pb-24 md:pb-0">
         {/* Mobile layout */}
         <div className="md:hidden">
           <header className="sticky top-0 z-40 bg-background/90 backdrop-blur-sm border-b border-border">
