@@ -27,9 +27,10 @@ const C = {
   borderHi: "rgba(250, 245, 233, 0.15)",
 };
 
-const mono = { fontFamily: "'Poppins', system-ui, sans-serif" } as const;
-const serif = { fontFamily: "'Poppins', system-ui, sans-serif" } as const;
-const sans = { fontFamily: "'Poppins', system-ui, sans-serif" } as const;
+const mono = { fontFamily: "'Space Mono', ui-monospace, 'JetBrains Mono', monospace" } as const;
+const serif = { fontFamily: "'Playfair Display', Georgia, serif" } as const;
+const sans = { fontFamily: "'Inter', system-ui, sans-serif" } as const;
+const display = { fontFamily: "'Anton', Impact, sans-serif" } as const;
 
 const Label: React.FC<{ children: React.ReactNode; color?: string; size?: number }> = ({
   children,
