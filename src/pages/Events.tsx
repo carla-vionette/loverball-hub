@@ -366,13 +366,13 @@ const Events = () => {
 
                   {/* Date stamp — strong treatment */}
                   <div className="absolute top-5 right-5 text-right">
-                    <div style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 10, letterSpacing: "0.22em", color: "rgba(248,248,248,0.6)", textTransform: "uppercase" }}>
+                    <div style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 10, letterSpacing: "0.22em", color: "#E6F25A", textTransform: "uppercase" }}>
                       {format(d, "EEE")}
                     </div>
                     <div style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: 56, lineHeight: 0.85, color: "#F8F8F8" }}>
                       {format(d, "dd")}
                     </div>
-                    <div style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 10, letterSpacing: "0.22em", color: "rgba(248,248,248,0.6)", textTransform: "uppercase" }}>
+                    <div style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 10, letterSpacing: "0.22em", color: "#E6F25A", textTransform: "uppercase" }}>
                       {format(d, "MMM yyyy")}
                     </div>
                   </div>
