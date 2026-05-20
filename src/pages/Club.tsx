@@ -29,7 +29,7 @@ const Club = () => {
 
       <SiteNav />
 
-      <section className="px-6 md:px-12 pt-16 md:pt-24 pb-20 max-w-6xl">
+      <section className="px-6 md:px-12 pt-32 md:pt-40 pb-20 max-w-6xl">
         <Slug>The Club</Slug>
         <H1 className="mt-6" style={{ fontSize: "clamp(48px, 9vw, 128px)", lineHeight: 0.92 }}>
           The members-only home<br/>for women's sports fans.
