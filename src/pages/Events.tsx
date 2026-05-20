@@ -491,7 +491,7 @@ const Events = () => {
                         {/* Date block */}
                         <div className="absolute bottom-3 left-3 px-2.5 py-1.5 rounded-lg text-center"
                           style={{ background: "rgba(10,10,11,0.78)", border: "1px solid rgba(255,255,255,0.1)", backdropFilter: "blur(8px)" }}>
-                          <div style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 9, letterSpacing: "0.18em", color: "rgba(248,248,248,0.6)", textTransform: "uppercase" }}>
+                          <div style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 9, letterSpacing: "0.18em", color: "#E6F25A", textTransform: "uppercase" }}>
                             {format(d, "MMM")}
                           </div>
                           <div style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: 24, lineHeight: 0.9, color: "#F8F8F8" }}>
