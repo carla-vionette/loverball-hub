@@ -3,7 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Calendar, MapPin, Users, Clock, Loader2, PlusCircle, Send } from "lucide-react";
+import { Calendar, MapPin, Users, Clock, Loader2, PlusCircle, Send, Search } from "lucide-react";
 import EventTagBadges from "@/components/EventTagBadges";
 import SponsorCard from "@/components/SponsorCard";
 import { supabase } from "@/integrations/supabase/client";
@@ -12,6 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import BottomNav from "@/components/BottomNav";
+import { Input } from "@/components/ui/input";
 import AttendeeProfileDrawer from "@/components/AttendeeProfileDrawer";
 import EventSubmissionForm from "@/components/EventSubmissionForm";
 import Seo from "@/components/Seo";
@@ -96,6 +97,7 @@ const Events = () => {
   const [isApprovedCreator, setIsApprovedCreator] = useState(false);
   const { user } = useAuth();
   const { toast } = useToast();
+  const [searchQuery, setSearchQuery] = useState("");
 
   const [gateEventId, setGateEventId] = useState<string | null>(null);
   const openGate = (id: string) => {
@@ -221,7 +223,18 @@ const Events = () => {
   const pastEvents = events.filter(e => e.event_date < todayStr).reverse();
 
   const baseEvents = tab === "upcoming" ? upcomingEvents : pastEvents;
-  const filtered = category === "All" ? baseEvents : baseEvents.filter(e => e.event_type === category);
+  const categoryFiltered = category === "All" ? baseEvents : baseEvents.filter(e => e.event_type === category);
+  const q = searchQuery.trim().toLowerCase();
+  const filtered = q
+    ? categoryFiltered.filter(e =>
+        e.title.toLowerCase().includes(q) ||
+        (e.city && e.city.toLowerCase().includes(q)) ||
+        (e.venue_name && e.venue_name.toLowerCase().includes(q)) ||
+        (e.description && e.description.toLowerCase().includes(q)) ||
+        (e.sport_tags && e.sport_tags.some((t: string) => t.toLowerCase().includes(q))) ||
+        (e.event_tags && e.event_tags.some((t: string) => t.toLowerCase().includes(q)))
+      )
+    : categoryFiltered;
 
   const featured = tab === "upcoming" && upcomingEvents.length
     ? upcomingEvents.reduce((closest, ev) => {
@@ -330,6 +343,19 @@ const Events = () => {
             ))}
           </div>
 
+          {/* Search bar */}
+          <div className="mb-7 relative">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Input
+              type="text"
+              placeholder="Search events, cities, venues..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10 pr-4 py-3 rounded-full bg-muted/60 border-border/20 text-foreground placeholder:text-muted-foreground/60 focus-visible:ring-primary/40"
+              style={{ fontFamily: "'Inter', system-ui, sans-serif", fontSize: 14 }}
+            />
+          </div>
+
           {/* FEATURED — cinematic */}
           {featured && (() => {
             const th = eventTheme[getVariant(featured.event_type)];
@@ -435,13 +461,17 @@ const Events = () => {
                 <Calendar className="w-9 h-9" style={{ color: "#F04E23" }} />
               </div>
               <h2 style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: 22, color: "#E6F25A", textTransform: "uppercase", letterSpacing: "0.02em", margin: 0 }}>
-                {tab === "upcoming" ? "No upcoming events" : "No past events"}
+                {searchQuery.trim()
+                  ? "No events match your search"
+                  : tab === "upcoming" ? "No upcoming events" : "No past events"}
               </h2>
               <p className="max-w-sm mx-auto"
                 style={{ fontFamily: "'Playfair Display', serif", fontStyle: "italic", fontSize: 14, color: "rgba(248,248,248,0.55)" }}>
-                {tab === "upcoming"
-                  ? "Curated invitations drop weekly. Stay close."
-                  : "Recaps will appear here after the lights come up."}
+                {searchQuery.trim()
+                  ? "Try a different keyword or city."
+                  : tab === "upcoming"
+                    ? "Curated invitations drop weekly. Stay close."
+                    : "Recaps will appear here after the lights come up."}
               </p>
             </div>
           ) : (
