@@ -345,7 +345,7 @@ const MessagesPage = () => {
                   <Button 
                     className="mt-4" 
                     variant="outline"
-                    onClick={() => navigate('/members')}
+                    onClick={() => navigate('/club/xi')}
                   >
                     Find Connections
                   </Button>
