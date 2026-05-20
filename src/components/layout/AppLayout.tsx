@@ -1,7 +1,5 @@
 import { ReactNode } from 'react';
 import { useAuth } from '@/hooks/useAuth';
-import DesktopNav from '@/components/DesktopNav';
-import MobileHeader from '@/components/MobileHeader';
 import BottomNav from '@/components/BottomNav';
 
 interface AppLayoutProps {
@@ -18,9 +16,7 @@ const AppLayout = ({ children, hideNav = false }: AppLayoutProps) => {
 
   return (
     <div className="min-h-screen bg-background">
-      <MobileHeader />
-      <DesktopNav />
-      <main className="pt-[72px] md:pt-0 pb-24 md:pb-0">
+      <main className="pb-24 md:pb-0">
         {children}
       </main>
       <BottomNav />
