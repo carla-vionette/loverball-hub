@@ -27,6 +27,7 @@ import EventTagBadges from "@/components/EventTagBadges";
 import EarlyAccessBanner from "@/components/EarlyAccessBanner";
 import LockedFeature from "@/components/LockedFeature";
 import EventComments from "@/components/EventComments";
+import EventDiscussionPreview from "@/components/EventDiscussionPreview";
 import EventHostProfile from "@/components/EventHostProfile";
 import Seo from "@/components/Seo";
 import { getUserTier } from "@/services/subscriptionService";
@@ -870,6 +871,9 @@ const EventDetail = () => {
             {/* Full who's going + comments below the fold */}
             {id && <WhosGoing eventId={id} refreshKey={guestRefreshKey} />}
             {id && <div id="event-chat"><EventComments eventId={id} /></div>}
+
+            {/* Discussion board preview (mock data for design review) */}
+            <EventDiscussionPreview />
 
             {/* Calendar */}
             {!isEventPast && (
