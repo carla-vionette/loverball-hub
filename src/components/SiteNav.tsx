@@ -1,0 +1,168 @@
+import { useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Menu, X } from "lucide-react";
+import { C, fonts } from "@/lib/editorialTheme";
+import { useAuth } from "@/hooks/useAuth";
+import navLogo from "@/assets/loverball-logo.png";
+
+/**
+ * SiteNav — single shared top navigation used on every public/editorial page.
+ *
+ * Auth-aware variants (same shell, only the right-side actions differ):
+ *  - Logged out: "Sign in" link + "Join Free" pill
+ *  - Logged in : "Profile" link + "Open App" pill
+ *
+ * Tokens, type, spacing and active states are identical everywhere.
+ */
+
+const NAV_ITEMS: Array<[string, string]> = [
+  ["Watch", "/feed"],
+  ["Events", "/events"],
+  ["Club", "/club/xi"],
+  ["Membership", "/membership"],
+  ["About", "/about"],
+];
+
+const linkStyle = {
+  fontFamily: fonts.mono,
+  fontSize: 11,
+  letterSpacing: "0.18em",
+  textTransform: "uppercase" as const,
+};
+
+const pillStyle = {
+  fontFamily: fonts.mono,
+  fontSize: 11,
+  letterSpacing: "0.16em",
+  textTransform: "uppercase" as const,
+  padding: "10px 18px",
+  borderRadius: 999,
+};
+
+const SiteNav = () => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  const isActive = (to: string) =>
+    to === "/" ? pathname === "/" : pathname === to || pathname.startsWith(to + "/");
+
+  const goSignIn = () => navigate("/auth?mode=signin");
+  const goJoin = () => navigate("/auth?mode=signup");
+
+  return (
+    <nav
+      className="fixed top-0 inset-x-0 z-50"
+      role="navigation"
+      aria-label="Primary"
+      style={{
+        background: "rgba(11, 11, 11, 0.85)",
+        backdropFilter: "blur(16px)",
+        WebkitBackdropFilter: "blur(16px)",
+        borderBottom: `0.5px solid ${C.border}`,
+      }}
+    >
+      <div className="max-w-7xl mx-auto px-5 md:px-10 py-4 flex items-center justify-between gap-6">
+        <Link to="/" aria-label="Loverball home" className="flex items-center shrink-0">
+          <img src={navLogo} alt="Loverball" className="h-9 md:h-10 w-auto block" />
+        </Link>
+
+        <div className="hidden md:flex items-center gap-7 xl:gap-9">
+          {NAV_ITEMS.map(([label, to]) => (
+            <Link
+              key={label}
+              to={to}
+              aria-current={isActive(to) ? "page" : undefined}
+              style={{ ...linkStyle, color: isActive(to) ? C.text : C.muted }}
+              className="transition-colors hover:!text-[#FAF5E9]"
+            >
+              {label}
+            </Link>
+          ))}
+        </div>
+
+        <div className="hidden md:flex items-center gap-4">
+          {user ? (
+            <>
+              <Link to="/profile" style={{ ...linkStyle, color: C.muted }} className="transition-colors hover:!text-[#FAF5E9]">
+                Profile
+              </Link>
+              <Link to="/feed" style={{ ...pillStyle, background: C.raspberry, color: "#fff" }}>
+                Open App
+              </Link>
+            </>
+          ) : (
+            <>
+              <button onClick={goSignIn} style={{ ...linkStyle, color: C.muted }} className="transition-colors hover:!text-[#FAF5E9]">
+                Sign in
+              </button>
+              <button onClick={goJoin} style={{ ...pillStyle, background: C.raspberry, color: "#fff" }}>
+                Join Free
+              </button>
+            </>
+          )}
+        </div>
+
+        <button
+          className="md:hidden p-2 -mr-2"
+          onClick={() => setMobileOpen((v) => !v)}
+          aria-label="Toggle menu"
+          aria-expanded={mobileOpen}
+          style={{ color: C.text }}
+        >
+          {mobileOpen ? <X size={22} /> : <Menu size={22} />}
+        </button>
+      </div>
+
+      {mobileOpen && (
+        <div
+          className="md:hidden px-5 pb-5 pt-3 flex flex-col gap-4"
+          style={{ borderTop: `0.5px solid ${C.border}` }}
+        >
+          {NAV_ITEMS.map(([label, to]) => (
+            <Link
+              key={label}
+              to={to}
+              onClick={() => setMobileOpen(false)}
+              style={{ ...linkStyle, color: isActive(to) ? C.text : C.muted, fontSize: 12 }}
+            >
+              {label}
+            </Link>
+          ))}
+          <div className="flex gap-3 pt-2">
+            {user ? (
+              <Link
+                to="/feed"
+                onClick={() => setMobileOpen(false)}
+                className="flex-1 text-center"
+                style={{ ...pillStyle, background: C.raspberry, color: "#fff" }}
+              >
+                Open App
+              </Link>
+            ) : (
+              <>
+                <button
+                  onClick={() => { setMobileOpen(false); goSignIn(); }}
+                  className="flex-1"
+                  style={{ ...pillStyle, background: "transparent", color: C.text, border: `1px solid ${C.borderStrong}` }}
+                >
+                  Sign in
+                </button>
+                <button
+                  onClick={() => { setMobileOpen(false); goJoin(); }}
+                  className="flex-1"
+                  style={{ ...pillStyle, background: C.raspberry, color: "#fff" }}
+                >
+                  Join Free
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+    </nav>
+  );
+};
+
+export default SiteNav;
