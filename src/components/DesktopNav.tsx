@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { User, Search, CalendarDays, Settings, Newspaper, Shield, Users } from "lucide-react";
+import { User, Search, CalendarDays, Settings, Newspaper, Shield, Users, Trophy } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import GlobalSearch from "@/components/GlobalSearch";
@@ -12,6 +12,7 @@ const ACCENT = "#E91E63";
 const mainNavItems = [
   { icon: Newspaper, label: "Feed", path: "/feed" },
   { icon: CalendarDays, label: "EVENTS", path: "/events" },
+  { icon: Trophy, label: "Club", path: "/club" },
   { icon: Users, label: "Friends", path: "/friends" },
 ];
 
