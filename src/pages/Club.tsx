@@ -125,6 +125,7 @@ const Club = () => {
         )}
       </section>
 
+      <ClubMessagesInbox />
 
       <section className="max-w-7xl mx-auto px-5 md:px-10 pb-24">
         <div
