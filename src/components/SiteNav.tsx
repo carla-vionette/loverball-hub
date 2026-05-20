@@ -86,8 +86,8 @@ const SiteNav = () => {
                 key={label}
                 to={to}
                 aria-current={active ? "page" : undefined}
-                style={{ ...linkStyle, color: active ? "#E6F25A" : C.muted }}
-                className="transition-colors hover:!text-[#F7F7F2]"
+                style={{ ...linkStyle, color: active ? "#E6F25A" : "#E86BB0" }}
+                className="transition-colors hover:!text-[#E6F25A]"
               >
                 {label}
               </Link>
