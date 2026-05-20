@@ -36,6 +36,7 @@ const formatDate = (date: string, time: string | null) => {
 const WhatsHappeningNow = () => {
   const [event, setEvent] = useState<NextEvent | null>(null);
   const [club, setClub] = useState<ClubActivity | null>(null);
+  const [video, setVideo] = useState<LatestVideo | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
