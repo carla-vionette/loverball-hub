@@ -5,11 +5,11 @@ import Seo from "@/components/Seo";
 import DraftConfirmModal from "@/components/club/DraftConfirmModal";
 import MutualDraftCelebration from "@/components/club/MutualDraftCelebration";
 import {
-  MOCK_MEMBERS,
   loadDrafts,
   saveDrafts,
   type Member,
 } from "@/lib/startingXiData";
+import { supabase } from "@/integrations/supabase/client";
 
 const C = {
   bg: "#0a0a0a",
@@ -75,31 +75,34 @@ const MemberCard: React.FC<{ m: Member; onDraft: () => void; disabled: boolean; 
         borderRadius: 14,
       }}
     >
-      <img
-        src={m.photo}
-        alt={m.name}
-        loading="lazy"
-        className="object-cover flex-shrink-0"
-        style={{ width: 72, height: 88, borderRadius: 10 }}
-      />
+      {m.photo ? (
+        <img
+          src={m.photo}
+          alt={m.name}
+          loading="lazy"
+          className="object-cover flex-shrink-0"
+          style={{ width: 72, height: 88, borderRadius: 10 }}
+        />
+      ) : (
+        <div
+          className="flex-shrink-0 flex items-center justify-center"
+          style={{
+            width: 72,
+            height: 88,
+            borderRadius: 10,
+            background: C.pink,
+            color: "#0a0a0a",
+            fontFamily: "'Anton', Impact, sans-serif",
+            fontSize: 32,
+            textTransform: "uppercase",
+          }}
+        >
+          {m.firstName?.[0] || "?"}
+        </div>
+      )}
       <div className="flex-1 min-w-0">
         <div className="flex items-start justify-between gap-2">
           <h3 style={{ ...serif, fontSize: 19, color: C.text, lineHeight: 1.1 }}>{m.name}</h3>
-          <span
-            className="uppercase whitespace-nowrap"
-            style={{
-              ...mono,
-              fontSize: 9,
-              letterSpacing: "0.14em",
-              color: C.text,
-              background: "rgba(250, 245, 233, 0.08)",
-              padding: "3px 7px",
-              borderRadius: 6,
-              fontWeight: 500,
-            }}
-          >
-            {m.match}% Match
-          </span>
         </div>
         <p
           className="uppercase mt-1"
@@ -202,14 +205,64 @@ const FloatingNav: React.FC = () => {
   );
 };
 
+const profileToMember = (p: any): Member => {
+  const sports: string[] = Array.isArray(p.favorite_sports) ? p.favorite_sports : [];
+  const teams: string[] = Array.isArray(p.favorite_la_teams) && p.favorite_la_teams.length
+    ? p.favorite_la_teams
+    : sports;
+  const primaryTeam = teams[0] || sports[0] || "Sports fan";
+  const firstName = (p.name || "Member").split(" ")[0];
+  const bio = (p.bio || "").trim();
+  const tags = sports.slice(0, 3).map((s: string) => s.toUpperCase());
+  return {
+    id: p.id,
+    name: p.name || "Member",
+    firstName,
+    photo: p.profile_photo_url || "",
+    match: 0,
+    team: primaryTeam,
+    city: p.city || "",
+    vibe: bio || "New to the Club",
+    tags,
+    teams,
+    joined: "",
+    reasons: [],
+    vibeLong: bio,
+    youBoth: [],
+    rounds: [],
+    opener: `Hey ${firstName} — saw we both ride for ${primaryTeam}.`,
+  };
+};
+
 const StartingXi: React.FC = () => {
   const [state, setState] = useState(loadDrafts);
   const [confirm, setConfirm] = useState<Member | null>(null);
   const [celebrate, setCelebrate] = useState<Member | null>(null);
+  const [members, setMembers] = useState<Member[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     saveDrafts(state);
   }, [state]);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("id, name, bio, city, profile_photo_url, favorite_sports, favorite_la_teams, created_at")
+        .not("name", "is", null)
+        .neq("name", "")
+        .order("created_at", { ascending: false })
+        .limit(24);
+      if (cancelled) return;
+      if (!error && data) {
+        setMembers(data.map(profileToMember));
+      }
+      setLoading(false);
+    })();
+    return () => { cancelled = true; };
+  }, []);
 
   const handleDraft = (m: Member) => {
     if (state.draftsLeft <= 0) return;
@@ -229,8 +282,6 @@ const StartingXi: React.FC = () => {
       setTimeout(() => setCelebrate(m), 600);
     }
   };
-
-  const members = useMemo(() => MOCK_MEMBERS, []);
 
   return (
     <div style={{ background: C.bg, color: C.text, ...sans }} className="min-h-screen">
@@ -283,18 +334,28 @@ const StartingXi: React.FC = () => {
         </div>
 
         {/* Feed */}
-        <ul className="mt-5 space-y-3">
-          {members.map((m) => (
-            <li key={m.id}>
-              <MemberCard
-                m={m}
-                onDraft={() => handleDraft(m)}
-                disabled={state.draftsLeft <= 0}
-                alreadyDrafted={state.drafted.includes(m.id)}
-              />
-            </li>
-          ))}
-        </ul>
+        {loading ? (
+          <p className="mt-8 text-center" style={{ ...mono, fontSize: 10, letterSpacing: "0.2em", color: C.muted }}>
+            Loading members…
+          </p>
+        ) : members.length === 0 ? (
+          <p className="mt-8 text-center" style={{ ...mono, fontSize: 10, letterSpacing: "0.2em", color: C.muted }}>
+            No members yet — invite the first one.
+          </p>
+        ) : (
+          <ul className="mt-5 space-y-3">
+            {members.map((m) => (
+              <li key={m.id}>
+                <MemberCard
+                  m={m}
+                  onDraft={() => handleDraft(m)}
+                  disabled={state.draftsLeft <= 0}
+                  alreadyDrafted={state.drafted.includes(m.id)}
+                />
+              </li>
+            ))}
+          </ul>
+        )}
 
         {state.draftsLeft === 0 && (
           <p className="mt-6 text-center" style={{ ...mono, fontSize: 10, letterSpacing: "0.2em", color: C.muted }}>
