@@ -3,7 +3,7 @@ import { Seo } from "@/components/Seo";
 import { Users, MessagesSquare, Sparkles, MapPin } from "lucide-react";
 import { C, fonts } from "@/lib/editorialTheme";
 import { H1, H3, Body, Slug, Mono, PrimaryBtn, TertiaryLink } from "@/components/editorial/primitives";
-import SiteNav from "@/components/SiteNav";
+
 
 
 const PILLARS = [
@@ -22,7 +22,6 @@ const Connect = () => {
         description="Connect with sports fans who actually get it. Smart matching, private group chats, and members-only mixers built around the teams you love."
         path="/connect"
       />
-      <SiteNav />
 
       <section className="px-6 md:px-12 pt-32 md:pt-40 pb-20 max-w-6xl">
         <Slug>Issue · Connect</Slug>

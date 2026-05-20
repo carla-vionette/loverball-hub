@@ -1,8 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import BottomNav from "@/components/BottomNav";
-import DesktopNav from "@/components/DesktopNav";
-import MobileHeader from "@/components/MobileHeader";
 import Seo from "@/components/Seo";
 import DraftConfirmModal from "@/components/club/DraftConfirmModal";
 import { fetchProfileById } from "@/lib/profileApi";
@@ -373,11 +371,9 @@ const MemberProfile = () => {
         description={profile.bio || `Member profile on Loverball.`}
         path={`/members/${id}`}
       />
-      <MobileHeader />
-      <DesktopNav />
       <BottomNav />
 
-      <main className="md:ml-16 xl:ml-64 pt-16 md:pt-2" style={{ paddingBottom: 120 }}>
+      <main className="pt-16 md:pt-2" style={{ paddingBottom: 120 }}>
         <div className="max-w-[440px] md:max-w-2xl mx-auto px-5">
           {/* Top bar */}
           <div className="flex items-center justify-between py-3">

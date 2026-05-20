@@ -27,8 +27,6 @@ import {
 } from "@/lib/onboardingOptions";
 import { X, Camera, Loader2, ArrowLeft } from "lucide-react";
 import loverballLogo from "@/assets/loverball-script-logo.png";
-import MobileHeader from "@/components/MobileHeader";
-import DesktopNav from "@/components/DesktopNav";
 import BottomNav from "@/components/BottomNav";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -269,11 +267,9 @@ const EditProfile = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <MobileHeader />
-      <DesktopNav />
       <BottomNav />
 
-      <main className="md:ml-16 xl:ml-64 pb-20 md:pb-8 pt-20 md:pt-8">
+      <main className="pb-20 md:pb-8 pt-20 md:pt-8">
         <div className="max-w-2xl mx-auto px-4">
           {/* Header */}
           <div className="mb-8">
