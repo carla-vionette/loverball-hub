@@ -30,7 +30,7 @@ const NavItem = ({
   badge,
 }: {
   to: string;
-  icon: React.ComponentType<{ className?: string; "aria-hidden"?: boolean }>;
+  icon: React.ElementType;
   label: string;
   active: boolean;
   badge?: number;
