@@ -8,7 +8,6 @@ import { H1, Body, Slug, Mono, PrimaryBtn, TertiaryLink } from "@/components/edi
 const About = () => (
   <div style={{ background: C.bg, color: C.text, fontFamily: fonts.sans }} className="min-h-screen">
     <Seo title="About — Loverball" description="Loverball is the members-only home for sports fandom. Built in Los Angeles for the fans who finally want a place that gets it." path="/about" />
-    <SiteNav />
 
     <section className="px-6 md:px-12 pt-32 md:pt-40 pb-12 max-w-4xl">
       <Slug>About</Slug>
