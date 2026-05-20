@@ -40,7 +40,7 @@ const Connect = () => {
           A members-only home for sports fans who want more than a comment section. Matching, group chats, and meetups — quiet, vetted, real.
         </Body>
         <div className="mt-10 flex flex-wrap gap-4 items-center">
-          <PrimaryBtn onClick={() => navigate("/auth?mode=signup")}>Join Loverball</PrimaryBtn>
+          <PrimaryBtn onClick={() => navigate("/auth?mode=signup")}>Join us!</PrimaryBtn>
           <TertiaryLink to="/club">What is The Club?</TertiaryLink>
         </div>
       </section>
