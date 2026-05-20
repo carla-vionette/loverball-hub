@@ -271,7 +271,7 @@ const EditProfile = () => {
       <DesktopNav />
       <BottomNav />
 
-      <main className="md:ml-64 pb-20 md:pb-8 pt-20 md:pt-8">
+      <main className="md:ml-16 xl:ml-64 pb-20 md:pb-8 pt-20 md:pt-8">
         <div className="max-w-2xl mx-auto px-4">
           {/* Header */}
           <div className="mb-8">
