@@ -411,8 +411,8 @@ const Profile = () => {
                     <img
                       src={profile.profile_photo_url}
                       alt={profile.name}
-                      className="w-full h-full object-cover"
-                      style={{ filter: "saturate(0.95) contrast(1.04)" }}
+                      className="w-full h-full object-contain"
+                      style={{ filter: "saturate(0.95) contrast(1.04)", background: "#0F0F10" }}
                     />
                   ) : (
                     <div
