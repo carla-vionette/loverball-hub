@@ -247,13 +247,9 @@ const MessagesPage = () => {
           {/* Matches List - Hidden on mobile when chat selected */}
           <div className={`w-full md:w-80 border-r border-border bg-card flex flex-col ${selectedMatch ? 'hidden md:flex' : 'flex'}`}>
             <div className="px-5 pt-5 pb-3 border-b border-border">
-              <EditorialMasthead
-                volume="Vol. 04"
-                section="Direct"
-                eyebrow="private dispatches"
-                title="Messages"
-                size="md"
-              />
+              <h1 style={{ fontFamily: "'Playfair Display', serif", fontStyle: "italic", fontWeight: 500, fontSize: 36, letterSpacing: "-0.02em", margin: 0, color: "hsl(var(--foreground))" }}>
+                Messages
+              </h1>
             </div>
             
             <ScrollArea className="flex-1">
