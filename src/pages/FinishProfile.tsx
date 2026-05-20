@@ -10,6 +10,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Camera, ChevronRight, Check, Loader2, ArrowRight } from "lucide-react";
 import loverballLogo from "@/assets/loverball-script-logo.png";
 import { SPORTS_OPTIONS, CITY_OPTIONS } from "@/lib/onboardingOptions";
+import { useAuth } from "@/hooks/useAuth";
 import {
   Select,
   SelectContent,
@@ -31,13 +32,14 @@ const slideVariants = {
 const consumeRedirect = () => {
   const r = sessionStorage.getItem("postAuthRedirect");
   if (r) sessionStorage.removeItem("postAuthRedirect");
-  return r || "/watch";
+  return r || "/feed";
 };
 
 const FinishProfile = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { user, loading: authLoading } = useAuth();
 
   const [userId, setUserId] = useState<string | null>(null);
   const [userEmail, setUserEmail] = useState<string>("");
@@ -61,36 +63,36 @@ const FinishProfile = () => {
 
   // Auth guard
   useEffect(() => {
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      if (!user) {
+    if (authLoading) return;
+    if (!user) {
         navigate("/auth");
         return;
-      }
-      setUserId(user.id);
-      setUserEmail(user.email || "");
+    }
 
-      // Pull existing name from metadata or profiles
-      const metaName = user.user_metadata?.name || "";
-      if (metaName) setExistingName(metaName);
+    setUserId(user.id);
+    setUserEmail(user.email || "");
 
-      supabase
-        .from("profiles")
-        .select("name, username, city, bio, favorite_sports, favorite_teams_players, profile_photo_url")
-        .eq("id", user.id)
-        .maybeSingle()
-        .then(({ data: profile }) => {
-          if (profile) {
-            if (profile.name && !metaName) setExistingName(profile.name);
-            if (profile.username) setUsername(profile.username);
-            if (profile.city) setCity(profile.city);
-            if (profile.bio) setBio(profile.bio);
-            if (profile.favorite_sports?.length) setFavoriteSports(profile.favorite_sports);
-            if (profile.favorite_teams_players?.length) setFavoriteTeams(profile.favorite_teams_players);
-            if (profile.profile_photo_url) setPhotoPreview(profile.profile_photo_url);
-          }
-        });
-    });
-  }, [navigate]);
+    // Pull existing name from metadata or profiles
+    const metaName = user.user_metadata?.name || "";
+    if (metaName) setExistingName(metaName);
+
+    supabase
+      .from("profiles")
+      .select("name, username, city, bio, favorite_sports, favorite_teams_players, profile_photo_url")
+      .eq("id", user.id)
+      .maybeSingle()
+      .then(({ data: profile }) => {
+        if (profile) {
+          if (profile.name && !metaName) setExistingName(profile.name);
+          if (profile.username) setUsername(profile.username);
+          if (profile.city) setCity(profile.city);
+          if (profile.bio) setBio(profile.bio);
+          if (profile.favorite_sports?.length) setFavoriteSports(profile.favorite_sports);
+          if (profile.favorite_teams_players?.length) setFavoriteTeams(profile.favorite_teams_players);
+          if (profile.profile_photo_url) setPhotoPreview(profile.profile_photo_url);
+        }
+      });
+  }, [authLoading, navigate, user]);
 
   const go = (newStep: number, dir: number) => {
     setDirection(dir);
