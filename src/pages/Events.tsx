@@ -627,7 +627,7 @@ const Events = () => {
         <Dialog open={gateOpen} onOpenChange={setGateOpen}>
           <DialogContent className="sm:max-w-md text-center">
             <DialogHeader>
-              <DialogTitle className="font-display text-2xl uppercase tracking-tight">Your people are already here</DialogTitle>
+              <DialogTitle className="font-display text-2xl uppercase tracking-tight" style={{ color: "#E6F25A" }}>Your people are already here</DialogTitle>
             </DialogHeader>
             <div className="space-y-4 pt-2">
               <p className="text-sm text-muted-foreground leading-relaxed">
