@@ -93,7 +93,7 @@ const DraftConfirmModal: React.FC<DraftConfirmModalProps> = ({
             letterSpacing: "-0.01em",
           }}
         >
-          She's on your bench.
+          They're on your bench.
         </h2>
         <p
           className="text-center mb-5 px-2"
