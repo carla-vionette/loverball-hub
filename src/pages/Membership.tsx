@@ -184,9 +184,11 @@ const Membership = () => {
 
                 <div className="mt-10">
                   {hi ? (
-                    <PrimaryBtn onClick={goSignup} style={{ width: "100%" }}>{t.cta}</PrimaryBtn>
+                    <PrimaryBtn onClick={() => handleTierCta(t.name)} disabled={checkoutLoading} style={{ width: "100%" }}>
+                      {checkoutLoading ? "Loading…" : t.cta}
+                    </PrimaryBtn>
                   ) : (
-                    <SecondaryBtn onClick={goSignup} style={{ width: "100%" }}>{t.cta}</SecondaryBtn>
+                    <SecondaryBtn onClick={() => handleTierCta(t.name)} style={{ width: "100%" }}>{t.cta}</SecondaryBtn>
                   )}
                 </div>
               </article>
