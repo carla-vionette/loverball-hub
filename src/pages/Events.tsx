@@ -334,7 +334,7 @@ const Events = () => {
 
           {/* FEATURED — cinematic */}
           {featured && (() => {
-            const th = sceneTheme[getVariant(featured.event_type)];
+            const th = eventTheme[getVariant(featured.event_type)];
             const d = new Date(featured.event_date);
             return (
               <div
