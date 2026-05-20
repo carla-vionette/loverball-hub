@@ -202,6 +202,25 @@ const Settings = () => {
         }, { onConflict: "user_id" });
 
       if (fError) throw fError;
+
+      // Save notification channel + phone preferences on profile
+      const phoneTrim = channels.phone.trim();
+      if (phoneTrim && !/^\+[1-9]\d{6,14}$/.test(phoneTrim)) {
+        toast.error("Phone must be in E.164 format (e.g. +15551234567)");
+        setSaving(false);
+        return;
+      }
+      const { error: pError } = await supabase
+        .from("profiles")
+        .update({
+          in_app_notifications_enabled: channels.in_app,
+          sms_notifications_enabled: channels.sms,
+          email_notifications_enabled: channels.email,
+          phone: phoneTrim || null,
+        })
+        .eq("id", user.id);
+      if (pError) throw pError;
+
       toast.success("Preferences saved!");
     } catch (err) {
       toast.error("Failed to save preferences");
