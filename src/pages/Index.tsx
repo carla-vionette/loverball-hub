@@ -156,7 +156,7 @@ const Index = () => {
   const navItems = [
     { label: "Watch", to: "/feed" },
     { label: "Connect", to: "/connect" },
-    { label: "Events", to: "/events" },
+    { label: "EVENTS", to: "/events" },
     { label: "Club", to: "/club" },
   ];
 
