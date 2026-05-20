@@ -334,7 +334,7 @@ const StartingXi: React.FC = () => {
               fontSize: "clamp(44px, 11vw, 72px)",
               lineHeight: 0.9,
               letterSpacing: "-0.01em",
-              color: C.text,
+              color: C.raspberry,
               fontWeight: 400,
               textTransform: "uppercase",
             }}
