@@ -266,25 +266,32 @@ const Events = () => {
 
       <main className="pb-24 md:pb-0">
         <div className="max-w-6xl mx-auto px-5 md:px-10 py-8">
-          {user && isApprovedCreator && (
-            <div className="flex justify-end mb-4">
-              <Button
-                className="rounded-full gap-2 h-10 px-5"
-                style={{
-                  background: "hsl(var(--primary))",
-                  color: "hsl(var(--primary-foreground))",
-                  fontFamily: "'Space Mono', ui-monospace, monospace",
-                  fontWeight: 400,
-                  letterSpacing: "0.16em",
-                  fontSize: 11,
-                  textTransform: "uppercase",
-                }}
-                onClick={() => setShowSubmitForm(true)}
-              >
-                <PlusCircle className="w-4 h-4" /> Submit
-              </Button>
-            </div>
-          )}
+          <EditorialMasthead
+            section="Events"
+            meta={`${upcomingEvents.length} on deck`}
+            eyebrow="selectively assembled"
+            title="Events"
+            size="lg"
+            rightSlot={
+              user && isApprovedCreator ? (
+                <Button
+                  className="rounded-full gap-2 h-10 px-5"
+                  style={{
+                    background: "hsl(var(--primary))",
+                    color: "hsl(var(--primary-foreground))",
+                    fontFamily: "'Space Mono', ui-monospace, monospace",
+                    fontWeight: 400,
+                    letterSpacing: "0.16em",
+                    fontSize: 11,
+                    textTransform: "uppercase",
+                  }}
+                  onClick={() => setShowSubmitForm(true)}
+                >
+                  <PlusCircle className="w-4 h-4" /> Submit
+                </Button>
+              ) : undefined
+            }
+          />
 
           {/* Apply to Post CTA for non-approved users */}
           {user && !isApprovedCreator && (
