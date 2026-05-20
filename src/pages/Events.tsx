@@ -47,8 +47,8 @@ interface DbEvent {
   event_tags?: string[] | null;
 }
 
-type SceneVariant = "external" | "hosted" | "cultural";
-const variantMap: Record<string, SceneVariant> = {
+type EventVariant = "external" | "hosted" | "cultural";
+const variantMap: Record<string, EventVariant> = {
   game: "external",
   watch_party: "external",
   networking: "hosted",
@@ -58,8 +58,8 @@ const variantMap: Record<string, SceneVariant> = {
   salon: "cultural",
   other: "cultural",
 };
-const getVariant = (t?: string | null): SceneVariant => (t && variantMap[t]) || "cultural";
-const sceneTheme: Record<SceneVariant, { accent: string; label: string }> = {
+const getVariant = (t?: string | null): EventVariant => (t && variantMap[t]) || "cultural";
+const eventTheme: Record<EventVariant, { accent: string; label: string }> = {
   external: { accent: "#E8276F", label: "Broadcast" },
   hosted:   { accent: "#D88C5A", label: "Hosted" },
   cultural: { accent: "#F8F8F8", label: "Cultural" },
@@ -334,7 +334,7 @@ const Events = () => {
 
           {/* FEATURED — cinematic */}
           {featured && (() => {
-            const th = sceneTheme[getVariant(featured.event_type)];
+            const th = eventTheme[getVariant(featured.event_type)];
             const d = new Date(featured.event_date);
             return (
               <div
@@ -454,7 +454,7 @@ const Events = () => {
                 const spotsLeft = ev.capacity ? ev.capacity - ct : null;
                 const cardIndex = idx + 1;
                 const sponsorSlot = cardIndex > 0 && cardIndex % 5 === 0;
-                const th = sceneTheme[getVariant(ev.event_type)];
+                const th = eventTheme[getVariant(ev.event_type)];
                 const d = new Date(ev.event_date);
 
                 return (

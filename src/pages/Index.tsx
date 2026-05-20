@@ -319,7 +319,7 @@ const Index = () => {
           <div className="marquee-track py-3" style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: 22, letterSpacing: "0.04em", textTransform: "uppercase", color: "#0a0a0a" }}>
             {Array.from({ length: 2 }).map((_, k) => (
               <div key={k} className="flex items-center gap-8 px-4">
-                {["Her game", "★", "HER COMMUNITY", "★", "", "★", "No permission required", "★", "Built in LA", "★"].map((t, i) => (
+                {["Her game", "★", "HER COMMUNITY", "★", "EVENTS", "★", "No permission required", "★", "Built in LA", "★"].map((t, i) => (
                   <span key={`${k}-${i}`}>{t}</span>
                 ))}
               </div>
