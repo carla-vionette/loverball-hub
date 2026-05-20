@@ -27,8 +27,9 @@ const MobileHeader = () => {
 
   return (
     <header
-      className="md:hidden fixed top-0 left-0 right-0 bg-background/95 backdrop-blur-md border-b border-border/20 z-40 px-4 py-3"
+      className="md:hidden fixed top-0 left-0 right-0 bg-background/95 backdrop-blur-md z-40 px-4 py-3"
       role="banner"
+      style={{ borderBottom: "1px solid #E86BB0" }}
     >
       <div className="flex items-center gap-3">
         <Link to="/" className="flex items-center flex-shrink-0 focus-ring rounded-lg" aria-label="Loverball home">
