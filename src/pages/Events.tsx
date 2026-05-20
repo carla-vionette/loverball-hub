@@ -289,7 +289,7 @@ const Events = () => {
             <div className="mb-6 rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center gap-3"
               style={{ background: "rgba(240,78,35,0.06)", border: "1px solid rgba(240,78,35,0.18)" }}>
               <div className="flex-1">
-                <h3 style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: 16, color: "#E86BB0", textTransform: "uppercase", letterSpacing: "0.02em", margin: 0 }}>
+                <h3 style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: 16, color: "#E6F25A", textTransform: "uppercase", letterSpacing: "0.02em", margin: 0 }}>
                   Want to post an event?
                 </h3>
                 <p className="mt-1" style={{ fontFamily: "'Inter', system-ui, sans-serif", fontSize: 12, color: "rgba(248,248,248,0.6)", margin: 0 }}>
@@ -380,7 +380,7 @@ const Events = () => {
                   {/* Bottom block */}
                   <div className="absolute bottom-0 left-0 right-0 p-5 md:p-7">
                     <h2 className="line-clamp-2"
-                      style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: "clamp(28px, 6vw, 44px)", lineHeight: 0.95, color: "#F8F8F8", textTransform: "uppercase", letterSpacing: "0.005em", margin: 0 }}>
+                      style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: "clamp(28px, 6vw, 44px)", lineHeight: 0.95, color: "#E6F25A", textTransform: "uppercase", letterSpacing: "0.005em", margin: 0 }}>
                       {featured.title}
                     </h2>
                     <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-3"
@@ -436,7 +436,7 @@ const Events = () => {
                 style={{ background: "rgba(240,78,35,0.1)", border: "1px solid rgba(240,78,35,0.25)" }}>
                 <Calendar className="w-9 h-9" style={{ color: "#F04E23" }} />
               </div>
-              <h2 style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: 22, color: "#F8F8F8", textTransform: "uppercase", letterSpacing: "0.02em", margin: 0 }}>
+              <h2 style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: 22, color: "#E6F25A", textTransform: "uppercase", letterSpacing: "0.02em", margin: 0 }}>
                 {tab === "upcoming" ? "No upcoming events" : "No past events"}
               </h2>
               <p className="max-w-sm mx-auto"
@@ -502,7 +502,7 @@ const Events = () => {
 
                       <div className="p-4 space-y-3">
                         <h3 className="line-clamp-2"
-                          style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: 18, lineHeight: 1.05, color: "#F8F8F8", textTransform: "uppercase", letterSpacing: "0.01em", margin: 0 }}>
+                          style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: 18, lineHeight: 1.05, color: "#E6F25A", textTransform: "uppercase", letterSpacing: "0.01em", margin: 0 }}>
                           {ev.title}
                         </h3>
                         <div className="flex flex-wrap items-center gap-x-3 gap-y-1"
@@ -595,7 +595,7 @@ const Events = () => {
               <span style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 10, letterSpacing: "0.22em", color: "#E6F25A", textTransform: "uppercase" }}>
                 Confirm your seat
               </span>
-              <DialogTitle style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: 30, lineHeight: 0.95, color: "#F8F8F8", textTransform: "uppercase", letterSpacing: "0.01em", marginTop: 4 }}>
+              <DialogTitle style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: 30, lineHeight: 0.95, color: "#E6F25A", textTransform: "uppercase", letterSpacing: "0.01em", marginTop: 4 }}>
                 RSVP
               </DialogTitle>
             </DialogHeader>
@@ -627,7 +627,7 @@ const Events = () => {
         <Dialog open={gateOpen} onOpenChange={setGateOpen}>
           <DialogContent className="sm:max-w-md text-center">
             <DialogHeader>
-              <DialogTitle className="font-display text-2xl uppercase tracking-tight">Your people are already here</DialogTitle>
+              <DialogTitle className="font-display text-2xl uppercase tracking-tight" style={{ color: "#E6F25A" }}>Your people are already here</DialogTitle>
             </DialogHeader>
             <div className="space-y-4 pt-2">
               <p className="text-sm text-muted-foreground leading-relaxed">
