@@ -243,6 +243,7 @@ const profileToMember = (p: any): Member => {
 
 const StartingXi: React.FC = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [state, setState] = useState(loadDrafts);
   const [confirm, setConfirm] = useState<Member | null>(null);
   const [celebrate, setCelebrate] = useState<Member | null>(null);
