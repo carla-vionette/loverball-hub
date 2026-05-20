@@ -327,9 +327,9 @@ const StartingXi: React.FC = () => {
 
       <main className="max-w-[440px] mx-auto px-5 pt-24 md:pt-28 pb-36">
         <EditorialMasthead
-          section="Club"
+          section="Starting XI."
           eyebrow="find your people"
-          title="Club"
+          title="Starting XI."
           size="md"
         />
 
