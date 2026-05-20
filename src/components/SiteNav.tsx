@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { C, fonts } from "@/lib/editorialTheme";
 import { useAuth } from "@/hooks/useAuth";
+import NotificationBell from "@/components/NotificationBell";
 import navLogo from "@/assets/loverball-logo.png";
 
 /**
@@ -88,6 +89,7 @@ const SiteNav = () => {
         <div className="hidden md:flex items-center gap-4">
           {user ? (
             <>
+              <NotificationBell />
               <Link to="/profile" style={{ ...linkStyle, color: C.muted }} className="transition-colors hover:!text-[#FAF5E9]">
                 Profile
               </Link>
@@ -106,6 +108,8 @@ const SiteNav = () => {
             </>
           )}
         </div>
+
+        {user && <div className="md:hidden flex items-center"><NotificationBell /></div>}
 
         <button
           className="md:hidden p-2 -mr-2"
