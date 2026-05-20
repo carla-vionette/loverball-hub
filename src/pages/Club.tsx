@@ -23,6 +23,13 @@ const Club = () => {
   const navigate = useNavigate();
   const goSignup = () => navigate("/auth?mode=signup");
   const [query, setQuery] = useState("");
+  const [connections, setConnections] = useState<Member[]>([]);
+
+  useEffect(() => {
+    const { drafted } = loadDrafts();
+    setConnections(drafted.map((id) => MOCK_MEMBERS.find((m) => m.id === id)).filter(Boolean) as Member[]);
+  }, []);
+
   const filteredPillars = useMemo(() => {
     const q = query.trim().toLowerCase();
     if (!q) return PILLARS;
