@@ -334,18 +334,28 @@ const StartingXi: React.FC = () => {
         </div>
 
         {/* Feed */}
-        <ul className="mt-5 space-y-3">
-          {members.map((m) => (
-            <li key={m.id}>
-              <MemberCard
-                m={m}
-                onDraft={() => handleDraft(m)}
-                disabled={state.draftsLeft <= 0}
-                alreadyDrafted={state.drafted.includes(m.id)}
-              />
-            </li>
-          ))}
-        </ul>
+        {loading ? (
+          <p className="mt-8 text-center" style={{ ...mono, fontSize: 10, letterSpacing: "0.2em", color: C.muted }}>
+            Loading members…
+          </p>
+        ) : members.length === 0 ? (
+          <p className="mt-8 text-center" style={{ ...mono, fontSize: 10, letterSpacing: "0.2em", color: C.muted }}>
+            No members yet — invite the first one.
+          </p>
+        ) : (
+          <ul className="mt-5 space-y-3">
+            {members.map((m) => (
+              <li key={m.id}>
+                <MemberCard
+                  m={m}
+                  onDraft={() => handleDraft(m)}
+                  disabled={state.draftsLeft <= 0}
+                  alreadyDrafted={state.drafted.includes(m.id)}
+                />
+              </li>
+            ))}
+          </ul>
+        )}
 
         {state.draftsLeft === 0 && (
           <p className="mt-6 text-center" style={{ ...mono, fontSize: 10, letterSpacing: "0.2em", color: C.muted }}>
