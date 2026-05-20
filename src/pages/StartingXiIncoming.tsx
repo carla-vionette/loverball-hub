@@ -13,8 +13,8 @@ const C = {
   pink: "#E86BB0",
 };
 
-const mono = { fontFamily: "'JetBrains Mono', ui-monospace, monospace" } as const;
-const serif = { fontFamily: "'Inter', system-ui, sans-serif" } as const;
+const mono = { fontFamily: "'Poppins', system-ui, sans-serif" } as const;
+const serif = { fontFamily: "'Poppins', system-ui, sans-serif" } as const;
 
 // State B: "What Chloe sees" — a preview of an incoming draft from the user (Carla).
 // Demo-only standalone screen. In production this lives in the recipient's notifications tray.
@@ -24,7 +24,7 @@ const StartingXiIncoming: React.FC = () => {
   const [celebrate, setCelebrate] = useState(false);
 
   return (
-    <div style={{ background: C.bg, color: C.text, fontFamily: "Inter, sans-serif" }} className="min-h-screen">
+    <div style={{ background: C.bg, color: C.text, fontFamily: "Poppins, system-ui, sans-serif" }} className="min-h-screen">
       <Seo
         title="Incoming draft — Starting XI | Loverball"
         description="Preview of what a member sees when someone drafts them."
