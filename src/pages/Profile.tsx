@@ -596,6 +596,11 @@ const Profile = () => {
             {/* ═══════════ RIGHT COLUMN — ACTIVITY ═══════════ */}
             <div className="space-y-6 min-w-0">
 
+              <motion.div variants={staggerItem}>
+                <ProfileInbox />
+              </motion.div>
+
+
               {/* Top row: section header + horoscope right widget */}
               <motion.div
                 variants={staggerItem}
