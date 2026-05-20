@@ -1,19 +1,19 @@
-import { useState, useEffect } from"react";
-import BottomNav from"@/components/BottomNav";
-import { Button } from"@/components/ui/button";
-import { Switch } from"@/components/ui/switch";
-import { Input } from"@/components/ui/input";
-import { Badge } from"@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from"@/components/ui/tabs";
-import { Card, CardContent, CardHeader, CardTitle } from"@/components/ui/card";
-import { Slider } from"@/components/ui/slider";
-import { supabase } from"@/integrations/supabase/client";
-import { useAuth } from"@/hooks/useAuth";
-import { toast } from"sonner";
-import { Loader2, Bell, Eye, EyeOff, MapPin, Save, Smartphone } from"lucide-react";
-import { Label } from"@/components/ui/label";
-import { LA_PRO_TEAMS, LA_D1_COLLEGES } from"@/lib/laTeamsConfig";
-import { SPORTS_OPTIONS } from"@/lib/onboardingOptions";
+import { useState, useEffect } from "react ";
+import BottomNav from "@/components/BottomNav ";
+import { Button } from "@/components/ui/button ";
+import { Switch } from "@/components/ui/switch ";
+import { Input } from "@/components/ui/input ";
+import { Badge } from "@/components/ui/badge ";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs ";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card ";
+import { Slider } from "@/components/ui/slider ";
+import { supabase } from "@/integrations/supabase/client ";
+import { useAuth } from "@/hooks/useAuth ";
+import { toast } from "sonner ";
+import { Loader2, Bell, Eye, EyeOff, MapPin, Save, Smartphone } from "lucide-react ";
+import { Label } from "@/components/ui/label ";
+import { LA_PRO_TEAMS, LA_D1_COLLEGES } from "@/lib/laTeamsConfig ";
+import { SPORTS_OPTIONS } from "@/lib/onboardingOptions ";
 
 interface NotificationPref {
   id?: string;
@@ -34,11 +34,11 @@ interface FeedPrefs {
 }
 
 const ALL_TEAMS = [
-  ...LA_PRO_TEAMS.map(t => ({ key: t.shortName, name: t.name, league: t.league, type:"team" as const })),
-  ...LA_D1_COLLEGES.map(t => ({ key: t.shortName, name: t.name, league: t.conference, type:"team" as const })),
+  ...LA_PRO_TEAMS.map(t => ({ key: t.shortName, name: t.name, league: t.league, type:"team " as const })),
+  ...LA_D1_COLLEGES.map(t => ({ key: t.shortName, name: t.name, league: t.conference, type:"team " as const })),
 ];
 
-const EVENT_TYPES = ["Watch Party","Mixer","Panel","Pickup Game","Tournament","Networking","Viewing Party",
+const EVENT_TYPES = ["Watch Party ","Mixer ","Panel ","Pickup Game ","Tournament ","Networking ","Viewing Party ",
 ];
 
 const Settings = () => {
@@ -49,8 +49,8 @@ const Settings = () => {
   const [feedPrefs, setFeedPrefs] = useState<FeedPrefs>({
     hidden_sports: [],
     hidden_event_types: [],
-    home_venue:"",
-    home_neighborhood:"",
+    home_venue: "",
+    home_neighborhood: "",
     preferred_distance_miles: 25,
   });
   const [userTeams, setUserTeams] = useState<string[]>([]);
@@ -58,7 +58,7 @@ const Settings = () => {
     in_app: true,
     sms: true,
     email: true,
-    phone:"",
+    phone: "",
   });
 
   useEffect(() => {
@@ -70,9 +70,9 @@ const Settings = () => {
     try {
       // Load notification prefs
       const { data: nPrefs } = await supabase
-        .from("notification_preferences")
+        .from("notification_preferences ")
         .select("*")
-        .eq("user_id", user.id);
+        .eq("user_id ", user.id);
 
       const prefsMap = new Map<string, NotificationPref>();
       nPrefs?.forEach(p => {
@@ -82,26 +82,26 @@ const Settings = () => {
 
       // Load feed prefs
       const { data: fPrefs } = await supabase
-        .from("user_feed_preferences")
+        .from("user_feed_preferences ")
         .select("*")
-        .eq("user_id", user.id)
+        .eq("user_id ", user.id)
         .maybeSingle();
 
       if (fPrefs) {
         setFeedPrefs({
           hidden_sports: fPrefs.hidden_sports || [],
           hidden_event_types: fPrefs.hidden_event_types || [],
-          home_venue: fPrefs.home_venue ||"",
-          home_neighborhood: fPrefs.home_neighborhood ||"",
+          home_venue: fPrefs.home_venue || "",
+          home_neighborhood: fPrefs.home_neighborhood || "",
           preferred_distance_miles: fPrefs.preferred_distance_miles || 25,
         });
       }
 
       // Load user's favorite teams
       const { data: profile } = await supabase
-        .from("profiles")
-        .select("favorite_la_teams, in_app_notifications_enabled, sms_notifications_enabled, email_notifications_enabled, phone")
-        .eq("id", user.id)
+        .from("profiles ")
+        .select("favorite_la_teams, in_app_notifications_enabled, sms_notifications_enabled, email_notifications_enabled, phone ")
+        .eq("id ", user.id)
         .single();
 
       setUserTeams(profile?.favorite_la_teams || []);
@@ -109,7 +109,7 @@ const Settings = () => {
         in_app: profile?.in_app_notifications_enabled ?? true,
         sms: profile?.sms_notifications_enabled ?? true,
         email: profile?.email_notifications_enabled ?? true,
-        phone: profile?.phone ||"",
+        phone: profile?.phone || "",
       });
     } catch (err) {
       // Preferences load error handled silently
@@ -175,14 +175,14 @@ const Settings = () => {
 
       if (prefsToUpsert.length > 0) {
         const { error: nError } = await supabase
-          .from("notification_preferences")
-          .upsert(prefsToUpsert, { onConflict:"user_id,preference_type,preference_key" });
+          .from("notification_preferences ")
+          .upsert(prefsToUpsert, { onConflict:"user_id,preference_type,preference_key " });
         if (nError) throw nError;
       }
 
       // Save feed prefs
       const { error: fError } = await supabase
-        .from("user_feed_preferences")
+        .from("user_feed_preferences ")
         .upsert({
           user_id: user.id,
           hidden_sports: feedPrefs.hidden_sports,
@@ -190,7 +190,7 @@ const Settings = () => {
           home_venue: feedPrefs.home_venue || null,
           home_neighborhood: feedPrefs.home_neighborhood || null,
           preferred_distance_miles: feedPrefs.preferred_distance_miles,
-        }, { onConflict:"user_id" });
+        }, { onConflict:"user_id " });
 
       if (fError) throw fError;
 
@@ -202,19 +202,19 @@ const Settings = () => {
         return;
       }
       const { error: pError } = await supabase
-        .from("profiles")
+        .from("profiles ")
         .update({
           in_app_notifications_enabled: channels.in_app,
           sms_notifications_enabled: channels.sms,
           email_notifications_enabled: channels.email,
           phone: phoneTrim || null,
         })
-        .eq("id", user.id);
+        .eq("id ", user.id);
       if (pError) throw pError;
 
       toast.success("Preferences saved!");
     } catch (err) {
-      toast.error("Failed to save preferences");
+      toast.error("Failed to save preferences ");
     } finally {
       setSaving(false);
     }
@@ -224,7 +224,7 @@ const Settings = () => {
     return (
       <div className="min-h-screen bg-background pb-20 md:pb-0 md:pl-64">
         <div className="flex items-center justify-center py-20">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <Loader2 className="h-8 w-8 animate-spin text-primary " />
         </div>
       </div>
     );
@@ -235,66 +235,66 @@ const Settings = () => {
 
   return (
     <div className="min-h-screen bg-background pb-20 md:pb-0 md:pl-64">
-      <main className="container mx-auto px-4 py-8 pb-20 md:pb-8 max-w-3xl">
+      <main className="container mx-auto px-4 py-8 pb-20 md:pb-8 max-w-3xl ">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-3xl font-bold text-foreground">Settings</h1>
-            <p className="text-muted-foreground text-sm">Manage notifications, feed & location preferences</p>
+            <h1 className="text-3xl font-bold text-foreground ">Settings</h1>
+            <p className="text-muted-foreground text-sm ">Manage notifications, feed & location preferences</p>
           </div>
           <Button onClick={saveAllPreferences} disabled={saving} className="rounded-full gap-2">
-            {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+            {saving ? <Loader2 className="h-4 w-4 animate-spin " /> : <Save className="h-4 w-4" />}
             Save
           </Button>
         </div>
 
-        <Tabs defaultValue="notifications" className="space-y-6">
-          <TabsList className="bg-transparent gap-2 h-auto p-0 w-full justify-start overflow-x-auto">
-            <TabsTrigger value="notifications" className="rounded-full px-5 py-2 text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+        <Tabs defaultValue="notifications " className="space-y-6">
+          <TabsList className="bg-transparent gap-2 h-auto p-0 w-full justify-start overflow-x-auto ">
+            <TabsTrigger value="notifications " className="rounded-full px-5 py-2 text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground ">
               <Bell className="h-4 w-4 mr-2" /> Notifications
             </TabsTrigger>
-            <TabsTrigger value="feed" className="rounded-full px-5 py-2 text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+            <TabsTrigger value="feed " className="rounded-full px-5 py-2 text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground ">
               <Eye className="h-4 w-4 mr-2" /> Feed
             </TabsTrigger>
-            <TabsTrigger value="location" className="rounded-full px-5 py-2 text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+            <TabsTrigger value="location " className="rounded-full px-5 py-2 text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground ">
               <MapPin className="h-4 w-4 mr-2" /> Location
             </TabsTrigger>
           </TabsList>
 
           {/* Notifications Tab */}
-          <TabsContent value="notifications" className="space-y-6">
+          <TabsContent value="notifications " className="space-y-6">
             {/* Notification channels */}
             <Card className="rounded-2xl border-border/50">
               <CardHeader className="pb-3">
                 <CardTitle className="text-lg flex items-center gap-2">
                   <Smartphone className="h-5 w-5" /> Notification Channels
                 </CardTitle>
-                <p className="text-sm text-muted-foreground">Choose how Loverball reaches you</p>
+                <p className="text-sm text-muted-foreground ">Choose how Loverball reaches you</p>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between ">
                   <div>
-                    <p className="text-sm font-medium">In-app notifications</p>
-                    <p className="text-xs text-muted-foreground">Bell badge & realtime alerts</p>
+                    <p className="text-sm font-medium ">In-app notifications</p>
+                    <p className="text-xs text-muted-foreground ">Bell badge & realtime alerts</p>
                   </div>
                   <Switch
                     checked={channels.in_app}
                     onCheckedChange={(v) => setChannels((c) => ({ ...c, in_app: v }))}
                   />
                 </div>
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between ">
                   <div>
-                    <p className="text-sm font-medium">SMS notifications</p>
-                    <p className="text-xs text-muted-foreground">Texts via Twilio. Reply STOP to opt out.</p>
+                    <p className="text-sm font-medium ">SMS notifications</p>
+                    <p className="text-xs text-muted-foreground ">Texts via Twilio. Reply STOP to opt out.</p>
                   </div>
                   <Switch
                     checked={channels.sms}
                     onCheckedChange={(v) => setChannels((c) => ({ ...c, sms: v }))}
                   />
                 </div>
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between ">
                   <div>
-                    <p className="text-sm font-medium">Email notifications</p>
-                    <p className="text-xs text-muted-foreground">Digest & important updates</p>
+                    <p className="text-sm font-medium ">Email notifications</p>
+                    <p className="text-xs text-muted-foreground ">Digest & important updates</p>
                   </div>
                   <Switch
                     checked={channels.email}
@@ -302,15 +302,15 @@ const Settings = () => {
                   />
                 </div>
                 <div className="pt-2 space-y-1.5">
-                  <Label htmlFor="phone-input" className="text-sm">Phone number (for SMS)</Label>
+                  <Label htmlFor="phone-input " className="text-sm ">Phone number (for SMS)</Label>
                   <Input
-                    id="phone-input"
-                    type="tel"
+                    id="phone-input "
+                    type="tel "
                     placeholder="+15551234567"
                     value={channels.phone}
                     onChange={(e) => setChannels((c) => ({ ...c, phone: e.target.value }))}
                   />
-                  <p className="text-[11px] text-muted-foreground">E.164 format, e.g. +1 for US.</p>
+                  <p className="text-[11px] text-muted-foreground ">E.164 format, e.g. +1 for US.</p>
                 </div>
               </CardContent>
             </Card>
@@ -319,47 +319,47 @@ const Settings = () => {
             {favoriteTeams.length > 0 && (
               <Card className="rounded-2xl border-border/50">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-lg">Your Teams</CardTitle>
-                  <p className="text-sm text-muted-foreground">Set notifications for your favorite teams</p>
+                  <CardTitle className="text-lg ">Your Teams</CardTitle>
+                  <p className="text-sm text-muted-foreground ">Set notifications for your favorite teams</p>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   {favoriteTeams.map(team => {
-                    const pref = getOrCreatePref("team", team.key);
+                    const pref = getOrCreatePref("team ", team.key);
                     return (
                       <div key={team.key} className="space-y-3 pb-4 border-b border-border/30 last:border-0 last:pb-0">
-                        <div className="flex items-center justify-between">
+                        <div className="flex items-center justify-between ">
                           <div>
-                            <p className="font-medium text-sm">{team.name}</p>
-                            <p className="text-xs text-muted-foreground">{team.league}</p>
+                            <p className="font-medium text-sm ">{team.name}</p>
+                            <p className="text-xs text-muted-foreground ">{team.league}</p>
                           </div>
                         </div>
                         <div className="grid grid-cols-2 gap-3">
-                          <div className="flex items-center justify-between">
-                            <span className="text-xs text-muted-foreground">Game reminders</span>
+                          <div className="flex items-center justify-between ">
+                            <span className="text-xs text-muted-foreground ">Game reminders</span>
                             <Switch
                               checked={pref.game_reminders}
-                              onCheckedChange={(v) => updateNotifPref("team", team.key,"game_reminders", v)}
+                              onCheckedChange={(v) => updateNotifPref("team ", team.key,"game_reminders ", v)}
                             />
                           </div>
-                          <div className="flex items-center justify-between">
-                            <span className="text-xs text-muted-foreground">Event alerts</span>
+                          <div className="flex items-center justify-between ">
+                            <span className="text-xs text-muted-foreground ">Event alerts</span>
                             <Switch
                               checked={pref.event_alerts}
-                              onCheckedChange={(v) => updateNotifPref("team", team.key,"event_alerts", v)}
+                              onCheckedChange={(v) => updateNotifPref("team ", team.key,"event_alerts ", v)}
                             />
                           </div>
-                          <div className="flex items-center justify-between">
-                            <span className="text-xs text-muted-foreground">News updates</span>
+                          <div className="flex items-center justify-between ">
+                            <span className="text-xs text-muted-foreground ">News updates</span>
                             <Switch
                               checked={pref.news_updates}
-                              onCheckedChange={(v) => updateNotifPref("team", team.key,"news_updates", v)}
+                              onCheckedChange={(v) => updateNotifPref("team ", team.key,"news_updates ", v)}
                             />
                           </div>
-                          <div className="flex items-center justify-between">
-                            <span className="text-xs text-muted-foreground">SMS alerts</span>
+                          <div className="flex items-center justify-between ">
+                            <span className="text-xs text-muted-foreground ">SMS alerts</span>
                             <Switch
                               checked={pref.sms_enabled}
-                              onCheckedChange={(v) => updateNotifPref("team", team.key,"sms_enabled", v)}
+                              onCheckedChange={(v) => updateNotifPref("team ", team.key,"sms_enabled ", v)}
                             />
                           </div>
                         </div>
@@ -374,8 +374,8 @@ const Settings = () => {
             {otherTeams.length > 0 && (
               <Card className="rounded-2xl border-border/50">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-lg">Other Teams</CardTitle>
-                  <p className="text-sm text-muted-foreground">Enable notifications for additional teams</p>
+                  <CardTitle className="text-lg ">Other Teams</CardTitle>
+                  <p className="text-sm text-muted-foreground ">Enable notifications for additional teams</p>
                 </CardHeader>
                 <CardContent>
                   <div className="flex flex-wrap gap-2">
@@ -385,15 +385,15 @@ const Settings = () => {
                       return (
                         <Badge
                           key={team.key}
-                          variant={isActive ?"default" :"outline"}
-                          className="cursor-pointer rounded-full px-3 py-1.5 text-xs transition-colors"
+                          variant={isActive ?"default " :"outline "}
+                          className="cursor-pointer rounded-full px-3 py-1.5 text-xs transition-colors "
                           onClick={() => {
                             if (isActive) {
-                              updateNotifPref("team", team.key,"game_reminders", false);
-                              updateNotifPref("team", team.key,"event_alerts", false);
+                              updateNotifPref("team ", team.key,"game_reminders ", false);
+                              updateNotifPref("team ", team.key,"event_alerts ", false);
                             } else {
-                              updateNotifPref("team", team.key,"game_reminders", true);
-                              updateNotifPref("team", team.key,"event_alerts", true);
+                              updateNotifPref("team ", team.key,"game_reminders ", true);
+                              updateNotifPref("team ", team.key,"event_alerts ", true);
                             }
                           }}
                         >
@@ -409,25 +409,25 @@ const Settings = () => {
             {/* Global notification settings */}
             <Card className="rounded-2xl border-border/50">
               <CardHeader className="pb-3">
-                <CardTitle className="text-lg">General Notifications</CardTitle>
+                <CardTitle className="text-lg ">General Notifications</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 {[
-                  { key:"new_messages", label:"New messages", desc:"DMs and group chat messages" },
-                  { key:"event_reminders", label:"Event reminders", desc:"Reminders for RSVP'd events" },
-                  { key:"connection_requests", label:"Connection requests", desc:"When someone wants to connect" },
-                  { key:"weekly_recap", label:"Weekly recap", desc:"Your week in sports summary" },
+                  { key:"new_messages ", label:"New messages ", desc:"DMs and group chat messages " },
+                  { key:"event_reminders ", label:"Event reminders ", desc:"Reminders for RSVP'd events " },
+                  { key:"connection_requests ", label:"Connection requests ", desc:"When someone wants to connect " },
+                  { key:"weekly_recap ", label:"Weekly recap ", desc:"Your week in sports summary " },
                 ].map(item => {
-                  const pref = getOrCreatePref("general", item.key);
+                  const pref = getOrCreatePref("general ", item.key);
                   return (
-                    <div key={item.key} className="flex items-center justify-between">
+                    <div key={item.key} className="flex items-center justify-between ">
                       <div>
-                        <p className="text-sm font-medium">{item.label}</p>
-                        <p className="text-xs text-muted-foreground">{item.desc}</p>
+                        <p className="text-sm font-medium ">{item.label}</p>
+                        <p className="text-xs text-muted-foreground ">{item.desc}</p>
                       </div>
                       <Switch
                         checked={pref.event_alerts}
-                        onCheckedChange={(v) => updateNotifPref("general", item.key,"event_alerts", v)}
+                        onCheckedChange={(v) => updateNotifPref("general ", item.key,"event_alerts ", v)}
                       />
                     </div>
                   );
@@ -437,23 +437,23 @@ const Settings = () => {
           </TabsContent>
 
           {/* Feed Tab */}
-          <TabsContent value="feed" className="space-y-6">
+          <TabsContent value="feed " className="space-y-6">
             <Card className="rounded-2xl border-border/50">
               <CardHeader className="pb-3">
                 <CardTitle className="text-lg flex items-center gap-2">
                   <EyeOff className="h-5 w-5" /> Hidden Sports
                 </CardTitle>
-                <p className="text-sm text-muted-foreground">Hide these sports from your feed and recommendations</p>
+                <p className="text-sm text-muted-foreground ">Hide these sports from your feed and recommendations</p>
               </CardHeader>
               <CardContent>
                 <div className="flex flex-wrap gap-2">
-                  {SPORTS_OPTIONS.filter(s => s !=="Other").map(sport => {
+                  {SPORTS_OPTIONS.filter(s => s !=="Other ").map(sport => {
                     const isHidden = feedPrefs.hidden_sports.includes(sport);
                     return (
                       <Badge
                         key={sport}
-                        variant={isHidden ?"destructive" :"outline"}
-                        className="cursor-pointer rounded-full px-3 py-1.5 text-xs transition-colors"
+                        variant={isHidden ?"destructive " :"outline "}
+                        className="cursor-pointer rounded-full px-3 py-1.5 text-xs transition-colors "
                         onClick={() => toggleHiddenSport(sport)}
                       >
                         {isHidden && <EyeOff className="h-3 w-3 mr-1" />}
@@ -467,8 +467,8 @@ const Settings = () => {
 
             <Card className="rounded-2xl border-border/50">
               <CardHeader className="pb-3">
-                <CardTitle className="text-lg">Hidden Event Types</CardTitle>
-                <p className="text-sm text-muted-foreground">Hide these event types from your feed</p>
+                <CardTitle className="text-lg ">Hidden Event Types</CardTitle>
+                <p className="text-sm text-muted-foreground ">Hide these event types from your feed</p>
               </CardHeader>
               <CardContent>
                 <div className="flex flex-wrap gap-2">
@@ -477,8 +477,8 @@ const Settings = () => {
                     return (
                       <Badge
                         key={type}
-                        variant={isHidden ?"destructive" :"outline"}
-                        className="cursor-pointer rounded-full px-3 py-1.5 text-xs transition-colors"
+                        variant={isHidden ?"destructive " :"outline "}
+                        className="cursor-pointer rounded-full px-3 py-1.5 text-xs transition-colors "
                         onClick={() => toggleHiddenEventType(type)}
                       >
                         {isHidden && <EyeOff className="h-3 w-3 mr-1" />}
@@ -492,35 +492,35 @@ const Settings = () => {
           </TabsContent>
 
           {/* Location Tab */}
-          <TabsContent value="location" className="space-y-6">
+          <TabsContent value="location " className="space-y-6">
             <Card className="rounded-2xl border-border/50">
               <CardHeader className="pb-3">
                 <CardTitle className="text-lg flex items-center gap-2">
                   <MapPin className="h-5 w-5" /> Home Venue
                 </CardTitle>
-                <p className="text-sm text-muted-foreground">Set your preferred venue for location-based recommendations</p>
+                <p className="text-sm text-muted-foreground ">Set your preferred venue for location-based recommendations</p>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <label className="text-sm font-medium mb-1.5 block">Favorite venue</label>
+                  <label className="text-sm font-medium mb-1.5 block ">Favorite venue</label>
                   <Input
                     placeholder="e.g. Crypto.com Arena, SoFi Stadium..."
                     value={feedPrefs.home_venue}
                     onChange={(e) => setFeedPrefs(prev => ({ ...prev, home_venue: e.target.value }))}
-                    className="rounded-full"
+                    className="rounded-full "
                   />
                 </div>
                 <div>
-                  <label className="text-sm font-medium mb-1.5 block">Neighborhood</label>
+                  <label className="text-sm font-medium mb-1.5 block ">Neighborhood</label>
                   <Input
                     placeholder="e.g. Downtown LA, Santa Monica, Pasadena..."
                     value={feedPrefs.home_neighborhood}
                     onChange={(e) => setFeedPrefs(prev => ({ ...prev, home_neighborhood: e.target.value }))}
-                    className="rounded-full"
+                    className="rounded-full "
                   />
                 </div>
                 <div>
-                  <label className="text-sm font-medium mb-1.5 block">
+                  <label className="text-sm font-medium mb-1.5 block ">
                     Preferred distance: {feedPrefs.preferred_distance_miles} miles
                   </label>
                   <Slider

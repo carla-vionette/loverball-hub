@@ -1,12 +1,12 @@
-import { useState } from"react";
-import { Link, useNavigate } from"react-router-dom";
-import { Seo } from"@/components/Seo";
-import { Check, Minus, ChevronDown, Sparkles, Loader2 } from"lucide-react";
-import { C, fonts } from"@/lib/editorialTheme";
-import { H1, H2, H3, Body, Slug, Mono, PrimaryBtn, SecondaryBtn, TertiaryLink } from"@/components/editorial/primitives";
-import { useAuth } from"@/hooks/useAuth";
-import { createCheckoutSession } from"@/services/subscriptionService";
-import { toast } from"sonner";
+import { useState } from "react ";
+import { Link, useNavigate } from "react-router-dom ";
+import { Seo } from "@/components/Seo ";
+import { Check, Minus, ChevronDown, Sparkles, Loader2 } from "lucide-react ";
+import { C, fonts } from "@/lib/editorialTheme ";
+import { H1, H2, H3, Body, Slug, Mono, PrimaryBtn, SecondaryBtn, TertiaryLink } from "@/components/editorial/primitives ";
+import { useAuth } from "@/hooks/useAuth ";
+import { createCheckoutSession } from "@/services/subscriptionService ";
+import { toast } from "sonner ";
 
 
 type Tier = {
@@ -21,34 +21,34 @@ type Tier = {
 
 const TIERS: Tier[] = [
   {
-    name:"Free",
+    name:"Free ",
     price:"$0",
-    cadence:"forever",
+    cadence:"forever ",
     tagline:"A taste of the club. Read, watch, look around.",
-    features: ["Join core events for free","Ad-supported editorial stories & scores","Group chat preview"],
-    cta:"Create account",
+    features: ["Join core events for free ","Ad-supported editorial stories & scores ","Group chat preview "],
+    cta:"Create account ",
   },
   {
-    name:"All-Access",
+    name:"All-Access ",
     price:"$35",
-    cadence:"per month",
+    cadence:"per month ",
     tagline:"The full members-only home.",
-    features: ["Everything in Free","Unlimited group chats","Smart fan matching","Members-only events","Private city crews","Priority event invites","Mixers, away-game travel, and merch drops",
+    features: ["Everything in Free ","Unlimited group chats ","Smart fan matching ","Members-only events ","Private city crews ","Priority event invites ","Mixers, away-game travel, and merch drops ",
     ],
-    cta:"Go All-Access",
+    cta:"Go All-Access ",
     highlight: true,
   },
 ];
 
 const COMPARE = [
-  { label:"Ad-supported editorial stories & scores", free: true, all: true },
-  { label:"Join core events for free", free: true, all: true },
-  { label:"Group chats", free:"Preview", all:"Unlimited" },
-  { label:"Smart fan matching", free: false, all: true },
-  { label:"Members-only events", free: false, all: true },
-  { label:"Private city crews", free: false, all: true },
-  { label:"Priority event invites", free: false, all: true },
-  { label:"Mixers, away-game travel, and merch drops", free: false, all: true },
+  { label:"Ad-supported editorial stories & scores ", free: true, all: true },
+  { label:"Join core events for free ", free: true, all: true },
+  { label:"Group chats ", free:"Preview ", all:"Unlimited " },
+  { label:"Smart fan matching ", free: false, all: true },
+  { label:"Members-only events ", free: false, all: true },
+  { label:"Private city crews ", free: false, all: true },
+  { label:"Priority event invites ", free: false, all: true },
+  { label:"Mixers, away-game travel, and merch drops ", free: false, all: true },
 ] as const;
 
 const FAQS = [
@@ -64,54 +64,54 @@ const Membership = () => {
   const { user } = useAuth();
   const [open, setOpen] = useState<number | null>(0);
   const [checkoutLoading, setCheckoutLoading] = useState(false);
-  const goSignup = () => navigate("/auth?mode=signup&redirect=/membership");
+  const goSignup = () => navigate("/auth?mode=signup&redirect=/membership ");
 
   const goCheckout = async () => {
     if (!user) {
-      navigate("/auth?mode=signup&redirect=/membership&checkout=all-access");
+      navigate("/auth?mode=signup&redirect=/membership&checkout=all-access ");
       return;
     }
     setCheckoutLoading(true);
     try {
-      const url = await createCheckoutSession("local");
+      const url = await createCheckoutSession("local ");
       window.location.href = url;
     } catch (e) {
-      toast.error(e instanceof Error ? e.message :"Checkout unavailable");
+      toast.error(e instanceof Error ? e.message :"Checkout unavailable ");
       setCheckoutLoading(false);
     }
   };
 
   const handleTierCta = (tierName: string) => {
-    if (tierName ==="Free") return goSignup();
+    if (tierName ==="Free ") return goSignup();
     return goCheckout();
   };
 
   return (
-    <div style={{ background: C.bg, color: C.text, fontFamily: fonts.sans }} className="min-h-screen">
+    <div style={{ background: C.bg, color: C.text, fontFamily: fonts.sans }} className="min-h-screen ">
       <Seo
-        title="Choose your pass — Loverball Membership"
+        title="Choose your pass — Loverball Membership "
         description="Choose your Loverball pass. Free or All-Access — the members-only home for sports fandom."
-        path="/membership"
+        path="/membership "
       />
 
       {/* Hero */}
-      <section className="px-6 md:px-12 pt-32 md:pt-40 pb-16 max-w-6xl">
+      <section className="px-6 md:px-12 pt-32 md:pt-40 pb-16 max-w-6xl ">
         <Slug>Membership · Choose your pass</Slug>
         <H1 className="mt-6">Pick your<br/>Loverball pass.</H1>
-        <Body muted size={18} className="mt-8 max-w-xl">
+        <Body muted size={18} className="mt-8 max-w-xl ">
           Start free. Upgrade to All-Access when you're ready for the full members-only home.
         </Body>
       </section>
 
       {/* Pricing tiers */}
-      <section className="px-6 md:px-12 pb-24 max-w-6xl">
-        <div className="grid md:grid-cols-2 gap-6 max-w-4xl">
+      <section className="px-6 md:px-12 pb-24 max-w-6xl ">
+        <div className="grid md:grid-cols-2 gap-6 max-w-4xl ">
           {TIERS.map((t) => {
             const hi = !!t.highlight;
             return (
               <article
                 key={t.name}
-                className="relative p-8 md:p-10 flex flex-col"
+                className="relative p-8 md:p-10 flex flex-col "
                 style={{
                   background: hi
                     ? `linear-gradient(180deg, ${C.raspberry}0F 0%, ${C.surface} 60%)`
@@ -120,8 +120,8 @@ const Membership = () => {
                   borderRadius: 8,
                   boxShadow: hi
                     ? `0 24px 60px -28px ${C.raspberry}99, 0 0 0 4px ${C.raspberry}14`
-                    :"none",
-                  transform: hi ?"translateY(-8px)" :"none",
+                    :"none ",
+                  transform: hi ?"translateY(-8px)" :"none ",
                 }}
               >
                 {hi && (
@@ -129,11 +129,11 @@ const Membership = () => {
                     className="absolute -top-3 left-1/2 -translate-x-1/2 inline-flex items-center gap-1.5 px-3 py-1.5"
                     style={{
                       background: C.raspberry,
-                      color:"#fff",
+                      color:"#fff ",
                       fontFamily: fonts.mono,
                       fontSize: 10,
-                      letterSpacing:"0.18em",
-                      textTransform:"uppercase",
+                      letterSpacing:"0.18em ",
+                      textTransform:"uppercase ",
                       borderRadius: 999,
                       fontWeight: 600,
                       boxShadow: `0 8px 20px -8px ${C.raspberry}AA`,
@@ -146,7 +146,7 @@ const Membership = () => {
                 <Mono color={hi ? C.raspberry : C.muted}>{t.name}</Mono>
 
                 <div className="mt-6 flex items-baseline gap-2">
-                  <span style={{ fontFamily: fonts.serif, fontStyle:"italic", fontWeight: 500, fontSize: 72, lineHeight: 1, letterSpacing:"-0.02em", color: C.text }}>{t.price}</span>
+                  <span style={{ fontFamily: fonts.serif, fontStyle:"italic ", fontWeight: 500, fontSize: 72, lineHeight: 1, letterSpacing:"-0.02em ", color: C.text }}>{t.price}</span>
                   <Mono>/ {t.cadence}</Mono>
                 </div>
                 <Body muted size={14} className="mt-3">{t.tagline}</Body>
@@ -176,12 +176,12 @@ const Membership = () => {
       </section>
 
       {/* Comparison */}
-      <section className="px-6 md:px-12 py-20 max-w-6xl" style={{ borderTop: `0.5px solid ${C.border}` }}>
+      <section className="px-6 md:px-12 py-20 max-w-6xl " style={{ borderTop: `0.5px solid ${C.border}` }}>
         <Slug>Compare</Slug>
         <H2 className="mt-4 mb-12">What's in each pass.</H2>
 
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[640px]" style={{ borderCollapse:"collapse" }}>
+        <div className="overflow-x-auto ">
+          <table className="w-full min-w-[640px]" style={{ borderCollapse:"collapse " }}>
             <thead>
               <tr style={{ borderBottom: `0.5px solid ${C.borderStrong}` }}>
                 <th className="text-left py-4"><Mono>Feature</Mono></th>
@@ -206,7 +206,7 @@ const Membership = () => {
       </section>
 
       {/* FAQ */}
-      <section className="px-6 md:px-12 py-20 max-w-3xl" style={{ borderTop: `0.5px solid ${C.border}` }}>
+      <section className="px-6 md:px-12 py-20 max-w-3xl " style={{ borderTop: `0.5px solid ${C.border}` }}>
         <Slug>FAQ</Slug>
         <H2 className="mt-4 mb-12">Questions, answered.</H2>
 
@@ -217,7 +217,7 @@ const Membership = () => {
               <div key={f.q} style={{ borderBottom: `0.5px solid ${C.border}` }}>
                 <button onClick={() => setOpen(isOpen ? null : i)} className="w-full text-left py-6 flex items-center justify-between gap-4">
                   <H3 style={{ fontSize: 22 }}>{f.q}</H3>
-                  <ChevronDown size={18} style={{ transform: isOpen ?"rotate(180deg)" :"none", transition:"transform 200ms", color: C.muted }} />
+                  <ChevronDown size={18} style={{ transform: isOpen ?"rotate(180deg)" :"none ", transition:"transform 200ms ", color: C.muted }} />
                 </button>
                 {isOpen && <Body muted className="pb-6 pr-10">{f.a}</Body>}
               </div>
@@ -227,14 +227,14 @@ const Membership = () => {
       </section>
 
       {/* Final CTA */}
-      <section className="px-6 md:px-12 py-24 text-center" style={{ borderTop: `0.5px solid ${C.border}` }}>
+      <section className="px-6 md:px-12 py-24 text-center " style={{ borderTop: `0.5px solid ${C.border}` }}>
         <Slug>Ready</Slug>
-        <H2 className="mt-4 mx-auto max-w-3xl" style={{ fontSize:"clamp(40px, 6vw, 80px)" }}>
+        <H2 className="mt-4 mx-auto max-w-3xl " style={{ fontSize:"clamp(40px, 6vw, 80px)" }}>
           The members-only home for sports fandom.
         </H2>
-        <div className="mt-10 flex flex-wrap gap-4 justify-center">
-          <PrimaryBtn onClick={goCheckout} disabled={checkoutLoading}>{checkoutLoading ?"Loading…" :"Go All-Access"}</PrimaryBtn>
-          <SecondaryBtn to="/club">Tour the Club</SecondaryBtn>
+        <div className="mt-10 flex flex-wrap gap-4 justify-center ">
+          <PrimaryBtn onClick={goCheckout} disabled={checkoutLoading}>{checkoutLoading ?"Loading…" :"Go All-Access "}</PrimaryBtn>
+          <SecondaryBtn to="/club ">Tour the Club</SecondaryBtn>
         </div>
       </section>
 

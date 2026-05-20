@@ -1,8 +1,8 @@
-import { ReactNode } from"react";
-import { Link, useNavigate } from"react-router-dom";
-import { ArrowLeft } from"lucide-react";
-import { C, fonts } from"@/lib/editorialTheme";
-import { H1, H2, Body, Slug, Mono } from"@/components/editorial/primitives";
+import { ReactNode } from "react ";
+import { Link, useNavigate } from "react-router-dom ";
+import { ArrowLeft } from "lucide-react ";
+import { C, fonts } from "@/lib/editorialTheme ";
+import { H1, H2, Body, Slug, Mono } from "@/components/editorial/primitives ";
 export const LegalSection = ({ title, children }: { title: string; children: ReactNode }) => (
   <section className="space-y-4">
     <H2 style={{ fontSize:"clamp(28px, 3.4vw, 40px)" }}>{title}</H2>
@@ -13,7 +13,7 @@ export const LegalSection = ({ title, children }: { title: string; children: Rea
 );
 
 export const LegalList = ({ items }: { items: ReactNode[] }) => (
-  <ul className="space-y-2 pl-5" style={{ listStyle:"disc" }}>
+  <ul className="space-y-2 pl-5" style={{ listStyle:"disc " }}>
     {items.map((it, i) => <li key={i}>{it}</li>)}
   </ul>
 );
@@ -21,12 +21,12 @@ export const LegalList = ({ items }: { items: ReactNode[] }) => (
 const LegalPage = ({ kicker, title, updated, children }: { kicker: string; title: string; updated: string; children: ReactNode }) => {
   const navigate = useNavigate();
   return (
-    <div style={{ background: C.bg, color: C.text, fontFamily: fonts.sans }} className="min-h-screen">
+    <div style={{ background: C.bg, color: C.text, fontFamily: fonts.sans }} className="min-h-screen ">
       <div className="max-w-3xl mx-auto px-6 md:px-12 pt-32 md:pt-40 pb-24">
         <button
           onClick={() => navigate(-1)}
-          className="mb-10 inline-flex items-center gap-2 hover:opacity-80 transition-opacity"
-          style={{ fontFamily: fonts.mono, fontSize: 11, letterSpacing:"0.2em", textTransform:"uppercase", color: C.muted }}
+          className="mb-10 inline-flex items-center gap-2 hover:opacity-80 transition-opacity "
+          style={{ fontFamily: fonts.mono, fontSize: 11, letterSpacing:"0.2em ", textTransform:"uppercase ", color: C.muted }}
         >
           <ArrowLeft className="h-3.5 w-3.5" /> Back
         </button>
