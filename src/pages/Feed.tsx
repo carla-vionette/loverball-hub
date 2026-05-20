@@ -165,7 +165,7 @@ const Feed = () => {
                   textTransform: "uppercase",
                 }}
               >
-                Vol. 01
+                {"\n"}
               </span>
               <span
                 style={{
