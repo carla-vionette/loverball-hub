@@ -27,9 +27,10 @@ const C = {
   borderHi: "rgba(250, 245, 233, 0.15)",
 };
 
-const mono = { fontFamily: "'Poppins', system-ui, sans-serif" } as const;
-const serif = { fontFamily: "'Poppins', system-ui, sans-serif" } as const;
-const sans = { fontFamily: "'Poppins', system-ui, sans-serif" } as const;
+const mono = { fontFamily: "'Space Mono', ui-monospace, 'JetBrains Mono', monospace" } as const;
+const serif = { fontFamily: "'Playfair Display', Georgia, serif" } as const;
+const sans = { fontFamily: "'Inter', system-ui, sans-serif" } as const;
+const display = { fontFamily: "'Anton', Impact, sans-serif" } as const;
 
 const Label: React.FC<{ children: React.ReactNode; color?: string; size?: number }> = ({
   children,
@@ -96,7 +97,7 @@ const MemberCard: React.FC<{ m: Member; onDraft: () => void; disabled: boolean; 
             borderRadius: 10,
             background: C.pink,
             color: "#0a0a0a",
-            fontFamily: "'Oswald', system-ui, sans-serif",
+            fontFamily: "'Anton', Impact, sans-serif",
             fontSize: 32,
             textTransform: "uppercase",
           }}
@@ -327,12 +328,12 @@ const StartingXi: React.FC = () => {
         <header className="flex items-start justify-between gap-4">
           <h1
             style={{
-              fontFamily: "'Oswald', system-ui, sans-serif",
-              fontSize: 38,
-              lineHeight: 0.95,
+              fontFamily: "'Anton', Impact, sans-serif",
+              fontSize: "clamp(44px, 11vw, 72px)",
+              lineHeight: 0.9,
               letterSpacing: "-0.01em",
               color: C.text,
-              fontWeight: 500,
+              fontWeight: 400,
               textTransform: "uppercase",
             }}
           >
