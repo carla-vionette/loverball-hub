@@ -871,6 +871,9 @@ const EventDetail = () => {
             {id && <WhosGoing eventId={id} refreshKey={guestRefreshKey} />}
             {id && <div id="event-chat"><EventComments eventId={id} /></div>}
 
+            {/* Discussion board preview (mock data for design review) */}
+            <EventDiscussionPreview />
+
             {/* Calendar */}
             {!isEventPast && (
               <Button variant="outline" size="sm" onClick={addToGoogleCalendar} className="w-full">
