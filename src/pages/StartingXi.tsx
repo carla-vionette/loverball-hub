@@ -27,9 +27,9 @@ const C = {
   borderHi: "rgba(250, 245, 233, 0.15)",
 };
 
-const mono = { fontFamily: "'JetBrains Mono', ui-monospace, monospace" } as const;
-const serif = { fontFamily: "'Inter', system-ui, sans-serif" } as const;
-const sans = { fontFamily: "'Inter', system-ui, sans-serif" } as const;
+const mono = { fontFamily: "'Poppins', system-ui, sans-serif" } as const;
+const serif = { fontFamily: "'Poppins', system-ui, sans-serif" } as const;
+const sans = { fontFamily: "'Poppins', system-ui, sans-serif" } as const;
 
 const Label: React.FC<{ children: React.ReactNode; color?: string; size?: number }> = ({
   children,
@@ -96,7 +96,7 @@ const MemberCard: React.FC<{ m: Member; onDraft: () => void; disabled: boolean; 
             borderRadius: 10,
             background: C.pink,
             color: "#0a0a0a",
-            fontFamily: "'Anton', Impact, sans-serif",
+            fontFamily: "'Oswald', system-ui, sans-serif",
             fontSize: 32,
             textTransform: "uppercase",
           }}
@@ -117,7 +117,7 @@ const MemberCard: React.FC<{ m: Member; onDraft: () => void; disabled: boolean; 
         <p
           className="mt-1.5 truncate"
           style={{
-            fontFamily: "'JetBrains Mono', ui-monospace, monospace",
+            fontFamily: "'Poppins', system-ui, sans-serif",
             fontSize: 11,
             color: C.muted,
             letterSpacing: "0.01em",

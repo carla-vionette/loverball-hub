@@ -85,7 +85,7 @@ const DraftConfirmModal: React.FC<DraftConfirmModalProps> = ({
         <h2
           className="text-center mb-2"
           style={{
-            fontFamily: "'Playfair Display', Georgia, serif",
+            fontFamily: "'Oswald', system-ui, sans-serif",
             fontStyle: "italic",
             fontSize: 30,
             color: C.text,
@@ -121,7 +121,7 @@ const DraftConfirmModal: React.FC<DraftConfirmModalProps> = ({
               <span
                 className="text-[9.5px] uppercase font-semibold"
                 style={{
-                  fontFamily: "'Space Mono', monospace",
+                  fontFamily: "'Poppins', system-ui, sans-serif",
                   letterSpacing: "0.2em",
                   color: C.copper,
                 }}
@@ -136,7 +136,7 @@ const DraftConfirmModal: React.FC<DraftConfirmModalProps> = ({
                 rows={3}
                 className="w-full bg-transparent outline-none resize-none"
                 style={{
-                  fontFamily: "'Space Mono', ui-monospace, monospace",
+                  fontFamily: "'Poppins', system-ui, sans-serif",
                   fontSize: 12.5,
                   lineHeight: 1.55,
                   color: C.text,
@@ -146,7 +146,7 @@ const DraftConfirmModal: React.FC<DraftConfirmModalProps> = ({
             ) : (
               <p
                 style={{
-                  fontFamily: "'Space Mono', ui-monospace, monospace",
+                  fontFamily: "'Poppins', system-ui, sans-serif",
                   fontSize: 12.5,
                   lineHeight: 1.55,
                   color: C.text,
@@ -160,7 +160,7 @@ const DraftConfirmModal: React.FC<DraftConfirmModalProps> = ({
                 onClick={() => setEditing((v) => !v)}
                 className="text-[10px] uppercase font-semibold"
                 style={{
-                  fontFamily: "'Space Mono', monospace",
+                  fontFamily: "'Poppins', system-ui, sans-serif",
                   letterSpacing: "0.16em",
                   color: C.raspberry,
                 }}
@@ -170,7 +170,7 @@ const DraftConfirmModal: React.FC<DraftConfirmModalProps> = ({
               <span
                 className="text-[10px] uppercase"
                 style={{
-                  fontFamily: "'Space Mono', monospace",
+                  fontFamily: "'Poppins', system-ui, sans-serif",
                   letterSpacing: "0.16em",
                   color: C.faint,
                 }}
@@ -189,7 +189,7 @@ const DraftConfirmModal: React.FC<DraftConfirmModalProps> = ({
           }}
           className="w-full rounded-full uppercase font-bold transition-opacity active:opacity-80"
           style={{
-            fontFamily: "Inter, sans-serif",
+            fontFamily: "Poppins, system-ui, sans-serif",
             fontSize: 12,
             letterSpacing: "0.18em",
             padding: "14px 18px",
@@ -205,7 +205,7 @@ const DraftConfirmModal: React.FC<DraftConfirmModalProps> = ({
         <p
           className="text-center mt-4 text-[10px] uppercase"
           style={{
-            fontFamily: "'Space Mono', monospace",
+            fontFamily: "'Poppins', system-ui, sans-serif",
             letterSpacing: "0.2em",
             color: C.faint,
           }}
