@@ -627,32 +627,37 @@ const Profile = () => {
                         </button>
                       </div>
                     ) : (
-                      <div className="grid sm:grid-cols-2 gap-4">
-                        {rsvpEvents.slice(0, 4).map(r => r.event && (
-                          <div key={r.id} className="rounded-xl p-4 cursor-pointer transition-colors hover:bg-white/[0.04]"
-                            style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)" }}
-                            onClick={() => goTo(`/event/${r.event!.id}`)}>
-                            {r.event.image_url ? (
-                              <img src={r.event.image_url} alt={r.event.title} className="w-full h-32 object-cover rounded-lg mb-3" />
-                            ) : (
-                              <div className="w-full h-32 rounded-lg mb-3 flex items-center justify-center"
-                                style={{ background: "linear-gradient(135deg, rgba(233,30,99,0.18), rgba(216,140,90,0.10))" }}>
-                                <Calendar className="w-8 h-8" style={{ color: PINK }} />
+                      <ul className="divide-y" style={{ borderColor: "rgba(255,255,255,0.06)" }}>
+                        {rsvpEvents.slice(0, 5).map(r => r.event && (
+                          <li key={r.id}>
+                            <button
+                              onClick={() => goTo(`/event/${r.event!.id}`)}
+                              className="w-full flex items-center gap-3 py-2.5 text-left transition-colors hover:bg-white/[0.03] rounded-lg px-2 -mx-2"
+                            >
+                              <div className="shrink-0 w-10 h-10 rounded-lg flex flex-col items-center justify-center"
+                                style={{ background: "rgba(233,30,99,0.10)", border: "1px solid rgba(233,30,99,0.20)" }}>
+                                <span className="text-[8px] uppercase leading-none" style={{ fontFamily: "'Space Mono', monospace", color: PINK, letterSpacing: "0.1em" }}>
+                                  {format(new Date(r.event.event_date), "MMM")}
+                                </span>
+                                <span className="text-[14px] font-bold leading-none mt-0.5" style={{ color: "#FAF5E9", fontFamily: "'Playfair Display', serif" }}>
+                                  {format(new Date(r.event.event_date), "d")}
+                                </span>
                               </div>
-                            )}
-                            <div className="flex items-center gap-2 mb-1">
-                              <span className="text-[9px] uppercase px-2 py-0.5 rounded-full"
+                              <div className="flex-1 min-w-0">
+                                <p className="text-[13px] font-medium truncate" style={{ color: "#FAF5E9" }}>{r.event.title}</p>
+                                <p className="text-[11px] truncate" style={{ color: "rgba(250,245,233,0.55)" }}>
+                                  {r.event.venue_name || r.event.city || "Location TBD"}
+                                </p>
+                              </div>
+                              <span className="text-[9px] uppercase px-2 py-0.5 rounded-full shrink-0"
                                 style={{ background: r.status === "going" || r.status === "attended" ? "rgba(240,78,35,0.18)" : "rgba(255,255,255,0.06)", color: r.status === "going" || r.status === "attended" ? PINK : "rgba(250,245,233,0.6)", fontFamily: "'Space Mono', monospace", letterSpacing: "0.12em" }}>
                                 {r.status}
                               </span>
-                            </div>
-                            <p className="font-medium" style={{ color: "#FAF5E9" }}>{r.event.title}</p>
-                            <p className="text-sm" style={{ color: "rgba(250,245,233,0.55)" }}>
-                              {r.event.venue_name || r.event.city || "Location TBD"} • {format(new Date(r.event.event_date), "MMM d")}
-                            </p>
-                          </div>
+                              <ChevronRight className="w-3.5 h-3.5 shrink-0" style={{ color: "rgba(250,245,233,0.35)" }} />
+                            </button>
+                          </li>
                         ))}
-                      </div>
+                      </ul>
                     )}
                   </div>
                 </div>
