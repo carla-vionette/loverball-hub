@@ -3,17 +3,8 @@ import { Seo } from "@/components/Seo";
 import { Tv, Users, MessagesSquare, MapPin, Gift, Sparkles } from "lucide-react";
 import { C, fonts } from "@/lib/editorialTheme";
 import { H1, H2, H3, Body, Slug, Mono, PrimaryBtn, SecondaryBtn, TertiaryLink } from "@/components/editorial/primitives";
+import SiteNav from "@/components/SiteNav";
 
-const NavBar = () => (
-  <header className="px-6 md:px-12 pt-10 pb-6 flex items-center justify-between" style={{ borderBottom: `0.5px solid ${C.border}` }}>
-    <Link to="/" style={{ fontFamily: fonts.serif, fontStyle: "italic", fontSize: 28, letterSpacing: "-0.02em", color: C.text }}>Loverball</Link>
-    <nav className="hidden md:flex items-center gap-8">
-      {[["Watch","/feed"],["Connect","/connect"],["Events","/events"],["Club","/club"]].map(([l,h]) => (
-        <Link key={l} to={h} style={{ fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.2em", textTransform: "uppercase", color: l === "Club" ? C.text : C.muted }}>{l}</Link>
-      ))}
-    </nav>
-  </header>
-);
 
 const PILLARS = [
   { Icon: Tv, chip: "Watch parties", h: "Watch the game with your people.", p: "Members-only watch parties, both IRL and in private chat rooms. Live reactions, hot takes, post-game debriefs — without the chaos of public timelines." },
@@ -36,9 +27,9 @@ const Club = () => {
         path="/club"
       />
 
-      <NavBar />
+      <SiteNav />
 
-      <section className="px-6 md:px-12 pt-16 md:pt-24 pb-20 max-w-6xl">
+      <section className="px-6 md:px-12 pt-32 md:pt-40 pb-20 max-w-6xl">
         <Slug>The Club</Slug>
         <H1 className="mt-6" style={{ fontSize: "clamp(48px, 9vw, 128px)", lineHeight: 0.92 }}>
           The members-only home<br/>for women's sports fans.
