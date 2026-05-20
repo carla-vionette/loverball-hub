@@ -289,7 +289,7 @@ const Events = () => {
             <div className="mb-6 rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center gap-3"
               style={{ background: "rgba(240,78,35,0.06)", border: "1px solid rgba(240,78,35,0.18)" }}>
               <div className="flex-1">
-                <h3 style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: 16, color: "#F8F8F8", textTransform: "uppercase", letterSpacing: "0.02em", margin: 0 }}>
+                <h3 style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: 16, color: "#E86BB0", textTransform: "uppercase", letterSpacing: "0.02em", margin: 0 }}>
                   Want to post an event?
                 </h3>
                 <p className="mt-1" style={{ fontFamily: "'Inter', system-ui, sans-serif", fontSize: 12, color: "rgba(248,248,248,0.6)", margin: 0 }}>
@@ -319,7 +319,7 @@ const Events = () => {
                 className="px-5 py-2 rounded-full transition-all"
                 style={{
                   background: tab === t.k ? "#F04E23" : "transparent",
-                  color: tab === t.k ? "#fff" : "rgba(248,248,248,0.6)",
+                  color: tab === t.k ? "#E6F25A" : "rgba(248,248,248,0.6)",
                   fontFamily: "'Inter', system-ui, sans-serif",
                   fontWeight: 700,
                   fontSize: 11,
@@ -366,13 +366,13 @@ const Events = () => {
 
                   {/* Date stamp — strong treatment */}
                   <div className="absolute top-5 right-5 text-right">
-                    <div style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 10, letterSpacing: "0.22em", color: "rgba(248,248,248,0.6)", textTransform: "uppercase" }}>
+                    <div style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 10, letterSpacing: "0.22em", color: "#E6F25A", textTransform: "uppercase" }}>
                       {format(d, "EEE")}
                     </div>
                     <div style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: 56, lineHeight: 0.85, color: "#F8F8F8" }}>
                       {format(d, "dd")}
                     </div>
-                    <div style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 10, letterSpacing: "0.22em", color: "rgba(248,248,248,0.6)", textTransform: "uppercase" }}>
+                    <div style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 10, letterSpacing: "0.22em", color: "#E6F25A", textTransform: "uppercase" }}>
                       {format(d, "MMM yyyy")}
                     </div>
                   </div>
@@ -491,7 +491,7 @@ const Events = () => {
                         {/* Date block */}
                         <div className="absolute bottom-3 left-3 px-2.5 py-1.5 rounded-lg text-center"
                           style={{ background: "rgba(10,10,11,0.78)", border: "1px solid rgba(255,255,255,0.1)", backdropFilter: "blur(8px)" }}>
-                          <div style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 9, letterSpacing: "0.18em", color: "rgba(248,248,248,0.6)", textTransform: "uppercase" }}>
+                          <div style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 9, letterSpacing: "0.18em", color: "#E6F25A", textTransform: "uppercase" }}>
                             {format(d, "MMM")}
                           </div>
                           <div style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: 24, lineHeight: 0.9, color: "#F8F8F8" }}>
