@@ -1664,12 +1664,15 @@ export type Database = {
           city: string | null
           created_at: string
           current_streak: number
+          email: string | null
+          email_notifications_enabled: boolean
           event_comfort_level: string | null
           favorite_la_teams: string[] | null
           favorite_sports: string[] | null
           favorite_teams_players: string[] | null
           has_completed_onboarding: boolean
           id: string
+          in_app_notifications_enabled: boolean
           industries: string[] | null
           instagram_url: string | null
           interested_in_la28: boolean | null
@@ -1683,11 +1686,13 @@ export type Database = {
           neighborhood: string | null
           other_interests: string[] | null
           participation_preferences: string[] | null
+          phone: string | null
           primary_role: string | null
           profile_photo_url: string | null
           pronouns: string | null
           role: string | null
           sms_notifications_enabled: boolean | null
+          sms_unsubscribed: boolean
           sports_experience_types: string[] | null
           tiktok_url: string | null
           total_points: number
@@ -1703,12 +1708,15 @@ export type Database = {
           city?: string | null
           created_at?: string
           current_streak?: number
+          email?: string | null
+          email_notifications_enabled?: boolean
           event_comfort_level?: string | null
           favorite_la_teams?: string[] | null
           favorite_sports?: string[] | null
           favorite_teams_players?: string[] | null
           has_completed_onboarding?: boolean
           id: string
+          in_app_notifications_enabled?: boolean
           industries?: string[] | null
           instagram_url?: string | null
           interested_in_la28?: boolean | null
@@ -1722,11 +1730,13 @@ export type Database = {
           neighborhood?: string | null
           other_interests?: string[] | null
           participation_preferences?: string[] | null
+          phone?: string | null
           primary_role?: string | null
           profile_photo_url?: string | null
           pronouns?: string | null
           role?: string | null
           sms_notifications_enabled?: boolean | null
+          sms_unsubscribed?: boolean
           sports_experience_types?: string[] | null
           tiktok_url?: string | null
           total_points?: number
@@ -1742,12 +1752,15 @@ export type Database = {
           city?: string | null
           created_at?: string
           current_streak?: number
+          email?: string | null
+          email_notifications_enabled?: boolean
           event_comfort_level?: string | null
           favorite_la_teams?: string[] | null
           favorite_sports?: string[] | null
           favorite_teams_players?: string[] | null
           has_completed_onboarding?: boolean
           id?: string
+          in_app_notifications_enabled?: boolean
           industries?: string[] | null
           instagram_url?: string | null
           interested_in_la28?: boolean | null
@@ -1761,11 +1774,13 @@ export type Database = {
           neighborhood?: string | null
           other_interests?: string[] | null
           participation_preferences?: string[] | null
+          phone?: string | null
           primary_role?: string | null
           profile_photo_url?: string | null
           pronouns?: string | null
           role?: string | null
           sms_notifications_enabled?: boolean | null
+          sms_unsubscribed?: boolean
           sports_experience_types?: string[] | null
           tiktok_url?: string | null
           total_points?: number
@@ -1847,6 +1862,33 @@ export type Database = {
           item_id?: string
           item_type?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      sms_send_log: {
+        Row: {
+          body_preview: string | null
+          created_at: string
+          id: string
+          status: string
+          to_phone: string
+          user_id: string | null
+        }
+        Insert: {
+          body_preview?: string | null
+          created_at?: string
+          id?: string
+          status?: string
+          to_phone: string
+          user_id?: string | null
+        }
+        Update: {
+          body_preview?: string | null
+          created_at?: string
+          id?: string
+          status?: string
+          to_phone?: string
+          user_id?: string | null
         }
         Relationships: []
       }
