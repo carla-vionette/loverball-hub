@@ -51,12 +51,12 @@ const WhatsHappeningNow = () => {
 
       if (user) {
         const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
-        const pendingRes = await supabase
+        const pendingRes: any = await (supabase as any)
           .from("matches")
           .select("id", { count: "exact", head: true })
           .eq("addressee_id", user.id)
           .eq("status", "pending");
-        const recentRes = await supabase
+        const recentRes: any = await (supabase as any)
           .from("matches")
           .select("id", { count: "exact", head: true })
           .or(`requester_id.eq.${user.id},addressee_id.eq.${user.id}`)
