@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Calendar, MapPin, ArrowRight, Users } from "lucide-react";
+import { Calendar, MapPin, ArrowRight, Users, Play } from "lucide-react";
 
 interface NextEvent {
   id: string;
@@ -18,6 +18,13 @@ interface ClubActivity {
   city: string | null;
 }
 
+interface LatestVideo {
+  id: string;
+  title: string;
+  category: string | null;
+  creator: string | null;
+}
+
 const formatDate = (date: string, time: string | null) => {
   const d = new Date(`${date}T${time || "00:00"}`);
   const day = d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
@@ -29,6 +36,7 @@ const formatDate = (date: string, time: string | null) => {
 const WhatsHappeningNow = () => {
   const [event, setEvent] = useState<NextEvent | null>(null);
   const [club, setClub] = useState<ClubActivity | null>(null);
+  const [video, setVideo] = useState<LatestVideo | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -73,6 +81,23 @@ const WhatsHappeningNow = () => {
         });
       }
 
+      const videoRes: any = await (supabase as any)
+        .from("videos")
+        .select("id, title, category, creator_channels(channel_name)")
+        .eq("is_published", true)
+        .order("published_at", { ascending: false, nullsFirst: false })
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (videoRes?.data) {
+        setVideo({
+          id: videoRes.data.id,
+          title: videoRes.data.title,
+          category: videoRes.data.category ?? null,
+          creator: videoRes.data.creator_channels?.channel_name ?? null,
+        });
+      }
+
       setLoading(false);
     })();
   }, []);
@@ -91,7 +116,7 @@ const WhatsHappeningNow = () => {
         : null
     : null;
 
-  if (!event && !clubMessage) return null;
+  if (!event && !clubMessage && !video) return null;
 
   return (
     <section className="max-w-7xl mx-auto mt-16 px-5 md:px-10">
@@ -176,6 +201,39 @@ const WhatsHappeningNow = () => {
             </div>
             <span className="inline-flex items-center gap-1 text-sm font-medium text-[#FF4D3A] group-hover:gap-2 transition-all">
               Go to Club <ArrowRight className="w-3.5 h-3.5" />
+            </span>
+          </Link>
+        )}
+
+        {/* Card 3: Latest video */}
+        {video && (
+          <Link
+            to="/feed"
+            className="group rounded-[20px] p-6 border border-white/10 bg-white/[0.03] hover:bg-white/[0.06] hover:border-[#FF4D3A]/40 transition-all"
+          >
+            <div className="flex items-center gap-2 mb-3">
+              <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#FF4D3A] animate-pulse" />
+              <span
+                className="text-[10px] tracking-[0.2em] uppercase text-[#FF4D3A] font-semibold"
+                style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace" }}
+              >
+                {video.category ? video.category.toUpperCase() : "New on Watch"}
+              </span>
+            </div>
+            <h3
+              className="text-xl md:text-2xl text-white leading-tight mb-3 line-clamp-3"
+              style={{ fontFamily: "'Oswald', sans-serif", fontWeight: 600 }}
+            >
+              {video.title}
+            </h3>
+            {video.creator && (
+              <div className="flex items-center gap-2 text-sm text-white/70 mb-4">
+                <Play className="w-3.5 h-3.5 flex-shrink-0" />
+                <span className="truncate">{video.creator}</span>
+              </div>
+            )}
+            <span className="inline-flex items-center gap-1 text-sm font-medium text-[#FF4D3A] group-hover:gap-2 transition-all">
+              Watch now <ArrowRight className="w-3.5 h-3.5" />
             </span>
           </Link>
         )}
