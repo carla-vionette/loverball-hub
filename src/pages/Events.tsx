@@ -47,8 +47,8 @@ interface DbEvent {
   event_tags?: string[] | null;
 }
 
-type SceneVariant = "external" | "hosted" | "cultural";
-const variantMap: Record<string, SceneVariant> = {
+type EventVariant = "external" | "hosted" | "cultural";
+const variantMap: Record<string, EventVariant> = {
   game: "external",
   watch_party: "external",
   networking: "hosted",
@@ -58,8 +58,8 @@ const variantMap: Record<string, SceneVariant> = {
   salon: "cultural",
   other: "cultural",
 };
-const getVariant = (t?: string | null): SceneVariant => (t && variantMap[t]) || "cultural";
-const sceneTheme: Record<SceneVariant, { accent: string; label: string }> = {
+const getVariant = (t?: string | null): EventVariant => (t && variantMap[t]) || "cultural";
+const eventTheme: Record<EventVariant, { accent: string; label: string }> = {
   external: { accent: "#E8276F", label: "Broadcast" },
   hosted:   { accent: "#D88C5A", label: "Hosted" },
   cultural: { accent: "#F8F8F8", label: "Cultural" },
