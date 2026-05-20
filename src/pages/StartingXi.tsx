@@ -75,13 +75,31 @@ const MemberCard: React.FC<{ m: Member; onDraft: () => void; disabled: boolean; 
         borderRadius: 14,
       }}
     >
-      <img
-        src={m.photo}
-        alt={m.name}
-        loading="lazy"
-        className="object-cover flex-shrink-0"
-        style={{ width: 72, height: 88, borderRadius: 10 }}
-      />
+      {m.photo ? (
+        <img
+          src={m.photo}
+          alt={m.name}
+          loading="lazy"
+          className="object-cover flex-shrink-0"
+          style={{ width: 72, height: 88, borderRadius: 10 }}
+        />
+      ) : (
+        <div
+          className="flex-shrink-0 flex items-center justify-center"
+          style={{
+            width: 72,
+            height: 88,
+            borderRadius: 10,
+            background: C.pink,
+            color: "#0a0a0a",
+            fontFamily: "'Anton', Impact, sans-serif",
+            fontSize: 32,
+            textTransform: "uppercase",
+          }}
+        >
+          {m.firstName?.[0] || "?"}
+        </div>
+      )}
       <div className="flex-1 min-w-0">
         <div className="flex items-start justify-between gap-2">
           <h3 style={{ ...serif, fontSize: 19, color: C.text, lineHeight: 1.1 }}>{m.name}</h3>
