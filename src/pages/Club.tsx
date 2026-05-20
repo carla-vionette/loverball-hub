@@ -57,21 +57,44 @@ const Club = () => {
       </section>
 
       <section className="max-w-7xl mx-auto px-5 md:px-10 pb-24">
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {PILLARS.map(({ Icon, chip, h, p }) => (
-            <article
-              key={chip}
-              className="p-8 md:p-10 rounded-[20px] transition-all duration-300 hover:-translate-y-1"
-              style={{ background: C.surface, border: `1px solid ${C.border}` }}
-            >
-              <Mono color={C.raspberry}>{chip}</Mono>
-              <div className="mt-6"><Icon size={28} color={C.gold} strokeWidth={1.25} /></div>
-              <H3 className="mt-6">{h}</H3>
-              <Body muted size={15} className="mt-4">{p}</Body>
-            </article>
-          ))}
+        <div
+          className="mb-10 flex items-center gap-3 px-5 py-3 rounded-full"
+          style={{ background: C.surface, border: `1px solid ${C.border}` }}
+        >
+          <Search size={18} color={C.muted} aria-hidden="true" />
+          <input
+            type="search"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search the Club — watch parties, crews, perks…"
+            aria-label="Search the Club"
+            className="flex-1 bg-transparent outline-none text-base placeholder:opacity-60"
+            style={{ color: C.text, fontFamily: fonts.sans }}
+          />
         </div>
+
+        {filteredPillars.length === 0 ? (
+          <div className="text-center py-16" style={{ color: C.muted }}>
+            <Body muted size={16}>No matches for "{query}".</Body>
+          </div>
+        ) : (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredPillars.map(({ Icon, chip, h, p }) => (
+              <article
+                key={chip}
+                className="p-8 md:p-10 rounded-[20px] transition-all duration-300 hover:-translate-y-1"
+                style={{ background: C.surface, border: `1px solid ${C.border}` }}
+              >
+                <Mono color={C.raspberry}>{chip}</Mono>
+                <div className="mt-6"><Icon size={28} color={C.gold} strokeWidth={1.25} /></div>
+                <H3 className="mt-6">{h}</H3>
+                <Body muted size={15} className="mt-4">{p}</Body>
+              </article>
+            ))}
+          </div>
+        )}
       </section>
+
 
       <section className="max-w-7xl mx-auto px-5 md:px-10 py-24">
         <div className="grid md:grid-cols-12 gap-10 items-start">
