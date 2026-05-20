@@ -247,22 +247,46 @@ const Index = () => {
       </nav>
 
       {/* ============ HERO ============ */}
-      <section className="pt-32 md:pt-40 pb-20 md:pb-28 px-5 md:px-10">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+      <section className="pt-32 md:pt-40 pb-20 md:pb-28 px-5 md:px-10 relative overflow-hidden">
+        <div aria-hidden className="absolute -top-20 -left-20 w-[480px] h-[480px] rounded-full pointer-events-none" style={{ background: C.raspberry, opacity: 0.18, filter: "blur(120px)" }} />
+        <div aria-hidden className="absolute top-40 right-0 w-[420px] h-[420px] rounded-full pointer-events-none" style={{ background: C.pink, opacity: 0.18, filter: "blur(140px)" }} />
+
+        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center relative">
           <div className="lg:col-span-7">
-            <Slug>A members community · Built in LA</Slug>
-            <h1
-              className="mt-6"
-              style={{
-                fontFamily: fonts.serif, fontStyle: "italic", fontWeight: 500,
-                fontSize: "clamp(48px, 8vw, 104px)", lineHeight: 0.96,
-                letterSpacing: "-0.03em", color: C.text,
-              }}
-            >
-              Her Game.<br/>Her Community.
+            <div className="flex flex-wrap items-center gap-2 mb-6">
+              <span style={{ background: C.neon, color: "#0a0a0a", fontFamily: fonts.mono, fontSize: 10, letterSpacing: "0.22em", textTransform: "uppercase", padding: "6px 12px", borderRadius: 999, fontWeight: 700 }}>
+                ● Live now
+              </span>
+              <span style={{ background: "transparent", color: C.text, border: `1px solid ${C.borderStrong}`, fontFamily: fonts.mono, fontSize: 10, letterSpacing: "0.22em", textTransform: "uppercase", padding: "6px 12px", borderRadius: 999 }}>
+                Built in LA
+              </span>
+              <span style={{ background: C.pink, color: "#fff", fontFamily: fonts.mono, fontSize: 10, letterSpacing: "0.22em", textTransform: "uppercase", padding: "6px 12px", borderRadius: 999, fontWeight: 600 }}>
+                Members only
+              </span>
+            </div>
+
+            <h1 className="mt-2" style={{ lineHeight: 0.88, letterSpacing: "-0.02em" }}>
+              <span style={{ fontFamily: "'Anton', Impact, sans-serif", fontWeight: 400, fontSize: "clamp(64px, 11vw, 144px)", textTransform: "uppercase", color: C.text, display: "block" }}>
+                Her Game.
+              </span>
+              <span
+                style={{
+                  fontFamily: "'Anton', Impact, sans-serif", fontWeight: 400,
+                  fontSize: "clamp(64px, 11vw, 144px)", textTransform: "uppercase",
+                  display: "block",
+                  background: `linear-gradient(95deg, ${C.raspberry} 0%, ${C.pink} 60%, ${C.neon} 100%)`,
+                  WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent",
+                }}
+              >
+                Her Court.
+              </span>
+              <span style={{ fontFamily: fonts.serif, fontStyle: "italic", fontWeight: 500, fontSize: "clamp(36px, 6vw, 80px)", letterSpacing: "-0.03em", color: C.text, display: "block", marginTop: 8 }}>
+                Her <span style={{ color: C.neon }}>community</span>.
+              </span>
             </h1>
+
             <p className="mt-8 max-w-xl" style={{ color: C.muted, fontSize: 19, lineHeight: 1.55 }}>
-              Loverball brings together events, members, stories, and culture for women who love sports.
+              Loverball brings together events, members, stories, and culture for women who love sports — loud, smart, and built to actually show up.
             </p>
 
             <div className="mt-10 flex flex-wrap gap-3">
@@ -271,28 +295,42 @@ const Index = () => {
             </div>
 
             <p className="mt-6" style={{ fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.16em", textTransform: "uppercase", color: C.muted }}>
-              Built in LA · For women who live sports loudly
+              No permission required · For women who live sports loudly
             </p>
           </div>
 
           <div className="lg:col-span-5">
-            <div
-              className="relative overflow-hidden"
-              style={{ borderRadius: 12, aspectRatio: "4/5", background: C.surface, border: `0.5px solid ${C.border}` }}
-            >
-              <img src={heroImage} alt="Women sports fans at a Loverball watch party" className="w-full h-full object-cover" />
+            <div className="relative">
+              <div aria-hidden className="absolute -inset-3 rounded-[16px]" style={{ background: C.neon, transform: "rotate(-2deg)" }} />
               <div
-                aria-hidden
-                className="absolute inset-0"
-                style={{ background: "linear-gradient(180deg, transparent 55%, rgba(10,10,10,0.7) 100%)" }}
-              />
-              <div className="absolute bottom-5 left-5 right-5 flex items-center justify-between">
-                <Mono color="#fff" size={10}>Members watch party · LA</Mono>
-                <span style={{ background: C.raspberry, color: "#fff", borderRadius: 999, padding: "4px 10px", fontFamily: fonts.mono, fontSize: 10, letterSpacing: "0.16em", textTransform: "uppercase" }}>
-                  Live weekly
-                </span>
+                className="relative overflow-hidden"
+                style={{ borderRadius: 12, aspectRatio: "4/5", background: C.surface, border: `1px solid ${C.borderStrong}` }}
+              >
+                <img src={heroImage} alt="Women sports fans at a Loverball watch party" className="w-full h-full object-cover" />
+                <div aria-hidden className="absolute inset-0" style={{ background: "linear-gradient(180deg, transparent 50%, rgba(10,10,10,0.85) 100%)" }} />
+                <div className="absolute top-4 left-4 flex items-center gap-1.5" style={{ background: C.raspberry, color: "#fff", borderRadius: 999, padding: "6px 12px", fontFamily: fonts.mono, fontSize: 10, letterSpacing: "0.22em", textTransform: "uppercase", fontWeight: 700, boxShadow: "0 8px 24px -8px rgba(240,78,35,0.7)" }}>
+                  <span className="inline-block w-1.5 h-1.5 rounded-full bg-white animate-pulse" /> Starting 5
+                </div>
+                <div className="absolute bottom-5 left-5 right-5 flex items-center justify-between">
+                  <Mono color="#fff" size={10}>Members watch party · LA</Mono>
+                  <span style={{ background: C.neon, color: "#0a0a0a", borderRadius: 999, padding: "4px 10px", fontFamily: fonts.mono, fontSize: 10, letterSpacing: "0.16em", textTransform: "uppercase", fontWeight: 700 }}>
+                    Live weekly
+                  </span>
+                </div>
               </div>
             </div>
+          </div>
+        </div>
+
+        <div className="max-w-7xl mx-auto mt-16 -mx-5 md:-mx-10 overflow-hidden" style={{ background: C.neon }}>
+          <div className="marquee-track py-3" style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: 22, letterSpacing: "0.04em", textTransform: "uppercase", color: "#0a0a0a" }}>
+            {Array.from({ length: 2 }).map((_, k) => (
+              <div key={k} className="flex items-center gap-8 px-4">
+                {["Her game", "★", "Her court", "★", "Her community", "★", "No permission required", "★", "Built in LA", "★"].map((t, i) => (
+                  <span key={`${k}-${i}`}>{t}</span>
+                ))}
+              </div>
+            ))}
           </div>
         </div>
       </section>
