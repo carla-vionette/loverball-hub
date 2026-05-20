@@ -167,7 +167,7 @@ const ProfileFollowCounts = ({ userId, onClickFollowers, onClickFollowing }: { u
             fontFamily: "'Space Mono', monospace",
             fontWeight: 700,
             fontSize: 22,
-            color: "#F8F8F8",
+            color: "#FAF5E9",
           }}
         >
           {fmt(followerCount)}
@@ -176,7 +176,7 @@ const ProfileFollowCounts = ({ userId, onClickFollowers, onClickFollowing }: { u
           className="mt-1 text-[11px]"
           style={{
             fontFamily: "'Space Mono', monospace",
-            color: "rgba(248,248,248,0.55)",
+            color: "rgba(250,245,233,0.55)",
           }}
         >
           Followers
@@ -189,7 +189,7 @@ const ProfileFollowCounts = ({ userId, onClickFollowers, onClickFollowing }: { u
             fontFamily: "'Space Mono', monospace",
             fontWeight: 700,
             fontSize: 22,
-            color: "#F8F8F8",
+            color: "#FAF5E9",
           }}
         >
           {fmt(followingCount)}
@@ -198,7 +198,7 @@ const ProfileFollowCounts = ({ userId, onClickFollowers, onClickFollowing }: { u
           className="mt-1 text-[11px]"
           style={{
             fontFamily: "'Space Mono', monospace",
-            color: "rgba(248,248,248,0.55)",
+            color: "rgba(250,245,233,0.55)",
           }}
         >
           Following
@@ -334,12 +334,15 @@ const Profile = () => {
   const eventsAttended = rsvpEvents.filter(r => r.status === "going" || r.status === "attended").length;
   const FEED_FILTERS = ["All", "NBA", "WNBA", "NWSL", "NFL", "MLB", "Soccer"];
 
-  const PINK = "#E91E63";
-  const PANEL = "#141415";
-  const PANEL_BORDER = "1px solid rgba(255,255,255,0.06)";
+  // Homepage palette (matches src/pages/Index.tsx)
+  const BG = "#0a0a0a";
+  const TEXT = "#FAF5E9";
+  const PINK = "#F04E23";        // Vermilion (homepage primary)
+  const PANEL = "#161616";       // Homepage surface
+  const PANEL_BORDER = "1px solid rgba(250, 245, 233, 0.08)";
 
   return (
-    <div className="min-h-screen" style={{ background: "#0A0A0B" }}>
+    <div className="min-h-screen" style={{ background: BG, fontFamily: "'Inter', system-ui, sans-serif" }}>
       <Seo
         title="Your Profile | Loverball"
         description="Your Loverball member profile — favorite teams, personalized news, daily horoscope, and live scores."
@@ -351,7 +354,7 @@ const Profile = () => {
 
       <main
         className="md:ml-16 xl:ml-64 pb-20 md:pb-10 pt-16 md:pt-4 transition-[margin] duration-200"
-        style={{ background: "#0A0A0B", color: "#F8F8F8" }}
+        style={{ background: BG, color: TEXT, fontFamily: "'Inter', system-ui, sans-serif" }}
       >
         <div className="max-w-[1400px] mx-auto px-4 md:px-8 pt-2">
 
@@ -368,7 +371,7 @@ const Profile = () => {
                 fontFamily: "'Playfair Display', Georgia, serif",
                 fontWeight: 800,
                 fontSize: "clamp(48px, 8vw, 88px)",
-                color: "#F8F8F8",
+                color: "#FAF5E9",
               }}
             >
               Profile<span style={{ color: PINK }}>.</span>
@@ -378,7 +381,7 @@ const Profile = () => {
               style={{
                 fontFamily: "'Space Mono', monospace",
                 letterSpacing: "0.24em",
-                color: "rgba(248,248,248,0.45)",
+                color: "rgba(250,245,233,0.45)",
               }}
             >
               {formattedDate} · {formattedTime}
@@ -419,7 +422,7 @@ const Profile = () => {
                         fontFamily: "'Playfair Display', serif",
                         fontSize: 140,
                         fontWeight: 800,
-                        color: "rgba(248,248,248,0.45)",
+                        color: "rgba(250,245,233,0.45)",
                       }}
                     >
                       {initials[0]}
@@ -456,7 +459,7 @@ const Profile = () => {
                       className="mt-1 flex items-center gap-2 flex-wrap text-[12px]"
                       style={{
                         fontFamily: "'Space Mono', monospace",
-                        color: "rgba(248,248,248,0.75)",
+                        color: "rgba(250,245,233,0.75)",
                       }}
                     >
                       <span style={{ color: PINK }}>{handle}</span>
@@ -498,7 +501,7 @@ const Profile = () => {
                             fontFamily: "'Playfair Display', serif",
                             fontWeight: 700,
                             fontSize: 22,
-                            color: s.value === null ? "rgba(248,248,248,0.35)" : "#F8F8F8",
+                            color: s.value === null ? "rgba(250,245,233,0.35)" : "#FAF5E9",
                           }}
                         >
                           {s.value === null ? "—" : s.value}
@@ -508,7 +511,7 @@ const Profile = () => {
                           style={{
                             fontFamily: "'Space Mono', monospace",
                             letterSpacing: "0.16em",
-                            color: "rgba(248,248,248,0.5)",
+                            color: "rgba(250,245,233,0.5)",
                           }}
                         >
                           {s.label}
@@ -523,10 +526,10 @@ const Profile = () => {
                       className="mt-4 text-[13px] leading-relaxed"
                       style={{
                         fontFamily: "'Space Mono', monospace",
-                        color: "rgba(248,248,248,0.72)",
+                        color: "rgba(250,245,233,0.72)",
                       }}
                     >
-                      <span style={{ color: "#F8F8F8", fontWeight: 700 }}>VIBE:</span>{" "}
+                      <span style={{ color: "#FAF5E9", fontWeight: 700 }}>VIBE:</span>{" "}
                       {profile.bio}
                     </p>
                   )}
@@ -538,7 +541,7 @@ const Profile = () => {
                       className="flex-1 rounded-xl h-11 text-[11px] font-bold tracking-[0.16em] uppercase"
                       style={{
                         background: PINK,
-                        color: "#0A0A0B",
+                        color: "#0a0a0a",
                         fontFamily: "Inter, sans-serif",
                         boxShadow: "0 10px 28px -12px rgba(233,30,99,0.65)",
                       }}
@@ -553,7 +556,7 @@ const Profile = () => {
                       style={{
                         background: "transparent",
                         border: "1px solid rgba(255,255,255,0.12)",
-                        color: "#F8F8F8",
+                        color: "#FAF5E9",
                       }}
                     >
                       <MessageCircle className="w-4 h-4" />
@@ -566,7 +569,7 @@ const Profile = () => {
                       style={{
                         background: "transparent",
                         border: "1px solid rgba(255,255,255,0.12)",
-                        color: "#F8F8F8",
+                        color: "#FAF5E9",
                       }}
                     >
                       <Settings className="w-4 h-4" />
@@ -580,7 +583,7 @@ const Profile = () => {
                     style={{
                       fontFamily: "'Space Mono', monospace",
                       letterSpacing: "0.18em",
-                      color: "rgba(248,248,248,0.45)",
+                      color: "rgba(250,245,233,0.45)",
                     }}
                   >
                     <LogOut className="w-3 h-3" /> Log out
@@ -614,15 +617,15 @@ const Profile = () => {
                       fontFamily: "'Playfair Display', Georgia, serif",
                       fontWeight: 700,
                       fontSize: "clamp(34px, 4.4vw, 52px)",
-                      color: "#F8F8F8",
+                      color: "#FAF5E9",
                     }}
                   >
                     Curated{" "}
                     <span style={{ fontStyle: "italic", color: PINK }}>for you</span>.
                   </h2>
-                  <p className="mt-2 text-[13px]" style={{ color: "rgba(248,248,248,0.55)" }}>
+                  <p className="mt-2 text-[13px]" style={{ color: "rgba(250,245,233,0.55)" }}>
                     {greeting},{" "}
-                    <span style={{ color: "#F8F8F8", fontWeight: 500 }}>{userName}</span>. Here's what's on tonight.
+                    <span style={{ color: "#FAF5E9", fontWeight: 500 }}>{userName}</span>. Here's what's on tonight.
                   </p>
                 </div>
 
@@ -663,7 +666,7 @@ const Profile = () => {
                           className="text-[12px] leading-snug mt-1 line-clamp-2 italic"
                           style={{
                             fontFamily: "'Playfair Display', Georgia, serif",
-                            color: "rgba(248,248,248,0.85)",
+                            color: "rgba(250,245,233,0.85)",
                           }}
                         >
                           {horoscopeLoading
@@ -684,10 +687,10 @@ const Profile = () => {
                     <CollapsibleTrigger asChild>
                       <button className="w-full p-5 pb-3 flex items-center justify-between cursor-pointer hover:bg-white/[0.03] transition-colors">
                         <span className="text-[13px] uppercase flex items-center gap-2.5"
-                          style={{ fontFamily: "'Space Mono', monospace", letterSpacing: "0.2em", color: "#F8F8F8", fontWeight: 500 }}>
+                          style={{ fontFamily: "'Space Mono', monospace", letterSpacing: "0.2em", color: "#FAF5E9", fontWeight: 500 }}>
                           <Shield className="w-3.5 h-3.5" style={{ color: PINK }} strokeWidth={2.5} /> Favorite Teams
                         </span>
-                        <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${teamsOpen ? 'rotate-180' : ''}`} style={{ color: "rgba(248,248,248,0.5)" }} />
+                        <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${teamsOpen ? 'rotate-180' : ''}`} style={{ color: "rgba(250,245,233,0.5)" }} />
                       </button>
                     </CollapsibleTrigger>
                     <CollapsibleContent>
@@ -701,18 +704,18 @@ const Profile = () => {
                             <img src={team.logo} alt={team.name} className="w-10 h-10 object-contain rounded-lg p-0.5" style={{ background: "rgba(255,255,255,0.04)" }} onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} />
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-2">
-                                <span className="text-sm font-medium text-foreground group-hover:opacity-90 transition-colors" style={{ color: "#F8F8F8" }}>{team.name}</span>
-                                <Badge variant="outline" className="text-[9px] px-1.5 py-0 rounded-full" style={{ borderColor: "rgba(255,255,255,0.12)", color: "rgba(248,248,248,0.65)" }}>{team.league}</Badge>
+                                <span className="text-sm font-medium text-foreground group-hover:opacity-90 transition-colors" style={{ color: "#FAF5E9" }}>{team.name}</span>
+                                <Badge variant="outline" className="text-[9px] px-1.5 py-0 rounded-full" style={{ borderColor: "rgba(255,255,255,0.12)", color: "rgba(250,245,233,0.65)" }}>{team.league}</Badge>
                                 {team.injuryNote && (
                                   <span title={team.injuryNote}>
                                     <AlertTriangle className="w-3.5 h-3.5 text-amber-500" />
                                   </span>
                                 )}
                               </div>
-                              <p className="text-xs mt-0.5" style={{ color: "rgba(248,248,248,0.5)" }}>{team.nextGame}</p>
+                              <p className="text-xs mt-0.5" style={{ color: "rgba(250,245,233,0.5)" }}>{team.nextGame}</p>
                             </div>
                             <div className="flex flex-col items-end gap-2">
-                              <p className="text-sm font-bold" style={{ color: team.winPct > 0.5 ? "#7DD3A4" : (team.winPct > 0 && team.winPct < 0.5 ? "#F87171" : "#F8F8F8") }}>{team.record}</p>
+                              <p className="text-sm font-bold" style={{ color: team.winPct > 0.5 ? "#7DD3A4" : (team.winPct > 0 && team.winPct < 0.5 ? "#F87171" : "#FAF5E9") }}>{team.record}</p>
                               {team.last5.length > 0 && (
                                 <div className="flex gap-0.5">
                                   {team.last5.map((win, i) => <div key={i} className="w-1.5 h-1.5 rounded-full" style={{ background: win ? "#7DD3A4" : "rgba(248,113,113,0.6)" }} />)}
@@ -734,10 +737,10 @@ const Profile = () => {
                     <CollapsibleTrigger asChild>
                       <button className="w-full p-5 pb-3 flex items-center justify-between cursor-pointer hover:bg-white/[0.03] transition-colors">
                         <span className="text-[13px] uppercase flex items-center gap-2.5"
-                          style={{ fontFamily: "'Space Mono', monospace", letterSpacing: "0.2em", color: "#F8F8F8", fontWeight: 500 }}>
+                          style={{ fontFamily: "'Space Mono', monospace", letterSpacing: "0.2em", color: "#FAF5E9", fontWeight: 500 }}>
                           <Radio className="w-3.5 h-3.5" style={{ color: PINK }} /> Live &amp; Recent Scores
                         </span>
-                        <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${scoresOpen ? 'rotate-180' : ''}`} style={{ color: "rgba(248,248,248,0.5)" }} />
+                        <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${scoresOpen ? 'rotate-180' : ''}`} style={{ color: "rgba(250,245,233,0.5)" }} />
                       </button>
                     </CollapsibleTrigger>
                     <CollapsibleContent>
@@ -756,10 +759,10 @@ const Profile = () => {
                     <CollapsibleTrigger asChild>
                       <button className="w-full p-5 pb-3 flex items-center justify-between cursor-pointer hover:bg-white/[0.03] transition-colors">
                         <span className="text-[13px] uppercase flex items-center gap-2.5"
-                          style={{ fontFamily: "'Space Mono', monospace", letterSpacing: "0.2em", color: "#F8F8F8", fontWeight: 500 }}>
+                          style={{ fontFamily: "'Space Mono', monospace", letterSpacing: "0.2em", color: "#FAF5E9", fontWeight: 500 }}>
                           <Tv className="w-3.5 h-3.5" style={{ color: PINK }} /> Where to Watch
                         </span>
-                        <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${watchOpen ? 'rotate-180' : ''}`} style={{ color: "rgba(248,248,248,0.5)" }} />
+                        <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${watchOpen ? 'rotate-180' : ''}`} style={{ color: "rgba(250,245,233,0.5)" }} />
                       </button>
                     </CollapsibleTrigger>
                     <CollapsibleContent>
@@ -779,10 +782,10 @@ const Profile = () => {
                       <CollapsibleTrigger asChild>
                         <button className="w-full p-5 pb-3 flex items-center justify-between cursor-pointer hover:bg-white/[0.03] transition-colors">
                           <span className="text-[13px] uppercase flex items-center gap-2.5"
-                            style={{ fontFamily: "'Space Mono', monospace", letterSpacing: "0.2em", color: "#F8F8F8", fontWeight: 500 }}>
+                            style={{ fontFamily: "'Space Mono', monospace", letterSpacing: "0.2em", color: "#FAF5E9", fontWeight: 500 }}>
                             <CalendarHeart className="w-3.5 h-3.5" style={{ color: PINK }} strokeWidth={2.5} /> Recommended Events
                           </span>
-                          <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${recEventsOpen ? 'rotate-180' : ''}`} style={{ color: "rgba(248,248,248,0.5)" }} />
+                          <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${recEventsOpen ? 'rotate-180' : ''}`} style={{ color: "rgba(250,245,233,0.5)" }} />
                         </button>
                       </CollapsibleTrigger>
                       <CollapsibleContent>
@@ -800,8 +803,8 @@ const Profile = () => {
                                     <Calendar className="w-8 h-8" style={{ color: PINK }} />
                                   </div>
                                 )}
-                                <p className="font-medium" style={{ color: "#F8F8F8" }}>{event.title}</p>
-                                <p className="text-sm" style={{ color: "rgba(248,248,248,0.55)" }}>{event.venue_name || event.city || "Location TBD"} • {format(new Date(event.event_date), "MMM d")}</p>
+                                <p className="font-medium" style={{ color: "#FAF5E9" }}>{event.title}</p>
+                                <p className="text-sm" style={{ color: "rgba(250,245,233,0.55)" }}>{event.venue_name || event.city || "Location TBD"} • {format(new Date(event.event_date), "MMM d")}</p>
                               </div>
                             ))}
                           </div>
@@ -817,7 +820,7 @@ const Profile = () => {
                 <div className="rounded-2xl p-5" style={{ background: PANEL, border: PANEL_BORDER }}>
                   <div className="flex items-center justify-between mb-4">
                     <span className="text-[13px] uppercase flex items-center gap-2.5"
-                      style={{ fontFamily: "'Space Mono', monospace", letterSpacing: "0.2em", color: "#F8F8F8", fontWeight: 500 }}>
+                      style={{ fontFamily: "'Space Mono', monospace", letterSpacing: "0.2em", color: "#FAF5E9", fontWeight: 500 }}>
                       <Users className="w-3.5 h-3.5" style={{ color: PINK }} /> Friends Activity
                     </span>
                     <button onClick={() => goTo("/friends")}
@@ -832,15 +835,15 @@ const Profile = () => {
                       style={{ background: "rgba(233,30,99,0.15)" }}>
                       <Users className="w-5 h-5" style={{ color: PINK }} />
                     </div>
-                    <p className="text-[14px] mb-1" style={{ color: "#F8F8F8", fontFamily: "'Playfair Display', serif", fontStyle: "italic" }}>
+                    <p className="text-[14px] mb-1" style={{ color: "#FAF5E9", fontFamily: "'Playfair Display', serif", fontStyle: "italic" }}>
                       No friend activity yet.
                     </p>
-                    <p className="text-[12px] mb-4" style={{ color: "rgba(248,248,248,0.55)" }}>
+                    <p className="text-[12px] mb-4" style={{ color: "rgba(250,245,233,0.55)" }}>
                       Add friends and you'll see their check-ins, RSVPs, and posts here.
                     </p>
                     <button onClick={() => goTo("/friends")}
                       className="text-[11px] uppercase font-bold tracking-[0.16em] px-4 py-2 rounded-full"
-                      style={{ background: PINK, color: "#0A0A0B", fontFamily: "Inter, sans-serif" }}>
+                      style={{ background: PINK, color: "#0a0a0a", fontFamily: "Inter, sans-serif" }}>
                       Find friends
                     </button>
                   </div>
@@ -852,7 +855,7 @@ const Profile = () => {
                 <div className="rounded-2xl p-5" style={{ background: PANEL, border: PANEL_BORDER }}>
                   <div className="flex items-center justify-between mb-4">
                     <span className="text-[13px] uppercase flex items-center gap-2.5"
-                      style={{ fontFamily: "'Space Mono', monospace", letterSpacing: "0.2em", color: "#F8F8F8", fontWeight: 500 }}>
+                      style={{ fontFamily: "'Space Mono', monospace", letterSpacing: "0.2em", color: "#FAF5E9", fontWeight: 500 }}>
                       <MessageCircle className="w-3.5 h-3.5" style={{ color: PINK }} /> Communities
                     </span>
                     <button onClick={() => goTo("/club")}
@@ -867,15 +870,15 @@ const Profile = () => {
                       style={{ background: "rgba(233,30,99,0.15)" }}>
                       <Heart className="w-5 h-5" style={{ color: PINK }} />
                     </div>
-                    <p className="text-[14px] mb-1" style={{ color: "#F8F8F8", fontFamily: "'Playfair Display', serif", fontStyle: "italic" }}>
+                    <p className="text-[14px] mb-1" style={{ color: "#FAF5E9", fontFamily: "'Playfair Display', serif", fontStyle: "italic" }}>
                       Not in any communities yet.
                     </p>
-                    <p className="text-[12px] mb-4" style={{ color: "rgba(248,248,248,0.55)" }}>
+                    <p className="text-[12px] mb-4" style={{ color: "rgba(250,245,233,0.55)" }}>
                       Join team chats, city crews, and fan circles in The Club.
                     </p>
                     <button onClick={() => goTo("/club")}
                       className="text-[11px] uppercase font-bold tracking-[0.16em] px-4 py-2 rounded-full"
-                      style={{ background: PINK, color: "#0A0A0B", fontFamily: "Inter, sans-serif" }}>
+                      style={{ background: PINK, color: "#0a0a0a", fontFamily: "Inter, sans-serif" }}>
                       Browse groups
                     </button>
                   </div>
@@ -895,7 +898,7 @@ const Profile = () => {
                           className="text-[11px] uppercase font-bold tracking-[0.16em] h-9 px-4 rounded-full transition-colors whitespace-nowrap"
                           style={{
                             background: active ? PINK : "rgba(255,255,255,0.04)",
-                            color: active ? "#0A0A0B" : "rgba(248,248,248,0.7)",
+                            color: active ? "#0a0a0a" : "rgba(250,245,233,0.7)",
                             border: active ? "1px solid transparent" : "1px solid rgba(255,255,255,0.08)",
                             fontFamily: "Inter, sans-serif",
                           }}
