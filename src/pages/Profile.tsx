@@ -745,46 +745,7 @@ const Profile = () => {
                 </Collapsible>
               </motion.div>
 
-              {/* ═══════════ 8. RECOMMENDED EVENTS (collapsed) ═══════════ */}
-              {suggestedEvents.length > 0 && (
-                <motion.div variants={staggerItem}>
-                  <Collapsible open={recEventsOpen} onOpenChange={setRecEventsOpen}>
-                    <div className="rounded-2xl overflow-hidden" style={{ background: PANEL, border: PANEL_BORDER }}>
-                      <CollapsibleTrigger asChild>
-                        <button className="w-full p-5 pb-3 flex items-center justify-between cursor-pointer hover:bg-white/[0.03] transition-colors">
-                          <span className="text-[13px] uppercase flex items-center gap-2.5"
-                            style={{ fontFamily: "'Space Mono', monospace", letterSpacing: "0.2em", color: "#FAF5E9", fontWeight: 500 }}>
-                            <CalendarHeart className="w-3.5 h-3.5" style={{ color: PINK }} strokeWidth={2.5} /> Recommended Events
-                          </span>
-                          <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${recEventsOpen ? 'rotate-180' : ''}`} style={{ color: "rgba(250,245,233,0.5)" }} />
-                        </button>
-                      </CollapsibleTrigger>
-                      <CollapsibleContent>
-                        <div className="px-5 pb-5">
-                          <div className="grid sm:grid-cols-2 gap-4">
-                            {suggestedEvents.map(event => (
-                              <div key={event.id} className="rounded-xl p-4 cursor-pointer transition-colors hover:bg-white/[0.04]"
-                                style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)" }}
-                                onClick={() => goTo(`/event/${event.id}`)}>
-                                {event.image_url ? (
-                                  <img src={event.image_url} alt={event.title} className="w-full h-32 object-cover rounded-lg mb-3" />
-                                ) : (
-                                  <div className="w-full h-32 rounded-lg mb-3 flex items-center justify-center"
-                                    style={{ background: "linear-gradient(135deg, rgba(233,30,99,0.18), rgba(216,140,90,0.10))" }}>
-                                    <Calendar className="w-8 h-8" style={{ color: PINK }} />
-                                  </div>
-                                )}
-                                <p className="font-medium" style={{ color: "#FAF5E9" }}>{event.title}</p>
-                                <p className="text-sm" style={{ color: "rgba(250,245,233,0.55)" }}>{event.venue_name || event.city || "Location TBD"} • {format(new Date(event.event_date), "MMM d")}</p>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      </CollapsibleContent>
-                    </div>
-                  </Collapsible>
-                </motion.div>
-              )}
+              {/* Recommended Events removed — Profile only shows events the member has RSVP'd to */}
 
 
 
