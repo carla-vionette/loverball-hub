@@ -27,8 +27,9 @@ const MobileHeader = () => {
 
   return (
     <header
-      className="md:hidden fixed top-0 left-0 right-0 bg-background/95 backdrop-blur-md border-b border-border/20 z-40 px-4 py-3"
+      className="md:hidden fixed top-0 left-0 right-0 bg-background/95 backdrop-blur-md z-40 px-4 py-3"
       role="banner"
+      style={{ borderBottom: "1px solid #E86BB0" }}
     >
       <div className="flex items-center gap-3">
         <Link to="/" className="flex items-center flex-shrink-0 focus-ring rounded-lg" aria-label="Loverball home">
@@ -57,7 +58,7 @@ const MobileHeader = () => {
           className="relative p-2.5 hover:bg-secondary rounded-full transition-all duration-300 focus-ring tap-target"
           aria-label="Notifications"
         >
-          <Bell className="w-5 h-5 text-foreground" aria-hidden="true" />
+          <Bell className="w-5 h-5" style={{ color: "#E86BB0" }} aria-hidden="true" />
         </button>
 
         <button
@@ -65,7 +66,7 @@ const MobileHeader = () => {
           className="relative p-2.5 hover:bg-secondary rounded-full transition-all duration-300 focus-ring tap-target"
           aria-label="Messages"
         >
-          <MessageCircle className="w-5 h-5 text-foreground" aria-hidden="true" />
+          <MessageCircle className="w-5 h-5" style={{ color: "#E86BB0" }} aria-hidden="true" />
         </button>
       </div>
     </header>
