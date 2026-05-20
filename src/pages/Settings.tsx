@@ -63,6 +63,12 @@ const Settings = () => {
     preferred_distance_miles: 25,
   });
   const [userTeams, setUserTeams] = useState<string[]>([]);
+  const [channels, setChannels] = useState({
+    in_app: true,
+    sms: true,
+    email: true,
+    phone: "",
+  });
 
   useEffect(() => {
     if (user) loadPreferences();
