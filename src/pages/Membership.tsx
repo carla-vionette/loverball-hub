@@ -4,23 +4,11 @@ import { Seo } from "@/components/Seo";
 import { Check, Minus, ChevronDown, Sparkles, Loader2 } from "lucide-react";
 import { C, fonts } from "@/lib/editorialTheme";
 import { H1, H2, H3, Body, Slug, Mono, PrimaryBtn, SecondaryBtn, TertiaryLink } from "@/components/editorial/primitives";
-import loverballLogo from "@/assets/loverball-logo.png";
+import SiteNav from "@/components/SiteNav";
 import { useAuth } from "@/hooks/useAuth";
 import { createCheckoutSession } from "@/services/subscriptionService";
 import { toast } from "sonner";
 
-const NavBar = () => (
-  <header className="px-6 md:px-12 pt-10 pb-6 flex items-center justify-between" style={{ borderBottom: `0.5px solid ${C.border}` }}>
-    <Link to="/" aria-label="Loverball" className="flex items-center">
-      <img src={loverballLogo} alt="Loverball" style={{ height: 36, width: "auto", display: "block" }} />
-    </Link>
-    <nav className="hidden md:flex items-center gap-8">
-      {[["Watch","/feed"],["Connect","/connect"],["Events","/events"],["Club","/club"]].map(([l,h]) => (
-        <Link key={l} to={h} style={{ fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.2em", textTransform: "uppercase", color: C.muted }}>{l}</Link>
-      ))}
-    </nav>
-  </header>
-);
 
 type Tier = {
   name: string;
