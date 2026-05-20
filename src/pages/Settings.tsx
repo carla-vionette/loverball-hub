@@ -12,7 +12,8 @@ import { Slider } from "@/components/ui/slider";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
-import { Loader2, Bell, Eye, EyeOff, MapPin, Save } from "lucide-react";
+import { Loader2, Bell, Eye, EyeOff, MapPin, Save, Smartphone } from "lucide-react";
+import { Label } from "@/components/ui/label";
 import { LA_PRO_TEAMS, LA_D1_COLLEGES } from "@/lib/laTeamsConfig";
 import { SPORTS_OPTIONS } from "@/lib/onboardingOptions";
 
