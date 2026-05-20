@@ -105,7 +105,7 @@ const Membership = () => {
       <SiteNav />
 
       {/* Hero */}
-      <section className="px-6 md:px-12 pt-16 md:pt-24 pb-16 max-w-6xl">
+      <section className="px-6 md:px-12 pt-32 md:pt-40 pb-16 max-w-6xl">
         <Slug>Membership · Choose your pass</Slug>
         <H1 className="mt-6">Pick your<br/>Loverball pass.</H1>
         <Body muted size={18} className="mt-8 max-w-xl">
