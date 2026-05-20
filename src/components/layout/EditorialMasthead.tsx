@@ -24,7 +24,7 @@ interface EditorialMastheadProps {
  * hairline rule below.
  */
 const EditorialMasthead = ({
-  volume = "Vol. 01",
+  volume = "\n",
   section,
   meta,
   eyebrow,
