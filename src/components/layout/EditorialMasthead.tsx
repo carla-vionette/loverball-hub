@@ -15,6 +15,8 @@ interface EditorialMastheadProps {
   rightSlot?: ReactNode;
   /** Display scale — "lg" for hero pages, "md" for sub-pages */
   size?: "lg" | "md";
+  /** Additional CSS classes */
+  className?: string;
 }
 
 /**
@@ -31,6 +33,7 @@ const EditorialMasthead = ({
   title,
   rightSlot,
   size = "lg",
+  className = "",
 }: EditorialMastheadProps) => {
   const titleSize =
     size === "lg"
@@ -38,7 +41,7 @@ const EditorialMasthead = ({
       : "clamp(32px, 9vw, 56px)";
 
   return (
-    <header className="mb-6">
+    <header className={`mb-6 ${className}`}>
       {/* Volume + section */}
       <div className="flex items-center gap-2 mb-3">
         <span
