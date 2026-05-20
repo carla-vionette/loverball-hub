@@ -109,7 +109,7 @@ const MemberCard: React.FC<{ m: Member; onDraft: () => void; disabled: boolean; 
       )}
       <div className="flex-1 min-w-0">
         <div className="flex items-start justify-between gap-2">
-          <h3 style={{ ...serif, fontSize: 19, color: C.text, lineHeight: 1.1 }}>{m.name}</h3>
+          <h3 style={{ ...serif, fontSize: 19, color: C.raspberry, lineHeight: 1.1 }}>{m.name}</h3>
         </div>
         <p
           className="uppercase mt-1"
