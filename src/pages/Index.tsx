@@ -5,6 +5,7 @@ import { Instagram, Check, ArrowRight, BookOpen, CalendarHeart, Users } from "lu
 import heroImage from "@/assets/hero-women-new.png";
 import SiteNav from "@/components/SiteNav";
 import WhatsHappeningNow from "@/components/WhatsHappeningNow";
+import StoriesSection from "@/components/StoriesSection";
 import { INSTAGRAM_URL } from "@/lib/socialLinks";
 
 /* ============================================================
