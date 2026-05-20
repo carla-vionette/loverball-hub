@@ -377,7 +377,7 @@ const MemberProfile = () => {
       <DesktopNav />
       <BottomNav />
 
-      <main className="md:ml-64 pt-16 md:pt-2" style={{ paddingBottom: 120 }}>
+      <main className="md:ml-16 xl:ml-64 pt-16 md:pt-2" style={{ paddingBottom: 120 }}>
         <div className="max-w-[440px] md:max-w-2xl mx-auto px-5">
           {/* Top bar */}
           <div className="flex items-center justify-between py-3">
