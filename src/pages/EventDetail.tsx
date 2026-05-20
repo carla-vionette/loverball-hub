@@ -819,20 +819,20 @@ const EventDetail = () => {
               )}
             </div>
 
-            {/* GOING CHAT TEASER */}
+            {/* Going chat → scrolls to Event chat below */}
             {isGoing && (
               <button
-                onClick={() => navigate(`/event/${event.id}/chat`)}
+                onClick={() => document.getElementById('event-chat')?.scrollIntoView({ behavior: 'smooth' })}
                 className="w-full text-left rounded-xl bg-card border border-border/30 p-3"
               >
                 <div className="flex justify-between items-center mb-1">
                   <div className="flex items-center gap-1.5">
                     <span className="w-1.5 h-1.5 rounded-full bg-[hsl(173_58%_39%)] inline-block" />
-                    <span className="text-xs font-semibold">Going chat</span>
+                    <span className="text-xs font-semibold">Event chat</span>
                   </div>
                   <MessageCircle className="w-3.5 h-3.5 text-muted-foreground" />
                 </div>
-                <p className="text-xs italic text-muted-foreground">Join the conversation with everyone going.</p>
+                <p className="text-xs italic text-muted-foreground">Jump into the conversation with everyone going.</p>
               </button>
             )}
 
