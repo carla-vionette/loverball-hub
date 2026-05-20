@@ -21,83 +21,86 @@
 
 @layer base {
   :root {
-    /* ── Brand — Vermilion / Hot Pink / Neon Yellow ── */
-    --brand: 10 87% 54%;                    /* Vermilion #F04E23 */
+    /* ── Brand — Orange / Pink / Neon Yellow (locked hex) ── */
+    --brand: 10 87% 54%;                    /* Orange #F04E23 */
     --brand-foreground: 0 0% 100%;
 
-    /* ── Core palette — bold dark streetwear ── */
-    --background: 240 6% 4%;                /* #0A0A0B */
-    --foreground: 0 0% 97%;                 /* #F8F8F8 */
+    /* ── Core palette (locked hex) ── */
+    --background: 0 0% 4%;                  /* #0B0B0B */
+    --foreground: 60 17% 96%;               /* #F7F7F2 */
 
-    --bg-secondary: 240 3% 8%;
-    --bg-card: 240 4% 11%;
+    --bg-secondary: 0 0% 6%;                /* #0F0F0F */
+    --bg-card: 0 0% 8%;                     /* #151515 surface */
 
-    --card: 240 4% 11%;
-    --card-foreground: 0 0% 97%;
+    --card: 0 0% 8%;                        /* #151515 */
+    --card-foreground: 60 17% 96%;
 
-    --popover: 240 4% 11%;
-    --popover-foreground: 0 0% 97%;
+    --popover: 0 0% 8%;
+    --popover-foreground: 60 17% 96%;
 
-    /* Primary = Vermilion #F04E23 */
+    /* Primary = Orange #F04E23 */
     --primary: 10 87% 54%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 240 3% 8%;
-    --secondary-foreground: 0 0% 97%;
+    --secondary: 0 0% 6%;
+    --secondary-foreground: 60 17% 96%;
 
-    --muted: 240 3% 14%;
-    --muted-foreground: 0 0% 60%;
+    --muted: 0 0% 12%;
+    --muted-foreground: 0 0% 62%;
 
-    /* Accent = Hot Pink #E86BB0 */
+    /* Accent = Pink #E86BB0 */
     --accent: 327 73% 66%;
     --accent-foreground: 0 0% 100%;
 
     /* ── Status colors ── */
     --success: 142 60% 45%;
     --success-foreground: 0 0% 100%;
-    --warning: 66 84% 65%;                  /* Neon Yellow */
+    --warning: 65 85% 65%;                  /* Neon Yellow #E6F25A */
     --warning-foreground: 0 0% 0%;
     --info: 327 73% 66%;
     --info-foreground: 0 0% 100%;
     --destructive: 10 87% 54%;
     --destructive-foreground: 0 0% 100%;
 
-    /* ── Legacy aliases — remapped to new palette ── */
-    --coral: 10 87% 54%;                    /* Vermilion */
+    /* ── Legacy aliases — remapped to locked palette ── */
+    --coral: 10 87% 54%;
     --coral-foreground: 0 0% 100%;
     --pale-pink: 327 73% 88%;
-    --pale-pink-foreground: 240 6% 4%;
+    --pale-pink-foreground: 0 0% 4%;
     --medium-blue: 327 73% 66%;
     --medium-blue-foreground: 0 0% 100%;
-    --olive: 66 84% 65%;
+    --olive: 65 85% 65%;
     --olive-foreground: 0 0% 0%;
-    --light-lime: 66 84% 65%;               /* Neon Yellow */
+    --light-lime: 65 85% 65%;
     --light-lime-foreground: 0 0% 0%;
-    --ticker: 66 84% 65%;                   /* Neon Yellow ticker */
+    --ticker: 65 85% 65%;
     --ticker-foreground: 0 0% 0%;
-    --gold: 66 84% 65%;                     /* Neon Yellow */
+    --gold: 65 85% 65%;
     --gold-foreground: 0 0% 0%;
     --terracotta: 10 87% 54%;
     --terracotta-foreground: 0 0% 100%;
-    --warm-beige: 240 3% 8%;
-    --warm-beige-foreground: 0 0% 97%;
-    --hot-pink: 327 73% 66%;                /* Hot Pink */
+    --warm-beige: 0 0% 6%;
+    --warm-beige-foreground: 60 17% 96%;
+    --hot-pink: 327 73% 66%;                /* Pink #E86BB0 */
     --hot-pink-foreground: 0 0% 100%;
-    --neon: 66 84% 65%;                     /* Neon Yellow */
+    --neon: 65 85% 65%;                     /* Neon Yellow #E6F25A */
     --neon-foreground: 0 0% 0%;
 
     /* ── Chrome ── */
-    --border: 240 4% 16%;
-    --input: 240 3% 14%;
+    --border: 0 0% 14%;
+    --input: 0 0% 12%;
     --ring: 10 87% 54%;
 
-    --radius: 1rem;
+    /* Radii — one pill, one card */
+    --radius: 1.25rem;                      /* card radius 20px */
+    --radius-pill: 9999px;                  /* badge/button pill */
 
     /* ── Design tokens ── */
     --radius-sm: 0.5rem;
     --radius-md: 0.875rem;
     --radius-lg: 1.25rem;
     --radius-xl: 1.75rem;
+
 
     --shadow-sm: 0 2px 8px 0 rgba(0, 0, 0, 0.4);
     --shadow-md: 0 4px 20px -2px rgba(0, 0, 0, 0.5);
@@ -205,6 +208,110 @@
    ============================================================ */
 
 @layer components {
+  /* ============================================================
+     LOVERBALL UNIFIED COMPONENT LAYER — single source of truth
+     Use these classes everywhere instead of ad-hoc styling.
+     ============================================================ */
+
+  /* — Buttons — */
+  .lb-btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold uppercase tracking-wider transition-all duration-200;
+    background: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
+    letter-spacing: 0.08em;
+    min-height: 44px;
+  }
+  .lb-btn-primary:hover { filter: brightness(1.08); transform: translateY(-1px); }
+  .lb-btn-primary:focus-visible { outline: 2px solid hsl(var(--accent)); outline-offset: 2px; }
+
+  .lb-btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold uppercase tracking-wider transition-all duration-200;
+    background: hsl(var(--bg-card));
+    color: hsl(var(--foreground));
+    border: 1.5px solid hsl(var(--accent));
+    letter-spacing: 0.08em;
+    min-height: 44px;
+  }
+  .lb-btn-secondary:hover { background: hsl(var(--accent) / 0.12); }
+
+  .lb-btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium transition-all;
+    color: hsl(var(--foreground) / 0.75);
+  }
+  .lb-btn-ghost:hover { color: hsl(var(--foreground)); background: hsl(var(--foreground) / 0.06); }
+
+  /* — Cards — */
+  .lb-card {
+    background: hsl(var(--bg-card));
+    border: 1px solid hsl(var(--border));
+    border-radius: var(--radius);
+    transition: transform 200ms ease, border-color 200ms ease;
+  }
+  .lb-card:hover { border-color: hsl(var(--foreground) / 0.18); }
+
+  .lb-card-event {
+    background: hsl(var(--bg-card));
+    border: 1px solid hsl(var(--border));
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  /* — Badge / pill — */
+  .lb-pill {
+    @apply inline-flex items-center gap-1.5 px-3 py-1 text-[11px] font-semibold uppercase;
+    border-radius: var(--radius-pill);
+    letter-spacing: 0.12em;
+    background: hsl(var(--bg-card));
+    color: hsl(var(--foreground));
+    border: 1px solid hsl(var(--border));
+  }
+  .lb-pill-pink {
+    background: hsl(var(--accent) / 0.16);
+    color: hsl(var(--accent));
+    border-color: hsl(var(--accent) / 0.4);
+  }
+  .lb-pill-neon {
+    background: hsl(var(--warning) / 0.16);
+    color: hsl(var(--warning));
+    border-color: hsl(var(--warning) / 0.4);
+  }
+  .lb-pill-orange {
+    background: hsl(var(--primary) / 0.18);
+    color: hsl(var(--primary));
+    border-color: hsl(var(--primary) / 0.5);
+  }
+
+  /* — Stats & section labels — */
+  .lb-stat {
+    font-family: 'Anton', 'Oswald', Impact, sans-serif;
+    color: hsl(var(--warning));               /* neon yellow for stats */
+    @apply text-4xl leading-none;
+    letter-spacing: 0.01em;
+  }
+  .lb-section-label {
+    font-family: 'Space Mono', ui-monospace, monospace;
+    color: hsl(var(--warning));               /* neon for section labels */
+    @apply text-[11px] font-bold uppercase;
+    letter-spacing: 0.16em;
+  }
+  .lb-eyebrow {
+    font-family: 'Space Mono', ui-monospace, monospace;
+    color: hsl(var(--foreground) / 0.5);
+    @apply text-[11px] font-medium uppercase;
+    letter-spacing: 0.18em;
+  }
+
+  /* — Forms — */
+  .lb-input {
+    @apply w-full rounded-xl px-4 py-3 text-base transition-all;
+    background: hsl(var(--input));
+    color: hsl(var(--foreground));
+    border: 1px solid hsl(var(--border));
+    min-height: 44px;
+  }
+  .lb-input:focus { outline: 2px solid hsl(var(--accent)); outline-offset: 1px; border-color: transparent; }
+
+  /* — Legacy helpers (kept for backward compat) — */
   .editorial-underline {
     @apply relative inline-block;
   }
@@ -212,6 +319,7 @@
     content: '';
     @apply absolute bottom-0 left-0 w-full h-[3px] bg-primary rounded-full;
   }
+
 
   .pill-button {
     @apply px-8 py-3 rounded-full text-sm font-semibold uppercase transition-all duration-300;
