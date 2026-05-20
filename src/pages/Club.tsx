@@ -1,12 +1,13 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Seo } from "@/components/Seo";
-import { Tv, Users, MessagesSquare, MapPin, Gift, Sparkles, Search } from "lucide-react";
+import { Tv, Users, MessagesSquare, MapPin, Gift, Sparkles, Search, ArrowRight } from "lucide-react";
 import { C, fonts } from "@/lib/editorialTheme";
 import { H1, H2, H3, Body, Slug, Mono, PrimaryBtn, SecondaryBtn, TertiaryLink } from "@/components/editorial/primitives";
 import MobileHeader from "@/components/MobileHeader";
 import DesktopNav from "@/components/DesktopNav";
 import BottomNav from "@/components/BottomNav";
+import { loadDrafts, MOCK_MEMBERS, type Member } from "@/lib/startingXiData";
 
 
 const PILLARS = [
@@ -22,6 +23,13 @@ const Club = () => {
   const navigate = useNavigate();
   const goSignup = () => navigate("/auth?mode=signup");
   const [query, setQuery] = useState("");
+  const [connections, setConnections] = useState<Member[]>([]);
+
+  useEffect(() => {
+    const { drafted } = loadDrafts();
+    setConnections(drafted.map((id) => MOCK_MEMBERS.find((m) => m.id === id)).filter(Boolean) as Member[]);
+  }, []);
+
   const filteredPillars = useMemo(() => {
     const q = query.trim().toLowerCase();
     if (!q) return PILLARS;
@@ -57,6 +65,66 @@ const Club = () => {
           <TertiaryLink to="/membership">See passes</TertiaryLink>
         </div>
       </section>
+
+      <section className="max-w-7xl mx-auto px-5 md:px-10 pb-16">
+        <div className="flex items-end justify-between gap-4 mb-8">
+          <div>
+            <Slug>Your Starting XI</Slug>
+            <H2 className="mt-3">My Connections</H2>
+          </div>
+          <button
+            onClick={() => navigate("/club/xi")}
+            className="inline-flex items-center gap-2 text-sm hover:opacity-80 transition-opacity"
+            style={{ color: C.raspberry, fontFamily: fonts.mono, letterSpacing: "0.08em", textTransform: "uppercase" }}
+          >
+            Draft more <ArrowRight size={14} />
+          </button>
+        </div>
+
+        {connections.length === 0 ? (
+          <div
+            className="rounded-[20px] p-10 md:p-14 text-center"
+            style={{ background: C.surface, border: `1px dashed ${C.border}` }}
+          >
+            <Sparkles size={28} color={C.gold} strokeWidth={1.25} className="mx-auto" />
+            <H3 className="mt-5">No connections drafted yet</H3>
+            <Body muted size={15} className="mt-3 max-w-md mx-auto">
+              Your Starting XI is empty. Open the draft to pick the members you want in your lineup this week.
+            </Body>
+            <div className="mt-7 flex justify-center">
+              <PrimaryBtn onClick={() => navigate("/club/xi")}>Open Starting XI</PrimaryBtn>
+            </div>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+            {connections.map((m) => (
+              <article
+                key={m.id}
+                onClick={() => navigate(`/members/${m.id}`)}
+                className="cursor-pointer rounded-[20px] overflow-hidden transition-transform hover:-translate-y-1"
+                style={{ background: C.surface, border: `1px solid ${C.border}` }}
+              >
+                <div className="aspect-[4/5] overflow-hidden" style={{ background: C.bg }}>
+                  <img src={m.photo} alt={m.name} loading="lazy" className="w-full h-full object-cover" />
+                </div>
+                <div className="p-4">
+                  <Mono color={C.raspberry} size={10}>{m.match}% MATCH</Mono>
+                  <H3 className="mt-2" style={{ fontSize: 20 }}>{m.name}</H3>
+                  <Body muted size={13} className="mt-1 line-clamp-1">{m.team} · {m.city}</Body>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); navigate("/messages"); }}
+                    className="mt-4 inline-flex items-center gap-2 text-xs px-3 py-2 rounded-full transition-colors"
+                    style={{ background: C.bg, color: C.text, border: `1px solid ${C.border}`, fontFamily: fonts.mono, letterSpacing: "0.08em", textTransform: "uppercase" }}
+                  >
+                    <MessagesSquare size={12} /> Message
+                  </button>
+                </div>
+              </article>
+            ))}
+          </div>
+        )}
+      </section>
+
 
       <section className="max-w-7xl mx-auto px-5 md:px-10 pb-24">
         <div
