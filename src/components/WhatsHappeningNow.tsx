@@ -81,6 +81,23 @@ const WhatsHappeningNow = () => {
         });
       }
 
+      const videoRes: any = await (supabase as any)
+        .from("videos")
+        .select("id, title, category, creator_channels(channel_name)")
+        .eq("is_published", true)
+        .order("published_at", { ascending: false, nullsFirst: false })
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (videoRes?.data) {
+        setVideo({
+          id: videoRes.data.id,
+          title: videoRes.data.title,
+          category: videoRes.data.category ?? null,
+          creator: videoRes.data.creator_channels?.channel_name ?? null,
+        });
+      }
+
       setLoading(false);
     })();
   }, []);
@@ -99,7 +116,7 @@ const WhatsHappeningNow = () => {
         : null
     : null;
 
-  if (!event && !clubMessage) return null;
+  if (!event && !clubMessage && !video) return null;
 
   return (
     <section className="max-w-7xl mx-auto mt-16 px-5 md:px-10">
