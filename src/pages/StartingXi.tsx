@@ -97,7 +97,7 @@ const MemberCard: React.FC<{ m: Member; onDraft: () => void; disabled: boolean; 
             borderRadius: 10,
             background: C.pink,
             color: "#0a0a0a",
-            fontFamily: "'Oswald', system-ui, sans-serif",
+            fontFamily: "'Anton', Impact, sans-serif",
             fontSize: 32,
             textTransform: "uppercase",
           }}
