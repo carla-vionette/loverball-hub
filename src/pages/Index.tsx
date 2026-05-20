@@ -16,11 +16,14 @@ const C = {
   surfaceHi: "#1F1F1F",
   text: "#FAF5E9",
   muted: "#B8B8B8",
-  raspberry: "#D4537E",
-  gold: "#E8B86A",
+  raspberry: "#F04E23",   // Vermilion (primary)
+  pink: "#E86BB0",        // Hot Pink (accent)
+  neon: "#E6F25A",        // Neon Yellow (highlight)
+  gold: "#E6F25A",        // legacy alias → Neon Yellow
   border: "rgba(250, 245, 233, 0.08)",
   borderStrong: "rgba(250, 245, 233, 0.15)",
 };
+
 
 const fonts = {
   serif: "'Playfair Display', Georgia, serif",
