@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Sparkles } from "lucide-react";
 import Seo from "@/components/Seo";
 import BottomNav from "@/components/BottomNav";
+import EditorialMasthead from "@/components/layout/EditorialMasthead";
 import DraftConfirmModal from "@/components/club/DraftConfirmModal";
 import MutualDraftCelebration from "@/components/club/MutualDraftCelebration";
 import {
@@ -325,24 +326,13 @@ const StartingXi: React.FC = () => {
       <BottomNav />
 
       <main className="max-w-[440px] mx-auto px-5 pt-24 md:pt-28 pb-36">
-        {/* Header */}
-        <header className="flex items-start justify-between gap-4">
-          <h1
-            style={{
-              fontFamily: "'Playfair Display', serif",
-              fontStyle: "italic",
-              fontSize: "clamp(44px, 11vw, 72px)",
-              lineHeight: 0.92,
-              letterSpacing: "-0.02em",
-              color: C.raspberry,
-              fontWeight: 500,
-            }}
-          >
-            Starting<br />XI.
-          </h1>
-          <Label color={C.muted} size={10}>Find your people</Label>
-        </header>
-        <div style={{ height: 0.5, background: C.border, marginTop: 18 }} />
+        <EditorialMasthead
+          section="The Club"
+          meta="Starting XI"
+          eyebrow="find your people"
+          title="Starting XI"
+          size="md"
+        />
 
         {/* Sub-header */}
         <div className="flex items-center justify-between mt-4">
