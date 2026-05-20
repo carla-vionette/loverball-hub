@@ -342,9 +342,107 @@ const StartingXi: React.FC = () => {
           </Label>
         </div>
 
+        {/* Friends + DMs */}
+        <section className="mt-6">
+          <div className="flex items-end justify-between gap-4 mb-3">
+            <div>
+              <Label color={C.raspberry}>Current roster</Label>
+              <h2 className="mt-1" style={{ ...serif, fontSize: 20, color: C.text, lineHeight: 1.1 }}>
+                Your friends{state.drafted.length ? ` · ${state.drafted.length}` : ""}
+              </h2>
+            </div>
+            <button
+              onClick={() => navigate("/messages")}
+              className="inline-flex items-center gap-1.5 uppercase"
+              style={{ ...mono, fontSize: 10, letterSpacing: "0.18em", color: C.pink, fontWeight: 500 }}
+              aria-label="Open direct messages"
+            >
+              <MessagesSquare size={13} /> Messages <ArrowRight size={11} />
+            </button>
+          </div>
+
+          {(() => {
+            const drafted = members.filter((m) => state.drafted.includes(m.id));
+            if (drafted.length === 0) {
+              return (
+                <div
+                  className="flex items-center justify-between gap-3 p-4"
+                  style={{ background: C.card, border: `0.5px dashed ${C.borderHi}`, borderRadius: 14 }}
+                >
+                  <p style={{ ...sans, fontSize: 12, color: C.muted }}>
+                    No friends drafted yet. Build your roster below.
+                  </p>
+                  <button
+                    onClick={() => navigate("/messages")}
+                    className="inline-flex items-center gap-1.5 uppercase whitespace-nowrap"
+                    style={{
+                      ...mono,
+                      fontSize: 9,
+                      letterSpacing: "0.18em",
+                      color: "#0a0a0a",
+                      background: C.pink,
+                      padding: "7px 12px",
+                      borderRadius: 999,
+                      fontWeight: 500,
+                    }}
+                  >
+                    Open DMs
+                  </button>
+                </div>
+              );
+            }
+            return (
+              <div className="flex gap-3 overflow-x-auto pb-2 -mx-1 px-1" style={{ scrollbarWidth: "thin" }}>
+                {drafted.map((m) => (
+                  <div key={m.id} className="flex-shrink-0 flex flex-col items-center gap-2" style={{ width: 72 }}>
+                    <button
+                      onClick={() => navigate(`/members/${m.id}`)}
+                      className="relative overflow-hidden transition-transform hover:-translate-y-0.5"
+                      style={{ width: 56, height: 56, borderRadius: 999, border: `1px solid ${C.borderHi}` }}
+                      aria-label={`View ${m.name}`}
+                    >
+                      {m.photo ? (
+                        <img src={m.photo} alt={m.name} loading="lazy" className="w-full h-full object-cover" />
+                      ) : (
+                        <div
+                          className="w-full h-full flex items-center justify-center"
+                          style={{ background: C.pink, color: "#0a0a0a", ...display, fontSize: 22 }}
+                        >
+                          {m.firstName?.[0] || "?"}
+                        </div>
+                      )}
+                    </button>
+                    <div
+                      className="w-full text-center truncate uppercase"
+                      style={{ ...mono, fontSize: 9, letterSpacing: "0.12em", color: C.muted }}
+                    >
+                      {m.firstName}
+                    </div>
+                    <button
+                      onClick={() => navigate(`/messages?member=${m.id}`)}
+                      className="inline-flex items-center justify-center"
+                      style={{
+                        width: 26,
+                        height: 26,
+                        borderRadius: 999,
+                        background: C.cardHi,
+                        border: `0.5px solid ${C.border}`,
+                        color: C.pink,
+                      }}
+                      aria-label={`Message ${m.firstName}`}
+                    >
+                      <MessagesSquare size={12} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            );
+          })()}
+        </section>
+
         {/* Featured strip */}
         <div
-          className="mt-4 flex items-start gap-2.5 p-3"
+          className="mt-6 flex items-start gap-2.5 p-3"
           style={{
             background: "rgba(212, 83, 126, 0.08)",
             border: "0.5px solid rgba(212, 83, 126, 0.35)",
