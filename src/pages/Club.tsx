@@ -56,7 +56,7 @@ const Club = () => {
                 textTransform: "uppercase",
               }}
             >
-              Vol. 03
+              {"\n"}
             </span>
             <span
               style={{
