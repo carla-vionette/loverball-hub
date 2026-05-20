@@ -1,7 +1,5 @@
 import { useState, useEffect } from "react";
-import DesktopNav from "@/components/DesktopNav";
 import BottomNav from "@/components/BottomNav";
-import MobileHeader from "@/components/MobileHeader";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Input } from "@/components/ui/input";
@@ -232,8 +230,6 @@ const Settings = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-background pb-20 md:pb-0 md:pl-64">
-        <MobileHeader />
-        <DesktopNav />
         <div className="flex items-center justify-center py-20">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
@@ -246,10 +242,7 @@ const Settings = () => {
 
   return (
     <div className="min-h-screen bg-background pb-20 md:pb-0 md:pl-64">
-      <MobileHeader />
-      <DesktopNav />
-
-      <main className="container mx-auto px-4 pt-20 md:pt-8 py-8 pb-20 md:pb-8 max-w-3xl">
+      <main className="container mx-auto px-4 py-8 pb-20 md:pb-8 max-w-3xl">
         <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-3xl font-bold text-foreground">Settings</h1>

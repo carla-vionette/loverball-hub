@@ -3,8 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { ChevronLeft } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import MobileHeader from "@/components/MobileHeader";
-import DesktopNav from "@/components/DesktopNav";
 import BottomNav from "@/components/BottomNav";
 import Seo from "@/components/Seo";
 import IncomingDraftCard from "@/components/club/IncomingDraftCard";
@@ -146,11 +144,9 @@ const ClubDrafts: React.FC = () => {
         description="Members who drafted you. Draft back to open the DM."
         path="/club/drafts"
       />
-      <MobileHeader />
-      <DesktopNav />
       <BottomNav />
 
-      <main className="md:ml-16 xl:ml-64 pb-28 md:pb-10 pt-16 md:pt-2">
+      <main className="pb-28 md:pb-10 pt-16 md:pt-2">
         <div className="max-w-[440px] md:max-w-2xl mx-auto px-5">
           {/* Top bar */}
           <div className="flex items-center justify-between py-3">

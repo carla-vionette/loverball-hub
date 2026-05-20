@@ -1,8 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import BottomNav from "@/components/BottomNav";
-import DesktopNav from "@/components/DesktopNav";
-import MobileHeader from "@/components/MobileHeader";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -142,11 +140,9 @@ const Horoscope = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <MobileHeader />
-      <DesktopNav />
       <BottomNav />
 
-      <main className="md:ml-16 xl:ml-64 pb-20 md:pb-8 pt-20 md:pt-8 px-4">
+      <main className="pb-20 md:pb-8 px-4">
         <div className="max-w-2xl mx-auto space-y-6">
 
           {/* Header */}

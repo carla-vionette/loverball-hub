@@ -5,8 +5,6 @@ import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import BottomNav from "@/components/BottomNav";
-import DesktopNav from "@/components/DesktopNav";
-import MobileHeader from "@/components/MobileHeader";
 import TeamFollowSection from "@/components/TeamFollowSection";
 import { supabase } from "@/integrations/supabase/client";
 import { format, formatDistanceToNow } from "date-fns";
@@ -323,11 +321,9 @@ const Explore = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <MobileHeader />
-      <DesktopNav />
       <BottomNav />
 
-      <main className="md:ml-16 xl:ml-64 pt-16 md:pt-0 pb-24 md:pb-0">
+      <main className="pb-24 md:pb-0">
         <div className="max-w-3xl mx-auto px-5 md:px-10 py-6">
           <h1 className="font-display text-2xl md:text-[28px] font-bold uppercase tracking-tight mb-5">Discover</h1>
 

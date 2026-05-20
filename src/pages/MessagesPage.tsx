@@ -242,11 +242,9 @@ const MessagesPage = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <MobileHeader />
-      <DesktopNav />
       <BottomNav />
       
-      <main className="md:ml-16 xl:ml-64 pt-16 md:pt-0 pb-20 md:pb-0 h-screen">
+      <main className="pb-20 md:pb-0 h-screen">
         <div className="h-full flex">
           {/* Matches List - Hidden on mobile when chat selected */}
           <div className={`w-full md:w-80 border-r border-border bg-card flex flex-col ${selectedMatch ? 'hidden md:flex' : 'flex'}`}>
