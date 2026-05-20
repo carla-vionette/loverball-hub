@@ -213,6 +213,7 @@ const Profile = () => {
   const [teamsOpen, setTeamsOpen] = useState(true);
   const [scoresOpen, setScoresOpen] = useState(true);
   const [watchOpen, setWatchOpen] = useState(false);
+  const [eventsOpen, setEventsOpen] = useState(true);
   const [recEventsOpen, setRecEventsOpen] = useState(false);
   const [feedFilter, setFeedFilter] = useState<string>("All");
   const [profile, setProfile] = useState<ProfileData | null>(null);
@@ -593,19 +594,37 @@ const Profile = () => {
               {/* ═══════════ 2. MY EVENTS ═══════════ */}
               <motion.div variants={staggerItem}>
                 <div className="rounded-2xl overflow-hidden" style={{ background: PANEL, border: PANEL_BORDER }}>
-                  <div className="p-5 pb-3 flex items-center justify-between">
+                  <button
+                    type="button"
+                    onClick={() => setEventsOpen(o => !o)}
+                    aria-expanded={eventsOpen}
+                    className="w-full p-5 pb-3 flex items-center justify-between"
+                  >
                     <span className="text-[13px] uppercase flex items-center gap-2.5"
                       style={{ fontFamily: "'Space Mono', monospace", letterSpacing: "0.2em", color: "#FAF5E9", fontWeight: 500 }}>
                       <Ticket className="w-3.5 h-3.5" style={{ color: PINK }} strokeWidth={2.5} /> My Events
+                      {rsvpEvents.length > 0 && (
+                        <span className="text-[10px] px-1.5 py-0.5 rounded-full" style={{ background: "rgba(233,30,99,0.15)", color: PINK, letterSpacing: "0.08em" }}>
+                          {rsvpEvents.length}
+                        </span>
+                      )}
                     </span>
-                    <button
-                      onClick={() => goTo("/events")}
-                      className="text-[11px] uppercase"
-                      style={{ fontFamily: "'Space Mono', monospace", letterSpacing: "0.18em", color: PINK }}
-                    >
-                      Browse all →
-                    </button>
-                  </div>
+                    <div className="flex items-center gap-3">
+                      <span
+                        onClick={(e) => { e.stopPropagation(); goTo("/events"); }}
+                        role="link"
+                        className="text-[11px] uppercase cursor-pointer"
+                        style={{ fontFamily: "'Space Mono', monospace", letterSpacing: "0.18em", color: PINK }}
+                      >
+                        Browse all →
+                      </span>
+                      <ChevronDown
+                        className="w-4 h-4 transition-transform"
+                        style={{ color: PINK, transform: eventsOpen ? "rotate(0deg)" : "rotate(-90deg)" }}
+                      />
+                    </div>
+                  </button>
+                  {eventsOpen && (
                   <div className="px-5 pb-5">
                     {rsvpEvents.length === 0 ? (
                       <div className="py-10 px-4 text-center rounded-xl"
@@ -660,6 +679,7 @@ const Profile = () => {
                       </ul>
                     )}
                   </div>
+                  )}
                 </div>
               </motion.div>
 
