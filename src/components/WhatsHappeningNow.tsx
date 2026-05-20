@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Calendar, MapPin, ArrowRight, Users } from "lucide-react";
+import { Calendar, MapPin, ArrowRight, Users, Play } from "lucide-react";
 
 interface NextEvent {
   id: string;
@@ -16,6 +16,13 @@ interface ClubActivity {
   pendingMatches: number;
   recentMatches: number;
   city: string | null;
+}
+
+interface LatestVideo {
+  id: string;
+  title: string;
+  category: string | null;
+  creator: string | null;
 }
 
 const formatDate = (date: string, time: string | null) => {
