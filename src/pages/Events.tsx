@@ -454,7 +454,7 @@ const Events = () => {
                 const spotsLeft = ev.capacity ? ev.capacity - ct : null;
                 const cardIndex = idx + 1;
                 const sponsorSlot = cardIndex > 0 && cardIndex % 5 === 0;
-                const th = sceneTheme[getVariant(ev.event_type)];
+                const th = eventTheme[getVariant(ev.event_type)];
                 const d = new Date(ev.event_date);
 
                 return (
