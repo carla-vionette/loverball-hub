@@ -1,6 +1,7 @@
+import { useState, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Seo } from "@/components/Seo";
-import { Tv, Users, MessagesSquare, MapPin, Gift, Sparkles } from "lucide-react";
+import { Tv, Users, MessagesSquare, MapPin, Gift, Sparkles, Search } from "lucide-react";
 import { C, fonts } from "@/lib/editorialTheme";
 import { H1, H2, H3, Body, Slug, Mono, PrimaryBtn, SecondaryBtn, TertiaryLink } from "@/components/editorial/primitives";
 import MobileHeader from "@/components/MobileHeader";
