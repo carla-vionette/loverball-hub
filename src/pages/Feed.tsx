@@ -7,6 +7,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Play } from "lucide-react";
 import Seo from "@/components/Seo";
 import loverballLogo from "@/assets/loverball-script-logo.png";
+import FeedStoriesPanel from "@/components/FeedStoriesPanel";
 
 type FeedTab = "foryou" | "following" | "stories";
 
