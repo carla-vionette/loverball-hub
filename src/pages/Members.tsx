@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import BottomNav from '@/components/BottomNav';
 import Seo from '@/components/Seo';
 import MemberCard from '@/components/MemberCard';
-import MemberCard from '@/components/MemberCard';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { fetchProfilesByIds } from '@/lib/profileApi';
