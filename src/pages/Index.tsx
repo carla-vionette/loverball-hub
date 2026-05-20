@@ -573,7 +573,7 @@ const Index = () => {
             </div>
           </div>
         </div>
-        <div aria-hidden style={{ height: 3, background: `linear-gradient(90deg, ${C.raspberry}, ${C.gold})`, opacity: 0.5 }} />
+        <div aria-hidden style={{ height: 4, background: `linear-gradient(90deg, ${C.raspberry}, ${C.pink} 55%, ${C.neon})` }} />
       </footer>
     </div>
   );
