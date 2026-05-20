@@ -387,7 +387,7 @@ const Auth = () => {
                 className="space-y-8"
               >
                 <div className="text-center space-y-2">
-                  <AuthH1>Join us!</AuthH1>
+                  <AuthH1>JOIN US!</AuthH1>
                   <AuthBody muted center>Sign up in seconds.</AuthBody>
                 </div>
 
