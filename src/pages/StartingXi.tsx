@@ -416,7 +416,7 @@ const StartingXi: React.FC = () => {
         themInitial={celebrate?.firstName?.[0]}
         upcomingHint={celebrate?.upcoming}
         onClose={() => setCelebrate(null)}
-        onSayHi={() => setCelebrate(null)}
+        onSayHi={() => { setCelebrate(null); navigate("/messages"); }}
       />
     </div>
   );
