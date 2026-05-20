@@ -97,6 +97,7 @@ const Events = () => {
   const [isApprovedCreator, setIsApprovedCreator] = useState(false);
   const { user } = useAuth();
   const { toast } = useToast();
+  const [searchQuery, setSearchQuery] = useState("");
 
   const [gateEventId, setGateEventId] = useState<string | null>(null);
   const openGate = (id: string) => {
