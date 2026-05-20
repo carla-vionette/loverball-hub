@@ -323,7 +323,7 @@ const StartingXi: React.FC = () => {
         path="/club/xi"
       />
 
-      <SiteNav />
+      <MobileHeader /><DesktopNav /><BottomNav />
 
       <main className="max-w-[440px] mx-auto px-5 pt-24 md:pt-28 pb-36">
         {/* Header */}
