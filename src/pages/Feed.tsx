@@ -176,7 +176,7 @@ const Feed = () => {
                   textTransform: "uppercase",
                 }}
               >
-                · The Feed
+                THE FEED
               </span>
             </div>
             <span
