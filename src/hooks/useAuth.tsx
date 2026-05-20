@@ -23,6 +23,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
   const [role, setRole] = useState<AppRole | null>(null);
 
+  const hasStoredSessionToken = useCallback(() => {
+    if (typeof window === 'undefined') return false;
+
+    return Object.keys(localStorage).some((key) =>
+      key.startsWith('sb-') && key.endsWith('-auth-token')
+    );
+  }, []);
+
   const fetchUserRole = useCallback(async (userId: string) => {
     const { data, error } = await supabase
       .from('user_roles')
@@ -60,51 +68,32 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     let mounted = true;
+    let bootstrapped = false;
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, nextSession) => {
+      (event, nextSession) => {
         if (!mounted) return;
+
+        if (!bootstrapped && event === 'INITIAL_SESSION' && !nextSession && hasStoredSessionToken()) {
+          return;
+        }
+
         void applySession(nextSession);
       }
     );
 
-    supabase.auth.getSession().then(({ data: { session: initialSession } }) => {
+    supabase.auth.getSession().then(async ({ data: { session: initialSession } }) => {
       if (!mounted) return;
-      void applySession(initialSession);
+
+      bootstrapped = true;
+      await applySession(initialSession);
     });
 
     return () => {
       mounted = false;
       subscription.unsubscribe();
     };
-  }, [applySession]);
-
-  useEffect(() => {
-    const syncFromStorage = async () => {
-      const hasStoredSession = Object.keys(localStorage).some((key) =>
-        key.startsWith('sb-') && key.endsWith('-auth-token')
-      );
-
-      if (!hasStoredSession || user || session) {
-        return;
-      }
-
-      const { data: { session: recoveredSession } } = await supabase.auth.getSession();
-      if (recoveredSession) {
-        await applySession(recoveredSession);
-      } else {
-        setLoading(false);
-      }
-    };
-
-    void syncFromStorage();
-    const handleFocus = () => {
-      void syncFromStorage();
-    };
-
-    window.addEventListener('focus', handleFocus);
-    return () => window.removeEventListener('focus', handleFocus);
-  }, [applySession, session, user]);
+  }, [applySession, hasStoredSessionToken]);
 
   const signOut = async () => {
     await supabase.auth.signOut();
