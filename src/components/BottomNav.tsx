@@ -6,7 +6,7 @@ import { useAuth } from "@/hooks/useAuth";
 
 const navItems = [
   { icon: Play, label: "Feed", path: "/feed", matches: ["/feed", "/home"] },
-  { icon: CalendarDays, label: "EVENTS", path: "/events", matches: ["/events", "/event/"] },
+  { icon: CalendarDays, label: "Events", path: "/events", matches: ["/events", "/event/"] },
   { icon: Heart, label: "Club", path: "/members", matches: ["/members"] },
   { icon: User, label: "Profile", path: "/profile", matches: ["/profile"] },
 ];
