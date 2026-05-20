@@ -7,7 +7,7 @@ import { useAuth } from "@/hooks/useAuth";
 const navItems = [
   { icon: Play, label: "Feed", path: "/feed", matches: ["/feed", "/home"] },
   { icon: CalendarDays, label: "Events", path: "/events", matches: ["/events", "/event/"] },
-  { icon: Heart, label: "Club", path: "/members", matches: ["/members"] },
+  { icon: Heart, label: "Club", path: "/club/xi", matches: ["/club/xi", "/club", "/members"] },
   { icon: User, label: "Profile", path: "/profile", matches: ["/profile"] },
 ];
 
@@ -59,7 +59,7 @@ const BottomNav = () => {
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive = item.matches.some(m => pathname === m || (m.endsWith("/") && pathname.startsWith(m)));
-          const showBadge = item.path === "/members" && badgeCount > 0;
+          const showBadge = item.label === "Club" && badgeCount > 0;
           const color = isActive ? "#E8276F" : "rgba(248,248,248,0.55)";
           return (
             <Link
