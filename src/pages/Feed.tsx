@@ -7,8 +7,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Play } from "lucide-react";
 import Seo from "@/components/Seo";
 import loverballLogo from "@/assets/loverball-script-logo.png";
+import FeedStoriesPanel from "@/components/FeedStoriesPanel";
 
-type FeedTab = "foryou" | "following";
+type FeedTab = "foryou" | "following" | "stories";
 
 const FeedSkeleton = () => (
   <div className="h-screen w-full bg-black flex flex-col items-center justify-center gap-4 snap-start">
@@ -205,6 +206,7 @@ const Feed = () => {
               {[
                 { key: "following" as const, label: "Following" },
                 { key: "foryou" as const, label: "For You" },
+                { key: "stories" as const, label: "Stories" },
               ].map((t) => {
                 const active = activeTab === t.key;
                 return (
@@ -235,35 +237,39 @@ const Feed = () => {
       </div>
 
       {/* Video container */}
-      <div
-        ref={containerRef}
-        className="h-full overflow-y-scroll snap-y snap-mandatory scrollbar-hide"
-      >
-        {isLoading ? (
-          <>
-            <FeedSkeleton />
-            <FeedSkeleton />
-          </>
-        ) : isEmpty ? (
-          <EmptyState />
-        ) : (
-          currentVideos.map((video, index) => (
-            <div
-              key={video.id}
-              ref={(el) => setVideoRef(el, index)}
-              data-index={index}
-              className="h-screen w-full snap-start snap-always"
-            >
-              <FeedVideoPlayer
-                video={video}
-                isActive={index === activeIndex}
-                isMuted={isMuted}
-                onToggleMute={() => setIsMuted(!isMuted)}
-              />
-            </div>
-          ))
-        )}
-      </div>
+      {activeTab === "stories" ? (
+        <FeedStoriesPanel />
+      ) : (
+        <div
+          ref={containerRef}
+          className="h-full overflow-y-scroll snap-y snap-mandatory scrollbar-hide"
+        >
+          {isLoading ? (
+            <>
+              <FeedSkeleton />
+              <FeedSkeleton />
+            </>
+          ) : isEmpty ? (
+            <EmptyState />
+          ) : (
+            currentVideos.map((video, index) => (
+              <div
+                key={video.id}
+                ref={(el) => setVideoRef(el, index)}
+                data-index={index}
+                className="h-screen w-full snap-start snap-always"
+              >
+                <FeedVideoPlayer
+                  video={video}
+                  isActive={index === activeIndex}
+                  isMuted={isMuted}
+                  onToggleMute={() => setIsMuted(!isMuted)}
+                />
+              </div>
+            ))
+          )}
+        </div>
+      )}
 
       {/* Bottom nav (mobile only) */}
       <BottomNav />
