@@ -27,7 +27,7 @@ const Club = () => {
         path="/club"
       />
 
-      <NavBar />
+      <SiteNav />
 
       <section className="px-6 md:px-12 pt-16 md:pt-24 pb-20 max-w-6xl">
         <Slug>The Club</Slug>

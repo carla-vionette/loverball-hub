@@ -114,7 +114,7 @@ const Membership = () => {
         path="/membership"
       />
 
-      <NavBar />
+      <SiteNav />
 
       {/* Hero */}
       <section className="px-6 md:px-12 pt-16 md:pt-24 pb-16 max-w-6xl">
