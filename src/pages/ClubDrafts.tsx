@@ -1,23 +1,23 @@
-import React, { useEffect, useState } from"react";
-import { useNavigate } from"react-router-dom";
-import { ChevronLeft } from"lucide-react";
-import { supabase } from"@/integrations/supabase/client";
-import { useAuth } from"@/hooks/useAuth";
-import BottomNav from"@/components/BottomNav";
-import Seo from"@/components/Seo";
-import IncomingDraftCard from"@/components/club/IncomingDraftCard";
-import MutualDraftCelebration from"@/components/club/MutualDraftCelebration";
-import { toast } from"sonner";
+import React, { useEffect, useState } from "react ";
+import { useNavigate } from "react-router-dom ";
+import { ChevronLeft } from "lucide-react ";
+import { supabase } from "@/integrations/supabase/client ";
+import { useAuth } from "@/hooks/useAuth ";
+import BottomNav from "@/components/BottomNav ";
+import Seo from "@/components/Seo ";
+import IncomingDraftCard from "@/components/club/IncomingDraftCard ";
+import MutualDraftCelebration from "@/components/club/MutualDraftCelebration ";
+import { toast } from "sonner ";
 
 const C = {
-  bg:"#0a0a0a",
-  card:"#1A1A1A",
-  cardElev:"#2A2A2A",
-  text:"#FAF5E9",
-  muted:"#B8B8B8",
-  faint:"#6B6B70",
-  raspberry:"#F04E23",
-  copper:"#E6F25A",
+  bg:"#0a0a0a ",
+  card:"#1A1A1A ",
+  cardElev:"#2A2A2A ",
+  text:"#FAF5E9 ",
+  muted:"#B8B8B8 ",
+  faint:"#6B6B70 ",
+  raspberry:"#F04E23 ",
+  copper:"#E6F25A ",
   border:"rgba(250, 245, 233, 0.08)",
 };
 
@@ -38,7 +38,7 @@ type IncomingRow = {
 function timeAgo(iso: string): string {
   const diff = Date.now() - new Date(iso).getTime();
   const m = Math.floor(diff / 60000);
-  if (m < 1) return"Now";
+  if (m < 1) return "Now ";
   if (m < 60) return `${m}m`;
   const h = Math.floor(m / 60);
   if (h < 24) return `${h}h`;
@@ -59,7 +59,7 @@ const ClubDrafts: React.FC = () => {
     themFirst: string;
     themInitial: string;
     upcomingHint?: string;
-  }>({ open: false, themPhoto: null, themFirst:"", themInitial:"" });
+  }>({ open: false, themPhoto: null, themFirst: "", themInitial: "" });
 
   useEffect(() => {
     let cancelled = false;
@@ -68,31 +68,31 @@ const ClubDrafts: React.FC = () => {
       setLoading(true);
 
       const { data: myRow } = await supabase
-        .from("profiles")
-        .select("name, profile_photo_url")
-        .eq("id", user.id)
+        .from("profiles ")
+        .select("name, profile_photo_url ")
+        .eq("id ", user.id)
         .maybeSingle();
       if (myRow) {
         setMe({
           photo: myRow.profile_photo_url || null,
-          initial: (myRow.name?.[0] ||"·").toUpperCase(),
+          initial: (myRow.name?.[0] || "·").toUpperCase(),
         });
       }
 
       const { data: incoming } = await supabase
-        .from("friendships")
-        .select("id, requester_id, mutual_teams, created_at")
-        .eq("addressee_id", user.id)
-        .eq("status","pending")
-        .order("created_at", { ascending: false });
+        .from("friendships ")
+        .select("id, requester_id, mutual_teams, created_at ")
+        .eq("addressee_id ", user.id)
+        .eq("status ","pending ")
+        .order("created_at ", { ascending: false });
 
       const reqIds = (incoming || []).map((r: any) => r.requester_id);
       let profilesById: Record<string, any> = {};
       if (reqIds.length) {
         const { data: profs } = await supabase
-          .from("profiles")
-          .select("id, name, city, profile_photo_url, favorite_la_teams")
-          .in("id", reqIds);
+          .from("profiles ")
+          .select("id, name, city, profile_photo_url, favorite_la_teams ")
+          .in("id ", reqIds);
         (profs || []).forEach((p: any) => (profilesById[p.id] = p));
       }
 
@@ -116,17 +116,17 @@ const ClubDrafts: React.FC = () => {
     if (!row.requester) return;
     setPending(row.id);
     const { error } = await supabase
-      .from("friendships")
-      .update({ status:"accepted" })
-      .eq("id", row.id);
+      .from("friendships ")
+      .update({ status:"accepted " })
+      .eq("id ", row.id);
     setPending(null);
     if (error) {
       toast.error("Couldn't draft back. Try again.");
       return;
     }
     setRows((prev) => prev.filter((r) => r.id !== row.id));
-    const first = row.requester.name?.split("")[0] ||"Member";
-    const last = row.requester.name?.split("").slice(-1)[0]?.[0] ||"·";
+    const first = row.requester.name?.split(" ")[0] || "Member ";
+    const last = row.requester.name?.split(" ").slice(-1)[0]?.[0] || "·";
     const team = row.requester.favorite_la_teams?.[0];
     setCelebration({
       open: true,
@@ -138,11 +138,11 @@ const ClubDrafts: React.FC = () => {
   };
 
   return (
-    <div style={{ background: C.bg, color: C.text }} className="min-h-screen">
+    <div style={{ background: C.bg, color: C.text }} className="min-h-screen ">
       <Seo
-        title="Incoming Drafts | Club — Loverball"
+        title="Incoming Drafts | Club — Loverball "
         description="Members who drafted you. Draft back to open the DM."
-        path="/club/drafts"
+        path="/club/drafts "
       />
       <BottomNav />
 
@@ -151,18 +151,18 @@ const ClubDrafts: React.FC = () => {
           {/* Top bar */}
           <div className="flex items-center justify-between py-3">
             <button
-              onClick={() => navigate("/club")}
-              className="p-1.5 -ml-1.5 rounded-full"
+              onClick={() => navigate("/club ")}
+              className="p-1.5 -ml-1.5 rounded-full "
               style={{ color: C.text }}
-              aria-label="Back to Club"
+              aria-label="Back to Club "
             >
               <ChevronLeft size={22} />
             </button>
             <span
-              className="text-[10px] uppercase font-bold"
+              className="text-[10px] uppercase font-bold "
               style={{
-                fontFamily:"'Poppins', system-ui, sans-serif",
-                letterSpacing:"0.28em",
+                fontFamily:"'Poppins', system-ui, sans-serif ",
+                letterSpacing:"0.28em ",
                 color: C.muted,
               }}
             >
@@ -176,18 +176,18 @@ const ClubDrafts: React.FC = () => {
             <p
               className="text-[10px] uppercase mb-2"
               style={{
-                fontFamily:"'Poppins', system-ui, sans-serif",
+                fontFamily:"'Poppins', system-ui, sans-serif ",
                 color: C.copper,
-                letterSpacing:"0.22em",
+                letterSpacing:"0.22em ",
               }}
             >
               They picked you
             </p>
             <h1
-              className="leading-[0.92] tracking-tight"
+              className="leading-[0.92] tracking-tight "
               style={{
-                fontFamily:"'Oswald', system-ui, sans-serif",
-                fontStyle:"italic",
+                fontFamily:"'Oswald', system-ui, sans-serif ",
+                fontStyle:"italic ",
                 fontSize: 42,
                 color: C.text,
               }}
@@ -195,7 +195,7 @@ const ClubDrafts: React.FC = () => {
               On the wire.
             </h1>
             <p
-              className="mt-2 text-[12.5px] leading-relaxed"
+              className="mt-2 text-[12.5px] leading-relaxed "
               style={{ color: C.muted }}
             >
               Members who drafted you this week. Draft back and the DM opens.
@@ -207,7 +207,7 @@ const ClubDrafts: React.FC = () => {
               {[0, 1].map((i) => (
                 <li
                   key={i}
-                  className="rounded-2xl p-4 animate-pulse"
+                  className="rounded-2xl p-4 animate-pulse "
                   style={{
                     background: C.cardElev,
                     border: `1px solid ${C.border}`,
@@ -218,7 +218,7 @@ const ClubDrafts: React.FC = () => {
             </ul>
           ) : rows.length === 0 ? (
             <div
-              className="rounded-2xl px-6 py-10 text-center"
+              className="rounded-2xl px-6 py-10 text-center "
               style={{
                 background: C.cardElev,
                 border: `1px solid ${C.border}`,
@@ -227,17 +227,17 @@ const ClubDrafts: React.FC = () => {
               <p
                 className="text-[10px] uppercase mb-3"
                 style={{
-                  fontFamily:"'Poppins', system-ui, sans-serif",
+                  fontFamily:"'Poppins', system-ui, sans-serif ",
                   color: C.copper,
-                  letterSpacing:"0.22em",
+                  letterSpacing:"0.22em ",
                 }}
               >
                 Quiet wire
               </p>
               <h3
                 style={{
-                  fontFamily:"'Oswald', system-ui, sans-serif",
-                  fontStyle:"italic",
+                  fontFamily:"'Oswald', system-ui, sans-serif ",
+                  fontStyle:"italic ",
                   fontSize: 26,
                   color: C.text,
                   lineHeight: 1.05,
@@ -257,7 +257,7 @@ const ClubDrafts: React.FC = () => {
           ) : (
             <ul className="space-y-3">
               {rows.map((r) => {
-                const first = r.requester?.name?.split("")[0] ||"Member";
+                const first = r.requester?.name?.split(" ")[0] || "Member ";
                 const bits: string[] = [];
                 if (r.requester?.favorite_la_teams?.[0])
                   bits.push(r.requester.favorite_la_teams[0]);
@@ -266,7 +266,7 @@ const ClubDrafts: React.FC = () => {
                 const tail = shared
                   ? `You both ride for ${shared}.`
                   :"Your scenes overlap.";
-                const context = `${bits.join(" ·")}${bits.length ?" ·" :""}${tail}`;
+                const context = `${bits.join(" ·")}${bits.length ?" ·" : ""}${tail}`;
                 return (
                   <li key={r.id}>
                     <IncomingDraftCard
@@ -296,7 +296,7 @@ const ClubDrafts: React.FC = () => {
         themInitial={celebration.themInitial}
         upcomingHint={celebration.upcomingHint}
         onClose={() => setCelebration((s) => ({ ...s, open: false }))}
-        onSayHi={() => navigate("/inbox")}
+        onSayHi={() => navigate("/inbox ")}
       />
     </div>
   );

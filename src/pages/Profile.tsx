@@ -1,34 +1,34 @@
-import React, { useEffect, useState } from"react";
-import { supabase } from"@/integrations/supabase/client";
-import { MapPin, Edit, Sparkles, LogOut, Calendar, Clock, TrendingUp, TrendingDown, Trophy, Flame, Bookmark, BookOpen, Award, ChevronRight, ChevronDown, ArrowUpRight, Share2, AlertTriangle, Ticket, Play, Eye, Lightbulb, Settings, Heart, MessageCircle, Loader2, ExternalLink, Newspaper, Zap, RefreshCw, Users, Tv, Radio, CalendarHeart, Shield } from"lucide-react";
-import MemberBadge from"@/components/MemberBadge";
-import { useFollow } from"@/hooks/useFollow";
-import BadgeShelf from"@/components/BadgeShelf";
-import PointsStreakCard from"@/components/PointsStreakCard";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from"@/components/ui/collapsible";
-import { Button } from"@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from"@/components/ui/card";
-import { Badge } from"@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from"@/components/ui/avatar";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from"@/components/ui/tabs";
-import { useToast } from"@/hooks/use-toast";
-import BottomNav from"@/components/BottomNav";
-import Seo from"@/components/Seo";
-import ProfileInbox from"@/components/profile/ProfileInbox";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from"@/components/ui/alert-dialog";
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from"@/components/ui/sheet";
-import { useAuth } from"@/hooks/useAuth";
+import React, { useEffect, useState } from "react ";
+import { supabase } from "@/integrations/supabase/client ";
+import { MapPin, Edit, Sparkles, LogOut, Calendar, Clock, TrendingUp, TrendingDown, Trophy, Flame, Bookmark, BookOpen, Award, ChevronRight, ChevronDown, ArrowUpRight, Share2, AlertTriangle, Ticket, Play, Eye, Lightbulb, Settings, Heart, MessageCircle, Loader2, ExternalLink, Newspaper, Zap, RefreshCw, Users, Tv, Radio, CalendarHeart, Shield } from "lucide-react ";
+import MemberBadge from "@/components/MemberBadge ";
+import { useFollow } from "@/hooks/useFollow ";
+import BadgeShelf from "@/components/BadgeShelf ";
+import PointsStreakCard from "@/components/PointsStreakCard ";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible ";
+import { Button } from "@/components/ui/button ";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card ";
+import { Badge } from "@/components/ui/badge ";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar ";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs ";
+import { useToast } from "@/hooks/use-toast ";
+import BottomNav from "@/components/BottomNav ";
+import Seo from "@/components/Seo ";
+import ProfileInbox from "@/components/profile/ProfileInbox ";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog ";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet ";
+import { useAuth } from "@/hooks/useAuth ";
 
-import { format } from"date-fns";
-import { motion } from"framer-motion";
+import { format } from "date-fns ";
+import { motion } from "framer-motion ";
 import {
   TEAM_PERFORMANCE,
-} from"@/lib/mockStatsData";
-import { getTeamWatchUrl, getTeamTicketsUrl } from"@/lib/teamLinksMap";
-import MySportsFeed from"@/components/MySportsFeed";
-import LiveScores from"@/components/LiveScores";
-import ProfileScores from"@/components/ProfileScores";
-import ProfileWhereToWatch from"@/components/ProfileWhereToWatch";
+} from "@/lib/mockStatsData ";
+import { getTeamWatchUrl, getTeamTicketsUrl } from "@/lib/teamLinksMap ";
+import MySportsFeed from "@/components/MySportsFeed ";
+import LiveScores from "@/components/LiveScores ";
+import ProfileScores from "@/components/ProfileScores ";
+import ProfileWhereToWatch from "@/components/ProfileWhereToWatch ";
 
 
 type ProfileData = {
@@ -74,25 +74,25 @@ type SuggestedEvent = {
 
 // --- Zodiac helpers ---
 const ZODIAC_SIGNS = [
-  { name:"Capricorn", symbol:"♑", element:"earth", dates: [{ m: 12, d: 22 }, { m: 1, d: 19 }] },
-  { name:"Aquarius", symbol:"♒", element:"air", dates: [{ m: 1, d: 20 }, { m: 2, d: 18 }] },
-  { name:"Pisces", symbol:"♓", element:"water", dates: [{ m: 2, d: 19 }, { m: 3, d: 20 }] },
-  { name:"Aries", symbol:"♈", element:"fire", dates: [{ m: 3, d: 21 }, { m: 4, d: 19 }] },
-  { name:"Taurus", symbol:"♉", element:"earth", dates: [{ m: 4, d: 20 }, { m: 5, d: 20 }] },
-  { name:"Gemini", symbol:"♊", element:"air", dates: [{ m: 5, d: 21 }, { m: 6, d: 20 }] },
-  { name:"Cancer", symbol:"♋", element:"water", dates: [{ m: 6, d: 21 }, { m: 7, d: 22 }] },
-  { name:"Leo", symbol:"♌", element:"fire", dates: [{ m: 7, d: 23 }, { m: 8, d: 22 }] },
-  { name:"Virgo", symbol:"♍", element:"earth", dates: [{ m: 8, d: 23 }, { m: 9, d: 22 }] },
-  { name:"Libra", symbol:"♎", element:"air", dates: [{ m: 9, d: 23 }, { m: 10, d: 22 }] },
-  { name:"Scorpio", symbol:"♏", element:"water", dates: [{ m: 10, d: 23 }, { m: 11, d: 21 }] },
-  { name:"Sagittarius", symbol:"♐", element:"fire", dates: [{ m: 11, d: 22 }, { m: 12, d: 21 }] },
+  { name:"Capricorn ", symbol:"♑", element:"earth ", dates: [{ m: 12, d: 22 }, { m: 1, d: 19 }] },
+  { name:"Aquarius ", symbol:"♒", element:"air ", dates: [{ m: 1, d: 20 }, { m: 2, d: 18 }] },
+  { name:"Pisces ", symbol:"♓", element:"water ", dates: [{ m: 2, d: 19 }, { m: 3, d: 20 }] },
+  { name:"Aries ", symbol:"♈", element:"fire ", dates: [{ m: 3, d: 21 }, { m: 4, d: 19 }] },
+  { name:"Taurus ", symbol:"♉", element:"earth ", dates: [{ m: 4, d: 20 }, { m: 5, d: 20 }] },
+  { name:"Gemini ", symbol:"♊", element:"air ", dates: [{ m: 5, d: 21 }, { m: 6, d: 20 }] },
+  { name:"Cancer ", symbol:"♋", element:"water ", dates: [{ m: 6, d: 21 }, { m: 7, d: 22 }] },
+  { name:"Leo ", symbol:"♌", element:"fire ", dates: [{ m: 7, d: 23 }, { m: 8, d: 22 }] },
+  { name:"Virgo ", symbol:"♍", element:"earth ", dates: [{ m: 8, d: 23 }, { m: 9, d: 22 }] },
+  { name:"Libra ", symbol:"♎", element:"air ", dates: [{ m: 9, d: 23 }, { m: 10, d: 22 }] },
+  { name:"Scorpio ", symbol:"♏", element:"water ", dates: [{ m: 10, d: 23 }, { m: 11, d: 21 }] },
+  { name:"Sagittarius ", symbol:"♐", element:"fire ", dates: [{ m: 11, d: 22 }, { m: 12, d: 21 }] },
 ];
 
 const ELEMENT_GRADIENTS: Record<string, string> = {
-  fire:"from-primary/20 via-primary/10 to-transparent",
-  earth:"from-accent/20 via-accent/10 to-transparent",
-  air:"from-accent/15 via-primary/10 to-transparent",
-  water:"from-accent/20 via-accent/10 to-transparent",
+  fire:"from-primary/20 via-primary/10 to-transparent ",
+  earth:"from-accent/20 via-accent/10 to-transparent ",
+  air:"from-accent/15 via-primary/10 to-transparent ",
+  water:"from-accent/20 via-accent/10 to-transparent ",
 };
 
 const HOROSCOPE_MESSAGES: Record<string, string> = {
@@ -117,7 +117,7 @@ function getZodiacSign(birthday: string | null) {
   const day = date.getDate();
   for (const sign of ZODIAC_SIGNS) {
     const [start, end] = sign.dates;
-    if (sign.name ==="Capricorn") {
+    if (sign.name ==="Capricorn ") {
       if ((month === 12 && day >= 22) || (month === 1 && day <= 19)) return sign;
     } else if ((month === start.m && day >= start.d) || (month === end.m && day <= end.d)) {
       return sign;
@@ -128,9 +128,9 @@ function getZodiacSign(birthday: string | null) {
 
 function getGreeting(): string {
   const hour = new Date().getHours();
-  if (hour < 12) return"Good morning";
-  if (hour < 17) return"Good afternoon";
-  return"Good evening";
+  if (hour < 12) return "Good morning ";
+  if (hour < 17) return "Good afternoon ";
+  return "Good evening ";
 }
 
 function getTimeAgo(dateStr: string): string {
@@ -159,14 +159,14 @@ const ProfileFollowCounts = ({ userId, onClickFollowers, onClickFollowing }: { u
   const fmt = (n: number) => (n >= 1000 ? `${(n / 1000).toFixed(1)}k` : `${n}`);
   return (
     <div className="flex items-end gap-6">
-      <button onClick={onClickFollowers} className="text-left group">
+      <button onClick={onClickFollowers} className="text-left group ">
         <p
-          className="leading-none"
+          className="leading-none "
           style={{
-            fontFamily:"'Space Mono', monospace",
+            fontFamily:"'Space Mono', monospace ",
             fontWeight: 700,
             fontSize: 22,
-            color:"#FAF5E9",
+            color:"#FAF5E9 ",
           }}
         >
           {fmt(followerCount)}
@@ -174,21 +174,21 @@ const ProfileFollowCounts = ({ userId, onClickFollowers, onClickFollowing }: { u
         <p
           className="mt-1 text-[11px]"
           style={{
-            fontFamily:"'Space Mono', monospace",
+            fontFamily:"'Space Mono', monospace ",
             color:"rgba(250,245,233,0.55)",
           }}
         >
           Followers
         </p>
       </button>
-      <button onClick={onClickFollowing} className="text-left group">
+      <button onClick={onClickFollowing} className="text-left group ">
         <p
-          className="leading-none"
+          className="leading-none "
           style={{
-            fontFamily:"'Space Mono', monospace",
+            fontFamily:"'Space Mono', monospace ",
             fontWeight: 700,
             fontSize: 22,
-            color:"#FAF5E9",
+            color:"#FAF5E9 ",
           }}
         >
           {fmt(followingCount)}
@@ -196,7 +196,7 @@ const ProfileFollowCounts = ({ userId, onClickFollowers, onClickFollowing }: { u
         <p
           className="mt-1 text-[11px]"
           style={{
-            fontFamily:"'Space Mono', monospace",
+            fontFamily:"'Space Mono', monospace ",
             color:"rgba(250,245,233,0.55)",
           }}
         >
@@ -213,7 +213,7 @@ const Profile = () => {
   const [watchOpen, setWatchOpen] = useState(false);
   const [eventsOpen, setEventsOpen] = useState(true);
   const [recEventsOpen, setRecEventsOpen] = useState(false);
-  const [feedFilter, setFeedFilter] = useState<string>("All");
+  const [feedFilter, setFeedFilter] = useState<string>("All ");
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [rsvpEvents, setRsvpEvents] = useState<RSVPEvent[]>([]);
   const [suggestedEvents, setSuggestedEvents] = useState<SuggestedEvent[]>([]);
@@ -236,7 +236,7 @@ const Profile = () => {
 
   const confirmLogout = async () => {
     await supabase.auth.signOut();
-    toast({ title:"Signed out", description:"You have been logged out successfully." });
+    toast({ title:"Signed out ", description:"You have been logged out successfully." });
     goTo("/");
   };
 
@@ -246,28 +246,28 @@ const Profile = () => {
     const fetchProfile = async () => {
       try {
         if (authLoading) return;
-        if (!user || cancelled) { if (!cancelled) goTo("/auth"); return; }
+        if (!user || cancelled) { if (!cancelled) goTo("/auth "); return; }
 
         const [profileResult, rsvpResult, suggestedResult] = await Promise.all([
-          supabase.from("profiles").select("*").eq("id", user.id).maybeSingle(),
-          supabase.from("event_rsvps").select(`id, status, event:events (id, title, event_date, event_time, venue_name, city, image_url)`).eq("user_id", user.id).order("created_at", { ascending: false }),
-          supabase.from("events").select("id, title, event_date, event_time, venue_name, city, image_url").gte("event_date", new Date().toISOString().split("T")[0]).eq("status","published").order("event_date", { ascending: true }).limit(4),
+          supabase.from("profiles ").select("*").eq("id ", user.id).maybeSingle(),
+          supabase.from("event_rsvps ").select(`id, status, event:events (id, title, event_date, event_time, venue_name, city, image_url)`).eq("user_id ", user.id).order("created_at ", { ascending: false }),
+          supabase.from("events ").select("id, title, event_date, event_time, venue_name, city, image_url ").gte("event_date ", new Date().toISOString().split("T ")[0]).eq("status ","published ").order("event_date ", { ascending: true }).limit(4),
         ]);
 
         if (cancelled) return;
 
-        if (profileResult.error || !profileResult.data) { goTo("/onboarding"); return; }
+        if (profileResult.error || !profileResult.data) { goTo("/onboarding "); return; }
 
         setProfile(profileResult.data);
         // Fetch birthday from sensitive table
-        const { data: sensitive } = await supabase.from("profiles_sensitive" as any).select("birthday").eq("id", user.id).maybeSingle();
+        const { data: sensitive } = await supabase.from("profiles_sensitive " as any).select("birthday ").eq("id ", user.id).maybeSingle();
         if (sensitive) setBirthday((sensitive as any).birthday);
         if (rsvpResult.data) {
           setRsvpEvents(rsvpResult.data.filter(r => r.event !== null) as RSVPEvent[]);
         }
         if (suggestedResult.data) setSuggestedEvents(suggestedResult.data);
       } catch (err) {
-        if (!cancelled) goTo("/onboarding");
+        if (!cancelled) goTo("/onboarding ");
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -282,8 +282,8 @@ const Profile = () => {
     const zodiacSign = getZodiacSign(birthday);
     if (!zodiacSign) return;
     setHoroscopeLoading(true);
-    supabase.functions.invoke("horoscope", {
-      body: { sign: zodiacSign.name.toLowerCase(), period:"daily" },
+    supabase.functions.invoke("horoscope ", {
+      body: { sign: zodiacSign.name.toLowerCase(), period:"daily " },
     }).then(({ data: resp }) => {
       const reading = resp?.data?.horoscope || resp?.horoscope || resp?.reading;
       if (reading) setLiveHoroscope(reading);
@@ -301,15 +301,15 @@ const Profile = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-background ">
         <BottomNav />
         <main className="pb-20 md:pb-8">
-          <div className="max-w-4xl mx-auto px-4 py-8 space-y-6 animate-pulse">
+          <div className="max-w-4xl mx-auto px-4 py-8 space-y-6 animate-pulse ">
             <div className="flex items-start gap-4">
-              <div className="w-24 h-24 rounded-full bg-muted" />
+              <div className="w-24 h-24 rounded-full bg-muted " />
               <div className="flex-1 space-y-3">
-                <div className="h-6 w-40 bg-muted rounded" />
-                <div className="h-4 w-24 bg-muted rounded" />
+                <div className="h-6 w-40 bg-muted rounded " />
+                <div className="h-4 w-24 bg-muted rounded " />
               </div>
             </div>
           </div>
@@ -320,54 +320,54 @@ const Profile = () => {
 
   if (!profile) return null;
 
-  const initials = profile.name.split("").map(n => n[0]).join("").toUpperCase();
-  const locationText = profile.city ||"Location not set";
+  const initials = profile.name.split(" ").map(n => n[0]).join("").toUpperCase();
+  const locationText = profile.city || "Location not set ";
   const zodiac = getZodiacSign(birthday);
   const greeting = getGreeting();
-  const userName = profile.name?.split("")[0] ||"there";
-  const formattedDate = currentTime.toLocaleDateString("en-US", { weekday:"long", month:"long", day:"numeric", year:"numeric" });
-  const formattedTime = currentTime.toLocaleTimeString("en-US", { hour:"numeric", minute:"2-digit" });
+  const userName = profile.name?.split(" ")[0] || "there ";
+  const formattedDate = currentTime.toLocaleDateString("en-US ", { weekday:"long ", month:"long ", day:"numeric ", year:"numeric " });
+  const formattedTime = currentTime.toLocaleTimeString("en-US ", { hour:"numeric ", minute:"2-digit " });
 
-  const handle = `@${(profile.name?.split("")[0] ||"member").toLowerCase().replace(/[^a-z0-9]/g,"")}`;
-  const eventsAttended = rsvpEvents.filter(r => r.status ==="going" || r.status ==="attended").length;
-  const FEED_FILTERS = ["All","NBA","WNBA","NWSL","NFL","MLB","Soccer"];
+  const handle = `@${(profile.name?.split(" ")[0] || "member ").toLowerCase().replace(/[^a-z0-9]/g,"")}`;
+  const eventsAttended = rsvpEvents.filter(r => r.status ==="going " || r.status ==="attended ").length;
+  const FEED_FILTERS = ["All ","NBA ","WNBA ","NWSL ","NFL ","MLB ","Soccer "];
 
   // Homepage palette (matches src/pages/Index.tsx)
-  const BG ="#0a0a0a";
-  const TEXT ="#FAF5E9";
-  const PINK ="#F04E23";        // Vermilion (homepage primary)
+  const BG ="#0a0a0a ";
+  const TEXT ="#FAF5E9 ";
+  const PINK ="#F04E23 ";        // Vermilion (homepage primary)
   const PANEL ="#161616";       // Homepage surface
   const PANEL_BORDER ="1px solid rgba(250, 245, 233, 0.08)";
 
   return (
-    <div className="min-h-screen" style={{ background: BG, fontFamily:"'Inter', system-ui, sans-serif" }}>
+    <div className="min-h-screen " style={{ background: BG, fontFamily:"'Inter', system-ui, sans-serif " }}>
       <Seo
-        title="Your Profile | Loverball"
+        title="Your Profile | Loverball "
         description="Your Loverball member profile — favorite teams, personalized news, daily horoscope, and live scores."
-        path="/profile"
+        path="/profile "
       />
       <BottomNav />
 
       <main
         className="pb-20 md:pb-10 transition-[margin] duration-200"
-        style={{ background: BG, color: TEXT, fontFamily:"'Inter', system-ui, sans-serif" }}
+        style={{ background: BG, color: TEXT, fontFamily:"'Inter', system-ui, sans-serif " }}
       >
         <div className="max-w-[1400px] mx-auto px-4 md:px-8 pt-2">
 
           {/* ───── PAGE MASTHEAD ───── */}
           <motion.div
             variants={staggerItem}
-            initial="hidden"
-            animate="show"
+            initial="hidden "
+            animate="show "
             className="pb-6 flex items-end justify-between gap-4"
           >
             <h1
-              className="leading-[0.85] tracking-tight"
+              className="leading-[0.85] tracking-tight "
               style={{
-                fontFamily:"'Playfair Display', Georgia, serif",
+                fontFamily:"'Playfair Display', Georgia, serif ",
                 fontWeight: 800,
                 fontSize:"clamp(48px, 8vw, 88px)",
-                color:"#FAF5E9",
+                color:"#FAF5E9 ",
               }}
             >
               Profile<span style={{ color: PINK }}>.</span>
@@ -375,8 +375,8 @@ const Profile = () => {
             <p
               className="hidden md:block text-[10px] uppercase mb-3"
               style={{
-                fontFamily:"'Space Mono', monospace",
-                letterSpacing:"0.24em",
+                fontFamily:"'Space Mono', monospace ",
+                letterSpacing:"0.24em ",
                 color:"rgba(250,245,233,0.45)",
               }}
             >
@@ -387,35 +387,35 @@ const Profile = () => {
           {/* ───── 2-COLUMN GRID (40 / 60 @ lg+) ───── */}
           <motion.div
             variants={staggerContainer}
-            initial="hidden"
-            animate="show"
-            className="grid grid-cols-1 lg:grid-cols-[2fr_3fr] gap-6 lg:gap-8 items-start"
+            initial="hidden "
+            animate="show "
+            className="grid grid-cols-1 lg:grid-cols-[2fr_3fr] gap-6 lg:gap-8 items-start "
           >
 
             {/* ═══════════ LEFT COLUMN — IDENTITY ═══════════ */}
             <motion.aside variants={staggerItem} className="lg:sticky lg:top-6">
               <div
-                className="relative rounded-3xl overflow-hidden"
+                className="relative rounded-3xl overflow-hidden "
                 style={{ background: PANEL, border: PANEL_BORDER }}
               >
                 {/* Hero photo */}
                 <div
-                  className="relative w-full"
-                  style={{ height:"min(320px, 40vh)", background:"#0F0F10" }}
+                  className="relative w-full "
+                  style={{ height:"min(320px, 40vh)", background:"#0F0F10 " }}
                 >
                   {profile.profile_photo_url ? (
                     <img
                       src={profile.profile_photo_url}
                       alt={profile.name}
-                      className="w-full h-full object-contain"
-                      style={{ filter:"saturate(0.95) contrast(1.04)", background:"#0F0F10" }}
+                      className="w-full h-full object-contain "
+                      style={{ filter:"saturate(0.95) contrast(1.04)", background:"#0F0F10 " }}
                     />
                   ) : (
                     <div
-                      className="w-full h-full flex items-center justify-center"
+                      className="w-full h-full flex items-center justify-center "
                       style={{
                         background:"linear-gradient(140deg, rgba(233,30,99,0.18), rgba(216,140,90,0.10))",
-                        fontFamily:"'Playfair Display', serif",
+                        fontFamily:"'Playfair Display', serif ",
                         fontSize: 140,
                         fontWeight: 800,
                         color:"rgba(250,245,233,0.45)",
@@ -427,7 +427,7 @@ const Profile = () => {
 
                   {/* Tier badge — top right */}
                   <div className="absolute top-4 right-4">
-                    <MemberBadge tier={profile.membership_tier} size="md" />
+                    <MemberBadge tier={profile.membership_tier} size="md " />
                   </div>
 
                   {/* Glassmorphism overlay */}
@@ -441,12 +441,12 @@ const Profile = () => {
                     }}
                   >
                     <h2
-                      className="leading-[0.95] tracking-tight"
+                      className="leading-[0.95] tracking-tight "
                       style={{
-                        fontFamily:"'Playfair Display', Georgia, serif",
+                        fontFamily:"'Playfair Display', Georgia, serif ",
                         fontWeight: 700,
                         fontSize:"clamp(26px, 3vw, 34px)",
-                        color:"#FFFFFF",
+                        color:"#FFFFFF ",
                       }}
                     >
                       {profile.name}
@@ -454,7 +454,7 @@ const Profile = () => {
                     <p
                       className="mt-1 flex items-center gap-2 flex-wrap text-[12px]"
                       style={{
-                        fontFamily:"'Space Mono', monospace",
+                        fontFamily:"'Space Mono', monospace ",
                         color:"rgba(250,245,233,0.75)",
                       }}
                     >
@@ -480,13 +480,13 @@ const Profile = () => {
                   {/* Bio */}
                   {profile.bio && (
                     <p
-                      className="mt-4 text-[13px] leading-relaxed"
+                      className="mt-4 text-[13px] leading-relaxed "
                       style={{
-                        fontFamily:"'Space Mono', monospace",
+                        fontFamily:"'Space Mono', monospace ",
                         color:"rgba(250,245,233,0.72)",
                       }}
                     >
-                      <span style={{ color:"#FAF5E9", fontWeight: 700 }}>VIBE:</span>{""}
+                      <span style={{ color:"#FAF5E9 ", fontWeight: 700 }}>VIBE:</span>{""}
                       {profile.bio}
                     </p>
                   )}
@@ -494,39 +494,39 @@ const Profile = () => {
                   {/* Action buttons */}
                   <div className="mt-5 flex items-center gap-2">
                     <Button
-                      onClick={() => goTo("/profile/edit")}
-                      className="flex-1 rounded-xl h-11 text-[11px] font-bold tracking-[0.16em] uppercase"
+                      onClick={() => goTo("/profile/edit ")}
+                      className="flex-1 rounded-xl h-11 text-[11px] font-bold tracking-[0.16em] uppercase "
                       style={{
                         background: PINK,
-                        color:"#0a0a0a",
-                        fontFamily:"Inter, sans-serif",
+                        color:"#0a0a0a ",
+                        fontFamily:"Inter, sans-serif ",
                         boxShadow:"0 10px 28px -12px rgba(233,30,99,0.65)",
                       }}
                     >
                       Edit Profile
                     </Button>
                     <Button
-                      variant="outline"
-                      onClick={() => goTo("/dms")}
-                      aria-label="Messages"
+                      variant="outline "
+                      onClick={() => goTo("/dms ")}
+                      aria-label="Messages "
                       className="w-11 h-11 p-0 rounded-xl shrink-0"
                       style={{
-                        background:"transparent",
+                        background:"transparent ",
                         border:"1px solid rgba(255,255,255,0.12)",
-                        color:"#FAF5E9",
+                        color:"#FAF5E9 ",
                       }}
                     >
                       <MessageCircle className="w-4 h-4" />
                     </Button>
                     <Button
-                      variant="outline"
-                      onClick={() => goTo("/settings")}
-                      aria-label="Settings"
+                      variant="outline "
+                      onClick={() => goTo("/settings ")}
+                      aria-label="Settings "
                       className="w-11 h-11 p-0 rounded-xl shrink-0"
                       style={{
-                        background:"transparent",
+                        background:"transparent ",
                         border:"1px solid rgba(255,255,255,0.12)",
-                        color:"#FAF5E9",
+                        color:"#FAF5E9 ",
                       }}
                     >
                       <Settings className="w-4 h-4" />
@@ -538,8 +538,8 @@ const Profile = () => {
                     onClick={handleLogout}
                     className="w-full mt-3 h-9 rounded-xl text-[10px] uppercase inline-flex items-center justify-center gap-1.5 transition-colors hover:bg-white/[0.04]"
                     style={{
-                      fontFamily:"'Space Mono', monospace",
-                      letterSpacing:"0.18em",
+                      fontFamily:"'Space Mono', monospace ",
+                      letterSpacing:"0.18em ",
                       color:"rgba(250,245,233,0.45)",
                     }}
                   >
@@ -557,11 +557,11 @@ const Profile = () => {
                 <div className="mb-3 flex items-end justify-between gap-3">
                   <div className="min-w-0">
                     <p
-                      className="text-[10px] uppercase"
+                      className="text-[10px] uppercase "
                       style={{
-                        fontFamily:"'Space Mono', monospace",
-                        letterSpacing:"0.26em",
-                        color:"#D88C5A",
+                        fontFamily:"'Space Mono', monospace ",
+                        letterSpacing:"0.26em ",
+                        color:"#D88C5A ",
                       }}
                     >
                       Your activity
@@ -569,16 +569,16 @@ const Profile = () => {
                     <h2
                       className="leading-[0.95] mt-1.5"
                       style={{
-                        fontFamily:"'Playfair Display', Georgia, serif",
+                        fontFamily:"'Playfair Display', Georgia, serif ",
                         fontWeight: 700,
                         fontSize:"clamp(28px, 3.4vw, 38px)",
-                        color:"#FAF5E9",
+                        color:"#FAF5E9 ",
                       }}
                     >
-                      What's <span style={{ fontStyle:"italic", color: PINK }}>new</span>.
+                      What's <span style={{ fontStyle:"italic ", color: PINK }}>new</span>.
                     </h2>
                     <p className="mt-1.5 text-[12.5px]" style={{ color:"rgba(250,245,233,0.55)" }}>
-                      {greeting}, <span style={{ color:"#FAF5E9", fontWeight: 500 }}>{userName}</span>. Here's what you missed.
+                      {greeting}, <span style={{ color:"#FAF5E9 ", fontWeight: 500 }}>{userName}</span>. Here's what you missed.
                     </p>
                   </div>
                 </div>
@@ -587,33 +587,33 @@ const Profile = () => {
 
               {/* ═══════════ 2. MY EVENTS ═══════════ */}
               <motion.div variants={staggerItem}>
-                <div className="rounded-2xl overflow-hidden" style={{ background: PANEL, border: PANEL_BORDER }}>
+                <div className="rounded-2xl overflow-hidden " style={{ background: PANEL, border: PANEL_BORDER }}>
                   <button
-                    type="button"
+                    type="button "
                     onClick={() => setEventsOpen(o => !o)}
                     aria-expanded={eventsOpen}
-                    className="w-full p-5 pb-3 flex items-center justify-between"
+                    className="w-full p-5 pb-3 flex items-center justify-between "
                   >
                     <span className="text-[13px] uppercase flex items-center gap-2.5"
-                      style={{ fontFamily:"'Space Mono', monospace", letterSpacing:"0.2em", color:"#FAF5E9", fontWeight: 500 }}>
+                      style={{ fontFamily:"'Space Mono', monospace ", letterSpacing:"0.2em ", color:"#FAF5E9 ", fontWeight: 500 }}>
                       <Ticket className="w-3.5 h-3.5" style={{ color: PINK }} strokeWidth={2.5} /> My Events
                       {rsvpEvents.length > 0 && (
-                        <span className="text-[10px] px-1.5 py-0.5 rounded-full" style={{ background:"rgba(233,30,99,0.15)", color: PINK, letterSpacing:"0.08em" }}>
+                        <span className="text-[10px] px-1.5 py-0.5 rounded-full " style={{ background:"rgba(233,30,99,0.15)", color: PINK, letterSpacing:"0.08em " }}>
                           {rsvpEvents.length}
                         </span>
                       )}
                     </span>
                     <div className="flex items-center gap-3">
                       <span
-                        onClick={(e) => { e.stopPropagation(); goTo("/events"); }}
-                        role="link"
-                        className="text-[11px] uppercase cursor-pointer"
-                        style={{ fontFamily:"'Space Mono', monospace", letterSpacing:"0.18em", color: PINK }}
+                        onClick={(e) => { e.stopPropagation(); goTo("/events "); }}
+                        role="link "
+                        className="text-[11px] uppercase cursor-pointer "
+                        style={{ fontFamily:"'Space Mono', monospace ", letterSpacing:"0.18em ", color: PINK }}
                       >
                         Browse all →
                       </span>
                       <ChevronDown
-                        className="w-4 h-4 transition-transform"
+                        className="w-4 h-4 transition-transform "
                         style={{ color: PINK, transform: eventsOpen ?"rotate(0deg)" :"rotate(-90deg)" }}
                       />
                     </div>
@@ -621,49 +621,49 @@ const Profile = () => {
                   {eventsOpen && (
                   <div className="px-5 pb-5">
                     {rsvpEvents.length === 0 ? (
-                      <div className="py-10 px-4 text-center rounded-xl"
+                      <div className="py-10 px-4 text-center rounded-xl "
                         style={{ background:"linear-gradient(135deg, rgba(233,30,99,0.08), rgba(216,140,90,0.04))", border:"1px dashed rgba(233,30,99,0.22)" }}>
                         <div className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3"
                           style={{ background:"rgba(233,30,99,0.15)" }}>
                           <Calendar className="w-5 h-5" style={{ color: PINK }} />
                         </div>
-                        <p className="text-[14px] mb-1" style={{ color:"#FAF5E9", fontFamily:"'Playfair Display', serif", fontStyle:"italic" }}>
+                        <p className="text-[14px] mb-1" style={{ color:"#FAF5E9 ", fontFamily:"'Playfair Display', serif ", fontStyle:"italic " }}>
                           No events on your calendar yet.
                         </p>
                         <p className="text-[12px] mb-4" style={{ color:"rgba(250,245,233,0.55)" }}>
                           Watch parties, tailgates, and meetups happen weekly. Find one near you.
                         </p>
-                        <button onClick={() => goTo("/events")}
-                          className="text-[11px] uppercase font-bold tracking-[0.16em] px-4 py-2 rounded-full"
-                          style={{ background: PINK, color:"#0a0a0a", fontFamily:"Inter, sans-serif" }}>
+                        <button onClick={() => goTo("/events ")}
+                          className="text-[11px] uppercase font-bold tracking-[0.16em] px-4 py-2 rounded-full "
+                          style={{ background: PINK, color:"#0a0a0a ", fontFamily:"Inter, sans-serif " }}>
                           Explore events
                         </button>
                       </div>
                     ) : (
-                      <ul className="divide-y" style={{ borderColor:"rgba(255,255,255,0.06)" }}>
+                      <ul className="divide-y " style={{ borderColor:"rgba(255,255,255,0.06)" }}>
                         {rsvpEvents.slice(0, 5).map(r => r.event && (
                           <li key={r.id}>
                             <button
                               onClick={() => goTo(`/event/${r.event!.id}`)}
                               className="w-full flex items-center gap-3 py-2.5 text-left transition-colors hover:bg-white/[0.03] rounded-lg px-2 -mx-2"
                             >
-                              <div className="shrink-0 w-10 h-10 rounded-lg flex flex-col items-center justify-center"
+                              <div className="shrink-0 w-10 h-10 rounded-lg flex flex-col items-center justify-center "
                                 style={{ background:"rgba(233,30,99,0.10)", border:"1px solid rgba(233,30,99,0.20)" }}>
-                                <span className="text-[8px] uppercase leading-none" style={{ fontFamily:"'Space Mono', monospace", color: PINK, letterSpacing:"0.1em" }}>
-                                  {format(new Date(r.event.event_date),"MMM")}
+                                <span className="text-[8px] uppercase leading-none " style={{ fontFamily:"'Space Mono', monospace ", color: PINK, letterSpacing:"0.1em " }}>
+                                  {format(new Date(r.event.event_date),"MMM ")}
                                 </span>
-                                <span className="text-[14px] font-bold leading-none mt-0.5" style={{ color:"#FAF5E9", fontFamily:"'Playfair Display', serif" }}>
-                                  {format(new Date(r.event.event_date),"d")}
+                                <span className="text-[14px] font-bold leading-none mt-0.5" style={{ color:"#FAF5E9 ", fontFamily:"'Playfair Display', serif " }}>
+                                  {format(new Date(r.event.event_date),"d ")}
                                 </span>
                               </div>
                               <div className="flex-1 min-w-0">
-                                <p className="text-[13px] font-medium truncate" style={{ color:"#FAF5E9" }}>{r.event.title}</p>
-                                <p className="text-[11px] truncate" style={{ color:"rgba(250,245,233,0.55)" }}>
-                                  {r.event.venue_name || r.event.city ||"Location TBD"}
+                                <p className="text-[13px] font-medium truncate " style={{ color:"#FAF5E9 " }}>{r.event.title}</p>
+                                <p className="text-[11px] truncate " style={{ color:"rgba(250,245,233,0.55)" }}>
+                                  {r.event.venue_name || r.event.city || "Location TBD "}
                                 </p>
                               </div>
                               <span className="text-[9px] uppercase px-2 py-0.5 rounded-full shrink-0"
-                                style={{ background: r.status ==="going" || r.status ==="attended" ?"rgba(240,78,35,0.18)" :"rgba(255,255,255,0.06)", color: r.status ==="going" || r.status ==="attended" ? PINK :"rgba(250,245,233,0.6)", fontFamily:"'Space Mono', monospace", letterSpacing:"0.12em" }}>
+                                style={{ background: r.status ==="going " || r.status ==="attended " ?"rgba(240,78,35,0.18)" :"rgba(255,255,255,0.06)", color: r.status ==="going " || r.status ==="attended " ? PINK :"rgba(250,245,233,0.6)", fontFamily:"'Space Mono', monospace ", letterSpacing:"0.12em " }}>
                                 {r.status}
                               </span>
                               <ChevronRight className="w-3.5 h-3.5 shrink-0" style={{ color:"rgba(250,245,233,0.35)" }} />
@@ -683,29 +683,29 @@ const Profile = () => {
               {/* ═══════════ 5. FAVORITE TEAMS (collapsed by default below social) ═══════════ */}
               <motion.div variants={staggerItem}>
                 <Collapsible open={teamsOpen} onOpenChange={setTeamsOpen}>
-                  <div className="rounded-2xl overflow-hidden" style={{ background: PANEL, border: PANEL_BORDER }}>
+                  <div className="rounded-2xl overflow-hidden " style={{ background: PANEL, border: PANEL_BORDER }}>
                     <CollapsibleTrigger asChild>
-                      <button className="w-full p-5 pb-3 flex items-center justify-between cursor-pointer hover:bg-white/[0.03] transition-colors">
+                      <button className="w-full p-5 pb-3 flex items-center justify-between cursor-pointer hover:bg-white/[0.03] transition-colors ">
                         <span className="text-[13px] uppercase flex items-center gap-2.5"
-                          style={{ fontFamily:"'Space Mono', monospace", letterSpacing:"0.2em", color:"#FAF5E9", fontWeight: 500 }}>
+                          style={{ fontFamily:"'Space Mono', monospace ", letterSpacing:"0.2em ", color:"#FAF5E9 ", fontWeight: 500 }}>
                           <Shield className="w-3.5 h-3.5" style={{ color: PINK }} strokeWidth={2.5} /> Favorite Teams
                         </span>
                         <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${teamsOpen ? 'rotate-180' : ''}`} style={{ color:"rgba(250,245,233,0.5)" }} />
                       </button>
                     </CollapsibleTrigger>
                     <CollapsibleContent>
-                      <div className="divide-y" style={{ borderColor:"rgba(255,255,255,0.05)" }}>
+                      <div className="divide-y " style={{ borderColor:"rgba(255,255,255,0.05)" }}>
                         {TEAM_PERFORMANCE.map(team => (
                           <div
                             key={team.name}
-                            className="flex items-center gap-3 px-5 py-4 hover:bg-white/[0.03] transition-colors cursor-pointer group"
+                            className="flex items-center gap-3 px-5 py-4 hover:bg-white/[0.03] transition-colors cursor-pointer group "
                             onClick={() => goTo(`/team/${team.slug}`)}
                           >
                             <img src={team.logo} alt={team.name} className="w-10 h-10 object-contain rounded-lg p-0.5" style={{ background:"rgba(255,255,255,0.04)" }} onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} />
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-2">
-                                <span className="text-sm font-medium text-foreground group-hover:opacity-90 transition-colors" style={{ color:"#FAF5E9" }}>{team.name}</span>
-                                <Badge variant="outline" className="text-[9px] px-1.5 py-0 rounded-full" style={{ borderColor:"rgba(255,255,255,0.12)", color:"rgba(250,245,233,0.65)" }}>{team.league}</Badge>
+                                <span className="text-sm font-medium text-foreground group-hover:opacity-90 transition-colors " style={{ color:"#FAF5E9 " }}>{team.name}</span>
+                                <Badge variant="outline " className="text-[9px] px-1.5 py-0 rounded-full " style={{ borderColor:"rgba(255,255,255,0.12)", color:"rgba(250,245,233,0.65)" }}>{team.league}</Badge>
                                 {team.injuryNote && (
                                   <span title={team.injuryNote}>
                                     <AlertTriangle className="w-3.5 h-3.5 text-amber-500" />
@@ -715,10 +715,10 @@ const Profile = () => {
                               <p className="text-xs mt-0.5" style={{ color:"rgba(250,245,233,0.5)" }}>{team.nextGame}</p>
                             </div>
                             <div className="flex flex-col items-end gap-2">
-                              <p className="text-sm font-bold" style={{ color: team.winPct > 0.5 ?"#7DD3A4" : (team.winPct > 0 && team.winPct < 0.5 ?"#F87171" :"#FAF5E9") }}>{team.record}</p>
+                              <p className="text-sm font-bold " style={{ color: team.winPct > 0.5 ?"#7DD3A4 " : (team.winPct > 0 && team.winPct < 0.5 ?"#F87171 " :"#FAF5E9 ") }}>{team.record}</p>
                               {team.last5.length > 0 && (
                                 <div className="flex gap-0.5">
-                                  {team.last5.map((win, i) => <div key={i} className="w-1.5 h-1.5 rounded-full" style={{ background: win ?"#7DD3A4" :"rgba(248,113,113,0.6)" }} />)}
+                                  {team.last5.map((win, i) => <div key={i} className="w-1.5 h-1.5 rounded-full " style={{ background: win ?"#7DD3A4 " :"rgba(248,113,113,0.6)" }} />)}
                                 </div>
                               )}
                             </div>
@@ -733,11 +733,11 @@ const Profile = () => {
               {/* ═══════════ 6. LIVE & RECENT SCORES ═══════════ */}
               <motion.div variants={staggerItem}>
                 <Collapsible open={scoresOpen} onOpenChange={setScoresOpen}>
-                  <div className="rounded-2xl overflow-hidden" style={{ background: PANEL, border: PANEL_BORDER }}>
+                  <div className="rounded-2xl overflow-hidden " style={{ background: PANEL, border: PANEL_BORDER }}>
                     <CollapsibleTrigger asChild>
-                      <button className="w-full p-5 pb-3 flex items-center justify-between cursor-pointer hover:bg-white/[0.03] transition-colors">
+                      <button className="w-full p-5 pb-3 flex items-center justify-between cursor-pointer hover:bg-white/[0.03] transition-colors ">
                         <span className="text-[13px] uppercase flex items-center gap-2.5"
-                          style={{ fontFamily:"'Space Mono', monospace", letterSpacing:"0.2em", color:"#FAF5E9", fontWeight: 500 }}>
+                          style={{ fontFamily:"'Space Mono', monospace ", letterSpacing:"0.2em ", color:"#FAF5E9 ", fontWeight: 500 }}>
                           <Radio className="w-3.5 h-3.5" style={{ color: PINK }} /> Live &amp; Recent Scores
                         </span>
                         <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${scoresOpen ? 'rotate-180' : ''}`} style={{ color:"rgba(250,245,233,0.5)" }} />
@@ -755,11 +755,11 @@ const Profile = () => {
               {/* ═══════════ 7. WHERE TO WATCH (collapsed) ═══════════ */}
               <motion.div variants={staggerItem}>
                 <Collapsible open={watchOpen} onOpenChange={setWatchOpen}>
-                  <div className="rounded-2xl overflow-hidden" style={{ background: PANEL, border: PANEL_BORDER }}>
+                  <div className="rounded-2xl overflow-hidden " style={{ background: PANEL, border: PANEL_BORDER }}>
                     <CollapsibleTrigger asChild>
-                      <button className="w-full p-5 pb-3 flex items-center justify-between cursor-pointer hover:bg-white/[0.03] transition-colors">
+                      <button className="w-full p-5 pb-3 flex items-center justify-between cursor-pointer hover:bg-white/[0.03] transition-colors ">
                         <span className="text-[13px] uppercase flex items-center gap-2.5"
-                          style={{ fontFamily:"'Space Mono', monospace", letterSpacing:"0.2em", color:"#FAF5E9", fontWeight: 500 }}>
+                          style={{ fontFamily:"'Space Mono', monospace ", letterSpacing:"0.2em ", color:"#FAF5E9 ", fontWeight: 500 }}>
                           <Tv className="w-3.5 h-3.5" style={{ color: PINK }} /> Where to Watch
                         </span>
                         <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${watchOpen ? 'rotate-180' : ''}`} style={{ color:"rgba(250,245,233,0.5)" }} />
@@ -778,11 +778,11 @@ const Profile = () => {
               {suggestedEvents.length > 0 && (
                 <motion.div variants={staggerItem}>
                   <Collapsible open={recEventsOpen} onOpenChange={setRecEventsOpen}>
-                    <div className="rounded-2xl overflow-hidden" style={{ background: PANEL, border: PANEL_BORDER }}>
+                    <div className="rounded-2xl overflow-hidden " style={{ background: PANEL, border: PANEL_BORDER }}>
                       <CollapsibleTrigger asChild>
-                        <button className="w-full p-5 pb-3 flex items-center justify-between cursor-pointer hover:bg-white/[0.03] transition-colors">
+                        <button className="w-full p-5 pb-3 flex items-center justify-between cursor-pointer hover:bg-white/[0.03] transition-colors ">
                           <span className="text-[13px] uppercase flex items-center gap-2.5"
-                            style={{ fontFamily:"'Space Mono', monospace", letterSpacing:"0.2em", color:"#FAF5E9", fontWeight: 500 }}>
+                            style={{ fontFamily:"'Space Mono', monospace ", letterSpacing:"0.2em ", color:"#FAF5E9 ", fontWeight: 500 }}>
                             <CalendarHeart className="w-3.5 h-3.5" style={{ color: PINK }} strokeWidth={2.5} /> Recommended Events
                           </span>
                           <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${recEventsOpen ? 'rotate-180' : ''}`} style={{ color:"rgba(250,245,233,0.5)" }} />
@@ -798,13 +798,13 @@ const Profile = () => {
                                 {event.image_url ? (
                                   <img src={event.image_url} alt={event.title} className="w-full h-32 object-cover rounded-lg mb-3" />
                                 ) : (
-                                  <div className="w-full h-32 rounded-lg mb-3 flex items-center justify-center"
+                                  <div className="w-full h-32 rounded-lg mb-3 flex items-center justify-center "
                                     style={{ background:"linear-gradient(135deg, rgba(233,30,99,0.18), rgba(216,140,90,0.10))" }}>
                                     <Calendar className="w-8 h-8" style={{ color: PINK }} />
                                   </div>
                                 )}
-                                <p className="font-medium" style={{ color:"#FAF5E9" }}>{event.title}</p>
-                                <p className="text-sm" style={{ color:"rgba(250,245,233,0.55)" }}>{event.venue_name || event.city ||"Location TBD"} • {format(new Date(event.event_date),"MMM d")}</p>
+                                <p className="font-medium " style={{ color:"#FAF5E9 " }}>{event.title}</p>
+                                <p className="text-sm " style={{ color:"rgba(250,245,233,0.55)" }}>{event.venue_name || event.city || "Location TBD "} • {format(new Date(event.event_date),"MMM d ")}</p>
                               </div>
                             ))}
                           </div>
@@ -820,11 +820,11 @@ const Profile = () => {
 
               {/* ═══════════ 10. SPORTS FEED PREVIEW (deprioritized) ═══════════ */}
               <motion.div variants={staggerItem}>
-                <div className="rounded-2xl overflow-hidden" style={{ background: PANEL, border: PANEL_BORDER }}>
-                  <div className="p-5 pb-3 flex items-center justify-between">
+                <div className="rounded-2xl overflow-hidden " style={{ background: PANEL, border: PANEL_BORDER }}>
+                  <div className="p-5 pb-3 flex items-center justify-between ">
                     <div className="min-w-0">
                       <span className="text-[13px] uppercase flex items-center gap-2.5"
-                        style={{ fontFamily:"'Space Mono', monospace", letterSpacing:"0.2em", color:"#FAF5E9", fontWeight: 500 }}>
+                        style={{ fontFamily:"'Space Mono', monospace ", letterSpacing:"0.2em ", color:"#FAF5E9 ", fontWeight: 500 }}>
                         <Radio className="w-3.5 h-3.5" style={{ color: PINK }} /> From your sports
                       </span>
                       <p className="text-[11px] mt-1.5" style={{ color:"rgba(250,245,233,0.5)" }}>
@@ -832,14 +832,14 @@ const Profile = () => {
                       </p>
                     </div>
                     <button
-                      onClick={() => goTo("/explore")}
+                      onClick={() => goTo("/explore ")}
                       className="text-[11px] uppercase shrink-0"
-                      style={{ fontFamily:"'Space Mono', monospace", letterSpacing:"0.18em", color: PINK }}
+                      style={{ fontFamily:"'Space Mono', monospace ", letterSpacing:"0.18em ", color: PINK }}
                     >
                       Full feed →
                     </button>
                   </div>
-                  <div className="px-5 pb-5 pt-2 max-h-[520px] overflow-hidden relative">
+                  <div className="px-5 pb-5 pt-2 max-h-[520px] overflow-hidden relative ">
                     <MySportsFeed
                       userSports={profile.favorite_sports || []}
                       userTeams={[...(profile.favorite_teams_players || []), ...((profile as any).favorite_la_teams || [])]}
@@ -848,11 +848,11 @@ const Profile = () => {
                     <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-24"
                       style={{ background:"linear-gradient(to bottom, transparent, rgba(10,10,11,0.95))" }} />
                   </div>
-                  <div className="px-5 pb-5 -mt-2 relative">
+                  <div className="px-5 pb-5 -mt-2 relative ">
                     <button
-                      onClick={() => goTo("/explore")}
+                      onClick={() => goTo("/explore ")}
                       className="w-full h-10 rounded-xl text-[11px] uppercase font-bold tracking-[0.16em]"
-                      style={{ background:"rgba(255,255,255,0.04)", border:"1px solid rgba(255,255,255,0.08)", color:"#FAF5E9", fontFamily:"Inter, sans-serif" }}
+                      style={{ background:"rgba(255,255,255,0.04)", border:"1px solid rgba(255,255,255,0.08)", color:"#FAF5E9 ", fontFamily:"Inter, sans-serif " }}
                     >
                       View the full sports feed
                     </button>
@@ -886,9 +886,9 @@ const Profile = () => {
           <SheetHeader>
             <SheetTitle>{showFollowersModal === 'followers' ? 'Followers' : 'Following'}</SheetTitle>
           </SheetHeader>
-          <div className="py-8 text-center">
+          <div className="py-8 text-center ">
             <Users className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
-            <p className="text-muted-foreground text-sm">
+            <p className="text-muted-foreground text-sm ">
               {showFollowersModal === 'followers' ? 'No followers yet' : 'Not following anyone yet'}
             </p>
             <p className="text-muted-foreground text-xs mt-1">

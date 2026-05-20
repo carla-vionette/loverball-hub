@@ -1,21 +1,21 @@
-import { useState, useEffect } from"react";
-import { useNavigate } from"react-router-dom";
-import { Seo } from"@/components/Seo";
-import { Tv, Users, MessagesSquare, MapPin, Gift, Sparkles, ArrowRight } from"lucide-react";
-import { C, fonts } from"@/lib/editorialTheme";
-import { H1, H2, H3, Body, Slug, Mono, PrimaryBtn, SecondaryBtn } from"@/components/editorial/primitives";
-import BottomNav from"@/components/BottomNav";
-import { loadDrafts, MOCK_MEMBERS, type Member } from"@/lib/startingXiData";
-import ClubMessagesInbox from"@/components/club/ClubMessagesInbox";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from"@/components/ui/tabs";
+import { useState, useEffect } from "react ";
+import { useNavigate } from "react-router-dom ";
+import { Seo } from "@/components/Seo ";
+import { Tv, Users, MessagesSquare, MapPin, Gift, Sparkles, ArrowRight } from "lucide-react ";
+import { C, fonts } from "@/lib/editorialTheme ";
+import { H1, H2, H3, Body, Slug, Mono, PrimaryBtn, SecondaryBtn } from "@/components/editorial/primitives ";
+import BottomNav from "@/components/BottomNav ";
+import { loadDrafts, MOCK_MEMBERS, type Member } from "@/lib/startingXiData ";
+import ClubMessagesInbox from "@/components/club/ClubMessagesInbox ";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs ";
 
 const PILLARS = [
-  { Icon: Tv, chip:"Watch parties", h:"Watch the game with your people.", p:"Members-only watch parties, both IRL and in private chat rooms. Live reactions, hot takes, post-game debriefs — without the chaos of public timelines." },
-  { Icon: Sparkles, chip:"Fan matching", h:"Smart matches, not swipes.", p:"Three curated drafts a week, built around the teams you love, the games you watch, and the city you live in. Make the introductions count." },
-  { Icon: MessagesSquare, chip:"Group chats", h:"Rooms by team & moment.", p:"Private group chats organized by team, sport, and ritual. The game-thread energy you actually want — vetted, members-only, on-topic." },
-  { Icon: MapPin, chip:"City crews", h:"Find your local lineup.", p:"City crews for the cities Loverball lives in. LA first, then everywhere members show up. Bar takeovers, away-game travel, post-game dinners." },
-  { Icon: Users, chip:"Fan circles", h:"Small rooms, real friendships.", p:"Members-only circles built around fandoms and rituals. Quiet onboarding so new members land in a real conversation, not a stadium of strangers." },
-  { Icon: Gift, chip:"Perks", h:"Members-only everything.", p:"Priority event invites, mixers, merch drops, partner discounts, and a direct line to the team. The good stuff is reserved for the people in the room." },
+  { Icon: Tv, chip:"Watch parties ", h:"Watch the game with your people.", p:"Members-only watch parties, both IRL and in private chat rooms. Live reactions, hot takes, post-game debriefs — without the chaos of public timelines." },
+  { Icon: Sparkles, chip:"Fan matching ", h:"Smart matches, not swipes.", p:"Three curated drafts a week, built around the teams you love, the games you watch, and the city you live in. Make the introductions count." },
+  { Icon: MessagesSquare, chip:"Group chats ", h:"Rooms by team & moment.", p:"Private group chats organized by team, sport, and ritual. The game-thread energy you actually want — vetted, members-only, on-topic." },
+  { Icon: MapPin, chip:"City crews ", h:"Find your local lineup.", p:"City crews for the cities Loverball lives in. LA first, then everywhere members show up. Bar takeovers, away-game travel, post-game dinners." },
+  { Icon: Users, chip:"Fan circles ", h:"Small rooms, real friendships.", p:"Members-only circles built around fandoms and rituals. Quiet onboarding so new members land in a real conversation, not a stadium of strangers." },
+  { Icon: Gift, chip:"Perks ", h:"Members-only everything.", p:"Priority event invites, mixers, merch drops, partner discounts, and a direct line to the team. The good stuff is reserved for the people in the room." },
 ];
 
 const Club = () => {
@@ -34,11 +34,11 @@ const Club = () => {
   }, []);
 
   return (
-    <div style={{ background: C.bg, color: C.text, fontFamily: fonts.sans }} className="min-h-screen">
+    <div style={{ background: C.bg, color: C.text, fontFamily: fonts.sans }} className="min-h-screen ">
       <Seo
-        title="The Club — Loverball"
+        title="The Club — Loverball "
         description="Members-only home for women's sports fans. Curated matches, connections, group chats, and city crews."
-        path="/club"
+        path="/club "
       />
 
       <BottomNav />
@@ -50,29 +50,29 @@ const Club = () => {
           <H1 className="mt-6" style={{ fontSize:"clamp(40px, 7vw, 96px)", lineHeight: 0.95 }}>
             The members-only home<br/>for women's sports fans.
           </H1>
-          <div className="mt-8 flex flex-wrap gap-3 items-center">
-            <PrimaryBtn onClick={() => navigate("/club/xi")}>My Connections</PrimaryBtn>
-            <SecondaryBtn onClick={() => navigate("/messages")}>Messages</SecondaryBtn>
+          <div className="mt-8 flex flex-wrap gap-3 items-center ">
+            <PrimaryBtn onClick={() => navigate("/club/xi ")}>My Connections</PrimaryBtn>
+            <SecondaryBtn onClick={() => navigate("/messages ")}>Messages</SecondaryBtn>
           </div>
         </section>
 
         {/* Tabs */}
         <section className="max-w-7xl mx-auto px-5 md:px-10 pb-20">
-          <Tabs defaultValue="matches" className="w-full">
+          <Tabs defaultValue="matches " className="w-full ">
             <TabsList
               className="h-auto p-1 mb-10 inline-flex gap-1"
               style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 999 }}
             >
               {[
-                { v:"matches", label:"This Week's Matches" },
-                { v:"connections", label:"My Connections" },
-                { v:"inside", label:"Inside the Club" },
+                { v:"matches ", label:"This Week's Matches " },
+                { v:"connections ", label:"My Connections " },
+                { v:"inside ", label:"Inside the Club " },
               ].map((t) => (
                 <TabsTrigger
                   key={t.v}
                   value={t.v}
-                  className="rounded-full px-5 py-2.5 text-sm data-[state=active]:shadow-none"
-                  style={{ fontFamily: fonts.mono, letterSpacing:"0.06em", textTransform:"uppercase" }}
+                  className="rounded-full px-5 py-2.5 text-sm data-[state=active]:shadow-none "
+                  style={{ fontFamily: fonts.mono, letterSpacing:"0.06em ", textTransform:"uppercase " }}
                 >
                   {t.label}
                 </TabsTrigger>
@@ -80,12 +80,12 @@ const Club = () => {
             </TabsList>
 
             {/* ---- MATCHES ---- */}
-            <TabsContent value="matches" className="mt-0">
+            <TabsContent value="matches " className="mt-0">
               <div className="flex items-end justify-between gap-4 mb-6">
                 <div>
                   <Slug>Curated for you</Slug>
                   <H2 className="mt-3">Three matches this week.</H2>
-                  <Body muted size={15} className="mt-3 max-w-xl">
+                  <Body muted size={15} className="mt-3 max-w-xl ">
                     Hand-picked by your teams, your city, and your rituals. New drops every Monday.
                   </Body>
                 </div>
@@ -93,7 +93,7 @@ const Club = () => {
 
               {curated.length === 0 ? (
                 <div
-                  className="rounded-[20px] p-10 text-center"
+                  className="rounded-[20px] p-10 text-center "
                   style={{ background: C.surface, border: `1px dashed ${C.border}` }}
                 >
                   <Body muted size={15}>No new matches this week. Check back Monday.</Body>
@@ -107,8 +107,8 @@ const Club = () => {
                       className="cursor-pointer rounded-[20px] overflow-hidden transition-transform hover:-translate-y-1"
                       style={{ background: C.surface, border: `1px solid ${C.border}` }}
                     >
-                      <div className="aspect-[4/5] overflow-hidden" style={{ background: C.bg }}>
-                        <img src={m.photo} alt={m.name} loading="lazy" className="w-full h-full object-cover" />
+                      <div className="aspect-[4/5] overflow-hidden " style={{ background: C.bg }}>
+                        <img src={m.photo} alt={m.name} loading="lazy " className="w-full h-full object-cover " />
                       </div>
                       <div className="p-5">
                         <Mono color={C.raspberry} size={10}>{m.match}% MATCH</Mono>
@@ -119,16 +119,16 @@ const Club = () => {
                         </Body>
                         <div className="mt-5 flex items-center gap-2">
                           <button
-                            onClick={(e) => { e.stopPropagation(); navigate("/club/xi"); }}
-                            className="flex-1 inline-flex items-center justify-center gap-2 text-xs px-3 py-2.5 rounded-full transition-colors"
-                            style={{ background: C.raspberry, color:"#fff", fontFamily: fonts.mono, letterSpacing:"0.08em", textTransform:"uppercase" }}
+                            onClick={(e) => { e.stopPropagation(); navigate("/club/xi "); }}
+                            className="flex-1 inline-flex items-center justify-center gap-2 text-xs px-3 py-2.5 rounded-full transition-colors "
+                            style={{ background: C.raspberry, color:"#fff ", fontFamily: fonts.mono, letterSpacing:"0.08em ", textTransform:"uppercase " }}
                           >
                             Draft
                           </button>
                           <button
                             onClick={(e) => { e.stopPropagation(); navigate(`/members/${m.id}`); }}
-                            className="inline-flex items-center gap-1 text-xs px-3 py-2.5 rounded-full transition-colors"
-                            style={{ background: C.bg, color: C.text, border: `1px solid ${C.border}`, fontFamily: fonts.mono, letterSpacing:"0.08em", textTransform:"uppercase" }}
+                            className="inline-flex items-center gap-1 text-xs px-3 py-2.5 rounded-full transition-colors "
+                            style={{ background: C.bg, color: C.text, border: `1px solid ${C.border}`, fontFamily: fonts.mono, letterSpacing:"0.08em ", textTransform:"uppercase " }}
                           >
                             View
                           </button>
@@ -141,16 +141,16 @@ const Club = () => {
             </TabsContent>
 
             {/* ---- CONNECTIONS ---- */}
-            <TabsContent value="connections" className="mt-0">
+            <TabsContent value="connections " className="mt-0">
               <div className="flex items-end justify-between gap-4 mb-6">
                 <div>
                   <Slug>Your Starting XI</Slug>
                   <H2 className="mt-3">My Connections</H2>
                 </div>
                 <button
-                  onClick={() => navigate("/club/xi")}
-                  className="inline-flex items-center gap-2 text-sm hover:opacity-80 transition-opacity"
-                  style={{ color: C.raspberry, fontFamily: fonts.mono, letterSpacing:"0.08em", textTransform:"uppercase" }}
+                  onClick={() => navigate("/club/xi ")}
+                  className="inline-flex items-center gap-2 text-sm hover:opacity-80 transition-opacity "
+                  style={{ color: C.raspberry, fontFamily: fonts.mono, letterSpacing:"0.08em ", textTransform:"uppercase " }}
                 >
                   Draft more <ArrowRight size={14} />
                 </button>
@@ -158,16 +158,16 @@ const Club = () => {
 
               {connections.length === 0 ? (
                 <div
-                  className="rounded-[20px] p-10 md:p-14 text-center"
+                  className="rounded-[20px] p-10 md:p-14 text-center "
                   style={{ background: C.surface, border: `1px dashed ${C.border}` }}
                 >
-                  <Sparkles size={28} color={C.gold} strokeWidth={1.25} className="mx-auto" />
+                  <Sparkles size={28} color={C.gold} strokeWidth={1.25} className="mx-auto " />
                   <H3 className="mt-5">No connections drafted yet</H3>
-                  <Body muted size={15} className="mt-3 max-w-md mx-auto">
+                  <Body muted size={15} className="mt-3 max-w-md mx-auto ">
                     Your Starting XI is empty. Open the draft to pick the members you want in your lineup this week.
                   </Body>
-                  <div className="mt-7 flex justify-center">
-                    <PrimaryBtn onClick={() => navigate("/club/xi")}>Open Starting XI</PrimaryBtn>
+                  <div className="mt-7 flex justify-center ">
+                    <PrimaryBtn onClick={() => navigate("/club/xi ")}>Open Starting XI</PrimaryBtn>
                   </div>
                 </div>
               ) : (
@@ -179,17 +179,17 @@ const Club = () => {
                       className="cursor-pointer rounded-[20px] overflow-hidden transition-transform hover:-translate-y-1"
                       style={{ background: C.surface, border: `1px solid ${C.border}` }}
                     >
-                      <div className="aspect-[4/5] overflow-hidden" style={{ background: C.bg }}>
-                        <img src={m.photo} alt={m.name} loading="lazy" className="w-full h-full object-cover" />
+                      <div className="aspect-[4/5] overflow-hidden " style={{ background: C.bg }}>
+                        <img src={m.photo} alt={m.name} loading="lazy " className="w-full h-full object-cover " />
                       </div>
                       <div className="p-4">
                         <Mono color={C.raspberry} size={10}>{m.match}% MATCH</Mono>
                         <H3 className="mt-2" style={{ fontSize: 20 }}>{m.name}</H3>
                         <Body muted size={13} className="mt-1 line-clamp-1">{m.team} · {m.city}</Body>
                         <button
-                          onClick={(e) => { e.stopPropagation(); navigate("/messages"); }}
-                          className="mt-4 inline-flex items-center gap-2 text-xs px-3 py-2 rounded-full transition-colors"
-                          style={{ background: C.bg, color: C.text, border: `1px solid ${C.border}`, fontFamily: fonts.mono, letterSpacing:"0.08em", textTransform:"uppercase" }}
+                          onClick={(e) => { e.stopPropagation(); navigate("/messages "); }}
+                          className="mt-4 inline-flex items-center gap-2 text-xs px-3 py-2 rounded-full transition-colors "
+                          style={{ background: C.bg, color: C.text, border: `1px solid ${C.border}`, fontFamily: fonts.mono, letterSpacing:"0.08em ", textTransform:"uppercase " }}
                         >
                           <MessagesSquare size={12} /> Message
                         </button>
@@ -205,24 +205,24 @@ const Club = () => {
             </TabsContent>
 
             {/* ---- INSIDE THE CLUB ---- */}
-            <TabsContent value="inside" className="mt-0">
+            <TabsContent value="inside " className="mt-0">
               <div className="mb-8">
                 <Slug>What's inside</Slug>
                 <H2 className="mt-3">Everything the Club includes.</H2>
               </div>
 
               <ul
-                className="rounded-[20px] overflow-hidden"
+                className="rounded-[20px] overflow-hidden "
                 style={{ background: C.surface, border: `1px solid ${C.border}` }}
               >
                 {PILLARS.map(({ Icon, chip, h, p }, i) => (
                   <li
                     key={chip}
                     className="flex items-start gap-5 md:gap-7 p-6 md:p-8"
-                    style={{ borderTop: i === 0 ?"none" : `0.5px solid ${C.border}` }}
+                    style={{ borderTop: i === 0 ?"none " : `0.5px solid ${C.border}` }}
                   >
                     <div
-                      className="flex-shrink-0 flex items-center justify-center rounded-full"
+                      className="flex-shrink-0 flex items-center justify-center rounded-full "
                       style={{ background: C.bg, border: `1px solid ${C.border}`, width: 56, height: 56 }}
                     >
                       <Icon size={22} color={C.gold} strokeWidth={1.25} />
