@@ -857,7 +857,7 @@ const EventDetail = () => {
                 <EventCheckIn eventId={event.id} eventDate={event.event_date} eventCity={event.city} />
               </div>
             )}
-            {variant === 'external' && (
+            {variant === 'external' && !event.venue_name && (
               <WhereToWatch eventCity={event.city} eventType={event.event_type} />
             )}
             <WhereToSit venueName={event.venue_name} eventType={event.event_type} />
