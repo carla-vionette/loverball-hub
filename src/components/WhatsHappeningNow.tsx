@@ -204,6 +204,39 @@ const WhatsHappeningNow = () => {
             </span>
           </Link>
         )}
+
+        {/* Card 3: Latest video */}
+        {video && (
+          <Link
+            to="/feed"
+            className="group rounded-[20px] p-6 border border-white/10 bg-white/[0.03] hover:bg-white/[0.06] hover:border-[#FF4D3A]/40 transition-all"
+          >
+            <div className="flex items-center gap-2 mb-3">
+              <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#FF4D3A] animate-pulse" />
+              <span
+                className="text-[10px] tracking-[0.2em] uppercase text-[#FF4D3A] font-semibold"
+                style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace" }}
+              >
+                {video.category ? video.category.toUpperCase() : "New on Watch"}
+              </span>
+            </div>
+            <h3
+              className="text-xl md:text-2xl text-white leading-tight mb-3 line-clamp-3"
+              style={{ fontFamily: "'Oswald', sans-serif", fontWeight: 600 }}
+            >
+              {video.title}
+            </h3>
+            {video.creator && (
+              <div className="flex items-center gap-2 text-sm text-white/70 mb-4">
+                <Play className="w-3.5 h-3.5 flex-shrink-0" />
+                <span className="truncate">{video.creator}</span>
+              </div>
+            )}
+            <span className="inline-flex items-center gap-1 text-sm font-medium text-[#FF4D3A] group-hover:gap-2 transition-all">
+              Watch now <ArrowRight className="w-3.5 h-3.5" />
+            </span>
+          </Link>
+        )}
       </div>
     </section>
   );
