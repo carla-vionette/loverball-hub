@@ -18,6 +18,7 @@ import BottomNav from "@/components/BottomNav";
 import Seo from "@/components/Seo";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { useAuth } from "@/hooks/useAuth";
 
 import { format } from "date-fns";
 import { motion } from "framer-motion";
@@ -221,6 +222,7 @@ const Profile = () => {
   const [liveHoroscope, setLiveHoroscope] = useState<string | null>(null);
   const [horoscopeLoading, setHoroscopeLoading] = useState(false);
   const [birthday, setBirthday] = useState<string | null>(null);
+  const { user, loading: authLoading } = useAuth();
   
   const goTo = (path: string) => { window.location.href = path; };
   const { toast } = useToast();
@@ -243,7 +245,7 @@ const Profile = () => {
     let cancelled = false;
     const fetchProfile = async () => {
       try {
-        const { data: { user } } = await supabase.auth.getUser();
+        if (authLoading) return;
         if (!user || cancelled) { if (!cancelled) goTo("/auth"); return; }
 
         const [profileResult, rsvpResult, suggestedResult] = await Promise.all([
@@ -272,7 +274,7 @@ const Profile = () => {
     };
     fetchProfile();
     return () => { cancelled = true; };
-  }, []);
+  }, [authLoading, user]);
 
   // Fetch live daily horoscope
   useEffect(() => {
