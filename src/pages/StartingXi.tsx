@@ -331,6 +331,7 @@ const StartingXi: React.FC = () => {
           eyebrow="find your people"
           title="Starting XI."
           size="md"
+          className="text-6xl"
         />
 
         {/* Sub-header */}
