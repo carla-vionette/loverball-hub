@@ -60,8 +60,8 @@ const variantMap: Record<string, EventVariant> = {
 };
 const getVariant = (t?: string | null): EventVariant => (t && variantMap[t]) || "cultural";
 const eventTheme: Record<EventVariant, { accent: string; label: string }> = {
-  external: { accent: "#E8276F", label: "Broadcast" },
-  hosted:   { accent: "#D88C5A", label: "Hosted" },
+  external: { accent: "#F04E23", label: "Broadcast" },
+  hosted:   { accent: "#E86BB0", label: "Hosted" },
   cultural: { accent: "#F8F8F8", label: "Cultural" },
 };
 
@@ -287,7 +287,7 @@ const Events = () => {
           {/* Apply to Post CTA for non-approved users */}
           {user && !isApprovedCreator && (
             <div className="mb-6 rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center gap-3"
-              style={{ background: "rgba(232,39,111,0.06)", border: "1px solid rgba(232,39,111,0.18)" }}>
+              style={{ background: "rgba(240,78,35,0.06)", border: "1px solid rgba(240,78,35,0.18)" }}>
               <div className="flex-1">
                 <h3 style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: 16, color: "#F8F8F8", textTransform: "uppercase", letterSpacing: "0.02em", margin: 0 }}>
                   Want to post an event?
@@ -298,8 +298,8 @@ const Events = () => {
               </div>
               <a
                 href="mailto:Carla@loverball.com?subject=Apply%20to%20Post%20an%20Event&body=Hi%20Carla%2C%0A%0AI%27d%20like%20to%20apply%20to%20post%20an%20event%20on%20Loverball.%0A%0AName%3A%20%0AOrganization%2FTeam%2FCreator%3A%20%0AEvent%20idea%3A%20%0ADate%20%26%20venue%3A%20%0ALinks%20(IG%2FTikTok%2Fsite)%3A%20%0A%0AThanks!"
-                className="inline-flex items-center justify-center rounded-full gap-2 whitespace-nowrap h-10 px-4 text-sm font-medium border transition-colors hover:bg-[rgba(232,39,111,0.08)]"
-                style={{ borderColor: "rgba(232,39,111,0.4)", color: "#E8276F", background: "transparent" }}
+                className="inline-flex items-center justify-center rounded-full gap-2 whitespace-nowrap h-10 px-4 text-sm font-medium border transition-colors hover:bg-[rgba(240,78,35,0.08)]"
+                style={{ borderColor: "rgba(240,78,35,0.4)", color: "#F04E23", background: "transparent" }}
               >
                 <Send className="w-3.5 h-3.5" /> Apply to Post
               </a>
@@ -318,7 +318,7 @@ const Events = () => {
                 onClick={() => setTab(t.k)}
                 className="px-5 py-2 rounded-full transition-all"
                 style={{
-                  background: tab === t.k ? "#E8276F" : "transparent",
+                  background: tab === t.k ? "#F04E23" : "transparent",
                   color: tab === t.k ? "#fff" : "rgba(248,248,248,0.6)",
                   fontFamily: "'Inter', system-ui, sans-serif",
                   fontWeight: 700,
@@ -386,12 +386,12 @@ const Events = () => {
                     <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-3"
                       style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 11, color: "rgba(248,248,248,0.7)", letterSpacing: "0.04em" }}>
                       {featured.event_time && <span className="flex items-center gap-1.5"><Clock className="w-3.5 h-3.5" />{fmtTime(featured.event_time)}</span>}
-                      {(featured.venue_name || featured.city) && <span className="flex items-center gap-1.5 truncate max-w-[220px]"><MapPin className="w-3.5 h-3.5 flex-shrink-0" style={{ color: "#D88C5A" }} />{featured.venue_name || featured.city}</span>}
+                      {(featured.venue_name || featured.city) && <span className="flex items-center gap-1.5 truncate max-w-[220px]"><MapPin className="w-3.5 h-3.5 flex-shrink-0" style={{ color: "#E86BB0" }} />{featured.venue_name || featured.city}</span>}
                       {counts[featured.id] > 0 && <span className="flex items-center gap-1.5"><Users className="w-3.5 h-3.5" />{counts[featured.id]} going</span>}
                     </div>
                     <Button
                       className="rounded-full mt-5 h-11 px-6"
-                      style={{ background: "#E8276F", color: "#fff", fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 700, fontSize: 12, letterSpacing: "0.1em", textTransform: "uppercase" }}
+                      style={{ background: "#F04E23", color: "#fff", fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 700, fontSize: 12, letterSpacing: "0.1em", textTransform: "uppercase" }}
                       onClick={e => { e.stopPropagation(); requestRsvp(featured.id); }}
                     >
                       {user ? "RSVP Now" : "Sign Up to RSVP"}
@@ -433,8 +433,8 @@ const Events = () => {
             <div className="text-center py-20 space-y-4 rounded-3xl"
               style={{ background: "#141415", border: "1px solid rgba(255,255,255,0.08)" }}>
               <div className="w-20 h-20 mx-auto rounded-full flex items-center justify-center"
-                style={{ background: "rgba(232,39,111,0.1)", border: "1px solid rgba(232,39,111,0.25)" }}>
-                <Calendar className="w-9 h-9" style={{ color: "#E8276F" }} />
+                style={{ background: "rgba(240,78,35,0.1)", border: "1px solid rgba(240,78,35,0.25)" }}>
+                <Calendar className="w-9 h-9" style={{ color: "#F04E23" }} />
               </div>
               <h2 style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: 22, color: "#F8F8F8", textTransform: "uppercase", letterSpacing: "0.02em", margin: 0 }}>
                 {tab === "upcoming" ? "No upcoming events" : "No past events"}
@@ -510,7 +510,7 @@ const Events = () => {
                           {ev.event_time && <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{fmtTime(ev.event_time)}</span>}
                           {(ev.venue_name || ev.city) && (
                             <span className="flex items-center gap-1 truncate max-w-[180px]">
-                              <MapPin className="w-3 h-3" style={{ color: "#D88C5A" }} />
+                              <MapPin className="w-3 h-3" style={{ color: "#E86BB0" }} />
                               {ev.venue_name}{ev.venue_name && ev.city ? ", " : ""}{ev.city}
                             </span>
                           )}
@@ -535,7 +535,7 @@ const Events = () => {
                                     >
                                       <Avatar className="w-7 h-7" style={{ border: "2px solid #1A1A1C" }}>
                                         <AvatarImage src={attendee.profile_photo_url || undefined} />
-                                        <AvatarFallback style={{ background: "rgba(232,39,111,0.18)", color: "#E8276F", fontSize: 10, fontFamily: "'Inter', sans-serif", fontWeight: 700 }}>
+                                        <AvatarFallback style={{ background: "rgba(240,78,35,0.18)", color: "#F04E23", fontSize: 10, fontFamily: "'Inter', sans-serif", fontWeight: 700 }}>
                                           {attendee.name?.charAt(0).toUpperCase()}
                                         </AvatarFallback>
                                       </Avatar>
@@ -554,12 +554,12 @@ const Events = () => {
                               </span>
                               {rsvp ? (
                                 <span className="px-3 py-1 rounded-full capitalize"
-                                  style={{ background: rsvp === "attending" ? "rgba(232,39,111,0.15)" : "rgba(255,255,255,0.06)", color: rsvp === "attending" ? "#E8276F" : "rgba(248,248,248,0.6)", border: rsvp === "attending" ? "1px solid rgba(232,39,111,0.35)" : "1px solid rgba(255,255,255,0.08)", fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 700, fontSize: 10, letterSpacing: "0.08em", textTransform: "uppercase" }}>
+                                  style={{ background: rsvp === "attending" ? "rgba(240,78,35,0.15)" : "rgba(255,255,255,0.06)", color: rsvp === "attending" ? "#F04E23" : "rgba(248,248,248,0.6)", border: rsvp === "attending" ? "1px solid rgba(240,78,35,0.35)" : "1px solid rgba(255,255,255,0.08)", fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 700, fontSize: 10, letterSpacing: "0.08em", textTransform: "uppercase" }}>
                                   {rsvp === "attending" ? "Going ✓" : rsvp}
                                 </span>
                               ) : (
                                 <Button size="sm" className="rounded-full h-8 px-4"
-                                  style={{ background: "#E8276F", color: "#fff", fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 700, fontSize: 10, letterSpacing: "0.1em", textTransform: "uppercase" }}
+                                  style={{ background: "#F04E23", color: "#fff", fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 700, fontSize: 10, letterSpacing: "0.1em", textTransform: "uppercase" }}
                                   onClick={e => { e.stopPropagation(); setRsvpId(ev.id); }}>
                                   RSVP
                                 </Button>
@@ -572,7 +572,7 @@ const Events = () => {
                               Sign up to see who's going
                             </p>
                             <Button size="sm" className="rounded-full h-8 px-4"
-                              style={{ background: "transparent", color: "#E8276F", border: "1px solid rgba(232,39,111,0.4)", fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 700, fontSize: 10, letterSpacing: "0.1em", textTransform: "uppercase" }}
+                              style={{ background: "transparent", color: "#F04E23", border: "1px solid rgba(240,78,35,0.4)", fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 700, fontSize: 10, letterSpacing: "0.1em", textTransform: "uppercase" }}
                               onClick={e => { e.stopPropagation(); openGate(ev.id); }}>
                               Unlock
                             </Button>
@@ -592,7 +592,7 @@ const Events = () => {
         <Dialog open={!!rsvpId} onOpenChange={() => setRsvpId(null)}>
           <DialogContent className="sm:max-w-sm rounded-3xl" style={{ background: "#141415", border: "1px solid rgba(255,255,255,0.08)" }}>
             <DialogHeader>
-              <span style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 10, letterSpacing: "0.22em", color: "#E8276F", textTransform: "uppercase" }}>
+              <span style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 10, letterSpacing: "0.22em", color: "#F04E23", textTransform: "uppercase" }}>
                 Confirm your seat
               </span>
               <DialogTitle style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: 30, lineHeight: 0.95, color: "#F8F8F8", textTransform: "uppercase", letterSpacing: "0.01em", marginTop: 4 }}>
@@ -601,7 +601,7 @@ const Events = () => {
             </DialogHeader>
             <div className="space-y-2.5 pt-3">
               <Button className="w-full rounded-full h-11"
-                style={{ background: "#E8276F", color: "#fff", fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: 12, letterSpacing: "0.12em", textTransform: "uppercase" }}
+                style={{ background: "#F04E23", color: "#fff", fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: 12, letterSpacing: "0.12em", textTransform: "uppercase" }}
                 onClick={() => handleRsvp("attending")}>Going</Button>
               <Button className="w-full rounded-full h-11"
                 style={{ background: "transparent", color: "#F8F8F8", border: "1px solid rgba(255,255,255,0.12)", fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: 12, letterSpacing: "0.12em", textTransform: "uppercase" }}
