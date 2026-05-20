@@ -1,10 +1,13 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Seo } from "@/components/Seo";
-import { Check, Minus, ChevronDown, Sparkles } from "lucide-react";
+import { Check, Minus, ChevronDown, Sparkles, Loader2 } from "lucide-react";
 import { C, fonts } from "@/lib/editorialTheme";
 import { H1, H2, H3, Body, Slug, Mono, PrimaryBtn, SecondaryBtn, TertiaryLink } from "@/components/editorial/primitives";
 import loverballLogo from "@/assets/loverball-logo.png";
+import { useAuth } from "@/hooks/useAuth";
+import { createCheckoutSession } from "@/services/subscriptionService";
+import { toast } from "sonner";
 
 const NavBar = () => (
   <header className="px-6 md:px-12 pt-10 pb-6 flex items-center justify-between" style={{ borderBottom: `0.5px solid ${C.border}` }}>
