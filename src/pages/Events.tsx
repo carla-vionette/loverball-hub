@@ -293,6 +293,27 @@ const Events = () => {
             }
           />
 
+          {/* Apply to Post CTA for non-approved users */}
+          {user && !isApprovedCreator && (
+            <div className="mb-6 rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center gap-3"
+              style={{ background: "rgba(240,78,35,0.06)", border: "1px solid rgba(240,78,35,0.18)" }}>
+              <div className="flex-1">
+                <h3 style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: 16, color: "#E6F25A", textTransform: "uppercase", letterSpacing: "0.02em", margin: 0 }}>
+                  Want to post an event?
+                </h3>
+                <p className="mt-1" style={{ fontFamily: "'Inter', system-ui, sans-serif", fontSize: 12, color: "rgba(248,248,248,0.6)", margin: 0 }}>
+                  Team, creator, and organization accounts can submit events for review.
+                </p>
+              </div>
+              <a
+                href="mailto:Carla@loverball.com?subject=Apply%20to%20Post%20an%20Event&body=Hi%20Carla%2C%0A%0AI%27d%20like%20to%20apply%20to%20post%20an%20event%20on%20Loverball.%0A%0AName%3A%20%0AOrganization%2FTeam%2FCreator%3A%20%0AEvent%20idea%3A%20%0ADate%20%26%20venue%3A%20%0ALinks%20(IG%2FTikTok%2Fsite)%3A%20%0A%0AThanks!"
+                className="inline-flex items-center justify-center rounded-full gap-2 whitespace-nowrap h-10 px-4 text-sm font-medium border transition-colors hover:bg-[rgba(240,78,35,0.08)]"
+                style={{ borderColor: "rgba(240,78,35,0.4)", color: "#F04E23", background: "transparent" }}
+              >
+                <Send className="w-3.5 h-3.5" /> Apply to Post
+              </a>
+            </div>
+          )}
 
           {/* TABS */}
           <div className="flex gap-1 mb-7 p-1 w-fit rounded-full"
