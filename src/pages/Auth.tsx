@@ -583,7 +583,7 @@ const Auth = () => {
                     style={{ color: C.raspberry, fontWeight: 600, borderBottom: `1px solid ${C.raspberry}`, paddingBottom: 1 }}
                     className="hover:opacity-80 transition-opacity"
                   >
-                    Join us!
+                    JOIN US!
                   </button>
                 </p>
               </motion.div>
