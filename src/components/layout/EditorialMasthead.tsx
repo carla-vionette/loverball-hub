@@ -88,11 +88,12 @@ const EditorialMasthead = ({
             </span>
           )}
           <h1
+            className={className}
             style={{
               fontFamily: "'Playfair Display', serif",
               fontStyle: "italic",
               fontWeight: 500,
-              fontSize: titleSize,
+              fontSize: className.includes('text-') ? undefined : titleSize,
               lineHeight: 0.92,
               color: "hsl(var(--foreground))",
               margin: 0,
