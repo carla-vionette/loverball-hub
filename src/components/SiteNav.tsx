@@ -67,10 +67,10 @@ const SiteNav = () => {
       role="navigation"
       aria-label="Primary"
       style={{
-        background: "rgba(11, 11, 11, 0.85)",
+        background: "rgba(11, 11, 11, 0.9)",
         backdropFilter: "blur(16px)",
         WebkitBackdropFilter: "blur(16px)",
-        borderBottom: `0.5px solid ${C.border}`,
+        borderBottom: `1px solid #E86BB0`,
       }}
     >
       <div className="max-w-7xl mx-auto px-5 md:px-10 py-4 flex items-center justify-between gap-6">
@@ -86,8 +86,8 @@ const SiteNav = () => {
                 key={label}
                 to={to}
                 aria-current={active ? "page" : undefined}
-                style={{ ...linkStyle, color: active ? "#E6F25A" : C.muted }}
-                className="transition-colors hover:!text-[#F7F7F2]"
+                style={{ ...linkStyle, color: active ? "#E6F25A" : "#E86BB0" }}
+                className="transition-colors hover:!text-[#E6F25A]"
               >
                 {label}
               </Link>
@@ -99,19 +99,19 @@ const SiteNav = () => {
           {user ? (
             <>
               <NotificationBell />
-              <Link to="/profile" style={{ ...linkStyle, color: C.muted }} className="transition-colors hover:!text-[#FAF5E9]">
+              <Link to="/profile" style={{ ...linkStyle, color: "#E86BB0" }} className="transition-colors hover:!text-[#E6F25A]">
                 Profile
               </Link>
-              <Link to="/feed" style={{ ...pillStyle, background: C.raspberry, color: "#fff" }}>
+              <Link to="/feed" style={{ ...pillStyle, background: "#F04E23", color: "#E6F25A" }}>
                 Open App
               </Link>
             </>
           ) : (
             <>
-              <button onClick={goSignIn} style={{ ...linkStyle, color: C.muted }} className="transition-colors hover:!text-[#FAF5E9]">
+              <button onClick={goSignIn} style={{ ...linkStyle, color: "#E86BB0" }} className="transition-colors hover:!text-[#E6F25A]">
                 Sign in
               </button>
-              <button onClick={goJoin} style={{ ...pillStyle, background: C.raspberry, color: "#fff" }}>
+              <button onClick={goJoin} style={{ ...pillStyle, background: "#F04E23", color: "#E6F25A" }}>
                 JOIN US!
               </button>
             </>
