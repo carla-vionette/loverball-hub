@@ -4,7 +4,7 @@ import { Seo } from "@/components/Seo";
 import { Check, Minus, ChevronDown, Sparkles, Loader2 } from "lucide-react";
 import { C, fonts } from "@/lib/editorialTheme";
 import { H1, H2, H3, Body, Slug, Mono, PrimaryBtn, SecondaryBtn, TertiaryLink } from "@/components/editorial/primitives";
-import SiteNav from "@/components/SiteNav";
+
 import { useAuth } from "@/hooks/useAuth";
 import { createCheckoutSession } from "@/services/subscriptionService";
 import { toast } from "sonner";
@@ -101,8 +101,6 @@ const Membership = () => {
         description="Choose your Loverball pass. Free or All-Access — the members-only home for sports fandom."
         path="/membership"
       />
-
-      <SiteNav />
 
       {/* Hero */}
       <section className="px-6 md:px-12 pt-32 md:pt-40 pb-16 max-w-6xl">

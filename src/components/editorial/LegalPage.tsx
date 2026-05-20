@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { C, fonts } from "@/lib/editorialTheme";
 import { H1, H2, Body, Slug, Mono } from "@/components/editorial/primitives";
-import SiteNav from "@/components/SiteNav";
+
 
 
 export const LegalSection = ({ title, children }: { title: string; children: ReactNode }) => (
@@ -25,8 +25,6 @@ const LegalPage = ({ kicker, title, updated, children }: { kicker: string; title
   const navigate = useNavigate();
   return (
     <div style={{ background: C.bg, color: C.text, fontFamily: fonts.sans }} className="min-h-screen">
-      <SiteNav />
-
       <div className="max-w-3xl mx-auto px-6 md:px-12 pt-32 md:pt-40 pb-24">
         <button
           onClick={() => navigate(-1)}

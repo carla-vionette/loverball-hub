@@ -1,9 +1,7 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import DesktopNav from "@/components/DesktopNav";
 import BottomNav from "@/components/BottomNav";
-import MobileHeader from "@/components/MobileHeader";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Loader2, Heart, X, Users, Sparkles, MapPin, UserPlus, Briefcase } from "lucide-react";
@@ -275,9 +273,6 @@ const Connections = () => {
 
   return (
     <div className="min-h-screen bg-background pb-24 md:pb-0 md:pl-64">
-      <DesktopNav />
-      <MobileHeader />
-
       <main className="container mx-auto px-4 py-6 max-w-4xl">
         {/* Community Banner */}
         <div className="text-center mb-8">
