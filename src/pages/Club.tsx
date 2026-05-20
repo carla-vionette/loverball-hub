@@ -139,6 +139,7 @@ const Club = () => {
       <footer className="max-w-7xl mx-auto px-5 md:px-10 py-10" style={{ borderTop: `0.5px solid ${C.border}` }}>
         <Mono size={10}>© 2026 Loverball · Built in LA</Mono>
       </footer>
+      </main>
 
     </div>
   );
