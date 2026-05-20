@@ -12,7 +12,6 @@ const CONTACT_EMAIL = "hello@loverball.com";
 const Contact = () => (
   <div style={{ background: C.bg, color: C.text, fontFamily: fonts.sans }} className="min-h-screen">
     <Seo title="Contact — Loverball" description="Get in touch with Loverball — the members-only home for sports fandom. Press, partnerships, and member support." path="/contact" />
-    <SiteNav />
 
     <section className="px-6 md:px-12 pt-32 md:pt-40 pb-12 max-w-5xl">
       <Slug>Contact</Slug>

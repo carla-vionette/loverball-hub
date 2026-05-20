@@ -102,8 +102,6 @@ const Membership = () => {
         path="/membership"
       />
 
-      <SiteNav />
-
       {/* Hero */}
       <section className="px-6 md:px-12 pt-32 md:pt-40 pb-16 max-w-6xl">
         <Slug>Membership · Choose your pass</Slug>

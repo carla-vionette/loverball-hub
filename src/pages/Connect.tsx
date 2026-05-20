@@ -22,7 +22,6 @@ const Connect = () => {
         description="Connect with sports fans who actually get it. Smart matching, private group chats, and members-only mixers built around the teams you love."
         path="/connect"
       />
-      <SiteNav />
 
       <section className="px-6 md:px-12 pt-32 md:pt-40 pb-20 max-w-6xl">
         <Slug>Issue · Connect</Slug>
