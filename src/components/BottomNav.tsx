@@ -50,7 +50,7 @@ const BottomNav = () => {
         background: "rgba(20, 20, 21, 0.72)",
         backdropFilter: "blur(20px) saturate(140%)",
         WebkitBackdropFilter: "blur(20px) saturate(140%)",
-        border: "1px solid rgba(255,255,255,0.08)",
+        border: "1px solid #E86BB0",
         borderRadius: 24,
         boxShadow: "0 12px 32px -8px rgba(0,0,0,0.6)",
       }}
@@ -60,7 +60,7 @@ const BottomNav = () => {
           const Icon = item.icon;
           const isActive = item.matches.some(m => pathname === m || (m.endsWith("/") && pathname.startsWith(m)));
           const showBadge = item.label === "Club" && badgeCount > 0;
-          const color = isActive ? "#E8276F" : "rgba(248,248,248,0.55)";
+          const color = isActive ? "#E6F25A" : "#E86BB0";
           return (
             <Link
               key={item.path}
@@ -75,7 +75,7 @@ const BottomNav = () => {
                 {showBadge && (
                   <span
                     className="absolute -top-1.5 -right-2.5 text-[9px] font-bold rounded-full min-w-[16px] h-4 flex items-center justify-center px-1"
-                    style={{ background: "#E8276F", color: "#fff" }}
+                    style={{ background: "#F04E23", color: "#E6F25A" }}
                   >
                     {badgeCount > 99 ? "99+" : badgeCount}
                   </span>
