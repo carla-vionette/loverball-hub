@@ -50,7 +50,7 @@ const IncomingDraftCard: React.FC<IncomingDraftCardProps> = ({
         >
           <span
             style={{
-              fontFamily: "'Playfair Display', Georgia, serif",
+              fontFamily: "'Oswald', system-ui, sans-serif",
               fontStyle: "italic",
               fontWeight: 700,
               fontSize: 17,
@@ -64,7 +64,7 @@ const IncomingDraftCard: React.FC<IncomingDraftCardProps> = ({
         <span
           className="text-[9.5px] uppercase font-bold"
           style={{
-            fontFamily: "'Space Mono', monospace",
+            fontFamily: "'Poppins', system-ui, sans-serif",
             letterSpacing: "0.22em",
             color: C.copper,
           }}
@@ -77,7 +77,7 @@ const IncomingDraftCard: React.FC<IncomingDraftCardProps> = ({
       {/* Headline */}
       <h3
         style={{
-          fontFamily: "'Playfair Display', Georgia, serif",
+          fontFamily: "'Oswald', system-ui, sans-serif",
           fontStyle: "italic",
           fontSize: 24,
           color: C.text,
@@ -107,7 +107,7 @@ const IncomingDraftCard: React.FC<IncomingDraftCardProps> = ({
           disabled={pending}
           className="flex-1 rounded-full uppercase font-bold transition-opacity active:opacity-80"
           style={{
-            fontFamily: "Inter, sans-serif",
+            fontFamily: "Poppins, system-ui, sans-serif",
             fontSize: 11,
             letterSpacing: "0.16em",
             padding: "12px 14px",
@@ -123,7 +123,7 @@ const IncomingDraftCard: React.FC<IncomingDraftCardProps> = ({
           onClick={onViewProfile}
           className="rounded-full uppercase font-bold transition-opacity active:opacity-80"
           style={{
-            fontFamily: "Inter, sans-serif",
+            fontFamily: "Poppins, system-ui, sans-serif",
             fontSize: 11,
             letterSpacing: "0.16em",
             padding: "12px 16px",
