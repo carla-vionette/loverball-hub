@@ -163,8 +163,6 @@ const Index = () => {
         path="/"
       />
 
-      <SiteNav />
-
       {/* ============ HERO ============ */}
       <section className="pt-32 md:pt-40 pb-20 md:pb-28 px-5 md:px-10 relative overflow-hidden">
         <div aria-hidden className="absolute -top-20 -left-20 w-[480px] h-[480px] rounded-full pointer-events-none" style={{ background: C.raspberry, opacity: 0.18, filter: "blur(120px)" }} />

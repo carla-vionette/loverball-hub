@@ -25,8 +25,6 @@ const LegalPage = ({ kicker, title, updated, children }: { kicker: string; title
   const navigate = useNavigate();
   return (
     <div style={{ background: C.bg, color: C.text, fontFamily: fonts.sans }} className="min-h-screen">
-      <SiteNav />
-
       <div className="max-w-3xl mx-auto px-6 md:px-12 pt-32 md:pt-40 pb-24">
         <button
           onClick={() => navigate(-1)}
