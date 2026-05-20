@@ -5,11 +5,11 @@ import Seo from "@/components/Seo";
 import DraftConfirmModal from "@/components/club/DraftConfirmModal";
 import MutualDraftCelebration from "@/components/club/MutualDraftCelebration";
 import {
-  MOCK_MEMBERS,
   loadDrafts,
   saveDrafts,
   type Member,
 } from "@/lib/startingXiData";
+import { supabase } from "@/integrations/supabase/client";
 
 const C = {
   bg: "#0a0a0a",
