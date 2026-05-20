@@ -41,7 +41,7 @@ const Circle: React.FC<{ src?: string | null; letter: string; ring: string }> = 
     ) : (
       <span
         style={{
-          fontFamily: "'Anton', sans-serif",
+          fontFamily: "'Oswald', system-ui, sans-serif",
           fontSize: 44,
           color: "rgba(250,245,233,0.45)",
         }}
@@ -102,7 +102,7 @@ const MutualDraftCelebration: React.FC<MutualDraftCelebrationProps> = ({
         <p
           className="text-center mb-3 text-[10.5px] uppercase font-bold"
           style={{
-            fontFamily: "'Space Mono', monospace",
+            fontFamily: "'Poppins', system-ui, sans-serif",
             letterSpacing: "0.32em",
             color: C.raspberry,
           }}
@@ -114,7 +114,7 @@ const MutualDraftCelebration: React.FC<MutualDraftCelebrationProps> = ({
         <h2
           className="text-center mb-3"
           style={{
-            fontFamily: "'Playfair Display', Georgia, serif",
+            fontFamily: "'Oswald', system-ui, sans-serif",
             fontStyle: "italic",
             fontSize: 34,
             color: C.text,
@@ -141,7 +141,7 @@ const MutualDraftCelebration: React.FC<MutualDraftCelebrationProps> = ({
           onClick={onSayHi}
           className="w-full rounded-full uppercase font-bold flex items-center justify-center gap-2 transition-transform active:scale-[0.98]"
           style={{
-            fontFamily: "Inter, sans-serif",
+            fontFamily: "Poppins, system-ui, sans-serif",
             fontSize: 12.5,
             letterSpacing: "0.18em",
             padding: "16px 18px",
@@ -163,7 +163,7 @@ const MutualDraftCelebration: React.FC<MutualDraftCelebrationProps> = ({
             <p
               className="text-center text-[10.5px] uppercase"
               style={{
-                fontFamily: "'Space Mono', monospace",
+                fontFamily: "'Poppins', system-ui, sans-serif",
                 letterSpacing: "0.22em",
                 color: C.muted,
               }}
@@ -173,7 +173,7 @@ const MutualDraftCelebration: React.FC<MutualDraftCelebrationProps> = ({
             <p
               className="text-center mt-1.5"
               style={{
-                fontFamily: "'Playfair Display', Georgia, serif",
+                fontFamily: "'Oswald', system-ui, sans-serif",
                 fontStyle: "italic",
                 fontSize: 15,
                 color: C.text,

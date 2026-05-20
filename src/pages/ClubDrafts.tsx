@@ -165,7 +165,7 @@ const ClubDrafts: React.FC = () => {
             <span
               className="text-[10px] uppercase font-bold"
               style={{
-                fontFamily: "'Space Mono', monospace",
+                fontFamily: "'Poppins', system-ui, sans-serif",
                 letterSpacing: "0.28em",
                 color: C.muted,
               }}
@@ -180,7 +180,7 @@ const ClubDrafts: React.FC = () => {
             <p
               className="text-[10px] uppercase mb-2"
               style={{
-                fontFamily: "'Space Mono', monospace",
+                fontFamily: "'Poppins', system-ui, sans-serif",
                 color: C.copper,
                 letterSpacing: "0.22em",
               }}
@@ -190,7 +190,7 @@ const ClubDrafts: React.FC = () => {
             <h1
               className="leading-[0.92] tracking-tight"
               style={{
-                fontFamily: "'Playfair Display', Georgia, serif",
+                fontFamily: "'Oswald', system-ui, sans-serif",
                 fontStyle: "italic",
                 fontSize: 42,
                 color: C.text,
@@ -231,7 +231,7 @@ const ClubDrafts: React.FC = () => {
               <p
                 className="text-[10px] uppercase mb-3"
                 style={{
-                  fontFamily: "'Space Mono', monospace",
+                  fontFamily: "'Poppins', system-ui, sans-serif",
                   color: C.copper,
                   letterSpacing: "0.22em",
                 }}
@@ -240,7 +240,7 @@ const ClubDrafts: React.FC = () => {
               </p>
               <h3
                 style={{
-                  fontFamily: "'Playfair Display', Georgia, serif",
+                  fontFamily: "'Oswald', system-ui, sans-serif",
                   fontStyle: "italic",
                   fontSize: 26,
                   color: C.text,
