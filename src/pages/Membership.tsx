@@ -1,10 +1,13 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Seo } from "@/components/Seo";
-import { Check, Minus, ChevronDown, Sparkles } from "lucide-react";
+import { Check, Minus, ChevronDown, Sparkles, Loader2 } from "lucide-react";
 import { C, fonts } from "@/lib/editorialTheme";
 import { H1, H2, H3, Body, Slug, Mono, PrimaryBtn, SecondaryBtn, TertiaryLink } from "@/components/editorial/primitives";
 import loverballLogo from "@/assets/loverball-logo.png";
+import { useAuth } from "@/hooks/useAuth";
+import { createCheckoutSession } from "@/services/subscriptionService";
+import { toast } from "sonner";
 
 const NavBar = () => (
   <header className="px-6 md:px-12 pt-10 pb-6 flex items-center justify-between" style={{ borderBottom: `0.5px solid ${C.border}` }}>
@@ -78,8 +81,30 @@ const FAQS = [
 
 const Membership = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [open, setOpen] = useState<number | null>(0);
-  const goSignup = () => navigate("/auth?mode=signup");
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const goSignup = () => navigate("/auth?mode=signup&redirect=/membership");
+
+  const goCheckout = async () => {
+    if (!user) {
+      navigate("/auth?mode=signup&redirect=/membership&checkout=all-access");
+      return;
+    }
+    setCheckoutLoading(true);
+    try {
+      const url = await createCheckoutSession("local");
+      window.location.href = url;
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Checkout unavailable");
+      setCheckoutLoading(false);
+    }
+  };
+
+  const handleTierCta = (tierName: string) => {
+    if (tierName === "Free") return goSignup();
+    return goCheckout();
+  };
 
   return (
     <div style={{ background: C.bg, color: C.text, fontFamily: fonts.sans }} className="min-h-screen">
@@ -159,9 +184,11 @@ const Membership = () => {
 
                 <div className="mt-10">
                   {hi ? (
-                    <PrimaryBtn onClick={goSignup} style={{ width: "100%" }}>{t.cta}</PrimaryBtn>
+                    <PrimaryBtn onClick={() => handleTierCta(t.name)} disabled={checkoutLoading} style={{ width: "100%" }}>
+                      {checkoutLoading ? "Loading…" : t.cta}
+                    </PrimaryBtn>
                   ) : (
-                    <SecondaryBtn onClick={goSignup} style={{ width: "100%" }}>{t.cta}</SecondaryBtn>
+                    <SecondaryBtn onClick={() => handleTierCta(t.name)} style={{ width: "100%" }}>{t.cta}</SecondaryBtn>
                   )}
                 </div>
               </article>
@@ -228,7 +255,7 @@ const Membership = () => {
           The members-only home for sports fandom.
         </H2>
         <div className="mt-10 flex flex-wrap gap-4 justify-center">
-          <PrimaryBtn onClick={goSignup}>Go All-Access</PrimaryBtn>
+          <PrimaryBtn onClick={goCheckout} disabled={checkoutLoading}>{checkoutLoading ? "Loading…" : "Go All-Access"}</PrimaryBtn>
           <SecondaryBtn to="/club">Tour the Club</SecondaryBtn>
         </div>
       </section>
