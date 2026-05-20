@@ -78,7 +78,6 @@ const WhatsHappeningNow = () => {
   }, []);
 
   if (loading) return null;
-  if (!event && !club) return null;
 
   const location = event ? [event.venue_name, event.city].filter(Boolean).join(" · ") : "";
 
@@ -91,6 +90,8 @@ const WhatsHappeningNow = () => {
           : "Your crew has new activity"
         : null
     : null;
+
+  if (!event && !clubMessage) return null;
 
   return (
     <section className="max-w-7xl mx-auto mt-16 px-5 md:px-10">
