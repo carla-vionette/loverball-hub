@@ -12,7 +12,8 @@ import { Slider } from "@/components/ui/slider";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
-import { Loader2, Bell, Eye, EyeOff, MapPin, Save } from "lucide-react";
+import { Loader2, Bell, Eye, EyeOff, MapPin, Save, Smartphone } from "lucide-react";
+import { Label } from "@/components/ui/label";
 import { LA_PRO_TEAMS, LA_D1_COLLEGES } from "@/lib/laTeamsConfig";
 import { SPORTS_OPTIONS } from "@/lib/onboardingOptions";
 
@@ -62,6 +63,12 @@ const Settings = () => {
     preferred_distance_miles: 25,
   });
   const [userTeams, setUserTeams] = useState<string[]>([]);
+  const [channels, setChannels] = useState({
+    in_app: true,
+    sms: true,
+    email: true,
+    phone: "",
+  });
 
   useEffect(() => {
     if (user) loadPreferences();
@@ -102,11 +109,17 @@ const Settings = () => {
       // Load user's favorite teams
       const { data: profile } = await supabase
         .from("profiles")
-        .select("favorite_la_teams")
+        .select("favorite_la_teams, in_app_notifications_enabled, sms_notifications_enabled, email_notifications_enabled, phone")
         .eq("id", user.id)
         .single();
 
       setUserTeams(profile?.favorite_la_teams || []);
+      setChannels({
+        in_app: profile?.in_app_notifications_enabled ?? true,
+        sms: profile?.sms_notifications_enabled ?? true,
+        email: profile?.email_notifications_enabled ?? true,
+        phone: profile?.phone || "",
+      });
     } catch (err) {
       // Preferences load error handled silently
     } finally {
@@ -189,6 +202,25 @@ const Settings = () => {
         }, { onConflict: "user_id" });
 
       if (fError) throw fError;
+
+      // Save notification channel + phone preferences on profile
+      const phoneTrim = channels.phone.trim();
+      if (phoneTrim && !/^\+[1-9]\d{6,14}$/.test(phoneTrim)) {
+        toast.error("Phone must be in E.164 format (e.g. +15551234567)");
+        setSaving(false);
+        return;
+      }
+      const { error: pError } = await supabase
+        .from("profiles")
+        .update({
+          in_app_notifications_enabled: channels.in_app,
+          sms_notifications_enabled: channels.sms,
+          email_notifications_enabled: channels.email,
+          phone: phoneTrim || null,
+        })
+        .eq("id", user.id);
+      if (pError) throw pError;
+
       toast.success("Preferences saved!");
     } catch (err) {
       toast.error("Failed to save preferences");
@@ -244,6 +276,59 @@ const Settings = () => {
 
           {/* Notifications Tab */}
           <TabsContent value="notifications" className="space-y-6">
+            {/* Notification channels */}
+            <Card className="rounded-2xl border-border/50">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <Smartphone className="h-5 w-5" /> Notification Channels
+                </CardTitle>
+                <p className="text-sm text-muted-foreground">Choose how Loverball reaches you</p>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium">In-app notifications</p>
+                    <p className="text-xs text-muted-foreground">Bell badge & realtime alerts</p>
+                  </div>
+                  <Switch
+                    checked={channels.in_app}
+                    onCheckedChange={(v) => setChannels((c) => ({ ...c, in_app: v }))}
+                  />
+                </div>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium">SMS notifications</p>
+                    <p className="text-xs text-muted-foreground">Texts via Twilio. Reply STOP to opt out.</p>
+                  </div>
+                  <Switch
+                    checked={channels.sms}
+                    onCheckedChange={(v) => setChannels((c) => ({ ...c, sms: v }))}
+                  />
+                </div>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium">Email notifications</p>
+                    <p className="text-xs text-muted-foreground">Digest & important updates</p>
+                  </div>
+                  <Switch
+                    checked={channels.email}
+                    onCheckedChange={(v) => setChannels((c) => ({ ...c, email: v }))}
+                  />
+                </div>
+                <div className="pt-2 space-y-1.5">
+                  <Label htmlFor="phone-input" className="text-sm">Phone number (for SMS)</Label>
+                  <Input
+                    id="phone-input"
+                    type="tel"
+                    placeholder="+15551234567"
+                    value={channels.phone}
+                    onChange={(e) => setChannels((c) => ({ ...c, phone: e.target.value }))}
+                  />
+                  <p className="text-[11px] text-muted-foreground">E.164 format, e.g. +1 for US.</p>
+                </div>
+              </CardContent>
+            </Card>
+
             {/* Favorite teams section */}
             {favoriteTeams.length > 0 && (
               <Card className="rounded-2xl border-border/50">
