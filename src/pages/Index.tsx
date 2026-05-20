@@ -4,6 +4,7 @@ import { Seo } from "@/components/Seo";
 import { Instagram, Check, ArrowRight, BookOpen, CalendarHeart, Users } from "lucide-react";
 import heroImage from "@/assets/hero-women-new.png";
 import SiteNav from "@/components/SiteNav";
+import WhatsHappeningNow from "@/components/WhatsHappeningNow";
 import { INSTAGRAM_URL } from "@/lib/socialLinks";
 
 /* ============================================================
@@ -233,6 +234,7 @@ const Index = () => {
             </div>
           </div>
         </div>
+        <WhatsHappeningNow />
 
         <div className="max-w-7xl mx-auto mt-16 -mx-5 md:-mx-10 overflow-hidden" style={{ background: C.neon }}>
           <div className="marquee-track py-3" style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: 22, letterSpacing: "0.04em", textTransform: "uppercase", color: "#0a0a0a" }}>
