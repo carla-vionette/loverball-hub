@@ -278,15 +278,15 @@ const Index = () => {
                   WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent",
                 }}
               >
-                Her Court.
+                HER COMMUNITY.
               </span>
               <span style={{ fontFamily: fonts.serif, fontStyle: "italic", fontWeight: 500, fontSize: "clamp(36px, 6vw, 80px)", letterSpacing: "-0.03em", color: C.text, display: "block", marginTop: 8 }}>
-                Her <span style={{ color: C.neon }}>community</span>.
+                <br />
               </span>
             </h1>
 
             <p className="mt-8 max-w-xl" style={{ color: C.muted, fontSize: 19, lineHeight: 1.55 }}>
-              Loverball brings together events, members, stories, and culture for women who love sports — loud, smart, and built to actually show up.
+              Loverball brings together events, members, stories, and culture for women who love sports.
             </p>
 
             <div className="mt-10 flex flex-wrap gap-3">
