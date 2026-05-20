@@ -283,7 +283,7 @@ const Index = () => {
             </p>
 
             <div className="mt-10 flex flex-wrap gap-3">
-              <PrimaryCTA onClick={goJoin}>Join Loverball Free</PrimaryCTA>
+               <PrimaryCTA onClick={goJoin}>Join us! Free</PrimaryCTA>
               <SecondaryCTA to="/membership">See Membership <ArrowRight size={14} /></SecondaryCTA>
             </div>
 
@@ -511,7 +511,7 @@ const Index = () => {
             Free to join. Upgrade to All-Access for unlimited group chats, smart matching, and members-only events.
           </p>
           <div className="mt-10 flex flex-wrap gap-3 justify-center">
-            <PrimaryCTA onClick={goJoin}>Join Loverball Free</PrimaryCTA>
+            <PrimaryCTA onClick={goJoin}>Join us! Free</PrimaryCTA>
             <SecondaryCTA to="/events">View Upcoming Events</SecondaryCTA>
           </div>
         </div>
