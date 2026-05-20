@@ -8,6 +8,7 @@ import MobileHeader from "@/components/MobileHeader";
 import DesktopNav from "@/components/DesktopNav";
 import BottomNav from "@/components/BottomNav";
 import { loadDrafts, MOCK_MEMBERS, type Member } from "@/lib/startingXiData";
+import ClubMessagesInbox from "@/components/club/ClubMessagesInbox";
 
 
 const PILLARS = [
@@ -125,6 +126,7 @@ const Club = () => {
         )}
       </section>
 
+      <ClubMessagesInbox />
 
       <section className="max-w-7xl mx-auto px-5 md:px-10 pb-24">
         <div
