@@ -3,7 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Calendar, MapPin, Users, Clock, Loader2, PlusCircle, Send } from "lucide-react";
+import { Calendar, MapPin, Users, Clock, Loader2, PlusCircle, Send, Search } from "lucide-react";
 import EventTagBadges from "@/components/EventTagBadges";
 import SponsorCard from "@/components/SponsorCard";
 import { supabase } from "@/integrations/supabase/client";
