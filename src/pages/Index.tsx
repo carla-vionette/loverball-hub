@@ -262,14 +262,14 @@ const Index = () => {
               </span>
             </div>
 
-            <h1 className="mt-2" style={{ lineHeight: 0.88, letterSpacing: "-0.02em" }}>
-              <span style={{ fontFamily: "'Anton', Impact, sans-serif", fontWeight: 400, fontSize: "clamp(64px, 11vw, 144px)", textTransform: "uppercase", color: C.text, display: "block" }}>
+            <h1 className="mt-2" style={{ lineHeight: 0.92, letterSpacing: "-0.02em" }}>
+              <span style={{ fontFamily: "'Anton', Impact, sans-serif", fontWeight: 400, fontSize: "clamp(52px, 9vw, 120px)", textTransform: "uppercase", color: C.text, display: "block" }}>
                 Her Game.
               </span>
               <span
                 style={{
                   fontFamily: "'Anton', Impact, sans-serif", fontWeight: 400,
-                  fontSize: "clamp(64px, 11vw, 144px)", textTransform: "uppercase",
+                  fontSize: "clamp(52px, 9vw, 120px)", textTransform: "uppercase",
                   display: "block",
                   background: `linear-gradient(95deg, ${C.raspberry} 0%, ${C.pink} 60%, ${C.neon} 100%)`,
                   WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent",
@@ -279,7 +279,7 @@ const Index = () => {
               </span>
             </h1>
 
-            <p className="mt-6 max-w-xl" style={{ color: C.muted, fontSize: 19, lineHeight: 1.55 }}>
+            <p className="mt-6 max-w-xl" style={{ color: C.muted, fontSize: "clamp(16px, 1.5vw, 19px)", lineHeight: 1.6 }}>
               Loverball brings together events, members, stories, and culture for women who love sports.
             </p>
 
