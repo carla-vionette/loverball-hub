@@ -10,6 +10,7 @@ import {
   type Member,
 } from "@/lib/startingXiData";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 
 const C = {
   bg: "#0a0a0a",
