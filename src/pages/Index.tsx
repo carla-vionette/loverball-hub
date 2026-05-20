@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Seo } from "@/components/Seo";
-import { Menu, X, Instagram, Check, ArrowRight, BookOpen, CalendarHeart, Users } from "lucide-react";
+import { Instagram, Check, ArrowRight, BookOpen, CalendarHeart, Users } from "lucide-react";
 import heroImage from "@/assets/hero-women-new.png";
-import navLogo from "@/assets/loverball-nav-logo.png";
+import SiteNav from "@/components/SiteNav";
 import { INSTAGRAM_URL } from "@/lib/socialLinks";
 
 /* ============================================================
