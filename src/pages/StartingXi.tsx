@@ -187,14 +187,64 @@ const FloatingNav: React.FC = () => {
   );
 };
 
+const profileToMember = (p: any): Member => {
+  const sports: string[] = Array.isArray(p.favorite_sports) ? p.favorite_sports : [];
+  const teams: string[] = Array.isArray(p.favorite_la_teams) && p.favorite_la_teams.length
+    ? p.favorite_la_teams
+    : sports;
+  const primaryTeam = teams[0] || sports[0] || "Sports fan";
+  const firstName = (p.name || "Member").split(" ")[0];
+  const bio = (p.bio || "").trim();
+  const tags = sports.slice(0, 3).map((s: string) => s.toUpperCase());
+  return {
+    id: p.id,
+    name: p.name || "Member",
+    firstName,
+    photo: p.profile_photo_url || "",
+    match: 0,
+    team: primaryTeam,
+    city: p.city || "",
+    vibe: bio || "New to the Club",
+    tags,
+    teams,
+    joined: "",
+    reasons: [],
+    vibeLong: bio,
+    youBoth: [],
+    rounds: [],
+    opener: `Hey ${firstName} — saw we both ride for ${primaryTeam}.`,
+  };
+};
+
 const StartingXi: React.FC = () => {
   const [state, setState] = useState(loadDrafts);
   const [confirm, setConfirm] = useState<Member | null>(null);
   const [celebrate, setCelebrate] = useState<Member | null>(null);
+  const [members, setMembers] = useState<Member[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     saveDrafts(state);
   }, [state]);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("id, name, bio, city, profile_photo_url, favorite_sports, favorite_la_teams, created_at")
+        .not("name", "is", null)
+        .neq("name", "")
+        .order("created_at", { ascending: false })
+        .limit(24);
+      if (cancelled) return;
+      if (!error && data) {
+        setMembers(data.map(profileToMember));
+      }
+      setLoading(false);
+    })();
+    return () => { cancelled = true; };
+  }, []);
 
   const handleDraft = (m: Member) => {
     if (state.draftsLeft <= 0) return;
@@ -214,8 +264,6 @@ const StartingXi: React.FC = () => {
       setTimeout(() => setCelebrate(m), 600);
     }
   };
-
-  const members = useMemo(() => MOCK_MEMBERS, []);
 
   return (
     <div style={{ background: C.bg, color: C.text, ...sans }} className="min-h-screen">
