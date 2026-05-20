@@ -397,10 +397,7 @@ export default function ProfileInbox() {
           ) : activity.length === 0 ? (
             <div className="px-4 py-6 text-center">
               <Activity size={24} className="mx-auto mb-3" style={{ color: "rgba(250,245,233,0.35)" }} />
-              <p className="text-[13px] mb-3" style={{ color: "rgba(250,245,233,0.55)" }}>No activity yet. Share something with the community.</p>
-              <button onClick={() => navigate("/community")} className="text-[11px] uppercase" style={{ fontFamily: "'Space Mono', monospace", letterSpacing: "0.18em", color: PINK }}>
-                Open community →
-              </button>
+              <p className="text-[13px]" style={{ color: "rgba(250,245,233,0.55)" }}>No activity yet.</p>
             </div>
           ) : (
             <ul>
@@ -425,14 +422,8 @@ export default function ProfileInbox() {
               ))}
             </ul>
           )}
-          <button
-            onClick={() => navigate("/community")}
-            className="w-full flex items-center justify-center gap-2 py-2.5 text-[11px] uppercase transition-colors hover:bg-white/[0.03]"
-            style={{ borderTop: BORDER, fontFamily: "'Space Mono', monospace", letterSpacing: "0.18em", color: PINK }}
-          >
-            Open community <ArrowRight size={12} />
-          </button>
         </TabsContent>
+
       </Tabs>
     </section>
   );
