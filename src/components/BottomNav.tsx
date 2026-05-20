@@ -50,7 +50,7 @@ const BottomNav = () => {
         background: "rgba(20, 20, 21, 0.72)",
         backdropFilter: "blur(20px) saturate(140%)",
         WebkitBackdropFilter: "blur(20px) saturate(140%)",
-        border: "1px solid rgba(255,255,255,0.08)",
+        border: "1px solid #E86BB0",
         borderRadius: 24,
         boxShadow: "0 12px 32px -8px rgba(0,0,0,0.6)",
       }}
