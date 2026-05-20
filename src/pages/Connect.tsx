@@ -8,7 +8,7 @@ const NavBar = () => (
   <header className="px-6 md:px-12 pt-10 pb-6 flex items-center justify-between" style={{ borderBottom: `0.5px solid ${C.border}` }}>
     <Link to="/" style={{ fontFamily: fonts.serif, fontStyle: "italic", fontSize: 28, letterSpacing: "-0.02em", color: C.text }}>Loverball</Link>
     <nav className="hidden md:flex items-center gap-8">
-      {[["Watch","/feed"],["Connect","/connect"],["Events","/events"],["Club","/club"]].map(([l,h]) => (
+      {[["Watch","/feed"],["Connect","/connect"],["EVENTS","/events"],["Club","/club"]].map(([l,h]) => (
         <Link key={l} to={h} style={{ fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.2em", textTransform: "uppercase", color: l === "Connect" ? C.text : C.muted }}>{l}</Link>
       ))}
     </nav>
