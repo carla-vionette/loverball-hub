@@ -11,7 +11,7 @@ const ACCENT = "#E91E63";
 
 const mainNavItems = [
   { icon: Newspaper, label: "Feed", path: "/feed" },
-  { icon: CalendarDays, label: "Events", path: "/events" },
+  { icon: CalendarDays, label: "EVENTS", path: "/events" },
   { icon: ShoppingBag, label: "Shop", path: "/shop" },
   { icon: Users, label: "Friends", path: "/friends" },
 ];
