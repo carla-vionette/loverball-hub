@@ -29,7 +29,7 @@ const Club = () => {
         path="/club"
       />
 
-      <SiteNav />
+      <MobileHeader /><DesktopNav /><BottomNav />
 
       <section className="max-w-7xl mx-auto px-5 md:px-10 pt-32 md:pt-40 pb-20">
         <Slug>The Club</Slug>
