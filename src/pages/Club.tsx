@@ -41,7 +41,7 @@ const Club = () => {
         path="/club"
       />
 
- <BottomNav />
+      <BottomNav />
 
       <main className="pb-24 md:pb-0">
         {/* Header */}

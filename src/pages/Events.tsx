@@ -234,7 +234,7 @@ const Events = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-background">
- <BottomNav />
+        <BottomNav />
         <main className="pb-20 md:pb-0 flex items-center justify-center">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </main>
@@ -249,7 +249,7 @@ const Events = () => {
         description="Watch parties, game days, panels, brunches, and networking meetups for women's sports fans. Discover upcoming Loverball events."
         path="/events"
       />
- <BottomNav />
+      <BottomNav />
 
       <main className="pb-24 md:pb-0">
         <div className="max-w-6xl mx-auto px-5 md:px-10 py-8">
