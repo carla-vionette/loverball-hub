@@ -21,6 +21,15 @@ const PILLARS = [
 const Club = () => {
   const navigate = useNavigate();
   const goSignup = () => navigate("/auth?mode=signup");
+  const [query, setQuery] = useState("");
+  const filteredPillars = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return PILLARS;
+    return PILLARS.filter(({ chip, h, p }) =>
+      `${chip} ${h} ${p}`.toLowerCase().includes(q)
+    );
+  }, [query]);
+
 
   return (
     <div style={{ background: C.bg, color: C.text, fontFamily: fonts.sans }} className="min-h-screen">
