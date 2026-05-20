@@ -26,6 +26,7 @@ import { X, Camera, Loader2, Check, ChevronRight, ChevronLeft, User, Users, Tv, 
 import loverballLogo from "@/assets/loverball-script-logo.png";
 import { motion, AnimatePresence } from "framer-motion";
 import type { AccountType } from "@/types";
+import { useAuth } from "@/hooks/useAuth";
 
 const ACCOUNT_TYPE_OPTIONS: { type: AccountType; label: string; description: string; icon: typeof User }[] = [
   { type: "member", label: "Member", description: "Fan, supporter, or sports enthusiast", icon: User },
@@ -41,6 +42,7 @@ const Onboarding = () => {
   const [direction, setDirection] = useState(1);
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { user, loading: authLoading } = useAuth();
 
   // Step 0: Account type
   const [accountType, setAccountType] = useState<AccountType | null>(null);
@@ -66,16 +68,13 @@ const Onboarding = () => {
   const [contentInterests, setContentInterests] = useState<string[]>([]);
 
   useEffect(() => {
-    const checkAuth = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
+    if (authLoading) return;
+    if (!user) {
         navigate("/auth");
-      } else {
-        setUserId(user.id);
-      }
-    };
-    checkAuth();
-  }, [navigate]);
+    } else {
+      setUserId(user.id);
+    }
+  }, [authLoading, navigate, user]);
 
   const totalSteps = 5; // 0: account type, 1-4: member onboarding
   const progress = (step / (totalSteps - 1)) * 100;
