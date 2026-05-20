@@ -195,13 +195,18 @@ export default function ProfileInbox() {
               ))}
             </ul>
           )}
-          <button
-            onClick={() => navigate("/notifications")}
-            className="w-full flex items-center justify-center gap-2 py-3 text-[11px] uppercase transition-colors hover:bg-white/[0.03]"
-            style={{ borderTop: BORDER, fontFamily: "'Space Mono', monospace", letterSpacing: "0.18em", color: PINK }}
-          >
-            See all <ArrowRight size={12} />
-          </button>
+          {previewNotifs.length > 0 && unreadNotifs > 0 && (
+            <button
+              onClick={async () => {
+                await supabase.from("notifications").update({ is_read: true }).eq("user_id", user.id).eq("is_read", false);
+                setNotifications(prev => prev.map(n => ({ ...n, is_read: true })));
+              }}
+              className="w-full flex items-center justify-center gap-2 py-3 text-[11px] uppercase transition-colors hover:bg-white/[0.03]"
+              style={{ borderTop: BORDER, fontFamily: "'Space Mono', monospace", letterSpacing: "0.18em", color: PINK }}
+            >
+              Mark all read
+            </button>
+          )}
         </TabsContent>
 
         <TabsContent value="messages" className="mt-4">
