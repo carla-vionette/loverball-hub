@@ -247,7 +247,7 @@ const Events = () => {
   return (
     <div className="min-h-screen bg-background">
       <Seo
-        title="The Scene — Women's Sports Events | Loverball"
+        title="EVENTS — Women's Sports Events | Loverball"
         description="Watch parties, game days, panels, brunches, and networking meetups for women's sports fans. Discover upcoming Loverball events."
         path="/events"
       />
@@ -258,10 +258,10 @@ const Events = () => {
           {/* ── Editorial masthead ── */}
           <EditorialMasthead
             volume="Vol. 02"
-            section="The Scene"
+            section="EVENTS"
             meta={`${upcomingEvents.length} on deck`}
             eyebrow="selectively assembled"
-            title="The Scene"
+            title="EVENTS"
             size="lg"
             rightSlot={
               user && isApprovedCreator ? (
