@@ -2,17 +2,17 @@ import React, { useState } from "react";
 import { Check, X, Sparkles } from "lucide-react";
 
 const C = {
-  bg: "#0A0A0B",
-  card: "#141415",
-  cardElev: "#1A1A1C",
+  bg: "#0a0a0a",
+  card: "#1A1A1A",
+  cardElev: "#2A2A2A",
   text: "#FAF5E9",
-  muted: "#9B9B9F",
+  muted: "#B8B8B8",
   faint: "#6B6B70",
-  raspberry: "#E8276F",
-  copper: "#D88C5A",
-  border: "rgba(255,255,255,0.08)",
-  borderStrong: "rgba(255,255,255,0.14)",
-  chip: "rgba(255,255,255,0.05)",
+  raspberry: "#F04E23",
+  copper: "#E6F25A",
+  border: "rgba(250, 245, 233, 0.08)",
+  borderStrong: "rgba(250, 245, 233, 0.15)",
+  chip: "rgba(250, 245, 233, 0.05)",
 };
 
 export interface DraftConfirmModalProps {

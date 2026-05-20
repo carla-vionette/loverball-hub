@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Sparkles } from "lucide-react";
 import Seo from "@/components/Seo";
+import SiteNav from "@/components/SiteNav";
 import DraftConfirmModal from "@/components/club/DraftConfirmModal";
 import MutualDraftCelebration from "@/components/club/MutualDraftCelebration";
 import {
@@ -12,21 +13,23 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 
+// Aligned with shared editorialTheme palette so The Club matches the rest of the platform.
 const C = {
   bg: "#0a0a0a",
   card: "#1A1A1A",
   cardHi: "#2A2A2A",
   text: "#FAF5E9",
   muted: "#B8B8B8",
-  pink: "#D4537E",
-  gold: "#E8B86A",
+  pink: "#E86BB0",
+  gold: "#E6F25A",
+  raspberry: "#F04E23",
   border: "rgba(250, 245, 233, 0.08)",
   borderHi: "rgba(250, 245, 233, 0.15)",
 };
 
 const mono = { fontFamily: "'JetBrains Mono', ui-monospace, monospace" } as const;
-const serif = { fontFamily: "'Playfair Display', Georgia, serif", fontStyle: "italic" as const };
-const sans = { fontFamily: "Inter, system-ui, sans-serif" } as const;
+const serif = { fontFamily: "'Inter', system-ui, sans-serif" } as const;
+const sans = { fontFamily: "'Inter', system-ui, sans-serif" } as const;
 
 const Label: React.FC<{ children: React.ReactNode; color?: string; size?: number }> = ({
   children,
@@ -317,7 +320,9 @@ const StartingXi: React.FC = () => {
         path="/club/xi"
       />
 
-      <main className="max-w-[440px] mx-auto px-5 pt-8 pb-36">
+      <SiteNav />
+
+      <main className="max-w-[440px] mx-auto px-5 pt-24 md:pt-28 pb-36">
         {/* Header */}
         <header className="flex items-start justify-between gap-4">
           <h1
