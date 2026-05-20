@@ -3,7 +3,7 @@ import { Seo } from "@/components/Seo";
 import { Users, MessagesSquare, Sparkles, MapPin } from "lucide-react";
 import { C, fonts } from "@/lib/editorialTheme";
 import { H1, H3, Body, Slug, Mono, PrimaryBtn, TertiaryLink } from "@/components/editorial/primitives";
-import SiteNav from "@/components/SiteNav";
+
 
 
 const PILLARS = [
