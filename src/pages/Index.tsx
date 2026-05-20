@@ -254,9 +254,6 @@ const Index = () => {
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center relative">
           <div className="lg:col-span-7">
             <div className="flex flex-wrap items-center gap-2 mb-6">
-              <span style={{ background: C.neon, color: "#0a0a0a", fontFamily: fonts.mono, fontSize: 10, letterSpacing: "0.22em", textTransform: "uppercase", padding: "6px 12px", borderRadius: 999, fontWeight: 700 }}>
-                ● Live now
-              </span>
               <span style={{ background: "transparent", color: C.text, border: `1px solid ${C.borderStrong}`, fontFamily: fonts.mono, fontSize: 10, letterSpacing: "0.22em", textTransform: "uppercase", padding: "6px 12px", borderRadius: 999 }}>
                 Built in LA
               </span>
@@ -280,12 +277,9 @@ const Index = () => {
               >
                 HER COMMUNITY.
               </span>
-              <span style={{ fontFamily: fonts.serif, fontStyle: "italic", fontWeight: 500, fontSize: "clamp(36px, 6vw, 80px)", letterSpacing: "-0.03em", color: C.text, display: "block", marginTop: 8 }}>
-                <br />
-              </span>
             </h1>
 
-            <p className="mt-8 max-w-xl" style={{ color: C.muted, fontSize: 19, lineHeight: 1.55 }}>
+            <p className="mt-6 max-w-xl" style={{ color: C.muted, fontSize: 19, lineHeight: 1.55 }}>
               Loverball brings together events, members, stories, and culture for women who love sports.
             </p>
 
