@@ -29,7 +29,7 @@ const Club = () => {
 
       <SiteNav />
 
-      <section className="px-6 md:px-12 pt-32 md:pt-40 pb-20 max-w-6xl">
+      <section className="max-w-7xl mx-auto px-5 md:px-10 pt-32 md:pt-40 pb-20">
         <Slug>The Club</Slug>
         <H1 className="mt-6" style={{ fontSize: "clamp(48px, 9vw, 128px)", lineHeight: 0.92 }}>
           The members-only home<br/>for women's sports fans.
@@ -44,18 +44,24 @@ const Club = () => {
         </div>
       </section>
 
-      <section className="grid md:grid-cols-2 lg:grid-cols-3 gap-px" style={{ background: C.border, borderTop: `0.5px solid ${C.border}`, borderBottom: `0.5px solid ${C.border}` }}>
-        {PILLARS.map(({ Icon, chip, h, p }) => (
-          <article key={chip} className="p-10" style={{ background: C.bg }}>
-            <Mono color={C.raspberry}>{chip}</Mono>
-            <div className="mt-6"><Icon size={28} color={C.gold} strokeWidth={1.25} /></div>
-            <H3 className="mt-6">{h}</H3>
-            <Body muted size={15} className="mt-4">{p}</Body>
-          </article>
-        ))}
+      <section className="max-w-7xl mx-auto px-5 md:px-10 pb-24">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {PILLARS.map(({ Icon, chip, h, p }) => (
+            <article
+              key={chip}
+              className="p-8 md:p-10 rounded-[20px] transition-all duration-300 hover:-translate-y-1"
+              style={{ background: C.surface, border: `1px solid ${C.border}` }}
+            >
+              <Mono color={C.raspberry}>{chip}</Mono>
+              <div className="mt-6"><Icon size={28} color={C.gold} strokeWidth={1.25} /></div>
+              <H3 className="mt-6">{h}</H3>
+              <Body muted size={15} className="mt-4">{p}</Body>
+            </article>
+          ))}
+        </div>
       </section>
 
-      <section className="px-6 md:px-12 py-24 max-w-5xl">
+      <section className="max-w-7xl mx-auto px-5 md:px-10 py-24">
         <div className="grid md:grid-cols-12 gap-10 items-start">
           <div className="md:col-span-4"><Slug>Member perks</Slug></div>
           <div className="md:col-span-8">
@@ -79,7 +85,7 @@ const Club = () => {
         </div>
       </section>
 
-      <section className="px-6 md:px-12 py-24 text-center" style={{ borderTop: `0.5px solid ${C.border}` }}>
+      <section className="max-w-7xl mx-auto px-5 md:px-10 py-24 text-center" style={{ borderTop: `0.5px solid ${C.border}` }}>
         <Slug>Join</Slug>
         <H2 className="mt-4 mx-auto max-w-3xl" style={{ fontSize: "clamp(40px, 6vw, 80px)" }}>
           A members-only home for sports fandom.
@@ -93,9 +99,10 @@ const Club = () => {
         </div>
       </section>
 
-      <footer className="px-6 md:px-12 py-10" style={{ borderTop: `0.5px solid ${C.border}` }}>
+      <footer className="max-w-7xl mx-auto px-5 md:px-10 py-10" style={{ borderTop: `0.5px solid ${C.border}` }}>
         <Mono size={10}>© 2026 Loverball · Built in LA</Mono>
       </footer>
+
     </div>
   );
 };
