@@ -110,41 +110,74 @@ const WhatsHappeningNow = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* Card 1: Next event */}
-        <Link
-          to={`/event/${event.id}`}
-          className="group rounded-[20px] p-6 border border-white/10 bg-white/[0.03] hover:bg-white/[0.06] hover:border-[#FF4D3A]/40 transition-all"
-        >
-          <div className="flex items-center gap-2 mb-3">
-            <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#FF4D3A] animate-pulse" />
-            <span
-              className="text-[10px] tracking-[0.2em] uppercase text-[#FF4D3A] font-semibold"
-              style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace" }}
-            >
-              Next Event
-            </span>
-          </div>
-          <h3
-            className="text-xl md:text-2xl text-white leading-tight mb-3 line-clamp-2"
-            style={{ fontFamily: "'Oswald', sans-serif", fontWeight: 600 }}
+        {event && (
+          <Link
+            to={`/event/${event.id}`}
+            className="group rounded-[20px] p-6 border border-white/10 bg-white/[0.03] hover:bg-white/[0.06] hover:border-[#FF4D3A]/40 transition-all"
           >
-            {event.title}
-          </h3>
-          <div className="space-y-1.5 mb-4">
-            <div className="flex items-center gap-2 text-sm text-white/70">
-              <Calendar className="w-3.5 h-3.5 flex-shrink-0" />
-              <span>{formatDate(event.event_date, event.event_time)}</span>
+            <div className="flex items-center gap-2 mb-3">
+              <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#FF4D3A] animate-pulse" />
+              <span
+                className="text-[10px] tracking-[0.2em] uppercase text-[#FF4D3A] font-semibold"
+                style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace" }}
+              >
+                Next Event
+              </span>
             </div>
-            {location && (
+            <h3
+              className="text-xl md:text-2xl text-white leading-tight mb-3 line-clamp-2"
+              style={{ fontFamily: "'Oswald', sans-serif", fontWeight: 600 }}
+            >
+              {event.title}
+            </h3>
+            <div className="space-y-1.5 mb-4">
               <div className="flex items-center gap-2 text-sm text-white/70">
-                <MapPin className="w-3.5 h-3.5 flex-shrink-0" />
-                <span className="truncate">{location}</span>
+                <Calendar className="w-3.5 h-3.5 flex-shrink-0" />
+                <span>{formatDate(event.event_date, event.event_time)}</span>
               </div>
-            )}
-          </div>
-          <span className="inline-flex items-center gap-1 text-sm font-medium text-[#FF4D3A] group-hover:gap-2 transition-all">
-            See event <ArrowRight className="w-3.5 h-3.5" />
-          </span>
-        </Link>
+              {location && (
+                <div className="flex items-center gap-2 text-sm text-white/70">
+                  <MapPin className="w-3.5 h-3.5 flex-shrink-0" />
+                  <span className="truncate">{location}</span>
+                </div>
+              )}
+            </div>
+            <span className="inline-flex items-center gap-1 text-sm font-medium text-[#FF4D3A] group-hover:gap-2 transition-all">
+              See event <ArrowRight className="w-3.5 h-3.5" />
+            </span>
+          </Link>
+        )}
+
+        {/* Card 2: Club activity */}
+        {clubMessage && (
+          <Link
+            to="/club"
+            className="group rounded-[20px] p-6 border border-white/10 bg-white/[0.03] hover:bg-white/[0.06] hover:border-[#FF4D3A]/40 transition-all"
+          >
+            <div className="flex items-center gap-2 mb-3">
+              <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#FF4D3A] animate-pulse" />
+              <span
+                className="text-[10px] tracking-[0.2em] uppercase text-[#FF4D3A] font-semibold"
+                style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace" }}
+              >
+                The Club
+              </span>
+            </div>
+            <h3
+              className="text-xl md:text-2xl text-white leading-tight mb-3 line-clamp-3"
+              style={{ fontFamily: "'Oswald', sans-serif", fontWeight: 600 }}
+            >
+              {clubMessage}
+            </h3>
+            <div className="flex items-center gap-2 text-sm text-white/70 mb-4">
+              <Users className="w-3.5 h-3.5 flex-shrink-0" />
+              <span>Fan matches & crews</span>
+            </div>
+            <span className="inline-flex items-center gap-1 text-sm font-medium text-[#FF4D3A] group-hover:gap-2 transition-all">
+              Go to Club <ArrowRight className="w-3.5 h-3.5" />
+            </span>
+          </Link>
+        )}
       </div>
     </section>
   );
