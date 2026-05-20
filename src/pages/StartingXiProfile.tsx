@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ChevronLeft, MoreHorizontal, Sparkles, Beer, Calendar, Users, Plus, MessageCircle } from "lucide-react";
+import { ChevronLeft, MoreHorizontal, Sparkles, Beer, Calendar, Users, Plus } from "lucide-react";
 import Seo from "@/components/Seo";
 import DraftConfirmModal from "@/components/club/DraftConfirmModal";
 import MutualDraftCelebration from "@/components/club/MutualDraftCelebration";
