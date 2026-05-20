@@ -338,7 +338,7 @@ const StartingXi: React.FC = () => {
 
         {/* Sub-header */}
         <div className="flex items-center justify-between mt-4">
-          <Label color={C.muted}>Picked for you this week</Label>
+          <Label color={C.muted}>{viewerCity ? `Near ${viewerCity}` : "Picked for you this week"}</Label>
           <Label color={C.pink}>
             Drafts left: {state.draftsLeft}
           </Label>
