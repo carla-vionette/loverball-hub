@@ -52,9 +52,14 @@ const EmptyState = () => (
 
 const Feed = () => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const initialTab: FeedTab =
+    typeof window !== "undefined" &&
+    new URLSearchParams(window.location.search).get("tab") === "stories"
+      ? "stories"
+      : "foryou";
   const [activeIndex, setActiveIndex] = useState(0);
   const [isMuted, setIsMuted] = useState(true);
-  const [activeTab, setActiveTab] = useState<FeedTab>("foryou");
+  const [activeTab, setActiveTab] = useState<FeedTab>(initialTab);
   const [isLoading, setIsLoading] = useState(true);
   const observerRef = useRef<IntersectionObserver | null>(null);
   const videoRefs = useRef<Map<number, HTMLDivElement>>(new Map());
