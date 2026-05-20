@@ -28,7 +28,6 @@ const MEMBER_NAV_ITEMS: Array<[string, string]> = [
   ["Watch", "/feed"],
   ["Events", "/events"],
   ["Club", "/club/xi"],
-  ["Friends", "/friends"],
   ["Membership", "/membership"],
 ];
 
