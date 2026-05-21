@@ -22,7 +22,7 @@ const EditorialInput = (props: React.ComponentProps<"input">) => (
       width: "100%",
       padding: "0 20px",
       borderRadius: 16,
-      border: `1px solid ${C.borderStrong}`,
+      border: `1.5px solid rgba(250, 245, 233, 0.35)`,
       background: C.surface,
       color: C.text,
       outline: "none",
@@ -403,7 +403,7 @@ const Auth = () => {
           transition={{ duration: 0.5 }}
           className="mb-10"
         >
-          <img src={loverballLogo} alt="Loverball" className="w-[160px] h-auto mx-auto" />
+          <img src={loverballLogo} alt="Loverball" className="w-[160px] h-auto mx-auto" style={{ filter: "brightness(0) invert(1)" }} />
         </motion.div>
 
         <div className="w-full max-w-sm">
