@@ -60,7 +60,7 @@ const BottomNav = () => {
           const Icon = item.icon;
           const isActive = item.matches.some(m => pathname === m || (m.endsWith("/") && pathname.startsWith(m)));
           const showBadge = item.label === "Club" && badgeCount > 0;
-          const color = isActive ? "#E6F25A" : "#E86BB0";
+          const color = isActive ? "#E6F25A" : "rgba(250, 245, 233, 0.7)";
           return (
             <Link
               key={item.path}
