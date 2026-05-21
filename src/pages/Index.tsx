@@ -200,10 +200,48 @@ const Index = () => {
               Loverball brings together events, members, stories, and culture for women who love sports.
             </p>
 
-            <div className="mt-10 flex flex-wrap gap-3">
+            <div className="mt-10 flex flex-wrap gap-3 items-center">
                <PrimaryCTA onClick={goJoin}>JOIN US!</PrimaryCTA>
-              <SecondaryCTA to="/auth?mode=signin">Sign In <ArrowRight size={14} /></SecondaryCTA>
-              <SecondaryCTA to="/membership">See Membership <ArrowRight size={14} /></SecondaryCTA>
+               <Link
+                 to="/auth?mode=signin"
+                 style={{
+                   background: "transparent",
+                   color: C.text,
+                   border: `1.5px solid rgba(250, 245, 233, 0.35)`,
+                   fontFamily: fonts.mono,
+                   fontSize: 12,
+                   letterSpacing: "0.16em",
+                   textTransform: "uppercase",
+                   padding: "15px 27px",
+                   borderRadius: 999,
+                   fontWeight: 500,
+                   display: "inline-flex",
+                   alignItems: "center",
+                   justifyContent: "center",
+                   gap: 8,
+                 }}
+                 className="hover:bg-white/5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4537E] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0a0a]"
+               >
+                 Sign In <ArrowRight size={14} />
+               </Link>
+               <Link
+                 to="/membership"
+                 style={{
+                   color: C.text,
+                   fontFamily: fonts.mono,
+                   fontSize: 12,
+                   letterSpacing: "0.16em",
+                   textTransform: "uppercase",
+                   fontWeight: 500,
+                   display: "inline-flex",
+                   alignItems: "center",
+                   gap: 8,
+                   padding: "4px 0",
+                 }}
+                 className="hover:opacity-80 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4537E] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0a0a]"
+               >
+                 See Membership <ArrowRight size={14} />
+               </Link>
             </div>
 
             <p className="mt-6" style={{ fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.16em", textTransform: "uppercase", color: C.muted }}>
