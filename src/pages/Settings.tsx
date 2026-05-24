@@ -107,16 +107,22 @@ const Settings = () => {
       // Load user's favorite teams
       const { data: profile } = await supabase
         .from("profiles")
-        .select("favorite_la_teams, in_app_notifications_enabled, sms_notifications_enabled, email_notifications_enabled, phone")
+        .select("favorite_la_teams, in_app_notifications_enabled, sms_notifications_enabled, email_notifications_enabled")
         .eq("id", user.id)
         .single();
+
+      const { data: sensitive } = await supabase
+        .from("profiles_sensitive" as any)
+        .select("phone_number")
+        .eq("id", user.id)
+        .maybeSingle();
 
       setUserTeams(profile?.favorite_la_teams || []);
       setChannels({
         in_app: profile?.in_app_notifications_enabled ?? true,
         sms: profile?.sms_notifications_enabled ?? true,
         email: profile?.email_notifications_enabled ?? true,
-        phone: profile?.phone || "",
+        phone: (sensitive as any)?.phone_number || "",
       });
     } catch (err) {
       // Preferences load error handled silently
