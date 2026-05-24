@@ -348,9 +348,10 @@ const Profile = () => {
         path="/profile"
       />
       <BottomNav />
+      <div className="hidden md:block"><SiteNav /></div>
 
       <main
-        className="pb-20 md:pb-10 transition-[margin] duration-200"
+        className="pb-20 md:pb-10 md:pt-20 transition-[margin] duration-200"
         style={{ background: BG, color: TEXT, fontFamily: "'Inter', system-ui, sans-serif" }}
       >
         <div className="max-w-[1400px] mx-auto px-4 md:px-8 pt-2">
