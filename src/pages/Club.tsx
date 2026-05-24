@@ -5,6 +5,7 @@ import { Tv, Users, MessagesSquare, MapPin, Gift, Sparkles, ArrowRight, Search }
 import { C, fonts } from "@/lib/editorialTheme";
 import { H1, H2, H3, Body, Slug, Mono, PrimaryBtn, SecondaryBtn } from "@/components/editorial/primitives";
 import BottomNav from "@/components/BottomNav";
+import SiteNav from "@/components/SiteNav";
 import { loadDrafts, MOCK_MEMBERS, type Member } from "@/lib/startingXiData";
 import ClubMessagesInbox from "@/components/club/ClubMessagesInbox";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -43,6 +44,7 @@ const Club = () => {
       />
 
       <BottomNav />
+      <div className="hidden md:block"><SiteNav /></div>
 
       <main className="pb-24 md:pb-0">
         {/* Header */}
@@ -104,13 +106,13 @@ const Club = () => {
               className="rounded-[20px] p-6 flex items-center justify-between gap-4"
               style={{ background: C.surface, border: `1px dashed ${C.border}` }}
             >
-              <Body muted size={14}>No friends drafted yet. Build your roster from this week's matches.</Body>
+              <Body muted size={14}>No friends added yet. Build your roster from this week's matches.</Body>
               <button
                 onClick={() => navigate("/club/xi")}
                 className="inline-flex items-center gap-2 text-xs px-4 py-2 rounded-full whitespace-nowrap"
                 style={{ background: C.raspberry, color: "#fff", fontFamily: fonts.mono, letterSpacing: "0.08em", textTransform: "uppercase" }}
               >
-                Draft
+                + Add
               </button>
             </div>
           ) : (
@@ -213,7 +215,7 @@ const Club = () => {
                             className="flex-1 inline-flex items-center justify-center gap-2 text-xs px-3 py-2.5 rounded-full transition-colors"
                             style={{ background: C.raspberry, color: "#fff", fontFamily: fonts.mono, letterSpacing: "0.08em", textTransform: "uppercase" }}
                           >
-                            Draft
+                            + Add
                           </button>
                           <button
                             onClick={(e) => { e.stopPropagation(); navigate(`/members/${m.id}`); }}
@@ -234,7 +236,7 @@ const Club = () => {
             <TabsContent value="connections" className="mt-0">
               <div className="flex items-end justify-between gap-4 mb-6">
                 <div>
-                  <Slug>Your Starting XI</Slug>
+                  <Slug>Your Team</Slug>
                   <H2 className="mt-3">My Connections</H2>
                 </div>
                 <button
@@ -242,7 +244,7 @@ const Club = () => {
                   className="inline-flex items-center gap-2 text-sm hover:opacity-80 transition-opacity"
                   style={{ color: C.raspberry, fontFamily: fonts.mono, letterSpacing: "0.08em", textTransform: "uppercase" }}
                 >
-                  Draft more <ArrowRight size={14} />
+                  Add more <ArrowRight size={14} />
                 </button>
               </div>
 
@@ -293,15 +295,15 @@ const Club = () => {
                       style={{ background: C.surface, border: `1px dashed ${C.border}` }}
                     >
                       <Sparkles size={28} color={C.gold} strokeWidth={1.25} className="mx-auto" />
-                      <H3 className="mt-5">{q ? "No matches found" : "No connections drafted yet"}</H3>
+                      <H3 className="mt-5">{q ? "No matches found" : "No friends added yet"}</H3>
                       <Body muted size={15} className="mt-3 max-w-md mx-auto">
                         {q
                           ? "Try a different search term or clear the filter."
-                          : "Your Starting XI is empty. Open the draft to pick the members you want in your lineup this week."}
+                          : "Your Team is empty. Open the picker to choose the members you want in your lineup this week."}
                       </Body>
                       {!q && (
                         <div className="mt-7 flex justify-center">
-                          <PrimaryBtn onClick={() => navigate("/club/xi")}>Open Starting XI</PrimaryBtn>
+                          <PrimaryBtn onClick={() => navigate("/club/xi")}>Open Your Team</PrimaryBtn>
                         </div>
                       )}
                     </div>
