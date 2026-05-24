@@ -213,7 +213,7 @@ const Club = () => {
                             className="flex-1 inline-flex items-center justify-center gap-2 text-xs px-3 py-2.5 rounded-full transition-colors"
                             style={{ background: C.raspberry, color: "#fff", fontFamily: fonts.mono, letterSpacing: "0.08em", textTransform: "uppercase" }}
                           >
-                            Draft
+                            + Add
                           </button>
                           <button
                             onClick={(e) => { e.stopPropagation(); navigate(`/members/${m.id}`); }}
