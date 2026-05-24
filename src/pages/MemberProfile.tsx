@@ -411,7 +411,7 @@ const MemberProfile = () => {
               }}
               aria-label="Draft to your XI"
             >
-              {isDrafted ? "✓ Added" : pending ? "…" : "+ Add"}
+              {isDrafted ? "✓ Drafted" : pending ? "…" : "+ Draft"}
             </button>
           </div>
 
@@ -764,7 +764,7 @@ const MemberProfile = () => {
                   : "0 16px 36px -12px rgba(232,39,111,0.6)",
               }}
             >
-              {isDrafted ? "✓ Added" : pending ? "…" : "+ Add to Your Team"}
+              {isDrafted ? "✓ Drafted" : pending ? "…" : "+ Draft to your XI"}
             </button>
           </div>
         </div>
