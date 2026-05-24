@@ -764,7 +764,7 @@ const MemberProfile = () => {
                   : "0 16px 36px -12px rgba(232,39,111,0.6)",
               }}
             >
-              {isDrafted ? "✓ Drafted" : pending ? "…" : "+ Draft to your XI"}
+              {isDrafted ? "✓ Added" : pending ? "…" : "+ Add to Your Team"}
             </button>
           </div>
         </div>
