@@ -81,7 +81,7 @@ const FinishProfile = () => {
 
     supabase
       .from("profiles")
-      .select("name, username, city, bio, favorite_sports, favorite_teams_players, profile_photo_url, phone")
+      .select("name, username, city, bio, favorite_sports, favorite_teams_players, profile_photo_url")
       .eq("id", user.id)
       .maybeSingle()
       .then(({ data: profile }) => {
@@ -93,10 +93,9 @@ const FinishProfile = () => {
           if (profile.favorite_sports?.length) setFavoriteSports(profile.favorite_sports);
           if (profile.favorite_teams_players?.length) setFavoriteTeams(profile.favorite_teams_players);
           if (profile.profile_photo_url) setPhotoPreview(profile.profile_photo_url);
-          if (profile.phone) setExistingPhone(profile.phone);
         }
         const metaPhone = user.user_metadata?.phone as string | undefined;
-        if (metaPhone && !profile?.phone) setExistingPhone(metaPhone);
+        if (metaPhone) setExistingPhone(metaPhone);
       });
   }, [authLoading, navigate, user]);
 
