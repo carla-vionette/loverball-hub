@@ -293,15 +293,15 @@ const Club = () => {
                       style={{ background: C.surface, border: `1px dashed ${C.border}` }}
                     >
                       <Sparkles size={28} color={C.gold} strokeWidth={1.25} className="mx-auto" />
-                      <H3 className="mt-5">{q ? "No matches found" : "No connections drafted yet"}</H3>
+                      <H3 className="mt-5">{q ? "No matches found" : "No friends added yet"}</H3>
                       <Body muted size={15} className="mt-3 max-w-md mx-auto">
                         {q
                           ? "Try a different search term or clear the filter."
-                          : "Your Starting XI is empty. Open the draft to pick the members you want in your lineup this week."}
+                          : "Your Team is empty. Open the picker to choose the members you want in your lineup this week."}
                       </Body>
                       {!q && (
                         <div className="mt-7 flex justify-center">
-                          <PrimaryBtn onClick={() => navigate("/club/xi")}>Open Starting XI</PrimaryBtn>
+                          <PrimaryBtn onClick={() => navigate("/club/xi")}>Open Your Team</PrimaryBtn>
                         </div>
                       )}
                     </div>
