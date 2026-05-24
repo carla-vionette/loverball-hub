@@ -259,7 +259,7 @@ const Index = () => {
                 <img src={heroImage} alt="Women sports fans at a Loverball watch party" className="w-full h-full object-cover" />
                 <div aria-hidden className="absolute inset-0" style={{ background: "linear-gradient(180deg, transparent 50%, rgba(10,10,10,0.85) 100%)" }} />
                 <div className="absolute top-4 left-4 flex items-center gap-1.5" style={{ background: C.raspberry, color: "#fff", borderRadius: 999, padding: "6px 12px", fontFamily: fonts.mono, fontSize: 10, letterSpacing: "0.22em", textTransform: "uppercase", fontWeight: 700, boxShadow: "0 8px 24px -8px rgba(240,78,35,0.7)" }}>
-                  <span className="inline-block w-1.5 h-1.5 rounded-full bg-white animate-pulse" /> Starting 5
+                  <span className="inline-block w-1.5 h-1.5 rounded-full bg-white animate-pulse" /> Your Team
                 </div>
                 <div className="absolute bottom-5 left-5 right-5 flex items-center justify-between">
                   <Mono color="#fff" size={10}>Members watch party · LA</Mono>
@@ -492,7 +492,7 @@ const Index = () => {
             <div className="md:col-span-6 grid grid-cols-2 gap-8">
               {[
                 { h: "Loverball", items: [["About", "/about"], ["Membership", "/membership"], ["Contact", "/contact"]] },
-                { h: "Explore", items: [["Watch", "/feed"], ["Events", "/events"], ["Club", "/club"]] },
+                { h: "Explore", items: [["Events", "/events"], ["Club", "/club"]] },
               ].map((col) => (
                 <div key={col.h} className="flex flex-col gap-3">
                   <Mono color={C.muted} size={10}>{col.h}</Mono>

@@ -12,6 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import BottomNav from "@/components/BottomNav";
+import SiteNav from "@/components/SiteNav";
 import { Input } from "@/components/ui/input";
 import AttendeeProfileDrawer from "@/components/AttendeeProfileDrawer";
 import EventSubmissionForm from "@/components/EventSubmissionForm";
@@ -263,8 +264,9 @@ const Events = () => {
         path="/events"
       />
       <BottomNav />
+      <div className="hidden md:block"><SiteNav /></div>
 
-      <main className="pb-24 md:pb-0">
+      <main className="pb-24 md:pb-0 md:pt-20">
         <div className="max-w-6xl mx-auto px-5 md:px-10 py-8">
           <EditorialMasthead
             section="Events"
