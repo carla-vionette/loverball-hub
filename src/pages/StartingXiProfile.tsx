@@ -343,7 +343,7 @@ const StartingXiProfile: React.FC = () => {
             }}
           >
             <Plus size={14} strokeWidth={2} />
-            {alreadyDrafted ? "Drafted" : "Draft to your XI"}
+            {alreadyDrafted ? "Added" : "Add to Your Team"}
           </button>
         </div>
       </div>
