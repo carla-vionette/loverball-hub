@@ -45,39 +45,39 @@ const ProfileHeader = ({
   return (
     <div className="relative md:rounded-2xl overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-b from-primary/15 via-background/40 to-background z-10" />
-      <div className="relative z-20 px-4 pt-4 pb-5 md:px-8 md:pt-6 md:pb-6">
-        <div className="flex flex-col items-center text-center gap-3">
+      <div className="relative z-20 px-4 pt-8 pb-6 md:px-8 md:pt-10 md:pb-8">
+        <div className="flex flex-col items-center text-center gap-5">
           {/* Avatar */}
           <div className="relative">
-            <div className="absolute -inset-1.5 rounded-full bg-gradient-to-br from-primary/30 to-accent/30 blur-md" />
-            <Avatar className="relative w-20 h-20 md:w-24 md:h-24 border-[3px] border-primary/50">
+            <div className="absolute -inset-2 rounded-full bg-gradient-to-br from-primary/40 to-accent/30 blur-lg" />
+            <Avatar className="relative w-32 h-32 md:w-40 md:h-40 border-[3px] border-primary/60 shadow-xl">
               {profile.profile_photo_url ? (
                 <AvatarImage src={profile.profile_photo_url} alt={profile.name} className="object-cover" />
               ) : null}
-              <AvatarFallback className="bg-primary text-primary-foreground text-3xl font-sans">
+              <AvatarFallback className="bg-primary text-primary-foreground text-4xl md:text-5xl font-sans">
                 {initials}
               </AvatarFallback>
             </Avatar>
             {isOwnProfile && (
               <button
                 onClick={onEditProfile}
-                className="absolute bottom-0 right-0 w-7 h-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-md hover:bg-primary/90 transition-colors"
+                className="absolute bottom-1 right-1 w-9 h-9 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-lg hover:bg-primary/90 transition-colors border-2 border-background"
               >
-                <Edit className="w-3.5 h-3.5" />
+                <Edit className="w-4 h-4" />
               </button>
             )}
           </div>
 
           {/* Name */}
-          <div>
-            <h1 className="text-2xl md:text-3xl font-display text-foreground tracking-tight flex items-center gap-2 justify-center">
+          <div className="space-y-1">
+            <h1 className="text-3xl md:text-4xl font-display text-foreground tracking-tight flex items-center gap-2 justify-center leading-tight">
               {profile.name}
               <MemberBadge tier={profile.membership_tier} size="lg" />
             </h1>
             {profile.pronouns && (
-              <p className="text-sm text-muted-foreground mt-0.5">{profile.pronouns}</p>
+              <p className="text-sm text-muted-foreground">{profile.pronouns}</p>
             )}
-            <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground mt-1.5">
+            <div className="flex items-center justify-center gap-1.5 text-sm text-muted-foreground pt-0.5">
               <MapPin className="w-3.5 h-3.5 text-primary flex-shrink-0" />
               <span>{profile.city || "Location not set"}</span>
             </div>
