@@ -135,7 +135,7 @@ export default function ClubMessagesInbox() {
           <MessageCircle size={28} color={C.gold} strokeWidth={1.25} className="mx-auto" />
           <H3 className="mt-5">No messages yet</H3>
           <Body muted size={15} className="mt-3 max-w-md mx-auto">
-            Match with members from your Starting XI to start a conversation.
+            Match with members from Your Team to start a conversation.
           </Body>
         </div>
       ) : (

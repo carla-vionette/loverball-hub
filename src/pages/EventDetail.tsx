@@ -30,6 +30,7 @@ import EventComments from "@/components/EventComments";
 import EventDiscussionPreview from "@/components/EventDiscussionPreview";
 import EventHostProfile from "@/components/EventHostProfile";
 import Seo from "@/components/Seo";
+import DesktopNav from "@/components/DesktopNav";
 import { getUserTier } from "@/services/subscriptionService";
 
 interface Event {
@@ -635,19 +636,22 @@ const EventDetail = () => {
         )}
       </AnimatePresence>
 
-      {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-background/90 backdrop-blur-sm border-b border-border">
+      {/* Desktop global nav — keeps Watch/Events/Club/Profile reachable */}
+      <DesktopNav />
+
+      {/* Mobile-only event header */}
+      <header className="md:hidden fixed top-0 left-0 right-0 z-50 bg-background/90 backdrop-blur-sm border-b border-border">
         <div className="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
-          <Button 
-            variant="ghost" 
+          <Button
+            variant="ghost"
             size="icon"
             onClick={() => navigate(-1)}
           >
             <ArrowLeft className="w-5 h-5" />
           </Button>
           <img src={loverballLogo} alt="Loverball" className="h-12 md:h-14" />
-          <Button 
-            variant="ghost" 
+          <Button
+            variant="ghost"
             size="icon"
             onClick={handleShare}
           >
@@ -681,7 +685,7 @@ const EventDetail = () => {
         const capacityLeft = event.capacity ? event.capacity - goingCount : null;
 
         return (
-        <main className="pt-16 pb-32">
+        <main className="pt-16 md:pt-4 pb-32">
           <div className="max-w-xl mx-auto px-4 py-4 space-y-3">
             {/* HERO CARD */}
             <div className={`relative overflow-hidden rounded-2xl p-4 ${heroClass}`}>
