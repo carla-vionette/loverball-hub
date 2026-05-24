@@ -90,7 +90,7 @@ const StartingXiProfile: React.FC = () => {
     return (
       <div style={{ background: C.bg, color: C.text }} className="min-h-screen flex items-center justify-center">
         <button onClick={() => navigate("/club/xi")} style={{ color: C.pink }}>
-          Back to Your Team
+          Back to Starting XI
         </button>
       </div>
     );
@@ -343,7 +343,7 @@ const StartingXiProfile: React.FC = () => {
             }}
           >
             <Plus size={14} strokeWidth={2} />
-            {alreadyDrafted ? "Added" : "Add to Your Team"}
+            {alreadyDrafted ? "Drafted" : "Draft to your XI"}
           </button>
         </div>
       </div>

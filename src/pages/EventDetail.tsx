@@ -28,7 +28,6 @@ import EarlyAccessBanner from "@/components/EarlyAccessBanner";
 import LockedFeature from "@/components/LockedFeature";
 import EventComments from "@/components/EventComments";
 import EventDiscussionPreview from "@/components/EventDiscussionPreview";
-import SiteNav from "@/components/SiteNav";
 import EventHostProfile from "@/components/EventHostProfile";
 import Seo from "@/components/Seo";
 import { getUserTier } from "@/services/subscriptionService";
@@ -587,8 +586,7 @@ const EventDetail = () => {
   }
 
   return (
-    <div ref={gestureRef} className="min-h-screen bg-background md:pt-20">
-      <div className="hidden md:block"><SiteNav /></div>
+    <div ref={gestureRef} className="min-h-screen bg-background">
       {event && (
         <Seo
           title={`${event.title} | Loverball`}

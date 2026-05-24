@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 
 const navItems = [
+  { icon: Play, label: "Watch", path: "/feed", matches: ["/feed", "/home", "/watch"] },
   { icon: CalendarDays, label: "Events", path: "/events", matches: ["/events", "/event/"] },
   { icon: Heart, label: "Club", path: "/club/xi", matches: ["/club/xi", "/club", "/members", "/friends", "/messages", "/dms"] },
   { icon: User, label: "Profile", path: "/profile", matches: ["/profile"] },
