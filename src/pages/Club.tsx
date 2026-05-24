@@ -44,6 +44,7 @@ const Club = () => {
       />
 
       <BottomNav />
+      <div className="hidden md:block"><SiteNav /></div>
 
       <main className="pb-24 md:pb-0">
         {/* Header */}
