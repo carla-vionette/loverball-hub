@@ -234,7 +234,7 @@ const Club = () => {
             <TabsContent value="connections" className="mt-0">
               <div className="flex items-end justify-between gap-4 mb-6">
                 <div>
-                  <Slug>Your Starting XI</Slug>
+                  <Slug>Your Team</Slug>
                   <H2 className="mt-3">My Connections</H2>
                 </div>
                 <button
@@ -242,7 +242,7 @@ const Club = () => {
                   className="inline-flex items-center gap-2 text-sm hover:opacity-80 transition-opacity"
                   style={{ color: C.raspberry, fontFamily: fonts.mono, letterSpacing: "0.08em", textTransform: "uppercase" }}
                 >
-                  Draft more <ArrowRight size={14} />
+                  Add more <ArrowRight size={14} />
                 </button>
               </div>
 
