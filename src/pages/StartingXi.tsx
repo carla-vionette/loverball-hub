@@ -153,7 +153,7 @@ const MemberCard: React.FC<{ m: Member; onDraft: () => void; disabled: boolean; 
               opacity: disabled ? 0.4 : 1,
             }}
           >
-            {alreadyDrafted ? "Drafted" : "+ Draft"}
+            {alreadyDrafted ? "Added" : "+ Add"}
           </button>
         </div>
       </div>
@@ -327,9 +327,9 @@ const StartingXi: React.FC = () => {
 
       <main className="max-w-[440px] mx-auto px-5 pt-24 md:pt-28 pb-36">
         <EditorialMasthead
-          section="Starting XI."
+          section="Your Team."
           eyebrow="find your people"
-          title="Starting XI."
+          title="Your Team."
           size="md"
           className="text-6xl"
         />
@@ -451,7 +451,7 @@ const StartingXi: React.FC = () => {
         >
           <Sparkles size={14} color={C.pink} className="mt-0.5 flex-shrink-0" strokeWidth={1.5} />
           <p style={{ fontSize: 12.5, lineHeight: 1.5, color: C.text }}>
-            Surfaced based on your teams, vibes &amp; this week's matchups.
+            Suggested Friends
           </p>
         </div>
 
