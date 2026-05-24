@@ -28,6 +28,7 @@ import EarlyAccessBanner from "@/components/EarlyAccessBanner";
 import LockedFeature from "@/components/LockedFeature";
 import EventComments from "@/components/EventComments";
 import EventDiscussionPreview from "@/components/EventDiscussionPreview";
+import SiteNav from "@/components/SiteNav";
 import EventHostProfile from "@/components/EventHostProfile";
 import Seo from "@/components/Seo";
 import { getUserTier } from "@/services/subscriptionService";
