@@ -492,7 +492,7 @@ const Index = () => {
             <div className="md:col-span-6 grid grid-cols-2 gap-8">
               {[
                 { h: "Loverball", items: [["About", "/about"], ["Membership", "/membership"], ["Contact", "/contact"]] },
-                { h: "Explore", items: [["Watch", "/feed"], ["Events", "/events"], ["Club", "/club"]] },
+                { h: "Explore", items: [["Events", "/events"], ["Club", "/club"]] },
               ].map((col) => (
                 <div key={col.h} className="flex flex-col gap-3">
                   <Mono color={C.muted} size={10}>{col.h}</Mono>
