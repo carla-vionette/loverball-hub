@@ -451,7 +451,7 @@ const StartingXi: React.FC = () => {
         >
           <Sparkles size={14} color={C.pink} className="mt-0.5 flex-shrink-0" strokeWidth={1.5} />
           <p style={{ fontSize: 12.5, lineHeight: 1.5, color: C.text }}>
-            Surfaced based on your teams, vibes &amp; this week's matchups.
+            Suggested Friends
           </p>
         </div>
 
