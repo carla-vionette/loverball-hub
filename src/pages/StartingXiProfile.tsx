@@ -90,7 +90,7 @@ const StartingXiProfile: React.FC = () => {
     return (
       <div style={{ background: C.bg, color: C.text }} className="min-h-screen flex items-center justify-center">
         <button onClick={() => navigate("/club/xi")} style={{ color: C.pink }}>
-          Back to Starting XI
+          Back to Your Team
         </button>
       </div>
     );
