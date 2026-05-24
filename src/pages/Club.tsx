@@ -5,6 +5,7 @@ import { Tv, Users, MessagesSquare, MapPin, Gift, Sparkles, ArrowRight, Search }
 import { C, fonts } from "@/lib/editorialTheme";
 import { H1, H2, H3, Body, Slug, Mono, PrimaryBtn, SecondaryBtn } from "@/components/editorial/primitives";
 import BottomNav from "@/components/BottomNav";
+import SiteNav from "@/components/SiteNav";
 import { loadDrafts, MOCK_MEMBERS, type Member } from "@/lib/startingXiData";
 import ClubMessagesInbox from "@/components/club/ClubMessagesInbox";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
