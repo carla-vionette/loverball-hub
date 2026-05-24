@@ -411,7 +411,7 @@ const MemberProfile = () => {
               }}
               aria-label="Draft to your XI"
             >
-              {isDrafted ? "✓ Drafted" : pending ? "…" : "+ Draft"}
+              {isDrafted ? "✓ Added" : pending ? "…" : "+ Add"}
             </button>
           </div>
 
