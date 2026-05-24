@@ -104,13 +104,13 @@ const Club = () => {
               className="rounded-[20px] p-6 flex items-center justify-between gap-4"
               style={{ background: C.surface, border: `1px dashed ${C.border}` }}
             >
-              <Body muted size={14}>No friends drafted yet. Build your roster from this week's matches.</Body>
+              <Body muted size={14}>No friends added yet. Build your roster from this week's matches.</Body>
               <button
                 onClick={() => navigate("/club/xi")}
                 className="inline-flex items-center gap-2 text-xs px-4 py-2 rounded-full whitespace-nowrap"
                 style={{ background: C.raspberry, color: "#fff", fontFamily: fonts.mono, letterSpacing: "0.08em", textTransform: "uppercase" }}
               >
-                Draft
+                + Add
               </button>
             </div>
           ) : (
