@@ -587,7 +587,8 @@ const EventDetail = () => {
   }
 
   return (
-    <div ref={gestureRef} className="min-h-screen bg-background">
+    <div ref={gestureRef} className="min-h-screen bg-background md:pt-20">
+      <div className="hidden md:block"><SiteNav /></div>
       {event && (
         <Seo
           title={`${event.title} | Loverball`}
