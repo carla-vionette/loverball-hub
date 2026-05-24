@@ -264,8 +264,9 @@ const Events = () => {
         path="/events"
       />
       <BottomNav />
+      <div className="hidden md:block"><SiteNav /></div>
 
-      <main className="pb-24 md:pb-0">
+      <main className="pb-24 md:pb-0 md:pt-20">
         <div className="max-w-6xl mx-auto px-5 md:px-10 py-8">
           <EditorialMasthead
             section="Events"
