@@ -101,19 +101,6 @@ const Club = () => {
           Discover, search and connect with fellow Loverball members.
         </Body>
 
-        {/* Search */}
-        <div className="mt-8 flex items-center gap-3 rounded-full px-5 py-3"
-          style={{ background: C.surface, border: `1px solid ${C.border}` }}
-        >
-          <Search size={16} color={C.muted} />
-          <Input
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search by name, city, team..."
-            className="bg-transparent border-0 p-0 h-auto text-sm focus-visible:ring-0"
-            aria-label="Search members"
-          />
-        </div>
 
         {loading && (
           <div className="mt-16 flex items-center justify-center gap-2" style={{ color: C.muted }}>
