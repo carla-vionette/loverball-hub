@@ -11,14 +11,6 @@ const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL as string;
 export const hasApiKey = () => !!SUPABASE_URL;
 
 async function fetchApi<T>(path: string): Promise<T> {
-  const { data, error } = await supabase.functions.invoke("sports-data-proxy", {
-    method: "GET",
-    // Pass path as query param via headers fallback: supabase-js doesn't support query on invoke,
-    // so we call the raw URL instead.
-  });
-  // If invoke worked above we'd return; otherwise fall through to fetch with query string.
-  if (!error && data) return data as T;
-
   const url = `${SUPABASE_URL}/functions/v1/sports-data-proxy?path=${encodeURIComponent(path)}`;
   const { data: { session } } = await supabase.auth.getSession();
   const headers: Record<string, string> = {
