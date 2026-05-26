@@ -150,7 +150,7 @@ const QUOTES = [
 
 const Index = () => {
   const navigate = useNavigate();
-  const goJoin = () => navigate("/auth?mode=signup");
+  const goJoin = () => navigate("/onboarding");
   const goSignIn = () => navigate("/auth?mode=signin");
 
 
