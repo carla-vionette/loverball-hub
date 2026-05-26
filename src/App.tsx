@@ -14,45 +14,28 @@ import ProtectedRoute from "./components/ProtectedRoute";
 
 // ── Eager-load primary routes ──
 import Index from "./pages/Index";
-import Friends from "./pages/Friends";
 
 // ── Lazy-loaded secondary pages ──
 const Auth = lazy(() => import("./pages/Auth"));
 const Signup = lazy(() => import("./pages/Signup"));
-const FinishProfile = lazy(() => import("./pages/FinishProfile"));
 const Feed = lazy(() => import("./pages/Feed"));
 const Events = lazy(() => import("./pages/Events"));
 const EventDetail = lazy(() => import("./pages/EventDetail"));
 const EventPublic = lazy(() => import("./pages/EventPublic"));
 
-const MemberProfile = lazy(() => import("./pages/MemberProfile"));
 const Profile = lazy(() => import("./pages/Profile"));
 const EditProfile = lazy(() => import("./pages/EditProfile"));
 const Club = lazy(() => import("./pages/Club"));
-const ClubDrafts = lazy(() => import("./pages/ClubDrafts"));
-const StartingXi = lazy(() => import("./pages/StartingXi"));
-const StartingXiProfile = lazy(() => import("./pages/StartingXiProfile"));
-const StartingXiIncoming = lazy(() => import("./pages/StartingXiIncoming"));
 
 const Onboarding = lazy(() => import("./pages/Onboarding"));
 
 const Settings = lazy(() => import("./pages/Settings"));
-const Inbox = lazy(() => import("./pages/Inbox"));
 const MessagesPage = lazy(() => import("./pages/MessagesPage"));
 const ChatRoom = lazy(() => import("./pages/ChatRoom"));
-const DirectMessages = lazy(() => import("./pages/DirectMessages"));
-const Connections = lazy(() => import("./pages/Connections"));
-const Membership = lazy(() => import("./pages/Membership"));
-const PricingPage = lazy(() => import("./pages/PricingPage"));
-const BillingPage = lazy(() => import("./pages/BillingPage"));
-const InvitesPage = lazy(() => import("./pages/InvitesPage"));
-const InviteLanding = lazy(() => import("./pages/InviteLanding"));
+const Friends = lazy(() => import("./pages/Friends"));
 const CheckoutSuccess = lazy(() => import("./pages/CheckoutSuccess"));
 const Terms = lazy(() => import("./pages/Terms"));
 const Privacy = lazy(() => import("./pages/Privacy"));
-const Connect = lazy(() => import("./pages/Connect"));
-const About = lazy(() => import("./pages/About"));
-const Contact = lazy(() => import("./pages/Contact"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 // Admin pages
@@ -116,43 +99,24 @@ const App = () => (
                 <Route path="/signup" element={<Signup />} />
                 <Route path="/terms" element={<Terms />} />
                 <Route path="/privacy" element={<Privacy />} />
-                <Route path="/pricing" element={<PricingPage />} />
-                <Route path="/invite/:code" element={<InviteLanding />} />
-                <Route path="/connect" element={<Connect />} />
-                <Route path="/about" element={<About />} />
-                <Route path="/contact" element={<Contact />} />
 
-                {/* Core tabs: FEED, SCENE, CLUB, PROFILE */}
+                {/* Core tabs: WATCH, EVENTS, CLUB, PROFILE */}
                 <Route path="/feed" element={<Feed />} />
                 <Route path="/events" element={<Events />} />
                 <Route path="/event/:id" element={<EventDetail />} />
                 <Route path="/events/:id" element={<EventDetail />} />
                 <Route path="/e/:id" element={<EventPublic />} />
-                <Route path="/members" element={<Navigate to="/club" replace />} />
-                <Route path="/members/:id" element={<ProtectedRoute><MemberProfile /></ProtectedRoute>} />
-                <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
                 <Route path="/club" element={<Club />} />
-                <Route path="/club/drafts" element={<ProtectedRoute><ClubDrafts /></ProtectedRoute>} />
-                <Route path="/club/xi" element={<ProtectedRoute><StartingXi /></ProtectedRoute>} />
-                <Route path="/club/xi/incoming" element={<ProtectedRoute><StartingXiIncoming /></ProtectedRoute>} />
-                <Route path="/club/xi/:id" element={<ProtectedRoute><StartingXiProfile /></ProtectedRoute>} />
+                <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+                <Route path="/profile/:id" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
                 <Route path="/profile/edit" element={<ProtectedRoute><EditProfile /></ProtectedRoute>} />
-                <Route path="/profile/interests" element={<Navigate to="/profile/edit" replace />} />
 
-                {/* Profile-linked utilities */}
-                <Route path="/finish-profile" element={<ProtectedRoute><FinishProfile /></ProtectedRoute>} />
+                {/* Supporting routes (not in nav) */}
                 <Route path="/onboarding" element={<ProtectedRoute><Onboarding /></ProtectedRoute>} />
-                
                 <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
-                <Route path="/inbox" element={<ProtectedRoute><Inbox /></ProtectedRoute>} />
                 <Route path="/messages" element={<ProtectedRoute><MessagesPage /></ProtectedRoute>} />
                 <Route path="/messages/:chatId" element={<ProtectedRoute><ChatRoom /></ProtectedRoute>} />
-                <Route path="/dms" element={<ProtectedRoute><DirectMessages /></ProtectedRoute>} />
                 <Route path="/friends" element={<ProtectedRoute><Friends /></ProtectedRoute>} />
-                <Route path="/connections" element={<ProtectedRoute><Connections /></ProtectedRoute>} />
-                <Route path="/membership" element={<Membership />} />
-                <Route path="/billing" element={<ProtectedRoute><BillingPage /></ProtectedRoute>} />
-                <Route path="/invites" element={<ProtectedRoute><InvitesPage /></ProtectedRoute>} />
                 <Route path="/checkout-success" element={<ProtectedRoute><CheckoutSuccess /></ProtectedRoute>} />
 
                 {/* Admin */}
@@ -173,10 +137,28 @@ const App = () => (
                 <Route path="/channel/:handle" element={<Navigate to="/feed" replace />} />
                 <Route path="/search" element={<Navigate to="/feed" replace />} />
                 <Route path="/trending" element={<Navigate to="/feed" replace />} />
-                <Route path="/community" element={<Navigate to="/members" replace />} />
-                <Route path="/community/:groupId" element={<Navigate to="/members" replace />} />
-                <Route path="/network" element={<Navigate to="/members" replace />} />
-                
+                <Route path="/community" element={<Navigate to="/club" replace />} />
+                <Route path="/community/:groupId" element={<Navigate to="/club" replace />} />
+                <Route path="/network" element={<Navigate to="/club" replace />} />
+                <Route path="/members" element={<Navigate to="/club" replace />} />
+                <Route path="/members/:id" element={<Navigate to="/club" replace />} />
+                <Route path="/connect" element={<Navigate to="/club" replace />} />
+                <Route path="/connections" element={<Navigate to="/club" replace />} />
+                <Route path="/club/xi" element={<Navigate to="/club" replace />} />
+                <Route path="/club/xi/:id" element={<Navigate to="/club" replace />} />
+                <Route path="/club/xi/incoming" element={<Navigate to="/club" replace />} />
+                <Route path="/club/drafts" element={<Navigate to="/club" replace />} />
+                <Route path="/inbox" element={<Navigate to="/messages" replace />} />
+                <Route path="/dms" element={<Navigate to="/messages" replace />} />
+                <Route path="/about" element={<Navigate to="/" replace />} />
+                <Route path="/contact" element={<Navigate to="/" replace />} />
+                <Route path="/membership" element={<Navigate to="/profile" replace />} />
+                <Route path="/pricing" element={<Navigate to="/profile" replace />} />
+                <Route path="/billing" element={<Navigate to="/profile" replace />} />
+                <Route path="/invites" element={<Navigate to="/profile" replace />} />
+                <Route path="/invite/:code" element={<Navigate to="/" replace />} />
+                <Route path="/finish-profile" element={<Navigate to="/profile/edit" replace />} />
+                <Route path="/profile/interests" element={<Navigate to="/profile/edit" replace />} />
                 <Route path="/gather" element={<Navigate to="/events" replace />} />
                 <Route path="/following" element={<Navigate to="/profile" replace />} />
                 <Route path="/shop" element={<Navigate to="/profile" replace />} />
@@ -185,7 +167,7 @@ const App = () => (
                 <Route path="/team/:slug" element={<Navigate to="/events" replace />} />
                 <Route path="/teams/:slug" element={<Navigate to="/events" replace />} />
                 <Route path="/dashboard" element={<Navigate to="/profile" replace />} />
-                <Route path="/plans" element={<Navigate to="/membership" replace />} />
+                <Route path="/plans" element={<Navigate to="/profile" replace />} />
                 <Route path="/apply" element={<Navigate to="/profile" replace />} />
                 <Route path="/application-pending" element={<Navigate to="/profile" replace />} />
 
