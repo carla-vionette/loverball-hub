@@ -129,8 +129,15 @@ const Profile = () => {
   const [feedFilter, setFeedFilter] = useState<string>("All");
   const [currentTime, setCurrentTime] = useState(new Date());
   const { user, loading: authLoading } = useAuth();
+  const { id: routeId } = useParams<{ id?: string }>();
+  const viewingOther = !!routeId && (!user || routeId !== user.id);
 
   const goTo = (path: string) => { window.location.href = path; };
+
+  // When viewing another member's profile, render the public MemberProfile view.
+  if (viewingOther && routeId) {
+    return <MemberProfile memberId={routeId} />;
+  }
   const { toast } = useToast();
 
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
