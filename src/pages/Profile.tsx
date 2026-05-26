@@ -133,11 +133,6 @@ const Profile = () => {
   const viewingOther = !!routeId && (!user || routeId !== user.id);
 
   const goTo = (path: string) => { window.location.href = path; };
-
-  // When viewing another member's profile, render the public MemberProfile view.
-  if (viewingOther && routeId) {
-    return <MemberProfile memberId={routeId} />;
-  }
   const { toast } = useToast();
 
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
