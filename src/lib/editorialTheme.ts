@@ -14,7 +14,7 @@ export const C = {
 };
 
 export const fonts = {
-  serif: "'Oswald', system-ui, sans-serif",
-  sans: "'Poppins', system-ui, sans-serif",
-  mono: "'Poppins', system-ui, sans-serif",
+  serif: "'Playfair Display', Georgia, serif",
+  sans: "'Inter', system-ui, sans-serif",
+  mono: "'Space Mono', ui-monospace, monospace",
 };
