@@ -269,24 +269,24 @@ const EditProfile = () => {
     <div className="min-h-screen bg-background">
       <BottomNav />
 
-      <main className="pb-20 md:pb-8 pt-20 md:pt-8">
-        <div className="max-w-2xl mx-auto px-4">
+      <main className="pb-20 md:pb-6 pt-14 md:pt-6">
+        <div className="max-w-xl mx-auto px-4">
           {/* Header */}
-          <div className="mb-8">
+          <div className="mb-5">
             <Button 
               variant="ghost" 
               onClick={() => navigate("/profile")}
-              className="mb-4 -ml-2"
+              className="mb-2 -ml-2 text-sm"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Profile
             </Button>
-            <p className="text-primary text-sm font-medium tracking-widest mb-4 uppercase">Step {step} of {totalSteps}</p>
-            <h1 className="text-3xl sm:text-4xl font-sans font-normal text-foreground mb-4">Edit your profile</h1>
+            <p className="text-primary text-xs font-medium tracking-widest mb-2 uppercase">Step {step} of {totalSteps}</p>
+            <h1 className="text-2xl sm:text-3xl font-sans font-normal text-foreground mb-3">Edit your profile</h1>
             <Progress value={progress} className="h-1" />
           </div>
 
-          <div className="bg-pale-pink p-6 sm:p-10 space-y-6">
+          <div className="bg-pale-pink p-4 sm:p-6 space-y-4">
             {/* Step 1: Basic Info */}
             {step === 1 && (
               <div className="space-y-6">
