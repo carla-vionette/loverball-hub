@@ -270,7 +270,7 @@ const Profile = () => {
     <div className="min-h-screen" style={{ background: BG, fontFamily: "'Inter', system-ui, sans-serif" }}>
       <Seo
         title="Your Profile | Loverball"
-        description="Your Loverball member profile — favorite teams, personalized news, daily horoscope, and live scores."
+        description="Your Loverball member profile — favorite teams, personalized news, and live scores."
         path="/profile"
       />
       <DesktopNav />
