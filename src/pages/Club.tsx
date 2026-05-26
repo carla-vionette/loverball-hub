@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { Seo } from "@/components/Seo";
-import { Search, Users, MessageCircle, Sparkles, Loader2 } from "lucide-react";
+import { Users, MessageCircle, Sparkles, Loader2 } from "lucide-react";
 import { C, fonts } from "@/lib/editorialTheme";
 import { H1, Slug, Body } from "@/components/editorial/primitives";
 import BottomNav from "@/components/BottomNav";
@@ -10,7 +10,7 @@ import DesktopNav from "@/components/DesktopNav";
 import AddFriendButton from "@/components/AddFriendButton";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+
 import { supabase } from "@/integrations/supabase/client";
 import { fetchProfiles } from "@/lib/profileApi";
 import { useAuth } from "@/hooks/useAuth";
@@ -32,55 +32,6 @@ const Club = () => {
   const [friendIds, setFriendIds] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [query, setQuery] = useState("");
-
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        // Load member directory via rate-limited edge function
-        const { data, error: apiError } = await fetchProfiles<Member[]>({
-          excludeIds: user ? [user.id] : [],
-        });
-        if (apiError) throw new Error(apiError);
-        if (cancelled) return;
-        setMembers((data || []).filter((m) => m?.name));
-
-        // Load existing friendships to mark mutuals / hide add CTA
-        if (user) {
-          const { data: friendships } = await supabase
-            .from("friendships")
-            .select("requester_id, addressee_id, status")
-            .or(`requester_id.eq.${user.id},addressee_id.eq.${user.id}`);
-          if (cancelled) return;
-          const ids = new Set<string>();
-          (friendships || []).forEach((f: any) => {
-            const other = f.requester_id === user.id ? f.addressee_id : f.requester_id;
-            if (f.status === "accepted") ids.add(other);
-          });
-          setFriendIds(ids);
-        }
-      } catch (e: any) {
-        if (!cancelled) setError(e?.message || "Could not load members");
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    })();
-    return () => { cancelled = true; };
-  }, [user?.id]);
-
-  const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    if (!q) return members;
-    return members.filter((m) =>
-      (m.name || "").toLowerCase().includes(q) ||
-      (m.city || "").toLowerCase().includes(q) ||
-      (m.favorite_la_teams || []).some((t) => t.toLowerCase().includes(q)) ||
-      (m.favorite_sports || []).some((s) => s.toLowerCase().includes(q))
-    );
-  }, [members, query]);
 
   const suggested = useMemo(
     () => members.filter((m) => !friendIds.has(m.id)).slice(0, 6),
@@ -101,19 +52,6 @@ const Club = () => {
           Discover, search and connect with fellow Loverball members.
         </Body>
 
-        {/* Search */}
-        <div className="mt-8 flex items-center gap-3 rounded-full px-5 py-3"
-          style={{ background: C.surface, border: `1px solid ${C.border}` }}
-        >
-          <Search size={16} color={C.muted} />
-          <Input
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search by name, city, team..."
-            className="bg-transparent border-0 p-0 h-auto text-sm focus-visible:ring-0"
-            aria-label="Search members"
-          />
-        </div>
 
         {loading && (
           <div className="mt-16 flex items-center justify-center gap-2" style={{ color: C.muted }}>
@@ -129,7 +67,7 @@ const Club = () => {
           </div>
         )}
 
-        {!loading && !error && !query && suggested.length > 0 && (
+        {!loading && !error && suggested.length > 0 && (
           <section className="mt-10">
             <div className="flex items-center gap-2 mb-4">
               <Sparkles size={16} color={C.raspberry} />
@@ -146,23 +84,23 @@ const Club = () => {
         {!loading && !error && (
           <section className="mt-12">
             <div className="flex items-center justify-between mb-5">
-              <Slug>{query ? `${filtered.length} result${filtered.length === 1 ? "" : "s"}` : "All members"}</Slug>
+              <Slug>All members</Slug>
               <span style={{ fontFamily: fonts.mono, fontSize: 11, color: C.muted }}>
                 {members.length} total
               </span>
             </div>
 
-            {filtered.length === 0 ? (
+            {members.length === 0 ? (
               <div className="rounded-[20px] p-10 text-center"
                 style={{ background: C.surface, border: `1px dashed ${C.border}` }}>
                 <Users size={28} color={C.muted} className="mx-auto" />
                 <Body muted size={15} className="mt-4">
-                  {query ? "No members match your search." : "No members yet. Check back soon."}
+                  No members yet. Check back soon.
                 </Body>
               </div>
             ) : (
               <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {filtered.map((m) => (
+                {members.map((m) => (
                   <MemberRow key={m.id} member={m} navigate={navigate} />
                 ))}
               </ul>
