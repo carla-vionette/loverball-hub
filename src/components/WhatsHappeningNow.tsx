@@ -217,7 +217,7 @@ const WhatsHappeningNow = () => {
                 className="text-[10px] tracking-[0.2em] uppercase text-[#FF4D3A] font-semibold"
                 style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace" }}
               >
-                {video.category ? video.category.toUpperCase() : "New on Watch"}
+                {video.category ? video.category.toUpperCase() : "New on Feed"}
               </span>
             </div>
             <h3
