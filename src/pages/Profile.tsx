@@ -216,6 +216,8 @@ const Profile = () => {
     };
     fetchProfile();
     return () => { cancelled = true; };
+  }, [authLoading, user]);
+
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 60000);
     return () => clearInterval(timer);
