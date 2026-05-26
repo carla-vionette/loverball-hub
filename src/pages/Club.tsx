@@ -72,7 +72,7 @@ const Club = () => {
             </span>
           </div>
           <Slug>The Club</Slug>
-          <H1 className="mt-6" style={{ fontSize: "clamp(40px, 7vw, 96px)", lineHeight: 0.95 }}>
+          <H1 className="mt-6" style={{ fontFamily: "'Anton', Impact, sans-serif", fontStyle: "normal", fontSize: "clamp(40px, 7vw, 96px)", lineHeight: 0.95 }}>
             The members-only home<br/>for women's sports fans.
           </H1>
           <div className="mt-8 flex flex-wrap gap-3 items-center">
@@ -86,7 +86,7 @@ const Club = () => {
           <div className="flex items-end justify-between gap-4 mb-5">
             <div>
               <Slug>Current roster</Slug>
-              <H3 className="mt-2" style={{ fontSize: 22 }}>
+              <H3 className="mt-2" style={{ fontFamily: "'Anton', Impact, sans-serif", fontStyle: "normal", fontSize: 22 }}>
                 Your friends {connections.length ? `· ${connections.length}` : ""}
               </H3>
             </div>
@@ -174,7 +174,7 @@ const Club = () => {
               <div className="flex items-end justify-between gap-4 mb-6">
                 <div>
                   <Slug>Curated for you</Slug>
-                  <H2 className="mt-3">Three matches this week.</H2>
+                  <H2 className="mt-3" style={{ fontFamily: "'Anton', Impact, sans-serif", fontStyle: "normal" }}>Three matches this week.</H2>
                   <Body muted size={15} className="mt-3 max-w-xl">
                     Hand-picked by your teams, your city, and your rituals. New drops every Monday.
                   </Body>
@@ -202,7 +202,7 @@ const Club = () => {
                       </div>
                       <div className="p-5">
                         <Mono color={C.raspberry} size={10}>{m.match}% MATCH</Mono>
-                        <H3 className="mt-2" style={{ fontSize: 22 }}>{m.name}</H3>
+                        <H3 className="mt-2" style={{ fontFamily: "'Anton', Impact, sans-serif", fontStyle: "normal", fontSize: 22 }}>{m.name}</H3>
                         <Body muted size={13} className="mt-1 line-clamp-1">{m.team} · {m.city}</Body>
                         <Body size={14} className="mt-3 line-clamp-2" style={{ fontFamily: fonts.mono }}>
                           {m.vibe}
@@ -235,7 +235,7 @@ const Club = () => {
               <div className="flex items-end justify-between gap-4 mb-6">
                 <div>
                   <Slug>Your Team</Slug>
-                  <H2 className="mt-3">My Connections</H2>
+                  <H2 className="mt-3" style={{ fontFamily: "'Anton', Impact, sans-serif", fontStyle: "normal" }}>My Connections</H2>
                 </div>
                 <button
                   onClick={() => navigate("/club/xi")}
@@ -293,7 +293,7 @@ const Club = () => {
                       style={{ background: C.surface, border: `1px dashed ${C.border}` }}
                     >
                       <Sparkles size={28} color={C.gold} strokeWidth={1.25} className="mx-auto" />
-                      <H3 className="mt-5">{q ? "No matches found" : "No connections added yet"}</H3>
+                      <H3 className="mt-5" style={{ fontFamily: "'Anton', Impact, sans-serif", fontStyle: "normal" }}>{q ? "No matches found" : "No connections added yet"}</H3>
                       <Body muted size={15} className="mt-3 max-w-md mx-auto">
                         {q
                           ? "Try a different search term or clear the filter."
@@ -347,7 +347,7 @@ const Club = () => {
             <TabsContent value="inside" className="mt-0">
               <div className="mb-8">
                 <Slug>What's inside</Slug>
-                <H2 className="mt-3">Everything the Club includes.</H2>
+                <H2 className="mt-3" style={{ fontFamily: "'Anton', Impact, sans-serif", fontStyle: "normal" }}>Everything the Club includes.</H2>
               </div>
 
               <ul
