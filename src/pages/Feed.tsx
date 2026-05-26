@@ -198,7 +198,7 @@ const Feed = () => {
             <a
               href="/"
               aria-label="Back to Loverball home"
-              className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E8276F] rounded"
+              className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E8276F] rounded md:hidden"
             >
               <img
                 src={loverballLogo}
