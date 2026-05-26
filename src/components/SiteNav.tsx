@@ -70,13 +70,12 @@ const SiteNav = () => {
 
   return (
     <nav
-      className="fixed top-0 inset-x-0 z-50"
+      className="fixed top-0 inset-x-0"
       role="navigation"
       aria-label="Primary"
       style={{
-        background: "rgba(11, 11, 11, 0.9)",
-        backdropFilter: "blur(16px)",
-        WebkitBackdropFilter: "blur(16px)",
+        zIndex: 100,
+        background: "#0B0B0B",
         borderBottom: `1px solid #E86BB0`,
       }}
     >
