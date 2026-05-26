@@ -216,22 +216,6 @@ const Profile = () => {
     };
     fetchProfile();
     return () => { cancelled = true; };
-  }, [authLoading, user]);
-
-  // Fetch live daily horoscope
-  useEffect(() => {
-    if (!birthday) return;
-    const zodiacSign = getZodiacSign(birthday);
-    if (!zodiacSign) return;
-    setHoroscopeLoading(true);
-    supabase.functions.invoke("horoscope", {
-      body: { sign: zodiacSign.name.toLowerCase(), period: "daily" },
-    }).then(({ data: resp }) => {
-      const reading = resp?.data?.horoscope || resp?.horoscope || resp?.reading;
-      if (reading) setLiveHoroscope(reading);
-    }).catch(() => {}).finally(() => setHoroscopeLoading(false));
-  }, [birthday]);
-
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 60000);
     return () => clearInterval(timer);
@@ -264,7 +248,6 @@ const Profile = () => {
 
   const initials = profile.name.split(" ").map(n => n[0]).join("").toUpperCase();
   const locationText = profile.city || "Location not set";
-  const zodiac = getZodiacSign(birthday);
   const greeting = getGreeting();
   const userName = profile.name?.split(" ")[0] || "there";
   const formattedDate = currentTime.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" });
