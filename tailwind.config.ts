@@ -63,14 +63,19 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ["Inter", "system-ui", "sans-serif"],
-        display: ["Anton", "Impact", "sans-serif"],
-        script: ["Great Vibes", "Pacifico", "cursive"],
-        condensed: ["Anton", "Impact", "sans-serif"],
-        serif: ["Playfair Display", "Georgia", "serif"],
-        elegant: ["Playfair Display", "Georgia", "serif"],
-        mono: ["Space Mono", "ui-monospace", "monospace"],
+        // All font utilities resolve via CSS variables defined in index.css
+        // so future pages inherit the homepage typography automatically.
+        sans: ["var(--font-body)"],
+        body: ["var(--font-body)"],
+        heading: ["var(--font-heading)"],
+        display: ["var(--font-display)"],
+        condensed: ["var(--font-display)"],
+        script: ["var(--font-script)"],
+        serif: ["var(--font-serif)"],
+        elegant: ["var(--font-serif)"],
+        mono: ["var(--font-mono)"],
       },
+
       fontSize: {
         xs: ["0.75rem", { lineHeight: "1rem" }],
         sm: ["0.875rem", { lineHeight: "1.25rem" }],
