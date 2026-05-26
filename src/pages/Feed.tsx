@@ -2,6 +2,7 @@ import { useRef, useState, useEffect, useCallback } from "react";
 import FeedVideoPlayer from "@/components/video/FeedVideoPlayer";
 import { FEED_VIDEOS, type FeedVideoItem } from "@/lib/feedVideoData";
 import BottomNav from "@/components/BottomNav";
+import DesktopNav from "@/components/DesktopNav";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Play } from "lucide-react";
 import Seo from "@/components/Seo";
