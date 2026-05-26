@@ -381,14 +381,15 @@ const StartingXi: React.FC = () => {
                     className="inline-flex items-center gap-1.5 uppercase whitespace-nowrap"
                     style={{
                       ...mono,
-                      fontSize: 9,
-                      letterSpacing: "0.18em",
+                      fontSize: 11,
+                      letterSpacing: "0.16em",
                       color: "#0a0a0a",
                       background: C.pink,
-                      padding: "7px 12px",
+                      padding: "8px 14px",
                       borderRadius: 999,
-                      fontWeight: 500,
+                      fontWeight: 600,
                     }}
+
                   >
                     Open DMs
                   </button>
