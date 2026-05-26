@@ -148,9 +148,12 @@ export function useProfileScores(favoriteTeams: string[] = []) {
     return () => clearInterval(interval);
   }, []);
 
-  const filteredGames = favoriteTeams.length
-    ? games.filter((g) => matchesFavorites(g, favoriteTeams))
-    : games;
+  let filteredGames = games;
+  if (favoriteTeams.length) {
+    const matched = games.filter((g) => matchesFavorites(g, favoriteTeams));
+    // Fall back to all games if no favorites match — better than an empty state
+    filteredGames = matched.length > 0 ? matched : games;
+  }
 
   return { games: filteredGames, loading, error, refetch: fetchScores, hasFavorites: favoriteTeams.length > 0 };
 }
