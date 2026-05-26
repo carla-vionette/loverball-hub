@@ -342,10 +342,11 @@ const Profile = () => {
                     <h2
                       className="leading-[0.95] tracking-tight"
                       style={{
-                        fontFamily: "'Playfair Display', Georgia, serif",
-                        fontWeight: 700,
+                        fontFamily: "'Anton', Impact, sans-serif",
+                        fontWeight: 400,
                         fontSize: "clamp(26px, 3vw, 34px)",
                         color: "#FFFFFF",
+                        textTransform: "uppercase",
                       }}
                     >
                       {profile.name}
