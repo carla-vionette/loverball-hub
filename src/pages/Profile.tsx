@@ -167,9 +167,6 @@ const Profile = () => {
   const [suggestedEvents, setSuggestedEvents] = useState<SuggestedEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentTime, setCurrentTime] = useState(new Date());
-  const [liveHoroscope, setLiveHoroscope] = useState<string | null>(null);
-  const [horoscopeLoading, setHoroscopeLoading] = useState(false);
-  const [birthday, setBirthday] = useState<string | null>(null);
   const { user, loading: authLoading } = useAuth();
   
   const goTo = (path: string) => { window.location.href = path; };
