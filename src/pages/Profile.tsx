@@ -172,6 +172,11 @@ const Profile = () => {
     return () => clearInterval(timer);
   }, []);
 
+  // When viewing another member's profile (after all hooks), render the public view.
+  if (viewingOther && routeId) {
+    return <MemberProfile memberId={routeId} />;
+  }
+
 
   const activePerfTeams = TEAM_PERFORMANCE.filter(t => t.winPct > 0);
   const combinedWinPct = activePerfTeams.length > 0 ? activePerfTeams.reduce((s, t) => s + t.winPct, 0) / activePerfTeams.length : 0;
