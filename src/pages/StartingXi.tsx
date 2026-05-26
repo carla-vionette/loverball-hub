@@ -357,7 +357,8 @@ const StartingXi: React.FC = () => {
             <button
               onClick={() => navigate("/messages")}
               className="inline-flex items-center gap-1.5 uppercase"
-              style={{ ...mono, fontSize: 10, letterSpacing: "0.18em", color: C.pink, fontWeight: 500 }}
+              style={{ ...mono, fontSize: 11, letterSpacing: "0.16em", color: C.pink, fontWeight: 600 }}
+
               aria-label="Open direct messages"
             >
               <MessagesSquare size={13} /> Messages <ArrowRight size={11} />
