@@ -96,7 +96,8 @@ const App = () => (
                 {/* Public */}
                 <Route path="/" element={<Index />} />
                 <Route path="/auth" element={<Auth />} />
-                <Route path="/signup" element={<Signup />} />
+                <Route path="/signup" element={<Navigate to="/onboarding" replace />} />
+                <Route path="/onboarding" element={<Onboarding />} />
                 <Route path="/terms" element={<Terms />} />
                 <Route path="/privacy" element={<Privacy />} />
 
