@@ -107,7 +107,7 @@ const MemberCard: React.FC<{ m: Member; onDraft: () => void; disabled: boolean; 
       )}
       <div className="flex-1 min-w-0">
         <div className="flex items-start justify-between gap-2">
-          <h3 style={{ ...serif, fontSize: 19, color: C.raspberry, lineHeight: 1.1 }}>{m.name}</h3>
+          <h3 style={{ ...serif, fontWeight: 500, fontSize: 22, color: C.raspberry, lineHeight: 1.15, letterSpacing: "-0.015em" }}>{m.name}</h3>
         </div>
         <p
           className="uppercase mt-1"
@@ -329,7 +329,7 @@ const StartingXi: React.FC = () => {
           <div className="flex items-center gap-2 mb-3">
             <span style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 10, letterSpacing: "0.22em", color: C.muted, textTransform: "uppercase" }}>find your people</span>
           </div>
-          <h1 style={{ fontFamily: "'Anton', Impact, sans-serif", fontStyle: "normal", fontWeight: 500, fontSize: "clamp(32px, 9vw, 56px)", lineHeight: 0.92, color: C.text, margin: 0, letterSpacing: "-0.02em" }}>
+          <h1 style={{ fontFamily: "'Anton', Impact, sans-serif", fontWeight: 500, fontSize: "clamp(40px, 10vw, 64px)", lineHeight: 0.95, color: C.text, margin: 0, letterSpacing: "-0.03em" }}>
             Your Team.
           </h1>
           <div className="mt-5 h-px w-full" style={{ background: "rgba(230, 242, 90, 0.08)" }} />
@@ -348,7 +348,7 @@ const StartingXi: React.FC = () => {
           <div className="flex items-end justify-between gap-4 mb-3">
             <div>
               <Label color={C.raspberry}>Current roster</Label>
-              <h2 className="mt-1" style={{ ...serif, fontSize: 20, color: C.text, lineHeight: 1.1 }}>
+              <h2 className="mt-1" style={{ ...serif, fontWeight: 500, fontSize: "clamp(28px, 7vw, 40px)", color: C.text, lineHeight: 1.0, letterSpacing: "-0.02em" }}>
                 Your friends{state.drafted.length ? ` · ${state.drafted.length}` : ""}
               </h2>
             </div>
