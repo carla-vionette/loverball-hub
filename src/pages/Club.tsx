@@ -67,7 +67,7 @@ const Club = () => {
           </div>
         )}
 
-        {!loading && !error && !query && suggested.length > 0 && (
+        {!loading && !error && suggested.length > 0 && (
           <section className="mt-10">
             <div className="flex items-center gap-2 mb-4">
               <Sparkles size={16} color={C.raspberry} />
