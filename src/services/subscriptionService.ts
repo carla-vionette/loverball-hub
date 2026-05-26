@@ -62,22 +62,9 @@ export async function createCheckoutSession(plan: SubscriptionPlan): Promise<str
   const { data: { session } } = await supabase.auth.getSession();
   if (!session) throw new Error('Not authenticated');
 
-  const priceMap: Record<string, number> = {
-    digital: 15,
-    local: 35,
-  };
-
-  const price = priceMap[plan];
-  if (!price) throw new Error('Invalid plan');
-
-  const labelMap: Record<string, string> = {
-    digital: 'All Access',
-    local: 'The Club',
-  };
-
   const { data, error } = await supabase.functions.invoke('create-checkout', {
     body: {
-      items: [{ name: `Loverball ${labelMap[plan]} Plan`, price, quantity: 1 }],
+      planId: plan,
       success_url: `${window.location.origin}/billing?success=true`,
       cancel_url: `${window.location.origin}/membership`,
     },
