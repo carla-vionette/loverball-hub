@@ -7,13 +7,18 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+// Server-side canonical plan catalog — prices are NEVER trusted from the client.
+const PLAN_CATALOG: Record<string, { name: string; price: number }> = {
+  digital: { name: "Loverball All Access Plan", price: 15 },
+  local: { name: "Loverball The Club Plan", price: 35 },
+};
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    // Authenticate the user
     const authHeader = req.headers.get("Authorization");
     if (!authHeader?.startsWith("Bearer ")) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
@@ -46,35 +51,32 @@ Deno.serve(async (req) => {
 
     const stripe = new Stripe(stripeKey, { apiVersion: "2024-12-18.acacia" });
 
-    const { items, success_url, cancel_url } = await req.json();
+    const { planId, success_url, cancel_url } = await req.json();
 
-    if (!items || !Array.isArray(items) || items.length === 0) {
-      return new Response(JSON.stringify({ error: "No items provided" }), {
+    if (typeof planId !== "string" || !PLAN_CATALOG[planId]) {
+      return new Response(JSON.stringify({ error: "Invalid plan" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    const line_items = items.map((item: { name: string; price: number; quantity: number; image_url?: string }) => ({
-      price_data: {
-        currency: "usd",
-        product_data: {
-          name: item.name,
-          ...(item.image_url ? { images: [item.image_url] } : {}),
-        },
-        unit_amount: Math.round(item.price * 100),
-      },
-      quantity: item.quantity,
-    }));
+    const plan = PLAN_CATALOG[planId];
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
-      line_items,
+      line_items: [{
+        price_data: {
+          currency: "usd",
+          product_data: { name: plan.name },
+          unit_amount: plan.price * 100,
+        },
+        quantity: 1,
+      }],
       mode: "payment",
       success_url: success_url || `${req.headers.get("origin")}/checkout-success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: cancel_url || `${req.headers.get("origin")}/shop`,
+      cancel_url: cancel_url || `${req.headers.get("origin")}/membership`,
       customer_email: user.email,
-      metadata: { user_id: user.id },
+      metadata: { user_id: user.id, plan_id: planId },
     });
 
     return new Response(JSON.stringify({ url: session.url, sessionId: session.id }), {
@@ -82,8 +84,7 @@ Deno.serve(async (req) => {
     });
   } catch (error) {
     console.error("Stripe checkout error:", error);
-    const message = error instanceof Error ? error.message : "An unexpected error occurred";
-    return new Response(JSON.stringify({ error: message }), {
+    return new Response(JSON.stringify({ error: "Checkout failed" }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });

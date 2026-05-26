@@ -160,6 +160,23 @@ Deno.serve(async (req: Request) => {
       });
     }
 
+    // Authorization: only the event host or an admin may send branded invites.
+    const isHost = (event as { host_user_id?: string }).host_user_id === callerId;
+    let isAdmin = false;
+    if (!isHost) {
+      const { data: adminCheck } = await service.rpc("has_role", {
+        _user_id: callerId,
+        _role: "admin",
+      });
+      isAdmin = adminCheck === true;
+    }
+    if (!isHost && !isAdmin) {
+      return new Response(JSON.stringify({ error: "Forbidden" }), {
+        status: 403,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     // Sender name (best effort)
     let senderName: string | null = null;
     const { data: prof } = await service
