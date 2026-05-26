@@ -84,23 +84,23 @@ const Club = () => {
         {!loading && !error && (
           <section className="mt-12">
             <div className="flex items-center justify-between mb-5">
-              <Slug>{query ? `${filtered.length} result${filtered.length === 1 ? "" : "s"}` : "All members"}</Slug>
+              <Slug>All members</Slug>
               <span style={{ fontFamily: fonts.mono, fontSize: 11, color: C.muted }}>
                 {members.length} total
               </span>
             </div>
 
-            {filtered.length === 0 ? (
+            {members.length === 0 ? (
               <div className="rounded-[20px] p-10 text-center"
                 style={{ background: C.surface, border: `1px dashed ${C.border}` }}>
                 <Users size={28} color={C.muted} className="mx-auto" />
                 <Body muted size={15} className="mt-4">
-                  {query ? "No members match your search." : "No members yet. Check back soon."}
+                  No members yet. Check back soon.
                 </Body>
               </div>
             ) : (
               <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {filtered.map((m) => (
+                {members.map((m) => (
                   <MemberRow key={m.id} member={m} navigate={navigate} />
                 ))}
               </ul>
