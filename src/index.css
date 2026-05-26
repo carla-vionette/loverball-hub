@@ -139,12 +139,25 @@
 }
 
 /* ============================================================
-   TYPOGRAPHY
-   Display: Oswald (bold condensed headlines)
-   Body: Poppins (clean, modern)
-   Accent: Playfair Display Italic (elegant quotes)
-   Script: Pacifico (brand/logo)
+   GLOBAL TYPOGRAPHY TOKENS
+   Single source of truth — update here and the whole app follows.
+   Heading default = Anton (matches homepage "Her Game. HER COMMUNITY.")
    ============================================================ */
+:root {
+  --font-heading: 'Anton', Impact, 'Oswald', sans-serif;
+  --font-display: 'Anton', Impact, 'Oswald', sans-serif;
+  --font-body: 'Inter', 'Poppins', system-ui, sans-serif;
+  --font-serif: 'Playfair Display', Georgia, serif;
+  --font-script: 'Great Vibes', 'Pacifico', cursive;
+  --font-mono: 'Space Mono', ui-monospace, monospace;
+
+  /* Heading defaults — pages can override per-element if needed */
+  --heading-weight: 500;
+  --heading-tracking: -0.02em;
+  --heading-leading: 0.95;
+}
+
+
 
 @layer base {
   * {
