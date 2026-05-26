@@ -150,7 +150,7 @@ const QUOTES = [
 
 const Index = () => {
   const navigate = useNavigate();
-  const goJoin = () => navigate("/auth?mode=signup");
+  const goJoin = () => navigate("/onboarding");
   const goSignIn = () => navigate("/auth?mode=signin");
 
 
@@ -403,7 +403,7 @@ const Index = () => {
                     {hi ? (
                       <PrimaryCTA onClick={goJoin} full>{t.cta}</PrimaryCTA>
                     ) : (
-                      <SecondaryCTA to="/auth?mode=signup" full>{t.cta}</SecondaryCTA>
+                      <SecondaryCTA to="/onboarding" full>{t.cta}</SecondaryCTA>
                     )}
                   </div>
                 </article>
