@@ -186,12 +186,13 @@ const FloatingNav: React.FC = () => {
           className="relative flex flex-col items-center uppercase"
           style={{
             ...mono,
-            fontSize: 10,
-            letterSpacing: "0.22em",
+            fontSize: 11,
+            letterSpacing: "0.16em",
             color: t.active ? C.pink : C.muted,
             padding: "6px 14px",
-            fontWeight: 500,
+            fontWeight: 600,
           }}
+
         >
           {t.label}
           {t.active && (
