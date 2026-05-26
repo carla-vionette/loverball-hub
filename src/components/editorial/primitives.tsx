@@ -13,13 +13,13 @@ export const H1 = ({ children, className = "", style }: { children: React.ReactN
   <h1
     className={className}
     style={{
-      fontFamily: fonts.serif,
-      fontStyle: "italic",
-      fontWeight: 500,
+      fontFamily: "'Anton', Impact, sans-serif",
+      fontWeight: 400,
       fontSize: "clamp(48px, 8vw, 112px)",
-      lineHeight: 0.95,
-      letterSpacing: "-0.03em",
+      lineHeight: 0.92,
+      letterSpacing: "-0.02em",
       color: C.text,
+      textTransform: "uppercase",
       ...style,
     }}
   >
