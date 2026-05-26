@@ -77,8 +77,7 @@ const IncomingDraftCard: React.FC<IncomingDraftCardProps> = ({
       {/* Headline */}
       <h3
         style={{
-          fontFamily: "'Oswald', system-ui, sans-serif",
-          fontStyle: "italic",
+          fontFamily: "'Anton', Impact, sans-serif",
           fontSize: 24,
           color: C.text,
           lineHeight: 1.05,
