@@ -42,20 +42,20 @@ const BottomNav = () => {
 
   return (
     <nav
-      className="fixed bottom-3 left-3 right-3 z-50 md:hidden safe-area-pb"
+      className="fixed bottom-4 left-4 right-4 z-50 md:hidden safe-area-pb"
       role="navigation"
       aria-label="Main navigation"
       style={{
-        height: 64,
+        height: 72,
         background: "rgba(20, 20, 21, 0.72)",
         backdropFilter: "blur(20px) saturate(140%)",
         WebkitBackdropFilter: "blur(20px) saturate(140%)",
         border: "1px solid #E86BB0",
-        borderRadius: 24,
+        borderRadius: 28,
         boxShadow: "0 12px 32px -8px rgba(0,0,0,0.6)",
       }}
     >
-      <div className="relative flex justify-around items-center h-full max-w-lg mx-auto px-2">
+      <div className="relative flex justify-around items-center h-full max-w-lg mx-auto px-3">
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive = item.matches.some(m => pathname === m || (m.endsWith("/") && pathname.startsWith(m)));
@@ -67,11 +67,11 @@ const BottomNav = () => {
               to={item.path}
               aria-current={isActive ? "page" : undefined}
               aria-label={item.label}
-              className="flex flex-col items-center justify-center flex-1 h-full tap-target focus-ring relative"
+              className="flex flex-col items-center justify-center flex-1 h-full tap-target focus-ring relative gap-1.5"
               style={{ color }}
             >
               <div className="relative flex items-center justify-center">
-                <Icon className="w-[20px] h-[20px]" aria-hidden="true" fill={isActive ? "currentColor" : "none"} strokeWidth={isActive ? 2 : 1.75} />
+                <Icon className="w-[22px] h-[22px]" aria-hidden="true" fill={isActive ? "currentColor" : "none"} strokeWidth={isActive ? 2 : 1.75} />
                 {showBadge && (
                   <span
                     className="absolute -top-1.5 -right-2.5 text-[9px] font-bold rounded-full min-w-[16px] h-4 flex items-center justify-center px-1"
@@ -82,12 +82,12 @@ const BottomNav = () => {
                 )}
               </div>
               <span
-                className="mt-1"
                 style={{
                   fontFamily: "'Inter', system-ui, sans-serif",
-                  fontWeight: 700,
-                  fontSize: 10,
-                  letterSpacing: "1.4px",
+                  fontWeight: 600,
+                  fontSize: 11,
+                  lineHeight: 1,
+                  letterSpacing: "1.2px",
                   textTransform: "uppercase",
                 }}
               >
