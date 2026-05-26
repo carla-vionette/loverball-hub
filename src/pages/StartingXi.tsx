@@ -29,7 +29,7 @@ const C = {
 };
 
 const mono = { fontFamily: "'Space Mono', ui-monospace, 'JetBrains Mono', monospace" } as const;
-const serif = { fontFamily: "'Playfair Display', Georgia, serif" } as const;
+const serif = { fontFamily: "'Anton', Impact, sans-serif" } as const;
 const sans = { fontFamily: "'Inter', system-ui, sans-serif" } as const;
 const display = { fontFamily: "'Anton', Impact, sans-serif" } as const;
 
@@ -326,13 +326,15 @@ const StartingXi: React.FC = () => {
       <BottomNav />
 
       <main className="max-w-[440px] mx-auto px-5 pt-24 md:pt-28 pb-36">
-        <EditorialMasthead
-          section="Your Team."
-          eyebrow="find your people"
-          title="Your Team."
-          size="md"
-          className="text-6xl"
-        />
+        <header className="mb-6">
+          <div className="flex items-center gap-2 mb-3">
+            <span style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 10, letterSpacing: "0.22em", color: C.muted, textTransform: "uppercase" }}>find your people</span>
+          </div>
+          <h1 style={{ fontFamily: "'Anton', Impact, sans-serif", fontStyle: "normal", fontWeight: 500, fontSize: "clamp(32px, 9vw, 56px)", lineHeight: 0.92, color: C.text, margin: 0, letterSpacing: "-0.02em" }}>
+            Your Team.
+          </h1>
+          <div className="mt-5 h-px w-full" style={{ background: "rgba(230, 242, 90, 0.08)" }} />
+        </header>
 
         {/* Sub-header */}
         <div className="flex items-center justify-between mt-4">
