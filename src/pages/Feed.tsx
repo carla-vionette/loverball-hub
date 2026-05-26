@@ -139,7 +139,7 @@ const Feed = () => {
   return (
     <>
       <DesktopNav />
-      <div className="fixed inset-0 bg-black z-30">
+      <div className="fixed inset-0 bg-black z-30 md:top-[74px]">
 
       <Seo
         title="Video Feed | Loverball"
