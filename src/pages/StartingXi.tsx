@@ -141,16 +141,17 @@ const MemberCard: React.FC<{ m: Member; onDraft: () => void; disabled: boolean; 
             disabled={disabled || alreadyDrafted}
             className="uppercase whitespace-nowrap transition-opacity active:opacity-80"
             style={{
-              ...sans,
-              fontSize: 10,
-              fontWeight: 500,
+              ...mono,
+              fontSize: 11,
+              fontWeight: 600,
               letterSpacing: "0.16em",
               color: alreadyDrafted ? C.muted : "#0a0a0a",
               background: alreadyDrafted ? C.cardHi : C.pink,
-              padding: "7px 12px",
+              padding: "8px 14px",
               borderRadius: 999,
               opacity: disabled ? 0.4 : 1,
             }}
+
           >
             {alreadyDrafted ? "Added" : "+ Add"}
           </button>
