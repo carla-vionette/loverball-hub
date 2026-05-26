@@ -67,6 +67,31 @@ Deno.serve(async (req) => {
     let targetUserId: string | null = payload.targetUserId ?? null;
 
     if (targetUserId) {
+      // Authorization: only allow SMS to target if caller is admin, self, or has an accepted friendship.
+      if (targetUserId !== callerId) {
+        const { data: adminCheck } = await admin.rpc("has_role", {
+          _user_id: callerId,
+          _role: "admin",
+        });
+        const isAdmin = adminCheck === true;
+        if (!isAdmin) {
+          const { data: friendship } = await admin
+            .from("friendships")
+            .select("id")
+            .eq("status", "accepted")
+            .or(
+              `and(requester_id.eq.${callerId},addressee_id.eq.${targetUserId}),and(requester_id.eq.${targetUserId},addressee_id.eq.${callerId})`,
+            )
+            .maybeSingle();
+          if (!friendship) {
+            return new Response(JSON.stringify({ error: "Forbidden" }), {
+              status: 403,
+              headers: { ...corsHeaders, "Content-Type": "application/json" },
+            });
+          }
+        }
+      }
+
       const { data: prof } = await admin
         .from("profiles")
         .select("phone, sms_notifications_enabled, sms_unsubscribed")
@@ -85,6 +110,18 @@ Deno.serve(async (req) => {
         });
       }
       toPhone = prof.phone;
+    } else {
+      // Direct phone targeting (no targetUserId) is admin-only.
+      const { data: adminCheck } = await admin.rpc("has_role", {
+        _user_id: callerId,
+        _role: "admin",
+      });
+      if (adminCheck !== true) {
+        return new Response(JSON.stringify({ error: "Forbidden" }), {
+          status: 403,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
     }
 
     if (!toPhone || !/^\+[1-9]\d{6,14}$/.test(toPhone)) {
