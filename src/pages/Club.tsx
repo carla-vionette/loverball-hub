@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { Seo } from "@/components/Seo";
-import { Search, Users, MessageCircle, Sparkles, Loader2 } from "lucide-react";
+import { Users, MessageCircle, Sparkles, Loader2 } from "lucide-react";
 import { C, fonts } from "@/lib/editorialTheme";
 import { H1, Slug, Body } from "@/components/editorial/primitives";
 import BottomNav from "@/components/BottomNav";
@@ -10,7 +10,7 @@ import DesktopNav from "@/components/DesktopNav";
 import AddFriendButton from "@/components/AddFriendButton";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+
 import { supabase } from "@/integrations/supabase/client";
 import { fetchProfiles } from "@/lib/profileApi";
 import { useAuth } from "@/hooks/useAuth";
@@ -32,55 +32,6 @@ const Club = () => {
   const [friendIds, setFriendIds] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [query, setQuery] = useState("");
-
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        // Load member directory via rate-limited edge function
-        const { data, error: apiError } = await fetchProfiles<Member[]>({
-          excludeIds: user ? [user.id] : [],
-        });
-        if (apiError) throw new Error(apiError);
-        if (cancelled) return;
-        setMembers((data || []).filter((m) => m?.name));
-
-        // Load existing friendships to mark mutuals / hide add CTA
-        if (user) {
-          const { data: friendships } = await supabase
-            .from("friendships")
-            .select("requester_id, addressee_id, status")
-            .or(`requester_id.eq.${user.id},addressee_id.eq.${user.id}`);
-          if (cancelled) return;
-          const ids = new Set<string>();
-          (friendships || []).forEach((f: any) => {
-            const other = f.requester_id === user.id ? f.addressee_id : f.requester_id;
-            if (f.status === "accepted") ids.add(other);
-          });
-          setFriendIds(ids);
-        }
-      } catch (e: any) {
-        if (!cancelled) setError(e?.message || "Could not load members");
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    })();
-    return () => { cancelled = true; };
-  }, [user?.id]);
-
-  const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    if (!q) return members;
-    return members.filter((m) =>
-      (m.name || "").toLowerCase().includes(q) ||
-      (m.city || "").toLowerCase().includes(q) ||
-      (m.favorite_la_teams || []).some((t) => t.toLowerCase().includes(q)) ||
-      (m.favorite_sports || []).some((s) => s.toLowerCase().includes(q))
-    );
-  }, [members, query]);
 
   const suggested = useMemo(
     () => members.filter((m) => !friendIds.has(m.id)).slice(0, 6),
