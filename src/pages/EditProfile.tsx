@@ -289,25 +289,25 @@ const EditProfile = () => {
           <div className="bg-pale-pink p-4 sm:p-6 space-y-4">
             {/* Step 1: Basic Info */}
             {step === 1 && (
-              <div className="space-y-6">
+              <div className="space-y-4">
                 {/* Profile Photo Upload */}
-                <div className="flex flex-col items-center gap-3">
+                <div className="flex flex-col items-center gap-2">
                   <Label className="text-xs tracking-wider uppercase text-foreground/60">Profile Photo</Label>
                   <div 
                     onClick={() => fileInputRef.current?.click()}
                     className="relative cursor-pointer group"
                   >
-                    <Avatar className="w-24 h-24 border-2 border-dashed border-foreground/20 group-hover:border-primary transition-colors">
+                    <Avatar className="w-20 h-20 border-2 border-dashed border-foreground/20 group-hover:border-primary transition-colors">
                       {profilePhotoPreview ? (
                         <AvatarImage src={profilePhotoPreview} alt="Preview" className="object-cover" />
                       ) : (
                         <AvatarFallback className="bg-background">
-                          <Camera className="w-8 h-8 text-foreground/40" />
+                          <Camera className="w-7 h-7 text-foreground/40" />
                         </AvatarFallback>
                       )}
                     </Avatar>
                     <div className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
-                      <Camera className="w-6 h-6 text-white" />
+                      <Camera className="w-5 h-5 text-white" />
                     </div>
                   </div>
                   <input
@@ -320,21 +320,21 @@ const EditProfile = () => {
                   <p className="text-xs text-foreground/40">Click to upload (max 5MB)</p>
                 </div>
 
-                <div className="space-y-2">
+                <div className="space-y-1.5">
                   <Label htmlFor="name" className="text-xs tracking-wider uppercase text-foreground/60">Name *</Label>
                   <Input
                     id="name"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="Your name"
-                    className="rounded-none h-12 border-border bg-background"
+                    className="rounded-none h-10 border-border bg-background"
                   />
                 </div>
 
-                <div className="space-y-2">
+                <div className="space-y-1.5">
                   <Label htmlFor="pronouns" className="text-xs tracking-wider uppercase text-foreground/60">Pronouns</Label>
                   <Select value={pronouns} onValueChange={setPronouns}>
-                    <SelectTrigger className="bg-background rounded-none h-12">
+                    <SelectTrigger className="bg-background rounded-none h-10">
                       <SelectValue placeholder="Select pronouns" />
                     </SelectTrigger>
                     <SelectContent className="bg-background z-50">
@@ -347,10 +347,10 @@ const EditProfile = () => {
                   </Select>
                 </div>
 
-                <div className="space-y-2">
+                <div className="space-y-1.5">
                   <Label htmlFor="city" className="text-xs tracking-wider uppercase text-foreground/60">City *</Label>
                   <Select value={city} onValueChange={setCity}>
-                    <SelectTrigger className="bg-background rounded-none h-12">
+                    <SelectTrigger className="bg-background rounded-none h-10">
                       <SelectValue placeholder="Select city" />
                     </SelectTrigger>
                     <SelectContent className="bg-background z-50 max-h-60 overflow-y-auto">
@@ -367,13 +367,12 @@ const EditProfile = () => {
 
             {/* Step 2: Sports */}
             {step === 2 && (
-              <div className="space-y-6">
-
-                <div className="space-y-3">
+              <div className="space-y-4">
+                <div className="space-y-2">
                   <Label className="text-xs tracking-wider uppercase text-foreground/60">Favorite Sports * (select all that apply)</Label>
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-2 gap-2">
                     {SPORTS_OPTIONS.map((sport) => (
-                      <div key={sport} className="flex items-center space-x-3 p-3 bg-background border border-border hover:border-primary transition-colors cursor-pointer" onClick={() => toggleArrayItem(favoriteSports, sport, setFavoriteSports)}>
+                      <div key={sport} className="flex items-center space-x-2 p-2.5 bg-background border border-border hover:border-primary transition-colors cursor-pointer" onClick={() => toggleArrayItem(favoriteSports, sport, setFavoriteSports)}>
                         <Checkbox
                           id={`sport-${sport}`}
                           checked={favoriteSports.includes(sport)}
@@ -389,7 +388,7 @@ const EditProfile = () => {
                   </div>
                 </div>
 
-                <div className="space-y-2">
+                <div className="space-y-1.5">
                   <Label htmlFor="teams" className="text-xs tracking-wider uppercase text-foreground/60">Favorite Teams & Players</Label>
                   <div className="flex gap-2">
                     <Input
@@ -398,15 +397,15 @@ const EditProfile = () => {
                       onChange={(e) => setTeamsInput(e.target.value)}
                       placeholder="e.g., Lakers, LeBron, USWNT"
                       onKeyPress={(e) => e.key === "Enter" && (e.preventDefault(), addTeam())}
-                      className="rounded-none h-12 border-border bg-background"
+                      className="rounded-none h-10 border-border bg-background"
                     />
-                    <Button type="button" onClick={addTeam} className="rounded-none h-12 px-6">
+                    <Button type="button" onClick={addTeam} className="rounded-none h-10 px-5">
                       ADD
                     </Button>
                   </div>
-                  <div className="flex flex-wrap gap-2 mt-3">
+                  <div className="flex flex-wrap gap-2 mt-2">
                     {favTeams.map((team) => (
-                      <Badge key={team} variant="secondary" className="gap-1 rounded-none px-3 py-1">
+                      <Badge key={team} variant="secondary" className="gap-1 rounded-none px-2.5 py-0.5">
                         {team}
                         <X
                           className="h-3 w-3 cursor-pointer"
@@ -421,12 +420,12 @@ const EditProfile = () => {
 
             {/* Step 3: Experience */}
             {step === 3 && (
-              <div className="space-y-6">
-                <div className="space-y-3">
+              <div className="space-y-4">
+                <div className="space-y-2">
                   <Label className="text-xs tracking-wider uppercase text-foreground/60">How do you like to experience sports? * (select all that apply)</Label>
-                  <div className="grid grid-cols-1 gap-3">
+                  <div className="grid grid-cols-1 gap-2">
                     {EXPERIENCE_OPTIONS.map((exp) => (
-                      <div key={exp} className="flex items-center space-x-3 p-3 bg-background border border-border hover:border-primary transition-colors cursor-pointer" onClick={() => toggleArrayItem(experienceTypes, exp, setExperienceTypes)}>
+                      <div key={exp} className="flex items-center space-x-2 p-2.5 bg-background border border-border hover:border-primary transition-colors cursor-pointer" onClick={() => toggleArrayItem(experienceTypes, exp, setExperienceTypes)}>
                         <Checkbox
                           id={`exp-${exp}`}
                           checked={experienceTypes.includes(exp)}
@@ -446,12 +445,12 @@ const EditProfile = () => {
 
             {/* Step 4: Interests */}
             {step === 4 && (
-              <div className="space-y-6">
-                <div className="space-y-3">
+              <div className="space-y-4">
+                <div className="space-y-2">
                   <Label className="text-xs tracking-wider uppercase text-foreground/60">What else are you into? * (select all that apply)</Label>
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-2 gap-2">
                     {INTERESTS_OPTIONS.map((interest) => (
-                      <div key={interest} className="flex items-center space-x-3 p-3 bg-background border border-border hover:border-primary transition-colors cursor-pointer" onClick={() => toggleArrayItem(interests, interest, setInterests)}>
+                      <div key={interest} className="flex items-center space-x-2 p-2.5 bg-background border border-border hover:border-primary transition-colors cursor-pointer" onClick={() => toggleArrayItem(interests, interest, setInterests)}>
                         <Checkbox
                           id={`interest-${interest}`}
                           checked={interests.includes(interest)}
@@ -471,11 +470,11 @@ const EditProfile = () => {
 
             {/* Step 5: Participation */}
             {step === 5 && (
-              <div className="space-y-6">
-                <div className="space-y-2">
+              <div className="space-y-4">
+                <div className="space-y-1.5">
                   <Label className="text-xs tracking-wider uppercase text-foreground/60">What's your comfort level with in-person events? *</Label>
                   <Select value={comfortLevel} onValueChange={setComfortLevel}>
-                    <SelectTrigger className="bg-background rounded-none h-12">
+                    <SelectTrigger className="bg-background rounded-none h-10">
                       <SelectValue placeholder="Select comfort level" />
                     </SelectTrigger>
                     <SelectContent className="bg-background z-50">
@@ -488,11 +487,11 @@ const EditProfile = () => {
                   </Select>
                 </div>
 
-                <div className="space-y-3">
+                <div className="space-y-2">
                   <Label className="text-xs tracking-wider uppercase text-foreground/60">What do you want to do? * (select all that apply)</Label>
-                  <div className="grid grid-cols-1 gap-3">
+                  <div className="grid grid-cols-1 gap-2">
                     {PARTICIPATION_OPTIONS.map((option) => (
-                      <div key={option} className="flex items-center space-x-3 p-3 bg-background border border-border hover:border-primary transition-colors cursor-pointer" onClick={() => toggleArrayItem(participation, option, setParticipation)}>
+                      <div key={option} className="flex items-center space-x-2 p-2.5 bg-background border border-border hover:border-primary transition-colors cursor-pointer" onClick={() => toggleArrayItem(participation, option, setParticipation)}>
                         <Checkbox
                           id={`participation-${option}`}
                           checked={participation.includes(option)}
@@ -508,7 +507,7 @@ const EditProfile = () => {
                   </div>
                 </div>
 
-                <div className="space-y-2">
+                <div className="space-y-1.5">
                   <Label htmlFor="phone" className="text-xs tracking-wider uppercase text-foreground/60">Phone Number (for event updates)</Label>
                   <Input
                     id="phone"
@@ -516,11 +515,11 @@ const EditProfile = () => {
                     value={phoneNumber}
                     onChange={(e) => setPhoneNumber(e.target.value)}
                     placeholder="(555) 123-4567"
-                    className="rounded-none h-12 border-border bg-background"
+                    className="rounded-none h-10 border-border bg-background"
                   />
                 </div>
 
-                <div className="flex items-center space-x-3 p-3 bg-background border border-border">
+                <div className="flex items-center space-x-2 p-2.5 bg-background border border-border">
                   <Checkbox
                     id="sms"
                     checked={smsNotifications}
@@ -534,12 +533,12 @@ const EditProfile = () => {
             )}
 
             {/* Navigation Buttons */}
-            <div className="flex gap-4 pt-6">
+            <div className="flex gap-3 pt-4">
               {step > 1 && (
                 <Button
                   variant="outline"
                   onClick={() => setStep(step - 1)}
-                  className="flex-1 h-12 rounded-none"
+                  className="flex-1 h-10 rounded-none"
                 >
                   Back
                 </Button>
@@ -549,7 +548,7 @@ const EditProfile = () => {
                 <Button
                   onClick={() => setStep(step + 1)}
                   disabled={!canProceed()}
-                  className="flex-1 h-12 rounded-none"
+                  className="flex-1 h-10 rounded-none"
                 >
                   Continue
                 </Button>
@@ -557,7 +556,7 @@ const EditProfile = () => {
                 <Button
                   onClick={handleSubmit}
                   disabled={!canProceed() || loading || uploadingPhoto}
-                  className="flex-1 h-12 rounded-none"
+                  className="flex-1 h-10 rounded-none"
                 >
                   {loading || uploadingPhoto ? (
                     <>
