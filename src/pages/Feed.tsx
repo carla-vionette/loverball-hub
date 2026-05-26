@@ -143,7 +143,7 @@ const Feed = () => {
 
       <Seo
         title="Video Feed | Loverball"
-        description="Watch the latest women's sports videos, highlights, and creator content — the Loverball immersive feed."
+        description="The Loverball FEED — the latest women's sports videos, highlights, and creator content in an immersive scroll."
         path="/feed"
       />
       <h1 className="sr-only">Loverball Video Feed</h1>

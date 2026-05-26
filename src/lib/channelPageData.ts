@@ -119,7 +119,7 @@ export const generatePlaylists = (channelName: string): ChannelPlaylist[] => [
 ];
 
 export const generateAbout = (channel: { name: string; description: string; sportBadge: string }): ChannelAbout => ({
-  fullDescription: `${channel.description}\n\nWelcome to the official ${channel.name} channel on Loverball Watch. Here you'll find highlights, behind-the-scenes content, player interviews, exclusive access, and community stories. Subscribe for notifications to never miss a new upload.\n\nWe upload new content every week including game recaps, pre-game analysis, and original features. Join our community of passionate fans and stay connected with everything ${channel.name}.`,
+  fullDescription: `${channel.description}\n\nWelcome to the official ${channel.name} channel on the Loverball FEED. Here you'll find highlights, behind-the-scenes content, player interviews, exclusive access, and community stories. Subscribe for notifications to never miss a new upload.\n\nWe upload new content every week including game recaps, pre-game analysis, and original features. Join our community of passionate fans and stay connected with everything ${channel.name}.`,
   createdDate: "January 2024",
   contactEmail: `media@${channel.name.toLowerCase().replace(/\s+/g, "")}.com`,
   website: `https://${channel.name.toLowerCase().replace(/\s+/g, "")}.com`,

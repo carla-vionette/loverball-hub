@@ -233,7 +233,7 @@ const WhatsHappeningNow = () => {
               </div>
             )}
             <span className="inline-flex items-center gap-1 text-sm font-medium text-[#FF4D3A] group-hover:gap-2 transition-all">
-              Watch now <ArrowRight className="w-3.5 h-3.5" />
+              Open Feed <ArrowRight className="w-3.5 h-3.5" />
             </span>
           </Link>
         )}
