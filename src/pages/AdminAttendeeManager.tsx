@@ -109,25 +109,9 @@ const AdminAttendeeManager = () => {
 
   const fetchAttendees = async () => {
     try {
-      const { data, error } = await supabase
-        .from('event_rsvps')
-        .select(`
-          id,
-          status,
-          user_id,
-          plus_ones,
-          guest_name,
-          guest_phone,
-          created_at,
-          profile:profiles (
-            name,
-            city,
-            profile_photo_url,
-            instagram_url
-          )
-        `)
-        .eq('event_id', id)
-        .order('created_at', { ascending: true });
+      const { data, error } = await supabase.rpc('admin_get_event_attendees', {
+        p_event_id: id,
+      });
 
       if (error) throw error;
 
@@ -139,12 +123,12 @@ const AdminAttendeeManager = () => {
         name: item.guest_name,
         phone: item.guest_phone,
         created_at: item.created_at,
-        profile: item.profile ? {
-          name: item.profile.name,
-          city: item.profile.city,
-          profile_photo_url: item.profile.profile_photo_url,
-          instagram_url: item.profile.instagram_url,
-        } : null
+        profile: item.profile_name || item.profile_city || item.profile_photo_url || item.profile_instagram_url ? {
+          name: item.profile_name,
+          city: item.profile_city,
+          profile_photo_url: item.profile_photo_url,
+          instagram_url: item.profile_instagram_url,
+        } : null,
       }));
 
       setAttendees(transformedData);
