@@ -1664,7 +1664,6 @@ export type Database = {
           city: string | null
           created_at: string
           current_streak: number
-          email: string | null
           email_notifications_enabled: boolean
           event_comfort_level: string | null
           favorite_la_teams: string[] | null
@@ -1686,7 +1685,6 @@ export type Database = {
           neighborhood: string | null
           other_interests: string[] | null
           participation_preferences: string[] | null
-          phone: string | null
           primary_role: string | null
           profile_photo_url: string | null
           pronouns: string | null
@@ -1708,7 +1706,6 @@ export type Database = {
           city?: string | null
           created_at?: string
           current_streak?: number
-          email?: string | null
           email_notifications_enabled?: boolean
           event_comfort_level?: string | null
           favorite_la_teams?: string[] | null
@@ -1730,7 +1727,6 @@ export type Database = {
           neighborhood?: string | null
           other_interests?: string[] | null
           participation_preferences?: string[] | null
-          phone?: string | null
           primary_role?: string | null
           profile_photo_url?: string | null
           pronouns?: string | null
@@ -1752,7 +1748,6 @@ export type Database = {
           city?: string | null
           created_at?: string
           current_streak?: number
-          email?: string | null
           email_notifications_enabled?: boolean
           event_comfort_level?: string | null
           favorite_la_teams?: string[] | null
@@ -1774,7 +1769,6 @@ export type Database = {
           neighborhood?: string | null
           other_interests?: string[] | null
           participation_preferences?: string[] | null
-          phone?: string | null
           primary_role?: string | null
           profile_photo_url?: string | null
           pronouns?: string | null
@@ -2215,6 +2209,22 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_get_event_attendees: {
+        Args: { p_event_id: string }
+        Returns: {
+          created_at: string
+          guest_name: string
+          guest_phone: string
+          id: string
+          plus_ones: number
+          profile_city: string
+          profile_instagram_url: string
+          profile_name: string
+          profile_photo_url: string
+          status: string
+          user_id: string
+        }[]
+      }
       check_rate_limit: {
         Args: {
           p_action_type: string
