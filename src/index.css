@@ -139,12 +139,25 @@
 }
 
 /* ============================================================
-   TYPOGRAPHY
-   Display: Oswald (bold condensed headlines)
-   Body: Poppins (clean, modern)
-   Accent: Playfair Display Italic (elegant quotes)
-   Script: Pacifico (brand/logo)
+   GLOBAL TYPOGRAPHY TOKENS
+   Single source of truth — update here and the whole app follows.
+   Heading default = Anton (matches homepage "Her Game. HER COMMUNITY.")
    ============================================================ */
+:root {
+  --font-heading: 'Anton', Impact, 'Oswald', sans-serif;
+  --font-display: 'Anton', Impact, 'Oswald', sans-serif;
+  --font-body: 'Inter', 'Poppins', system-ui, sans-serif;
+  --font-serif: 'Playfair Display', Georgia, serif;
+  --font-script: 'Great Vibes', 'Pacifico', cursive;
+  --font-mono: 'Space Mono', ui-monospace, monospace;
+
+  /* Heading defaults — pages can override per-element if needed */
+  --heading-weight: 500;
+  --heading-tracking: -0.02em;
+  --heading-leading: 0.95;
+}
+
+
 
 @layer base {
   * {
@@ -157,51 +170,66 @@
   }
 
   body {
-    @apply bg-background text-foreground font-sans antialiased text-base leading-relaxed;
+    @apply bg-background text-foreground antialiased text-base leading-relaxed;
+    font-family: var(--font-body);
     overflow-x: hidden;
     max-width: 100vw;
   }
 
-  /* Heading hierarchy — Playfair Display editorial (matches /profile) */
+  /* Heading hierarchy — defaults to Anton via --font-heading.
+     Override per-element with `style={{ fontFamily: 'var(--font-serif)' }}`
+     or a font utility class when a specific page needs a different voice. */
   h1 {
-    font-family: 'Playfair Display', Georgia, serif;
-    font-style: italic;
-    @apply text-[36px] md:text-[52px] lg:text-[64px] font-medium leading-[0.95];
-    letter-spacing: -0.015em;
+    font-family: var(--font-heading);
+    font-weight: var(--heading-weight);
+    letter-spacing: var(--heading-tracking);
+    line-height: var(--heading-leading);
+    @apply text-[40px] md:text-[56px] lg:text-[64px];
   }
   h2 {
-    font-family: 'Playfair Display', Georgia, serif;
-    font-style: italic;
-    @apply text-[24px] md:text-[30px] font-medium leading-tight;
-    letter-spacing: -0.005em;
+    font-family: var(--font-heading);
+    font-weight: var(--heading-weight);
+    letter-spacing: var(--heading-tracking);
+    @apply text-[28px] md:text-[36px] leading-[1];
   }
   h3 {
-    font-family: 'Playfair Display', Georgia, serif;
-    @apply text-xl font-semibold leading-tight;
-    letter-spacing: -0.005em;
+    font-family: var(--font-heading);
+    font-weight: var(--heading-weight);
+    letter-spacing: -0.015em;
+    @apply text-[22px] leading-[1.15];
   }
-  h4 { font-family: 'Playfair Display', Georgia, serif; @apply font-semibold text-lg leading-snug; }
-  h5 { @apply font-sans font-semibold text-base leading-normal; }
+  h4 {
+    font-family: var(--font-heading);
+    font-weight: var(--heading-weight);
+    @apply text-lg leading-snug;
+  }
+  h5 {
+    font-family: var(--font-body);
+    @apply font-semibold text-base leading-normal;
+  }
   h6 {
-    font-family: 'Space Mono', ui-monospace, monospace;
+    font-family: var(--font-mono);
     @apply text-xs font-normal leading-normal uppercase;
     letter-spacing: 0.12em;
   }
 
   p {
+    font-family: var(--font-body);
     @apply text-[15px] leading-[1.6] text-foreground/90;
     max-width: 68ch;
   }
 
   small, .caption {
-    font-family: 'Space Mono', ui-monospace, monospace;
+    font-family: var(--font-mono);
     @apply text-[11px] leading-normal text-foreground/50 uppercase;
     letter-spacing: 0.12em;
   }
   label {
-    @apply text-sm font-medium leading-none font-sans;
+    font-family: var(--font-body);
+    @apply text-sm font-medium leading-none;
   }
 }
+
 
 /* ============================================================
    COMPONENT LAYER
