@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { Search, MessageCircle, Bell } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { Search, MessageCircle } from "lucide-react";
 import { useCartStore } from "@/stores/cartStore";
 import loverballLogo from "@/assets/loverball-new-l-logo.png";
 
@@ -53,6 +52,7 @@ const MobileHeader = () => {
           </button>
         )}
 
+        <button
           onClick={() => navigate('/messages')}
           className="relative p-2.5 hover:bg-secondary rounded-full transition-all duration-300 focus-ring tap-target"
           aria-label="Messages"
