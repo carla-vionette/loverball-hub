@@ -115,16 +115,21 @@ const Club = () => {
 const MemberPill = ({ member, onView }: { member: Member; onView: () => void }) => (
   <button
     onClick={onView}
-    className="flex-shrink-0 flex flex-col items-center gap-2 w-20"
+    className="flex-shrink-0 flex flex-col items-center gap-2 w-28"
     aria-label={`View ${member.name}`}
   >
-    <Avatar className="w-16 h-16 border" style={{ borderColor: C.border }}>
+    <Avatar className="w-20 h-20 border-2" style={{ borderColor: C.border }}>
       <AvatarImage src={member.profile_photo_url || undefined} alt={member.name || ""} />
       <AvatarFallback>{(member.name || "?").slice(0, 1)}</AvatarFallback>
     </Avatar>
-    <span className="text-xs truncate w-full text-center" style={{ color: C.text }}>
-      {(member.name || "").split(" ")[0]}
+    <span className="text-sm font-medium truncate w-full text-center" style={{ color: C.text }}>
+      {member.name || "Member"}
     </span>
+    {member.bio && (
+      <span className="text-[11px] leading-tight truncate w-full text-center line-clamp-2" style={{ color: C.muted }}>
+        {member.bio}
+      </span>
+    )}
   </button>
 );
 
