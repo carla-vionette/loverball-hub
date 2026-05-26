@@ -33,46 +33,8 @@ import ProfileScores from "@/components/ProfileScores";
 import ProfileWhereToWatch from "@/components/ProfileWhereToWatch";
 
 
-type ProfileData = {
-  id: string;
-  name: string;
-  pronouns: string | null;
-  city: string | null;
-  age_range: string | null;
-  favorite_sports: string[] | null;
-  favorite_teams_players: string[] | null;
-  sports_experience_types: string[] | null;
-  other_interests: string[] | null;
-  event_comfort_level: string | null;
-  participation_preferences: string[] | null;
-  bio: string | null;
-  profile_photo_url: string | null;
-  membership_tier: string | null;
-};
+// Types moved to @/hooks/useProfileData
 
-type RSVPEvent = {
-  id: string;
-  status: string;
-  event: {
-    id: string;
-    title: string;
-    event_date: string;
-    event_time: string | null;
-    venue_name: string | null;
-    city: string | null;
-    image_url: string | null;
-  };
-};
-
-type SuggestedEvent = {
-  id: string;
-  title: string;
-  event_date: string;
-  event_time: string | null;
-  venue_name: string | null;
-  city: string | null;
-  image_url: string | null;
-};
 
 // --- Zodiac helpers ---
 function getGreeting(): string {
