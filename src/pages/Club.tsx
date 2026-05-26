@@ -38,6 +38,56 @@ const Club = () => {
     [members, friendIds]
   );
 
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const res = await fetchProfiles({ excludeIds: user ? [user.id] : [] });
+        if (cancelled) return;
+        if (res.error) {
+          setError(res.error);
+          setMembers([]);
+        } else {
+          const list = Array.isArray(res.data) ? res.data : [];
+          const mapped: Member[] = list.map((p: any) => ({
+            id: p.id,
+            name: p.name ?? p.full_name ?? null,
+            city: p.city ?? null,
+            bio: p.bio ?? null,
+            profile_photo_url: p.profile_photo_url ?? p.avatar_url ?? null,
+            favorite_la_teams: p.favorite_la_teams ?? null,
+            favorite_sports: p.favorite_sports ?? null,
+          }));
+          setMembers(mapped);
+        }
+
+        if (user) {
+          const { data: friends } = await supabase
+            .from("friendships")
+            .select("user_id, friend_id")
+            .or(`user_id.eq.${user.id},friend_id.eq.${user.id}`)
+            .eq("status", "accepted");
+          if (!cancelled && friends) {
+            const ids = new Set<string>();
+            friends.forEach((f: any) => {
+              ids.add(f.user_id === user.id ? f.friend_id : f.user_id);
+            });
+            setFriendIds(ids);
+          }
+        }
+      } catch (e: any) {
+        if (!cancelled) setError(e?.message || "Couldn't load members.");
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [user]);
+
   return (
     <div style={{ background: C.bg, color: C.text, fontFamily: fonts.sans }} className="min-h-screen pb-32 md:pb-12">
       <Seo title="Club — Members Directory | Loverball" description="Browse, search and connect with Loverball members." path="/club" />
