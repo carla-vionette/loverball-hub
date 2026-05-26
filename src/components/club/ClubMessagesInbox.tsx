@@ -111,7 +111,7 @@ export default function ClubMessagesInbox() {
       <div className="flex items-end justify-between gap-4 mb-8">
         <div>
           <Slug>Inbox</Slug>
-          <H2 className="mt-3">Messages</H2>
+          <H2 className="mt-3" style={{ fontFamily: "'Anton', Impact, sans-serif", fontStyle: "normal" }}>Messages</H2>
         </div>
         <button
           onClick={() => navigate("/dms")}
@@ -133,7 +133,7 @@ export default function ClubMessagesInbox() {
       ) : preview.length === 0 ? (
         <div className="rounded-[20px] p-10 md:p-14 text-center" style={{ background: C.surface, border: `1px dashed ${C.border}` }}>
           <MessageCircle size={28} color={C.gold} strokeWidth={1.25} className="mx-auto" />
-          <H3 className="mt-5">No messages yet</H3>
+          <H3 className="mt-5" style={{ fontFamily: "'Anton', Impact, sans-serif", fontStyle: "normal" }}>No messages yet</H3>
           <Body muted size={15} className="mt-3 max-w-md mx-auto">
             Match with members from Your Team to start a conversation.
           </Body>
@@ -161,7 +161,7 @@ export default function ClubMessagesInbox() {
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
-                  <H3 style={{ fontSize: 16, margin: 0 }} className="truncate">{c.otherUserName}</H3>
+                  <H3 style={{ fontFamily: "'Anton', Impact, sans-serif", fontStyle: "normal", fontSize: 16, margin: 0 }} className="truncate">{c.otherUserName}</H3>
                   {c.unread && <span className="w-2 h-2 rounded-full" style={{ background: C.raspberry }} />}
                 </div>
                 <Body muted size={13} className="truncate mt-1">

@@ -85,8 +85,7 @@ const DraftConfirmModal: React.FC<DraftConfirmModalProps> = ({
         <h2
           className="text-center mb-2"
           style={{
-            fontFamily: "'Oswald', system-ui, sans-serif",
-            fontStyle: "italic",
+            fontFamily: "'Anton', Impact, sans-serif",
             fontSize: 30,
             color: C.text,
             lineHeight: 1.05,

@@ -114,8 +114,7 @@ const MutualDraftCelebration: React.FC<MutualDraftCelebrationProps> = ({
         <h2
           className="text-center mb-3"
           style={{
-            fontFamily: "'Oswald', system-ui, sans-serif",
-            fontStyle: "italic",
+            fontFamily: "'Anton', Impact, sans-serif",
             fontSize: 34,
             color: C.text,
             lineHeight: 1.02,
