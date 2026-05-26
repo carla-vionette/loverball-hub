@@ -24,7 +24,7 @@ const VideoSidebar = () => {
       </div>
 
       {/* Nav Items */}
-      <nav className="flex-1 py-6 space-y-1" aria-label="Watch sections">
+      <nav className="flex-1 py-6 space-y-1" aria-label="Feed sections">
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive = location.pathname === item.path;
