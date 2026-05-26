@@ -18,19 +18,15 @@ import navLogo from "@/assets/loverball-logo.png";
 
 const PUBLIC_NAV_ITEMS: Array<[string, string]> = [
   ["Watch", "/feed"],
-  ["Stories", "/feed?tab=stories"],
   ["Events", "/events"],
-  ["Club", "/club/xi"],
-  ["Membership", "/membership"],
-  ["About", "/about"],
+  ["Club", "/club"],
 ];
 
 const MEMBER_NAV_ITEMS: Array<[string, string]> = [
   ["Watch", "/feed"],
-  ["Stories", "/feed?tab=stories"],
   ["Events", "/events"],
-  ["Club", "/club/xi"],
-  ["Membership", "/membership"],
+  ["Club", "/club"],
+  ["Profile", "/profile"],
 ];
 
 const linkStyle = {
