@@ -44,11 +44,14 @@ const Club = () => {
       try {
         setLoading(true);
         setError(null);
-        const profiles = await fetchProfiles({ limit: 100 });
+        const res = await fetchProfiles({ excludeIds: user ? [user.id] : [] });
         if (cancelled) return;
-        const mapped: Member[] = (profiles || [])
-          .filter((p: any) => !user || p.id !== user.id)
-          .map((p: any) => ({
+        if (res.error) {
+          setError(res.error);
+          setMembers([]);
+        } else {
+          const list = Array.isArray(res.data) ? res.data : [];
+          const mapped: Member[] = list.map((p: any) => ({
             id: p.id,
             name: p.name ?? p.full_name ?? null,
             city: p.city ?? null,
@@ -57,7 +60,8 @@ const Club = () => {
             favorite_la_teams: p.favorite_la_teams ?? null,
             favorite_sports: p.favorite_sports ?? null,
           }));
-        setMembers(mapped);
+          setMembers(mapped);
+        }
 
         if (user) {
           const { data: friends } = await supabase
