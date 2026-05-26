@@ -412,15 +412,15 @@ const Profile = () => {
                       Your activity
                     </p>
                     <h2
-                      className="leading-[0.95] mt-1.5"
+                      className="leading-[0.95] mt-1.5 uppercase"
                       style={{
-                        fontFamily: "'Playfair Display', Georgia, serif",
-                        fontWeight: 700,
+                        fontFamily: "'Anton', Impact, sans-serif",
+                        fontWeight: 400,
                         fontSize: "clamp(28px, 3.4vw, 38px)",
                         color: "#FAF5E9",
                       }}
                     >
-                      What's <span style={{ fontStyle: "italic", color: PINK }}>new</span>.
+                      What's <span style={{ color: PINK }}>new</span>.
                     </h2>
                     <p className="mt-1.5 text-[12.5px]" style={{ color: "rgba(250,245,233,0.55)" }}>
                       {greeting}, <span style={{ color: "#FAF5E9", fontWeight: 500 }}>{userName}</span>. Here's what you missed.
