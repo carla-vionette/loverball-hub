@@ -18,7 +18,7 @@ const C = {
   borderHi: "rgba(250, 245, 233, 0.15)",
 };
 const mono = { fontFamily: "'Poppins', system-ui, sans-serif" } as const;
-const serif = { fontFamily: "'Poppins', system-ui, sans-serif" } as const;
+const serif = { fontFamily: "'Anton', Impact, sans-serif" } as const;
 const sans = { fontFamily: "'Poppins', system-ui, sans-serif" } as const;
 
 const Label: React.FC<{ children: React.ReactNode; color?: string }> = ({ children, color = C.muted }) => (
