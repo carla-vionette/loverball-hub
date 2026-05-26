@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import MemberProfile from "./MemberProfile";
 import { supabase } from "@/integrations/supabase/client";
 import { MapPin, Edit, LogOut, Calendar, Clock, TrendingUp, TrendingDown, Trophy, Flame, Bookmark, BookOpen, Award, ChevronRight, ChevronDown, ArrowUpRight, Share2, AlertTriangle, Ticket, Play, Eye, Lightbulb, Settings, Heart, MessageCircle, ExternalLink, Newspaper, Zap, RefreshCw, Users, Tv, Radio, Shield } from "lucide-react";
 import MemberBadge from "@/components/MemberBadge";
@@ -127,6 +129,8 @@ const Profile = () => {
   const [feedFilter, setFeedFilter] = useState<string>("All");
   const [currentTime, setCurrentTime] = useState(new Date());
   const { user, loading: authLoading } = useAuth();
+  const { id: routeId } = useParams<{ id?: string }>();
+  const viewingOther = !!routeId && (!user || routeId !== user.id);
 
   const goTo = (path: string) => { window.location.href = path; };
   const { toast } = useToast();
@@ -167,6 +171,11 @@ const Profile = () => {
     const timer = setInterval(() => setCurrentTime(new Date()), 60000);
     return () => clearInterval(timer);
   }, []);
+
+  // When viewing another member's profile (after all hooks), render the public view.
+  if (viewingOther && routeId) {
+    return <MemberProfile memberId={routeId} />;
+  }
 
 
   const activePerfTeams = TEAM_PERFORMANCE.filter(t => t.winPct > 0);
