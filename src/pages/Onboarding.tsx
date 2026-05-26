@@ -294,14 +294,7 @@ const Onboarding = () => {
         : await supabase.auth.verifyOtp({ email: email.trim(), token: otp, type: "email" });
       if (error) throw error;
       setOtpVerified(true);
-      const { data: { user: u } } = await supabase.auth.getUser();
-      if (u) {
-        await supabase.from("profiles").upsert({
-          id: u.id,
-          ...(channel === "phone" ? { phone: fullPhone } : { email: email.trim() }),
-          updated_at: new Date().toISOString(),
-        } as any);
-      }
+      // identifier (phone or email) is already stored on auth.users by Supabase
       setStep(7);
     } catch (e: any) {
       toast({ title: "Code didn't work", description: e?.message ?? "Double-check & try again", variant: "destructive" });
