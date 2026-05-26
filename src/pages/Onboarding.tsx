@@ -1,686 +1,714 @@
-import { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { useToast } from "@/hooks/use-toast";
-import { Progress } from "@/components/ui/progress";
-import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
-import {
-  PRONOUN_OPTIONS,
-  CITY_OPTIONS,
-  SPORTS_OPTIONS,
-  CONTENT_INTERESTS_OPTIONS,
-} from "@/lib/onboardingOptions";
-import { X, Camera, Loader2, Check, ChevronRight, ChevronLeft, User, Users, Tv, Building2 } from "lucide-react";
-import loverballLogo from "@/assets/loverball-script-logo.png";
+import { useState, useEffect, useRef, useMemo, useCallback, ReactNode } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import type { AccountType } from "@/types";
+import { ArrowRight, ArrowLeft, Camera, Check, Loader2, X, Phone, Sparkles } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
+import { C, fonts } from "@/lib/editorialTheme";
+import loverballLogo from "@/assets/loverball-script-logo.png";
+import collage1 from "@/assets/community-women.jpg";
+import collage2 from "@/assets/brunch-basketball.jpg";
+import collage3 from "@/assets/community-event.jpg";
 
-const ACCOUNT_TYPE_OPTIONS: { type: AccountType; label: string; description: string; icon: typeof User }[] = [
-  { type: "member", label: "Member", description: "Fan, supporter, or sports enthusiast", icon: User },
-  { type: "creator", label: "Creator", description: "Sports content creator or influencer", icon: Tv },
-  { type: "team", label: "Team", description: "Sports team or athletic organization", icon: Users },
-  { type: "organization", label: "Organization", description: "League, media company, or brand", icon: Building2 },
+/* =========================================================
+   LOVERBALL · Unified 14-screen onboarding (Partiful-style)
+   ========================================================= */
+
+const TOTAL_CORE_SCREENS = 14;
+
+const COUNTRIES = [
+  { code: "+1", flag: "🇺🇸", label: "US" },
+  { code: "+1", flag: "🇨🇦", label: "CA" },
+  { code: "+44", flag: "🇬🇧", label: "UK" },
+  { code: "+52", flag: "🇲🇽", label: "MX" },
+  { code: "+61", flag: "🇦🇺", label: "AU" },
 ];
 
+const LEAGUES = ["WNBA", "NWSL", "NCAA", "NFL", "FIFA", "F1", "Flag Football", "MLB", "NBA", "MLS"];
+const TEAMS_BY_LEAGUE: Record<string, string[]> = {
+  WNBA: ["LA Sparks", "NY Liberty", "Las Vegas Aces", "Indiana Fever", "Seattle Storm", "Chicago Sky"],
+  NWSL: ["Angel City FC", "Gotham FC", "Portland Thorns", "San Diego Wave", "Bay FC"],
+  NCAA: ["UConn", "LSU", "South Carolina", "Iowa", "Stanford", "USC"],
+  NFL: ["49ers", "Eagles", "Chiefs", "Cowboys", "Rams"],
+  FIFA: ["USWNT", "England", "Spain", "Brazil", "Germany"],
+  F1: ["Ferrari", "Mercedes", "Red Bull", "McLaren"],
+  "Flag Football": ["Team USA", "LA Wildcats"],
+  MLB: ["Dodgers", "Yankees", "Red Sox"],
+  NBA: ["Lakers", "Celtics", "Warriors"],
+  MLS: ["LAFC", "LA Galaxy", "Inter Miami"],
+};
+const VIBES = ["Casual fan", "Die-hard", "Host", "Just here for the fits"] as const;
+
+/* ---------- atoms ---------- */
+const Page = ({ children }: { children: ReactNode }) => (
+  <motion.div
+    initial={{ opacity: 0, y: 12 }}
+    animate={{ opacity: 1, y: 0 }}
+    exit={{ opacity: 0, y: -8 }}
+    transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+    className="flex flex-col min-h-[100dvh] px-6 pt-14 pb-8"
+    style={{ background: C.bg, color: C.text }}
+  >
+    {children}
+  </motion.div>
+);
+
+const H = ({ children }: { children: ReactNode }) => (
+  <h1 style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: "clamp(34px, 8vw, 48px)", lineHeight: 1, letterSpacing: "-0.01em", textTransform: "uppercase" }}>
+    {children}
+  </h1>
+);
+
+const Sub = ({ children }: { children: ReactNode }) => (
+  <p className="mt-3" style={{ fontFamily: fonts.sans, color: C.muted, fontSize: 16, lineHeight: 1.5 }}>
+    {children}
+  </p>
+);
+
+const Trust = ({ children }: { children: ReactNode }) => (
+  <p className="mt-2 text-xs" style={{ fontFamily: fonts.mono, color: C.muted, opacity: 0.75 }}>
+    {children}
+  </p>
+);
+
+const PrimaryBtn = ({
+  children, onClick, disabled, loading, type = "button",
+}: { children: ReactNode; onClick?: () => void; disabled?: boolean; loading?: boolean; type?: "button" | "submit"; }) => (
+  <button
+    type={type}
+    onClick={onClick}
+    disabled={disabled || loading}
+    className="w-full flex items-center justify-center gap-2 transition-all active:scale-[0.98] hover:opacity-95 disabled:opacity-40 disabled:cursor-not-allowed"
+    style={{
+      height: 56, borderRadius: 999, border: "none",
+      background: `linear-gradient(95deg, ${C.raspberry} 0%, ${C.pink} 100%)`,
+      color: "#fff", fontFamily: fonts.mono, fontSize: 13,
+      letterSpacing: "0.18em", textTransform: "uppercase", fontWeight: 600,
+      boxShadow: "0 10px 30px -10px rgba(240,78,35,0.55)",
+    }}
+  >
+    {loading ? <Loader2 className="animate-spin" size={18} /> : children}
+    {!loading && <ArrowRight size={16} />}
+  </button>
+);
+
+const GhostBtn = ({ children, onClick }: { children: ReactNode; onClick?: () => void }) => (
+  <button onClick={onClick} className="text-xs hover:opacity-100 opacity-70 transition" style={{ fontFamily: fonts.mono, color: C.text, letterSpacing: "0.18em", textTransform: "uppercase" }}>
+    {children}
+  </button>
+);
+
+const TextField = (props: React.InputHTMLAttributes<HTMLInputElement>) => (
+  <input
+    {...props}
+    className={`w-full focus:outline-none placeholder:opacity-40 ${props.className ?? ""}`}
+    style={{
+      height: 60, borderRadius: 16, padding: "0 20px",
+      background: C.surface, color: C.text,
+      border: `1.5px solid ${C.borderStrong}`,
+      fontFamily: fonts.sans, fontSize: 18,
+      ...props.style,
+    }}
+  />
+);
+
+const TopBar = ({ step, onBack, onSkip }: { step: number; onBack?: () => void; onSkip?: () => void }) => (
+  <div className="flex items-center justify-between mb-8 -mt-4">
+    {onBack ? (
+      <button onClick={onBack} aria-label="Back" className="p-2 -ml-2 opacity-70 hover:opacity-100"><ArrowLeft size={20} /></button>
+    ) : <span className="w-8" />}
+    <div className="flex-1 mx-4 h-[3px] rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.08)" }}>
+      <motion.div
+        initial={false}
+        animate={{ width: `${(step / TOTAL_CORE_SCREENS) * 100}%` }}
+        transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+        className="h-full"
+        style={{ background: `linear-gradient(90deg, ${C.raspberry}, ${C.pink}, ${C.neon})` }}
+      />
+    </div>
+    {onSkip ? <GhostBtn onClick={onSkip}>Skip</GhostBtn> : <span className="w-8" />}
+  </div>
+);
+
+const Chip = ({ active, children, onClick }: { active?: boolean; children: ReactNode; onClick?: () => void }) => (
+  <button
+    onClick={onClick}
+    className="transition-all active:scale-95"
+    style={{
+      padding: "10px 16px", borderRadius: 999, fontFamily: fonts.mono, fontSize: 12, letterSpacing: "0.12em", textTransform: "uppercase",
+      border: `1.5px solid ${active ? C.pink : C.borderStrong}`,
+      background: active ? `linear-gradient(95deg, ${C.raspberry}, ${C.pink})` : "transparent",
+      color: active ? "#fff" : C.text,
+    }}
+  >
+    {children}
+  </button>
+);
+
+/* ====================================================== */
+
 const Onboarding = () => {
-  const [step, setStep] = useState(0); // Step 0 = account type selection
-  const [loading, setLoading] = useState(false);
-  const [userId, setUserId] = useState<string | null>(null);
-  const [direction, setDirection] = useState(1);
   const navigate = useNavigate();
+  const [params] = useSearchParams();
   const { toast } = useToast();
-  const { user, loading: authLoading } = useAuth();
+  const { user } = useAuth();
 
-  // Step 0: Account type
-  const [accountType, setAccountType] = useState<AccountType | null>(null);
+  const eventId = params.get("event") || params.get("eventId");
+  const finishOnly = params.get("step") === "finish";
 
-  // Step 1: Basic Info
+  // step 0 = splash (auto), 1..14 = core screens; 15..18 = finish-profile substeps
+  const [step, setStep] = useState<number>(finishOnly ? 15 : 0);
+  const [loading, setLoading] = useState(false);
+
+  // form state
+  const [country, setCountry] = useState(COUNTRIES[0]);
+  const [phone, setPhone] = useState("");
+  const [otp, setOtp] = useState("");
+  const [otpVerified, setOtpVerified] = useState(false);
+  const [resendSec, setResendSec] = useState(25);
   const [name, setName] = useState("");
-  const [pronouns, setPronouns] = useState("");
+  const [photoUrl, setPhotoUrl] = useState<string | null>(null);
+  const [photoFile, setPhotoFile] = useState<File | null>(null);
+  const [birthday, setBirthday] = useState(""); // YYYY-MM-DD
+
+  // finish profile
+  const [leagues, setLeagues] = useState<string[]>([]);
+  const [teams, setTeams] = useState<string[]>([]);
   const [city, setCity] = useState("");
-  const [birthday, setBirthday] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [smsOptIn, setSmsOptIn] = useState(false);
-  const [profilePhoto, setProfilePhoto] = useState<File | null>(null);
-  const [profilePhotoPreview, setProfilePhotoPreview] = useState<string | null>(null);
-  const [uploadingPhoto, setUploadingPhoto] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [vibe, setVibe] = useState<string>("");
 
-  // Step 2: Sports Preferences
-  const [favoriteSports, setFavoriteSports] = useState<string[]>([]);
-  const [teamsInput, setTeamsInput] = useState("");
-  const [favTeams, setFavTeams] = useState<string[]>([]);
+  const fileRef = useRef<HTMLInputElement>(null);
 
-  // Step 3: Content Interests
-  const [contentInterests, setContentInterests] = useState<string[]>([]);
-
+  /* splash → auto advance */
   useEffect(() => {
-    if (authLoading) return;
-    if (!user) {
-        navigate("/auth");
+    if (step !== 0) return;
+    const t = setTimeout(() => setStep(1), 1400);
+    return () => clearTimeout(t);
+  }, [step]);
+
+  /* resend timer */
+  useEffect(() => {
+    if (step !== 6 || resendSec <= 0) return;
+    const t = setTimeout(() => setResendSec((s) => s - 1), 1000);
+    return () => clearTimeout(t);
+  }, [step, resendSec]);
+
+  /* If user already signed in & lands on / onboarding (homepage path) - resume at name step */
+  useEffect(() => {
+    if (user && step >= 1 && step <= 7) {
+      setOtpVerified(true);
+      if (step < 8) setStep(8);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
+
+  const fullPhone = useMemo(() => `${country.code}${phone.replace(/\D/g, "")}`, [country, phone]);
+  const firstName = name.trim().split(/\s+/)[0] || "friend";
+
+  const next = useCallback(() => setStep((s) => s + 1), []);
+  const back = useCallback(() => setStep((s) => Math.max(1, s - 1)), []);
+
+  /* ---------- routing on finish ---------- */
+  const finishCoreFlow = useCallback(() => {
+    // After screen 14 welcome → show finish-profile prompt (step 15)
+    setStep(15);
+  }, []);
+
+  const exitToDestination = useCallback((completedFinish: boolean) => {
+    if (eventId) {
+      navigate(`/event/${eventId}${completedFinish ? "?welcome=1" : "?welcome=1&finish=1"}`, { replace: true });
     } else {
-      setUserId(user.id);
+      navigate(`/feed${completedFinish ? "?welcome=1" : "?welcome=1&finish=1"}`, { replace: true });
     }
-  }, [authLoading, navigate, user]);
+  }, [eventId, navigate]);
 
-  const totalSteps = 5; // 0: account type, 1-4: member onboarding
-  const progress = (step / (totalSteps - 1)) * 100;
-
-  const toggleArrayItem = (arr: string[], item: string, setter: (arr: string[]) => void) => {
-    if (arr.includes(item)) {
-      setter(arr.filter((i) => i !== item));
-    } else {
-      setter([...arr, item]);
+  /* ---------- supabase actions ---------- */
+  const sendOtp = async () => {
+    if (phone.replace(/\D/g, "").length < 7) {
+      toast({ title: "Add a valid number", variant: "destructive" });
+      return;
     }
-  };
-
-  const addTeam = () => {
-    if (teamsInput.trim() && !favTeams.includes(teamsInput.trim())) {
-      setFavTeams([...favTeams, teamsInput.trim()]);
-      setTeamsInput("");
-    }
-  };
-
-  const removeTeam = (team: string) => {
-    setFavTeams(favTeams.filter((t) => t !== team));
-  };
-
-  const handlePhotoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      if (file.size > 5 * 1024 * 1024) {
-        toast({
-          title: "File too large",
-          description: "Please select an image under 5MB",
-          variant: "destructive",
-        });
-        return;
-      }
-      setProfilePhoto(file);
-      setProfilePhotoPreview(URL.createObjectURL(file));
-    }
-  };
-
-  const uploadProfilePhoto = async (): Promise<string | null> => {
-    if (!profilePhoto || !userId) return null;
-
-    setUploadingPhoto(true);
-    try {
-      const fileExt = profilePhoto.name.split('.').pop();
-      const filePath = `${userId}/profile.${fileExt}`;
-
-      const { error: uploadError } = await supabase.storage
-        .from('profile-photos')
-        .upload(filePath, profilePhoto, { upsert: true });
-
-      if (uploadError) throw uploadError;
-
-      const { data } = supabase.storage
-        .from('profile-photos')
-        .getPublicUrl(filePath);
-
-      return data.publicUrl;
-    } catch (error: any) {
-      toast({
-        title: "Photo upload failed",
-        description: error.message,
-        variant: "destructive",
-      });
-      return null;
-    } finally {
-      setUploadingPhoto(false);
-    }
-  };
-
-  const generateBio = () => {
-    const sportsList = favoriteSports.slice(0, 2).join(" & ");
-    const interestsList = contentInterests.slice(0, 2).join(", ");
-    const teamText = favTeams[0] ? `${favTeams[0]} fan` : `${sportsList} enthusiast`;
-    const locationText = city ? `in ${city}` : "";
-
-    return `${teamText} ${locationText} who loves ${sportsList}${interestsList ? `, ${interestsList},` : ''} and connecting with fellow sports fans.`;
-  };
-
-  const handleSubmit = async () => {
-    if (!userId) return;
-
     setLoading(true);
     try {
-      const bio = generateBio();
-
-      let photoUrl: string | null = null;
-      if (profilePhoto) {
-        photoUrl = await uploadProfilePhoto();
-      }
-
-      const { error } = await supabase.from("profiles").upsert({
-        id: userId,
-        name,
-        pronouns,
-        city,
-        favorite_sports: favoriteSports,
-        favorite_teams_players: favTeams,
-        other_interests: contentInterests,
-        bio,
-        profile_photo_url: photoUrl,
-        sms_notifications_enabled: smsOptIn,
-      }, { onConflict: "id" });
-
+      const { error } = await supabase.auth.signInWithOtp({ phone: fullPhone });
       if (error) throw error;
-
-      // Store sensitive data separately
-      await supabase.from("profiles_sensitive" as any).upsert({
-        id: userId,
-        birthday: birthday || null,
-        phone_number: phoneNumber.trim() || null,
-      } as any);
-
-      // Send welcome email (fire-and-forget)
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user?.email) {
-        supabase.functions.invoke("send-welcome-email", {
-          body: { email: user.email, name },
-        }).catch(() => {});
-      }
-
-      toast({
-        title: "Profile created!",
-        description: "Welcome to Loverball!",
-      });
-
-      navigate("/profile");
-    } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive",
-      });
+      setResendSec(25);
+      setStep(6);
+    } catch (e: any) {
+      toast({ title: "Couldn't send code", description: e?.message ?? "Try again", variant: "destructive" });
     } finally {
       setLoading(false);
     }
   };
 
-  const handleAccountTypeSelect = (type: AccountType) => {
-    setAccountType(type);
-  };
-
-  const handleAccountTypeContinue = () => {
-    if (!accountType) return;
-
-    if (accountType === "member") {
-      // Continue with member onboarding
-      setDirection(1);
-      setStep(1);
-    } else {
-      // Redirect to creator/team/org application page
-      navigate(`/apply?type=${accountType}`);
+  const verifyOtp = async () => {
+    if (otp.length !== 6) return;
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.verifyOtp({ phone: fullPhone, token: otp, type: "sms" });
+      if (error) throw error;
+      setOtpVerified(true);
+      setStep(7);
+    } catch (e: any) {
+      toast({ title: "Code didn't work", description: e?.message ?? "Double-check & try again", variant: "destructive" });
+    } finally {
+      setLoading(false);
     }
   };
 
-  const canProceed = () => {
+  const saveProfilePartial = async (patch: Record<string, any>) => {
+    const { data: { user: u } } = await supabase.auth.getUser();
+    if (!u) return;
+    await supabase.from("profiles").upsert({ id: u.id, name: name || "Member", ...patch, updated_at: new Date().toISOString() });
+  };
+
+  const uploadPhoto = async (file: File) => {
+    const { data: { user: u } } = await supabase.auth.getUser();
+    if (!u) return null;
+    const ext = file.name.split(".").pop() || "jpg";
+    const path = `${u.id}/avatar-${Date.now()}.${ext}`;
+    const { error } = await supabase.storage.from("profile-photos").upload(path, file, { upsert: true });
+    if (error) { toast({ title: "Upload failed", description: error.message, variant: "destructive" }); return null; }
+    const { data } = supabase.storage.from("profile-photos").getPublicUrl(path);
+    return data.publicUrl;
+  };
+
+  const handlePhotoPick = async (file: File) => {
+    setPhotoFile(file);
+    setPhotoUrl(URL.createObjectURL(file));
+    const url = await uploadPhoto(file);
+    if (url) {
+      setPhotoUrl(url);
+      await saveProfilePartial({ profile_photo_url: url });
+    }
+  };
+
+  const completeCore = async () => {
+    await saveProfilePartial({
+      name: name || "Member",
+      profile_photo_url: photoUrl ?? undefined,
+      // store birthday into bio via dedicated col? schema has no birthday — keep month/day only in bio for now
+      bio: birthday ? `🎂 ${birthday.slice(5)}` : undefined,
+    });
+    finishCoreFlow();
+  };
+
+  const completeFinish = async () => {
+    setLoading(true);
+    try {
+      await saveProfilePartial({
+        favorite_sports: leagues,
+        favorite_teams_players: teams,
+        city: city || undefined,
+        other_interests: vibe ? [vibe] : [],
+        has_completed_onboarding: true,
+      });
+      toast({ title: "You're in 💅🏾", description: "Badge unlocked + event recs are live." });
+      exitToDestination(true);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  /* ====================================================== */
+  /* RENDER                                                  */
+  /* ====================================================== */
+
+  const renderStep = () => {
     switch (step) {
+      /* 1. Splash */
       case 0:
-        return !!accountType;
+        return (
+          <Page key="splash">
+            <div className="flex-1 flex items-center justify-center">
+              <motion.img
+                src={loverballLogo} alt="Loverball" className="h-32"
+                initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
+                transition={{ duration: 0.7, ease: "easeOut" }}
+              />
+            </div>
+            <div aria-hidden className="pointer-events-none absolute inset-0 -z-10"
+              style={{ background: `radial-gradient(circle at 30% 20%, ${C.raspberry}22, transparent 60%), radial-gradient(circle at 70% 80%, ${C.pink}22, transparent 60%)` }} />
+          </Page>
+        );
+
+      /* 2. Social proof collage */
       case 1:
-        return name.trim() && city;
+        return (
+          <Page key="collage">
+            <div className="flex justify-end">
+              <GhostBtn onClick={() => setStep(2)}>Skip</GhostBtn>
+            </div>
+            <div className="flex-1 flex flex-col items-center justify-center relative my-6">
+              <div className="grid grid-cols-2 gap-3 w-full max-w-sm">
+                <img src={collage1} alt="" className="rounded-2xl aspect-[3/4] object-cover" />
+                <div className="space-y-3">
+                  <img src={collage2} alt="" className="rounded-2xl aspect-square object-cover" />
+                  <img src={collage3} alt="" className="rounded-2xl aspect-square object-cover" />
+                </div>
+              </div>
+              <motion.div
+                initial={{ rotate: -6, opacity: 0, y: 10 }} animate={{ rotate: -6, opacity: 1, y: 0 }}
+                transition={{ delay: 0.3, duration: 0.5 }}
+                className="absolute -bottom-2 left-3 max-w-[240px] p-4 rounded-2xl"
+                style={{ background: C.neon, color: "#1a1a1a", boxShadow: "0 10px 30px -10px rgba(0,0,0,0.5)" }}
+              >
+                <p style={{ fontFamily: fonts.sans, fontSize: 14, lineHeight: 1.3, fontWeight: 600 }}>
+                  "Best watch party I've ever been to 😭🔥"
+                </p>
+                <p className="mt-1 text-[10px] opacity-70" style={{ fontFamily: fonts.mono, letterSpacing: "0.14em", textTransform: "uppercase" }}>
+                  — Mel, NWSL fan
+                </p>
+              </motion.div>
+            </div>
+            <PrimaryBtn onClick={() => setStep(2)}>Keep going</PrimaryBtn>
+          </Page>
+        );
+
+      /* 3. Hero / Get Started */
       case 2:
-        return favoriteSports.length > 0 && favTeams.length >= 1;
+        return (
+          <Page key="hero">
+            <TopBar step={2} />
+            <div className="flex-1 flex flex-col justify-center">
+              <H>Where women fans ball out together.</H>
+              <Sub>Watch parties, group chats, ticket drops, and the realest sports community on the internet.</Sub>
+            </div>
+            <div className="space-y-3">
+              <PrimaryBtn onClick={() => setStep(3)}>Get started</PrimaryBtn>
+              <p className="text-[11px] text-center" style={{ color: C.muted, fontFamily: fonts.mono }}>
+                By continuing you agree to our <a href="/terms" className="underline">Terms</a> & <a href="/privacy" className="underline">Privacy</a>.
+              </p>
+            </div>
+          </Page>
+        );
+
+      /* 4 & 5. Phone entry */
       case 3:
-        return contentInterests.length >= 3;
       case 4:
-        return true;
-      default:
-        return false;
-    }
-  };
+        return (
+          <Page key="phone">
+            <TopBar step={3} onBack={back} />
+            <div className="flex-1 flex flex-col justify-start">
+              <H>Join the league</H>
+              <Sub>Just for event drops. No spam 💌</Sub>
 
-  const getStepTitle = () => {
-    switch (step) {
-      case 0: return "How will you use Loverball?";
-      case 1: return "Tell us about yourself.";
-      case 2: return "Your sports preferences.";
-      case 3: return "What topics interest you?";
-      case 4: return "Review your profile.";
-      default: return "";
-    }
-  };
+              <div className="mt-8 flex gap-2">
+                <select
+                  value={`${country.flag}${country.code}`}
+                  onChange={(e) => {
+                    const c = COUNTRIES.find((x) => `${x.flag}${x.code}` === e.target.value);
+                    if (c) setCountry(c);
+                  }}
+                  className="focus:outline-none"
+                  style={{ height: 60, borderRadius: 16, padding: "0 14px", background: C.surface, color: C.text, border: `1.5px solid ${C.borderStrong}`, fontFamily: fonts.sans, fontSize: 16 }}
+                >
+                  {COUNTRIES.map((c) => (
+                    <option key={`${c.flag}${c.label}`} value={`${c.flag}${c.code}`}>{c.flag} {c.code}</option>
+                  ))}
+                </select>
+                <TextField
+                  type="tel" inputMode="tel" autoComplete="tel"
+                  placeholder="(310) 555-0123"
+                  value={phone}
+                  onChange={(e) => { setPhone(e.target.value); if (step === 3) setStep(4); }}
+                />
+              </div>
+              <Trust>Message & data rates may apply. We use this to verify you & send event drops.</Trust>
+            </div>
+            <PrimaryBtn onClick={sendOtp} loading={loading} disabled={phone.replace(/\D/g, "").length < 7}>
+              Send code
+            </PrimaryBtn>
+          </Page>
+        );
 
-  const getStepValidationMessage = () => {
-    switch (step) {
-      case 2:
-        if (favoriteSports.length === 0) return "Select at least 1 sport";
-        if (favTeams.length < 1) return "Add at least 1 favorite team";
-        return null;
-      case 3:
-        if (contentInterests.length < 3) return `Select at least 3 topics (${contentInterests.length}/3)`;
-        return null;
-      default:
-        return null;
-    }
-  };
+      /* 6 & 7. Verify OTP */
+      case 5:
+      case 6:
+        return (
+          <Page key="otp">
+            <TopBar step={5} onBack={back} />
+            <div className="flex-1 flex flex-col justify-start">
+              <H>Verify your number</H>
+              <Sub>We sent a 6-digit code to {country.code} {phone}.</Sub>
 
-  const goNext = () => {
-    if (step === 0) {
-      handleAccountTypeContinue();
-      return;
-    }
-    setDirection(1);
-    setStep(step + 1);
-  };
+              <input
+                value={otp}
+                onChange={(e) => { const v = e.target.value.replace(/\D/g, "").slice(0, 6); setOtp(v); }}
+                inputMode="numeric" autoComplete="one-time-code" maxLength={6}
+                placeholder="• • • • • •"
+                className="mt-8 w-full text-center focus:outline-none placeholder:opacity-30"
+                style={{ height: 76, borderRadius: 20, background: C.surface, color: C.text, border: `1.5px solid ${C.borderStrong}`, fontFamily: fonts.mono, fontSize: 36, letterSpacing: "0.5em" }}
+              />
 
-  const goBack = () => {
-    setDirection(-1);
-    setStep(step - 1);
-  };
+              <div className="mt-5 flex items-center justify-between text-xs" style={{ fontFamily: fonts.mono, color: C.muted }}>
+                <span>Didn't receive it?</span>
+                {resendSec > 0 ? (
+                  <span>Resend in {resendSec}s</span>
+                ) : (
+                  <button onClick={sendOtp} className="underline" style={{ color: C.pink }}>Resend code</button>
+                )}
+              </div>
+            </div>
+            <PrimaryBtn onClick={verifyOtp} loading={loading} disabled={otp.length !== 6}>Next</PrimaryBtn>
+          </Page>
+        );
 
-  const slideVariants = {
-    enter: (dir: number) => ({ x: dir > 0 ? 80 : -80, opacity: 0 }),
-    center: { x: 0, opacity: 1 },
-    exit: (dir: number) => ({ x: dir > 0 ? -80 : 80, opacity: 0 }),
-  };
+      /* 8. OTP verified state — instant transition to name */
+      case 7:
+        return (
+          <Page key="verified">
+            <div className="flex-1 flex flex-col items-center justify-center">
+              <motion.div
+                initial={{ scale: 0.6, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
+                transition={{ type: "spring", stiffness: 220, damping: 18 }}
+                className="w-20 h-20 rounded-full flex items-center justify-center mb-6"
+                style={{ background: `linear-gradient(135deg, ${C.raspberry}, ${C.pink})` }}
+              >
+                <Check size={36} color="#fff" />
+              </motion.div>
+              <H>You're in</H>
+              <Sub>Let's get your roster set up.</Sub>
+            </div>
+            <PrimaryBtn onClick={() => setStep(8)}>Continue</PrimaryBtn>
+          </Page>
+        );
 
-  // Display step numbers starting from 1 for user
-  const displayStep = step === 0 ? 1 : step + 1;
-  const displayTotalSteps = totalSteps;
+      /* 9. Name */
+      case 8:
+      case 9:
+        return (
+          <Page key="name">
+            <TopBar step={8} onBack={back} />
+            <div className="flex-1 flex flex-col">
+              <H>What should we call you?</H>
+              <Sub>So your section knows who's pulling up 💁🏽‍♀️</Sub>
+              <TextField
+                className="mt-8"
+                placeholder="A'ja Wilson"
+                value={name}
+                onChange={(e) => { setName(e.target.value); if (step === 8 && e.target.value.length > 0) setStep(9); }}
+              />
+            </div>
+            <PrimaryBtn onClick={async () => { await saveProfilePartial({ name }); setStep(10); }} disabled={name.trim().length < 1}>Next</PrimaryBtn>
+          </Page>
+        );
 
-  return (
-    <div className="min-h-screen bg-background">
-      {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-background/90 backdrop-blur-sm border-b border-border">
-        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
-          <div className="flex items-center justify-center h-16">
-            <img src={loverballLogo} alt="Loverball" className="h-20 w-auto" />
-          </div>
-        </div>
-      </nav>
+      /* 10. Profile pic */
+      case 10:
+        return (
+          <Page key="pic">
+            <TopBar step={10} onBack={back} onSkip={() => setStep(11)} />
+            <div className="flex-1 flex flex-col items-center">
+              <H>Drop a pic</H>
+              <Sub>So your crew spots you in the guest list.</Sub>
 
-      <div className="pt-24 pb-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-2xl mx-auto">
-          {/* Header */}
-          <div className="mb-8">
-            <div className="flex items-center justify-between mb-4">
-              <p className="text-primary text-sm font-medium tracking-widest uppercase">Step {displayStep} of {displayTotalSteps}</p>
-              <div className="flex gap-1.5">
-                {Array.from({ length: displayTotalSteps }).map((_, i) => (
-                  <div
-                    key={i}
-                    className={`h-2 w-8 rounded-full transition-colors duration-300 ${
-                      i + 1 <= displayStep ? "bg-primary" : "bg-border"
-                    }`}
-                  />
+              <button
+                onClick={() => fileRef.current?.click()}
+                className="mt-10 w-40 h-40 rounded-full flex items-center justify-center overflow-hidden relative active:scale-95 transition"
+                style={{ background: C.surface, border: `2px dashed ${C.borderStrong}` }}
+              >
+                {photoUrl ? (
+                  <img src={photoUrl} alt="You" className="w-full h-full object-cover" />
+                ) : (
+                  <Camera size={36} color={C.muted} />
+                )}
+              </button>
+              <input
+                ref={fileRef} type="file" accept="image/*" className="hidden"
+                onChange={(e) => e.target.files?.[0] && handlePhotoPick(e.target.files[0])}
+              />
+
+              <div className="mt-8 p-4 rounded-2xl max-w-sm" style={{ background: C.surface, border: `1px solid ${C.border}` }}>
+                <p className="text-sm" style={{ color: C.text, fontFamily: fonts.sans }}>
+                  💡 <b>Pro tip:</b> Members with pics get <span style={{ color: C.neon }}>8x more event invites</span> 👀
+                </p>
+              </div>
+            </div>
+            <PrimaryBtn onClick={() => setStep(11)}>{photoUrl ? "Looks good" : "Continue"}</PrimaryBtn>
+          </Page>
+        );
+
+      /* 11 & 12. Birthday */
+      case 11:
+      case 12:
+        return (
+          <Page key="bday">
+            <TopBar step={11} onBack={back} />
+            <div className="flex-1 flex flex-col">
+              <H>When's your birthday?</H>
+              <Sub>We'll plan something 🎂</Sub>
+              <TextField
+                type="date" className="mt-8"
+                value={birthday}
+                onChange={(e) => { setBirthday(e.target.value); if (step === 11) setStep(12); }}
+              />
+              <Trust>Your birth year is kept private.</Trust>
+            </div>
+            <PrimaryBtn onClick={async () => { await completeCoreBirthday(); }} disabled={!birthday}>Done</PrimaryBtn>
+          </Page>
+        );
+
+      /* 13. Contact sync */
+      case 13:
+        return (
+          <Page key="contacts">
+            <TopBar step={13} onBack={back} onSkip={() => setStep(14)} />
+            <div className="flex-1 flex flex-col items-center justify-center">
+              <div className="w-24 h-24 rounded-full flex items-center justify-center mb-8"
+                style={{ background: `linear-gradient(135deg, ${C.raspberry}33, ${C.pink}33)`, border: `1px solid ${C.borderStrong}` }}>
+                <Phone size={36} color={C.pink} />
+              </div>
+              <H>See who's already in</H>
+              <Sub>Sync contacts to find your fan fam.</Sub>
+              <Trust>We never store your contacts.</Trust>
+            </div>
+            <PrimaryBtn onClick={() => {
+              toast({ title: "Contact sync coming to the app soon ✨" });
+              setStep(14);
+            }}>Continue</PrimaryBtn>
+          </Page>
+        );
+
+      /* 14. Welcome */
+      case 14:
+        return (
+          <Page key="welcome">
+            <div className="flex-1 flex flex-col justify-center">
+              <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ duration: 0.6 }}>
+                <p style={{ fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.3em", textTransform: "uppercase", color: C.neon }}>You're official</p>
+                <h1 className="mt-3" style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: "clamp(40px, 10vw, 60px)", lineHeight: 1, textTransform: "uppercase" }}>
+                  Welcome to <span style={{ background: `linear-gradient(95deg, ${C.raspberry}, ${C.pink}, ${C.neon})`, WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent" }}>{firstName}</span>
+                </h1>
+                <Sub>Your next watch party is closer than you think.</Sub>
+              </motion.div>
+
+              <div className="mt-8 p-5 rounded-2xl" style={{ background: C.surface, border: `1px solid ${C.borderStrong}` }}>
+                <p style={{ fontFamily: fonts.mono, fontSize: 10, letterSpacing: "0.2em", textTransform: "uppercase", color: C.muted }}>Hero card</p>
+                <p className="mt-2 text-lg" style={{ fontFamily: fonts.sans }}>
+                  {eventId ? "Your RSVP is one tap away 🎟️" : "Pick from this week's drops 🏀"}
+                </p>
+                <p className="mt-1 text-xs flex items-center gap-1" style={{ color: C.pink, fontFamily: fonts.mono, letterSpacing: "0.14em", textTransform: "uppercase" }}>
+                  <Sparkles size={12} /> Ask the Commissioner
+                </p>
+              </div>
+            </div>
+            <PrimaryBtn onClick={completeCore}>Let's go</PrimaryBtn>
+          </Page>
+        );
+
+      /* ============ POST-ONBOARDING: Finish Profile ============ */
+      /* 15. Leagues */
+      case 15:
+        return (
+          <Page key="leagues">
+            <div className="flex items-center justify-between mb-8 -mt-4">
+              <span className="text-xs" style={{ color: C.neon, fontFamily: fonts.mono, letterSpacing: "0.2em", textTransform: "uppercase" }}>Bonus · Unlock recs</span>
+              <GhostBtn onClick={() => exitToDestination(false)}>Skip</GhostBtn>
+            </div>
+            <div className="flex-1 flex flex-col">
+              <H>Pick your leagues 🔥</H>
+              <Sub>We'll tune your feed + event drops.</Sub>
+              <div className="mt-8 flex flex-wrap gap-2">
+                {LEAGUES.map((l) => (
+                  <Chip key={l} active={leagues.includes(l)} onClick={() => setLeagues((p) => p.includes(l) ? p.filter((x) => x !== l) : [...p, l])}>{l}</Chip>
                 ))}
               </div>
             </div>
-            <h1 className="text-3xl sm:text-4xl font-sans font-normal text-foreground mb-4">
-              {getStepTitle()}
-            </h1>
-            <Progress value={progress} className="h-1" />
-          </div>
+            <PrimaryBtn onClick={() => setStep(16)} disabled={leagues.length === 0}>Next</PrimaryBtn>
+          </Page>
+        );
 
-          <AnimatePresence mode="wait" custom={direction}>
-            <motion.div
-              key={step}
-              custom={direction}
-              variants={slideVariants}
-              initial="enter"
-              animate="center"
-              exit="exit"
-              transition={{ duration: 0.25, ease: "easeInOut" }}
-            >
-              <div className="bg-pale-pink p-6 sm:p-10 space-y-6">
-
-                {/* Step 0: Account Type Selection */}
-                {step === 0 && (
-                  <div className="space-y-6">
-                    <p className="text-sm text-muted-foreground">
-                      Select how you'd like to join the Loverball community.
-                    </p>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      {ACCOUNT_TYPE_OPTIONS.map((option) => {
-                        const Icon = option.icon;
-                        const selected = accountType === option.type;
-                        return (
-                          <button
-                            key={option.type}
-                            type="button"
-                            onClick={() => handleAccountTypeSelect(option.type)}
-                            className={`flex flex-col items-center gap-3 p-6 border-2 transition-all duration-200 text-center ${
-                              selected
-                                ? "bg-primary/10 border-primary"
-                                : "bg-background border-border hover:border-primary/50"
-                            }`}
-                          >
-                            <Icon className={`w-8 h-8 ${selected ? "text-primary" : "text-foreground/60"}`} />
-                            <div>
-                              <h3 className="font-semibold text-foreground">{option.label}</h3>
-                              <p className="text-xs text-muted-foreground mt-1">{option.description}</p>
-                            </div>
-                            {selected && (
-                              <Check className="w-5 h-5 text-primary" />
-                            )}
-                          </button>
-                        );
-                      })}
-                    </div>
-                    {accountType && accountType !== "member" && (
-                      <p className="text-sm text-muted-foreground bg-secondary/50 p-3 rounded">
-                        As a {accountType}, you'll be directed to our application page. Your account will need admin approval before you can post events or upload videos.
-                      </p>
-                    )}
-                  </div>
-                )}
-
-                {/* Step 1: Basic Info */}
-                {step === 1 && (
-                  <div className="space-y-6">
-                    {/* Profile Photo */}
-                    <div className="flex flex-col items-center gap-3">
-                      <Label className="text-xs tracking-wider uppercase text-foreground/60">Profile Photo</Label>
-                      <div onClick={() => fileInputRef.current?.click()} className="relative cursor-pointer group">
-                        <Avatar className="w-24 h-24 border-2 border-dashed border-foreground/20 group-hover:border-primary transition-colors">
-                          {profilePhotoPreview ? (
-                            <AvatarImage src={profilePhotoPreview} alt="Preview" className="object-cover" />
-                          ) : (
-                            <AvatarFallback className="bg-background">
-                              <Camera className="w-8 h-8 text-foreground/40" />
-                            </AvatarFallback>
-                          )}
-                        </Avatar>
-                        <div className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
-                          <Camera className="w-6 h-6 text-white" />
-                        </div>
-                      </div>
-                      <input ref={fileInputRef} type="file" accept="image/*" onChange={handlePhotoSelect} className="hidden" />
-                      <p className="text-xs text-foreground/40">Click to upload (max 5MB)</p>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="name" className="text-xs tracking-wider uppercase text-foreground/60">Name *</Label>
-                      <Input id="name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Your name" className="rounded-none h-12 border-border bg-background" />
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="birthday" className="text-xs tracking-wider uppercase text-foreground/60">Birthday</Label>
-                      <Input id="birthday" type="date" value={birthday} onChange={(e) => setBirthday(e.target.value)} className="rounded-none h-12 border-border bg-background" />
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label className="text-xs tracking-wider uppercase text-foreground/60">Pronouns</Label>
-                      <Select value={pronouns} onValueChange={setPronouns}>
-                        <SelectTrigger className="bg-background rounded-none h-12">
-                          <SelectValue placeholder="Select pronouns" />
-                        </SelectTrigger>
-                        <SelectContent className="bg-background z-50">
-                          {PRONOUN_OPTIONS.map((option) => (
-                            <SelectItem key={option} value={option}>{option}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label className="text-xs tracking-wider uppercase text-foreground/60">City *</Label>
-                      <Select value={city} onValueChange={setCity}>
-                        <SelectTrigger className="bg-background rounded-none h-12">
-                          <SelectValue placeholder="Select city" />
-                        </SelectTrigger>
-                        <SelectContent className="bg-background z-50 max-h-60 overflow-y-auto">
-                          {CITY_OPTIONS.map((option) => (
-                            <SelectItem key={option} value={option}>{option}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="phone" className="text-xs tracking-wider uppercase text-foreground/60">Phone Number *</Label>
-                      <Input
-                        id="phone"
-                        type="tel"
-                        value={phoneNumber}
-                        onChange={(e) => setPhoneNumber(e.target.value)}
-                        placeholder="(555) 123-4567"
-                        className="rounded-none h-12 border-border bg-background"
-                      />
-                      {phoneNumber.trim() && phoneNumber.trim().length < 10 && (
-                        <p className="text-xs text-destructive">Enter a valid phone number</p>
-                      )}
-                    </div>
-
-                    {phoneNumber.trim().length >= 10 && (
-                      <div className="flex items-start gap-3 p-4 border border-border bg-background">
-                        <Checkbox
-                          id="sms-opt-in"
-                          checked={smsOptIn}
-                          onCheckedChange={(checked) => setSmsOptIn(checked === true)}
-                          className="mt-0.5"
-                        />
-                        <label htmlFor="sms-opt-in" className="text-sm text-foreground/80 leading-relaxed cursor-pointer">
-                          I'd like to receive text updates from Loverball (event reminders, match alerts & more)
-                        </label>
-                      </div>
-                    )}
-
-                  </div>
-                )}
-
-                {/* Step 2: Sports Preferences */}
-                {step === 2 && (
-                  <div className="space-y-6">
-                    <div className="space-y-3">
-                      <Label className="text-xs tracking-wider uppercase text-foreground/60">Select your favorite sports *</Label>
-                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                        {SPORTS_OPTIONS.map((sport) => {
-                          const selected = favoriteSports.includes(sport);
-                          return (
-                            <div
-                              key={sport}
-                              onClick={() => toggleArrayItem(favoriteSports, sport, setFavoriteSports)}
-                              className={`flex items-center gap-3 p-3 border cursor-pointer transition-all duration-200 ${
-                                selected
-                                  ? "bg-primary/10 border-primary"
-                                  : "bg-background border-border hover:border-primary/50"
-                              }`}
-                            >
-                              <Checkbox checked={selected} onCheckedChange={() => toggleArrayItem(favoriteSports, sport, setFavoriteSports)} />
-                              <span className="text-sm font-medium">{sport}</span>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label className="text-xs tracking-wider uppercase text-foreground/60">Select your favorite teams * (min 1)</Label>
-                      <div className="flex gap-2">
-                        <Input
-                          value={teamsInput}
-                          onChange={(e) => setTeamsInput(e.target.value)}
-                          placeholder="e.g., Lakers, Cowboys, Real Madrid"
-                          onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addTeam())}
-                          className="rounded-none h-12 border-border bg-background"
-                        />
-                        <Button type="button" onClick={addTeam} disabled={!teamsInput.trim()} className="rounded-none h-12 px-6">
-                          ADD
-                        </Button>
-                      </div>
-                      {favTeams.length > 0 && (
-                        <div className="flex flex-wrap gap-2 mt-3">
-                          {favTeams.map((team) => (
-                            <Badge key={team} variant="secondary" className="gap-1 rounded-none px-3 py-1.5 text-sm">
-                              {team}
-                              <X className="h-3 w-3 cursor-pointer ml-1" onClick={() => removeTeam(team)} />
-                            </Badge>
-                          ))}
-                        </div>
-                      )}
-                      {favTeams.length === 0 && (
-                        <p className="text-xs text-destructive mt-1">Add at least 1 team to continue</p>
-                      )}
-                    </div>
-                  </div>
-                )}
-
-                {/* Step 3: Content Interests */}
-                {step === 3 && (
-                  <div className="space-y-6">
-                    <div className="space-y-1">
-                      <Label className="text-xs tracking-wider uppercase text-foreground/60">What topics interest you? * (select at least 3)</Label>
-                      <p className="text-sm text-muted-foreground">{contentInterests.length}/3 minimum selected</p>
-                    </div>
-                    <div className="flex flex-wrap gap-3">
-                      {CONTENT_INTERESTS_OPTIONS.map((topic) => {
-                        const selected = contentInterests.includes(topic);
-                        return (
-                          <button
-                            key={topic}
-                            type="button"
-                            onClick={() => toggleArrayItem(contentInterests, topic, setContentInterests)}
-                            className={`px-5 py-2.5 text-sm font-medium border transition-all duration-200 ${
-                              selected
-                                ? "bg-primary text-primary-foreground border-primary"
-                                : "bg-background text-foreground border-border hover:border-primary/50"
-                            }`}
-                          >
-                            {selected && <Check className="inline h-3.5 w-3.5 mr-1.5 -mt-0.5" />}
-                            {topic}
-                          </button>
-                        );
-                      })}
-                    </div>
-                    {contentInterests.length > 0 && contentInterests.length < 3 && (
-                      <p className="text-xs text-destructive">Select {3 - contentInterests.length} more topic{3 - contentInterests.length > 1 ? "s" : ""}</p>
-                    )}
-                  </div>
-                )}
-
-                {/* Step 4: Confirmation */}
-                {step === 4 && (
-                  <div className="space-y-6">
-                    <p className="text-sm text-muted-foreground">Review your selections before completing setup.</p>
-
-                    {/* Profile Summary */}
-                    <div className="space-y-4">
-                      <div className="flex items-center gap-4">
-                        <Avatar className="w-16 h-16">
-                          {profilePhotoPreview ? (
-                            <AvatarImage src={profilePhotoPreview} alt="Preview" className="object-cover" />
-                          ) : (
-                            <AvatarFallback className="bg-background text-lg font-sans">
-                              {name.charAt(0).toUpperCase()}
-                            </AvatarFallback>
-                          )}
-                        </Avatar>
-                        <div>
-                          <h3 className="font-sans text-xl">{name}</h3>
-                          <p className="text-sm text-muted-foreground">
-                            {city}{pronouns ? ` · ${pronouns}` : ""}
-                          </p>
-                          {phoneNumber && (
-                            <p className="text-xs text-muted-foreground mt-1">{phoneNumber}{smsOptIn ? " · SMS updates ON" : ""}</p>
-                          )}
-                        </div>
-                      </div>
-
-                      <div className="border-t border-border pt-4 space-y-4">
-                        <div>
-                          <h4 className="text-xs tracking-wider uppercase text-foreground/60 mb-2">Favorite Sports</h4>
-                          <div className="flex flex-wrap gap-2">
-                            {favoriteSports.map((sport) => (
-                              <Badge key={sport} className="rounded-none bg-primary/10 text-primary border-primary/20 hover:bg-primary/10">
-                                {sport}
-                              </Badge>
-                            ))}
-                          </div>
-                        </div>
-
-                        <div>
-                          <h4 className="text-xs tracking-wider uppercase text-foreground/60 mb-2">Favorite Teams</h4>
-                          <div className="flex flex-wrap gap-2">
-                            {favTeams.map((team) => (
-                              <Badge key={team} variant="secondary" className="rounded-none">
-                                {team}
-                              </Badge>
-                            ))}
-                          </div>
-                        </div>
-
-                        <div>
-                          <h4 className="text-xs tracking-wider uppercase text-foreground/60 mb-2">Content Interests</h4>
-                          <div className="flex flex-wrap gap-2">
-                            {contentInterests.map((interest) => (
-                              <Badge key={interest} variant="outline" className="rounded-none">
-                                {interest}
-                              </Badge>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
+      /* 16. Teams */
+      case 16: {
+        const teamOptions = Array.from(new Set(leagues.flatMap((l) => TEAMS_BY_LEAGUE[l] ?? [])));
+        return (
+          <Page key="teams">
+            <div className="flex items-center justify-between mb-8 -mt-4">
+              <button onClick={() => setStep(15)} aria-label="Back" className="p-2 -ml-2 opacity-70"><ArrowLeft size={20} /></button>
+              <GhostBtn onClick={() => exitToDestination(false)}>Skip</GhostBtn>
+            </div>
+            <div className="flex-1 flex flex-col">
+              <H>Pick your teams 💛</H>
+              <Sub>Filtered by your leagues — pick as many as you want.</Sub>
+              <div className="mt-8 flex flex-wrap gap-2">
+                {teamOptions.length === 0 ? (
+                  <p style={{ color: C.muted, fontFamily: fonts.sans }}>Pick a league first.</p>
+                ) : teamOptions.map((t) => (
+                  <Chip key={t} active={teams.includes(t)} onClick={() => setTeams((p) => p.includes(t) ? p.filter((x) => x !== t) : [...p, t])}>{t}</Chip>
+                ))}
               </div>
-            </motion.div>
-          </AnimatePresence>
+            </div>
+            <PrimaryBtn onClick={() => setStep(17)}>Next</PrimaryBtn>
+          </Page>
+        );
+      }
 
-          {/* Validation message */}
-          {getStepValidationMessage() && !canProceed() && (
-            <p className="text-sm text-destructive mt-3">{getStepValidationMessage()}</p>
-          )}
+      /* 17. City */
+      case 17:
+        return (
+          <Page key="city">
+            <div className="flex items-center justify-between mb-8 -mt-4">
+              <button onClick={() => setStep(16)} aria-label="Back" className="p-2 -ml-2 opacity-70"><ArrowLeft size={20} /></button>
+              <GhostBtn onClick={() => exitToDestination(false)}>Skip</GhostBtn>
+            </div>
+            <div className="flex-1 flex flex-col">
+              <H>What city?</H>
+              <Sub>So we can match you to local watch parties + drops.</Sub>
+              <TextField className="mt-8" placeholder="Los Angeles" value={city} onChange={(e) => setCity(e.target.value)} />
+            </div>
+            <PrimaryBtn onClick={() => setStep(18)}>Next</PrimaryBtn>
+          </Page>
+        );
 
-          {/* Buttons */}
-          <div className="flex gap-3 pt-6">
-            {step > 0 && (
-              <Button variant="outline" onClick={goBack} className="rounded-none h-12 px-6 text-sm tracking-wider gap-2">
-                <ChevronLeft className="h-4 w-4" />
-                BACK
-              </Button>
-            )}
-            {step < 4 && (
-              <Button
-                onClick={goNext}
-                disabled={!canProceed()}
-                className="flex-1 rounded-none h-12 text-sm tracking-wider gap-2"
-              >
-                CONTINUE
-                <ChevronRight className="h-4 w-4" />
-              </Button>
-            )}
-            {step === 4 && (
-              <Button
-                onClick={handleSubmit}
-                disabled={loading}
-                className="flex-1 rounded-none h-12 text-sm tracking-wider gap-2"
-              >
-                {loading ? (
-                  <>
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                    CREATING PROFILE...
-                  </>
-                ) : (
-                  <>
-                    <Check className="h-4 w-4" />
-                    COMPLETE SETUP
-                  </>
-                )}
-              </Button>
-            )}
-          </div>
-        </div>
-      </div>
+      /* 18. Vibe */
+      case 18:
+        return (
+          <Page key="vibe">
+            <div className="flex items-center justify-between mb-8 -mt-4">
+              <button onClick={() => setStep(17)} aria-label="Back" className="p-2 -ml-2 opacity-70"><ArrowLeft size={20} /></button>
+              <GhostBtn onClick={() => exitToDestination(false)}>Skip</GhostBtn>
+            </div>
+            <div className="flex-1 flex flex-col">
+              <H>Your vibe?</H>
+              <Sub>Pick one — you can always change it later.</Sub>
+              <div className="mt-8 flex flex-col gap-3">
+                {VIBES.map((v) => (
+                  <button
+                    key={v}
+                    onClick={() => setVibe(v)}
+                    className="text-left px-5 py-4 rounded-2xl transition active:scale-[0.99]"
+                    style={{
+                      background: vibe === v ? `linear-gradient(95deg, ${C.raspberry}22, ${C.pink}22)` : C.surface,
+                      border: `1.5px solid ${vibe === v ? C.pink : C.borderStrong}`,
+                      fontFamily: fonts.sans, fontSize: 17, color: C.text,
+                    }}
+                  >
+                    {v}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <PrimaryBtn onClick={completeFinish} loading={loading} disabled={!vibe}>Unlock my feed</PrimaryBtn>
+          </Page>
+        );
+
+      default:
+        return null;
+    }
+  };
+
+  // wrapper for case 12 "Done" button
+  async function completeCoreBirthday() {
+    setStep(13);
+  }
+
+  return (
+    <div className="min-h-[100dvh]" style={{ background: C.bg }}>
+      <AnimatePresence mode="wait">
+        {renderStep()}
+      </AnimatePresence>
     </div>
   );
 };
