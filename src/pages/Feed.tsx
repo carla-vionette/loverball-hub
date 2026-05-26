@@ -2,6 +2,7 @@ import { useRef, useState, useEffect, useCallback } from "react";
 import FeedVideoPlayer from "@/components/video/FeedVideoPlayer";
 import { FEED_VIDEOS, type FeedVideoItem } from "@/lib/feedVideoData";
 import BottomNav from "@/components/BottomNav";
+import DesktopNav from "@/components/DesktopNav";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Play } from "lucide-react";
 import Seo from "@/components/Seo";
@@ -137,6 +138,7 @@ const Feed = () => {
 
   return (
     <>
+      <DesktopNav />
       <div className="fixed inset-0 bg-black z-30">
 
       <Seo
@@ -148,7 +150,7 @@ const Feed = () => {
       {/* Editorial masthead */}
       <div className="absolute top-0 left-0 right-0 z-40 pointer-events-auto">
         <div
-          className="pt-[max(env(safe-area-inset-top),12px)] pb-3 px-5"
+          className="pt-[max(env(safe-area-inset-top),12px)] md:pt-[74px] pb-3 px-5"
           style={{
             background:
               "linear-gradient(180deg, rgba(10,10,11,0.85) 0%, rgba(10,10,11,0.55) 60%, rgba(10,10,11,0) 100%)",
