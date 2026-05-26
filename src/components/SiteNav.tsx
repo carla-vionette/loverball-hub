@@ -58,7 +58,7 @@ const SiteNav = () => {
     const tab = params.get("tab");
     if (toPath === "/feed") {
       if (pathname !== "/feed" && !pathname.startsWith("/feed/")) return false;
-      // Stories link active only when tab=stories; Watch active otherwise
+      // Stories link active only when tab=stories; FEED active otherwise
       if (toQuery?.includes("tab=stories")) return tab === "stories";
       return tab !== "stories";
     }
