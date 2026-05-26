@@ -637,7 +637,7 @@ const EventDetail = () => {
         )}
       </AnimatePresence>
 
-      {/* Desktop global nav — keeps Watch/Events/Club/Profile reachable */}
+      {/* Desktop global nav — keeps FEED/Events/Club/Profile reachable */}
       <DesktopNav />
 
       {/* Mobile-only event header */}
