@@ -141,16 +141,17 @@ const MemberCard: React.FC<{ m: Member; onDraft: () => void; disabled: boolean; 
             disabled={disabled || alreadyDrafted}
             className="uppercase whitespace-nowrap transition-opacity active:opacity-80"
             style={{
-              ...sans,
-              fontSize: 10,
-              fontWeight: 500,
+              ...mono,
+              fontSize: 11,
+              fontWeight: 600,
               letterSpacing: "0.16em",
               color: alreadyDrafted ? C.muted : "#0a0a0a",
               background: alreadyDrafted ? C.cardHi : C.pink,
-              padding: "7px 12px",
+              padding: "8px 14px",
               borderRadius: 999,
               opacity: disabled ? 0.4 : 1,
             }}
+
           >
             {alreadyDrafted ? "Added" : "+ Add"}
           </button>
@@ -185,12 +186,13 @@ const FloatingNav: React.FC = () => {
           className="relative flex flex-col items-center uppercase"
           style={{
             ...mono,
-            fontSize: 10,
-            letterSpacing: "0.22em",
+            fontSize: 11,
+            letterSpacing: "0.16em",
             color: t.active ? C.pink : C.muted,
             padding: "6px 14px",
-            fontWeight: 500,
+            fontWeight: 600,
           }}
+
         >
           {t.label}
           {t.active && (
@@ -355,7 +357,8 @@ const StartingXi: React.FC = () => {
             <button
               onClick={() => navigate("/messages")}
               className="inline-flex items-center gap-1.5 uppercase"
-              style={{ ...mono, fontSize: 10, letterSpacing: "0.18em", color: C.pink, fontWeight: 500 }}
+              style={{ ...mono, fontSize: 11, letterSpacing: "0.16em", color: C.pink, fontWeight: 600 }}
+
               aria-label="Open direct messages"
             >
               <MessagesSquare size={13} /> Messages <ArrowRight size={11} />
@@ -378,14 +381,15 @@ const StartingXi: React.FC = () => {
                     className="inline-flex items-center gap-1.5 uppercase whitespace-nowrap"
                     style={{
                       ...mono,
-                      fontSize: 9,
-                      letterSpacing: "0.18em",
+                      fontSize: 11,
+                      letterSpacing: "0.16em",
                       color: "#0a0a0a",
                       background: C.pink,
-                      padding: "7px 12px",
+                      padding: "8px 14px",
                       borderRadius: 999,
-                      fontWeight: 500,
+                      fontWeight: 600,
                     }}
+
                   >
                     Open DMs
                   </button>
