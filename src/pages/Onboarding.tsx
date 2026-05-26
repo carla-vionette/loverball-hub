@@ -437,9 +437,11 @@ const Onboarding = () => {
           </Page>
         );
 
-      /* 4 & 5. Phone entry */
+      /* 4 & 5. Phone / Email entry */
       case 3:
-      case 4:
+      case 4: {
+        const canSendPhone = phone.replace(/\D/g, "").length >= 7;
+        const canSendEmail = /^\S+@\S+\.\S+$/.test(email.trim());
         return (
           <Page key="phone">
             <TopBar step={3} onBack={back} />
@@ -447,34 +449,67 @@ const Onboarding = () => {
               <H>Join the league</H>
               <Sub>Just for event drops. No spam 💌</Sub>
 
-              <div className="mt-8 flex gap-2">
-                <select
-                  value={`${country.flag}${country.code}`}
-                  onChange={(e) => {
-                    const c = COUNTRIES.find((x) => `${x.flag}${x.code}` === e.target.value);
-                    if (c) setCountry(c);
-                  }}
-                  className="focus:outline-none"
-                  style={{ height: 60, borderRadius: 16, padding: "0 14px", background: C.surface, color: C.text, border: `1.5px solid ${C.borderStrong}`, fontFamily: fonts.sans, fontSize: 16 }}
-                >
-                  {COUNTRIES.map((c) => (
-                    <option key={`${c.flag}${c.label}`} value={`${c.flag}${c.code}`}>{c.flag} {c.code}</option>
-                  ))}
-                </select>
+              {channel === "phone" ? (
+                <div className="mt-8 flex gap-2">
+                  <select
+                    value={`${country.flag}${country.code}`}
+                    onChange={(e) => {
+                      const c = COUNTRIES.find((x) => `${x.flag}${x.code}` === e.target.value);
+                      if (c) setCountry(c);
+                    }}
+                    className="focus:outline-none"
+                    style={{ height: 60, borderRadius: 16, padding: "0 14px", background: C.surface, color: C.text, border: `1.5px solid ${C.borderStrong}`, fontFamily: fonts.sans, fontSize: 16 }}
+                  >
+                    {COUNTRIES.map((c) => (
+                      <option key={`${c.flag}${c.label}`} value={`${c.flag}${c.code}`}>{c.flag} {c.code}</option>
+                    ))}
+                  </select>
+                  <TextField
+                    type="tel" inputMode="tel" autoComplete="tel"
+                    placeholder="(310) 555-0123"
+                    value={phone}
+                    onChange={(e) => { setPhone(e.target.value); if (step === 3) setStep(4); }}
+                  />
+                </div>
+              ) : (
                 <TextField
-                  type="tel" inputMode="tel" autoComplete="tel"
-                  placeholder="(310) 555-0123"
-                  value={phone}
-                  onChange={(e) => { setPhone(e.target.value); if (step === 3) setStep(4); }}
+                  className="mt-8"
+                  type="email" inputMode="email" autoComplete="email"
+                  placeholder="you@loverball.com"
+                  value={email}
+                  onChange={(e) => { setEmail(e.target.value); if (step === 3) setStep(4); }}
                 />
+              )}
+              <Trust>
+                {channel === "phone"
+                  ? "Message & data rates may apply. We use this to verify you & send event drops."
+                  : "We'll only email codes & event drops. Unsubscribe anytime."}
+              </Trust>
+
+              <div className="mt-5">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setOtp("");
+                    setChannel(channel === "phone" ? "email" : "phone");
+                  }}
+                  className="text-xs underline opacity-80 hover:opacity-100"
+                  style={{ fontFamily: fonts.mono, color: C.pink, letterSpacing: "0.08em" }}
+                >
+                  {channel === "phone" ? "Use email instead" : "Use phone instead"}
+                </button>
               </div>
-              <Trust>Message & data rates may apply. We use this to verify you & send event drops.</Trust>
             </div>
-            <PrimaryBtn onClick={sendOtp} loading={loading} disabled={phone.replace(/\D/g, "").length < 7}>
-              Send code
+            <PrimaryBtn
+              onClick={sendOtp}
+              loading={loading}
+              disabled={channel === "phone" ? !canSendPhone : !canSendEmail}
+            >
+              {channel === "phone" ? "Send code" : "Send code (email)"}
             </PrimaryBtn>
           </Page>
         );
+      }
 
       /* 6 & 7. Verify OTP */
       case 5:
@@ -483,8 +518,11 @@ const Onboarding = () => {
           <Page key="otp">
             <TopBar step={5} onBack={back} />
             <div className="flex-1 flex flex-col justify-start">
-              <H>Verify your number</H>
-              <Sub>We sent a 6-digit code to {country.code} {phone}.</Sub>
+              <H>{channel === "phone" ? "Verify your number" : "Verify your email"}</H>
+              <Sub>
+                We sent a 6-digit code to{" "}
+                {channel === "phone" ? `${country.code} ${phone}` : email}.
+              </Sub>
 
               <input
                 value={otp}
@@ -503,10 +541,24 @@ const Onboarding = () => {
                   <button onClick={sendOtp} className="underline" style={{ color: C.pink }}>Resend code</button>
                 )}
               </div>
+
+              {channel === "phone" && (
+                <div className="mt-4">
+                  <button
+                    type="button"
+                    onClick={switchToEmail}
+                    className="text-xs underline opacity-80 hover:opacity-100"
+                    style={{ fontFamily: fonts.mono, color: C.pink }}
+                  >
+                    Use email instead
+                  </button>
+                </div>
+              )}
             </div>
             <PrimaryBtn onClick={verifyOtp} loading={loading} disabled={otp.length !== 6}>Next</PrimaryBtn>
           </Page>
         );
+
 
       /* 8. OTP verified state — instant transition to name */
       case 7:
