@@ -35,7 +35,7 @@ const StartingXiProfile = lazy(() => import("./pages/StartingXiProfile"));
 const StartingXiIncoming = lazy(() => import("./pages/StartingXiIncoming"));
 
 const Onboarding = lazy(() => import("./pages/Onboarding"));
-const Horoscope = lazy(() => import("./pages/Horoscope"));
+
 const Settings = lazy(() => import("./pages/Settings"));
 const Inbox = lazy(() => import("./pages/Inbox"));
 const MessagesPage = lazy(() => import("./pages/MessagesPage"));
@@ -142,7 +142,7 @@ const App = () => (
                 {/* Profile-linked utilities */}
                 <Route path="/finish-profile" element={<ProtectedRoute><FinishProfile /></ProtectedRoute>} />
                 <Route path="/onboarding" element={<ProtectedRoute><Onboarding /></ProtectedRoute>} />
-                <Route path="/horoscope" element={<ProtectedRoute><Horoscope /></ProtectedRoute>} />
+                
                 <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
                 <Route path="/inbox" element={<ProtectedRoute><Inbox /></ProtectedRoute>} />
                 <Route path="/messages" element={<ProtectedRoute><MessagesPage /></ProtectedRoute>} />
