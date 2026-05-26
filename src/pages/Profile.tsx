@@ -19,6 +19,7 @@ import ProfileInbox from "@/components/profile/ProfileInbox";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { useAuth } from "@/hooks/useAuth";
+import { useProfileData, type ProfileData, type RSVPEvent, type SuggestedEvent } from "@/hooks/useProfileData";
 
 import { format } from "date-fns";
 import { motion } from "framer-motion";
@@ -32,46 +33,8 @@ import ProfileScores from "@/components/ProfileScores";
 import ProfileWhereToWatch from "@/components/ProfileWhereToWatch";
 
 
-type ProfileData = {
-  id: string;
-  name: string;
-  pronouns: string | null;
-  city: string | null;
-  age_range: string | null;
-  favorite_sports: string[] | null;
-  favorite_teams_players: string[] | null;
-  sports_experience_types: string[] | null;
-  other_interests: string[] | null;
-  event_comfort_level: string | null;
-  participation_preferences: string[] | null;
-  bio: string | null;
-  profile_photo_url: string | null;
-  membership_tier: string | null;
-};
+// Types moved to @/hooks/useProfileData
 
-type RSVPEvent = {
-  id: string;
-  status: string;
-  event: {
-    id: string;
-    title: string;
-    event_date: string;
-    event_time: string | null;
-    venue_name: string | null;
-    city: string | null;
-    image_url: string | null;
-  };
-};
-
-type SuggestedEvent = {
-  id: string;
-  title: string;
-  event_date: string;
-  event_time: string | null;
-  venue_name: string | null;
-  city: string | null;
-  image_url: string | null;
-};
 
 // --- Zodiac helpers ---
 function getGreeting(): string {
@@ -162,22 +125,33 @@ const Profile = () => {
   const [eventsOpen, setEventsOpen] = useState(true);
   const [recEventsOpen, setRecEventsOpen] = useState(false);
   const [feedFilter, setFeedFilter] = useState<string>("All");
-  const [profile, setProfile] = useState<ProfileData | null>(null);
-  const [rsvpEvents, setRsvpEvents] = useState<RSVPEvent[]>([]);
-  const [suggestedEvents, setSuggestedEvents] = useState<SuggestedEvent[]>([]);
-  const [loading, setLoading] = useState(true);
   const [currentTime, setCurrentTime] = useState(new Date());
   const { user, loading: authLoading } = useAuth();
-  
+
   const goTo = (path: string) => { window.location.href = path; };
   const { toast } = useToast();
 
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [showFollowersModal, setShowFollowersModal] = useState<'followers' | 'following' | null>(null);
 
+  const { data, isLoading: dataLoading } = useProfileData();
+  const profile = data?.profile ?? null;
+  const rsvpEvents = data?.rsvpEvents ?? [];
+  const suggestedEvents = data?.suggestedEvents ?? [];
+  const loading = authLoading || dataLoading;
+
+  useEffect(() => {
+    if (!authLoading && !user) goTo("/auth");
+  }, [authLoading, user]);
+
+  useEffect(() => {
+    if (!loading && user && data?.missingProfile) goTo("/onboarding");
+  }, [loading, user, data?.missingProfile]);
+
   const handleLogout = async () => {
     setShowLogoutConfirm(true);
   };
+
 
   const confirmLogout = async () => {
     await supabase.auth.signOut();
@@ -186,37 +160,8 @@ const Profile = () => {
   };
 
 
-  useEffect(() => {
-    let cancelled = false;
-    const fetchProfile = async () => {
-      try {
-        if (authLoading) return;
-        if (!user || cancelled) { if (!cancelled) goTo("/auth"); return; }
+  // Profile data now loaded via useProfileData() hook (cached + consolidated)
 
-        const [profileResult, rsvpResult, suggestedResult] = await Promise.all([
-          supabase.from("profiles").select("*").eq("id", user.id).maybeSingle(),
-          supabase.from("event_rsvps").select(`id, status, event:events (id, title, event_date, event_time, venue_name, city, image_url)`).eq("user_id", user.id).order("created_at", { ascending: false }),
-          supabase.from("events").select("id, title, event_date, event_time, venue_name, city, image_url").gte("event_date", new Date().toISOString().split("T")[0]).eq("status", "published").order("event_date", { ascending: true }).limit(4),
-        ]);
-
-        if (cancelled) return;
-
-        if (profileResult.error || !profileResult.data) { goTo("/onboarding"); return; }
-
-        setProfile(profileResult.data);
-        if (rsvpResult.data) {
-          setRsvpEvents(rsvpResult.data.filter(r => r.event !== null) as RSVPEvent[]);
-        }
-        if (suggestedResult.data) setSuggestedEvents(suggestedResult.data);
-      } catch (err) {
-        if (!cancelled) goTo("/onboarding");
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    };
-    fetchProfile();
-    return () => { cancelled = true; };
-  }, [authLoading, user]);
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 60000);
