@@ -162,8 +162,10 @@ const Onboarding = () => {
   const [loading, setLoading] = useState(false);
 
   // form state
+  const [channel, setChannel] = useState<"phone" | "email">("phone");
   const [country, setCountry] = useState(COUNTRIES[0]);
   const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
   const [otpVerified, setOtpVerified] = useState(false);
   const [resendSec, setResendSec] = useState(25);
