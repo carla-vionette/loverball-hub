@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { MapPin, Edit, Sparkles, LogOut, Calendar, Clock, TrendingUp, TrendingDown, Trophy, Flame, Bookmark, BookOpen, Award, ChevronRight, ChevronDown, ArrowUpRight, Share2, AlertTriangle, Ticket, Play, Eye, Lightbulb, Settings, Heart, MessageCircle, Loader2, ExternalLink, Newspaper, Zap, RefreshCw, Users, Tv, Radio, CalendarHeart, Shield } from "lucide-react";
+import { MapPin, Edit, LogOut, Calendar, Clock, TrendingUp, TrendingDown, Trophy, Flame, Bookmark, BookOpen, Award, ChevronRight, ChevronDown, ArrowUpRight, Share2, AlertTriangle, Ticket, Play, Eye, Lightbulb, Settings, Heart, MessageCircle, ExternalLink, Newspaper, Zap, RefreshCw, Users, Tv, Radio, Shield } from "lucide-react";
 import MemberBadge from "@/components/MemberBadge";
 import { useFollow } from "@/hooks/useFollow";
 import BadgeShelf from "@/components/BadgeShelf";
@@ -74,59 +74,6 @@ type SuggestedEvent = {
 };
 
 // --- Zodiac helpers ---
-const ZODIAC_SIGNS = [
-  { name: "Capricorn", symbol: "♑", element: "earth", dates: [{ m: 12, d: 22 }, { m: 1, d: 19 }] },
-  { name: "Aquarius", symbol: "♒", element: "air", dates: [{ m: 1, d: 20 }, { m: 2, d: 18 }] },
-  { name: "Pisces", symbol: "♓", element: "water", dates: [{ m: 2, d: 19 }, { m: 3, d: 20 }] },
-  { name: "Aries", symbol: "♈", element: "fire", dates: [{ m: 3, d: 21 }, { m: 4, d: 19 }] },
-  { name: "Taurus", symbol: "♉", element: "earth", dates: [{ m: 4, d: 20 }, { m: 5, d: 20 }] },
-  { name: "Gemini", symbol: "♊", element: "air", dates: [{ m: 5, d: 21 }, { m: 6, d: 20 }] },
-  { name: "Cancer", symbol: "♋", element: "water", dates: [{ m: 6, d: 21 }, { m: 7, d: 22 }] },
-  { name: "Leo", symbol: "♌", element: "fire", dates: [{ m: 7, d: 23 }, { m: 8, d: 22 }] },
-  { name: "Virgo", symbol: "♍", element: "earth", dates: [{ m: 8, d: 23 }, { m: 9, d: 22 }] },
-  { name: "Libra", symbol: "♎", element: "air", dates: [{ m: 9, d: 23 }, { m: 10, d: 22 }] },
-  { name: "Scorpio", symbol: "♏", element: "water", dates: [{ m: 10, d: 23 }, { m: 11, d: 21 }] },
-  { name: "Sagittarius", symbol: "♐", element: "fire", dates: [{ m: 11, d: 22 }, { m: 12, d: 21 }] },
-];
-
-const ELEMENT_GRADIENTS: Record<string, string> = {
-  fire: "from-primary/20 via-primary/10 to-transparent",
-  earth: "from-accent/20 via-accent/10 to-transparent",
-  air: "from-accent/15 via-primary/10 to-transparent",
-  water: "from-accent/20 via-accent/10 to-transparent",
-};
-
-const HOROSCOPE_MESSAGES: Record<string, string> = {
-  Aries: "Bold energy fuels your day. A surprise connection through sports could open a new door.",
-  Taurus: "Steady wins the race today. Your loyalty to your favorite team mirrors your approach to life.",
-  Gemini: "Your social butterfly energy is at a peak. Multiple conversations lead to one meaningful connection.",
-  Cancer: "Home court advantage is yours today. Nurture your inner circle and watch your community grow.",
-  Leo: "You're the MVP today. Your confidence attracts attention and your leadership shines.",
-  Virgo: "Details matter today. Your analytical eye catches something others miss.",
-  Libra: "Balance is your superpower. A partnership opportunity arises that aligns with your values.",
-  Scorpio: "Intensity drives your focus. Go deep on something you're passionate about.",
-  Sagittarius: "Adventure calls! Explore a new sport or attend an event outside your comfort zone.",
-  Capricorn: "Discipline meets opportunity. Your hard work in building community connections starts to pay dividends.",
-  Aquarius: "Innovation is your theme. A unique idea for bringing fans together sparks excitement.",
-  Pisces: "Intuition guides your game today. Creative expression through sports brings unexpected fulfillment.",
-};
-
-function getZodiacSign(birthday: string | null) {
-  if (!birthday) return null;
-  const date = new Date(birthday);
-  const month = date.getMonth() + 1;
-  const day = date.getDate();
-  for (const sign of ZODIAC_SIGNS) {
-    const [start, end] = sign.dates;
-    if (sign.name === "Capricorn") {
-      if ((month === 12 && day >= 22) || (month === 1 && day <= 19)) return sign;
-    } else if ((month === start.m && day >= start.d) || (month === end.m && day <= end.d)) {
-      return sign;
-    }
-  }
-  return ZODIAC_SIGNS[0];
-}
-
 function getGreeting(): string {
   const hour = new Date().getHours();
   if (hour < 12) return "Good morning";
