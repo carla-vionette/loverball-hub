@@ -8,7 +8,8 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Calendar, Clock, MapPin, Users, Lock, Share2, ArrowLeft, Loader2, Check, X, HelpCircle, Video, ExternalLink, Copy, Link2, MessageCircle } from "lucide-react";
+import { Calendar, Clock, MapPin, Users, Lock, Share2, ArrowLeft, Loader2, Check, X, HelpCircle, Video, ExternalLink, Copy, Link2, MessageCircle, CalendarPlus } from "lucide-react";
+import { downloadICS } from "@/lib/ics";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useGestures } from "@/hooks/useGestures";
 import { format, differenceInDays, differenceInHours, differenceInMinutes, isPast } from "date-fns";
@@ -650,13 +651,36 @@ const EventDetail = () => {
             <ArrowLeft className="w-5 h-5" />
           </Button>
           <img src={loverballLogo} alt="Loverball" className="h-12 md:h-14" />
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={handleShare}
-          >
-            <Share2 className="w-5 h-5" />
-          </Button>
+          <div className="flex items-center gap-1">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() =>
+                downloadICS({
+                  title: event.title,
+                  description: event.description || "",
+                  location: [event.venue_name, event.city].filter(Boolean).join(", "),
+                  url: window.location.href,
+                  date: event.event_date,
+                  time: event.event_time,
+                  endTime: event.end_time,
+                  uid: `${event.id}@loverball`,
+                })
+              }
+              aria-label="Add to calendar"
+              title="Add to calendar"
+            >
+              <CalendarPlus className="w-5 h-5" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={handleShare}
+              aria-label="Share event"
+            >
+              <Share2 className="w-5 h-5" />
+            </Button>
+          </div>
         </div>
       </header>
 
