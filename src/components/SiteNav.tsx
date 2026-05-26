@@ -17,13 +17,13 @@ import navLogo from "@/assets/loverball-logo.png";
  */
 
 const PUBLIC_NAV_ITEMS: Array<[string, string]> = [
-  ["Watch", "/feed"],
+  ["FEED", "/feed"],
   ["Events", "/events"],
   ["Club", "/club"],
 ];
 
 const MEMBER_NAV_ITEMS: Array<[string, string]> = [
-  ["Watch", "/feed"],
+  ["FEED", "/feed"],
   ["Events", "/events"],
   ["Club", "/club"],
   ["Profile", "/profile"],
