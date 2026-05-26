@@ -125,22 +125,33 @@ const Profile = () => {
   const [eventsOpen, setEventsOpen] = useState(true);
   const [recEventsOpen, setRecEventsOpen] = useState(false);
   const [feedFilter, setFeedFilter] = useState<string>("All");
-  const [profile, setProfile] = useState<ProfileData | null>(null);
-  const [rsvpEvents, setRsvpEvents] = useState<RSVPEvent[]>([]);
-  const [suggestedEvents, setSuggestedEvents] = useState<SuggestedEvent[]>([]);
-  const [loading, setLoading] = useState(true);
   const [currentTime, setCurrentTime] = useState(new Date());
   const { user, loading: authLoading } = useAuth();
-  
+
   const goTo = (path: string) => { window.location.href = path; };
   const { toast } = useToast();
 
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [showFollowersModal, setShowFollowersModal] = useState<'followers' | 'following' | null>(null);
 
+  const { data, isLoading: dataLoading } = useProfileData();
+  const profile = data?.profile ?? null;
+  const rsvpEvents = data?.rsvpEvents ?? [];
+  const suggestedEvents = data?.suggestedEvents ?? [];
+  const loading = authLoading || dataLoading;
+
+  useEffect(() => {
+    if (!authLoading && !user) goTo("/auth");
+  }, [authLoading, user]);
+
+  useEffect(() => {
+    if (!loading && user && data?.missingProfile) goTo("/onboarding");
+  }, [loading, user, data?.missingProfile]);
+
   const handleLogout = async () => {
     setShowLogoutConfirm(true);
   };
+
 
   const confirmLogout = async () => {
     await supabase.auth.signOut();
