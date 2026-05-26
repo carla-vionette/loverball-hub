@@ -72,7 +72,7 @@ const Club = () => {
             </span>
           </div>
           <Slug>The Club</Slug>
-          <H1 className="mt-6" style={{ fontFamily: "'Anton', Impact, sans-serif", fontStyle: "normal", fontSize: "clamp(40px, 7vw, 96px)", lineHeight: 0.95 }}>
+          <H1 className="mt-6">
             The members-only home<br/>for women's sports fans.
           </H1>
           <div className="mt-8 flex flex-wrap gap-3 items-center">

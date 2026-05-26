@@ -90,14 +90,14 @@ const EditorialMasthead = ({
           <h1
             className={className}
             style={{
-              fontFamily: "'Playfair Display', serif",
-              fontStyle: "italic",
-              fontWeight: 500,
+              fontFamily: "'Anton', Impact, sans-serif",
+              fontWeight: 400,
               fontSize: className.includes('text-') ? undefined : titleSize,
               lineHeight: 0.92,
               color: "hsl(var(--foreground))",
               margin: 0,
               letterSpacing: "-0.02em",
+              textTransform: "uppercase",
             }}
           >
             {title}
