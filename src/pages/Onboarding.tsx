@@ -226,15 +226,56 @@ const Onboarding = () => {
   }, [eventId, navigate]);
 
   /* ---------- supabase actions ---------- */
+  const isPhoneProviderError = (msg: string) => {
+    const m = (msg || "").toLowerCase();
+    return (
+      m.includes("phone") || m.includes("sms") || m.includes("twilio") ||
+      m.includes("provider") || m.includes("not enabled") ||
+      m.includes("unsupported") || m.includes("disabled")
+    );
+  };
+
+  const switchToEmail = () => {
+    setChannel("email");
+    setOtp("");
+    setStep(3);
+  };
+
   const sendOtp = async () => {
-    if (phone.replace(/\D/g, "").length < 7) {
-      toast({ title: "Add a valid number", variant: "destructive" });
-      return;
-    }
     setLoading(true);
     try {
-      const { error } = await supabase.auth.signInWithOtp({ phone: fullPhone });
-      if (error) throw error;
+      if (channel === "phone") {
+        if (phone.replace(/\D/g, "").length < 7) {
+          toast({ title: "Add a valid number", variant: "destructive" });
+          setLoading(false);
+          return;
+        }
+        const { error } = await supabase.auth.signInWithOtp({ phone: fullPhone });
+        if (error) {
+          if (isPhoneProviderError(error.message)) {
+            toast({
+              title: "Texts aren't working right now — try email?",
+              description: "We'll switch you over with your info intact.",
+              variant: "destructive",
+            });
+            switchToEmail();
+            setLoading(false);
+            return;
+          }
+          throw error;
+        }
+      } else {
+        if (!/^\S+@\S+\.\S+$/.test(email.trim())) {
+          toast({ title: "Add a valid email", variant: "destructive" });
+          setLoading(false);
+          return;
+        }
+        const { error } = await supabase.auth.signInWithOtp({
+          email: email.trim(),
+          options: { shouldCreateUser: true },
+        });
+        if (error) throw error;
+      }
       setResendSec(25);
       setStep(6);
     } catch (e: any) {
@@ -248,9 +289,19 @@ const Onboarding = () => {
     if (otp.length !== 6) return;
     setLoading(true);
     try {
-      const { error } = await supabase.auth.verifyOtp({ phone: fullPhone, token: otp, type: "sms" });
+      const { error } = channel === "phone"
+        ? await supabase.auth.verifyOtp({ phone: fullPhone, token: otp, type: "sms" })
+        : await supabase.auth.verifyOtp({ email: email.trim(), token: otp, type: "email" });
       if (error) throw error;
       setOtpVerified(true);
+      const { data: { user: u } } = await supabase.auth.getUser();
+      if (u) {
+        await supabase.from("profiles").upsert({
+          id: u.id,
+          ...(channel === "phone" ? { phone: fullPhone } : { email: email.trim() }),
+          updated_at: new Date().toISOString(),
+        } as any);
+      }
       setStep(7);
     } catch (e: any) {
       toast({ title: "Code didn't work", description: e?.message ?? "Double-check & try again", variant: "destructive" });
