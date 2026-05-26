@@ -403,7 +403,7 @@ const Index = () => {
                     {hi ? (
                       <PrimaryCTA onClick={goJoin} full>{t.cta}</PrimaryCTA>
                     ) : (
-                      <SecondaryCTA to="/auth?mode=signup" full>{t.cta}</SecondaryCTA>
+                      <SecondaryCTA to="/onboarding" full>{t.cta}</SecondaryCTA>
                     )}
                   </div>
                 </article>
