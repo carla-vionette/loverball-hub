@@ -173,7 +173,7 @@ const StartingXiProfile: React.FC = () => {
               borderBottomRightRadius: 16,
             }}
           >
-            <h1 style={{ ...serif, fontSize: 28, color: C.text, lineHeight: 1.05, fontWeight: 500 }}>
+            <h1 style={{ ...serif, fontWeight: 500, fontSize: "clamp(32px, 10vw, 48px)", color: C.text, lineHeight: 0.95, letterSpacing: "-0.03em" }}>
               {m.name}
             </h1>
             <p className="mt-1.5">
