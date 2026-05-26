@@ -19,6 +19,7 @@ import ProfileInbox from "@/components/profile/ProfileInbox";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { useAuth } from "@/hooks/useAuth";
+import { useProfileData, type ProfileData, type RSVPEvent, type SuggestedEvent } from "@/hooks/useProfileData";
 
 import { format } from "date-fns";
 import { motion } from "framer-motion";
