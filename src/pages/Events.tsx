@@ -159,12 +159,13 @@ const Events = () => {
           }
 
           // Fetch attendee avatars for each event (up to 4 per event)
+          // Left join on profiles so RSVPs from users without a full profile still count
           const { data: guests } = await supabase
             .from("event_guests")
             .select(`
               event_id,
               user_id,
-              profile:profiles!inner (
+              profile:profiles (
                 id, name, profile_photo_url, bio, favorite_sports, primary_role, city
               )
             `)
@@ -175,17 +176,16 @@ const Events = () => {
           if (guests) {
             const byEvent: Record<string, AttendeeProfile[]> = {};
             (guests as any[]).forEach((g) => {
-              if (!g.profile) return;
               if (!byEvent[g.event_id]) byEvent[g.event_id] = [];
               if (byEvent[g.event_id].length < 4) {
                 byEvent[g.event_id].push({
-                  id: g.profile.id,
-                  name: g.profile.name,
-                  profile_photo_url: g.profile.profile_photo_url,
-                  bio: g.profile.bio,
-                  favorite_sports: g.profile.favorite_sports,
-                  primary_role: g.profile.primary_role,
-                  city: g.profile.city,
+                  id: g.profile?.id || g.user_id,
+                  name: g.profile?.name || "Member",
+                  profile_photo_url: g.profile?.profile_photo_url || null,
+                  bio: g.profile?.bio || null,
+                  favorite_sports: g.profile?.favorite_sports || null,
+                  primary_role: g.profile?.primary_role || null,
+                  city: g.profile?.city || null,
                 });
               }
             });
