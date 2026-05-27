@@ -18,7 +18,7 @@ import { Input } from "@/components/ui/input";
 import AttendeeProfileDrawer from "@/components/AttendeeProfileDrawer";
 import EventSubmissionForm from "@/components/EventSubmissionForm";
 import Seo from "@/components/Seo";
-import EditorialMasthead from "@/components/layout/EditorialMasthead";
+import { buildShareSummary, buildSharePreviewDescription } from "@/lib/eventShare";
 
 
 const CATEGORIES = ["All", "watch_party", "game", "panel", "brunch", "networking", "other"];
