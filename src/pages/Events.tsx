@@ -644,9 +644,13 @@ const Events = () => {
               <div className="space-y-4 pt-1">
                 <SharePreview
                   title={`${shareEvent.title} · Loverball`}
-                  description={getShareDescription(shareEvent)}
+                  description={buildSharePreviewDescription(shareEvent)}
                   imageUrl={shareEvent.image_url}
                   siteName="loverball.com"
+                  eventDate={format(new Date(shareEvent.event_date), "EEE, MMM d, yyyy")}
+                  eventTime={shareEvent.event_time ? fmtTime(shareEvent.event_time) : null}
+                  venue={shareEvent.venue_name || null}
+                  city={shareEvent.city || null}
                 />
                 <div className="flex gap-2">
                   <Button
