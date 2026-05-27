@@ -34,6 +34,7 @@ import EventHostProfile from "@/components/EventHostProfile";
 import Seo from "@/components/Seo";
 import DesktopNav from "@/components/DesktopNav";
 import { getUserTier } from "@/services/subscriptionService";
+import { buildShareSummary, buildSharePreviewDescription } from "@/lib/eventShare";
 
 interface Event {
   id: string;
