@@ -426,13 +426,23 @@ const Events = () => {
                       {(featured.venue_name || featured.city) && <span className="flex items-center gap-1.5 truncate max-w-[220px]"><MapPin className="w-3.5 h-3.5 flex-shrink-0" style={{ color: "#E86BB0" }} />{featured.venue_name || featured.city}</span>}
                       {counts[featured.id] > 0 && <span className="flex items-center gap-1.5"><Users className="w-3.5 h-3.5" />{counts[featured.id]} going</span>}
                     </div>
-                    <Button
-                      className="rounded-full mt-5 h-11 px-6"
-                      style={{ background: "#F04E23", color: "#fff", fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 700, fontSize: 12, letterSpacing: "0.1em", textTransform: "uppercase" }}
-                      onClick={e => { e.stopPropagation(); requestRsvp(featured.id); }}
-                    >
-                      {user ? "RSVP Now" : "Sign Up to RSVP"}
-                    </Button>
+                    <div className="flex items-center gap-2 mt-5">
+                      <Button
+                        className="rounded-full h-11 px-6"
+                        style={{ background: "#F04E23", color: "#fff", fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 700, fontSize: 12, letterSpacing: "0.1em", textTransform: "uppercase" }}
+                        onClick={e => { e.stopPropagation(); requestRsvp(featured.id); }}
+                      >
+                        {user ? "RSVP Now" : "Sign Up to RSVP"}
+                      </Button>
+                      <button
+                        onClick={e => { e.stopPropagation(); handleShare(featured); }}
+                        className="h-11 w-11 rounded-full flex items-center justify-center transition-colors"
+                        style={{ background: "rgba(10,10,11,0.65)", border: "1px solid rgba(255,255,255,0.18)", backdropFilter: "blur(6px)" }}
+                        aria-label="Share event"
+                      >
+                        <Share2 className="w-4 h-4" style={{ color: "#F8F8F8" }} />
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
