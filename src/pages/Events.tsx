@@ -7,6 +7,7 @@ import EventTagBadges from "@/components/EventTagBadges";
 import SponsorCard from "@/components/SponsorCard";
 import RsvpAvatarBar from "@/components/RsvpAvatarBar";
 import SharePreview from "@/components/SharePreview";
+import SocialShareButtons from "@/components/SocialShareButtons";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";

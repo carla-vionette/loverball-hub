@@ -16,6 +16,7 @@ import { format, differenceInDays, differenceInHours, differenceInMinutes, isPas
 import { motion, AnimatePresence } from "framer-motion";
 import loverballLogo from "@/assets/loverball-script-logo.png";
 import SharePreview from "@/components/SharePreview";
+import SocialShareButtons from "@/components/SocialShareButtons";
 import WhosGoing from "@/components/WhosGoing";
 import RsvpAvatarBar from "@/components/RsvpAvatarBar";
 import { trackEventRSVP, trackContentView } from "@/lib/analytics";
