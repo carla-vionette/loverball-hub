@@ -19,6 +19,7 @@ import AttendeeProfileDrawer from "@/components/AttendeeProfileDrawer";
 import EventSubmissionForm from "@/components/EventSubmissionForm";
 import Seo from "@/components/Seo";
 import EditorialMasthead from "@/components/layout/EditorialMasthead";
+import { buildShareSummary, buildSharePreviewDescription } from "@/lib/eventShare";
 
 
 const CATEGORIES = ["All", "watch_party", "game", "panel", "brunch", "networking", "other"];
@@ -227,30 +228,21 @@ const Events = () => {
 
   const getShareUrl = (ev: DbEvent) => `https://www.loverball.com/e/${ev.id}`;
 
-  const getShareDescription = (ev: DbEvent) => {
-    if (ev.description) {
-      return ev.description.replace(/\s+/g, " ").trim().slice(0, 150) + (ev.description.length > 150 ? "..." : "");
-    }
-    const dateStr = format(new Date(ev.event_date), "EEE, MMM d, yyyy");
-    const timeStr = ev.event_time ? fmtTime(ev.event_time) : "";
-    const locStr = [ev.venue_name, ev.city].filter(Boolean).join(", ");
-    return `Join us ${dateStr}${timeStr ? ` at ${timeStr}` : ""}${locStr ? ` — ${locStr}` : ""}`;
-  };
-
   const copyShareLink = () => {
     if (!shareEvent) return;
     const url = getShareUrl(shareEvent);
-    navigator.clipboard.writeText(url);
-    toast({ title: "Link copied", description: "Share it anywhere." });
+    const summary = buildShareSummary(shareEvent);
+    navigator.clipboard.writeText(`${summary}\n\n${url}`);
+    toast({ title: "Copied!", description: "Event summary and link copied to clipboard." });
   };
 
   const handleNativeShare = async () => {
     if (!shareEvent) return;
     const url = getShareUrl(shareEvent);
-    const text = `${shareEvent.title} — ${format(new Date(shareEvent.event_date), "EEE, MMM d")}${shareEvent.event_time ? ` @ ${fmtTime(shareEvent.event_time)}` : ""}`;
+    const summary = buildShareSummary(shareEvent);
     if (typeof navigator.share === "function") {
       try {
-        await navigator.share({ title: shareEvent.title, text, url });
+        await navigator.share({ title: shareEvent.title, text: `${summary}\n\n${url}`, url });
         return;
       } catch { /* user cancelled */ }
     }
@@ -652,9 +644,13 @@ const Events = () => {
               <div className="space-y-4 pt-1">
                 <SharePreview
                   title={`${shareEvent.title} · Loverball`}
-                  description={getShareDescription(shareEvent)}
+                  description={buildSharePreviewDescription(shareEvent)}
                   imageUrl={shareEvent.image_url}
                   siteName="loverball.com"
+                  eventDate={format(new Date(shareEvent.event_date), "EEE, MMM d, yyyy")}
+                  eventTime={shareEvent.event_time ? fmtTime(shareEvent.event_time) : null}
+                  venue={shareEvent.venue_name || null}
+                  city={shareEvent.city || null}
                 />
                 <div className="flex gap-2">
                   <Button
