@@ -29,7 +29,7 @@ import EventTagBadges from "@/components/EventTagBadges";
 import EarlyAccessBanner from "@/components/EarlyAccessBanner";
 import LockedFeature from "@/components/LockedFeature";
 import EventComments from "@/components/EventComments";
-import EventDiscussionPreview from "@/components/EventDiscussionPreview";
+
 import EventHostProfile from "@/components/EventHostProfile";
 import Seo from "@/components/Seo";
 import DesktopNav from "@/components/DesktopNav";
