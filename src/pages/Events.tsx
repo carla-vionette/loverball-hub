@@ -532,30 +532,20 @@ const Events = () => {
                                 <EventTagBadges tags={ev.event_tags} size="sm" />
                               </div>
                             )}
-                            {/* Attendee avatars — guest signal */}
-                            {eventAttendees[ev.id]?.length > 0 && (
-                              <div className="flex items-center gap-2 pt-1" onClick={(e) => e.stopPropagation()}>
-                                <div className="flex -space-x-2">
-                                  {eventAttendees[ev.id].slice(0, 4).map((attendee) => (
-                                    <button
-                                      key={attendee.id}
-                                      onClick={(e) => { e.stopPropagation(); setSelectedProfile(attendee); setDrawerOpen(true); }}
-                                      className="hover:z-10 transition-transform hover:scale-110"
-                                    >
-                                      <Avatar className="w-7 h-7" style={{ border: "2px solid #1A1A1C" }}>
-                                        <AvatarImage src={attendee.profile_photo_url || undefined} />
-                                        <AvatarFallback style={{ background: "rgba(240,78,35,0.18)", color: "#F04E23", fontSize: 10, fontFamily: "'Inter', sans-serif", fontWeight: 700 }}>
-                                          {attendee.name?.charAt(0).toUpperCase()}
-                                        </AvatarFallback>
-                                      </Avatar>
-                                    </button>
-                                  ))}
-                                </div>
-                                <span style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 10, color: "rgba(248,248,248,0.55)", letterSpacing: "0.04em" }}>
-                                  {ct} going{spotsLeft !== null && spotsLeft > 0 && spotsLeft <= 5 ? ` · ${spotsLeft} left` : ev.capacity ? ` / ${ev.capacity}` : ""}
-                                </span>
-                              </div>
-                            )}
+                            {/* RSVP Avatar Bar — social proof */}
+                            <div className="pt-1" onClick={(e) => e.stopPropagation()}>
+                              <RsvpAvatarBar
+                                attendees={eventAttendees[ev.id] || []}
+                                totalCount={ct}
+                                size="sm"
+                                maxAvatars={5}
+                                onAvatarClick={(attendee) => {
+                                  setSelectedProfile(attendee);
+                                  setDrawerOpen(true);
+                                }}
+                                onViewAllClick={() => openTile(ev.id)}
+                              />
+                            </div>
                             <div className="flex items-center justify-between pt-2" style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
                               <span className="flex items-center gap-1"
                                 style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 10, color: "rgba(248,248,248,0.5)", letterSpacing: "0.04em" }}>
