@@ -472,6 +472,13 @@ const EventPublic = () => {
                 venue={event.venue_name}
                 city={event.city}
               />
+
+              {/* Social Share Buttons */}
+              <SocialShareButtons
+                url={publicUrl}
+                text={buildShareSummary(event)}
+              />
+
               <div className="flex gap-2">
                 <Button
                   variant="outline"

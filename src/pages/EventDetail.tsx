@@ -1021,6 +1021,12 @@ const EventDetail = () => {
                 venue={event.venue_name || null}
                 city={event.city || null}
               />
+
+              {/* Social Share Buttons */}
+              <SocialShareButtons
+                url={getShareUrl()}
+                text={buildShareSummary(event)}
+              />
               
               {/* Share Actions */}
               <div className="flex gap-2">

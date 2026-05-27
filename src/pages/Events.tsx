@@ -663,6 +663,13 @@ const Events = () => {
                   venue={shareEvent.venue_name || null}
                   city={shareEvent.city || null}
                 />
+
+                {/* Social Share Buttons */}
+                <SocialShareButtons
+                  url={getShareUrl(shareEvent)}
+                  text={buildShareSummary(shareEvent)}
+                />
+
                 <div className="flex gap-2">
                   <Button
                     variant="outline"
