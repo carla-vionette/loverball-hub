@@ -65,8 +65,14 @@ export function useProfileData() {
     queryFn: async () => {
       const uid = user!.id;
       const today = new Date().toISOString().split("T")[0];
-      const [profileResult, rsvpResult, suggestedResult] = await Promise.all([
-        supabase.from("profiles").select("*").eq("id", uid).maybeSingle(),
+      const [profileResult, rsvpResult, suggestedResult, settingsResult] = await Promise.all([
+        supabase
+          .from("profiles")
+          .select(
+            "id, name, pronouns, city, age_range, favorite_sports, favorite_teams_players, sports_experience_types, other_interests, event_comfort_level, participation_preferences, bio, profile_photo_url"
+          )
+          .eq("id", uid)
+          .maybeSingle(),
         supabase
           .from("event_rsvps")
           .select(
@@ -81,6 +87,7 @@ export function useProfileData() {
           .eq("status", "published")
           .order("event_date", { ascending: true })
           .limit(4),
+        supabase.rpc("get_my_account_settings" as any),
       ]);
 
       if (profileResult.error || !profileResult.data) {
@@ -91,8 +98,10 @@ export function useProfileData() {
         (r: any) => r.event !== null
       ) as RSVPEvent[];
 
+      const acct: any = settingsResult?.data || {};
+
       return {
-        profile: profileResult.data as ProfileData,
+        profile: { ...(profileResult.data as any), membership_tier: acct.membership_tier ?? null } as ProfileData,
         rsvpEvents,
         suggestedEvents: (suggestedResult.data || []) as SuggestedEvent[],
         missingProfile: false,
