@@ -540,7 +540,7 @@ const Events = () => {
                                 size="sm"
                                 maxAvatars={5}
                                 onAvatarClick={(attendee) => {
-                                  setSelectedProfile(attendee);
+                                  setSelectedProfile({ ...attendee, bio: null });
                                   setDrawerOpen(true);
                                 }}
                                 onViewAllClick={() => openTile(ev.id)}
