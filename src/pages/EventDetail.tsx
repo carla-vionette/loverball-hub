@@ -904,7 +904,7 @@ const EventDetail = () => {
 
             {/* Full who's going + comments below the fold */}
             {id && <WhosGoing eventId={id} refreshKey={guestRefreshKey} />}
-            {id && <div id="event-chat"><EventComments eventId={id} /></div>
+            {id && <div id="event-chat"><EventComments eventId={id} /></div>}
 
             {/* Calendar */}
             {!isEventPast && (
