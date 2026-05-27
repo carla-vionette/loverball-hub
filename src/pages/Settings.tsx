@@ -104,12 +104,16 @@ const Settings = () => {
         });
       }
 
-      // Load user's favorite teams
+      // Load user's favorite teams (public columns)
       const { data: profile } = await supabase
         .from("profiles")
-        .select("favorite_la_teams, in_app_notifications_enabled, sms_notifications_enabled, email_notifications_enabled")
+        .select("favorite_la_teams")
         .eq("id", user.id)
         .single();
+
+      // Operational settings live behind a SECURITY DEFINER RPC (column-restricted on the table)
+      const { data: settings } = await supabase.rpc("get_my_account_settings" as any);
+      const acct: any = settings || {};
 
       const { data: sensitive } = await supabase
         .from("profiles_sensitive" as any)
@@ -119,9 +123,9 @@ const Settings = () => {
 
       setUserTeams(profile?.favorite_la_teams || []);
       setChannels({
-        in_app: profile?.in_app_notifications_enabled ?? true,
-        sms: profile?.sms_notifications_enabled ?? true,
-        email: profile?.email_notifications_enabled ?? true,
+        in_app: acct.in_app_notifications_enabled ?? true,
+        sms: acct.sms_notifications_enabled ?? true,
+        email: acct.email_notifications_enabled ?? true,
         phone: (sensitive as any)?.phone_number || "",
       });
     } catch (err) {
