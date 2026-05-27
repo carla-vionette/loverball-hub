@@ -466,6 +466,10 @@ const EventPublic = () => {
                 description={shortDesc}
                 imageUrl={event.image_url}
                 siteName="loverball.com"
+                eventDate={dateStr}
+                eventTime={timeStr || null}
+                venue={event.venue_name}
+                city={event.city}
               />
               <div className="flex gap-2">
                 <Button
