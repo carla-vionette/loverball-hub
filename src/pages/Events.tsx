@@ -537,6 +537,16 @@ const Events = () => {
                           )}
                         </div>
 
+                        {/* Share button — top right */}
+                        <button
+                          onClick={(e) => { e.stopPropagation(); handleShare(ev); }}
+                          className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full flex items-center justify-center transition-colors"
+                          style={{ background: "rgba(10,10,11,0.65)", border: "1px solid rgba(255,255,255,0.12)", backdropFilter: "blur(6px)" }}
+                          aria-label="Share event"
+                        >
+                          <Share2 className="w-3.5 h-3.5" style={{ color: "#F8F8F8" }} />
+                        </button>
+
                         {/* Date block */}
                         <div className="absolute bottom-3 left-3 px-2.5 py-1.5 rounded-lg text-center"
                           style={{ background: "rgba(10,10,11,0.78)", border: "1px solid rgba(255,255,255,0.1)", backdropFilter: "blur(8px)" }}>
