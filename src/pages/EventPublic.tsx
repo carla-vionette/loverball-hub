@@ -80,7 +80,11 @@ const EventPublic = () => {
   const ogImage = event?.image_url || `${SITE}/og-image.png`;
   const ogTitle = event ? `${event.title} · Loverball` : "Loverball Event";
 
-  const handleShare = useCallback(async () => {
+  const handleShare = useCallback(() => {
+    setShowShareDialog(true);
+  }, []);
+
+  const handleNativeShare = useCallback(async () => {
     if (!event) return;
     const shareText = `${event.title} — ${dateStr}${timeStr ? ` @ ${timeStr}` : ""}`;
     if (typeof navigator.share === "function") {
@@ -89,13 +93,13 @@ const EventPublic = () => {
         return;
       } catch { /* user cancelled */ }
     }
-    try {
-      await navigator.clipboard.writeText(publicUrl);
-      toast({ title: "Link copied", description: "Share it anywhere." });
-    } catch {
-      toast({ title: "Couldn't copy", description: publicUrl, variant: "destructive" });
-    }
-  }, [event, dateStr, timeStr, publicUrl, toast]);
+    handleCopyLink();
+  }, [event, dateStr, timeStr, publicUrl]);
+
+  const handleCopyLink = useCallback(() => {
+    navigator.clipboard.writeText(publicUrl);
+    toast({ title: "Link copied", description: "Share it anywhere." });
+  }, [publicUrl, toast]);
 
   const applyRsvp = useCallback(
     async (status: RsvpIntent) => {
