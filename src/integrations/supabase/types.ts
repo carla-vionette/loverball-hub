@@ -2234,6 +2234,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      get_my_account_settings: { Args: never; Returns: Json }
       get_public_profile_columns: { Args: { target_id: string }; Returns: Json }
       get_safe_profile: { Args: { profile_id: string }; Returns: Json }
       has_role: {
