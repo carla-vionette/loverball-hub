@@ -253,38 +253,46 @@ const EventDetail = () => {
 
   const fetchAttendees = async () => {
     if (!id) return;
-    
-    try {
-      // Use event_guests table which has a proper FK to profiles
-      const { data, error } = await supabase
-        .from('event_guests')
-        .select(`
-          id,
-          user_id,
-          status,
-          profile:profiles!inner (
-            name,
-            profile_photo_url
-          )
-        `)
-        .eq('event_id', id)
-        .eq('status', 'going')
-        .limit(20);
 
-      if (error) throw error;
-      
-      const transformedData = (data || []).map((item: any) => ({
+    try {
+      // True total = count of all confirmed RSVP records, regardless of profile presence
+      const [rsvpCountRes, guestsRes] = await Promise.all([
+        supabase
+          .from('event_rsvps')
+          .select('id', { count: 'exact', head: true })
+          .eq('event_id', id)
+          .in('status', ['attending', 'confirmed']),
+        // Avatar previews — left join so attendees without a profile row still surface
+        supabase
+          .from('event_guests')
+          .select(`
+            id,
+            user_id,
+            status,
+            profile:profiles (
+              name,
+              profile_photo_url
+            )
+          `)
+          .eq('event_id', id)
+          .eq('status', 'going')
+          .limit(20),
+      ]);
+
+      const transformedData = (guestsRes.data || []).map((item: any) => ({
         id: item.id,
         user_id: item.user_id,
         status: item.status,
-        profile: item.profile ? {
-          name: item.profile.name,
-          profile_photo_url: item.profile.profile_photo_url,
-        } : null
+        profile: {
+          name: item.profile?.name || 'Member',
+          profile_photo_url: item.profile?.profile_photo_url || null,
+        },
       }));
-      
+
       setAttendees(transformedData);
-      setAttendeeCounts({ yes: transformedData.length, maybe: 0, no: 0 });
+      // Prefer authoritative RSVP count; fall back to guest preview length if count failed
+      const trueTotal = rsvpCountRes.count ?? transformedData.length;
+      setAttendeeCounts({ yes: trueTotal, maybe: 0, no: 0 });
     } catch (error) {
       // Silently handle attendee fetch errors
     }
