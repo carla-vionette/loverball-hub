@@ -447,6 +447,58 @@ const EventPublic = () => {
         </DialogContent>
       </Dialog>
 
+      {/* Share dialog */}
+      <Dialog open={showShareDialog} onOpenChange={setShowShareDialog}>
+        <DialogContent className="border-0" style={{ background: C.surface, color: C.text }}>
+          <DialogHeader>
+            <DialogTitle style={{ fontFamily: fonts.serif, fontStyle: "italic", fontSize: 24 }}>
+              Share event
+            </DialogTitle>
+            <DialogDescription style={{ color: C.muted }}>
+              {event ? `${event.title} · ${dateStr}${timeStr ? ` @ ${timeStr}` : ""}` : ""}
+            </DialogDescription>
+          </DialogHeader>
+          {event && (
+            <div className="space-y-4">
+              <SharePreview
+                title={`${event.title} · Loverball`}
+                description={shortDesc}
+                imageUrl={event.image_url}
+                siteName="loverball.com"
+              />
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  className="flex-1 h-11 rounded-full text-xs uppercase tracking-[0.2em] bg-transparent"
+                  style={{ borderColor: C.borderStrong, color: C.text, fontFamily: fonts.mono }}
+                  onClick={handleCopyLink}
+                >
+                  <Copy className="w-3.5 h-3.5 mr-2" /> Copy Link
+                </Button>
+                {typeof navigator.share === "function" && (
+                  <Button
+                    className="flex-1 h-11 rounded-full text-xs uppercase tracking-[0.2em] border-0"
+                    style={{ background: C.raspberry, color: "#fff", fontFamily: fonts.mono }}
+                    onClick={handleNativeShare}
+                  >
+                    <Share2 className="w-3.5 h-3.5 mr-2" /> Share
+                  </Button>
+                )}
+              </div>
+              <div className="rounded-xl p-3" style={{ background: C.bg, border: `1px solid ${C.borderStrong}` }}>
+                <p className="text-xs mb-1 flex items-center gap-1" style={{ color: C.muted, fontFamily: fonts.mono, letterSpacing: "0.04em" }}>
+                  <Link2 className="w-3 h-3" />
+                  Share URL
+                </p>
+                <p className="text-xs font-mono break-all" style={{ color: C.text }}>
+                  {publicUrl}
+                </p>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
       {/* Event-contextual signup / sign-in for RSVP */}
       <EventRSVPDialog
         open={authOpen}
