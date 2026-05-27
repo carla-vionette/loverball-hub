@@ -109,7 +109,13 @@ const EventDetail = () => {
   const [userTier, setUserTier] = useState<string | null>(null);
   const isMobileDevice = useIsMobile();
 
-  const goBack = useCallback(() => navigate(-1), [navigate]);
+  const goBack = useCallback(() => {
+    if (window.history.state && window.history.state.idx > 0) {
+      navigate(-1);
+    } else {
+      navigate('/events');
+    }
+  }, [navigate]);
 
   // Swipe-right to go back on mobile
   const gestureRef = useGestures<HTMLDivElement>({
@@ -646,7 +652,7 @@ const EventDetail = () => {
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => navigate(-1)}
+            onClick={goBack}
           >
             <ArrowLeft className="w-5 h-5" />
           </Button>
