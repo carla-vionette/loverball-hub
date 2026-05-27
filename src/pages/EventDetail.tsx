@@ -400,19 +400,8 @@ const EventDetail = () => {
     return `https://www.loverball.com/e/${event?.id}`;
   };
 
-  const getFormattedShareText = () => {
-    if (!event) return '';
-    const eventDate = format(new Date(event.event_date), 'EEE, MMM d');
-    const eventTime = event.event_time ? formatTime(event.event_time) : '';
-    const shareUrl = getShareUrl();
-    return `${event.title} - ${eventDate} @ ${eventTime}\n${shareUrl}`;
-  };
-
-  const getShareDescription = () => {
-    if (!event) return '';
-    return event.description 
-      ? event.description.substring(0, 150) + (event.description.length > 150 ? '...' : '')
-      : `Join us on ${format(new Date(event.event_date), 'EEEE, MMMM d, yyyy')}`;
+  const getShareUrl = () => {
+    return `https://www.loverball.com/e/${event?.id}`;
   };
 
   const handleShare = () => {
@@ -420,14 +409,15 @@ const EventDetail = () => {
   };
 
   const handleNativeShare = async () => {
+    if (!event) return;
     const shareUrl = getShareUrl();
-    const formattedText = getFormattedShareText();
-    
+    const summary = buildShareSummary(event);
+
     if (navigator.share) {
       try {
         await navigator.share({
-          title: event?.title || 'Loverball Event',
-          text: formattedText,
+          title: event.title,
+          text: `${summary}\n\n${shareUrl}`,
           url: shareUrl,
         });
       } catch (error) {
@@ -437,11 +427,13 @@ const EventDetail = () => {
   };
 
   const copyToClipboard = () => {
-    const formattedText = getFormattedShareText();
-    navigator.clipboard.writeText(formattedText);
+    if (!event) return;
+    const shareUrl = getShareUrl();
+    const summary = buildShareSummary(event);
+    navigator.clipboard.writeText(`${summary}\n\n${shareUrl}`);
     toast({
       title: "Copied!",
-      description: "Event details copied to clipboard.",
+      description: "Event summary and link copied to clipboard.",
     });
     setShowShareDialog(false);
   };
