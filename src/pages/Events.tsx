@@ -220,6 +220,43 @@ const Events = () => {
     setRsvpId(null);
   };
 
+  const handleShare = (ev: DbEvent) => {
+    setShareEvent(ev);
+    setShowShareDialog(true);
+  };
+
+  const getShareUrl = (ev: DbEvent) => `https://www.loverball.com/e/${ev.id}`;
+
+  const getShareDescription = (ev: DbEvent) => {
+    if (ev.description) {
+      return ev.description.replace(/\s+/g, " ").trim().slice(0, 150) + (ev.description.length > 150 ? "..." : "");
+    }
+    const dateStr = format(new Date(ev.event_date), "EEE, MMM d, yyyy");
+    const timeStr = ev.event_time ? fmtTime(ev.event_time) : "";
+    const locStr = [ev.venue_name, ev.city].filter(Boolean).join(", ");
+    return `Join us ${dateStr}${timeStr ? ` at ${timeStr}` : ""}${locStr ? ` — ${locStr}` : ""}`;
+  };
+
+  const copyShareLink = () => {
+    if (!shareEvent) return;
+    const url = getShareUrl(shareEvent);
+    navigator.clipboard.writeText(url);
+    toast({ title: "Link copied", description: "Share it anywhere." });
+  };
+
+  const handleNativeShare = async () => {
+    if (!shareEvent) return;
+    const url = getShareUrl(shareEvent);
+    const text = `${shareEvent.title} — ${format(new Date(shareEvent.event_date), "EEE, MMM d")}${shareEvent.event_time ? ` @ ${fmtTime(shareEvent.event_time)}` : ""}`;
+    if (typeof navigator.share === "function") {
+      try {
+        await navigator.share({ title: shareEvent.title, text, url });
+        return;
+      } catch { /* user cancelled */ }
+    }
+    copyShareLink();
+  };
+
   const [tab, setTab] = useState<"upcoming" | "past">("upcoming");
   const now = new Date();
   // Events move to "past" 24 hours after their event_date
