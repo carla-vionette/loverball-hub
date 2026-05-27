@@ -8,10 +8,11 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Calendar, Clock, MapPin, Share2, Copy, Mail, Loader2, ArrowLeft, Check, HelpCircle, X } from "lucide-react";
+import { Calendar, Clock, MapPin, Share2, Copy, Mail, Loader2, ArrowLeft, Check, HelpCircle, X, Link2 } from "lucide-react";
 import { format } from "date-fns";
 import loverballLogo from "@/assets/loverball-script-logo.png";
 import { C, fonts } from "@/lib/editorialTheme";
+import SharePreview from "@/components/SharePreview";
 import EventRSVPDialog, { RsvpIntent } from "@/components/EventRSVPDialog";
 
 const SITE = "https://www.loverball.com";
@@ -51,6 +52,7 @@ const EventPublic = () => {
   const [authIntent, setAuthIntent] = useState<RsvpIntent>("attending");
   const [rsvpStatus, setRsvpStatus] = useState<RsvpIntent | null>(null);
   const [rsvping, setRsvping] = useState(false);
+  const [showShareDialog, setShowShareDialog] = useState(false);
   const pendingAppliedRef = useRef(false);
 
   useEffect(() => {
@@ -78,7 +80,11 @@ const EventPublic = () => {
   const ogImage = event?.image_url || `${SITE}/og-image.png`;
   const ogTitle = event ? `${event.title} · Loverball` : "Loverball Event";
 
-  const handleShare = useCallback(async () => {
+  const handleShare = useCallback(() => {
+    setShowShareDialog(true);
+  }, []);
+
+  const handleNativeShare = useCallback(async () => {
     if (!event) return;
     const shareText = `${event.title} — ${dateStr}${timeStr ? ` @ ${timeStr}` : ""}`;
     if (typeof navigator.share === "function") {
@@ -87,13 +93,13 @@ const EventPublic = () => {
         return;
       } catch { /* user cancelled */ }
     }
-    try {
-      await navigator.clipboard.writeText(publicUrl);
-      toast({ title: "Link copied", description: "Share it anywhere." });
-    } catch {
-      toast({ title: "Couldn't copy", description: publicUrl, variant: "destructive" });
-    }
-  }, [event, dateStr, timeStr, publicUrl, toast]);
+    handleCopyLink();
+  }, [event, dateStr, timeStr, publicUrl]);
+
+  const handleCopyLink = useCallback(() => {
+    navigator.clipboard.writeText(publicUrl);
+    toast({ title: "Link copied", description: "Share it anywhere." });
+  }, [publicUrl, toast]);
 
   const applyRsvp = useCallback(
     async (status: RsvpIntent) => {
@@ -438,6 +444,58 @@ const EventPublic = () => {
               {sending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Send invites"}
             </Button>
           </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Share dialog */}
+      <Dialog open={showShareDialog} onOpenChange={setShowShareDialog}>
+        <DialogContent className="border-0" style={{ background: C.surface, color: C.text }}>
+          <DialogHeader>
+            <DialogTitle style={{ fontFamily: fonts.serif, fontStyle: "italic", fontSize: 24 }}>
+              Share event
+            </DialogTitle>
+            <DialogDescription style={{ color: C.muted }}>
+              {event ? `${event.title} · ${dateStr}${timeStr ? ` @ ${timeStr}` : ""}` : ""}
+            </DialogDescription>
+          </DialogHeader>
+          {event && (
+            <div className="space-y-4">
+              <SharePreview
+                title={`${event.title} · Loverball`}
+                description={shortDesc}
+                imageUrl={event.image_url}
+                siteName="loverball.com"
+              />
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  className="flex-1 h-11 rounded-full text-xs uppercase tracking-[0.2em] bg-transparent"
+                  style={{ borderColor: C.borderStrong, color: C.text, fontFamily: fonts.mono }}
+                  onClick={handleCopyLink}
+                >
+                  <Copy className="w-3.5 h-3.5 mr-2" /> Copy Link
+                </Button>
+                {typeof navigator.share === "function" && (
+                  <Button
+                    className="flex-1 h-11 rounded-full text-xs uppercase tracking-[0.2em] border-0"
+                    style={{ background: C.raspberry, color: "#fff", fontFamily: fonts.mono }}
+                    onClick={handleNativeShare}
+                  >
+                    <Share2 className="w-3.5 h-3.5 mr-2" /> Share
+                  </Button>
+                )}
+              </div>
+              <div className="rounded-xl p-3" style={{ background: C.bg, border: `1px solid ${C.borderStrong}` }}>
+                <p className="text-xs mb-1 flex items-center gap-1" style={{ color: C.muted, fontFamily: fonts.mono, letterSpacing: "0.04em" }}>
+                  <Link2 className="w-3 h-3" />
+                  Share URL
+                </p>
+                <p className="text-xs font-mono break-all" style={{ color: C.text }}>
+                  {publicUrl}
+                </p>
+              </div>
+            </div>
+          )}
         </DialogContent>
       </Dialog>
 

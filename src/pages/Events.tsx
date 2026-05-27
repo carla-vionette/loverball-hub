@@ -2,10 +2,11 @@ import React, { useState, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Calendar, MapPin, Users, Clock, Loader2, PlusCircle, Send, Search } from "lucide-react";
+import { Calendar, MapPin, Users, Clock, Loader2, PlusCircle, Send, Search, Share2, Copy, Link2 } from "lucide-react";
 import EventTagBadges from "@/components/EventTagBadges";
 import SponsorCard from "@/components/SponsorCard";
 import RsvpAvatarBar from "@/components/RsvpAvatarBar";
+import SharePreview from "@/components/SharePreview";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
@@ -97,6 +98,8 @@ const Events = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [showSubmitForm, setShowSubmitForm] = useState(false);
   const [isApprovedCreator, setIsApprovedCreator] = useState(false);
+  const [shareEvent, setShareEvent] = useState<DbEvent | null>(null);
+  const [showShareDialog, setShowShareDialog] = useState(false);
   const { user } = useAuth();
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
@@ -215,6 +218,43 @@ const Events = () => {
     if (status === "attending") setCounts(p => ({ ...p, [rsvpId]: (p[rsvpId] || 0) + 1 }));
     toast({ title: status === "attending" ? "You're going! 🎉" : status === "maybe" ? "Marked as maybe" : "Noted!" });
     setRsvpId(null);
+  };
+
+  const handleShare = (ev: DbEvent) => {
+    setShareEvent(ev);
+    setShowShareDialog(true);
+  };
+
+  const getShareUrl = (ev: DbEvent) => `https://www.loverball.com/e/${ev.id}`;
+
+  const getShareDescription = (ev: DbEvent) => {
+    if (ev.description) {
+      return ev.description.replace(/\s+/g, " ").trim().slice(0, 150) + (ev.description.length > 150 ? "..." : "");
+    }
+    const dateStr = format(new Date(ev.event_date), "EEE, MMM d, yyyy");
+    const timeStr = ev.event_time ? fmtTime(ev.event_time) : "";
+    const locStr = [ev.venue_name, ev.city].filter(Boolean).join(", ");
+    return `Join us ${dateStr}${timeStr ? ` at ${timeStr}` : ""}${locStr ? ` — ${locStr}` : ""}`;
+  };
+
+  const copyShareLink = () => {
+    if (!shareEvent) return;
+    const url = getShareUrl(shareEvent);
+    navigator.clipboard.writeText(url);
+    toast({ title: "Link copied", description: "Share it anywhere." });
+  };
+
+  const handleNativeShare = async () => {
+    if (!shareEvent) return;
+    const url = getShareUrl(shareEvent);
+    const text = `${shareEvent.title} — ${format(new Date(shareEvent.event_date), "EEE, MMM d")}${shareEvent.event_time ? ` @ ${fmtTime(shareEvent.event_time)}` : ""}`;
+    if (typeof navigator.share === "function") {
+      try {
+        await navigator.share({ title: shareEvent.title, text, url });
+        return;
+      } catch { /* user cancelled */ }
+    }
+    copyShareLink();
   };
 
   const [tab, setTab] = useState<"upcoming" | "past">("upcoming");
@@ -497,6 +537,16 @@ const Events = () => {
                           )}
                         </div>
 
+                        {/* Share button — top right */}
+                        <button
+                          onClick={(e) => { e.stopPropagation(); handleShare(ev); }}
+                          className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full flex items-center justify-center transition-colors"
+                          style={{ background: "rgba(10,10,11,0.65)", border: "1px solid rgba(255,255,255,0.12)", backdropFilter: "blur(6px)" }}
+                          aria-label="Share event"
+                        >
+                          <Share2 className="w-3.5 h-3.5" style={{ color: "#F8F8F8" }} />
+                        </button>
+
                         {/* Date block */}
                         <div className="absolute bottom-3 left-3 px-2.5 py-1.5 rounded-lg text-center"
                           style={{ background: "rgba(10,10,11,0.78)", border: "1px solid rgba(255,255,255,0.1)", backdropFilter: "blur(8px)" }}>
@@ -586,6 +636,58 @@ const Events = () => {
             </div>
           )}
         </div>
+
+        {/* SHARE DIALOG */}
+        <Dialog open={showShareDialog} onOpenChange={setShowShareDialog}>
+          <DialogContent className="sm:max-w-md rounded-3xl" style={{ background: "#141415", border: "1px solid rgba(255,255,255,0.08)" }}>
+            <DialogHeader>
+              <span style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 10, letterSpacing: "0.22em", color: "#E6F25A", textTransform: "uppercase" }}>
+                Spread the word
+              </span>
+              <DialogTitle style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: 30, lineHeight: 0.95, color: "#E6F25A", textTransform: "uppercase", letterSpacing: "0.01em", marginTop: 4 }}>
+                Share Event
+              </DialogTitle>
+            </DialogHeader>
+            {shareEvent && (
+              <div className="space-y-4 pt-1">
+                <SharePreview
+                  title={`${shareEvent.title} · Loverball`}
+                  description={getShareDescription(shareEvent)}
+                  imageUrl={shareEvent.image_url}
+                  siteName="loverball.com"
+                />
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    className="flex-1 h-11 rounded-full bg-transparent"
+                    style={{ borderColor: "rgba(255,255,255,0.12)", color: "#F8F8F8", fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: 12, letterSpacing: "0.12em", textTransform: "uppercase" }}
+                    onClick={copyShareLink}
+                  >
+                    <Copy className="w-4 h-4 mr-2" /> Copy Link
+                  </Button>
+                  {typeof navigator.share === "function" && (
+                    <Button
+                      className="flex-1 h-11 rounded-full"
+                      style={{ background: "#F04E23", color: "#fff", fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: 12, letterSpacing: "0.12em", textTransform: "uppercase" }}
+                      onClick={handleNativeShare}
+                    >
+                      <Share2 className="w-4 h-4 mr-2" /> Share
+                    </Button>
+                  )}
+                </div>
+                <div className="rounded-xl p-3" style={{ background: "rgba(20,20,21,0.6)", border: "1px solid rgba(255,255,255,0.08)" }}>
+                  <p className="text-xs mb-1 flex items-center gap-1" style={{ color: "rgba(248,248,248,0.5)", fontFamily: "'Space Mono', ui-monospace, monospace", letterSpacing: "0.04em" }}>
+                    <Link2 className="w-3 h-3" />
+                    Share URL
+                  </p>
+                  <p className="text-xs font-mono break-all" style={{ color: "#F8F8F8" }}>
+                    {getShareUrl(shareEvent)}
+                  </p>
+                </div>
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
 
         {/* RSVP MODAL */}
         <Dialog open={!!rsvpId} onOpenChange={() => setRsvpId(null)}>
