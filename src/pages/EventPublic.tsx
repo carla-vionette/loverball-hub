@@ -52,6 +52,7 @@ const EventPublic = () => {
   const [authIntent, setAuthIntent] = useState<RsvpIntent>("attending");
   const [rsvpStatus, setRsvpStatus] = useState<RsvpIntent | null>(null);
   const [rsvping, setRsvping] = useState(false);
+  const [showShareDialog, setShowShareDialog] = useState(false);
   const pendingAppliedRef = useRef(false);
 
   useEffect(() => {
