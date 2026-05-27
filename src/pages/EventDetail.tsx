@@ -17,6 +17,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import loverballLogo from "@/assets/loverball-script-logo.png";
 import SharePreview from "@/components/SharePreview";
 import WhosGoing from "@/components/WhosGoing";
+import RsvpAvatarBar from "@/components/RsvpAvatarBar";
 import { trackEventRSVP, trackContentView } from "@/lib/analytics";
 import EventCheckIn from "@/components/EventCheckIn";
 import AttendeeListModal from "@/components/AttendeeListModal";
@@ -812,7 +813,7 @@ const EventDetail = () => {
               </div>
             )}
 
-            {/* WHO ELSE IS GOING */}
+            {/* RSVP AVATAR BAR — social proof near action */}
             <div className="rounded-xl bg-card border border-border/30 p-3">
               <div className="flex justify-between items-baseline mb-2.5">
                 <span className="text-[10px] font-semibold tracking-[0.1em] text-muted-foreground">
@@ -824,29 +825,23 @@ const EventDetail = () => {
                     : `${goingCount} member${goingCount === 1 ? '' : 's'}`}
                 </span>
               </div>
-              {attendees.length > 0 ? (
-                <button onClick={() => setShowAttendeeList(true)} className="flex -space-x-1.5 mb-2">
-                  {attendees.slice(0, 5).map((a) => (
-                    <Avatar key={a.id} className="w-7 h-7 border-2 border-card">
-                      <AvatarImage src={a.profile?.profile_photo_url || undefined} />
-                      <AvatarFallback className="bg-primary/15 text-primary text-[10px]">
-                        {a.profile?.name?.charAt(0).toUpperCase() || '?'}
-                      </AvatarFallback>
-                    </Avatar>
-                  ))}
-                  {attendees.length > 5 && (
-                    <div className="w-7 h-7 rounded-full bg-muted border-2 border-card flex items-center justify-center text-[10px] font-medium">
-                      +{attendees.length - 5}
-                    </div>
-                  )}
-                </button>
-              ) : (
-                <p className="text-xs text-muted-foreground mb-2">Be one of the first.</p>
-              )}
+              <RsvpAvatarBar
+                attendees={attendees
+                  .filter((a) => a.profile)
+                  .map((a) => ({
+                    id: a.user_id,
+                    name: a.profile!.name,
+                    profile_photo_url: a.profile!.profile_photo_url,
+                  }))}
+                totalCount={goingCount}
+                maxAvatars={5}
+                size="md"
+                onViewAllClick={() => setShowAttendeeList(true)}
+              />
 
               {/* Hosted: fan modes mix chips */}
               {variant === 'hosted' && goingCount > 0 && (
-                <div className="flex gap-1.5 flex-wrap mt-1">
+                <div className="flex gap-1.5 flex-wrap mt-2.5">
                   <span className="text-[10px] px-2 py-0.5 rounded-full bg-[hsl(173_58%_39%)]/10 text-[hsl(173_58%_25%)]">Athletes</span>
                   <span className="text-[10px] px-2 py-0.5 rounded-full bg-primary/10 text-primary">New converts</span>
                   <span className="text-[10px] px-2 py-0.5 rounded-full bg-muted text-muted-foreground">Vibes</span>
