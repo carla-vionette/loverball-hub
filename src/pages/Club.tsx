@@ -550,7 +550,10 @@ const Club = () => {
                 <ul className="space-y-2">
                   {STATIC_CIRCLES.slice(0, 4).map((c) => (
                     <li key={c.id}>
-                      <button className="w-full flex items-center justify-between p-2 rounded-lg hover:bg-white/[0.03]">
+                      <button
+                        onClick={() => navigate("/events")}
+                        className="w-full flex items-center justify-between p-2 rounded-lg hover:bg-white/[0.03] text-left"
+                      >
                         <span className="flex items-center gap-2 text-sm" style={{ color: C.text }}>
                           <span>{c.emoji}</span>{c.name}
                         </span>
