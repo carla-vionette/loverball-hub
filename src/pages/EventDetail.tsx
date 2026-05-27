@@ -596,10 +596,11 @@ const EventDetail = () => {
     <div ref={gestureRef} className="min-h-screen bg-background">
       {event && (
         <Seo
-          title={`${event.title} | Loverball`}
-          description={(event.description || `${event.title} — Loverball event.`).slice(0, 158)}
-          path={`/event/${event.id}`}
+          title={`${event.title} · Loverball`}
+          description={buildSharePreviewDescription(event).slice(0, 200)}
+          path={`/e/${event.id}`}
           image={event.image_url || undefined}
+          imageAlt={`${event.title} — Loverball event cover`}
           type="event"
           jsonLd={{
             "@context": "https://schema.org",
