@@ -98,6 +98,8 @@ const Events = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [showSubmitForm, setShowSubmitForm] = useState(false);
   const [isApprovedCreator, setIsApprovedCreator] = useState(false);
+  const [shareEvent, setShareEvent] = useState<DbEvent | null>(null);
+  const [showShareDialog, setShowShareDialog] = useState(false);
   const { user } = useAuth();
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
