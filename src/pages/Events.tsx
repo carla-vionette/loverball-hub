@@ -218,10 +218,11 @@ const Events = () => {
 
   const [tab, setTab] = useState<"upcoming" | "past">("upcoming");
   const now = new Date();
-  const todayStr = now.toISOString().split("T")[0];
+  // Events move to "past" 24 hours after their event_date
+  const cutoff = new Date(now.getTime() - 24 * 60 * 60 * 1000);
 
-  const upcomingEvents = events.filter(e => e.event_date >= todayStr);
-  const pastEvents = events.filter(e => e.event_date < todayStr).reverse();
+  const upcomingEvents = events.filter(e => new Date(e.event_date) >= cutoff);
+  const pastEvents = events.filter(e => new Date(e.event_date) < cutoff).reverse();
 
   const baseEvents = tab === "upcoming" ? upcomingEvents : pastEvents;
   const categoryFiltered = category === "All" ? baseEvents : baseEvents.filter(e => e.event_type === category);
