@@ -721,6 +721,14 @@ const EventDetail = () => {
             {/* HERO CARD */}
             <div className={`relative overflow-hidden rounded-2xl p-4 ${heroClass}`}>
               <div className="absolute -top-5 -right-5 w-20 h-20 rounded-full bg-primary/20" />
+              {/* Desktop share button */}
+              <button
+                onClick={handleShare}
+                className="hidden md:flex absolute top-4 right-4 z-10 w-9 h-9 rounded-full items-center justify-center transition-colors bg-background/20 hover:bg-background/40 border border-white/20"
+                aria-label="Share event"
+              >
+                <Share2 className="w-4 h-4" />
+              </button>
               <div className="relative">
                 <div className={`flex items-center gap-1.5 mb-2 ${eyebrowAccent}`}>
                   <span className="w-1.5 h-1.5 rounded-full bg-current inline-block" />
