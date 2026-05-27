@@ -7,6 +7,7 @@ import EventTagBadges from "@/components/EventTagBadges";
 import SponsorCard from "@/components/SponsorCard";
 import RsvpAvatarBar from "@/components/RsvpAvatarBar";
 import SharePreview from "@/components/SharePreview";
+import SocialShareButtons from "@/components/SocialShareButtons";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
@@ -662,6 +663,13 @@ const Events = () => {
                   venue={shareEvent.venue_name || null}
                   city={shareEvent.city || null}
                 />
+
+                {/* Social Share Buttons */}
+                <SocialShareButtons
+                  url={getShareUrl(shareEvent)}
+                  text={buildShareSummary(shareEvent)}
+                />
+
                 <div className="flex gap-2">
                   <Button
                     variant="outline"

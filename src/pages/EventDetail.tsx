@@ -16,6 +16,7 @@ import { format, differenceInDays, differenceInHours, differenceInMinutes, isPas
 import { motion, AnimatePresence } from "framer-motion";
 import loverballLogo from "@/assets/loverball-script-logo.png";
 import SharePreview from "@/components/SharePreview";
+import SocialShareButtons from "@/components/SocialShareButtons";
 import WhosGoing from "@/components/WhosGoing";
 import RsvpAvatarBar from "@/components/RsvpAvatarBar";
 import { trackEventRSVP, trackContentView } from "@/lib/analytics";
@@ -1019,6 +1020,12 @@ const EventDetail = () => {
                 eventTime={event.event_time ? formatTime(event.event_time) : null}
                 venue={event.venue_name || null}
                 city={event.city || null}
+              />
+
+              {/* Social Share Buttons */}
+              <SocialShareButtons
+                url={getShareUrl()}
+                text={buildShareSummary(event)}
               />
               
               {/* Share Actions */}
