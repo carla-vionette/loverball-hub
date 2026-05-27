@@ -75,9 +75,7 @@ const EventPublic = () => {
   const dateStr = event ? format(new Date(event.event_date + "T00:00:00"), "EEE, MMM d, yyyy") : "";
   const timeStr = event?.event_time ? formatTime(event.event_time) : "";
   const locStr = [event?.venue_name, event?.city].filter(Boolean).join(", ");
-  const shortDesc = event?.description
-    ? event.description.replace(/\s+/g, " ").trim().slice(0, 180)
-    : `Join us ${dateStr}${timeStr ? ` at ${timeStr}` : ""}${locStr ? ` — ${locStr}` : ""}`;
+  const shortDesc = event ? buildSharePreviewDescription(event) : "";
   const ogImage = event?.image_url || `${SITE}/og-image.png`;
   const ogTitle = event ? `${event.title} · Loverball` : "Loverball Event";
 
@@ -87,20 +85,22 @@ const EventPublic = () => {
 
   const handleNativeShare = useCallback(async () => {
     if (!event) return;
-    const shareText = `${event.title} — ${dateStr}${timeStr ? ` @ ${timeStr}` : ""}`;
+    const summary = buildShareSummary(event);
     if (typeof navigator.share === "function") {
       try {
-        await navigator.share({ title: event.title, text: shareText, url: publicUrl });
+        await navigator.share({ title: event.title, text: `${summary}\n\n${publicUrl}`, url: publicUrl });
         return;
       } catch { /* user cancelled */ }
     }
     handleCopyLink();
-  }, [event, dateStr, timeStr, publicUrl]);
+  }, [event, publicUrl]);
 
   const handleCopyLink = useCallback(() => {
-    navigator.clipboard.writeText(publicUrl);
-    toast({ title: "Link copied", description: "Share it anywhere." });
-  }, [publicUrl, toast]);
+    if (!event) return;
+    const summary = buildShareSummary(event);
+    navigator.clipboard.writeText(`${summary}\n\n${publicUrl}`);
+    toast({ title: "Copied!", description: "Event summary and link copied to clipboard." });
+  }, [event, publicUrl, toast]);
 
   const applyRsvp = useCallback(
     async (status: RsvpIntent) => {
