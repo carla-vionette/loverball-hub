@@ -687,9 +687,12 @@ const MemberCardCompact = ({
   </li>
 );
 
-const CircleCard = ({ circle }: { circle: Circle }) => (
-  <div className="rounded-2xl p-5 flex flex-col gap-3 transition-transform hover:-translate-y-0.5"
-    style={{ background: C.surface, border: `1px solid ${C.border}` }}>
+const CircleCard = ({ circle, navigate }: { circle: Circle; navigate: ReturnType<typeof useNavigate> }) => (
+  <button
+    onClick={() => navigate("/events")}
+    className="rounded-2xl p-5 flex flex-col gap-3 transition-transform hover:-translate-y-0.5 text-left"
+    style={{ background: C.surface, border: `1px solid ${C.border}` }}
+  >
     <div className="flex items-start justify-between">
       <div className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl"
         style={{ background: `linear-gradient(135deg, ${C.raspberry}22, ${C.pink}1a)`, border: `1px solid ${C.border}` }}>
@@ -703,10 +706,13 @@ const CircleCard = ({ circle }: { circle: Circle }) => (
       <p className="font-semibold" style={{ color: C.text }}>{circle.name}</p>
       <p className="text-xs" style={{ color: C.muted }}>#{circle.tag.toLowerCase().replace(/\s+/g, "-")}</p>
     </div>
-    <Button size="sm" className="rounded-lg mt-1" style={{ background: C.raspberry, color: "#0a0a0a" }}>
+    <span
+      className="inline-flex items-center justify-center px-3 py-1.5 rounded-lg text-xs font-medium mt-1"
+      style={{ background: C.raspberry, color: "#0a0a0a" }}
+    >
       Join Circle
-    </Button>
-  </div>
+    </span>
+  </button>
 );
 
 const EmptyState = ({ text }: { text: string }) => (
