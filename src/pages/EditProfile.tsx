@@ -99,7 +99,9 @@ const EditProfile = () => {
       // Fetch sensitive data separately
       const { data: sensitive } = await supabase.from("profiles_sensitive" as any).select("phone_number").eq("id", user.id).maybeSingle();
       setPhoneNumber((sensitive as any)?.phone_number || "");
-      setSmsNotifications(profile.sms_notifications_enabled ?? true);
+      // Operational settings live behind a SECURITY DEFINER RPC
+      const { data: acct } = await supabase.rpc("get_my_account_settings" as any);
+      setSmsNotifications(((acct as any)?.sms_notifications_enabled) ?? true);
       setProfilePhotoPreview(profile.profile_photo_url || null);
       
       setInitialLoading(false);
