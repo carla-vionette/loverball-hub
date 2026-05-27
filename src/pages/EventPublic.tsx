@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback, useRef } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { Helmet } from "react-helmet-async";
+import Seo from "@/components/Seo";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
@@ -220,24 +220,25 @@ const EventPublic = () => {
 
   return (
     <>
-      <Helmet>
-        <title>{ogTitle}</title>
-        <meta name="description" content={shortDesc} />
-        <link rel="canonical" href={publicUrl} />
-        <meta property="og:type" content="event" />
-        <meta property="og:site_name" content="Loverball" />
-        <meta property="og:url" content={publicUrl} />
-        <meta property="og:title" content={ogTitle} />
-        <meta property="og:description" content={shortDesc} />
-        <meta property="og:image" content={ogImage} />
-        <meta property="og:image:width" content="1200" />
-        <meta property="og:image:height" content="630" />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:url" content={publicUrl} />
-        <meta name="twitter:title" content={ogTitle} />
-        <meta name="twitter:description" content={shortDesc} />
-        <meta name="twitter:image" content={ogImage} />
-      </Helmet>
+      <Seo
+        title={ogTitle}
+        description={shortDesc}
+        path={`/e/${id}`}
+        image={event.image_url || undefined}
+        imageAlt={`${event.title} — Loverball event cover`}
+        type="event"
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "Event",
+          name: event.title,
+          startDate: `${event.event_date}T${event.event_time || "00:00"}`,
+          eventStatus: "https://schema.org/EventScheduled",
+          location: { "@type": "Place", name: event.venue_name || "TBA", address: event.city || "" },
+          image: event.image_url ? [event.image_url] : undefined,
+          description: shortDesc,
+          organizer: { "@type": "Organization", name: "Loverball", url: "https://www.loverball.com/" },
+        }}
+      />
 
       <div className="min-h-[100dvh]" style={{ background: C.bg, color: C.text, fontFamily: fonts.sans }}>
         {/* Top bar */}
