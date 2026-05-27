@@ -400,10 +400,6 @@ const EventDetail = () => {
     return `https://www.loverball.com/e/${event?.id}`;
   };
 
-  const getShareUrl = () => {
-    return `https://www.loverball.com/e/${event?.id}`;
-  };
-
   const handleShare = () => {
     setShowShareDialog(true);
   };
@@ -1012,8 +1008,12 @@ const EventDetail = () => {
             <div className="space-y-4">
               <SharePreview
                 title={`${event.title} | Loverball`}
-                description={getShareDescription()}
+                description={buildSharePreviewDescription(event)}
                 imageUrl={event.image_url}
+                eventDate={format(new Date(event.event_date), "EEE, MMM d, yyyy")}
+                eventTime={event.event_time ? formatTime(event.event_time) : null}
+                venue={event.venue_name || null}
+                city={event.city || null}
               />
               
               {/* Share Actions */}
