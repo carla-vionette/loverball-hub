@@ -12,6 +12,7 @@ import { Calendar, Clock, MapPin, Share2, Copy, Mail, Loader2, ArrowLeft, Check,
 import { format } from "date-fns";
 import loverballLogo from "@/assets/loverball-script-logo.png";
 import { C, fonts } from "@/lib/editorialTheme";
+import { buildShareSummary, buildSharePreviewDescription } from "@/lib/eventShare";
 import SharePreview from "@/components/SharePreview";
 import EventRSVPDialog, { RsvpIntent } from "@/components/EventRSVPDialog";
 
