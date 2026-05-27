@@ -637,6 +637,58 @@ const Events = () => {
           )}
         </div>
 
+        {/* SHARE DIALOG */}
+        <Dialog open={showShareDialog} onOpenChange={setShowShareDialog}>
+          <DialogContent className="sm:max-w-md rounded-3xl" style={{ background: "#141415", border: "1px solid rgba(255,255,255,0.08)" }}>
+            <DialogHeader>
+              <span style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 10, letterSpacing: "0.22em", color: "#E6F25A", textTransform: "uppercase" }}>
+                Spread the word
+              </span>
+              <DialogTitle style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: 30, lineHeight: 0.95, color: "#E6F25A", textTransform: "uppercase", letterSpacing: "0.01em", marginTop: 4 }}>
+                Share Event
+              </DialogTitle>
+            </DialogHeader>
+            {shareEvent && (
+              <div className="space-y-4 pt-1">
+                <SharePreview
+                  title={`${shareEvent.title} · Loverball`}
+                  description={getShareDescription(shareEvent)}
+                  imageUrl={shareEvent.image_url}
+                  siteName="loverball.com"
+                />
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    className="flex-1 h-11 rounded-full bg-transparent"
+                    style={{ borderColor: "rgba(255,255,255,0.12)", color: "#F8F8F8", fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: 12, letterSpacing: "0.12em", textTransform: "uppercase" }}
+                    onClick={copyShareLink}
+                  >
+                    <Copy className="w-4 h-4 mr-2" /> Copy Link
+                  </Button>
+                  {typeof navigator.share === "function" && (
+                    <Button
+                      className="flex-1 h-11 rounded-full"
+                      style={{ background: "#F04E23", color: "#fff", fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: 12, letterSpacing: "0.12em", textTransform: "uppercase" }}
+                      onClick={handleNativeShare}
+                    >
+                      <Share2 className="w-4 h-4 mr-2" /> Share
+                    </Button>
+                  )}
+                </div>
+                <div className="rounded-xl p-3" style={{ background: "rgba(20,20,21,0.6)", border: "1px solid rgba(255,255,255,0.08)" }}>
+                  <p className="text-xs mb-1 flex items-center gap-1" style={{ color: "rgba(248,248,248,0.5)", fontFamily: "'Space Mono', ui-monospace, monospace", letterSpacing: "0.04em" }}>
+                    <Link2 className="w-3 h-3" />
+                    Share URL
+                  </p>
+                  <p className="text-xs font-mono break-all" style={{ color: "#F8F8F8" }}>
+                    {getShareUrl(shareEvent)}
+                  </p>
+                </div>
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
+
         {/* RSVP MODAL */}
         <Dialog open={!!rsvpId} onOpenChange={() => setRsvpId(null)}>
           <DialogContent className="sm:max-w-sm rounded-3xl" style={{ background: "#141415", border: "1px solid rgba(255,255,255,0.08)" }}>
