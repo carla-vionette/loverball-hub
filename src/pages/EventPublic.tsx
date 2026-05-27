@@ -238,7 +238,13 @@ const EventPublic = () => {
             <img src={loverballLogo} alt="Loverball" className="h-9 w-auto" />
           </Link>
           <button
-            onClick={() => navigate(-1)}
+            onClick={() => {
+              if (window.history.state && window.history.state.idx > 0) {
+                navigate(-1);
+              } else {
+                navigate('/');
+              }
+            }}
             className="text-xs uppercase tracking-[0.2em] flex items-center gap-1.5 opacity-70 hover:opacity-100"
             style={{ fontFamily: fonts.mono }}
           >
