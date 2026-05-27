@@ -17,6 +17,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import loverballLogo from "@/assets/loverball-script-logo.png";
 import SharePreview from "@/components/SharePreview";
 import WhosGoing from "@/components/WhosGoing";
+import RsvpAvatarBar from "@/components/RsvpAvatarBar";
 import { trackEventRSVP, trackContentView } from "@/lib/analytics";
 import EventCheckIn from "@/components/EventCheckIn";
 import AttendeeListModal from "@/components/AttendeeListModal";
