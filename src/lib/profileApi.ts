@@ -1,7 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
 
-const FUNCTION_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/get-member-profiles`;
-
 interface ProfileQueryOptions {
   excludeIds?: string[];
   includeIds?: string[];
@@ -9,136 +7,128 @@ interface ProfileQueryOptions {
   selectFields?: string;
 }
 
-interface ProfileApiResponse<T> {
+export interface ProfileApiResponse<T> {
   data: T | null;
   error: string | null;
   rateLimited?: boolean;
 }
 
-// In-memory cache + in-flight dedup to avoid hitting the 100/15min rate limit
-const CACHE_TTL_MS = 60_000; // 60s
-const cache = new Map<string, { ts: number; data: any }>();
+const CACHE_TTL_MS = 60_000;
+const cache = new Map<string, { ts: number; data: unknown }>();
 const inflight = new Map<string, Promise<ProfileApiResponse<any>>>();
 
-/**
- * Rate-limited profile API that prevents bulk scraping
- * Limits: 100 queries per 15 minutes per user
- */
+function normalizeIds(ids?: string[]) {
+  if (!ids?.length) return [];
+  return Array.from(new Set(ids.filter(Boolean))).sort();
+}
+
 export async function fetchProfiles<T = any>(
   options: ProfileQueryOptions = {}
 ): Promise<ProfileApiResponse<T>> {
   try {
+    const normalizedOptions: ProfileQueryOptions = {
+      ...options,
+      includeIds: normalizeIds(options.includeIds),
+      excludeIds: normalizeIds(options.excludeIds),
+    };
+
     const { data: { session } } = await supabase.auth.getSession();
 
-    if (!session?.access_token) {
+    if (!session?.user?.id) {
       return { data: null, error: "Not authenticated" };
     }
 
-    const params = new URLSearchParams();
+    const cacheKey = JSON.stringify({
+      userId: session.user.id,
+      includeIds: normalizedOptions.includeIds,
+      excludeIds: normalizedOptions.excludeIds,
+      singleId: normalizedOptions.singleId ?? null,
+      selectFields: normalizedOptions.selectFields ?? "*",
+    });
 
-    if (options.excludeIds?.length) {
-      params.set("exclude", options.excludeIds.join(","));
-    }
-    if (options.includeIds?.length) {
-      params.set("include", options.includeIds.join(","));
-    }
-    if (options.singleId) {
-      params.set("id", options.singleId);
-    }
-    if (options.selectFields) {
-      params.set("select", options.selectFields);
-    }
-
-    const qs = params.toString();
-    const cacheKey = `${session.user.id}::${qs}`;
-
-    // Serve from cache when fresh
     const cached = cache.get(cacheKey);
     if (cached && Date.now() - cached.ts < CACHE_TTL_MS) {
-      return { data: cached.data, error: null };
+      return { data: cached.data as T, error: null };
     }
 
-    // Dedup concurrent identical requests
-    const existing = inflight.get(cacheKey);
-    if (existing) return existing as Promise<ProfileApiResponse<T>>;
-
-    const url = `${FUNCTION_URL}?${qs}`;
+    const pending = inflight.get(cacheKey);
+    if (pending) {
+      return pending as Promise<ProfileApiResponse<T>>;
+    }
 
     const promise = (async (): Promise<ProfileApiResponse<T>> => {
-      const response = await fetch(url, {
-        headers: {
-          "Authorization": `Bearer ${session.access_token}`,
-          "Content-Type": "application/json"
+      const selectFields = normalizedOptions.selectFields || "*";
+      let query = supabase.from("profiles").select(selectFields);
+
+      if (normalizedOptions.singleId) {
+        const { data, error } = await query
+          .eq("id", normalizedOptions.singleId)
+          .maybeSingle();
+
+        if (error) {
+          return { data: null, error: error.message || "Failed to fetch profiles" };
         }
-      });
 
-      if (response.status === 429) {
-        const errorData = await response.json().catch(() => ({}));
-        // Serve stale cache if available so the UI doesn't blank out
-        if (cached) return { data: cached.data, error: null };
-        return {
-          data: null,
-          error: errorData.message || "Rate limit exceeded. Please try again later.",
-          rateLimited: true
-        };
+        cache.set(cacheKey, { ts: Date.now(), data });
+        return { data: data as T, error: null };
       }
 
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        return { data: null, error: errorData.error || "Failed to fetch profiles" };
+      if (normalizedOptions.includeIds?.length) {
+        query = query.in("id", normalizedOptions.includeIds);
       }
 
-      const result = await response.json();
-      cache.set(cacheKey, { ts: Date.now(), data: result.data });
-      return { data: result.data, error: null };
+      if (normalizedOptions.excludeIds?.length) {
+        query = query.not("id", "in", `(${normalizedOptions.excludeIds.join(",")})`);
+      }
+
+      const { data, error } = await query;
+      if (error) {
+        return { data: null, error: error.message || "Failed to fetch profiles" };
+      }
+
+      cache.set(cacheKey, { ts: Date.now(), data: data ?? [] });
+      return { data: (data ?? []) as T, error: null };
     })().finally(() => {
       inflight.delete(cacheKey);
     });
 
     inflight.set(cacheKey, promise);
     return promise;
-
-  } catch (error) {
+  } catch {
     return { data: null, error: "Network error fetching profiles" };
   }
 }
 
-
-/**
- * Fetch all profiles except specified IDs
- */
 export async function fetchAllProfiles(
   excludeIds: string[] = [],
   selectFields?: string
 ) {
   return fetchProfiles({
     excludeIds,
-    selectFields
+    selectFields,
   });
 }
 
-/**
- * Fetch specific profiles by IDs
- */
 export async function fetchProfilesByIds(
   ids: string[],
   selectFields?: string
 ) {
+  if (!ids.length) {
+    return { data: [], error: null };
+  }
+
   return fetchProfiles({
     includeIds: ids,
-    selectFields
+    selectFields,
   });
 }
 
-/**
- * Fetch a single profile by ID
- */
 export async function fetchProfileById(
   id: string,
   selectFields?: string
 ) {
   return fetchProfiles({
     singleId: id,
-    selectFields
+    selectFields,
   });
 }
