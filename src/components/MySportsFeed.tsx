@@ -128,8 +128,8 @@ const MySportsFeed: React.FC<MySportsFeedProps> = ({ userSports, userTeams, user
             const GRADIENTS: Record<string, string> = {
               basketball: "from-orange-500 to-amber-600",
               soccer: "from-emerald-500 to-green-600",
-              football: "from-amber-800 to-yellow-700",
-              tennis: "from-lime-500 to-green-500",
+              football: "from-amber-800 to-white",
+              tennis: "from-white to-green-500",
               hockey: "from-blue-500 to-cyan-600",
             };
             const gradient = GRADIENTS[primarySport.toLowerCase()] || "from-accent to-primary";

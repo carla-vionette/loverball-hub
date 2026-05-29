@@ -47,7 +47,7 @@ const statusConfig: Record<string, { label: string; color: string; icon: any }> 
   attending: { label: 'Attending', color: 'bg-green-500', icon: CheckCircle },
   yes: { label: 'Attending', color: 'bg-green-500', icon: CheckCircle },
   confirmed: { label: 'Confirmed', color: 'bg-green-500', icon: CheckCircle },
-  maybe: { label: 'Maybe', color: 'bg-yellow-500', icon: HelpCircle },
+  maybe: { label: 'Maybe', color: 'bg-white', icon: HelpCircle },
   no: { label: 'Not Going', color: 'bg-red-500', icon: XCircle },
   declined: { label: 'Declined', color: 'bg-red-500', icon: XCircle },
   waitlist: { label: 'Waitlist', color: 'bg-orange-500', icon: Clock },
@@ -373,8 +373,8 @@ const AdminAttendeeManager = () => {
           <Card>
             <CardContent className="pt-4 pb-4">
               <div className="flex items-center gap-3">
-                <div className="p-2 rounded-full bg-yellow-500/10">
-                  <HelpCircle className="w-5 h-5 text-yellow-500" />
+                <div className="p-2 rounded-full bg-white/10">
+                  <HelpCircle className="w-5 h-5 text-white" />
                 </div>
                 <div>
                   <p className="text-2xl font-bold">{stats.maybe}</p>
@@ -602,7 +602,7 @@ const AdminAttendeeManager = () => {
                             <div className="flex items-center gap-2">
                               <StatusIcon className={`w-4 h-4 ${
                                 config.color === 'bg-green-500' ? 'text-green-500' :
-                                config.color === 'bg-yellow-500' ? 'text-yellow-500' :
+                                config.color === 'bg-white' ? 'text-white' :
                                 config.color === 'bg-orange-500' ? 'text-orange-500' :
                                 config.color === 'bg-red-500' ? 'text-red-500' :
                                 config.color === 'bg-blue-500' ? 'text-blue-500' :

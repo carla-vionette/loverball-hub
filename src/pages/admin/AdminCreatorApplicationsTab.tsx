@@ -42,8 +42,8 @@ interface Props {
 }
 
 const statusColors: Record<string, string> = {
-  submitted: 'bg-yellow-500/15 text-yellow-600',
-  pending: 'bg-yellow-500/15 text-yellow-600',
+  submitted: 'bg-white/15 text-white',
+  pending: 'bg-white/15 text-white',
   approved: 'bg-green-500/15 text-green-600',
   rejected: 'bg-destructive/15 text-destructive',
 };
@@ -140,7 +140,7 @@ const AdminCreatorApplicationsTab = ({ onRefresh }: Props) => {
         <h2 className="font-display text-xl font-bold uppercase">
           Creator Applications
           {pendingCount > 0 && (
-            <span className="ml-2 text-sm bg-yellow-500/15 text-yellow-600 px-2 py-0.5 rounded-full font-semibold">
+            <span className="ml-2 text-sm bg-white/15 text-white px-2 py-0.5 rounded-full font-semibold">
               {pendingCount} pending
             </span>
           )}
