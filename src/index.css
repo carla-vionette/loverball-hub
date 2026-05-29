@@ -420,12 +420,12 @@
   /* Consistent card hover */
   .interactive-card {
     @apply bg-card rounded-[20px] border border-border/30 transition-all duration-300 p-6;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 20px hsl(151 37% 25% / 0.08);
   }
   .interactive-card:hover {
     @apply border-border/50;
     transform: scale(1.02);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 8px 32px hsl(151 37% 25% / 0.14);
   }
 
   /* Page container — generous spacing */
