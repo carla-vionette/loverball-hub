@@ -209,7 +209,7 @@ const EditProfile = () => {
         name,
         pronouns,
         city,
-        
+        zip_code: zipCode || null,
         favorite_sports: favoriteSports,
         favorite_teams_players: favTeams,
         sports_experience_types: experienceTypes,
@@ -219,7 +219,7 @@ const EditProfile = () => {
         bio,
         profile_photo_url: photoUrl,
         sms_notifications_enabled: smsNotifications,
-      }).eq("id", userId);
+      } as any).eq("id", userId);
 
       // Update sensitive data separately
       await supabase.from("profiles_sensitive" as any).upsert({
