@@ -638,20 +638,20 @@
   .font-playfair-italic { font-family: 'Playfair Display', serif; font-style: italic; font-weight: 800; }
   .font-inter-mag { font-family: 'Inter', system-ui, sans-serif; }
 
-  .text-raspberry { color: #F04E23; }
-  .text-copper { color: #E86BB0; }
-  .text-neon { color: #E6F25A; }
-  .bg-raspberry { background-color: #F04E23; }
-  .bg-copper { background-color: #E86BB0; }
-  .bg-neon { background-color: #E6F25A; }
-  .border-copper { border-color: #E86BB0; }
-  .border-raspberry { border-color: #F04E23; }
-  .border-neon { border-color: #E6F25A; }
+  .text-raspberry { color: #295942; }
+  .text-copper { color: #295942; }
+  .text-neon { color: #295942; }
+  .bg-raspberry { background-color: #295942; }
+  .bg-copper { background-color: #C9C2FF; }
+  .bg-neon { background-color: #F0FF29; }
+  .border-copper { border-color: rgba(41, 89, 66, 0.18); }
+  .border-raspberry { border-color: #295942; }
+  .border-neon { border-color: #F0FF29; }
 
   .pill-copper {
     display: inline-block;
-    border: 1px solid #d88c5a;
-    color: #d88c5a;
+    border: 1px solid #295942;
+    color: #295942;
     font-family: 'Inter', system-ui, sans-serif;
     font-weight: 800;
     font-size: 10px;
