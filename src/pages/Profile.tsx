@@ -458,9 +458,9 @@ const Profile = () => {
                     <span className="text-[13px] uppercase flex items-center gap-2.5"
                       style={{ fontFamily: "'Space Mono', monospace", letterSpacing: "0.2em", color: "#FAF5E9", fontWeight: 500 }}>
                       <Ticket className="w-3.5 h-3.5" style={{ color: PINK }} strokeWidth={2.5} /> My Events
-                      {rsvpEvents.length > 0 && (
+                      {visibleRsvps.length > 0 && (
                         <span className="text-[10px] px-1.5 py-0.5 rounded-full" style={{ background: "rgba(233,30,99,0.15)", color: PINK, letterSpacing: "0.08em" }}>
-                          {rsvpEvents.length}
+                          {visibleRsvps.length}
                         </span>
                       )}
                     </span>
@@ -481,7 +481,7 @@ const Profile = () => {
                   </button>
                   {eventsOpen && (
                   <div className="px-5 pb-5">
-                    {rsvpEvents.length === 0 ? (
+                    {visibleRsvps.length === 0 ? (
                       <div className="py-10 px-4 text-center rounded-xl"
                         style={{ background: "linear-gradient(135deg, rgba(233,30,99,0.08), rgba(216,140,90,0.04))", border: "1px dashed rgba(233,30,99,0.22)" }}>
                         <div className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3"
@@ -502,7 +502,7 @@ const Profile = () => {
                       </div>
                     ) : (
                       <ul className="divide-y" style={{ borderColor: "rgba(255,255,255,0.06)" }}>
-                        {rsvpEvents.slice(0, 5).map(r => r.event && (
+                        {visibleRsvps.slice(0, 5).map(r => r.event && (
                           <li key={r.id}>
                             <button
                               onClick={() => goTo(`/event/${r.event!.id}`)}
