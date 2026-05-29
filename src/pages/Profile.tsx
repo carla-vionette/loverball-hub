@@ -25,10 +25,8 @@ import { useProfileData, type ProfileData, type RSVPEvent, type SuggestedEvent }
 
 import { format } from "date-fns";
 import { motion } from "framer-motion";
-import {
-  TEAM_PERFORMANCE,
-} from "@/lib/mockStatsData";
 import { getTeamWatchUrl, getTeamTicketsUrl } from "@/lib/teamLinksMap";
+import { getTeamLeague, getTeamSlug } from "@/lib/teamLeagueMap";
 import MySportsFeed from "@/components/MySportsFeed";
 import LiveScores from "@/components/LiveScores";
 import ProfileScores from "@/components/ProfileScores";
