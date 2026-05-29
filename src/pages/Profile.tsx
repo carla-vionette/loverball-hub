@@ -755,6 +755,19 @@ const Profile = () => {
           </div>
         </SheetContent>
       </Sheet>
+
+      {/* Full Team Schedule Sheet */}
+      <Sheet open={!!scheduleTeam} onOpenChange={(o) => !o && setScheduleTeam(null)}>
+        <SheetContent side="right" className="w-full sm:max-w-lg overflow-y-auto bg-background">
+          <SheetHeader className="mb-4">
+            <SheetTitle className="flex items-center gap-2">
+              <Calendar className="w-4 h-4" style={{ color: PINK }} />
+              <span className="truncate">{scheduleTeam} · Full Schedule</span>
+            </SheetTitle>
+          </SheetHeader>
+          {scheduleTeam && <ProfileWhereToWatch favoriteTeams={[scheduleTeam]} />}
+        </SheetContent>
+      </Sheet>
     </div>
   );
 };
