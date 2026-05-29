@@ -1,16 +1,16 @@
 export const C = {
-  bg: "#F9F8F5",          // Off White
-  surface: "#FFFCF8",     // light surface
-  surfaceHi: "#F2EFE8",   // warm cream alt
-  text: "#295942",        // Deep Green type
-  muted: "rgba(41, 89, 66, 0.65)",
-  raspberry: "#295942",   // Primary CTA — Deep Green
-  gold: "#F0FF29",        // Neon Yellow (legacy alias)
-  neon: "#F0FF29",        // Neon Yellow — sparing accent
-  pink: "#C9C2FF",        // Lavender — rare supporting detail
-  teal: "#C9C2FF",        // legacy alias
-  border: "rgba(41, 89, 66, 0.12)",
-  borderStrong: "rgba(41, 89, 66, 0.22)",
+  bg: "#0a0a0a",
+  surface: "#1A1A1A",
+  surfaceHi: "#2A2A2A",
+  text: "#FAF5E9",
+  muted: "#B8B8B8",
+  raspberry: "#F04E23",   // Vermilion
+  gold: "#E6F25A",        // Neon Yellow (legacy alias)
+  neon: "#E6F25A",
+  pink: "#E86BB0",        // Hot Pink
+  teal: "#E86BB0",        // legacy alias
+  border: "rgba(250, 245, 233, 0.08)",
+  borderStrong: "rgba(250, 245, 233, 0.15)",
 };
 
 export const fonts = {
