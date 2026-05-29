@@ -26,9 +26,9 @@ const MobileHeader = () => {
 
   return (
     <header
-      className="md:hidden fixed top-0 left-0 right-0 bg-background/95 backdrop-blur-md z-40 px-4 py-3"
+      className="md:hidden fixed top-0 left-0 right-0 z-40 px-4 py-3"
       role="banner"
-      style={{ borderBottom: "1px solid #E86BB0" }}
+      style={{ background: "#FFFFFF", borderBottom: "1px solid #E8E3DC" }}
     >
       <div className="flex items-center gap-3">
         <Link to="/" className="flex items-center flex-shrink-0 focus-ring rounded-lg" aria-label="Loverball home">
@@ -44,7 +44,8 @@ const MobileHeader = () => {
         ) : (
           <button
             onClick={() => navigate(isClub ? '/friends' : '/search')}
-            className="flex-1 flex items-center gap-2 px-4 py-2.5 bg-secondary border border-border/20 text-muted-foreground text-sm rounded-full hover:bg-muted transition-all duration-300 focus-ring tap-target"
+            className="flex-1 flex items-center gap-2 px-4 py-2.5 text-sm rounded-full transition-all duration-300 focus-ring tap-target"
+            style={{ background: "#FFFFFF", border: "1px solid #E8E3DC", color: "#6B6B6B" }}
             aria-label={isClub ? 'Search friends' : 'Open search'}
           >
             <Search className="w-4 h-4" aria-hidden="true" />
@@ -54,10 +55,10 @@ const MobileHeader = () => {
 
         <button
           onClick={() => navigate('/messages')}
-          className="relative p-2.5 hover:bg-secondary rounded-full transition-all duration-300 focus-ring tap-target"
+          className="relative p-2.5 rounded-full transition-all duration-300 focus-ring tap-target hover:bg-[#F5F1EA]"
           aria-label="Messages"
         >
-          <MessageCircle className="w-5 h-5" style={{ color: "#E86BB0" }} aria-hidden="true" />
+          <MessageCircle className="w-5 h-5" style={{ color: "#1A1A1A" }} aria-hidden="true" />
         </button>
       </div>
     </header>
