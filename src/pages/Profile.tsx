@@ -211,7 +211,13 @@ const Profile = () => {
   const formattedTime = currentTime.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
 
   const handle = `@${(profile.name?.split(" ")[0] || "member").toLowerCase().replace(/[^a-z0-9]/g, "")}`;
-  const eventsAttended = rsvpEvents.filter(r => r.status === "going" || r.status === "attended").length;
+  // Only count RSVPs the user is actually attached to — drop declined/cancelled so the
+  // badge always matches the visible list below.
+  const visibleRsvps = rsvpEvents.filter(r => {
+    const s = (r.status || "").toLowerCase();
+    return s !== "declined" && s !== "cancelled" && s !== "canceled";
+  });
+  const eventsAttended = visibleRsvps.filter(r => r.status === "going" || r.status === "attended").length;
   const FEED_FILTERS = ["All", "NBA", "WNBA", "NWSL", "NFL", "MLB", "Soccer"];
 
   // Homepage palette (matches src/pages/Index.tsx)
