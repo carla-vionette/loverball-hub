@@ -348,9 +348,10 @@ const Onboarding = () => {
         favorite_sports: leagues,
         favorite_teams_players: teams,
         city: city || undefined,
+        zip_code: zipCode || undefined,
         other_interests: vibe ? [vibe] : [],
         has_completed_onboarding: true,
-      });
+      } as any);
       toast({ title: "You're in 💅🏾", description: "Badge unlocked + event recs are live." });
       exitToDestination(true);
     } finally {
