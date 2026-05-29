@@ -10,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { ArrowLeft, Users, Clock, Check, Loader2, MessageCircle, Send, X, ChevronRight, Sparkles, Trophy } from "lucide-react";
 import AddFriendButton from "@/components/AddFriendButton";
 import { EmptyState } from "@/components/ui/empty-state";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import AttendeeProfileDrawer from "@/components/AttendeeProfileDrawer";
 import BottomNav from "@/components/BottomNav";
