@@ -1688,7 +1688,6 @@ export type Database = {
           primary_role: string | null
           profile_photo_url: string | null
           pronouns: string | null
-          role: string | null
           sms_notifications_enabled: boolean | null
           sms_unsubscribed: boolean
           sports_experience_types: string[] | null
@@ -1731,7 +1730,6 @@ export type Database = {
           primary_role?: string | null
           profile_photo_url?: string | null
           pronouns?: string | null
-          role?: string | null
           sms_notifications_enabled?: boolean | null
           sms_unsubscribed?: boolean
           sports_experience_types?: string[] | null
@@ -1774,7 +1772,6 @@ export type Database = {
           primary_role?: string | null
           profile_photo_url?: string | null
           pronouns?: string | null
-          role?: string | null
           sms_notifications_enabled?: boolean | null
           sms_unsubscribed?: boolean
           sports_experience_types?: string[] | null
