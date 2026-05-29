@@ -20,6 +20,11 @@ const CACHE_TTL_MS = 60_000; // 60s
 const cache = new Map<string, { ts: number; data: any }>();
 const inflight = new Map<string, Promise<ProfileApiResponse<any>>>();
 
+function normalizeIds(ids?: string[]) {
+  if (!ids?.length) return [];
+  return Array.from(new Set(ids.filter(Boolean))).sort();
+}
+
 /**
  * Rate-limited profile API that prevents bulk scraping
  * Limits: 100 queries per 15 minutes per user
@@ -28,6 +33,12 @@ export async function fetchProfiles<T = any>(
   options: ProfileQueryOptions = {}
 ): Promise<ProfileApiResponse<T>> {
   try {
+    const normalizedOptions: ProfileQueryOptions = {
+      ...options,
+      includeIds: normalizeIds(options.includeIds),
+      excludeIds: normalizeIds(options.excludeIds),
+    };
+
     const { data: { session } } = await supabase.auth.getSession();
 
     if (!session?.access_token) {
@@ -36,17 +47,17 @@ export async function fetchProfiles<T = any>(
 
     const params = new URLSearchParams();
 
-    if (options.excludeIds?.length) {
-      params.set("exclude", options.excludeIds.join(","));
+    if (normalizedOptions.excludeIds?.length) {
+      params.set("exclude", normalizedOptions.excludeIds.join(","));
     }
-    if (options.includeIds?.length) {
-      params.set("include", options.includeIds.join(","));
+    if (normalizedOptions.includeIds?.length) {
+      params.set("include", normalizedOptions.includeIds.join(","));
     }
-    if (options.singleId) {
-      params.set("id", options.singleId);
+    if (normalizedOptions.singleId) {
+      params.set("id", normalizedOptions.singleId);
     }
-    if (options.selectFields) {
-      params.set("select", options.selectFields);
+    if (normalizedOptions.selectFields) {
+      params.set("select", normalizedOptions.selectFields);
     }
 
     const qs = params.toString();
@@ -124,6 +135,10 @@ export async function fetchProfilesByIds(
   ids: string[],
   selectFields?: string
 ) {
+  if (!ids.length) {
+    return { data: [], error: null };
+  }
+
   return fetchProfiles({
     includeIds: ids,
     selectFields
