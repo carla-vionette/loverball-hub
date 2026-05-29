@@ -307,7 +307,8 @@ const Club = () => {
           </div>
 
           {/* Filter chips */}
-          <div className="mt-4 flex flex-wrap gap-2">
+          <div className="mt-2.5 flex flex-wrap gap-2">
+
             {FILTER_CHIPS.map((f) => {
               const active = activeFilters.has(f);
               return (
