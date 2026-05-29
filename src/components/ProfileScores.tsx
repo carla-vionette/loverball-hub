@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useState, useMemo } from "react";
 import { useProfileScores, type GameScore } from "@/hooks/useProfileScores";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
-import { Trophy, Clock, Radio, RefreshCw } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Trophy, Clock, Radio, RefreshCw, Search } from "lucide-react";
+
 
 const STATUS_CONFIG: Record<
   GameScore["status"],
@@ -87,44 +89,72 @@ interface ProfileScoresProps {
 
 const ProfileScores: React.FC<ProfileScoresProps> = ({ favoriteTeams = [] }) => {
   const { games, loading, error, refetch, hasFavorites } = useProfileScores(favoriteTeams);
+  const [query, setQuery] = useState("");
+
+  const SearchBar = (
+    <div className="relative mb-3">
+      <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground pointer-events-none" />
+      <Input
+        type="search"
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        placeholder="Search scores by team..."
+        className="h-9 pl-8 text-sm bg-card border-border/30"
+      />
+    </div>
+  );
 
   if (loading) {
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        {[1, 2, 3].map((i) => (
-          <Card key={i} className="p-4">
-            <Skeleton className="h-4 w-20 mb-3" />
-            <Skeleton className="h-5 w-full mb-2" />
-            <Skeleton className="h-5 w-full" />
-          </Card>
-        ))}
+      <div>
+        {SearchBar}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          {[1, 2, 3].map((i) => (
+            <Card key={i} className="p-4">
+              <Skeleton className="h-4 w-20 mb-3" />
+              <Skeleton className="h-5 w-full mb-2" />
+              <Skeleton className="h-5 w-full" />
+            </Card>
+          ))}
+        </div>
       </div>
     );
   }
 
   if (error || games.length === 0) {
     return (
-      <Card className="p-6 text-center bg-card border-border/30">
-        <Radio className="w-8 h-8 text-primary mx-auto mb-3 opacity-60" />
-        <p className="text-sm font-semibold text-foreground mb-1">
-          {hasFavorites ? "No games for your favorite teams right now" : "No games right now"}
-        </p>
-        <p className="text-xs text-muted-foreground">
-          {hasFavorites
-            ? "We'll show live scores here the moment your teams take the floor."
-            : "Add favorite teams in your profile to see real-time scores here."}
-        </p>
-      </Card>
+      <div>
+        {SearchBar}
+        <Card className="p-6 text-center bg-card border-border/30">
+          <Radio className="w-8 h-8 text-primary mx-auto mb-3 opacity-60" />
+          <p className="text-sm font-semibold text-foreground mb-1">
+            {hasFavorites ? "No games for your favorite teams right now" : "No games right now"}
+          </p>
+          <p className="text-xs text-muted-foreground">
+            {hasFavorites
+              ? "We'll show live scores here the moment your teams take the floor."
+              : "Add favorite teams in your profile to see real-time scores here."}
+          </p>
+        </Card>
+      </div>
     );
   }
 
   const liveGames = games.filter((g) => g.status === "live");
   const recentGames = games.filter((g) => g.status === "final");
   const upcomingGames = games.filter((g) => g.status === "upcoming");
-  const displayGames = [...liveGames, ...recentGames, ...upcomingGames].slice(0, 6);
+  const ordered = [...liveGames, ...recentGames, ...upcomingGames];
+  const q = query.trim().toLowerCase();
+  const filtered = q
+    ? ordered.filter((g) =>
+        `${g.awayTeam} ${g.homeTeam} ${g.statusDetail ?? ""}`.toLowerCase().includes(q)
+      )
+    : ordered;
+  const displayGames = filtered.slice(0, 6);
 
   return (
     <div>
+      {SearchBar}
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           {liveGames.length > 0 && (
@@ -146,13 +176,20 @@ const ProfileScores: React.FC<ProfileScoresProps> = ({ favoriteTeams = [] }) => 
           />
         </Button>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        {displayGames.map((game) => (
-          <ScoreCard key={game.id} game={game} />
-        ))}
-      </div>
+      {displayGames.length === 0 ? (
+        <Card className="p-4 text-center bg-card border-border/30">
+          <p className="text-xs text-muted-foreground">No games match "{query}".</p>
+        </Card>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          {displayGames.map((game) => (
+            <ScoreCard key={game.id} game={game} />
+          ))}
+        </div>
+      )}
     </div>
   );
 };
+
 
 export default ProfileScores;
