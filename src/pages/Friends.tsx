@@ -41,6 +41,7 @@ interface FriendshipRow {
 const Friends = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { toast } = useToast();
   const [friends, setFriends] = useState<FriendshipRow[]>([]);
   const [pendingReceived, setPendingReceived] = useState<FriendshipRow[]>([]);
