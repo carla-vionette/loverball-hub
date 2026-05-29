@@ -599,9 +599,14 @@ const Profile = () => {
                                 </div>
                                 <p className="text-[11px] mt-0.5" style={{ color: "rgba(250,245,233,0.5)" }}>
                                   Live scores below ·{" "}
-                                  <span className="underline underline-offset-2" style={{ color: PINK }}>
+                                  <button
+                                    type="button"
+                                    onClick={(e) => { e.stopPropagation(); setScheduleTeam(teamName); }}
+                                    className="underline underline-offset-2 hover:opacity-80"
+                                    style={{ color: PINK, background: "transparent", padding: 0, border: 0, cursor: "pointer", font: "inherit" }}
+                                  >
                                     See full schedule
-                                  </span>
+                                  </button>
                                 </p>
                               </div>
                               {watchUrl && (
