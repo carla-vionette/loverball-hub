@@ -71,7 +71,7 @@ export default function ProfileInbox() {
     if (!user) { setLoading(false); return; }
     let cancelled = false;
 
-    (async () => {
+    const load = async () => {
       try {
         const [
           { data: notifs },
@@ -144,6 +144,8 @@ export default function ProfileInbox() {
           });
 
           if (!cancelled) setConvos(list);
+        } else if (!cancelled) {
+          setConvos([]);
         }
 
         // Friends
@@ -163,6 +165,8 @@ export default function ProfileInbox() {
             } as Friend;
           }));
           if (!cancelled) setFriends(friendList.filter(Boolean) as Friend[]);
+        } else if (!cancelled) {
+          setFriends([]);
         }
 
         // Activity (recent posts + comments by the user)
@@ -188,9 +192,21 @@ export default function ProfileInbox() {
       } finally {
         if (!cancelled) setLoading(false);
       }
-    })();
+    };
 
-    return () => { cancelled = true; };
+    load();
+
+    // Re-fetch when the tab regains focus so the inbox never shows stale state.
+    const onFocus = () => { load(); };
+    const onVisibility = () => { if (document.visibilityState === "visible") load(); };
+    window.addEventListener("focus", onFocus);
+    document.addEventListener("visibilitychange", onVisibility);
+
+    return () => {
+      cancelled = true;
+      window.removeEventListener("focus", onFocus);
+      document.removeEventListener("visibilitychange", onVisibility);
+    };
   }, [user]);
 
   if (!user) return null;

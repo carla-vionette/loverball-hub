@@ -29,6 +29,7 @@ import { X, Camera, Loader2, ArrowLeft } from "lucide-react";
 import loverballLogo from "@/assets/loverball-script-logo.png";
 import BottomNav from "@/components/BottomNav";
 import { useAuth } from "@/hooks/useAuth";
+import { useQueryClient } from "@tanstack/react-query";
 
 const EditProfile = () => {
   const [step, setStep] = useState(1);
@@ -38,6 +39,7 @@ const EditProfile = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { user, loading: authLoading } = useAuth();
+  const queryClient = useQueryClient();
 
   // Form state
   const [name, setName] = useState("");
@@ -229,11 +231,14 @@ const EditProfile = () => {
 
       if (error) throw error;
 
+      // Invalidate cached profile so /profile re-fetches the latest values immediately.
+      await queryClient.invalidateQueries({ queryKey: ["profile-bundle"] });
+
       toast({
         title: "Profile updated!",
         description: "Your changes have been saved.",
       });
-      
+
       navigate("/profile");
     } catch (error: any) {
       toast({

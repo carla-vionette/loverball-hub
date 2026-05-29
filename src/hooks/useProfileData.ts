@@ -10,6 +10,7 @@ export type ProfileData = {
   age_range: string | null;
   favorite_sports: string[] | null;
   favorite_teams_players: string[] | null;
+  favorite_la_teams: string[] | null;
   sports_experience_types: string[] | null;
   other_interests: string[] | null;
   event_comfort_level: string | null;
@@ -60,8 +61,12 @@ export function useProfileData() {
   return useQuery<ProfileBundle>({
     queryKey: ["profile-bundle", user?.id],
     enabled: !authLoading && !!user?.id,
-    staleTime: 60_000,
+    // Keep the bundle fresh: re-fetch on every mount and whenever the tab regains focus.
+    staleTime: 15_000,
     gcTime: 5 * 60_000,
+    refetchOnMount: "always",
+    refetchOnWindowFocus: true,
+    refetchOnReconnect: true,
     queryFn: async () => {
       const uid = user!.id;
       const today = new Date().toISOString().split("T")[0];
@@ -69,7 +74,7 @@ export function useProfileData() {
         supabase
           .from("profiles")
           .select(
-            "id, name, pronouns, city, age_range, favorite_sports, favorite_teams_players, sports_experience_types, other_interests, event_comfort_level, participation_preferences, bio, profile_photo_url"
+            "id, name, pronouns, city, age_range, favorite_sports, favorite_teams_players, favorite_la_teams, sports_experience_types, other_interests, event_comfort_level, participation_preferences, bio, profile_photo_url"
           )
           .eq("id", uid)
           .maybeSingle(),
