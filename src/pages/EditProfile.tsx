@@ -231,11 +231,14 @@ const EditProfile = () => {
 
       if (error) throw error;
 
+      // Invalidate cached profile so /profile re-fetches the latest values immediately.
+      await queryClient.invalidateQueries({ queryKey: ["profile-bundle"] });
+
       toast({
         title: "Profile updated!",
         description: "Your changes have been saved.",
       });
-      
+
       navigate("/profile");
     } catch (error: any) {
       toast({
