@@ -176,8 +176,11 @@ const Profile = () => {
   }
 
 
-  const activePerfTeams = TEAM_PERFORMANCE.filter(t => t.winPct > 0);
-  const combinedWinPct = activePerfTeams.length > 0 ? activePerfTeams.reduce((s, t) => s + t.winPct, 0) / activePerfTeams.length : 0;
+  // Build the user's live favorite-teams list from saved profile fields.
+  const favoriteTeams = Array.from(new Set([
+    ...((profile as any)?.favorite_la_teams || []),
+    ...(profile?.favorite_teams_players || []),
+  ].filter((t): t is string => typeof t === "string" && t.trim().length > 0)));
 
   if (loading) {
     return (
