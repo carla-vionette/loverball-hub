@@ -549,37 +549,69 @@ const Profile = () => {
                       </button>
                     </CollapsibleTrigger>
                     <CollapsibleContent>
-                      <div className="divide-y" style={{ borderColor: "rgba(255,255,255,0.05)" }}>
-                        {TEAM_PERFORMANCE.map(team => (
-                          <div
-                            key={team.name}
-                            className="flex items-center gap-3 px-5 py-4 hover:bg-white/[0.03] transition-colors cursor-pointer group"
-                            onClick={() => goTo(`/team/${team.slug}`)}
-                          >
-                            <img src={team.logo} alt={team.name} className="w-10 h-10 object-contain rounded-lg p-0.5" style={{ background: "rgba(255,255,255,0.04)" }} onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} />
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-2">
-                                <span className="text-sm font-medium text-foreground group-hover:opacity-90 transition-colors" style={{ color: "#FAF5E9" }}>{team.name}</span>
-                                <Badge variant="outline" className="text-[9px] px-1.5 py-0 rounded-full" style={{ borderColor: "rgba(255,255,255,0.12)", color: "rgba(250,245,233,0.65)" }}>{team.league}</Badge>
-                                {team.injuryNote && (
-                                  <span title={team.injuryNote}>
-                                    <AlertTriangle className="w-3.5 h-3.5 text-amber-500" />
-                                  </span>
-                                )}
-                              </div>
-                              <p className="text-xs mt-0.5" style={{ color: "rgba(250,245,233,0.5)" }}>{team.nextGame}</p>
-                            </div>
-                            <div className="flex flex-col items-end gap-2">
-                              <p className="text-sm font-bold" style={{ color: team.winPct > 0.5 ? "#7DD3A4" : (team.winPct > 0 && team.winPct < 0.5 ? "#F87171" : "#FAF5E9") }}>{team.record}</p>
-                              {team.last5.length > 0 && (
-                                <div className="flex gap-0.5">
-                                  {team.last5.map((win, i) => <div key={i} className="w-1.5 h-1.5 rounded-full" style={{ background: win ? "#7DD3A4" : "rgba(248,113,113,0.6)" }} />)}
-                                </div>
-                              )}
-                            </div>
+                      {favoriteTeams.length === 0 ? (
+                        <div className="px-5 pb-5">
+                          <div className="py-8 px-4 text-center rounded-xl"
+                            style={{ background: "linear-gradient(135deg, rgba(233,30,99,0.06), rgba(216,140,90,0.03))", border: "1px dashed rgba(233,30,99,0.18)" }}>
+                            <Shield className="w-5 h-5 mx-auto mb-2" style={{ color: PINK }} />
+                            <p className="text-[13px] mb-1" style={{ color: "#FAF5E9", fontFamily: "'Playfair Display', serif", fontStyle: "italic" }}>
+                              No favorite teams yet.
+                            </p>
+                            <p className="text-[11px] mb-3" style={{ color: "rgba(250,245,233,0.55)" }}>
+                              Add your teams to see live scores, records, and upcoming games.
+                            </p>
+                            <button onClick={() => goTo("/profile/edit")}
+                              className="text-[11px] uppercase font-bold tracking-[0.16em] px-4 py-2 rounded-full"
+                              style={{ background: PINK, color: "#0a0a0a", fontFamily: "Inter, sans-serif" }}>
+                              Add teams
+                            </button>
                           </div>
-                        ))}
+                        </div>
+                      ) : (
+                      <div className="divide-y" style={{ borderColor: "rgba(255,255,255,0.05)" }}>
+                        {favoriteTeams.map(teamName => {
+                          const league = getTeamLeague(teamName);
+                          const slug = getTeamSlug(teamName);
+                          const watchUrl = getTeamWatchUrl(teamName);
+                          return (
+                            <div
+                              key={teamName}
+                              className="flex items-center gap-3 px-5 py-4 hover:bg-white/[0.03] transition-colors cursor-pointer group"
+                              onClick={() => goTo(`/team/${slug}`)}
+                            >
+                              <div className="shrink-0 w-10 h-10 rounded-lg flex items-center justify-center"
+                                style={{ background: "rgba(233,30,99,0.10)", border: "1px solid rgba(233,30,99,0.20)" }}>
+                                <Shield className="w-4 h-4" style={{ color: PINK }} />
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-2">
+                                  <span className="text-sm font-medium truncate" style={{ color: "#FAF5E9" }}>{teamName}</span>
+                                  {league && (
+                                    <Badge variant="outline" className="text-[9px] px-1.5 py-0 rounded-full" style={{ borderColor: "rgba(255,255,255,0.12)", color: "rgba(250,245,233,0.65)" }}>{league}</Badge>
+                                  )}
+                                </div>
+                                <p className="text-[11px] mt-0.5" style={{ color: "rgba(250,245,233,0.5)" }}>
+                                  Live scores below · See full schedule
+                                </p>
+                              </div>
+                              {watchUrl && (
+                                <a
+                                  href={watchUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  onClick={(e) => e.stopPropagation()}
+                                  className="text-[10px] uppercase tracking-[0.14em] px-2.5 py-1 rounded-full shrink-0"
+                                  style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)", color: "rgba(250,245,233,0.8)", fontFamily: "'Space Mono', monospace" }}
+                                >
+                                  Schedule
+                                </a>
+                              )}
+                              <ChevronRight className="w-3.5 h-3.5 shrink-0" style={{ color: "rgba(250,245,233,0.35)" }} />
+                            </div>
+                          );
+                        })}
                       </div>
+                      )}
                     </CollapsibleContent>
                   </div>
                 </Collapsible>
