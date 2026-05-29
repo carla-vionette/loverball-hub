@@ -156,7 +156,9 @@ const ProfileScores: React.FC<ProfileScoresProps> = ({ favoriteTeams = [] }) => 
   const q = query.trim().toLowerCase();
   const filtered = q
     ? ordered.filter((g) =>
-        `${g.awayTeam} ${g.homeTeam} ${g.statusDetail ?? ""}`.toLowerCase().includes(q)
+        `${g.awayTeam} ${g.homeTeam} ${g.sport ?? ""} ${g.statusDetail ?? ""}`
+          .toLowerCase()
+          .includes(q)
       )
     : ordered;
   const displayGames = filtered.slice(0, 6);
