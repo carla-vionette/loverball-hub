@@ -101,7 +101,7 @@ const ProfileScores: React.FC<ProfileScoresProps> = ({ favoriteTeams = [] }) => 
         type="search"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        placeholder="Search scores by team..."
+        placeholder="Search teams or leagues..."
         className="h-9 pl-9 text-sm rounded-full placeholder:text-[#6B6B6B]"
         style={{
           background: "#FFFFFF",
