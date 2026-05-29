@@ -87,7 +87,7 @@ const eventTypeLabels: Record<string, string> = {
 const themeStyles: Record<string, string> = {
   default: 'from-primary/20 to-accent/20',
   valentines: 'from-pink-500/30 to-red-500/30',
-  sports: 'from-orange-500/20 to-yellow-500/20',
+  sports: 'from-orange-500/20 to-white/20',
   elegant: 'from-purple-500/20 to-indigo-500/20',
   summer: 'from-cyan-500/20 to-blue-500/20',
   night: 'from-slate-800/80 to-slate-900/80',

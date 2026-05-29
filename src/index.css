@@ -630,13 +630,13 @@
 
   .text-raspberry { color: #F04E23; }
   .text-copper { color: #E86BB0; }
-  .text-neon { color: #E6F25A; }
+  .text-neon { color: #FFFFFF; }
   .bg-raspberry { background-color: #F04E23; }
   .bg-copper { background-color: #E86BB0; }
-  .bg-neon { background-color: #E6F25A; }
+  .bg-neon { background-color: #FFFFFF; }
   .border-copper { border-color: #E86BB0; }
   .border-raspberry { border-color: #F04E23; }
-  .border-neon { border-color: #E6F25A; }
+  .border-neon { border-color: #FFFFFF; }
 
   .pill-copper {
     display: inline-block;

@@ -79,7 +79,7 @@ const NotificationBell = () => {
           <span
             className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] flex items-center justify-center rounded-full px-1"
             style={{
-              background: "#E6F25A",
+              background: "#FFFFFF",
               color: "#0a0a0a",
               fontFamily: fonts.mono,
               fontSize: 10,
@@ -138,7 +138,7 @@ const NotificationBell = () => {
                     >
                       <div
                         className="mt-1 w-2 h-2 rounded-full flex-shrink-0"
-                        style={{ background: n.is_read ? "transparent" : "#E6F25A" }}
+                        style={{ background: n.is_read ? "transparent" : "#FFFFFF" }}
                       />
                       <div className="flex-1 min-w-0">
                         <p

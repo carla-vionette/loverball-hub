@@ -92,8 +92,8 @@ const SiteNav = () => {
                 key={label}
                 to={to}
                 aria-current={active ? "page" : undefined}
-                style={{ ...linkStyle, color: active ? "#E6F25A" : "#E86BB0" }}
-                className="transition-colors hover:!text-[#E6F25A]"
+                style={{ ...linkStyle, color: active ? "#FFFFFF" : "#E86BB0" }}
+                className="transition-colors hover:!text-[#FFFFFF]"
               >
                 {label}
               </Link>
@@ -105,19 +105,19 @@ const SiteNav = () => {
           {user ? (
             <>
               <NotificationBell />
-              <Link to="/profile" style={{ ...linkStyle, color: "#E86BB0" }} className="transition-colors hover:!text-[#E6F25A]">
+              <Link to="/profile" style={{ ...linkStyle, color: "#E86BB0" }} className="transition-colors hover:!text-[#FFFFFF]">
                 Profile
               </Link>
-              <Link to="/feed" style={{ ...pillStyle, background: "#F04E23", color: "#E6F25A" }}>
+              <Link to="/feed" style={{ ...pillStyle, background: "#F04E23", color: "#FFFFFF" }}>
                 Open App
               </Link>
             </>
           ) : (
             <>
-              <button onClick={goSignIn} style={{ ...linkStyle, color: "#E86BB0" }} className="transition-colors hover:!text-[#E6F25A]">
+              <button onClick={goSignIn} style={{ ...linkStyle, color: "#E86BB0" }} className="transition-colors hover:!text-[#FFFFFF]">
                 Sign in
               </button>
-              <button onClick={goJoin} style={{ ...pillStyle, background: "#F04E23", color: "#E6F25A" }}>
+              <button onClick={goJoin} style={{ ...pillStyle, background: "#F04E23", color: "#FFFFFF" }}>
                 JOIN US!
               </button>
             </>
@@ -147,7 +147,7 @@ const SiteNav = () => {
               key={label}
               to={to}
               onClick={() => setMobileOpen(false)}
-              style={{ ...linkStyle, color: isActive(to) ? "#E6F25A" : C.muted, fontSize: 12 }}
+              style={{ ...linkStyle, color: isActive(to) ? "#FFFFFF" : C.muted, fontSize: 12 }}
             >
               {label}
             </Link>
