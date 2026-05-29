@@ -64,6 +64,43 @@ const Friends = () => {
     if (user) fetchAll();
   }, [user]);
 
+  // Auto-open a DM thread when ?dm=<userId> is in the URL
+  useEffect(() => {
+    const dmId = searchParams.get("dm");
+    if (!user || !dmId) return;
+    if (dmId === user.id) {
+      // Can't message yourself
+      setSearchParams({}, { replace: true });
+      return;
+    }
+    if (chatOpen === dmId) return;
+
+    let cancelled = false;
+    (async () => {
+      const { data: profile, error } = await supabase
+        .from("profiles")
+        .select("id, name, profile_photo_url, bio, favorite_sports, primary_role, city")
+        .eq("id", dmId)
+        .maybeSingle();
+      if (cancelled) return;
+      if (error || !profile) {
+        toast({
+          title: "Couldn't open conversation",
+          description: "We couldn't find that member. They may no longer be available.",
+          variant: "destructive",
+        });
+        setSearchParams({}, { replace: true });
+        return;
+      }
+      await openChat(profile as FriendProfile);
+      // Clean the param so a refresh doesn't reopen on top of user navigation
+      setSearchParams({}, { replace: true });
+    })();
+    return () => { cancelled = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, searchParams]);
+
+
   useEffect(() => {
     if (!user) return;
     const channel = supabase
