@@ -47,12 +47,11 @@ const BottomNav = () => {
       aria-label="Main navigation"
       style={{
         height: 72,
-        background: "rgba(20, 20, 21, 0.72)",
-        backdropFilter: "blur(20px) saturate(140%)",
-        WebkitBackdropFilter: "blur(20px) saturate(140%)",
-        border: "1px solid #E86BB0",
+        background: "#FFFFFF",
+        border: "1px solid #E8E3DC",
+        borderTop: "1px solid #E8E3DC",
         borderRadius: 28,
-        boxShadow: "0 12px 32px -8px rgba(0,0,0,0.6)",
+        boxShadow: "0 12px 32px -8px rgba(60,40,20,0.12)",
       }}
     >
       <div className="relative flex justify-around items-center h-full max-w-lg mx-auto px-3">
@@ -60,7 +59,7 @@ const BottomNav = () => {
           const Icon = item.icon;
           const isActive = item.matches.some(m => pathname === m || (m.endsWith("/") && pathname.startsWith(m)));
           const showBadge = item.label === "Club" && badgeCount > 0;
-          const color = isActive ? "#E6F25A" : "rgba(250, 245, 233, 0.7)";
+          const color = isActive ? "#F04E23" : "#9E9E9E";
           return (
             <Link
               key={item.path}
