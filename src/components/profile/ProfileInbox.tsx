@@ -369,7 +369,7 @@ export default function ProfileInbox() {
               {previewFriends.map((f, i) => (
                 <li
                   key={f.id}
-                  onClick={() => navigate(`/members/${f.id}`)}
+                  onClick={() => navigate(`/profile/${f.id}`)}
                   className="flex items-center gap-3 px-3 py-1.5 cursor-pointer transition-colors hover:bg-white/[0.03]"
                   style={{ borderTop: i === 0 ? "none" : BORDER }}
                 >
