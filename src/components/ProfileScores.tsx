@@ -187,7 +187,7 @@ const ProfileScores: React.FC<ProfileScoresProps> = ({ favoriteTeams = [] }) => 
       </div>
       {displayGames.length === 0 ? (
         <Card className="p-4 text-center bg-card border-border/30">
-          <p className="text-xs text-muted-foreground">No games match "{query}".</p>
+          <p className="text-xs text-muted-foreground">No results for "{query}"</p>
         </Card>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
