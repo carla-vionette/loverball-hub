@@ -349,6 +349,7 @@ const Onboarding = () => {
         favorite_teams_players: teams,
         city: city || undefined,
         zip_code: zipCode || undefined,
+        bio: vibe?.trim() || undefined,
         other_interests: vibe ? [vibe] : [],
         has_completed_onboarding: true,
       } as any);
