@@ -21,8 +21,8 @@
 
 @layer base {
   :root {
-    /* ── Brand — Orange / Pink / Neon Yellow (locked hex) ── */
-    --brand: 10 87% 54%;                    /* Orange #F04E23 */
+    /* ── Brand — Orange #E85D2F ── */
+    --brand: 15 80% 55%;
     --brand-foreground: 0 0% 100%;
 
     /* ── Core palette — WARM CREAM PREVIEW ── */
