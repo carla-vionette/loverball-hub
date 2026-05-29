@@ -17,7 +17,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 
 import { supabase } from "@/integrations/supabase/client";
-import { fetchProfiles, fetchProfileById } from "@/lib/profileApi";
+import { fetchProfiles, fetchProfileById, fetchProfilesByIds } from "@/lib/profileApi";
 import { useAuth } from "@/hooks/useAuth";
 
 interface Member {
@@ -190,17 +190,26 @@ const Club = () => {
         if (previews.length >= 8) break;
       }
 
-      // Hydrate names
-      await Promise.all(
-        previews.map(async (p) => {
-          const res = await fetchProfileById(p.peerId);
-          const pp = Array.isArray(res.data) ? res.data[0] : res.data;
-          if (pp) {
-            p.peerName = pp.name || "Member";
-            p.peerPhoto = pp.profile_photo_url || null;
+      const peerIds = Array.from(new Set(previews.map((preview) => preview.peerId)));
+      if (peerIds.length > 0) {
+        const res = await fetchProfilesByIds(
+          peerIds,
+          "id, name, profile_photo_url"
+        );
+        const profiles = Array.isArray(res.data) ? res.data : [];
+        const profileMap = new Map(
+          profiles.map((profile: any) => [profile.id, profile])
+        );
+
+        previews.forEach((preview) => {
+          const profile = profileMap.get(preview.peerId);
+          if (profile) {
+            preview.peerName = profile.name || "Member";
+            preview.peerPhoto = profile.profile_photo_url || null;
           }
-        })
-      );
+        });
+      }
+
       if (!cancelled) setChats(previews);
       setChatsLoading(false);
     })();
