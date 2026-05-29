@@ -461,7 +461,7 @@ const Club = () => {
                       {chats.map((c) => (
                         <li key={c.peerId}>
                           <button
-                            onClick={() => navigate(`/messages?to=${c.peerId}`)}
+                            onClick={() => navigate(`/friends?dm=${c.peerId}`)}
                             className="w-full flex items-center gap-3 rounded-2xl p-3 text-left hover:opacity-90 transition"
                             style={{ background: C.surface, border: `1px solid ${C.border}` }}
                           >
@@ -522,7 +522,7 @@ const Club = () => {
                     {chats.slice(0, 5).map((c) => (
                       <li key={c.peerId}>
                         <button
-                          onClick={() => navigate(`/messages?to=${c.peerId}`)}
+                          onClick={() => navigate(`/friends?dm=${c.peerId}`)}
                           className="w-full flex items-center gap-2.5 text-left rounded-lg p-2 hover:bg-white/[0.03]"
                         >
                           <Avatar className="w-8 h-8">
@@ -644,7 +644,7 @@ const FanCard = ({
         </Button>
         <AddFriendButton targetUserId={member.id} size="sm" />
         <Button size="sm" variant="ghost"
-          onClick={() => navigate(`/messages?to=${member.id}`)}
+          onClick={() => navigate(`/friends?dm=${member.id}`)}
           aria-label="Message"
           className="rounded-lg" style={{ color: C.text }}>
           <MessageCircle className="w-4 h-4" />
@@ -681,7 +681,7 @@ const MemberCardCompact = ({
       <div className="mt-2 flex items-center gap-2">
         <AddFriendButton targetUserId={member.id} size="sm" />
         <Button size="sm" variant="ghost"
-          onClick={() => navigate(`/messages?to=${member.id}`)}
+          onClick={() => navigate(`/friends?dm=${member.id}`)}
           aria-label="Message" style={{ color: C.text }}>
           <MessageCircle className="w-4 h-4" />
         </Button>

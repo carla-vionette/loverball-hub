@@ -208,7 +208,7 @@ const MemberProfile = ({ memberId }: Props) => {
                 <div className="flex items-center gap-2">
                   <AddFriendButton targetUserId={profile.id} size="default" />
                   <Button
-                    onClick={() => navigate(`/messages?to=${profile.id}`)}
+                    onClick={() => navigate(`/friends?dm=${profile.id}`)}
                     className="rounded-xl"
                     style={{ background: C.raspberry, color: "#0a0a0a" }}
                   >

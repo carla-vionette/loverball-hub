@@ -10,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { ArrowLeft, Users, Clock, Check, Loader2, MessageCircle, Send, X, ChevronRight, Sparkles, Trophy } from "lucide-react";
 import AddFriendButton from "@/components/AddFriendButton";
 import { EmptyState } from "@/components/ui/empty-state";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import AttendeeProfileDrawer from "@/components/AttendeeProfileDrawer";
 import BottomNav from "@/components/BottomNav";
@@ -41,6 +41,7 @@ interface FriendshipRow {
 const Friends = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { toast } = useToast();
   const [friends, setFriends] = useState<FriendshipRow[]>([]);
   const [pendingReceived, setPendingReceived] = useState<FriendshipRow[]>([]);
@@ -62,6 +63,43 @@ const Friends = () => {
   useEffect(() => {
     if (user) fetchAll();
   }, [user]);
+
+  // Auto-open a DM thread when ?dm=<userId> is in the URL
+  useEffect(() => {
+    const dmId = searchParams.get("dm");
+    if (!user || !dmId) return;
+    if (dmId === user.id) {
+      // Can't message yourself
+      setSearchParams({}, { replace: true });
+      return;
+    }
+    if (chatOpen === dmId) return;
+
+    let cancelled = false;
+    (async () => {
+      const { data: profile, error } = await supabase
+        .from("profiles")
+        .select("id, name, profile_photo_url, bio, favorite_sports, primary_role, city")
+        .eq("id", dmId)
+        .maybeSingle();
+      if (cancelled) return;
+      if (error || !profile) {
+        toast({
+          title: "Couldn't open conversation",
+          description: "We couldn't find that member. They may no longer be available.",
+          variant: "destructive",
+        });
+        setSearchParams({}, { replace: true });
+        return;
+      }
+      await openChat(profile as FriendProfile);
+      // Clean the param so a refresh doesn't reopen on top of user navigation
+      setSearchParams({}, { replace: true });
+    })();
+    return () => { cancelled = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, searchParams]);
+
 
   useEffect(() => {
     if (!user) return;
