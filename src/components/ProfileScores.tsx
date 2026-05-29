@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useState, useMemo } from "react";
 import { useProfileScores, type GameScore } from "@/hooks/useProfileScores";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
-import { Trophy, Clock, Radio, RefreshCw } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Trophy, Clock, Radio, RefreshCw, Search } from "lucide-react";
+
 
 const STATUS_CONFIG: Record<
   GameScore["status"],
