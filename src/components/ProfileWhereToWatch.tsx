@@ -169,21 +169,29 @@ const ProfileWhereToWatch: React.FC<Props> = ({ favoriteTeams = [] }) => {
         )}
       </div>
 
-      {/* Header context */}
+      {/* Section label */}
       {!isSearching && teams.length > 0 && (
-        <div className="flex items-center gap-2 px-1">
-          <Calendar className="w-3.5 h-3.5 text-primary" />
-          <p className="text-xs text-muted-foreground">
-            Your teams' upcoming games · next 7 days
-          </p>
+        <div className="flex items-center justify-between px-1 pt-1">
+          <div className="flex items-center gap-2">
+            <Calendar className="w-3.5 h-3.5 text-primary" />
+            <h3 className="text-[11px] font-bold tracking-[0.18em] uppercase text-foreground">
+              Your Teams on TV
+            </h3>
+          </div>
+          <span className="text-[10px] text-muted-foreground">Next 7 days</span>
         </div>
       )}
       {isSearching && (
-        <div className="flex items-center gap-2 px-1">
-          <Search className="w-3.5 h-3.5 text-primary" />
-          <p className="text-xs text-muted-foreground">
-            Results for "{debouncedQuery}"
-          </p>
+        <div className="flex items-center justify-between px-1 pt-1">
+          <div className="flex items-center gap-2">
+            <Search className="w-3.5 h-3.5 text-primary" />
+            <h3 className="text-[11px] font-bold tracking-[0.18em] uppercase text-foreground">
+              Find a Game
+            </h3>
+          </div>
+          <span className="text-[10px] text-muted-foreground truncate max-w-[60%]">
+            "{debouncedQuery}"
+          </span>
         </div>
       )}
 
