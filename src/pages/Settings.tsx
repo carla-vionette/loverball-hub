@@ -528,9 +528,12 @@ const Settings = () => {
                   />
                 </div>
                 <div>
-                  <label className="text-sm font-medium mb-1.5 block">Neighborhood</label>
+                  <label className="text-sm font-medium mb-1.5 block">ZIP code</label>
                   <Input
-                    placeholder="e.g. Downtown LA, Santa Monica, Pasadena..."
+                    placeholder="e.g. 90012"
+                    inputMode="numeric"
+                    pattern="[0-9]{5}"
+                    maxLength={10}
                     value={feedPrefs.home_neighborhood}
                     onChange={(e) => setFeedPrefs(prev => ({ ...prev, home_neighborhood: e.target.value }))}
                     className="rounded-full"
