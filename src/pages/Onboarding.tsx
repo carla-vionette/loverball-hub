@@ -178,6 +178,7 @@ const Onboarding = () => {
   const [leagues, setLeagues] = useState<string[]>([]);
   const [teams, setTeams] = useState<string[]>([]);
   const [city, setCity] = useState("");
+  const [zipCode, setZipCode] = useState("");
   const [vibe, setVibe] = useState<string>("");
 
   const fileRef = useRef<HTMLInputElement>(null);
