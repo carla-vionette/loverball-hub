@@ -43,6 +43,8 @@ const EditProfile = () => {
   const [name, setName] = useState("");
   const [pronouns, setPronouns] = useState("");
   const [city, setCity] = useState("");
+  const [zipCode, setZipCode] = useState("");
+  
   
   const [favoriteSports, setFavoriteSports] = useState<string[]>([]);
   const [teamsInput, setTeamsInput] = useState("");
