@@ -344,7 +344,7 @@ const Events = () => {
                 className="px-5 py-2 rounded-full transition-all"
                 style={{
                   background: tab === t.k ? "#F04E23" : "transparent",
-                  color: tab === t.k ? "#E6F25A" : "rgba(248,248,248,0.6)",
+                  color: tab === t.k ? "#FFFFFF" : "rgba(248,248,248,0.6)",
                   fontFamily: "'Inter', system-ui, sans-serif",
                   fontWeight: 700,
                   fontSize: 11,
@@ -404,13 +404,13 @@ const Events = () => {
 
                   {/* Date stamp — strong treatment */}
                   <div className="absolute top-5 right-5 text-right">
-                    <div style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 10, letterSpacing: "0.22em", color: "#E6F25A", textTransform: "uppercase" }}>
+                    <div style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 10, letterSpacing: "0.22em", color: "#FFFFFF", textTransform: "uppercase" }}>
                       {format(d, "EEE")}
                     </div>
                     <div style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: 56, lineHeight: 0.85, color: "#F8F8F8" }}>
                       {format(d, "dd")}
                     </div>
-                    <div style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 10, letterSpacing: "0.22em", color: "#E6F25A", textTransform: "uppercase" }}>
+                    <div style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 10, letterSpacing: "0.22em", color: "#FFFFFF", textTransform: "uppercase" }}>
                       {format(d, "MMM yyyy")}
                     </div>
                   </div>
@@ -418,7 +418,7 @@ const Events = () => {
                   {/* Bottom block */}
                   <div className="absolute bottom-0 left-0 right-0 p-5 md:p-7">
                     <h2 className="line-clamp-2"
-                      style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: "clamp(28px, 6vw, 44px)", lineHeight: 0.95, color: "#E6F25A", textTransform: "uppercase", letterSpacing: "0.005em", margin: 0, textShadow: "0 2px 16px rgba(0,0,0,0.9), 0 1px 4px rgba(0,0,0,0.95)" }}>
+                      style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: "clamp(28px, 6vw, 44px)", lineHeight: 0.95, color: "#FFFFFF", textTransform: "uppercase", letterSpacing: "0.005em", margin: 0, textShadow: "0 2px 16px rgba(0,0,0,0.9), 0 1px 4px rgba(0,0,0,0.95)" }}>
                       {featured.title}
                     </h2>
                     <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-3"
@@ -484,7 +484,7 @@ const Events = () => {
                 style={{ background: "rgba(240,78,35,0.1)", border: "1px solid rgba(240,78,35,0.25)" }}>
                 <Calendar className="w-9 h-9" style={{ color: "#F04E23" }} />
               </div>
-              <h2 style={{ fontFamily: "'Playfair Display', serif", fontStyle: "italic", fontWeight: 500, fontSize: 28, color: "#E6F25A", letterSpacing: "-0.02em", margin: 0 }}>
+              <h2 style={{ fontFamily: "'Playfair Display', serif", fontStyle: "italic", fontWeight: 500, fontSize: 28, color: "#FFFFFF", letterSpacing: "-0.02em", margin: 0 }}>
                 {searchQuery.trim()
                   ? "No events match your search"
                   : tab === "upcoming" ? "No upcoming events" : "No past events"}
@@ -553,7 +553,7 @@ const Events = () => {
                         {/* Date block */}
                         <div className="absolute bottom-3 left-3 px-2.5 py-1.5 rounded-lg text-center"
                           style={{ background: "rgba(10,10,11,0.78)", border: "1px solid rgba(255,255,255,0.1)", backdropFilter: "blur(8px)" }}>
-                          <div style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 9, letterSpacing: "0.18em", color: "#E6F25A", textTransform: "uppercase" }}>
+                          <div style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 9, letterSpacing: "0.18em", color: "#FFFFFF", textTransform: "uppercase" }}>
                             {format(d, "MMM")}
                           </div>
                           <div style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: 24, lineHeight: 0.9, color: "#F8F8F8" }}>
@@ -564,7 +564,7 @@ const Events = () => {
 
                       <div className="p-4 space-y-3">
                         <h3 className="line-clamp-2"
-                          style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: 18, lineHeight: 1.05, color: "#E6F25A", textTransform: "uppercase", letterSpacing: "0.01em", margin: 0 }}>
+                          style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: 18, lineHeight: 1.05, color: "#FFFFFF", textTransform: "uppercase", letterSpacing: "0.01em", margin: 0 }}>
                           {ev.title}
                         </h3>
                         <div className="flex flex-wrap items-center gap-x-3 gap-y-1"
@@ -644,10 +644,10 @@ const Events = () => {
         <Dialog open={showShareDialog} onOpenChange={setShowShareDialog}>
           <DialogContent className="sm:max-w-md rounded-3xl" style={{ background: "#141415", border: "1px solid rgba(255,255,255,0.08)" }}>
             <DialogHeader>
-              <span style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 10, letterSpacing: "0.22em", color: "#E6F25A", textTransform: "uppercase" }}>
+              <span style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 10, letterSpacing: "0.22em", color: "#FFFFFF", textTransform: "uppercase" }}>
                 Spread the word
               </span>
-              <DialogTitle style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: 30, lineHeight: 0.95, color: "#E6F25A", textTransform: "uppercase", letterSpacing: "0.01em", marginTop: 4 }}>
+              <DialogTitle style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: 30, lineHeight: 0.95, color: "#FFFFFF", textTransform: "uppercase", letterSpacing: "0.01em", marginTop: 4 }}>
                 Share Event
               </DialogTitle>
             </DialogHeader>
@@ -707,10 +707,10 @@ const Events = () => {
         <Dialog open={!!rsvpId} onOpenChange={() => setRsvpId(null)}>
           <DialogContent className="sm:max-w-sm rounded-3xl" style={{ background: "#141415", border: "1px solid rgba(255,255,255,0.08)" }}>
             <DialogHeader>
-              <span style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 10, letterSpacing: "0.22em", color: "#E6F25A", textTransform: "uppercase" }}>
+              <span style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 10, letterSpacing: "0.22em", color: "#FFFFFF", textTransform: "uppercase" }}>
                 Confirm your seat
               </span>
-              <DialogTitle style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: 30, lineHeight: 0.95, color: "#E6F25A", textTransform: "uppercase", letterSpacing: "0.01em", marginTop: 4 }}>
+              <DialogTitle style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: 30, lineHeight: 0.95, color: "#FFFFFF", textTransform: "uppercase", letterSpacing: "0.01em", marginTop: 4 }}>
                 RSVP
               </DialogTitle>
             </DialogHeader>
@@ -742,7 +742,7 @@ const Events = () => {
         <Dialog open={gateOpen} onOpenChange={setGateOpen}>
           <DialogContent className="sm:max-w-md text-center">
             <DialogHeader>
-              <DialogTitle className="font-display text-2xl uppercase tracking-tight" style={{ color: "#E6F25A" }}>Your people are already here</DialogTitle>
+              <DialogTitle className="font-display text-2xl uppercase tracking-tight" style={{ color: "#FFFFFF" }}>Your people are already here</DialogTitle>
             </DialogHeader>
             <div className="space-y-4 pt-2">
               <p className="text-sm text-muted-foreground leading-relaxed">

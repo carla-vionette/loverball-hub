@@ -5,8 +5,8 @@ export const C = {
   text: "#FAF5E9",
   muted: "#B8B8B8",
   raspberry: "#F04E23",   // Vermilion
-  gold: "#E6F25A",        // Neon Yellow (legacy alias)
-  neon: "#E6F25A",
+  gold: "#FFFFFF",        // Neon Yellow (legacy alias)
+  neon: "#FFFFFF",
   pink: "#E86BB0",        // Hot Pink
   teal: "#E86BB0",        // legacy alias
   border: "rgba(250, 245, 233, 0.08)",
