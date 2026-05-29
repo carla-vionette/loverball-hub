@@ -349,6 +349,7 @@ const Onboarding = () => {
         favorite_teams_players: teams,
         city: city || undefined,
         zip_code: zipCode || undefined,
+        bio: vibe?.trim() || undefined,
         other_interests: vibe ? [vibe] : [],
         has_completed_onboarding: true,
       } as any);
@@ -781,25 +782,26 @@ const Onboarding = () => {
             </div>
             <div className="flex-1 flex flex-col">
               <H>Your vibe?</H>
-              <Sub>Pick one — you can always change it later.</Sub>
-              <div className="mt-8 flex flex-col gap-3">
-                {VIBES.map((v) => (
-                  <button
-                    key={v}
-                    onClick={() => setVibe(v)}
-                    className="text-left px-5 py-4 rounded-2xl transition active:scale-[0.99]"
-                    style={{
-                      background: vibe === v ? `linear-gradient(95deg, ${C.raspberry}22, ${C.pink}22)` : C.surface,
-                      border: `1.5px solid ${vibe === v ? C.pink : C.borderStrong}`,
-                      fontFamily: fonts.sans, fontSize: 17, color: C.text,
-                    }}
-                  >
-                    {v}
-                  </button>
-                ))}
-              </div>
+              <Sub>Describe yourself in a sentence — fans will see this on your profile.</Sub>
+              <textarea
+                value={vibe}
+                onChange={(e) => setVibe(e.target.value.slice(0, 140))}
+                placeholder="e.g. Die-hard Sparks fan who shows up for every home game in full kit"
+                rows={4}
+                className="mt-8 w-full px-5 py-4 rounded-2xl resize-none outline-none focus:ring-2"
+                style={{
+                  background: C.surface,
+                  border: `1.5px solid ${vibe ? C.pink : C.borderStrong}`,
+                  fontFamily: fonts.sans,
+                  fontSize: 17,
+                  color: C.text,
+                }}
+              />
+              <p className="mt-2 text-xs" style={{ color: C.muted, fontFamily: fonts.mono }}>
+                {vibe.length}/140
+              </p>
             </div>
-            <PrimaryBtn onClick={completeFinish} loading={loading} disabled={!vibe}>Unlock my feed</PrimaryBtn>
+            <PrimaryBtn onClick={completeFinish} loading={loading} disabled={!vibe.trim()}>Unlock my feed</PrimaryBtn>
           </Page>
         );
 
