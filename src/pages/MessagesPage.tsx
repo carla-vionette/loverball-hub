@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
-import { fetchProfileById } from '@/lib/profileApi';
+import { fetchProfilesByIds } from '@/lib/profileApi';
 import { Loader2, Send, ArrowLeft, MessageCircle, Sparkles } from 'lucide-react';
 import { format } from 'date-fns';
 
@@ -85,16 +85,27 @@ const MessagesPage = () => {
 
       if (matchesError) throw matchesError;
 
+      const matchesList = matchesData || [];
+      const otherUserIds = Array.from(
+        new Set(
+          matchesList.map((match) =>
+            match.user_a_id === user.id ? match.user_b_id : match.user_a_id
+          )
+        )
+      );
+
+      const { data: profileRows } = await fetchProfilesByIds(
+        otherUserIds,
+        'id, name, profile_photo_url, primary_role'
+      );
+      const profileMap = new Map(
+        (Array.isArray(profileRows) ? profileRows : []).map((profile: any) => [profile.id, profile])
+      );
+
       // Get other user profiles and chats for each match
       const matchesWithDetails = await Promise.all(
-        (matchesData || []).map(async (match) => {
+        matchesList.map(async (match) => {
           const otherUserId = match.user_a_id === user.id ? match.user_b_id : match.user_a_id;
-          
-          // Get other user's profile using rate-limited API
-          const { data: profileData } = await fetchProfileById(
-            otherUserId,
-            'id, name, profile_photo_url, primary_role'
-          );
 
           // Get chat for this match
           const { data: chatData } = await supabase
@@ -118,7 +129,7 @@ const MessagesPage = () => {
 
           return {
             ...match,
-            other_user: profileData || { id: otherUserId, name: 'Unknown' },
+            other_user: profileMap.get(otherUserId) || { id: otherUserId, name: 'Unknown' },
             chat: chatData,
             last_message: lastMessage,
           };
