@@ -39,6 +39,7 @@ const EditProfile = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { user, loading: authLoading } = useAuth();
+  const queryClient = useQueryClient();
 
   // Form state
   const [name, setName] = useState("");
