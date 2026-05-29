@@ -39,7 +39,7 @@
     --popover-foreground: 24 18% 14%;
 
     /* Primary = Orange #F04E23 */
-    --primary: 10 87% 54%;
+    --primary: 15 80% 55%;
     --primary-foreground: 0 0% 100%;
 
     --secondary: 38 35% 90%;
@@ -59,11 +59,11 @@
     --warning-foreground: 0 0% 100%;
     --info: 327 73% 60%;
     --info-foreground: 0 0% 100%;
-    --destructive: 10 87% 54%;
+    --destructive: 15 80% 55%;
     --destructive-foreground: 0 0% 100%;
 
     /* ── Legacy aliases — remapped ── */
-    --coral: 10 87% 54%;
+    --coral: 15 80% 55%;
     --coral-foreground: 0 0% 100%;
     --pale-pink: 327 73% 88%;
     --pale-pink-foreground: 24 18% 14%;
@@ -77,7 +77,7 @@
     --ticker-foreground: 0 0% 100%;
     --gold: 38 90% 50%;
     --gold-foreground: 0 0% 100%;
-    --terracotta: 10 87% 54%;
+    --terracotta: 15 80% 55%;
     --terracotta-foreground: 0 0% 100%;
     --warm-beige: 38 35% 92%;
     --warm-beige-foreground: 24 18% 14%;
@@ -89,7 +89,7 @@
     /* ── Chrome ── */
     --border: 30 20% 82%;
     --input: 38 30% 90%;
-    --ring: 10 87% 54%;
+    --ring: 15 80% 55%;
 
     /* Radii — one pill, one card */
     --radius: 1.25rem;                      /* card radius 20px */
@@ -112,14 +112,14 @@
     --transition-slow: 400ms cubic-bezier(0.4, 0, 0.2, 1);
 
     /* Gradients */
-    --gradient-warm: linear-gradient(135deg, hsl(10 87% 54%), hsl(327 73% 66%));
-    --gradient-sunset: linear-gradient(135deg, hsl(10 87% 54%), hsl(66 84% 65%));
+    --gradient-warm: linear-gradient(135deg, hsl(15 80% 55%), hsl(327 73% 66%));
+    --gradient-sunset: linear-gradient(135deg, hsl(15 80% 55%), hsl(66 84% 65%));
     --gradient-cream: linear-gradient(180deg, hsl(240 6% 4%), hsl(240 3% 8%));
     --gradient-navy: linear-gradient(180deg, hsl(240 6% 4%), hsl(240 4% 11%));
   }
 
   .landing-theme {
-    --primary: 10 87% 54%;
+    --primary: 15 80% 55%;
     --primary-foreground: 0 0% 100%;
     --accent: 327 73% 66%;
     --accent-foreground: 0 0% 100%;
