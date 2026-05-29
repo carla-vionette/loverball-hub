@@ -660,7 +660,7 @@ const Profile = () => {
                     </CollapsibleTrigger>
                     <CollapsibleContent>
                       <div className="px-5 pb-5 pt-2">
-                        <ProfileWhereToWatch />
+                        <ProfileWhereToWatch favoriteTeams={favoriteTeams} />
                       </div>
                     </CollapsibleContent>
                   </div>
