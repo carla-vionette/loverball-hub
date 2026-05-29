@@ -315,16 +315,20 @@ const Club = () => {
                 <button
                   key={f}
                   onClick={() => toggleFilter(f)}
+                  aria-pressed={active}
                   className="px-3 py-1.5 rounded-full text-xs uppercase tracking-wider transition-all"
                   style={{
                     fontFamily: fonts.mono,
-                    background: active ? C.raspberry : "transparent",
-                    color: active ? "#0a0a0a" : C.text,
-                    border: `1px solid ${active ? C.raspberry : C.border}`,
+                    background: active ? "#E85D2F" : "transparent",
+                    color: active ? "#ffffff" : C.text,
+                    border: `1px solid ${active ? "#E85D2F" : C.border}`,
+                    boxShadow: active ? "0 4px 14px -4px rgba(232, 93, 47, 0.5)" : "none",
+                    fontWeight: active ? 600 : 400,
                   }}
                 >
                   {f}
                 </button>
+
               );
             })}
           </div>
