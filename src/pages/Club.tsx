@@ -307,31 +307,40 @@ const Club = () => {
           </div>
 
           {/* Filter chips */}
-          <div className="mt-2.5 flex flex-wrap gap-2">
-
-            {FILTER_CHIPS.map((f) => {
-              const active = activeFilters.has(f);
-              return (
-                <button
-                  key={f}
-                  onClick={() => toggleFilter(f)}
-                  aria-pressed={active}
-                  className="px-3 py-1.5 rounded-full text-xs uppercase tracking-wider transition-all"
-                  style={{
-                    fontFamily: fonts.mono,
-                    background: active ? "#E85D2F" : "transparent",
-                    color: active ? "#ffffff" : C.text,
-                    border: `1px solid ${active ? "#E85D2F" : C.border}`,
-                    boxShadow: active ? "0 4px 14px -4px rgba(232, 93, 47, 0.5)" : "none",
-                    fontWeight: active ? 600 : 400,
-                  }}
-                >
-                  {f}
-                </button>
-
-              );
-            })}
+          <div className="relative mt-2.5 -mx-5 md:-mx-10">
+            <div
+              className="flex flex-nowrap items-center gap-2 overflow-x-auto px-5 md:px-10 pb-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+            >
+              {FILTER_CHIPS.map((f) => {
+                const active = activeFilters.has(f);
+                return (
+                  <button
+                    key={f}
+                    onClick={() => toggleFilter(f)}
+                    aria-pressed={active}
+                    className="shrink-0 whitespace-nowrap px-3 py-1.5 rounded-full text-xs uppercase tracking-wider transition-all"
+                    style={{
+                      fontFamily: fonts.mono,
+                      background: active ? "#E85D2F" : "transparent",
+                      color: active ? "#ffffff" : C.text,
+                      border: `1px solid ${active ? "#E85D2F" : C.border}`,
+                      boxShadow: active ? "0 4px 14px -4px rgba(232, 93, 47, 0.5)" : "none",
+                      fontWeight: active ? 600 : 400,
+                    }}
+                  >
+                    {f}
+                  </button>
+                );
+              })}
+            </div>
+            {/* Right-edge fade hint */}
+            <div
+              aria-hidden
+              className="pointer-events-none absolute right-0 top-0 bottom-0 w-12"
+              style={{ background: `linear-gradient(to left, ${C.surface}, transparent)` }}
+            />
           </div>
+
         </section>
 
         {/* TABS */}
