@@ -330,9 +330,9 @@ const Club = () => {
                     className="shrink-0 whitespace-nowrap px-3 py-1.5 rounded-full text-xs uppercase tracking-wider transition-all"
                     style={{
                       fontFamily: fonts.mono,
-                      background: active ? "#E85D2F" : "transparent",
-                      color: active ? "#ffffff" : C.text,
-                      border: `1px solid ${active ? "#E85D2F" : C.border}`,
+                      background: active ? "#E85D2F" : "#FFFFFF",
+                      color: active ? "#ffffff" : "#1A1A1A",
+                      border: `1px solid ${active ? "#E85D2F" : "#E8E3DC"}`,
                       boxShadow: active ? "0 4px 14px -4px rgba(232, 93, 47, 0.5)" : "none",
                       fontWeight: active ? 600 : 400,
                     }}
