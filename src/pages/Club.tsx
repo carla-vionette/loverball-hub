@@ -279,20 +279,21 @@ const Club = () => {
       <DesktopNav />
       <BottomNav />
 
-      <main className="max-w-[1400px] mx-auto px-4 md:px-8 pt-20 md:pt-10">
+      <main className="max-w-[1400px] mx-auto px-4 md:px-8 pt-16 md:pt-8">
         {/* HERO */}
-        <section className="relative overflow-hidden rounded-3xl px-6 md:px-12 py-10 md:py-14"
+        <section className="relative overflow-hidden rounded-3xl px-5 md:px-10 py-5 md:py-7"
           style={{ background: `radial-gradient(120% 100% at 0% 0%, ${C.raspberry}22 0%, transparent 60%), radial-gradient(120% 100% at 100% 100%, ${C.pink}1f 0%, transparent 55%), ${C.surface}`, border: `1px solid ${C.border}` }}>
           <Slug>The Club</Slug>
-          <H1 className="mt-3" style={{ fontSize: "clamp(40px, 7vw, 84px)", lineHeight: 0.92 }}>
+          <H1 className="mt-2" style={{ fontSize: "clamp(26px, 4.2vw, 44px)", lineHeight: 0.95 }}>
             Find Your <span style={{ color: C.raspberry }}>Sports People.</span>
           </H1>
-          <Body muted size={16} className="mt-4 max-w-xl">
+          <Body muted size={13} className="mt-1.5 max-w-xl hidden md:block">
             Discover fans like you, connect around teams, cities and leagues, and start the chat.
           </Body>
 
           {/* Search */}
-          <div className="mt-7 flex items-center gap-3 max-w-2xl">
+          <div className="mt-3 flex items-center gap-3 max-w-2xl">
+
             <div className="relative flex-1">
               <Search className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2" style={{ color: C.muted }} />
               <Input
@@ -306,7 +307,8 @@ const Club = () => {
           </div>
 
           {/* Filter chips */}
-          <div className="mt-4 flex flex-wrap gap-2">
+          <div className="mt-2.5 flex flex-wrap gap-2">
+
             {FILTER_CHIPS.map((f) => {
               const active = activeFilters.has(f);
               return (
