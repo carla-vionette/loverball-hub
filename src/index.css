@@ -26,16 +26,16 @@
     --brand-foreground: 0 0% 100%;
 
     /* ── Core palette — WARM CREAM PREVIEW ── */
-    --background: 40 38% 95%;               /* #F7F1E3 warm cream */
+    --background: 36 33% 97%;               /* #FAF7F2 warm cream */
     --foreground: 0 0% 10%;               /* deep espresso */
 
-    --bg-secondary: 38 35% 92%;             /* slightly darker cream */
-    --bg-card: 40 50% 98%;                  /* near-white card */
+    --bg-secondary: 36 33% 97%;             /* match background */
+    --bg-card: 0 0% 100%;                   /* #FFFFFF */
 
-    --card: 40 50% 98%;
+    --card: 0 0% 100%;
     --card-foreground: 0 0% 10%;
 
-    --popover: 40 50% 98%;
+    --popover: 0 0% 100%;
     --popover-foreground: 0 0% 10%;
 
     /* Primary = Orange #F04E23 */
