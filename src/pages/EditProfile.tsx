@@ -368,6 +368,20 @@ const EditProfile = () => {
                     </SelectContent>
                   </Select>
                 </div>
+
+                <div className="space-y-1.5">
+                  <Label htmlFor="zip" className="text-xs tracking-wider uppercase text-foreground/60">ZIP Code *</Label>
+                  <Input
+                    id="zip"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    maxLength={5}
+                    placeholder="90001"
+                    value={zipCode}
+                    onChange={(e) => setZipCode(e.target.value.replace(/[^0-9]/g, "").slice(0, 5))}
+                    className="bg-background rounded-none h-10"
+                  />
+                </div>
               </div>
             )}
 
