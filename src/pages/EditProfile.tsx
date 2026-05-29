@@ -91,6 +91,8 @@ const EditProfile = () => {
       setName(profile.name || "");
       setPronouns(profile.pronouns || "");
       setCity(profile.city || "");
+      setZipCode((profile as any).zip_code || "");
+      
       
       setFavoriteSports(profile.favorite_sports || []);
       setFavTeams(profile.favorite_teams_players || []);
