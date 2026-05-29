@@ -122,6 +122,7 @@ const Profile = () => {
   const [teamsOpen, setTeamsOpen] = useState(true);
   const [scoresOpen, setScoresOpen] = useState(true);
   const [watchOpen, setWatchOpen] = useState(false);
+  const [scheduleTeam, setScheduleTeam] = useState<string | null>(null);
   const [eventsOpen, setEventsOpen] = useState(true);
   const [recEventsOpen, setRecEventsOpen] = useState(false);
   const [feedFilter, setFeedFilter] = useState<string>("All");
@@ -583,7 +584,7 @@ const Profile = () => {
                             <div
                               key={teamName}
                               className="flex items-center gap-3 px-5 py-4 hover:bg-white/[0.03] transition-colors cursor-pointer group"
-                              onClick={() => goTo(`/team/${slug}`)}
+                              onClick={() => setScheduleTeam(teamName)}
                             >
                               <div className="shrink-0 w-10 h-10 rounded-lg flex items-center justify-center"
                                 style={{ background: "rgba(233,30,99,0.10)", border: "1px solid rgba(233,30,99,0.20)" }}>
@@ -597,7 +598,10 @@ const Profile = () => {
                                   )}
                                 </div>
                                 <p className="text-[11px] mt-0.5" style={{ color: "rgba(250,245,233,0.5)" }}>
-                                  Live scores below · See full schedule
+                                  Live scores below ·{" "}
+                                  <span className="underline underline-offset-2" style={{ color: PINK }}>
+                                    See full schedule
+                                  </span>
                                 </p>
                               </div>
                               {watchUrl && (
@@ -609,7 +613,7 @@ const Profile = () => {
                                   className="text-[10px] uppercase tracking-[0.14em] px-2.5 py-1 rounded-full shrink-0"
                                   style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)", color: "rgba(250,245,233,0.8)", fontFamily: "'Space Mono', monospace" }}
                                 >
-                                  Schedule
+                                  Watch
                                 </a>
                               )}
                               <ChevronRight className="w-3.5 h-3.5 shrink-0" style={{ color: "rgba(250,245,233,0.35)" }} />
@@ -749,6 +753,19 @@ const Profile = () => {
               Connect with others at events to grow your network!
             </p>
           </div>
+        </SheetContent>
+      </Sheet>
+
+      {/* Full Team Schedule Sheet */}
+      <Sheet open={!!scheduleTeam} onOpenChange={(o) => !o && setScheduleTeam(null)}>
+        <SheetContent side="right" className="w-full sm:max-w-lg overflow-y-auto bg-background">
+          <SheetHeader className="mb-4">
+            <SheetTitle className="flex items-center gap-2">
+              <Calendar className="w-4 h-4" style={{ color: PINK }} />
+              <span className="truncate">{scheduleTeam} · Full Schedule</span>
+            </SheetTitle>
+          </SheetHeader>
+          {scheduleTeam && <ProfileWhereToWatch favoriteTeams={[scheduleTeam]} />}
         </SheetContent>
       </Sheet>
     </div>
