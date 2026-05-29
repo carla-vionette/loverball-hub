@@ -178,6 +178,7 @@ const Onboarding = () => {
   const [leagues, setLeagues] = useState<string[]>([]);
   const [teams, setTeams] = useState<string[]>([]);
   const [city, setCity] = useState("");
+  const [zipCode, setZipCode] = useState("");
   const [vibe, setVibe] = useState<string>("");
 
   const fileRef = useRef<HTMLInputElement>(null);
@@ -347,9 +348,10 @@ const Onboarding = () => {
         favorite_sports: leagues,
         favorite_teams_players: teams,
         city: city || undefined,
+        zip_code: zipCode || undefined,
         other_interests: vibe ? [vibe] : [],
         has_completed_onboarding: true,
-      });
+      } as any);
       toast({ title: "You're in 💅🏾", description: "Badge unlocked + event recs are live." });
       exitToDestination(true);
     } finally {
@@ -752,11 +754,20 @@ const Onboarding = () => {
               <GhostBtn onClick={() => exitToDestination(false)}>Skip</GhostBtn>
             </div>
             <div className="flex-1 flex flex-col">
-              <H>What city?</H>
+              <H>Where are you?</H>
               <Sub>So we can match you to local watch parties + drops.</Sub>
-              <TextField className="mt-8" placeholder="Los Angeles" value={city} onChange={(e) => setCity(e.target.value)} />
+              <TextField className="mt-8" placeholder="City (e.g. Los Angeles)" value={city} onChange={(e) => setCity(e.target.value)} />
+              <TextField
+                className="mt-4"
+                placeholder="ZIP code"
+                value={zipCode}
+                onChange={(e) => setZipCode(e.target.value.replace(/[^0-9]/g, "").slice(0, 5))}
+                inputMode="numeric"
+                pattern="[0-9]*"
+                maxLength={5}
+              />
             </div>
-            <PrimaryBtn onClick={() => setStep(18)}>Next</PrimaryBtn>
+            <PrimaryBtn onClick={() => setStep(18)} disabled={zipCode.length > 0 && zipCode.length !== 5}>Next</PrimaryBtn>
           </Page>
         );
 

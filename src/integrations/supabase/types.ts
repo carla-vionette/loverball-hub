@@ -1697,6 +1697,7 @@ export type Database = {
           updated_at: string
           username: string | null
           website_url: string | null
+          zip_code: string | null
         }
         Insert: {
           account_type?: string | null
@@ -1739,6 +1740,7 @@ export type Database = {
           updated_at?: string
           username?: string | null
           website_url?: string | null
+          zip_code?: string | null
         }
         Update: {
           account_type?: string | null
@@ -1781,6 +1783,7 @@ export type Database = {
           updated_at?: string
           username?: string | null
           website_url?: string | null
+          zip_code?: string | null
         }
         Relationships: []
       }

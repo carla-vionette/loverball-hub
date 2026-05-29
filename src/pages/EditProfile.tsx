@@ -43,6 +43,8 @@ const EditProfile = () => {
   const [name, setName] = useState("");
   const [pronouns, setPronouns] = useState("");
   const [city, setCity] = useState("");
+  const [zipCode, setZipCode] = useState("");
+  
   
   const [favoriteSports, setFavoriteSports] = useState<string[]>([]);
   const [teamsInput, setTeamsInput] = useState("");
@@ -89,6 +91,8 @@ const EditProfile = () => {
       setName(profile.name || "");
       setPronouns(profile.pronouns || "");
       setCity(profile.city || "");
+      setZipCode((profile as any).zip_code || "");
+      
       
       setFavoriteSports(profile.favorite_sports || []);
       setFavTeams(profile.favorite_teams_players || []);
@@ -205,7 +209,7 @@ const EditProfile = () => {
         name,
         pronouns,
         city,
-        
+        zip_code: zipCode || null,
         favorite_sports: favoriteSports,
         favorite_teams_players: favTeams,
         sports_experience_types: experienceTypes,
@@ -215,7 +219,7 @@ const EditProfile = () => {
         bio,
         profile_photo_url: photoUrl,
         sms_notifications_enabled: smsNotifications,
-      }).eq("id", userId);
+      } as any).eq("id", userId);
 
       // Update sensitive data separately
       await supabase.from("profiles_sensitive" as any).upsert({
@@ -245,7 +249,7 @@ const EditProfile = () => {
   const canProceed = () => {
     switch (step) {
       case 1:
-        return name.trim() && city;
+        return name.trim() && city && /^\d{5}$/.test(zipCode);
       case 2:
         return favoriteSports.length > 0;
       case 3:
@@ -363,6 +367,20 @@ const EditProfile = () => {
                       ))}
                     </SelectContent>
                   </Select>
+                </div>
+
+                <div className="space-y-1.5">
+                  <Label htmlFor="zip" className="text-xs tracking-wider uppercase text-foreground/60">ZIP Code *</Label>
+                  <Input
+                    id="zip"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    maxLength={5}
+                    placeholder="90001"
+                    value={zipCode}
+                    onChange={(e) => setZipCode(e.target.value.replace(/[^0-9]/g, "").slice(0, 5))}
+                    className="bg-background rounded-none h-10"
+                  />
                 </div>
               </div>
             )}
