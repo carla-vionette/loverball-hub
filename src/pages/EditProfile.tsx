@@ -29,6 +29,7 @@ import { X, Camera, Loader2, ArrowLeft } from "lucide-react";
 import loverballLogo from "@/assets/loverball-script-logo.png";
 import BottomNav from "@/components/BottomNav";
 import { useAuth } from "@/hooks/useAuth";
+import { useQueryClient } from "@tanstack/react-query";
 
 const EditProfile = () => {
   const [step, setStep] = useState(1);
