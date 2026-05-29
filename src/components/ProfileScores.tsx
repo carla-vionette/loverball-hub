@@ -18,8 +18,20 @@ const ScoreCard = ({ game }: { game: GameScore }) => {
   const config = STATUS_CONFIG[game.status];
   const StatusIcon = config.icon;
 
+  const openEspn = () => {
+    const query = encodeURIComponent(`${game.awayTeam} vs ${game.homeTeam}`);
+    const url = `https://www.espn.com/search/_/q/${query}`;
+    window.open(url, "_blank", "noopener,noreferrer");
+  };
+
   return (
-    <Card className="p-4 bg-card border-border/30 hover:border-primary/30 transition-colors">
+    <Card
+      onClick={openEspn}
+      role="link"
+      tabIndex={0}
+      onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openEspn(); } }}
+      className="p-4 bg-card border-border/30 hover:border-primary/30 transition-colors cursor-pointer"
+    >
       <div className="flex items-center justify-between mb-3">
         <div className={`flex items-center gap-1.5 text-xs font-semibold ${config.className}`}>
           <StatusIcon className="w-3.5 h-3.5" />
