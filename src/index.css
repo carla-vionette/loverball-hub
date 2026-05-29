@@ -55,7 +55,7 @@
     /* ── Status colors ── */
     --success: 142 60% 38%;
     --success-foreground: 0 0% 100%;
-    --warning: 38 90% 50%;
+    --warning: 7 51% 65%;
     --warning-foreground: 0 0% 100%;
     --info: 327 73% 60%;
     --info-foreground: 0 0% 100%;
@@ -69,13 +69,13 @@
     --pale-pink-foreground: 24 18% 14%;
     --medium-blue: 327 73% 60%;
     --medium-blue-foreground: 0 0% 100%;
-    --olive: 65 50% 45%;
+    --olive: 7 51% 65%;
     --olive-foreground: 0 0% 100%;
-    --light-lime: 65 60% 55%;
+    --light-lime: 7 51% 65%;
     --light-lime-foreground: 24 18% 14%;
-    --ticker: 38 90% 50%;
+    --ticker: 7 51% 65%;
     --ticker-foreground: 0 0% 100%;
-    --gold: 38 90% 50%;
+    --gold: 7 51% 65%;
     --gold-foreground: 0 0% 100%;
     --terracotta: 15 80% 55%;
     --terracotta-foreground: 0 0% 100%;
@@ -83,7 +83,7 @@
     --warm-beige-foreground: 24 18% 14%;
     --hot-pink: 327 73% 60%;
     --hot-pink-foreground: 0 0% 100%;
-    --neon: 38 90% 50%;
+    --neon: 7 51% 65%;
     --neon-foreground: 0 0% 100%;
 
     /* ── Chrome ── */
