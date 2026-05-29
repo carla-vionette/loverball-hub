@@ -21,120 +21,130 @@
 
 @layer base {
   :root {
-    /* ── Brand — Orange / Pink / Neon Yellow (locked hex) ── */
-    --brand: 10 87% 54%;                    /* Orange #F04E23 */
-    --brand-foreground: 0 0% 100%;
+    /* ============================================================
+       LOVERBALL BRAND — Deep Green / Off-White / Neon Yellow / Lavender
+       70% green+offwhite foundation · 20% photography
+       ·  8% neon yellow accents · 2% lavender supporting details
+       ============================================================ */
 
-    /* ── Core palette (locked hex) ── */
-    --background: 0 0% 4%;                  /* #0B0B0B */
-    --foreground: 60 17% 96%;               /* #F7F7F2 */
+    /* ── Brand ── */
+    --brand: 151 37% 25%;                   /* Deep Green #295942 */
+    --brand-foreground: 45 25% 97%;         /* Off White #F9F8F5 */
 
-    --bg-secondary: 0 0% 6%;                /* #0F0F0F */
-    --bg-card: 0 0% 8%;                     /* #151515 surface */
+    /* ── Core palette ── */
+    --background: 45 25% 97%;               /* Off White #F9F8F5 */
+    --foreground: 151 37% 25%;              /* Deep Green text */
 
-    --card: 0 0% 8%;                        /* #151515 */
-    --card-foreground: 60 17% 96%;
+    --bg-secondary: 42 28% 93%;             /* Surface alt #F2EFE8 */
+    --bg-card: 34 100% 99%;                 /* Surface #FFFCF8 */
 
-    --popover: 0 0% 8%;
-    --popover-foreground: 60 17% 96%;
+    --card: 34 100% 99%;                    /* #FFFCF8 */
+    --card-foreground: 151 37% 25%;
 
-    /* Primary = Orange #F04E23 */
-    --primary: 10 87% 54%;
-    --primary-foreground: 0 0% 100%;
+    --popover: 34 100% 99%;
+    --popover-foreground: 151 37% 25%;
 
-    --secondary: 0 0% 6%;
-    --secondary-foreground: 60 17% 96%;
+    /* Primary = Deep Green */
+    --primary: 151 37% 25%;
+    --primary-foreground: 45 25% 97%;
 
-    --muted: 0 0% 12%;
-    --muted-foreground: 0 0% 62%;
+    --secondary: 42 28% 93%;                /* warm cream */
+    --secondary-foreground: 151 37% 25%;
 
-    /* Accent = Pink #E86BB0 */
-    --accent: 327 73% 66%;
-    --accent-foreground: 0 0% 100%;
+    --muted: 42 28% 93%;
+    --muted-foreground: 151 18% 38%;        /* softer green for body meta */
+
+    /* Accent = Neon Yellow (use sparingly — CTAs / active / focus) */
+    --accent: 64 100% 58%;
+    --accent-foreground: 151 37% 25%;
 
     /* ── Status colors ── */
-    --success: 142 60% 45%;
-    --success-foreground: 0 0% 100%;
-    --warning: 65 85% 65%;                  /* Neon Yellow #E6F25A */
-    --warning-foreground: 0 0% 0%;
-    --info: 327 73% 66%;
-    --info-foreground: 0 0% 100%;
-    --destructive: 10 87% 54%;
-    --destructive-foreground: 0 0% 100%;
+    --success: 151 37% 25%;
+    --success-foreground: 45 25% 97%;
+    --warning: 64 100% 58%;                 /* Neon Yellow */
+    --warning-foreground: 151 37% 25%;
+    --info: 247 100% 88%;                   /* Lavender */
+    --info-foreground: 151 37% 25%;
+    --destructive: 6 74% 48%;
+    --destructive-foreground: 45 25% 97%;
 
-    /* ── Legacy aliases — remapped to locked palette ── */
-    --coral: 10 87% 54%;
-    --coral-foreground: 0 0% 100%;
-    --pale-pink: 327 73% 88%;
-    --pale-pink-foreground: 0 0% 4%;
-    --medium-blue: 327 73% 66%;
-    --medium-blue-foreground: 0 0% 100%;
-    --olive: 65 85% 65%;
-    --olive-foreground: 0 0% 0%;
-    --light-lime: 65 85% 65%;
-    --light-lime-foreground: 0 0% 0%;
-    --ticker: 65 85% 65%;
-    --ticker-foreground: 0 0% 0%;
-    --gold: 65 85% 65%;
-    --gold-foreground: 0 0% 0%;
-    --terracotta: 10 87% 54%;
-    --terracotta-foreground: 0 0% 100%;
-    --warm-beige: 0 0% 6%;
-    --warm-beige-foreground: 60 17% 96%;
-    --hot-pink: 327 73% 66%;                /* Pink #E86BB0 */
-    --hot-pink-foreground: 0 0% 100%;
-    --neon: 65 85% 65%;                     /* Neon Yellow #E6F25A */
-    --neon-foreground: 0 0% 0%;
+    /* ── Legacy aliases — remapped to new system ── */
+    --coral: 151 37% 25%;
+    --coral-foreground: 45 25% 97%;
+    --pale-pink: 247 100% 88%;
+    --pale-pink-foreground: 151 37% 25%;
+    --medium-blue: 247 100% 88%;
+    --medium-blue-foreground: 151 37% 25%;
+    --olive: 64 100% 58%;
+    --olive-foreground: 151 37% 25%;
+    --light-lime: 64 100% 58%;
+    --light-lime-foreground: 151 37% 25%;
+    --ticker: 64 100% 58%;
+    --ticker-foreground: 151 37% 25%;
+    --gold: 64 100% 58%;
+    --gold-foreground: 151 37% 25%;
+    --terracotta: 151 37% 25%;
+    --terracotta-foreground: 45 25% 97%;
+    --warm-beige: 42 28% 93%;
+    --warm-beige-foreground: 151 37% 25%;
+    --hot-pink: 247 100% 88%;
+    --hot-pink-foreground: 151 37% 25%;
+    --neon: 64 100% 58%;
+    --neon-foreground: 151 37% 25%;
+    --lavender: 247 100% 88%;
+    --lavender-foreground: 151 37% 25%;
 
     /* ── Chrome ── */
-    --border: 0 0% 14%;
-    --input: 0 0% 12%;
-    --ring: 10 87% 54%;
+    --border: 151 20% 82%;                  /* ≈ 12% green on cream */
+    --input: 42 28% 93%;
+    --ring: 64 100% 58%;                    /* neon focus ring */
 
-    /* Radii — one pill, one card */
-    --radius: 1.25rem;                      /* card radius 20px */
-    --radius-pill: 9999px;                  /* badge/button pill */
+    /* Radii */
+    --radius: 1.25rem;
+    --radius-pill: 9999px;
 
-    /* ── Design tokens ── */
     --radius-sm: 0.5rem;
     --radius-md: 0.875rem;
     --radius-lg: 1.25rem;
     --radius-xl: 1.75rem;
 
-
-    --shadow-sm: 0 2px 8px 0 rgba(0, 0, 0, 0.4);
-    --shadow-md: 0 4px 20px -2px rgba(0, 0, 0, 0.5);
-    --shadow-lg: 0 12px 32px -4px rgba(0, 0, 0, 0.6);
-    --shadow-glow: 0 0 32px rgba(240, 78, 35, 0.35);
+    --shadow-sm: 0 2px 8px 0 hsl(151 37% 25% / 0.06);
+    --shadow-md: 0 6px 24px -4px hsl(151 37% 25% / 0.10);
+    --shadow-lg: 0 18px 40px -8px hsl(151 37% 25% / 0.14);
+    --shadow-glow: 0 0 32px hsl(64 100% 58% / 0.35);
 
     --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
     --transition-normal: 300ms cubic-bezier(0.4, 0, 0.2, 1);
     --transition-slow: 400ms cubic-bezier(0.4, 0, 0.2, 1);
 
-    /* Gradients */
-    --gradient-warm: linear-gradient(135deg, hsl(10 87% 54%), hsl(327 73% 66%));
-    --gradient-sunset: linear-gradient(135deg, hsl(10 87% 54%), hsl(66 84% 65%));
-    --gradient-cream: linear-gradient(180deg, hsl(240 6% 4%), hsl(240 3% 8%));
-    --gradient-navy: linear-gradient(180deg, hsl(240 6% 4%), hsl(240 4% 11%));
+    /* Gradients — green-led */
+    --gradient-warm: linear-gradient(135deg, hsl(151 37% 25%), hsl(151 30% 35%));
+    --gradient-sunset: linear-gradient(135deg, hsl(151 37% 25%), hsl(64 100% 58%));
+    --gradient-cream: linear-gradient(180deg, hsl(45 25% 97%), hsl(42 28% 93%));
+    --gradient-navy: linear-gradient(180deg, hsl(151 37% 22%), hsl(151 37% 28%));
   }
 
   .landing-theme {
-    --primary: 10 87% 54%;
-    --primary-foreground: 0 0% 100%;
-    --accent: 327 73% 66%;
-    --accent-foreground: 0 0% 100%;
+    --primary: 151 37% 25%;
+    --primary-foreground: 45 25% 97%;
+    --accent: 64 100% 58%;
+    --accent-foreground: 151 37% 25%;
   }
 
-  .dark { /* default */ }
+  .dark { /* default light theme — kept as alias */ }
 
+  /* Watch/feed pages keep an immersive dark surface */
   .watch-dark {
-    --background: 240 6% 3%;
-    --foreground: 0 0% 97%;
-    --card: 240 4% 9%;
-    --card-foreground: 0 0% 97%;
-    --popover: 240 4% 9%;
-    --popover-foreground: 0 0% 97%;
-    --input: 240 3% 14%;
+    --background: 151 30% 6%;
+    --foreground: 45 25% 97%;
+    --card: 151 25% 10%;
+    --card-foreground: 45 25% 97%;
+    --popover: 151 25% 10%;
+    --popover-foreground: 45 25% 97%;
+    --input: 151 20% 14%;
+    --border: 151 20% 18%;
+    --muted: 151 20% 14%;
+    --muted-foreground: 45 15% 75%;
   }
 }
 
@@ -356,12 +366,12 @@
 
   .editorial-card {
     @apply bg-card rounded-[20px] shadow-sm transition-all duration-300 p-6;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 20px hsl(151 37% 25% / 0.08);
   }
   .editorial-card:hover {
     @apply -translate-y-0.5;
     transform: scale(1.02);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 8px 32px hsl(151 37% 25% / 0.14);
   }
 
   .quote-card {
@@ -410,12 +420,12 @@
   /* Consistent card hover */
   .interactive-card {
     @apply bg-card rounded-[20px] border border-border/30 transition-all duration-300 p-6;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 20px hsl(151 37% 25% / 0.08);
   }
   .interactive-card:hover {
     @apply border-border/50;
     transform: scale(1.02);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 8px 32px hsl(151 37% 25% / 0.14);
   }
 
   /* Page container — generous spacing */
@@ -628,20 +638,20 @@
   .font-playfair-italic { font-family: 'Playfair Display', serif; font-style: italic; font-weight: 800; }
   .font-inter-mag { font-family: 'Inter', system-ui, sans-serif; }
 
-  .text-raspberry { color: #F04E23; }
-  .text-copper { color: #E86BB0; }
-  .text-neon { color: #E6F25A; }
-  .bg-raspberry { background-color: #F04E23; }
-  .bg-copper { background-color: #E86BB0; }
-  .bg-neon { background-color: #E6F25A; }
-  .border-copper { border-color: #E86BB0; }
-  .border-raspberry { border-color: #F04E23; }
-  .border-neon { border-color: #E6F25A; }
+  .text-raspberry { color: #295942; }
+  .text-copper { color: #295942; }
+  .text-neon { color: #295942; }
+  .bg-raspberry { background-color: #295942; }
+  .bg-copper { background-color: #C9C2FF; }
+  .bg-neon { background-color: #F0FF29; }
+  .border-copper { border-color: rgba(41, 89, 66, 0.18); }
+  .border-raspberry { border-color: #295942; }
+  .border-neon { border-color: #F0FF29; }
 
   .pill-copper {
     display: inline-block;
-    border: 1px solid #d88c5a;
-    color: #d88c5a;
+    border: 1px solid #295942;
+    color: #295942;
     font-family: 'Inter', system-ui, sans-serif;
     font-weight: 800;
     font-size: 10px;
@@ -671,8 +681,8 @@
   font-family: 'Anton', 'Bebas Neue', sans-serif;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: #F8F8F8;
+  color: #295942;
 }
 .lb-section-label svg {
-  color: #E8276F;
+  color: #295942;
 }
