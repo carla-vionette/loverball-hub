@@ -93,16 +93,25 @@ const ProfileScores: React.FC<ProfileScoresProps> = ({ favoriteTeams = [] }) => 
 
   const SearchBar = (
     <div className="relative mb-3">
-      <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground pointer-events-none" />
+      <Search
+        className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none"
+        style={{ color: "#6B6B6B" }}
+      />
       <Input
         type="search"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder="Search scores by team..."
-        className="h-9 pl-8 text-sm bg-card border-border/30"
+        className="h-9 pl-9 text-sm rounded-full placeholder:text-[#6B6B6B]"
+        style={{
+          background: "#FFFFFF",
+          border: "1px solid #E8E3DC",
+          color: "#1A1A1A",
+        }}
       />
     </div>
   );
+
 
   if (loading) {
     return (
