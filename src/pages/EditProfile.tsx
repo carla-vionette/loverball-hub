@@ -249,7 +249,7 @@ const EditProfile = () => {
   const canProceed = () => {
     switch (step) {
       case 1:
-        return name.trim() && city;
+        return name.trim() && city && /^\d{5}$/.test(zipCode);
       case 2:
         return favoriteSports.length > 0;
       case 3:
