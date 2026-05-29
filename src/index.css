@@ -25,70 +25,70 @@
     --brand: 10 87% 54%;                    /* Orange #F04E23 */
     --brand-foreground: 0 0% 100%;
 
-    /* ── Core palette (locked hex) ── */
-    --background: 0 0% 4%;                  /* #0B0B0B */
-    --foreground: 60 17% 96%;               /* #F7F7F2 */
+    /* ── Core palette — WARM CREAM PREVIEW ── */
+    --background: 40 38% 95%;               /* #F7F1E3 warm cream */
+    --foreground: 24 18% 14%;               /* deep espresso */
 
-    --bg-secondary: 0 0% 6%;                /* #0F0F0F */
-    --bg-card: 0 0% 8%;                     /* #151515 surface */
+    --bg-secondary: 38 35% 92%;             /* slightly darker cream */
+    --bg-card: 40 50% 98%;                  /* near-white card */
 
-    --card: 0 0% 8%;                        /* #151515 */
-    --card-foreground: 60 17% 96%;
+    --card: 40 50% 98%;
+    --card-foreground: 24 18% 14%;
 
-    --popover: 0 0% 8%;
-    --popover-foreground: 60 17% 96%;
+    --popover: 40 50% 98%;
+    --popover-foreground: 24 18% 14%;
 
     /* Primary = Orange #F04E23 */
     --primary: 10 87% 54%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 0 0% 6%;
-    --secondary-foreground: 60 17% 96%;
+    --secondary: 38 35% 90%;
+    --secondary-foreground: 24 18% 14%;
 
-    --muted: 0 0% 12%;
-    --muted-foreground: 0 0% 62%;
+    --muted: 38 30% 88%;
+    --muted-foreground: 24 10% 40%;
 
     /* Accent = Pink #E86BB0 */
-    --accent: 327 73% 66%;
+    --accent: 327 73% 60%;
     --accent-foreground: 0 0% 100%;
 
     /* ── Status colors ── */
-    --success: 142 60% 45%;
+    --success: 142 60% 38%;
     --success-foreground: 0 0% 100%;
-    --warning: 65 85% 65%;                  /* Neon Yellow #E6F25A */
-    --warning-foreground: 0 0% 0%;
-    --info: 327 73% 66%;
+    --warning: 38 90% 50%;
+    --warning-foreground: 0 0% 100%;
+    --info: 327 73% 60%;
     --info-foreground: 0 0% 100%;
     --destructive: 10 87% 54%;
     --destructive-foreground: 0 0% 100%;
 
-    /* ── Legacy aliases — remapped to locked palette ── */
+    /* ── Legacy aliases — remapped ── */
     --coral: 10 87% 54%;
     --coral-foreground: 0 0% 100%;
     --pale-pink: 327 73% 88%;
-    --pale-pink-foreground: 0 0% 4%;
-    --medium-blue: 327 73% 66%;
+    --pale-pink-foreground: 24 18% 14%;
+    --medium-blue: 327 73% 60%;
     --medium-blue-foreground: 0 0% 100%;
-    --olive: 65 85% 65%;
-    --olive-foreground: 0 0% 0%;
-    --light-lime: 65 85% 65%;
-    --light-lime-foreground: 0 0% 0%;
-    --ticker: 65 85% 65%;
-    --ticker-foreground: 0 0% 0%;
-    --gold: 65 85% 65%;
-    --gold-foreground: 0 0% 0%;
+    --olive: 65 50% 45%;
+    --olive-foreground: 0 0% 100%;
+    --light-lime: 65 60% 55%;
+    --light-lime-foreground: 24 18% 14%;
+    --ticker: 38 90% 50%;
+    --ticker-foreground: 0 0% 100%;
+    --gold: 38 90% 50%;
+    --gold-foreground: 0 0% 100%;
     --terracotta: 10 87% 54%;
     --terracotta-foreground: 0 0% 100%;
-    --warm-beige: 0 0% 6%;
-    --warm-beige-foreground: 60 17% 96%;
-    --hot-pink: 327 73% 66%;                /* Pink #E86BB0 */
+    --warm-beige: 38 35% 92%;
+    --warm-beige-foreground: 24 18% 14%;
+    --hot-pink: 327 73% 60%;
     --hot-pink-foreground: 0 0% 100%;
-    --neon: 65 85% 65%;                     /* Neon Yellow #E6F25A */
-    --neon-foreground: 0 0% 0%;
+    --neon: 38 90% 50%;
+    --neon-foreground: 0 0% 100%;
 
     /* ── Chrome ── */
-    --border: 0 0% 14%;
-    --input: 0 0% 12%;
+    --border: 30 20% 82%;
+    --input: 38 30% 90%;
     --ring: 10 87% 54%;
 
     /* Radii — one pill, one card */
@@ -102,10 +102,10 @@
     --radius-xl: 1.75rem;
 
 
-    --shadow-sm: 0 2px 8px 0 rgba(0, 0, 0, 0.4);
-    --shadow-md: 0 4px 20px -2px rgba(0, 0, 0, 0.5);
-    --shadow-lg: 0 12px 32px -4px rgba(0, 0, 0, 0.6);
-    --shadow-glow: 0 0 32px rgba(240, 78, 35, 0.35);
+    --shadow-sm: 0 2px 8px 0 rgba(60, 40, 20, 0.08);
+    --shadow-md: 0 4px 20px -2px rgba(60, 40, 20, 0.12);
+    --shadow-lg: 0 12px 32px -4px rgba(60, 40, 20, 0.16);
+    --shadow-glow: 0 0 32px rgba(240, 78, 35, 0.25);
 
     --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
     --transition-normal: 300ms cubic-bezier(0.4, 0, 0.2, 1);
