@@ -170,7 +170,7 @@ const Index = () => {
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center relative">
           <div className="lg:col-span-7">
             <div className="flex flex-wrap items-center gap-2 mb-6">
-              <span style={{ background: "transparent", color: C.text, border: `1px solid ${C.borderStrong}`, fontFamily: fonts.mono, fontSize: 10, letterSpacing: "0.22em", textTransform: "uppercase", padding: "6px 12px", borderRadius: 999 }}>
+              <span style={{ background: "transparent", color: "#1A1A1A", border: `1px solid #E8E3DC`, fontFamily: fonts.mono, fontSize: 10, letterSpacing: "0.22em", textTransform: "uppercase", padding: "6px 12px", borderRadius: 999 }}>
                 Built in LA
               </span>
               <span style={{ background: C.pink, color: "#fff", fontFamily: fonts.mono, fontSize: 10, letterSpacing: "0.22em", textTransform: "uppercase", padding: "6px 12px", borderRadius: 999, fontWeight: 600 }}>
@@ -179,7 +179,7 @@ const Index = () => {
             </div>
 
             <h1 className="mt-2" style={{ lineHeight: 0.92, letterSpacing: "-0.02em" }}>
-              <span style={{ fontFamily: "'Anton', Impact, sans-serif", fontWeight: 400, fontSize: "clamp(52px, 9vw, 120px)", textTransform: "uppercase", color: C.text, display: "block" }}>
+              <span style={{ fontFamily: "'Anton', Impact, sans-serif", fontWeight: 400, fontSize: "clamp(52px, 9vw, 120px)", textTransform: "uppercase", color: "#1A1A1A", display: "block" }}>
                 Her Game.
               </span>
               <span
@@ -187,17 +187,17 @@ const Index = () => {
                   fontFamily: "'Anton', Impact, sans-serif", fontWeight: 400,
                   fontSize: "clamp(52px, 9vw, 120px)", textTransform: "uppercase",
                   display: "block",
-                  background: `linear-gradient(95deg, ${C.raspberry} 0%, ${C.pink} 60%, ${C.neon} 100%)`,
-                  WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent",
+                  color: "#E85D2F",
                 }}
               >
                 HER COMMUNITY.
               </span>
             </h1>
 
-            <p className="mt-6 max-w-xl" style={{ color: C.muted, fontSize: "clamp(16px, 1.5vw, 19px)", lineHeight: 1.6 }}>
+            <p className="mt-6 max-w-xl" style={{ color: "#1A1A1A", fontSize: "clamp(16px, 1.5vw, 19px)", lineHeight: 1.6 }}>
               Loverball brings together events, members, stories, and culture for women who love sports.
             </p>
+
 
             <div className="mt-10 flex flex-wrap gap-3 items-center">
                <PrimaryCTA onClick={goJoin}>JOIN US!</PrimaryCTA>
