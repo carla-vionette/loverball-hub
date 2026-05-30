@@ -59,7 +59,7 @@ const BottomNav = () => {
           const Icon = item.icon;
           const isActive = item.matches.some(m => pathname === m || (m.endsWith("/") && pathname.startsWith(m)));
           const showBadge = item.label === "Club" && badgeCount > 0;
-          const color = isActive ? "#F04E23" : "#9E9E9E";
+          const color = isActive ? "#E85D2F" : "#9E9E9E";
           return (
             <Link
               key={item.path}
@@ -74,7 +74,7 @@ const BottomNav = () => {
                 {showBadge && (
                   <span
                     className="absolute -top-1.5 -right-2.5 text-[9px] font-bold rounded-full min-w-[16px] h-4 flex items-center justify-center px-1"
-                    style={{ background: "#F04E23", color: "#FFFFFF" }}
+                    style={{ background: "#E85D2F", color: "#FFFFFF" }}
                   >
                     {badgeCount > 99 ? "99+" : badgeCount}
                   </span>

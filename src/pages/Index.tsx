@@ -19,7 +19,7 @@ const C = {
   surfaceHi: "#1F1F1F",
   text: "#FAF5E9",
   muted: "#B8B8B8",
-  raspberry: "#F04E23",   // Vermilion (primary)
+  raspberry: "#E85D2F",   // Vermilion (primary)
   pink: "#E86BB0",        // Hot Pink (accent)
   neon: "#FFFFFF",        // Neon Yellow (highlight)
   gold: "#FFFFFF",        // legacy alias → Neon Yellow
@@ -258,7 +258,7 @@ const Index = () => {
               >
                 <img src={heroImage} alt="Women sports fans at a Loverball watch party" className="w-full h-full object-cover" />
 
-                <div className="absolute top-4 left-4 flex items-center gap-1.5" style={{ background: C.raspberry, color: "#fff", borderRadius: 999, padding: "6px 12px", fontFamily: fonts.mono, fontSize: 10, letterSpacing: "0.22em", textTransform: "uppercase", fontWeight: 700, boxShadow: "0 8px 24px -8px rgba(240,78,35,0.7)" }}>
+                <div className="absolute top-4 left-4 flex items-center gap-1.5" style={{ background: C.raspberry, color: "#fff", borderRadius: 999, padding: "6px 12px", fontFamily: fonts.mono, fontSize: 10, letterSpacing: "0.22em", textTransform: "uppercase", fontWeight: 700, boxShadow: "0 8px 24px -8px rgba(232,93,47,0.7)" }}>
                   <span className="inline-block w-1.5 h-1.5 rounded-full bg-white animate-pulse" /> Your Team
                 </div>
                 <div className="absolute bottom-5 left-5 right-5 flex items-center justify-between">
