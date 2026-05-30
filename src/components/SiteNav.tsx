@@ -75,8 +75,8 @@ const SiteNav = () => {
       aria-label="Primary"
       style={{
         zIndex: 100,
-        background: "#0B0B0B",
-        borderBottom: `1px solid #E86BB0`,
+        background: "#FFFFFF",
+        borderBottom: `1px solid #E8E3DC`,
       }}
     >
       <div className="max-w-7xl mx-auto px-5 md:px-10 py-4 flex items-center justify-between gap-6">
