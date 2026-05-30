@@ -150,7 +150,7 @@ const StoriesSection = () => {
           <div style={{ color: C.raspberry, fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.18em", textTransform: "uppercase" }}>
             Stories
           </div>
-          <h2 className="mt-3" style={{ fontFamily: "'Oswald', Impact, sans-serif", fontSize: "clamp(36px, 5vw, 64px)", lineHeight: 0.95, color: C.text, textTransform: "uppercase", letterSpacing: "-0.01em" }}>
+          <h2 className="mt-3" style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: "clamp(36px, 5vw, 64px)", lineHeight: 0.95, color: C.text, textTransform: "uppercase", letterSpacing: "-0.01em" }}>
             The read.
           </h2>
         </div>
@@ -169,7 +169,7 @@ const StoriesSection = () => {
               </span>
 
               <a href={s.source_url || "#"} target={s.source_url ? "_blank" : undefined} rel="noreferrer" className="mt-3 hover:opacity-90 transition-opacity">
-                <h3 className="line-clamp-3" style={{ fontFamily: "'Oswald', Impact, sans-serif", fontSize: 26, lineHeight: 1.1, color: C.text, fontWeight: 700 }}>
+                <h3 className="line-clamp-3" style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: 26, lineHeight: 1.1, color: C.text, fontWeight: 700 }}>
                   {s.title}
                 </h3>
               </a>

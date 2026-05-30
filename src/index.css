@@ -144,8 +144,8 @@
    Heading default = Anton (matches homepage "Her Game. HER COMMUNITY.")
    ============================================================ */
 :root {
-  --font-heading: 'Anton', Impact, 'Oswald', sans-serif;
-  --font-display: 'Anton', Impact, 'Oswald', sans-serif;
+  --font-heading: 'Anton', Impact, 'Anton', Impact, sans-serif;
+  --font-display: 'Anton', Impact, 'Anton', Impact, sans-serif;
   --font-body: 'Inter', 'Poppins', system-ui, sans-serif;
   --font-serif: 'Playfair Display', Georgia, serif;
   --font-script: 'Great Vibes', 'Pacifico', cursive;
@@ -311,7 +311,7 @@
 
   /* — Stats & section labels — */
   .lb-stat {
-    font-family: 'Anton', 'Oswald', Impact, sans-serif;
+    font-family: 'Anton', 'Anton', Impact, sans-serif;
     color: hsl(var(--warning));               /* neon yellow for stats */
     @apply text-4xl leading-none;
     letter-spacing: 0.01em;
