@@ -75,8 +75,8 @@ const SiteNav = () => {
       aria-label="Primary"
       style={{
         zIndex: 100,
-        background: "#0B0B0B",
-        borderBottom: `1px solid #E86BB0`,
+        background: "#FFFFFF",
+        borderBottom: `1px solid #E8E3DC`,
       }}
     >
       <div className="max-w-7xl mx-auto px-5 md:px-10 py-4 flex items-center justify-between gap-6">
@@ -92,8 +92,8 @@ const SiteNav = () => {
                 key={label}
                 to={to}
                 aria-current={active ? "page" : undefined}
-                style={{ ...linkStyle, color: active ? "#FFFFFF" : "#E86BB0" }}
-                className="transition-colors hover:!text-[#FFFFFF]"
+                style={{ ...linkStyle, color: active ? "#E85D2F" : "#1A1A1A" }}
+                className="transition-colors hover:!text-[#E85D2F]"
               >
                 {label}
               </Link>
@@ -105,19 +105,19 @@ const SiteNav = () => {
           {user ? (
             <>
               <NotificationBell />
-              <Link to="/profile" style={{ ...linkStyle, color: "#E86BB0" }} className="transition-colors hover:!text-[#FFFFFF]">
+              <Link to="/profile" style={{ ...linkStyle, color: "#1A1A1A" }} className="transition-colors hover:!text-[#E85D2F]">
                 Profile
               </Link>
-              <Link to="/feed" style={{ ...pillStyle, background: "#F04E23", color: "#FFFFFF" }}>
+              <Link to="/feed" style={{ ...pillStyle, background: "#E85D2F", color: "#FFFFFF" }}>
                 Open App
               </Link>
             </>
           ) : (
             <>
-              <button onClick={goSignIn} style={{ ...linkStyle, color: "#E86BB0" }} className="transition-colors hover:!text-[#FFFFFF]">
+              <button onClick={goSignIn} style={{ ...linkStyle, color: "#1A1A1A" }} className="transition-colors hover:!text-[#E85D2F]">
                 Sign in
               </button>
-              <button onClick={goJoin} style={{ ...pillStyle, background: "#F04E23", color: "#FFFFFF" }}>
+              <button onClick={goJoin} style={{ ...pillStyle, background: "#E85D2F", color: "#FFFFFF" }}>
                 JOIN US!
               </button>
             </>
@@ -131,7 +131,7 @@ const SiteNav = () => {
           onClick={() => setMobileOpen((v) => !v)}
           aria-label="Toggle menu"
           aria-expanded={mobileOpen}
-          style={{ color: C.text }}
+          style={{ color: "#1A1A1A" }}
         >
           {mobileOpen ? <X size={22} /> : <Menu size={22} />}
         </button>
@@ -140,14 +140,14 @@ const SiteNav = () => {
       {mobileOpen && (
         <div
           className="md:hidden px-5 pb-5 pt-3 flex flex-col gap-4"
-          style={{ borderTop: `0.5px solid ${C.border}` }}
+          style={{ borderTop: `0.5px solid #E8E3DC`, background: "#FFFFFF" }}
         >
           {navItems.map(([label, to]) => (
             <Link
               key={label}
               to={to}
               onClick={() => setMobileOpen(false)}
-              style={{ ...linkStyle, color: isActive(to) ? "#FFFFFF" : C.muted, fontSize: 12 }}
+              style={{ ...linkStyle, color: isActive(to) ? "#E85D2F" : "#1A1A1A", fontSize: 12 }}
             >
               {label}
             </Link>
@@ -158,7 +158,7 @@ const SiteNav = () => {
                 to="/feed"
                 onClick={() => setMobileOpen(false)}
                 className="flex-1 text-center"
-                style={{ ...pillStyle, background: C.raspberry, color: "#fff" }}
+                style={{ ...pillStyle, background: "#E85D2F", color: "#FFFFFF" }}
               >
                 Open App
               </Link>
@@ -167,14 +167,14 @@ const SiteNav = () => {
                 <button
                   onClick={() => { setMobileOpen(false); goSignIn(); }}
                   className="flex-1"
-                  style={{ ...pillStyle, background: "transparent", color: C.text, border: `1px solid ${C.borderStrong}` }}
+                  style={{ ...pillStyle, background: "transparent", color: "#1A1A1A", border: `1px solid #E8E3DC` }}
                 >
                   Sign in
                 </button>
                 <button
                   onClick={() => { setMobileOpen(false); goJoin(); }}
                   className="flex-1"
-                  style={{ ...pillStyle, background: C.raspberry, color: "#fff" }}
+                  style={{ ...pillStyle, background: "#E85D2F", color: "#FFFFFF" }}
                 >
                   JOIN US!
                 </button>
