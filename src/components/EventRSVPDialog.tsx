@@ -316,7 +316,7 @@ const EventRSVPDialog = ({
                   <div
                     className="text-sm rounded-md px-3 py-2"
                     style={{
-                      background: "rgba(212,83,126,0.08)",
+                      background: "rgba(232,93,47,0.08)",
                       color: C.raspberry,
                       border: `1px solid ${C.raspberry}33`,
                     }}

@@ -51,7 +51,7 @@ const PrimaryCTA = ({ children, onClick, full = false }: { children: React.React
       background: C.raspberry, color: "#fff",
       fontFamily: fonts.mono, fontSize: 12, letterSpacing: "0.16em", textTransform: "uppercase",
       padding: "16px 28px", borderRadius: 999, fontWeight: 500,
-      boxShadow: "0 10px 28px -12px rgba(212,83,126,0.6)",
+      boxShadow: "0 10px 28px -12px rgba(232,93,47,0.6)",
       width: full ? "100%" : undefined,
       transition: "transform 160ms ease, opacity 160ms ease",
     }}

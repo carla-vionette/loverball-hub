@@ -262,14 +262,14 @@ const Profile = () => {
                 {/* Hero photo */}
                 <div
                   className="relative w-full"
-                  style={{ height: "min(320px, 40vh)", background: "#0F0F10" }}
+                  style={{ height: "min(320px, 40vh)", background: "#0a0a0a" }}
                 >
                   {profile.profile_photo_url ? (
                     <img
                       src={profile.profile_photo_url}
                       alt={profile.name}
                       className="w-full h-full object-contain"
-                      style={{ filter: "saturate(0.95) contrast(1.04)", background: "#0F0F10" }}
+                      style={{ filter: "saturate(0.95) contrast(1.04)", background: "#0a0a0a" }}
                     />
                   ) : (
                     <div

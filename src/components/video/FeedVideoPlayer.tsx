@@ -226,7 +226,7 @@ const FeedVideoPlayer = ({ video, isActive, isMuted, onToggleMute }: FeedVideoPl
           style={{ background: "rgba(20,20,21,0.55)", border: "1px solid rgba(255,255,255,0.1)", backdropFilter: "blur(10px)" }}
           aria-label={isMuted ? "Unmute" : "Mute"}
         >
-          {isMuted ? <VolumeX className="w-4 h-4" style={{ color: "#F8F8F8" }} /> : <Volume2 className="w-4 h-4" style={{ color: "#F8F8F8" }} />}
+          {isMuted ? <VolumeX className="w-4 h-4" style={{ color: "#FAF5E9" }} /> : <Volume2 className="w-4 h-4" style={{ color: "#FAF5E9" }} />}
         </button>
       </div>
 
@@ -278,28 +278,28 @@ const FeedVideoPlayer = ({ video, isActive, isMuted, onToggleMute }: FeedVideoPl
         {[
           {
             key: "like",
-            icon: <Heart className="w-[22px] h-[22px]" fill={liked ? "currentColor" : "none"} strokeWidth={1.75} style={{ color: liked ? "#E85D2F" : "#F8F8F8" }} />,
+            icon: <Heart className="w-[22px] h-[22px]" fill={liked ? "currentColor" : "none"} strokeWidth={1.75} style={{ color: liked ? "#E85D2F" : "#FAF5E9" }} />,
             count: likeCount,
             onClick: handleLike,
             label: liked ? "Unlike" : "Like",
           },
           {
             key: "comment",
-            icon: <MessageCircle className="w-[22px] h-[22px]" strokeWidth={1.75} style={{ color: "#F8F8F8" }} />,
+            icon: <MessageCircle className="w-[22px] h-[22px]" strokeWidth={1.75} style={{ color: "#FAF5E9" }} />,
             count: commentCount + comments.length,
             onClick: () => setShowComments(!showComments),
             label: "Comments",
           },
           {
             key: "bookmark",
-            icon: <Bookmark className="w-[22px] h-[22px]" fill={bookmarked ? "currentColor" : "none"} strokeWidth={1.75} style={{ color: bookmarked ? "#E85D2F" : "#F8F8F8" }} />,
+            icon: <Bookmark className="w-[22px] h-[22px]" fill={bookmarked ? "currentColor" : "none"} strokeWidth={1.75} style={{ color: bookmarked ? "#E85D2F" : "#FAF5E9" }} />,
             count: bookmarkCount,
             onClick: () => setBookmarked(!bookmarked),
             label: bookmarked ? "Remove bookmark" : "Bookmark",
           },
           {
             key: "share",
-            icon: <Share2 className="w-[22px] h-[22px]" strokeWidth={1.75} style={{ color: "#F8F8F8" }} />,
+            icon: <Share2 className="w-[22px] h-[22px]" strokeWidth={1.75} style={{ color: "#FAF5E9" }} />,
             count: shareCount,
             onClick: handleShare,
             label: "Share",
@@ -374,7 +374,7 @@ const FeedVideoPlayer = ({ video, isActive, isMuted, onToggleMute }: FeedVideoPl
               fontSize: 22,
               lineHeight: 1.0,
               letterSpacing: "0.005em",
-              color: "#F8F8F8",
+              color: "#FAF5E9",
               textTransform: "uppercase",
               textShadow: "0 2px 8px rgba(0,0,0,0.6)",
               margin: 0,
@@ -444,7 +444,7 @@ const FeedVideoPlayer = ({ video, isActive, isMuted, onToggleMute }: FeedVideoPl
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between px-5 py-3.5" style={{ borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
-              <span style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: 16, letterSpacing: "0.04em", color: "#F8F8F8", textTransform: "uppercase" }}>
+              <span style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: 16, letterSpacing: "0.04em", color: "#FAF5E9", textTransform: "uppercase" }}>
                 Comments · {formatCount(commentCount + comments.length)}
               </span>
               <button onClick={() => setShowComments(false)} aria-label="Close comments"><X className="w-5 h-5" style={{ color: "rgba(248,248,248,0.55)" }} /></button>
@@ -473,7 +473,7 @@ const FeedVideoPlayer = ({ video, isActive, isMuted, onToggleMute }: FeedVideoPl
                 onChange={(e) => setCommentText(e.target.value)}
                 onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); handleSubmitComment(); } }}
                 className="flex-1 rounded-full px-4 py-2 outline-none"
-                style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.08)", color: "#F8F8F8", fontFamily: "'Inter', system-ui, sans-serif", fontSize: 13 }}
+                style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.08)", color: "#FAF5E9", fontFamily: "'Inter', system-ui, sans-serif", fontSize: 13 }}
                 onClick={(e) => e.stopPropagation()}
               />
               <button onClick={(e) => { e.stopPropagation(); handleSubmitComment(); }} aria-label="Send comment">

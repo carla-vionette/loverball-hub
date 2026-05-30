@@ -67,7 +67,7 @@ const EditorialBtn = ({
       background: C.raspberry,
       color: "#fff",
       border: "none",
-      boxShadow: "0 8px 24px -10px rgba(212,83,126,0.55)",
+      boxShadow: "0 8px 24px -10px rgba(232,93,47,0.55)",
       cursor: disabled || loading ? "not-allowed" : "pointer",
       opacity: disabled || loading ? 0.6 : 1,
       transition: "all 180ms ease",
