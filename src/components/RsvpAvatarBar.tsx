@@ -56,8 +56,8 @@ const RsvpAvatarBar: React.FC<RsvpAvatarBarProps> = ({
           style={{
             width: avatarSize,
             height: avatarSize,
-            background: "rgba(240,78,35,0.12)",
-            border: "1.5px dashed rgba(240,78,35,0.35)",
+            background: "rgba(232,93,47,0.12)",
+            border: "1.5px dashed rgba(232,93,47,0.35)",
           }}
         >
           <span
@@ -65,7 +65,7 @@ const RsvpAvatarBar: React.FC<RsvpAvatarBarProps> = ({
               fontFamily: "'Inter', system-ui, sans-serif",
               fontSize: fallbackSize,
               fontWeight: 700,
-              color: "rgba(240,78,35,0.65)",
+              color: "rgba(232,93,47,0.65)",
             }}
           >
             +
@@ -123,13 +123,13 @@ const RsvpAvatarBar: React.FC<RsvpAvatarBarProps> = ({
                       style={{
                         background:
                           idx % 3 === 0
-                            ? "rgba(240,78,35,0.18)"
+                            ? "rgba(232,93,47,0.18)"
                             : idx % 3 === 1
                             ? "rgba(232,107,176,0.18)"
                             : "rgba(230,242,90,0.14)",
                         color:
                           idx % 3 === 0
-                            ? "#F04E23"
+                            ? "#E85D2F"
                             : idx % 3 === 1
                             ? "#E86BB0"
                             : "#C8D94E",
@@ -181,7 +181,7 @@ const RsvpAvatarBar: React.FC<RsvpAvatarBarProps> = ({
                 height: avatarSize,
                 marginLeft: overlap,
                 zIndex: 0,
-                background: "rgba(240,78,35,0.12)",
+                background: "rgba(232,93,47,0.12)",
                 border: `${strokeWidth}px solid #1A1A1C`,
               }}
             >
@@ -190,7 +190,7 @@ const RsvpAvatarBar: React.FC<RsvpAvatarBarProps> = ({
                   fontFamily: "'Space Mono', ui-monospace, monospace",
                   fontSize: size === "sm" ? 9 : 10,
                   fontWeight: 700,
-                  color: "#F04E23",
+                  color: "#E85D2F",
                   letterSpacing: "0.02em",
                 }}
               >

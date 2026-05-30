@@ -64,7 +64,7 @@ const variantMap: Record<string, EventVariant> = {
 };
 const getVariant = (t?: string | null): EventVariant => (t && variantMap[t]) || "cultural";
 const eventTheme: Record<EventVariant, { accent: string; label: string }> = {
-  external: { accent: "#F04E23", label: "Broadcast" },
+  external: { accent: "#E85D2F", label: "Broadcast" },
   hosted:   { accent: "#E86BB0", label: "Hosted" },
   cultural: { accent: "#F8F8F8", label: "Cultural" },
 };
@@ -343,7 +343,7 @@ const Events = () => {
                 onClick={() => setTab(t.k)}
                 className="px-5 py-2 rounded-full transition-all"
                 style={{
-                  background: tab === t.k ? "#F04E23" : "transparent",
+                  background: tab === t.k ? "#E85D2F" : "transparent",
                   color: tab === t.k ? "#FFFFFF" : "rgba(248,248,248,0.6)",
                   fontFamily: "'Inter', system-ui, sans-serif",
                   fontWeight: 700,
@@ -430,7 +430,7 @@ const Events = () => {
                     <div className="flex items-center gap-2 mt-5">
                       <Button
                         className="rounded-full h-11 px-6"
-                        style={{ background: "#F04E23", color: "#fff", fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 700, fontSize: 12, letterSpacing: "0.1em", textTransform: "uppercase" }}
+                        style={{ background: "#E85D2F", color: "#fff", fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 700, fontSize: 12, letterSpacing: "0.1em", textTransform: "uppercase" }}
                         onClick={e => { e.stopPropagation(); requestRsvp(featured.id); }}
                       >
                         {user ? "RSVP Now" : "Sign Up to RSVP"}
@@ -481,8 +481,8 @@ const Events = () => {
             <div className="text-center py-20 space-y-4 rounded-3xl"
               style={{ background: "#141415", border: "1px solid rgba(255,255,255,0.08)" }}>
               <div className="w-20 h-20 mx-auto rounded-full flex items-center justify-center"
-                style={{ background: "rgba(240,78,35,0.1)", border: "1px solid rgba(240,78,35,0.25)" }}>
-                <Calendar className="w-9 h-9" style={{ color: "#F04E23" }} />
+                style={{ background: "rgba(232,93,47,0.1)", border: "1px solid rgba(232,93,47,0.25)" }}>
+                <Calendar className="w-9 h-9" style={{ color: "#E85D2F" }} />
               </div>
               <h2 style={{ fontFamily: "'Playfair Display', serif", fontStyle: "italic", fontWeight: 500, fontSize: 28, color: "#FFFFFF", letterSpacing: "-0.02em", margin: 0 }}>
                 {searchQuery.trim()
@@ -606,12 +606,12 @@ const Events = () => {
                               </span>
                               {rsvp ? (
                                 <span className="px-3 py-1 rounded-full capitalize"
-                                  style={{ background: rsvp === "attending" ? "rgba(240,78,35,0.15)" : "rgba(255,255,255,0.06)", color: rsvp === "attending" ? "#F04E23" : "rgba(248,248,248,0.6)", border: rsvp === "attending" ? "1px solid rgba(240,78,35,0.35)" : "1px solid rgba(255,255,255,0.08)", fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 700, fontSize: 10, letterSpacing: "0.08em", textTransform: "uppercase" }}>
+                                  style={{ background: rsvp === "attending" ? "rgba(232,93,47,0.15)" : "rgba(255,255,255,0.06)", color: rsvp === "attending" ? "#E85D2F" : "rgba(248,248,248,0.6)", border: rsvp === "attending" ? "1px solid rgba(232,93,47,0.35)" : "1px solid rgba(255,255,255,0.08)", fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 700, fontSize: 10, letterSpacing: "0.08em", textTransform: "uppercase" }}>
                                   {rsvp === "attending" ? "Going ✓" : rsvp}
                                 </span>
                               ) : (
                                 <Button size="sm" className="rounded-full h-8 px-4"
-                                  style={{ background: "#F04E23", color: "#fff", fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 700, fontSize: 10, letterSpacing: "0.1em", textTransform: "uppercase" }}
+                                  style={{ background: "#E85D2F", color: "#fff", fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 700, fontSize: 10, letterSpacing: "0.1em", textTransform: "uppercase" }}
                                   onClick={e => { e.stopPropagation(); setRsvpId(ev.id); }}>
                                   RSVP
                                 </Button>
@@ -624,7 +624,7 @@ const Events = () => {
                               Sign up to see who's going
                             </p>
                             <Button size="sm" className="rounded-full h-8 px-4"
-                              style={{ background: "transparent", color: "#F04E23", border: "1px solid rgba(240,78,35,0.4)", fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 700, fontSize: 10, letterSpacing: "0.1em", textTransform: "uppercase" }}
+                              style={{ background: "transparent", color: "#E85D2F", border: "1px solid rgba(232,93,47,0.4)", fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 700, fontSize: 10, letterSpacing: "0.1em", textTransform: "uppercase" }}
                               onClick={e => { e.stopPropagation(); openGate(ev.id); }}>
                               Unlock
                             </Button>
@@ -682,7 +682,7 @@ const Events = () => {
                   {typeof navigator.share === "function" && (
                     <Button
                       className="flex-1 h-11 rounded-full"
-                      style={{ background: "#F04E23", color: "#fff", fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: 12, letterSpacing: "0.12em", textTransform: "uppercase" }}
+                      style={{ background: "#E85D2F", color: "#fff", fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: 12, letterSpacing: "0.12em", textTransform: "uppercase" }}
                       onClick={handleNativeShare}
                     >
                       <Share2 className="w-4 h-4 mr-2" /> Share
@@ -716,7 +716,7 @@ const Events = () => {
             </DialogHeader>
             <div className="space-y-2.5 pt-3">
               <Button className="w-full rounded-full h-11"
-                style={{ background: "#F04E23", color: "#fff", fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: 12, letterSpacing: "0.12em", textTransform: "uppercase" }}
+                style={{ background: "#E85D2F", color: "#fff", fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: 12, letterSpacing: "0.12em", textTransform: "uppercase" }}
                 onClick={() => handleRsvp("attending")}>Going</Button>
               <Button className="w-full rounded-full h-11"
                 style={{ background: "transparent", color: "#F8F8F8", border: "1px solid rgba(255,255,255,0.12)", fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: 12, letterSpacing: "0.12em", textTransform: "uppercase" }}

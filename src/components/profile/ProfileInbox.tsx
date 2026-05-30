@@ -44,7 +44,7 @@ interface ActivityItem {
 
 const PANEL = "#161616";
 const BORDER = "1px solid rgba(250, 245, 233, 0.08)";
-const PINK = "#F04E23";
+const PINK = "#E85D2F";
 
 const timeAgo = (iso: string | null) => {
   if (!iso) return "";
@@ -275,7 +275,7 @@ export default function ProfileInbox() {
                   className="flex items-start gap-3 px-3 py-1.5 cursor-pointer transition-colors hover:bg-white/[0.03]"
                   style={{ borderTop: i === 0 ? "none" : BORDER }}
                 >
-                  <div className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: "rgba(240,78,35,0.12)", color: PINK }}>
+                  <div className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: "rgba(232,93,47,0.12)", color: PINK }}>
                     <Bell size={14} />
                   </div>
                   <div className="flex-1 min-w-0">
@@ -387,7 +387,7 @@ export default function ProfileInbox() {
                     <p className="text-[12px] truncate mt-0.5" style={{ color: "rgba(250,245,233,0.55)" }}>{f.city || "—"}</p>
                   </div>
                   {f.pending ? (
-                    <span className="text-[10px] uppercase px-2 py-0.5 rounded-full" style={{ background: "rgba(240,78,35,0.15)", color: PINK, fontFamily: "'Space Mono', monospace", letterSpacing: "0.1em" }}>
+                    <span className="text-[10px] uppercase px-2 py-0.5 rounded-full" style={{ background: "rgba(232,93,47,0.15)", color: PINK, fontFamily: "'Space Mono', monospace", letterSpacing: "0.1em" }}>
                       {f.incoming ? "Requested" : "Pending"}
                     </span>
                   ) : (
@@ -424,7 +424,7 @@ export default function ProfileInbox() {
                   className="flex items-start gap-3 px-3 py-1.5 cursor-pointer transition-colors hover:bg-white/[0.03]"
                   style={{ borderTop: i === 0 ? "none" : BORDER }}
                 >
-                  <div className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: "rgba(240,78,35,0.12)", color: PINK }}>
+                  <div className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: "rgba(232,93,47,0.12)", color: PINK }}>
                     <Activity size={14} />
                   </div>
                   <div className="flex-1 min-w-0">

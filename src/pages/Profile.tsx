@@ -224,7 +224,7 @@ const Profile = () => {
   // Homepage palette (matches src/pages/Index.tsx)
   const BG = "#0a0a0a";
   const TEXT = "#FAF5E9";
-  const PINK = "#F04E23";        // Vermilion (homepage primary)
+  const PINK = "#E85D2F";        // Vermilion (homepage primary)
   const PANEL = "#161616";       // Homepage surface
   const PANEL_BORDER = "1px solid rgba(250, 245, 233, 0.08)";
 
@@ -525,7 +525,7 @@ const Profile = () => {
                                 </p>
                               </div>
                               <span className="text-[9px] uppercase px-2 py-0.5 rounded-full shrink-0"
-                                style={{ background: r.status === "going" || r.status === "attended" ? "rgba(240,78,35,0.18)" : "rgba(255,255,255,0.06)", color: r.status === "going" || r.status === "attended" ? PINK : "rgba(250,245,233,0.6)", fontFamily: "'Space Mono', monospace", letterSpacing: "0.12em" }}>
+                                style={{ background: r.status === "going" || r.status === "attended" ? "rgba(232,93,47,0.18)" : "rgba(255,255,255,0.06)", color: r.status === "going" || r.status === "attended" ? PINK : "rgba(250,245,233,0.6)", fontFamily: "'Space Mono', monospace", letterSpacing: "0.12em" }}>
                                 {r.status}
                               </span>
                               <ChevronRight className="w-3.5 h-3.5 shrink-0" style={{ color: "rgba(250,245,233,0.35)" }} />

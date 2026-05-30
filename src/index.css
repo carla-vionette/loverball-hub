@@ -38,7 +38,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 10%;
 
-    /* Primary = Orange #F04E23 */
+    /* Primary = Orange #E85D2F */
     --primary: 15 80% 55%;
     --primary-foreground: 0 0% 100%;
 
@@ -49,7 +49,7 @@
     --muted-foreground: 0 0% 42%;
 
     /* Accent = Pink #E86BB0 */
-    --accent: 327 73% 60%;
+    --accent: 15 80% 55%;
     --accent-foreground: 0 0% 100%;
 
     /* ── Status colors ── */
@@ -57,7 +57,7 @@
     --success-foreground: 0 0% 100%;
     --warning: 7 51% 65%;
     --warning-foreground: 0 0% 100%;
-    --info: 327 73% 60%;
+    --info: 15 80% 55%;
     --info-foreground: 0 0% 100%;
     --destructive: 15 80% 55%;
     --destructive-foreground: 0 0% 100%;
@@ -65,9 +65,9 @@
     /* ── Legacy aliases — remapped ── */
     --coral: 15 80% 55%;
     --coral-foreground: 0 0% 100%;
-    --pale-pink: 327 73% 88%;
+    --pale-pink: 15 80% 88%;
     --pale-pink-foreground: 0 0% 10%;
-    --medium-blue: 327 73% 60%;
+    --medium-blue: 15 80% 55%;
     --medium-blue-foreground: 0 0% 100%;
     --olive: 7 51% 65%;
     --olive-foreground: 0 0% 100%;
@@ -81,7 +81,7 @@
     --terracotta-foreground: 0 0% 100%;
     --warm-beige: 38 35% 92%;
     --warm-beige-foreground: 0 0% 10%;
-    --hot-pink: 327 73% 60%;
+    --hot-pink: 15 80% 55%;
     --hot-pink-foreground: 0 0% 100%;
     --neon: 7 51% 65%;
     --neon-foreground: 0 0% 100%;
@@ -105,14 +105,14 @@
     --shadow-sm: 0 2px 8px 0 rgba(60, 40, 20, 0.08);
     --shadow-md: 0 4px 20px -2px rgba(60, 40, 20, 0.12);
     --shadow-lg: 0 12px 32px -4px rgba(60, 40, 20, 0.16);
-    --shadow-glow: 0 0 32px rgba(240, 78, 35, 0.25);
+    --shadow-glow: 0 0 32px rgba(232, 93, 47, 0.25);
 
     --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
     --transition-normal: 300ms cubic-bezier(0.4, 0, 0.2, 1);
     --transition-slow: 400ms cubic-bezier(0.4, 0, 0.2, 1);
 
     /* Gradients */
-    --gradient-warm: linear-gradient(135deg, hsl(15 80% 55%), hsl(327 73% 66%));
+    --gradient-warm: linear-gradient(135deg, hsl(15 80% 55%), hsl(15 80% 55%));
     --gradient-sunset: linear-gradient(135deg, hsl(15 80% 55%), hsl(66 84% 65%));
     --gradient-cream: linear-gradient(180deg, hsl(240 6% 4%), hsl(240 3% 8%));
     --gradient-navy: linear-gradient(180deg, hsl(240 6% 4%), hsl(240 4% 11%));
@@ -121,7 +121,7 @@
   .landing-theme {
     --primary: 15 80% 55%;
     --primary-foreground: 0 0% 100%;
-    --accent: 327 73% 66%;
+    --accent: 15 80% 55%;
     --accent-foreground: 0 0% 100%;
   }
 
@@ -628,14 +628,14 @@
   .font-playfair-italic { font-family: 'Playfair Display', serif; font-style: italic; font-weight: 800; }
   .font-inter-mag { font-family: 'Inter', system-ui, sans-serif; }
 
-  .text-raspberry { color: #F04E23; }
+  .text-raspberry { color: #E85D2F; }
   .text-copper { color: #E86BB0; }
   .text-neon { color: #FFFFFF; }
-  .bg-raspberry { background-color: #F04E23; }
+  .bg-raspberry { background-color: #E85D2F; }
   .bg-copper { background-color: #E86BB0; }
   .bg-neon { background-color: #FFFFFF; }
   .border-copper { border-color: #E86BB0; }
-  .border-raspberry { border-color: #F04E23; }
+  .border-raspberry { border-color: #E85D2F; }
   .border-neon { border-color: #FFFFFF; }
 
   .pill-copper {

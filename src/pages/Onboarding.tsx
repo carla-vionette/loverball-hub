@@ -85,7 +85,7 @@ const PrimaryBtn = ({
       background: `linear-gradient(95deg, ${C.raspberry} 0%, ${C.pink} 100%)`,
       color: "#fff", fontFamily: fonts.mono, fontSize: 13,
       letterSpacing: "0.18em", textTransform: "uppercase", fontWeight: 600,
-      boxShadow: "0 10px 30px -10px rgba(240,78,35,0.55)",
+      boxShadow: "0 10px 30px -10px rgba(232,93,47,0.55)",
     }}
   >
     {loading ? <Loader2 className="animate-spin" size={18} /> : children}
