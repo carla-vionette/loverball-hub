@@ -245,7 +245,7 @@ const FeedVideoPlayer = ({ video, isActive, isMuted, onToggleMute }: FeedVideoPl
             aria-label={video.channelName}
             className="w-10 h-12 flex items-center justify-center"
             style={{
-              background: "#E8276F",
+              background: "#E85D2F",
               borderRadius: 6,
               border: "1px solid rgba(255,255,255,0.18)",
               color: "#fff",
@@ -261,7 +261,7 @@ const FeedVideoPlayer = ({ video, isActive, isMuted, onToggleMute }: FeedVideoPl
             <span
               className="absolute -bottom-2 left-1/2 -translate-x-1/2 px-1.5 py-[2px] rounded-sm leading-none"
               style={{
-                background: "#E8276F",
+                background: "#E85D2F",
                 color: "#fff",
                 fontFamily: "'Inter', system-ui, sans-serif",
                 fontWeight: 800,
@@ -278,7 +278,7 @@ const FeedVideoPlayer = ({ video, isActive, isMuted, onToggleMute }: FeedVideoPl
         {[
           {
             key: "like",
-            icon: <Heart className="w-[22px] h-[22px]" fill={liked ? "currentColor" : "none"} strokeWidth={1.75} style={{ color: liked ? "#E8276F" : "#F8F8F8" }} />,
+            icon: <Heart className="w-[22px] h-[22px]" fill={liked ? "currentColor" : "none"} strokeWidth={1.75} style={{ color: liked ? "#E85D2F" : "#F8F8F8" }} />,
             count: likeCount,
             onClick: handleLike,
             label: liked ? "Unlike" : "Like",
@@ -340,9 +340,9 @@ const FeedVideoPlayer = ({ video, isActive, isMuted, onToggleMute }: FeedVideoPl
             <span
               className="px-2 py-[3px] rounded-full"
               style={{
-                background: "rgba(232,39,111,0.14)",
-                border: "1px solid rgba(232,39,111,0.35)",
-                color: "#E8276F",
+                background: "rgba(232,93,47,0.14)",
+                border: "1px solid rgba(232,93,47,0.35)",
+                color: "#E85D2F",
                 fontFamily: "'Inter', system-ui, sans-serif",
                 fontWeight: 700,
                 fontSize: 9,
@@ -457,7 +457,7 @@ const FeedVideoPlayer = ({ video, isActive, isMuted, onToggleMute }: FeedVideoPl
               )}
               {comments.map(c => (
                 <div key={c.id} className="flex gap-2.5">
-                  <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: "rgba(232,39,111,0.18)", color: "#E8276F", fontFamily: "'Anton', Impact, sans-serif", fontSize: 13 }}>Y</div>
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: "rgba(232,93,47,0.18)", color: "#E85D2F", fontFamily: "'Anton', Impact, sans-serif", fontSize: 13 }}>Y</div>
                   <div>
                     <span style={{ fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 700, fontSize: 11, color: "rgba(248,248,248,0.85)", letterSpacing: "0.02em" }}>{c.user}</span>
                     <p style={{ fontFamily: "'Inter', system-ui, sans-serif", fontSize: 13, color: "rgba(248,248,248,0.78)", margin: 0 }}>{c.text}</p>
@@ -477,7 +477,7 @@ const FeedVideoPlayer = ({ video, isActive, isMuted, onToggleMute }: FeedVideoPl
                 onClick={(e) => e.stopPropagation()}
               />
               <button onClick={(e) => { e.stopPropagation(); handleSubmitComment(); }} aria-label="Send comment">
-                <Send className="w-5 h-5" style={{ color: commentText.trim() ? "#E8276F" : "rgba(248,248,248,0.3)" }} />
+                <Send className="w-5 h-5" style={{ color: commentText.trim() ? "#E85D2F" : "rgba(248,248,248,0.3)" }} />
               </button>
             </div>
           </motion.div>
@@ -486,7 +486,7 @@ const FeedVideoPlayer = ({ video, isActive, isMuted, onToggleMute }: FeedVideoPl
 
       {/* Progress bar — hairline raspberry */}
       <div className="absolute bottom-0 left-0 right-0 z-40 h-[2px]" style={{ background: "rgba(255,255,255,0.08)" }}>
-        <div className="h-full transition-[width] duration-100" style={{ width: `${progress}%`, background: "linear-gradient(90deg, #E8276F, #D88C5A)" }} />
+        <div className="h-full transition-[width] duration-100" style={{ width: `${progress}%`, background: "linear-gradient(90deg, #E85D2F, #D88C5A)" }} />
       </div>
     </div>
   );

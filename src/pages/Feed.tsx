@@ -163,7 +163,7 @@ const Feed = () => {
                   fontFamily: "'Space Mono', ui-monospace, monospace",
                   fontSize: 10,
                   letterSpacing: "0.22em",
-                  color: "#E8276F",
+                  color: "#E85D2F",
                   textTransform: "uppercase",
                 }}
               >
@@ -198,7 +198,7 @@ const Feed = () => {
             <a
               href="/"
               aria-label="Back to Loverball home"
-              className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E8276F] rounded md:hidden"
+              className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E85D2F] rounded md:hidden"
             >
               <img
                 src={loverballLogo}
@@ -220,7 +220,7 @@ const Feed = () => {
                     onClick={() => setActiveTab(t.key)}
                     className="px-3 py-1 rounded-full transition-all"
                     style={{
-                      background: active ? "#E8276F" : "transparent",
+                      background: active ? "#E85D2F" : "transparent",
                       color: active ? "#fff" : "rgba(248,248,248,0.65)",
                       fontFamily: "'Inter', system-ui, sans-serif",
                       fontWeight: 700,

@@ -97,7 +97,7 @@ const FeedStoriesPanel = () => {
   if (loading) {
     return (
       <div className="h-full flex items-center justify-center">
-        <div className="w-10 h-10 border-2 border-white/20 border-t-[#E8276F] rounded-full animate-spin" />
+        <div className="w-10 h-10 border-2 border-white/20 border-t-[#E85D2F] rounded-full animate-spin" />
       </div>
     );
   }
@@ -128,7 +128,7 @@ const FeedStoriesPanel = () => {
               <img src={s.image_url!} alt={s.title} loading="lazy" className="w-full h-full object-cover" />
             </a>
             <div className="p-5 md:p-6">
-              <span style={{ color: "#E8276F", fontFamily: "'Space Mono', monospace", fontSize: 10, letterSpacing: "0.18em", textTransform: "uppercase" }}>
+              <span style={{ color: "#E85D2F", fontFamily: "'Space Mono', monospace", fontSize: 10, letterSpacing: "0.18em", textTransform: "uppercase" }}>
                 {tagFor(s.category)}
               </span>
               <a href={s.source_url || "#"} target={s.source_url ? "_blank" : undefined} rel="noreferrer">
@@ -155,9 +155,9 @@ const FeedStoriesPanel = () => {
                       className="inline-flex items-center gap-1.5 transition-all"
                       style={{
                         minHeight: 36, padding: "6px 11px", borderRadius: 999,
-                        background: active ? "#E8276F" : "rgba(255,255,255,0.06)",
+                        background: active ? "#E85D2F" : "rgba(255,255,255,0.06)",
                         color: active ? "#fff" : "rgba(255,255,255,0.85)",
-                        border: `1px solid ${active ? "#E8276F" : "rgba(255,255,255,0.1)"}`,
+                        border: `1px solid ${active ? "#E85D2F" : "rgba(255,255,255,0.1)"}`,
                         fontFamily: "'Space Mono', monospace", fontSize: 11,
                         letterSpacing: "0.04em", textTransform: "uppercase",
                       }}
