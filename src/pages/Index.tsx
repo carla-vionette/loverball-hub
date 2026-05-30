@@ -205,8 +205,8 @@ const Index = () => {
                  to="/auth?mode=signin"
                  style={{
                    background: "transparent",
-                   color: C.text,
-                   border: `1.5px solid rgba(250, 245, 233, 0.35)`,
+                   color: "#1A1A1A",
+                   border: `1.5px solid #1A1A1A`,
                    fontFamily: fonts.mono,
                    fontSize: 12,
                    letterSpacing: "0.16em",
@@ -219,14 +219,14 @@ const Index = () => {
                    justifyContent: "center",
                    gap: 8,
                  }}
-                 className="hover:bg-white/5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4537E] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0a0a]"
+                 className="hover:bg-black/5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E85D2F]"
                >
                  Sign In <ArrowRight size={14} />
                </Link>
                <Link
                  to="/membership"
                  style={{
-                   color: C.text,
+                   color: "#1A1A1A",
                    fontFamily: fonts.mono,
                    fontSize: 12,
                    letterSpacing: "0.16em",
@@ -237,15 +237,16 @@ const Index = () => {
                    gap: 8,
                    padding: "4px 0",
                  }}
-                 className="hover:opacity-80 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4537E] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0a0a]"
+                 className="hover:opacity-70 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E85D2F]"
                >
                  See Membership <ArrowRight size={14} />
                </Link>
             </div>
 
-            <p className="mt-6" style={{ fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.16em", textTransform: "uppercase", color: C.muted }}>
+            <p className="mt-6" style={{ fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.16em", textTransform: "uppercase", color: "#6B6B6B" }}>
               Open membership · A home for women in sports
             </p>
+
           </div>
 
           <div className="lg:col-span-5">
