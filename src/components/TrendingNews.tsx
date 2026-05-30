@@ -27,7 +27,7 @@ const FALLBACK_GRADIENTS: Record<string, string> = {
   football: "from-amber-800 to-white",
   tennis: "from-white to-green-500",
   hockey: "from-blue-500 to-cyan-600",
-  gymnastics: "from-purple-500 to-fuchsia-500",
+  gymnastics: "from-[#E85D2F] to-amber-500",
   default: "from-accent to-primary",
 };
 

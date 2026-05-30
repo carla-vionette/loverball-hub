@@ -38,7 +38,7 @@ interface EventFormFieldsProps {
 
 const themeOptions = [
   { value: 'default', label: 'Default', color: 'bg-primary' },
-  { value: 'valentines', label: 'Valentines', color: 'bg-pink-500' },
+  { value: 'valentines', label: 'Valentines', color: 'bg-[#E85D2F]' },
   { value: 'sports', label: 'Sports', color: 'bg-orange-500' },
   { value: 'elegant', label: 'Elegant', color: 'bg-purple-500' },
   { value: 'summer', label: 'Summer', color: 'bg-cyan-500' },
