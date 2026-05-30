@@ -26,10 +26,10 @@ const SiteAccessGate = ({ children }: { children: ReactNode }) => {
   return (
     <div className="min-h-screen bg-[#FAF7F2] flex items-center justify-center px-6">
       <div className="w-full max-w-sm text-center">
-        <h1 className="text-2xl font-bold tracking-widest uppercase text-white mb-2">
+        <h1 className="text-2xl font-bold tracking-widest uppercase text-[#1A1A1A] mb-2">
           loverball
         </h1>
-        <p className="text-sm text-white/50 mb-8">Enter access code to continue</p>
+        <p className="text-sm text-[#6B6B6B] mb-8">Enter access code to continue</p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
@@ -39,19 +39,20 @@ const SiteAccessGate = ({ children }: { children: ReactNode }) => {
             value={code}
             onChange={(e) => { setCode(e.target.value); setError(false); }}
             placeholder="• • • •"
-            className="w-full text-center text-2xl tracking-[0.5em] bg-white/5 border border-white/10 rounded-xl px-4 py-4 text-white placeholder:text-white/20 focus:outline-none focus:border-white/30 transition-colors"
+            className="w-full text-center text-2xl tracking-[0.5em] bg-white border border-[#E8E3DC] rounded-xl px-4 py-4 text-[#1A1A1A] placeholder:text-[#6B6B6B] focus:outline-none focus:border-[#E85D2F] transition-colors"
             autoFocus
           />
           {error && (
-            <p className="text-red-400 text-xs">Invalid code. Try again.</p>
+            <p className="text-[#E85D2F] text-xs">Invalid code. Try again.</p>
           )}
           <button
             type="submit"
-            className="w-full bg-white text-black font-bold text-sm tracking-widest uppercase py-3.5 rounded-xl hover:bg-white/90 transition-colors"
+            className="w-full bg-[#E85D2F] text-white font-bold text-sm tracking-widest uppercase py-3.5 rounded-xl hover:opacity-90 transition-opacity"
           >
             Enter
           </button>
         </form>
+
       </div>
     </div>
   );
