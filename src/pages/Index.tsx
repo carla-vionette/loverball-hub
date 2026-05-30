@@ -164,9 +164,8 @@ const Index = () => {
       />
 
       {/* ============ HERO ============ */}
-      <section className="pt-32 md:pt-40 pb-20 md:pb-28 px-5 md:px-10 relative overflow-hidden">
-        <div aria-hidden className="absolute -top-20 -left-20 w-[480px] h-[480px] rounded-full pointer-events-none" style={{ background: C.raspberry, opacity: 0.18, filter: "blur(120px)" }} />
-        <div aria-hidden className="absolute top-40 right-0 w-[420px] h-[420px] rounded-full pointer-events-none" style={{ background: C.pink, opacity: 0.18, filter: "blur(140px)" }} />
+      <section className="pt-32 md:pt-40 pb-20 md:pb-28 px-5 md:px-10 relative overflow-hidden" style={{ background: "#FAF7F2", color: "#1A1A1A" }}>
+
 
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center relative">
           <div className="lg:col-span-7">
