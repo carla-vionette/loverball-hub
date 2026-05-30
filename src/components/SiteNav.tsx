@@ -75,7 +75,7 @@ const SiteNav = () => {
       aria-label="Primary"
       style={{
         zIndex: 100,
-        background: "#FFFFFF",
+        background: "#FAF7F2",
         borderBottom: `1px solid #E8E3DC`,
       }}
     >
@@ -140,7 +140,7 @@ const SiteNav = () => {
       {mobileOpen && (
         <div
           className="md:hidden px-5 pb-5 pt-3 flex flex-col gap-4"
-          style={{ borderTop: `0.5px solid #E8E3DC`, background: "#FFFFFF" }}
+          style={{ borderTop: `0.5px solid #E8E3DC`, background: "#FAF7F2" }}
         >
           {navItems.map(([label, to]) => (
             <Link
