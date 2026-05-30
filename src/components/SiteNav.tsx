@@ -131,7 +131,7 @@ const SiteNav = () => {
           onClick={() => setMobileOpen((v) => !v)}
           aria-label="Toggle menu"
           aria-expanded={mobileOpen}
-          style={{ color: C.text }}
+          style={{ color: "#1A1A1A" }}
         >
           {mobileOpen ? <X size={22} /> : <Menu size={22} />}
         </button>
