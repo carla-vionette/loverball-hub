@@ -164,14 +164,13 @@ const Index = () => {
       />
 
       {/* ============ HERO ============ */}
-      <section className="pt-32 md:pt-40 pb-20 md:pb-28 px-5 md:px-10 relative overflow-hidden">
-        <div aria-hidden className="absolute -top-20 -left-20 w-[480px] h-[480px] rounded-full pointer-events-none" style={{ background: C.raspberry, opacity: 0.18, filter: "blur(120px)" }} />
-        <div aria-hidden className="absolute top-40 right-0 w-[420px] h-[420px] rounded-full pointer-events-none" style={{ background: C.pink, opacity: 0.18, filter: "blur(140px)" }} />
+      <section className="pt-32 md:pt-40 pb-20 md:pb-28 px-5 md:px-10 relative overflow-hidden" style={{ background: "#FAF7F2", color: "#1A1A1A" }}>
+
 
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center relative">
           <div className="lg:col-span-7">
             <div className="flex flex-wrap items-center gap-2 mb-6">
-              <span style={{ background: "transparent", color: C.text, border: `1px solid ${C.borderStrong}`, fontFamily: fonts.mono, fontSize: 10, letterSpacing: "0.22em", textTransform: "uppercase", padding: "6px 12px", borderRadius: 999 }}>
+              <span style={{ background: "transparent", color: "#1A1A1A", border: `1px solid #E8E3DC`, fontFamily: fonts.mono, fontSize: 10, letterSpacing: "0.22em", textTransform: "uppercase", padding: "6px 12px", borderRadius: 999 }}>
                 Built in LA
               </span>
               <span style={{ background: C.pink, color: "#fff", fontFamily: fonts.mono, fontSize: 10, letterSpacing: "0.22em", textTransform: "uppercase", padding: "6px 12px", borderRadius: 999, fontWeight: 600 }}>
@@ -180,7 +179,7 @@ const Index = () => {
             </div>
 
             <h1 className="mt-2" style={{ lineHeight: 0.92, letterSpacing: "-0.02em" }}>
-              <span style={{ fontFamily: "'Anton', Impact, sans-serif", fontWeight: 400, fontSize: "clamp(52px, 9vw, 120px)", textTransform: "uppercase", color: C.text, display: "block" }}>
+              <span style={{ fontFamily: "'Anton', Impact, sans-serif", fontWeight: 400, fontSize: "clamp(52px, 9vw, 120px)", textTransform: "uppercase", color: "#1A1A1A", display: "block" }}>
                 Her Game.
               </span>
               <span
@@ -188,17 +187,17 @@ const Index = () => {
                   fontFamily: "'Anton', Impact, sans-serif", fontWeight: 400,
                   fontSize: "clamp(52px, 9vw, 120px)", textTransform: "uppercase",
                   display: "block",
-                  background: `linear-gradient(95deg, ${C.raspberry} 0%, ${C.pink} 60%, ${C.neon} 100%)`,
-                  WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent",
+                  color: "#E85D2F",
                 }}
               >
                 HER COMMUNITY.
               </span>
             </h1>
 
-            <p className="mt-6 max-w-xl" style={{ color: C.muted, fontSize: "clamp(16px, 1.5vw, 19px)", lineHeight: 1.6 }}>
+            <p className="mt-6 max-w-xl" style={{ color: "#1A1A1A", fontSize: "clamp(16px, 1.5vw, 19px)", lineHeight: 1.6 }}>
               Loverball brings together events, members, stories, and culture for women who love sports.
             </p>
+
 
             <div className="mt-10 flex flex-wrap gap-3 items-center">
                <PrimaryCTA onClick={goJoin}>JOIN US!</PrimaryCTA>
@@ -206,8 +205,8 @@ const Index = () => {
                  to="/auth?mode=signin"
                  style={{
                    background: "transparent",
-                   color: C.text,
-                   border: `1.5px solid rgba(250, 245, 233, 0.35)`,
+                   color: "#1A1A1A",
+                   border: `1.5px solid #1A1A1A`,
                    fontFamily: fonts.mono,
                    fontSize: 12,
                    letterSpacing: "0.16em",
@@ -220,14 +219,14 @@ const Index = () => {
                    justifyContent: "center",
                    gap: 8,
                  }}
-                 className="hover:bg-white/5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4537E] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0a0a]"
+                 className="hover:bg-black/5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E85D2F]"
                >
                  Sign In <ArrowRight size={14} />
                </Link>
                <Link
                  to="/membership"
                  style={{
-                   color: C.text,
+                   color: "#1A1A1A",
                    fontFamily: fonts.mono,
                    fontSize: 12,
                    letterSpacing: "0.16em",
@@ -238,15 +237,16 @@ const Index = () => {
                    gap: 8,
                    padding: "4px 0",
                  }}
-                 className="hover:opacity-80 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4537E] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0a0a]"
+                 className="hover:opacity-70 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E85D2F]"
                >
                  See Membership <ArrowRight size={14} />
                </Link>
             </div>
 
-            <p className="mt-6" style={{ fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.16em", textTransform: "uppercase", color: C.muted }}>
+            <p className="mt-6" style={{ fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.16em", textTransform: "uppercase", color: "#6B6B6B" }}>
               Open membership · A home for women in sports
             </p>
+
           </div>
 
           <div className="lg:col-span-5">
@@ -257,7 +257,7 @@ const Index = () => {
                 style={{ borderRadius: 12, aspectRatio: "4/5", background: C.surface, border: `1px solid ${C.borderStrong}` }}
               >
                 <img src={heroImage} alt="Women sports fans at a Loverball watch party" className="w-full h-full object-cover" />
-                <div aria-hidden className="absolute inset-0" style={{ background: "linear-gradient(180deg, transparent 50%, rgba(10,10,10,0.85) 100%)" }} />
+
                 <div className="absolute top-4 left-4 flex items-center gap-1.5" style={{ background: C.raspberry, color: "#fff", borderRadius: 999, padding: "6px 12px", fontFamily: fonts.mono, fontSize: 10, letterSpacing: "0.22em", textTransform: "uppercase", fontWeight: 700, boxShadow: "0 8px 24px -8px rgba(240,78,35,0.7)" }}>
                   <span className="inline-block w-1.5 h-1.5 rounded-full bg-white animate-pulse" /> Your Team
                 </div>
