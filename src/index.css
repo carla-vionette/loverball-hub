@@ -388,7 +388,7 @@
   }
 
   .section-number {
-    font-family: 'Oswald', 'Impact', sans-serif;
+    font-family: 'Anton', 'Impact', sans-serif;
     @apply text-8xl text-primary/10 leading-none;
   }
 
