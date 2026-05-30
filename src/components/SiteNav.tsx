@@ -75,7 +75,7 @@ const SiteNav = () => {
       aria-label="Primary"
       style={{
         zIndex: 100,
-        background: "#FFFFFF",
+        background: "#FAF7F2",
         borderBottom: `1px solid #E8E3DC`,
       }}
     >
