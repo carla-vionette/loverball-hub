@@ -317,7 +317,7 @@ const EventPublic = () => {
               <div
                 className="flex items-center gap-2 mb-3 px-4 py-3 rounded-xl"
                 style={{
-                  background: "rgba(212,83,126,0.08)",
+                  background: "rgba(232,93,47,0.08)",
                   border: `1px solid ${C.raspberry}44`,
                 }}
               >

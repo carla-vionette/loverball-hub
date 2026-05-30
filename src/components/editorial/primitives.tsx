@@ -134,7 +134,7 @@ const renderBtn = (inner: React.ReactNode, props: BtnProps, style: React.CSSProp
 export const PrimaryBtn = (props: BtnProps) => renderBtn(
   props.children,
   props,
-  { ...BTN_BASE, background: C.raspberry, color: "#fff", border: "none", boxShadow: "0 8px 24px -10px rgba(212,83,126,0.55)", ...props.style },
+  { ...BTN_BASE, background: C.raspberry, color: "#fff", border: "none", boxShadow: "0 8px 24px -10px rgba(232,93,47,0.55)", ...props.style },
   `hover:opacity-95 hover:-translate-y-0.5 active:scale-[0.98] ${props.className ?? ""}`
 );
 
