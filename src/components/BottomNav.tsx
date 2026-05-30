@@ -42,7 +42,7 @@ const BottomNav = () => {
 
   return (
     <nav
-      className="fixed bottom-4 left-4 right-4 z-50 md:hidden safe-area-pb"
+      className="fixed bottom-4 left-4 right-4 z-50 lg:hidden safe-area-pb"
       role="navigation"
       aria-label="Main navigation"
       style={{
