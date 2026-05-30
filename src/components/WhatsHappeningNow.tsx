@@ -153,7 +153,7 @@ const WhatsHappeningNow = () => {
             </div>
             <h3
               className="text-xl md:text-2xl leading-tight mb-3 line-clamp-2"
-              style={{ fontFamily: "'Oswald', sans-serif", fontWeight: 600, color: "#1A1A1A" }}
+              style={{ fontFamily: "'Anton', Impact, sans-serif", fontWeight: 600, color: "#1A1A1A" }}
             >
               {event.title}
             </h3>
@@ -194,7 +194,7 @@ const WhatsHappeningNow = () => {
             </div>
             <h3
               className="text-xl md:text-2xl leading-tight mb-3 line-clamp-3"
-              style={{ fontFamily: "'Oswald', sans-serif", fontWeight: 600, color: "#1A1A1A" }}
+              style={{ fontFamily: "'Anton', Impact, sans-serif", fontWeight: 600, color: "#1A1A1A" }}
             >
               {clubMessage}
             </h3>
@@ -226,7 +226,7 @@ const WhatsHappeningNow = () => {
             </div>
             <h3
               className="text-xl md:text-2xl leading-tight mb-3 line-clamp-3"
-              style={{ fontFamily: "'Oswald', sans-serif", fontWeight: 600, color: "#1A1A1A" }}
+              style={{ fontFamily: "'Anton', Impact, sans-serif", fontWeight: 600, color: "#1A1A1A" }}
             >
               {video.title}
             </h3>

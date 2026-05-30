@@ -132,7 +132,7 @@ const FeedStoriesPanel = () => {
                 {tagFor(s.category)}
               </span>
               <a href={s.source_url || "#"} target={s.source_url ? "_blank" : undefined} rel="noreferrer">
-                <h3 className="mt-2 line-clamp-3" style={{ fontFamily: "'Oswald', Impact, sans-serif", fontSize: 22, lineHeight: 1.15, color: "#fff", fontWeight: 700 }}>
+                <h3 className="mt-2 line-clamp-3" style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: 22, lineHeight: 1.15, color: "#fff", fontWeight: 700 }}>
                   {s.title}
                 </h3>
               </a>
