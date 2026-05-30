@@ -598,7 +598,7 @@ const Club = () => {
                 </p>
                 <Button
                   className="mt-3 w-full rounded-xl"
-                  style={{ background: C.raspberry, color: "#0a0a0a" }}
+                  style={{ background: C.raspberry, color: "#FFFFFF" }}
                   onClick={() => navigate("/events")}
                 >
                   <Plus className="w-4 h-4 mr-2" /> Find a Watch Party
@@ -735,7 +735,7 @@ const CircleCard = ({ circle, navigate }: { circle: Circle; navigate: ReturnType
     </div>
     <span
       className="inline-flex items-center justify-center px-3 py-1.5 rounded-lg text-xs font-medium mt-1"
-      style={{ background: C.raspberry, color: "#0a0a0a" }}
+      style={{ background: C.raspberry, color: "#FFFFFF" }}
     >
       Join Circle
     </span>
