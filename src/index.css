@@ -48,7 +48,7 @@
     --muted: 38 30% 88%;
     --muted-foreground: 0 0% 42%;
 
-    /* Accent = Pink #E85D2F */
+    /* Accent = Brand Orange #E85D2F (legacy token names retained for compat) */
     --accent: 15 80% 55%;
     --accent-foreground: 0 0% 100%;
 
