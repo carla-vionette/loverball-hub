@@ -37,7 +37,7 @@ const EarlyAccessBanner = ({ userTier, eventDate, eventTime, isExclusive }: Earl
 
   if (userTier === 'allaccess' && isExclusive) {
     return (
-      <div className="rounded-xl bg-gradient-to-r from-violet-500/20 to-fuchsia-500/20 border border-violet-500/30 p-4 mb-6">
+      <div className="rounded-xl bg-gradient-to-r from-[#E85D2F]/20 to-[#E85D2F]/10 border border-[#E85D2F]/30 p-4 mb-6">
         <div className="flex items-center gap-2">
           <span className="text-lg">💎</span>
           <div>
