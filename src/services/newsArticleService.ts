@@ -34,7 +34,7 @@ const SPORT_EMOJI: Record<string, string> = {
 };
 
 const SPORT_COLORS: Record<string, string> = {
-  basketball: "#F97316",
+  basketball: "#E85D2F",
   soccer: "#22C55E",
   football: "#92400E",
   baseball: "#EF4444",

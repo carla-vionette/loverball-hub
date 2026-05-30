@@ -322,7 +322,7 @@ export default function ProfileInbox() {
                   className="flex items-center gap-3 px-3 py-1.5 cursor-pointer transition-colors hover:bg-white/[0.03]"
                   style={{ borderTop: i === 0 ? "none" : BORDER }}
                 >
-                  <div className="w-7 h-7 rounded-full overflow-hidden flex-shrink-0" style={{ background: "#0F0F10", border: BORDER }}>
+                  <div className="w-7 h-7 rounded-full overflow-hidden flex-shrink-0" style={{ background: "#0a0a0a", border: BORDER }}>
                     {c.otherUserPhoto ? (
                       <img src={c.otherUserPhoto} alt={c.otherUserName} loading="lazy" className="w-full h-full object-cover" />
                     ) : (
@@ -373,7 +373,7 @@ export default function ProfileInbox() {
                   className="flex items-center gap-3 px-3 py-1.5 cursor-pointer transition-colors hover:bg-white/[0.03]"
                   style={{ borderTop: i === 0 ? "none" : BORDER }}
                 >
-                  <div className="w-7 h-7 rounded-full overflow-hidden flex-shrink-0" style={{ background: "#0F0F10", border: BORDER }}>
+                  <div className="w-7 h-7 rounded-full overflow-hidden flex-shrink-0" style={{ background: "#0a0a0a", border: BORDER }}>
                     {f.photo ? (
                       <img src={f.photo} alt={f.name} loading="lazy" className="w-full h-full object-cover" />
                     ) : (

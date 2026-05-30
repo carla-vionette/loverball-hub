@@ -66,7 +66,7 @@ const getVariant = (t?: string | null): EventVariant => (t && variantMap[t]) || 
 const eventTheme: Record<EventVariant, { accent: string; label: string }> = {
   external: { accent: "#E85D2F", label: "Broadcast" },
   hosted:   { accent: "#E85D2F", label: "Hosted" },
-  cultural: { accent: "#F8F8F8", label: "Cultural" },
+  cultural: { accent: "#FAF5E9", label: "Cultural" },
 };
 
 const fmtTime = (t: string) => {
@@ -377,7 +377,7 @@ const Events = () => {
             return (
               <div
                 className="relative overflow-hidden mb-10 cursor-pointer group rounded-[24px]"
-                style={{ background: "#141415", border: "1px solid rgba(255,255,255,0.08)" }}
+                style={{ background: "#0a0a0a", border: "1px solid rgba(255,255,255,0.08)" }}
                 onClick={() => openTile(featured.id)}
               >
                 <div className="relative h-72 md:h-[420px] overflow-hidden">
@@ -385,7 +385,7 @@ const Events = () => {
                     <img src={featured.image_url} alt={featured.title} loading="eager"
                       className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700" />
                   ) : (
-                    <div className="w-full h-full" style={{ background: `linear-gradient(135deg, ${th.accent}, #141415)` }} />
+                    <div className="w-full h-full" style={{ background: `linear-gradient(135deg, ${th.accent}, #0a0a0a)` }} />
                   )}
                   {/* layered overlays */}
                   <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, rgba(10,10,11,0.35) 0%, rgba(10,10,11,0.15) 40%, rgba(10,10,11,0.92) 100%)" }} />
@@ -407,7 +407,7 @@ const Events = () => {
                     <div style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 10, letterSpacing: "0.22em", color: "#FFFFFF", textTransform: "uppercase" }}>
                       {format(d, "EEE")}
                     </div>
-                    <div style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: 56, lineHeight: 0.85, color: "#F8F8F8" }}>
+                    <div style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: 56, lineHeight: 0.85, color: "#FAF5E9" }}>
                       {format(d, "dd")}
                     </div>
                     <div style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 10, letterSpacing: "0.22em", color: "#FFFFFF", textTransform: "uppercase" }}>
@@ -441,7 +441,7 @@ const Events = () => {
                         style={{ background: "rgba(10,10,11,0.65)", border: "1px solid rgba(255,255,255,0.18)", backdropFilter: "blur(6px)" }}
                         aria-label="Share event"
                       >
-                        <Share2 className="w-4 h-4" style={{ color: "#F8F8F8" }} />
+                        <Share2 className="w-4 h-4" style={{ color: "#FAF5E9" }} />
                       </button>
                     </div>
                   </div>
@@ -460,9 +460,9 @@ const Events = () => {
                   onClick={() => setCategory(c)}
                   className="px-4 py-2 rounded-full whitespace-nowrap transition-all"
                   style={{
-                    background: active ? "#F8F8F8" : "rgba(20,20,21,0.6)",
-                    color: active ? "#0A0A0B" : "rgba(248,248,248,0.7)",
-                    border: active ? "1px solid #F8F8F8" : "1px solid rgba(255,255,255,0.08)",
+                    background: active ? "#FAF5E9" : "rgba(20,20,21,0.6)",
+                    color: active ? "#0a0a0a" : "rgba(248,248,248,0.7)",
+                    border: active ? "1px solid #FAF5E9" : "1px solid rgba(255,255,255,0.08)",
                     fontFamily: "'Inter', system-ui, sans-serif",
                     fontWeight: 700,
                     fontSize: 11,
@@ -479,7 +479,7 @@ const Events = () => {
           {/* EVENTS GRID */}
           {filtered.length === 0 ? (
             <div className="text-center py-20 space-y-4 rounded-3xl"
-              style={{ background: "#141415", border: "1px solid rgba(255,255,255,0.08)" }}>
+              style={{ background: "#0a0a0a", border: "1px solid rgba(255,255,255,0.08)" }}>
               <div className="w-20 h-20 mx-auto rounded-full flex items-center justify-center"
                 style={{ background: "rgba(232,93,47,0.1)", border: "1px solid rgba(232,93,47,0.25)" }}>
                 <Calendar className="w-9 h-9" style={{ color: "#E85D2F" }} />
@@ -513,7 +513,7 @@ const Events = () => {
                   <React.Fragment key={ev.id}>
                     <article
                       className="overflow-hidden cursor-pointer group rounded-[22px] transition-all"
-                      style={{ background: "#1A1A1C", border: "1px solid rgba(255,255,255,0.08)" }}
+                      style={{ background: "#161616", border: "1px solid rgba(255,255,255,0.08)" }}
                       onClick={() => openTile(ev.id)}
                     >
                       {/* Cinematic header w/ date stamp */}
@@ -522,7 +522,7 @@ const Events = () => {
                           <img src={ev.image_url} alt={ev.title} loading="lazy"
                             className="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-500" />
                         ) : (
-                          <div className="w-full h-full" style={{ background: `linear-gradient(135deg, ${th.accent}40, #141415)` }} />
+                          <div className="w-full h-full" style={{ background: `linear-gradient(135deg, ${th.accent}40, #0a0a0a)` }} />
                         )}
                         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, rgba(10,10,11,0.1) 0%, rgba(10,10,11,0.55) 100%)" }} />
 
@@ -534,7 +534,7 @@ const Events = () => {
                           </span>
                           {ev.price === 0 && (
                             <span className="px-2 py-0.5 rounded-full"
-                              style={{ background: "rgba(248,248,248,0.92)", color: "#0A0A0B", fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 800, fontSize: 8.5, letterSpacing: "0.16em", textTransform: "uppercase" }}>
+                              style={{ background: "rgba(248,248,248,0.92)", color: "#0a0a0a", fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 800, fontSize: 8.5, letterSpacing: "0.16em", textTransform: "uppercase" }}>
                               Free
                             </span>
                           )}
@@ -547,7 +547,7 @@ const Events = () => {
                           style={{ background: "rgba(10,10,11,0.65)", border: "1px solid rgba(255,255,255,0.12)", backdropFilter: "blur(6px)" }}
                           aria-label="Share event"
                         >
-                          <Share2 className="w-3.5 h-3.5" style={{ color: "#F8F8F8" }} />
+                          <Share2 className="w-3.5 h-3.5" style={{ color: "#FAF5E9" }} />
                         </button>
 
                         {/* Date block */}
@@ -556,7 +556,7 @@ const Events = () => {
                           <div style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 9, letterSpacing: "0.18em", color: "#FFFFFF", textTransform: "uppercase" }}>
                             {format(d, "MMM")}
                           </div>
-                          <div style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: 24, lineHeight: 0.9, color: "#F8F8F8" }}>
+                          <div style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: 24, lineHeight: 0.9, color: "#FAF5E9" }}>
                             {format(d, "dd")}
                           </div>
                         </div>
@@ -642,7 +642,7 @@ const Events = () => {
 
         {/* SHARE DIALOG */}
         <Dialog open={showShareDialog} onOpenChange={setShowShareDialog}>
-          <DialogContent className="sm:max-w-md rounded-3xl" style={{ background: "#141415", border: "1px solid rgba(255,255,255,0.08)" }}>
+          <DialogContent className="sm:max-w-md rounded-3xl" style={{ background: "#0a0a0a", border: "1px solid rgba(255,255,255,0.08)" }}>
             <DialogHeader>
               <span style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 10, letterSpacing: "0.22em", color: "#FFFFFF", textTransform: "uppercase" }}>
                 Spread the word
@@ -674,7 +674,7 @@ const Events = () => {
                   <Button
                     variant="outline"
                     className="flex-1 h-11 rounded-full bg-transparent"
-                    style={{ borderColor: "rgba(255,255,255,0.12)", color: "#F8F8F8", fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: 12, letterSpacing: "0.12em", textTransform: "uppercase" }}
+                    style={{ borderColor: "rgba(255,255,255,0.12)", color: "#FAF5E9", fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: 12, letterSpacing: "0.12em", textTransform: "uppercase" }}
                     onClick={copyShareLink}
                   >
                     <Copy className="w-4 h-4 mr-2" /> Copy Link
@@ -694,7 +694,7 @@ const Events = () => {
                     <Link2 className="w-3 h-3" />
                     Share URL
                   </p>
-                  <p className="text-xs font-mono break-all" style={{ color: "#F8F8F8" }}>
+                  <p className="text-xs font-mono break-all" style={{ color: "#FAF5E9" }}>
                     {getShareUrl(shareEvent)}
                   </p>
                 </div>
@@ -705,7 +705,7 @@ const Events = () => {
 
         {/* RSVP MODAL */}
         <Dialog open={!!rsvpId} onOpenChange={() => setRsvpId(null)}>
-          <DialogContent className="sm:max-w-sm rounded-3xl" style={{ background: "#141415", border: "1px solid rgba(255,255,255,0.08)" }}>
+          <DialogContent className="sm:max-w-sm rounded-3xl" style={{ background: "#0a0a0a", border: "1px solid rgba(255,255,255,0.08)" }}>
             <DialogHeader>
               <span style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 10, letterSpacing: "0.22em", color: "#FFFFFF", textTransform: "uppercase" }}>
                 Confirm your seat
@@ -719,7 +719,7 @@ const Events = () => {
                 style={{ background: "#E85D2F", color: "#fff", fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: 12, letterSpacing: "0.12em", textTransform: "uppercase" }}
                 onClick={() => handleRsvp("attending")}>Going</Button>
               <Button className="w-full rounded-full h-11"
-                style={{ background: "transparent", color: "#F8F8F8", border: "1px solid rgba(255,255,255,0.12)", fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: 12, letterSpacing: "0.12em", textTransform: "uppercase" }}
+                style={{ background: "transparent", color: "#FAF5E9", border: "1px solid rgba(255,255,255,0.12)", fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: 12, letterSpacing: "0.12em", textTransform: "uppercase" }}
                 onClick={() => handleRsvp("maybe")}>Maybe</Button>
               <Button variant="ghost" className="w-full rounded-full h-11"
                 style={{ color: "rgba(248,248,248,0.5)", fontFamily: "'Inter', sans-serif", fontWeight: 600, fontSize: 11, letterSpacing: "0.1em", textTransform: "uppercase" }}

@@ -111,7 +111,7 @@ const RsvpAvatarBar: React.FC<RsvpAvatarBarProps> = ({
                     style={{
                       width: avatarSize,
                       height: avatarSize,
-                      border: `${strokeWidth}px solid #1A1A1C`,
+                      border: `${strokeWidth}px solid #161616`,
                     }}
                   >
                     <AvatarImage
@@ -158,7 +158,7 @@ const RsvpAvatarBar: React.FC<RsvpAvatarBarProps> = ({
                     fontFamily: "'Inter', system-ui, sans-serif",
                     fontSize: 11,
                     fontWeight: 600,
-                    color: "#F8F8F8",
+                    color: "#FAF5E9",
                     letterSpacing: "0.02em",
                   }}
                 >
@@ -182,7 +182,7 @@ const RsvpAvatarBar: React.FC<RsvpAvatarBarProps> = ({
                 marginLeft: overlap,
                 zIndex: 0,
                 background: "rgba(232,93,47,0.12)",
-                border: `${strokeWidth}px solid #1A1A1C`,
+                border: `${strokeWidth}px solid #161616`,
               }}
             >
               <span
