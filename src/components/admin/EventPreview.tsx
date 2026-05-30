@@ -33,7 +33,7 @@ const eventTypeLabels: Record<string, string> = {
 
 const themeStyles: Record<string, string> = {
   default: 'from-primary/20 to-accent/20',
-  valentines: 'from-pink-500/30 to-red-500/30',
+  valentines: 'from-[#E85D2F]/30 to-[#E85D2F]/15',
   sports: 'from-orange-500/20 to-white/20',
   elegant: 'from-purple-500/20 to-indigo-500/20',
   summer: 'from-cyan-500/20 to-blue-500/20',
