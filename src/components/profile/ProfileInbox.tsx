@@ -229,7 +229,7 @@ export default function ProfileInbox() {
         <div className="flex items-center justify-between gap-2 px-3 pt-2 pb-1 flex-wrap">
           <p
             className="text-[9px] uppercase"
-            style={{ fontFamily: "'Space Mono', monospace", letterSpacing: "0.24em", color: "#D88C5A" }}
+            style={{ fontFamily: "'Space Mono', monospace", letterSpacing: "0.24em", color: "#E85D2F" }}
           >
             Inbox
           </p>

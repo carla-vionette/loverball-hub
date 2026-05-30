@@ -131,7 +131,7 @@ const RsvpAvatarBar: React.FC<RsvpAvatarBarProps> = ({
                           idx % 3 === 0
                             ? "#E85D2F"
                             : idx % 3 === 1
-                            ? "#E86BB0"
+                            ? "#E85D2F"
                             : "#C8D94E",
                         fontSize: fallbackSize,
                         fontFamily: "'Inter', system-ui, sans-serif",

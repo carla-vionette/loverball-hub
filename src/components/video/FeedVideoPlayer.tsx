@@ -292,7 +292,7 @@ const FeedVideoPlayer = ({ video, isActive, isMuted, onToggleMute }: FeedVideoPl
           },
           {
             key: "bookmark",
-            icon: <Bookmark className="w-[22px] h-[22px]" fill={bookmarked ? "currentColor" : "none"} strokeWidth={1.75} style={{ color: bookmarked ? "#D88C5A" : "#F8F8F8" }} />,
+            icon: <Bookmark className="w-[22px] h-[22px]" fill={bookmarked ? "currentColor" : "none"} strokeWidth={1.75} style={{ color: bookmarked ? "#E85D2F" : "#F8F8F8" }} />,
             count: bookmarkCount,
             onClick: () => setBookmarked(!bookmarked),
             label: bookmarked ? "Remove bookmark" : "Bookmark",
@@ -486,7 +486,7 @@ const FeedVideoPlayer = ({ video, isActive, isMuted, onToggleMute }: FeedVideoPl
 
       {/* Progress bar — hairline raspberry */}
       <div className="absolute bottom-0 left-0 right-0 z-40 h-[2px]" style={{ background: "rgba(255,255,255,0.08)" }}>
-        <div className="h-full transition-[width] duration-100" style={{ width: `${progress}%`, background: "linear-gradient(90deg, #E85D2F, #D88C5A)" }} />
+        <div className="h-full transition-[width] duration-100" style={{ width: `${progress}%`, background: "linear-gradient(90deg, #E85D2F, #E85D2F)" }} />
       </div>
     </div>
   );
