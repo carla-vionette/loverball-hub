@@ -16,7 +16,7 @@ const AppLayout = ({ children, hideNav = false }: AppLayoutProps) => {
 
   return (
     <div className="min-h-screen bg-background">
-      <main className="pb-24 md:pb-0">
+      <main className="pb-24 lg:pb-0">
         {children}
       </main>
       <BottomNav />
