@@ -11,7 +11,7 @@ const STATUS_CONFIG: Record<
   GameScore["status"],
   { label: string; icon: typeof Trophy; className: string }
 > = {
-  live: { label: "LIVE", icon: Radio, className: "text-[#FF5D2E] animate-pulse" },
+  live: { label: "LIVE", icon: Radio, className: "text-[#E85D2F] animate-pulse" },
   final: { label: "Final", icon: Trophy, className: "text-muted-foreground" },
   upcoming: { label: "Upcoming", icon: Clock, className: "text-primary" },
 };
@@ -75,7 +75,7 @@ const ScoreCard = ({ game }: { game: GameScore }) => {
       </div>
 
       {game.status === "live" && game.statusDetail && (
-        <p className="text-[10px] text-[#FF5D2E] font-semibold mt-2 pt-2 border-t border-border/20">
+        <p className="text-[10px] text-[#E85D2F] font-semibold mt-2 pt-2 border-t border-border/20">
           {game.statusDetail}
         </p>
       )}
@@ -169,7 +169,7 @@ const ProfileScores: React.FC<ProfileScoresProps> = ({ favoriteTeams = [] }) => 
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           {liveGames.length > 0 && (
-            <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-[#FF5D2E] bg-[#FF5D2E]/10 px-2 py-0.5 rounded-full">
+            <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-[#E85D2F] bg-[#E85D2F]/10 px-2 py-0.5 rounded-full">
               <Radio className="w-3 h-3 animate-pulse" />
               {liveGames.length} Live
             </span>

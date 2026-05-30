@@ -48,7 +48,7 @@
     --muted: 38 30% 88%;
     --muted-foreground: 0 0% 42%;
 
-    /* Accent = Pink #E86BB0 */
+    /* Accent = Pink #E85D2F */
     --accent: 15 80% 55%;
     --accent-foreground: 0 0% 100%;
 
@@ -629,19 +629,19 @@
   .font-inter-mag { font-family: 'Inter', system-ui, sans-serif; }
 
   .text-raspberry { color: #E85D2F; }
-  .text-copper { color: #E86BB0; }
+  .text-copper { color: #E85D2F; }
   .text-neon { color: #FFFFFF; }
   .bg-raspberry { background-color: #E85D2F; }
-  .bg-copper { background-color: #E86BB0; }
+  .bg-copper { background-color: #E85D2F; }
   .bg-neon { background-color: #FFFFFF; }
-  .border-copper { border-color: #E86BB0; }
+  .border-copper { border-color: #E85D2F; }
   .border-raspberry { border-color: #E85D2F; }
   .border-neon { border-color: #FFFFFF; }
 
   .pill-copper {
     display: inline-block;
-    border: 1px solid #d88c5a;
-    color: #d88c5a;
+    border: 1px solid #E85D2F;
+    color: #E85D2F;
     font-family: 'Inter', system-ui, sans-serif;
     font-weight: 800;
     font-size: 10px;

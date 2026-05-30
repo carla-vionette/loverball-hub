@@ -29,7 +29,7 @@ const EditorialInput = (props: React.ComponentProps<"input">) => (
       transition: "border-color 180ms ease, box-shadow 180ms ease",
       ...props.style,
     }}
-    className={`placeholder:text-[#B8B8B8]/40 focus-visible:border-[#D4537E] focus-visible:ring-1 focus-visible:ring-[#D4537E]/30 ${props.className ?? ""}`}
+    className={`placeholder:text-[#B8B8B8]/40 focus-visible:border-[#E85D2F] focus-visible:ring-1 focus-visible:ring-[#E85D2F]/30 ${props.className ?? ""}`}
   />
 );
 

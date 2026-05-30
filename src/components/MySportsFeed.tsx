@@ -29,7 +29,7 @@ const FILTER_PILLS: { key: FeedFilter; label: string; emoji: string }[] = [
 ];
 
 const MATCH_CHIP_COLORS: Record<MatchReason["type"], string> = {
-  team: "bg-[#FF5D2E]/15 text-[#FF5D2E] border-[#FF5D2E]/30",
+  team: "bg-[#E85D2F]/15 text-[#E85D2F] border-[#E85D2F]/30",
   sport: "bg-primary/15 text-primary border-primary/30",
   city: "bg-[#FFD700]/15 text-[#92400E] border-[#FFD700]/30",
   trending: "bg-destructive/15 text-destructive border-destructive/30",
@@ -64,7 +64,7 @@ const MySportsFeed: React.FC<MySportsFeedProps> = ({ userSports, userTeams, user
       <div className="p-5 pb-3">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
-            <Newspaper className="w-4 h-4 text-[#FF5D2E]" />
+            <Newspaper className="w-4 h-4 text-[#E85D2F]" />
             <span className="text-sm font-medium tracking-wider uppercase text-foreground/50">
               My Sports Feed
             </span>
@@ -88,7 +88,7 @@ const MySportsFeed: React.FC<MySportsFeedProps> = ({ userSports, userTeams, user
               onClick={() => setFilter(pill.key)}
               className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-[11px] font-semibold tracking-wide whitespace-nowrap transition-all border ${
                 filter === pill.key
-                  ? "bg-[#FF5D2E] text-white border-[#FF5D2E]"
+                  ? "bg-[#E85D2F] text-white border-[#E85D2F]"
                   : "bg-secondary/60 text-foreground/60 border-border/30 hover:bg-secondary"
               }`}
             >
@@ -102,7 +102,7 @@ const MySportsFeed: React.FC<MySportsFeedProps> = ({ userSports, userTeams, user
       {/* Content */}
       {loading ? (
         <div className="px-5 py-12 flex flex-col items-center gap-3">
-          <Loader2 className="w-6 h-6 text-[#FF5D2E] animate-spin" />
+          <Loader2 className="w-6 h-6 text-[#E85D2F] animate-spin" />
           <p className="text-sm text-muted-foreground">Loading your feed…</p>
         </div>
       ) : articles.length === 0 ? (

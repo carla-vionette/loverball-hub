@@ -44,7 +44,7 @@ const SPORT_COLORS: Record<string, string> = {
 };
 
 const CATEGORY_COLORS: Record<string, string> = {
-  womens_sports: "#FF5D2E",
+  womens_sports: "#E85D2F",
   la_local: "#FFD700",
   national: "#3B82F6",
   culture: "#A855F7",

@@ -127,7 +127,7 @@ const WhatsHappeningNow = () => {
           fontSize: 11,
           letterSpacing: "0.22em",
           textTransform: "uppercase",
-          color: "#FF4D3A",
+          color: "#E85D2F",
           fontWeight: 700,
         }}
       >
@@ -143,9 +143,9 @@ const WhatsHappeningNow = () => {
             style={{ background: "#FFFFFF", border: "1px solid #E8E3DC", color: "#1A1A1A" }}
           >
             <div className="flex items-center gap-2 mb-3">
-              <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#FF4D3A] animate-pulse" />
+              <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#E85D2F] animate-pulse" />
               <span
-                className="text-[10px] tracking-[0.2em] uppercase text-[#FF4D3A] font-semibold"
+                className="text-[10px] tracking-[0.2em] uppercase text-[#E85D2F] font-semibold"
                 style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace" }}
               >
                 Next Event
@@ -169,7 +169,7 @@ const WhatsHappeningNow = () => {
                 </div>
               )}
             </div>
-            <span className="inline-flex items-center gap-1 text-sm font-medium text-[#FF4D3A] group-hover:gap-2 transition-all">
+            <span className="inline-flex items-center gap-1 text-sm font-medium text-[#E85D2F] group-hover:gap-2 transition-all">
               See event <ArrowRight className="w-3.5 h-3.5" />
             </span>
           </Link>
@@ -184,9 +184,9 @@ const WhatsHappeningNow = () => {
             style={{ background: "#FFFFFF", border: "1px solid #E8E3DC", color: "#1A1A1A" }}
           >
             <div className="flex items-center gap-2 mb-3">
-              <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#FF4D3A] animate-pulse" />
+              <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#E85D2F] animate-pulse" />
               <span
-                className="text-[10px] tracking-[0.2em] uppercase text-[#FF4D3A] font-semibold"
+                className="text-[10px] tracking-[0.2em] uppercase text-[#E85D2F] font-semibold"
                 style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace" }}
               >
                 The Club
@@ -202,7 +202,7 @@ const WhatsHappeningNow = () => {
               <Users className="w-3.5 h-3.5 flex-shrink-0" />
               <span>Fan matches & crews</span>
             </div>
-            <span className="inline-flex items-center gap-1 text-sm font-medium text-[#FF4D3A] group-hover:gap-2 transition-all">
+            <span className="inline-flex items-center gap-1 text-sm font-medium text-[#E85D2F] group-hover:gap-2 transition-all">
               Go to Club <ArrowRight className="w-3.5 h-3.5" />
             </span>
           </Link>
@@ -216,9 +216,9 @@ const WhatsHappeningNow = () => {
             style={{ background: "#FFFFFF", border: "1px solid #E8E3DC", color: "#1A1A1A" }}
           >
             <div className="flex items-center gap-2 mb-3">
-              <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#FF4D3A] animate-pulse" />
+              <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#E85D2F] animate-pulse" />
               <span
-                className="text-[10px] tracking-[0.2em] uppercase text-[#FF4D3A] font-semibold"
+                className="text-[10px] tracking-[0.2em] uppercase text-[#E85D2F] font-semibold"
                 style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace" }}
               >
                 {video.category ? video.category.toUpperCase() : "New on Feed"}
@@ -236,7 +236,7 @@ const WhatsHappeningNow = () => {
                 <span className="truncate">{video.creator}</span>
               </div>
             )}
-            <span className="inline-flex items-center gap-1 text-sm font-medium text-[#FF4D3A] group-hover:gap-2 transition-all">
+            <span className="inline-flex items-center gap-1 text-sm font-medium text-[#E85D2F] group-hover:gap-2 transition-all">
               Open Feed <ArrowRight className="w-3.5 h-3.5" />
             </span>
           </Link>

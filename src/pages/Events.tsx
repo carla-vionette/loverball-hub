@@ -65,7 +65,7 @@ const variantMap: Record<string, EventVariant> = {
 const getVariant = (t?: string | null): EventVariant => (t && variantMap[t]) || "cultural";
 const eventTheme: Record<EventVariant, { accent: string; label: string }> = {
   external: { accent: "#E85D2F", label: "Broadcast" },
-  hosted:   { accent: "#E86BB0", label: "Hosted" },
+  hosted:   { accent: "#E85D2F", label: "Hosted" },
   cultural: { accent: "#F8F8F8", label: "Cultural" },
 };
 
@@ -394,7 +394,7 @@ const Events = () => {
                   {/* eyebrow */}
                   <div className="absolute top-5 left-5 flex items-center gap-2">
                     <span className="px-2.5 py-1 rounded-full"
-                      style={{ background: "rgba(232,107,176,0.15)", border: "1px solid rgba(232,107,176,0.5)", color: "#E86BB0", fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 700, fontSize: 9, letterSpacing: "0.18em", textTransform: "uppercase" }}>
+                      style={{ background: "rgba(232,107,176,0.15)", border: "1px solid rgba(232,107,176,0.5)", color: "#E85D2F", fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 700, fontSize: 9, letterSpacing: "0.18em", textTransform: "uppercase" }}>
                       {th.label}
                     </span>
                     <span style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 10, letterSpacing: "0.18em", color: "rgba(248,248,248,0.7)", textTransform: "uppercase" }}>
@@ -424,7 +424,7 @@ const Events = () => {
                     <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-3"
                       style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 11, color: "rgba(248,248,248,0.7)", letterSpacing: "0.04em" }}>
                       {featured.event_time && <span className="flex items-center gap-1.5"><Clock className="w-3.5 h-3.5" />{fmtTime(featured.event_time)}</span>}
-                      {(featured.venue_name || featured.city) && <span className="flex items-center gap-1.5 truncate max-w-[220px]"><MapPin className="w-3.5 h-3.5 flex-shrink-0" style={{ color: "#E86BB0" }} />{featured.venue_name || featured.city}</span>}
+                      {(featured.venue_name || featured.city) && <span className="flex items-center gap-1.5 truncate max-w-[220px]"><MapPin className="w-3.5 h-3.5 flex-shrink-0" style={{ color: "#E85D2F" }} />{featured.venue_name || featured.city}</span>}
                       {counts[featured.id] > 0 && <span className="flex items-center gap-1.5"><Users className="w-3.5 h-3.5" />{counts[featured.id]} going</span>}
                     </div>
                     <div className="flex items-center gap-2 mt-5">
@@ -529,7 +529,7 @@ const Events = () => {
                         {/* Eyebrow */}
                         <div className="absolute top-3 left-3 flex items-center gap-1.5">
                           <span className="px-2 py-0.5 rounded-full"
-                            style={{ background: "rgba(232,107,176,0.15)", border: "1px solid rgba(232,107,176,0.5)", color: "#E86BB0", fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 700, fontSize: 8.5, letterSpacing: "0.18em", textTransform: "uppercase" }}>
+                            style={{ background: "rgba(232,107,176,0.15)", border: "1px solid rgba(232,107,176,0.5)", color: "#E85D2F", fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 700, fontSize: 8.5, letterSpacing: "0.18em", textTransform: "uppercase" }}>
                             {th.label}
                           </span>
                           {ev.price === 0 && (
@@ -572,7 +572,7 @@ const Events = () => {
                           {ev.event_time && <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{fmtTime(ev.event_time)}</span>}
                           {(ev.venue_name || ev.city) && (
                             <span className="flex items-center gap-1 truncate max-w-[180px]">
-                              <MapPin className="w-3 h-3" style={{ color: "#E86BB0" }} />
+                              <MapPin className="w-3 h-3" style={{ color: "#E85D2F" }} />
                               {ev.venue_name}{ev.venue_name && ev.city ? ", " : ""}{ev.city}
                             </span>
                           )}

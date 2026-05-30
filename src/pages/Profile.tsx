@@ -423,7 +423,7 @@ const Profile = () => {
                       style={{
                         fontFamily: "'Space Mono', monospace",
                         letterSpacing: "0.26em",
-                        color: "#D88C5A",
+                        color: "#E85D2F",
                       }}
                     >
                       Your activity

@@ -20,7 +20,7 @@ const C = {
   text: "#FAF5E9",
   muted: "#B8B8B8",
   raspberry: "#E85D2F",   // Vermilion (primary)
-  pink: "#E86BB0",        // Hot Pink (accent)
+  pink: "#E85D2F",        // Hot Pink (accent)
   neon: "#FFFFFF",        // Neon Yellow (highlight)
   gold: "#FFFFFF",        // legacy alias → Neon Yellow
   border: "rgba(250, 245, 233, 0.08)",
@@ -55,7 +55,7 @@ const PrimaryCTA = ({ children, onClick, full = false }: { children: React.React
       width: full ? "100%" : undefined,
       transition: "transform 160ms ease, opacity 160ms ease",
     }}
-    className="hover:-translate-y-0.5 hover:opacity-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4537E] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0a0a]"
+    className="hover:-translate-y-0.5 hover:opacity-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E85D2F] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0a0a]"
   >
     {children}
   </button>
@@ -71,7 +71,7 @@ const SecondaryCTA = ({ children, to, full = false }: { children: React.ReactNod
       display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 8,
       width: full ? "100%" : undefined,
     }}
-    className="hover:bg-white/5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4537E] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0a0a]"
+    className="hover:bg-white/5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E85D2F] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0a0a]"
   >
     {children}
   </Link>
@@ -501,7 +501,7 @@ const Index = () => {
                       key={label}
                       to={to}
                       style={{ fontFamily: fonts.sans, fontSize: 14, color: C.text }}
-                      className="hover:text-[#D4537E] transition-colors"
+                      className="hover:text-[#E85D2F] transition-colors"
                     >
                       {label}
                     </Link>
