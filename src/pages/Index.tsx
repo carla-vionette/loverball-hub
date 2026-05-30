@@ -257,7 +257,7 @@ const Index = () => {
                 style={{ borderRadius: 12, aspectRatio: "4/5", background: C.surface, border: `1px solid ${C.borderStrong}` }}
               >
                 <img src={heroImage} alt="Women sports fans at a Loverball watch party" className="w-full h-full object-cover" />
-                <div aria-hidden className="absolute inset-0" style={{ background: "linear-gradient(180deg, transparent 50%, rgba(10,10,10,0.85) 100%)" }} />
+
                 <div className="absolute top-4 left-4 flex items-center gap-1.5" style={{ background: C.raspberry, color: "#fff", borderRadius: 999, padding: "6px 12px", fontFamily: fonts.mono, fontSize: 10, letterSpacing: "0.22em", textTransform: "uppercase", fontWeight: 700, boxShadow: "0 8px 24px -8px rgba(240,78,35,0.7)" }}>
                   <span className="inline-block w-1.5 h-1.5 rounded-full bg-white animate-pulse" /> Your Team
                 </div>
