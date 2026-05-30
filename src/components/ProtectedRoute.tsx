@@ -19,7 +19,7 @@ const ProtectedRoute = ({
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-black">
+      <div className="min-h-screen flex items-center justify-center bg-[#FAF7F2]">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
     );
