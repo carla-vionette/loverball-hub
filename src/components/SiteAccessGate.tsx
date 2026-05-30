@@ -24,7 +24,7 @@ const SiteAccessGate = ({ children }: { children: ReactNode }) => {
   if (granted) return <>{children}</>;
 
   return (
-    <div className="min-h-screen bg-black flex items-center justify-center px-6">
+    <div className="min-h-screen bg-[#FAF7F2] flex items-center justify-center px-6">
       <div className="w-full max-w-sm text-center">
         <h1 className="text-2xl font-bold tracking-widest uppercase text-white mb-2">
           loverball
