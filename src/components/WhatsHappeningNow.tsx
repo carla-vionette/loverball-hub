@@ -139,7 +139,8 @@ const WhatsHappeningNow = () => {
         {event && (
           <Link
             to={`/event/${event.id}`}
-            className="group rounded-[20px] p-6 border border-white/10 bg-white/[0.03] hover:bg-white/[0.06] hover:border-[#FF4D3A]/40 transition-all"
+            className="group rounded-[20px] p-6 transition-all"
+            style={{ background: "#FFFFFF", border: "1px solid #E8E3DC", color: "#1A1A1A" }}
           >
             <div className="flex items-center gap-2 mb-3">
               <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#FF4D3A] animate-pulse" />
@@ -151,18 +152,18 @@ const WhatsHappeningNow = () => {
               </span>
             </div>
             <h3
-              className="text-xl md:text-2xl text-white leading-tight mb-3 line-clamp-2"
-              style={{ fontFamily: "'Oswald', sans-serif", fontWeight: 600 }}
+              className="text-xl md:text-2xl leading-tight mb-3 line-clamp-2"
+              style={{ fontFamily: "'Oswald', sans-serif", fontWeight: 600, color: "#1A1A1A" }}
             >
               {event.title}
             </h3>
             <div className="space-y-1.5 mb-4">
-              <div className="flex items-center gap-2 text-sm text-white/70">
+              <div className="flex items-center gap-2 text-sm" style={{ color: "#6B6B6B" }}>
                 <Calendar className="w-3.5 h-3.5 flex-shrink-0" />
                 <span>{formatDate(event.event_date, event.event_time)}</span>
               </div>
               {location && (
-                <div className="flex items-center gap-2 text-sm text-white/70">
+                <div className="flex items-center gap-2 text-sm" style={{ color: "#6B6B6B" }}>
                   <MapPin className="w-3.5 h-3.5 flex-shrink-0" />
                   <span className="truncate">{location}</span>
                 </div>
@@ -173,6 +174,7 @@ const WhatsHappeningNow = () => {
             </span>
           </Link>
         )}
+
 
         {/* Card 2: Club activity */}
         {clubMessage && (
