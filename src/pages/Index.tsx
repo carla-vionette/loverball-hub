@@ -133,16 +133,19 @@ const QUOTES = [
     q: "I finally have somewhere to scream about a 4th quarter without explaining myself.",
     name: "Maya R.",
     meta: "Member · LA",
+    avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=160&h=160&fit=crop&crop=faces",
   },
   {
     q: "Met three of my closest friends at a Loverball watch party. We now travel for away games.",
     name: "Priya S.",
     meta: "All-Access · LA",
+    avatar: "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=160&h=160&fit=crop&crop=faces",
   },
   {
     q: "It's the rare community that's actually about the sport — and the women who love it.",
     name: "Jordan T.",
-    meta: "Member · NYC",
+    meta: "Member · LA",
+    avatar: "https://images.unsplash.com/photo-1489424731084-a5d8b219a5bb?w=160&h=160&fit=crop&crop=faces",
   },
 ];
 
@@ -414,38 +417,47 @@ const Index = () => {
       </section>
 
       {/* ============ SOCIAL PROOF ============ */}
-      <section className="px-5 md:px-10 py-20 md:py-28" style={{ borderTop: `0.5px solid ${C.border}` }}>
+      <section className="px-5 md:px-10 py-16" style={{ borderTop: `0.5px solid ${C.border}` }}>
         <div className="max-w-7xl mx-auto">
-          <div className="max-w-2xl mb-14">
+          <div className="max-w-2xl mb-10">
             <Slug>Members</Slug>
             <h2
-              className="mt-5"
+              className="mt-4 text-4xl md:text-5xl"
               style={{
                 fontFamily: fonts.serif, fontStyle: "italic", fontWeight: 500,
-                fontSize: "clamp(36px, 5vw, 60px)", lineHeight: 1, letterSpacing: "-0.02em", color: C.text,
+                lineHeight: 1, letterSpacing: "-0.02em", color: C.text,
               }}
             >
               The room you've been looking for.
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             {QUOTES.map((q, i) => (
               <figure
                 key={i}
-                className="p-8 flex flex-col"
+                className="p-6 flex flex-col"
                 style={{ background: C.surface, border: `0.5px solid ${C.border}`, borderRadius: 12 }}
               >
-                <span style={{ fontFamily: fonts.serif, fontStyle: "italic", color: C.raspberry, fontSize: 48, lineHeight: 0.6 }}>“</span>
+                <span style={{ fontFamily: fonts.serif, fontStyle: "italic", color: C.raspberry, fontSize: 36, lineHeight: 0.6 }}>“</span>
                 <blockquote
-                  className="mt-3 flex-1"
-                  style={{ fontFamily: fonts.serif, fontStyle: "italic", fontSize: 22, lineHeight: 1.3, color: C.text, letterSpacing: "-0.01em" }}
+                  className="mt-2 flex-1"
+                  style={{ fontFamily: fonts.serif, fontStyle: "italic", fontSize: 17, lineHeight: 1.35, color: C.text, letterSpacing: "-0.01em" }}
                 >
                   {q.q}
                 </blockquote>
-                <figcaption className="mt-6">
-                  <div style={{ fontFamily: fonts.sans, fontSize: 14, color: C.text, fontWeight: 500 }}>{q.name}</div>
-                  <Mono size={10}>{q.meta}</Mono>
+                <figcaption className="mt-5 flex items-center gap-3">
+                  <img
+                    src={q.avatar}
+                    alt={q.name}
+                    loading="lazy"
+                    className="w-10 h-10 rounded-full object-cover shrink-0"
+                    style={{ border: `0.5px solid ${C.border}` }}
+                  />
+                  <div className="min-w-0">
+                    <div style={{ fontFamily: fonts.sans, fontSize: 13, color: C.text, fontWeight: 500 }}>{q.name}</div>
+                    <Mono size={10}>{q.meta}</Mono>
+                  </div>
                 </figcaption>
               </figure>
             ))}
