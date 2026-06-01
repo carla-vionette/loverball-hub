@@ -495,7 +495,7 @@ const Index = () => {
         <div className="max-w-7xl mx-auto px-5 md:px-10 py-16">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-12 mb-14">
             <div className="md:col-span-6">
-              <div style={{ fontFamily: fonts.serif, fontStyle: "italic", fontWeight: 500, fontSize: "clamp(36px, 5vw, 52px)", lineHeight: 1, color: C.text, letterSpacing: "-0.02em" }}>
+              <div style={{ fontFamily: "'Anton', Impact, sans-serif", fontWeight: 400, fontSize: "clamp(40px, 5.5vw, 64px)", lineHeight: 0.95, color: C.text, letterSpacing: "-0.01em", textTransform: "uppercase" }}>
                 Loverball
               </div>
               <p className="mt-3 max-w-md" style={{ color: C.muted, fontSize: 14, lineHeight: 1.55 }}>
