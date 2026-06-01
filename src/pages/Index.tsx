@@ -477,15 +477,9 @@ const Index = () => {
       <section className="px-5 md:px-10 py-24 md:py-32 text-center" style={{ borderTop: `0.5px solid ${C.border}` }}>
         <div className="max-w-3xl mx-auto">
           <Slug>Join</Slug>
-          <h2
-            className="mt-5"
-            style={{
-              fontFamily: fonts.serif, fontStyle: "italic", fontWeight: 500,
-              fontSize: "clamp(40px, 6vw, 80px)", lineHeight: 1, letterSpacing: "-0.02em", color: C.text,
-            }}
-          >
+          <DisplayH2 className="mt-5" size="clamp(44px, 7vw, 88px)">
             Sports are better with the right people.
-          </h2>
+          </DisplayH2>
           <p className="mt-6 max-w-xl mx-auto" style={{ color: C.muted, fontSize: 17, lineHeight: 1.6 }}>
             Free to join. Upgrade to All-Access for unlimited group chats, smart matching, and members-only events.
           </p>
