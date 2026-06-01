@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Seo } from "@/components/Seo";
 import { Instagram, Check, ArrowRight, BookOpen, CalendarHeart, Users } from "lucide-react";
 import heroImage from "@/assets/hero-women-new.png";
+import loverballWordmark from "@/assets/loverball-wordmark.png.asset.json";
 
 import WhatsHappeningNow from "@/components/WhatsHappeningNow";
 import StoriesSection from "@/components/StoriesSection";
