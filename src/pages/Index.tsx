@@ -35,11 +35,35 @@ const fonts = {
 };
 
 const Mono = ({ children, color = C.muted, size = 11 }: { children: React.ReactNode; color?: string; size?: number }) => (
-  <span style={{ fontFamily: fonts.mono, fontSize: size, letterSpacing: "0.16em", textTransform: "uppercase", color }}>{children}</span>
+  <span style={{ fontFamily: fonts.mono, fontSize: size, letterSpacing: "0.2em", textTransform: "uppercase", color, fontWeight: 500 }}>{children}</span>
 );
 
+// Unified eyebrow / section label. Same treatment everywhere on the page.
 const Slug = ({ children, color = C.raspberry }: { children: React.ReactNode; color?: string }) => (
-  <span style={{ fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.22em", textTransform: "uppercase", color }}>{children}</span>
+  <span style={{ fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.22em", textTransform: "uppercase", color, fontWeight: 600, display: "inline-block" }}>{children}</span>
+);
+
+// Unified display heading — matches the hero's Anton treatment, scaled by `size`.
+const DisplayH2 = ({
+  children,
+  className = "",
+  size = "clamp(40px, 6vw, 76px)",
+  color = C.text,
+}: { children: React.ReactNode; className?: string; size?: string; color?: string }) => (
+  <h2
+    className={className}
+    style={{
+      fontFamily: "'Anton', Impact, sans-serif",
+      fontWeight: 400,
+      fontSize: size,
+      lineHeight: 0.95,
+      letterSpacing: "-0.01em",
+      textTransform: "uppercase",
+      color,
+    }}
+  >
+    {children}
+  </h2>
 );
 
 /* ---------- Buttons (single primary, single secondary) ---------- */
