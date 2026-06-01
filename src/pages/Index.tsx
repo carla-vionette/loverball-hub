@@ -435,15 +435,9 @@ const Index = () => {
         <div className="max-w-7xl mx-auto">
           <div className="max-w-2xl mb-10">
             <Slug>Members</Slug>
-            <h2
-              className="mt-4 text-4xl md:text-5xl"
-              style={{
-                fontFamily: fonts.serif, fontStyle: "italic", fontWeight: 500,
-                lineHeight: 1, letterSpacing: "-0.02em", color: C.text,
-              }}
-            >
+            <DisplayH2 className="mt-4" size="clamp(36px, 4.5vw, 56px)">
               The room you've been looking for.
-            </h2>
+            </DisplayH2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
