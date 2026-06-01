@@ -197,6 +197,12 @@ const Index = () => {
 
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center relative">
           <div className="lg:col-span-7">
+            <img
+              src={loverballWordmark.url}
+              alt="Loverball"
+              className="block mb-6 w-[260px] md:w-[340px] lg:w-[400px] h-auto select-none"
+              draggable={false}
+            />
             <div className="flex flex-wrap items-center gap-2 mb-6">
               <span style={{ background: "transparent", color: "#1A1A1A", border: `1px solid #E8E3DC`, fontFamily: fonts.mono, fontSize: 10, letterSpacing: "0.22em", textTransform: "uppercase", padding: "6px 12px", borderRadius: 999 }}>
                 Built in LA
