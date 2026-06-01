@@ -402,7 +402,7 @@ const Index = () => {
                   )}
                   <Mono color={hi ? C.raspberry : C.muted}>{t.name}</Mono>
                   <div className="mt-5 flex items-baseline gap-2">
-                    <span style={{ fontFamily: fonts.serif, fontStyle: "italic", fontWeight: 500, fontSize: 56, lineHeight: 1, letterSpacing: "-0.02em", color: C.text }}>{t.price}</span>
+                    <span style={{ fontFamily: "'Anton', Impact, sans-serif", fontWeight: 400, fontSize: 64, lineHeight: 1, letterSpacing: "-0.01em", color: C.text }}>{t.price}</span>
                     <Mono>{t.cadence}</Mono>
                   </div>
                   <p className="mt-3" style={{ color: C.muted, fontSize: 14, lineHeight: 1.55 }}>{t.blurb}</p>
