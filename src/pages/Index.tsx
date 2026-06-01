@@ -319,15 +319,7 @@ const Index = () => {
         <div className="max-w-7xl mx-auto">
           <div className="max-w-2xl mb-14">
             <Slug>What you get</Slug>
-            <h2
-              className="mt-5"
-              style={{
-                fontFamily: fonts.serif, fontStyle: "italic", fontWeight: 500,
-                fontSize: "clamp(36px, 5vw, 60px)", lineHeight: 1, letterSpacing: "-0.02em", color: C.text,
-              }}
-            >
-              Three things, done right.
-            </h2>
+            <DisplayH2 className="mt-5">Three things, done right.</DisplayH2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -343,12 +335,18 @@ const Index = () => {
                 >
                   <Icon size={20} strokeWidth={1.75} />
                 </div>
-                <Mono color={C.muted} size={10}>{eyebrow}</Mono>
+                <div className="block mb-3">
+                  <Mono color={C.muted} size={10}>{eyebrow}</Mono>
+                </div>
                 <h3
-                  className="mt-3"
                   style={{
-                    fontFamily: fonts.serif, fontStyle: "italic", fontWeight: 500,
-                    fontSize: 26, lineHeight: 1.15, letterSpacing: "-0.015em", color: C.text,
+                    fontFamily: "'Anton', Impact, sans-serif",
+                    fontWeight: 400,
+                    fontSize: 30,
+                    lineHeight: 1.05,
+                    letterSpacing: "-0.005em",
+                    textTransform: "uppercase",
+                    color: C.text,
                   }}
                 >
                   {title}
@@ -366,15 +364,7 @@ const Index = () => {
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-14">
             <div className="max-w-2xl">
               <Slug>Membership</Slug>
-              <h2
-                className="mt-5"
-                style={{
-                  fontFamily: fonts.serif, fontStyle: "italic", fontWeight: 500,
-                  fontSize: "clamp(36px, 5vw, 60px)", lineHeight: 1, letterSpacing: "-0.02em", color: C.text,
-                }}
-              >
-                Pick your pass.
-              </h2>
+              <DisplayH2 className="mt-5">Pick your pass.</DisplayH2>
               <p className="mt-5 max-w-md" style={{ color: C.muted, fontSize: 16, lineHeight: 1.6 }}>
                 Start free. Upgrade to All-Access when you're ready for the full members-only home.
               </p>
