@@ -31,6 +31,21 @@ interface PublicEvent {
   city: string | null;
   visibility: string;
   host_user_id: string | null;
+  capacity: number | null;
+  guest_visibility: boolean | null;
+  rsvp_approval_required: boolean | null;
+}
+
+interface HostInfo {
+  name: string | null;
+  profile_photo_url: string | null;
+}
+
+interface AttendeePreview {
+  user_id: string;
+  name: string | null;
+  profile_photo_url: string | null;
+  city: string | null;
 }
 
 const formatTime = (t: string) => {
@@ -58,21 +73,70 @@ const EventPublic = () => {
   const [showShareDialog, setShowShareDialog] = useState(false);
   const pendingAppliedRef = useRef(false);
 
+  const [host, setHost] = useState<HostInfo | null>(null);
+  const [attendees, setAttendees] = useState<AttendeePreview[]>([]);
+  const [attendeeCount, setAttendeeCount] = useState<number>(0);
+
   useEffect(() => {
     if (!id) return;
     (async () => {
       const { data } = await supabase
         .from("events")
-        .select("id, title, description, image_url, event_date, event_time, venue_name, city, visibility, host_user_id")
+        .select("id, title, description, image_url, event_date, event_time, venue_name, city, visibility, host_user_id, capacity, guest_visibility, rsvp_approval_required")
         .eq("id", id)
         .maybeSingle();
-      setEvent(data as PublicEvent | null);
+      const ev = data as PublicEvent | null;
+      setEvent(ev);
       setLoading(false);
+
+      if (ev?.host_user_id) {
+        const { data: h } = await supabase
+          .from("profiles")
+          .select("name, profile_photo_url")
+          .eq("id", ev.host_user_id)
+          .maybeSingle();
+        setHost(h as HostInfo | null);
+      }
+
+      // Attendee count (always — used for capacity/social proof)
+      const { count } = await supabase
+        .from("event_rsvps")
+        .select("user_id", { count: "exact", head: true })
+        .eq("event_id", id)
+        .eq("status", "attending");
+      setAttendeeCount(count ?? 0);
+
+      // Avatar preview — only if host allows guest visibility (defaults to true)
+      if (ev?.guest_visibility !== false) {
+        const { data: rsvps } = await supabase
+          .from("event_rsvps")
+          .select("user_id")
+          .eq("event_id", id)
+          .eq("status", "attending")
+          .limit(8);
+        const ids = (rsvps ?? []).map((r) => r.user_id).filter(Boolean);
+        if (ids.length) {
+          const { data: profs } = await supabase
+            .from("profiles")
+            .select("id, name, profile_photo_url, city")
+            .in("id", ids);
+          setAttendees(
+            (profs ?? []).map((p) => ({
+              user_id: p.id,
+              name: p.name,
+              profile_photo_url: p.profile_photo_url,
+              city: p.city,
+            }))
+          );
+        }
+      }
     })();
   }, [id]);
 
   const publicUrl = `${SITE}/e/${id}`;
   const isHost = !!user && !!event && event.host_user_id === user.id;
+  const capacityReached = !!event?.capacity && attendeeCount >= (event.capacity ?? 0);
+  const guestVisible = event?.guest_visibility !== false;
 
   const dateStr = event ? format(new Date(event.event_date + "T00:00:00"), "EEE, MMM d, yyyy") : "";
   const timeStr = event?.event_time ? formatTime(event.event_time) : "";
@@ -280,6 +344,30 @@ const EventPublic = () => {
             )}
           </div>
 
+          {/* Host / community line */}
+          {(host?.name || isHost) && (
+            <div
+              className="flex items-center gap-2 mb-3 text-xs uppercase tracking-[0.22em]"
+              style={{ fontFamily: fonts.mono, color: C.muted }}
+            >
+              {host?.profile_photo_url ? (
+                <img
+                  src={host.profile_photo_url}
+                  alt={host.name ?? "Host"}
+                  className="w-6 h-6 rounded-full object-cover"
+                />
+              ) : (
+                <div
+                  className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold"
+                  style={{ background: C.raspberry, color: "#fff" }}
+                >
+                  {(host?.name ?? "L").slice(0, 1).toUpperCase()}
+                </div>
+              )}
+              <span>Hosted by {host?.name ?? "Loverball"}</span>
+            </div>
+          )}
+
           {/* Title */}
           <h1
             className="mb-5"
@@ -287,6 +375,57 @@ const EventPublic = () => {
           >
             {event.title}
           </h1>
+
+          {/* Social proof — attendee avatar stack */}
+          {(guestVisible && attendeeCount > 0) && (
+            <div className="flex items-center gap-3 mb-6">
+              {attendees.length > 0 && (
+                <div className="flex -space-x-2">
+                  {attendees.slice(0, 5).map((a) =>
+                    a.profile_photo_url ? (
+                      <img
+                        key={a.user_id}
+                        src={a.profile_photo_url}
+                        alt={a.name ?? "Attendee"}
+                        className="w-8 h-8 rounded-full object-cover border-2"
+                        style={{ borderColor: C.bg }}
+                      />
+                    ) : (
+                      <div
+                        key={a.user_id}
+                        className="w-8 h-8 rounded-full border-2 flex items-center justify-center text-[10px] font-bold"
+                        style={{ borderColor: C.bg, background: C.raspberry, color: "#fff" }}
+                      >
+                        {(a.name ?? "L").slice(0, 1).toUpperCase()}
+                      </div>
+                    )
+                  )}
+                </div>
+              )}
+              <span className="text-sm" style={{ color: C.text }}>
+                <span style={{ fontWeight: 600 }}>{attendeeCount}</span>{" "}
+                <span style={{ color: C.muted }}>
+                  {attendeeCount === 1 ? "woman" : "women"}
+                  {event.city ? ` from ${event.city}` : ""} going
+                </span>
+              </span>
+            </div>
+          )}
+
+          {/* Capacity badge when full */}
+          {capacityReached && (
+            <div
+              className="inline-flex items-center gap-2 mb-5 px-3 py-1.5 rounded-full text-[11px] uppercase tracking-[0.2em]"
+              style={{
+                background: "rgba(232,93,47,0.1)",
+                color: C.raspberry,
+                fontFamily: fonts.mono,
+              }}
+            >
+              Full · waitlist open
+            </div>
+          )}
+
 
           {/* Meta */}
           <div className="flex flex-col gap-3 mb-7" style={{ color: C.muted }}>
@@ -344,7 +483,7 @@ const EventPublic = () => {
             </div>
             <div className="grid grid-cols-3 gap-2">
               {([
-                { key: "attending", label: "Going", Icon: Check },
+                { key: "attending", label: capacityReached ? "Waitlist" : "Going", Icon: Check },
                 { key: "waitlisted", label: "Maybe", Icon: HelpCircle },
                 { key: "canceled", label: "Can't go", Icon: X },
               ] as const).map(({ key, label, Icon }) => {
@@ -419,7 +558,7 @@ const EventPublic = () => {
                 className="h-12 rounded-full text-[11px] uppercase tracking-[0.18em] border-0"
                 style={{ background: C.raspberry, color: "#fff", fontFamily: fonts.mono }}
               >
-                I'm in
+                {capacityReached ? "Join waitlist" : "I'm in"}
               </Button>
               <Button
                 onClick={() => handleRSVPIntent("waitlisted")}
