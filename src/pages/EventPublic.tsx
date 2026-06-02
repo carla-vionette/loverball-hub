@@ -483,7 +483,7 @@ const EventPublic = () => {
             </div>
             <div className="grid grid-cols-3 gap-2">
               {([
-                { key: "attending", label: "Going", Icon: Check },
+                { key: "attending", label: capacityReached ? "Waitlist" : "Going", Icon: Check },
                 { key: "waitlisted", label: "Maybe", Icon: HelpCircle },
                 { key: "canceled", label: "Can't go", Icon: X },
               ] as const).map(({ key, label, Icon }) => {
