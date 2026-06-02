@@ -344,6 +344,30 @@ const EventPublic = () => {
             )}
           </div>
 
+          {/* Host / community line */}
+          {(host?.name || isHost) && (
+            <div
+              className="flex items-center gap-2 mb-3 text-xs uppercase tracking-[0.22em]"
+              style={{ fontFamily: fonts.mono, color: C.muted }}
+            >
+              {host?.profile_photo_url ? (
+                <img
+                  src={host.profile_photo_url}
+                  alt={host.name ?? "Host"}
+                  className="w-6 h-6 rounded-full object-cover"
+                />
+              ) : (
+                <div
+                  className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold"
+                  style={{ background: C.raspberry, color: "#fff" }}
+                >
+                  {(host?.name ?? "L").slice(0, 1).toUpperCase()}
+                </div>
+              )}
+              <span>Hosted by {host?.name ?? "Loverball"}</span>
+            </div>
+          )}
+
           {/* Title */}
           <h1
             className="mb-5"
@@ -351,6 +375,57 @@ const EventPublic = () => {
           >
             {event.title}
           </h1>
+
+          {/* Social proof — attendee avatar stack */}
+          {(guestVisible && attendeeCount > 0) && (
+            <div className="flex items-center gap-3 mb-6">
+              {attendees.length > 0 && (
+                <div className="flex -space-x-2">
+                  {attendees.slice(0, 5).map((a) =>
+                    a.profile_photo_url ? (
+                      <img
+                        key={a.user_id}
+                        src={a.profile_photo_url}
+                        alt={a.name ?? "Attendee"}
+                        className="w-8 h-8 rounded-full object-cover border-2"
+                        style={{ borderColor: C.bg }}
+                      />
+                    ) : (
+                      <div
+                        key={a.user_id}
+                        className="w-8 h-8 rounded-full border-2 flex items-center justify-center text-[10px] font-bold"
+                        style={{ borderColor: C.bg, background: C.raspberry, color: "#fff" }}
+                      >
+                        {(a.name ?? "L").slice(0, 1).toUpperCase()}
+                      </div>
+                    )
+                  )}
+                </div>
+              )}
+              <span className="text-sm" style={{ color: C.text }}>
+                <span style={{ fontWeight: 600 }}>{attendeeCount}</span>{" "}
+                <span style={{ color: C.muted }}>
+                  {attendeeCount === 1 ? "woman" : "women"}
+                  {event.city ? ` from ${event.city}` : ""} going
+                </span>
+              </span>
+            </div>
+          )}
+
+          {/* Capacity badge when full */}
+          {capacityReached && (
+            <div
+              className="inline-flex items-center gap-2 mb-5 px-3 py-1.5 rounded-full text-[11px] uppercase tracking-[0.2em]"
+              style={{
+                background: "rgba(232,93,47,0.1)",
+                color: C.raspberry,
+                fontFamily: fonts.mono,
+              }}
+            >
+              Full · waitlist open
+            </div>
+          )}
+
 
           {/* Meta */}
           <div className="flex flex-col gap-3 mb-7" style={{ color: C.muted }}>
