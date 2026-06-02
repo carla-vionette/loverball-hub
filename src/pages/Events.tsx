@@ -582,6 +582,7 @@ const Events = () => {
                 const sponsorSlot = cardIndex > 0 && cardIndex % 5 === 0;
                 const th = eventTheme[getVariant(ev.event_type)];
                 const d = new Date(ev.event_date);
+                const dist = distanceById[ev.id];
 
                 return (
                   <React.Fragment key={ev.id}>
