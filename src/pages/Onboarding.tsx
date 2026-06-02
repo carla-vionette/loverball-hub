@@ -344,10 +344,19 @@ const Onboarding = () => {
   const completeFinish = async () => {
     setLoading(true);
     try {
+      let resolved: { city?: string; state?: string; latitude?: number | null; longitude?: number | null } = {};
+      if (zipCode && /^\d{5}$/.test(zipCode)) {
+        const { resolveZip } = await import("@/lib/geocoding");
+        const loc = await resolveZip(zipCode);
+        if (loc) resolved = { city: loc.city, state: loc.state, latitude: loc.latitude, longitude: loc.longitude };
+      }
       await saveProfilePartial({
         favorite_sports: leagues,
         favorite_teams_players: teams,
-        city: city || undefined,
+        city: resolved.city || city || undefined,
+        state: resolved.state,
+        latitude: resolved.latitude,
+        longitude: resolved.longitude,
         zip_code: zipCode || undefined,
         bio: vibe?.trim() || undefined,
         other_interests: vibe ? [vibe] : [],
