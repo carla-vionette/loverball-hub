@@ -172,6 +172,9 @@ const EventPublic = () => {
       return;
     }
     await applyRsvp(status);
+    if (status === "attending" || status === "waitlisted") {
+      navigate(`/rsvp/confirmed/${id}?returning=1`);
+    }
   };
 
   const handleSendInvites = async () => {
