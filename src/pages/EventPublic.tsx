@@ -16,6 +16,7 @@ import { buildShareSummary, buildSharePreviewDescription } from "@/lib/eventShar
 import SharePreview from "@/components/SharePreview";
 import SocialShareButtons from "@/components/SocialShareButtons";
 import EventRSVPDialog, { RsvpIntent } from "@/components/EventRSVPDialog";
+import RsvpPhoneSheet from "@/components/rsvp/RsvpPhoneSheet";
 
 const SITE = "https://www.loverball.com";
 
