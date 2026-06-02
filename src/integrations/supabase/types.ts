@@ -1666,6 +1666,7 @@ export type Database = {
           current_streak: number
           email_notifications_enabled: boolean
           event_comfort_level: string | null
+          fan_vibe: string | null
           favorite_la_teams: string[] | null
           favorite_sports: string[] | null
           favorite_teams_players: string[] | null
@@ -1708,6 +1709,7 @@ export type Database = {
           current_streak?: number
           email_notifications_enabled?: boolean
           event_comfort_level?: string | null
+          fan_vibe?: string | null
           favorite_la_teams?: string[] | null
           favorite_sports?: string[] | null
           favorite_teams_players?: string[] | null
@@ -1750,6 +1752,7 @@ export type Database = {
           current_streak?: number
           email_notifications_enabled?: boolean
           event_comfort_level?: string | null
+          fan_vibe?: string | null
           favorite_la_teams?: string[] | null
           favorite_sports?: string[] | null
           favorite_teams_players?: string[] | null

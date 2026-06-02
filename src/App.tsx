@@ -28,6 +28,10 @@ const EditProfile = lazy(() => import("./pages/EditProfile"));
 const Club = lazy(() => import("./pages/Club"));
 
 const Onboarding = lazy(() => import("./pages/Onboarding"));
+const RsvpConfirmed = lazy(() => import("./pages/RsvpConfirmed"));
+const WelcomeIdentity = lazy(() => import("./pages/WelcomeIdentity"));
+const WelcomeCircles = lazy(() => import("./pages/WelcomeCircles"));
+const WelcomeFirstMove = lazy(() => import("./pages/WelcomeFirstMove"));
 
 const Settings = lazy(() => import("./pages/Settings"));
 const MessagesPage = lazy(() => import("./pages/MessagesPage"));
@@ -107,6 +111,10 @@ const App = () => (
                 <Route path="/event/:id" element={<EventDetail />} />
                 <Route path="/events/:id" element={<EventDetail />} />
                 <Route path="/e/:id" element={<EventPublic />} />
+                <Route path="/rsvp/confirmed/:eventId" element={<RsvpConfirmed />} />
+                <Route path="/welcome/identity" element={<WelcomeIdentity />} />
+                <Route path="/welcome/circles" element={<WelcomeCircles />} />
+                <Route path="/welcome/first-move" element={<WelcomeFirstMove />} />
                 <Route path="/club" element={<Club />} />
                 <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
                 <Route path="/profile/:id" element={<ProtectedRoute><Profile /></ProtectedRoute>} />

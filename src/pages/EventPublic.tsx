@@ -15,7 +15,8 @@ import { C, fonts } from "@/lib/editorialTheme";
 import { buildShareSummary, buildSharePreviewDescription } from "@/lib/eventShare";
 import SharePreview from "@/components/SharePreview";
 import SocialShareButtons from "@/components/SocialShareButtons";
-import EventRSVPDialog, { RsvpIntent } from "@/components/EventRSVPDialog";
+import type { RsvpIntent } from "@/components/EventRSVPDialog";
+import RsvpPhoneSheet from "@/components/rsvp/RsvpPhoneSheet";
 
 const SITE = "https://www.loverball.com";
 
@@ -171,6 +172,9 @@ const EventPublic = () => {
       return;
     }
     await applyRsvp(status);
+    if (status === "attending" || status === "waitlisted") {
+      navigate(`/rsvp/confirmed/${id}?returning=1`);
+    }
   };
 
   const handleSendInvites = async () => {
@@ -401,6 +405,43 @@ const EventPublic = () => {
             POWERED BY LOVERBALL · HER GAME. HER COMMUNITY.
           </p>
         </main>
+
+        {/* Mobile sticky RSVP bar — only when no RSVP yet */}
+        {!rsvpStatus && (
+          <div
+            className="md:hidden fixed bottom-0 left-0 right-0 z-40 border-t px-4 pt-3 pb-[calc(env(safe-area-inset-bottom)+10px)]"
+            style={{ background: C.surface, borderColor: C.border }}
+          >
+            <div className="grid grid-cols-3 gap-2 max-w-md mx-auto">
+              <Button
+                onClick={() => handleRSVPIntent("attending")}
+                disabled={rsvping}
+                className="h-12 rounded-full text-[11px] uppercase tracking-[0.18em] border-0"
+                style={{ background: C.raspberry, color: "#fff", fontFamily: fonts.mono }}
+              >
+                I'm in
+              </Button>
+              <Button
+                onClick={() => handleRSVPIntent("waitlisted")}
+                disabled={rsvping}
+                variant="outline"
+                className="h-12 rounded-full text-[11px] uppercase tracking-[0.18em] bg-transparent"
+                style={{ borderColor: C.borderStrong, color: C.text, fontFamily: fonts.mono }}
+              >
+                Maybe
+              </Button>
+              <Button
+                onClick={() => handleRSVPIntent("canceled")}
+                disabled={rsvping}
+                variant="ghost"
+                className="h-12 rounded-full text-[11px] uppercase tracking-[0.18em]"
+                style={{ color: C.muted, fontFamily: fonts.mono }}
+              >
+                Can't go
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Invite dialog */}
@@ -513,15 +554,14 @@ const EventPublic = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Event-contextual signup / sign-in for RSVP */}
-      <EventRSVPDialog
+      {/* Phone-OTP RSVP sheet (replaces legacy email dialog on the public invite path) */}
+      <RsvpPhoneSheet
         open={authOpen}
         onOpenChange={setAuthOpen}
         eventId={event.id}
         eventTitle={event.title}
-        eventImage={event.image_url}
         intent={authIntent}
-        onAuthed={applyRsvp}
+        onVerified={applyRsvp}
       />
     </>
   );
