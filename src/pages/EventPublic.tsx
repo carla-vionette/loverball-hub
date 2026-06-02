@@ -73,21 +73,70 @@ const EventPublic = () => {
   const [showShareDialog, setShowShareDialog] = useState(false);
   const pendingAppliedRef = useRef(false);
 
+  const [host, setHost] = useState<HostInfo | null>(null);
+  const [attendees, setAttendees] = useState<AttendeePreview[]>([]);
+  const [attendeeCount, setAttendeeCount] = useState<number>(0);
+
   useEffect(() => {
     if (!id) return;
     (async () => {
       const { data } = await supabase
         .from("events")
-        .select("id, title, description, image_url, event_date, event_time, venue_name, city, visibility, host_user_id")
+        .select("id, title, description, image_url, event_date, event_time, venue_name, city, visibility, host_user_id, capacity, guest_visibility, rsvp_approval_required")
         .eq("id", id)
         .maybeSingle();
-      setEvent(data as PublicEvent | null);
+      const ev = data as PublicEvent | null;
+      setEvent(ev);
       setLoading(false);
+
+      if (ev?.host_user_id) {
+        const { data: h } = await supabase
+          .from("profiles")
+          .select("name, profile_photo_url")
+          .eq("id", ev.host_user_id)
+          .maybeSingle();
+        setHost(h as HostInfo | null);
+      }
+
+      // Attendee count (always — used for capacity/social proof)
+      const { count } = await supabase
+        .from("event_rsvps")
+        .select("user_id", { count: "exact", head: true })
+        .eq("event_id", id)
+        .eq("status", "attending");
+      setAttendeeCount(count ?? 0);
+
+      // Avatar preview — only if host allows guest visibility (defaults to true)
+      if (ev?.guest_visibility !== false) {
+        const { data: rsvps } = await supabase
+          .from("event_rsvps")
+          .select("user_id")
+          .eq("event_id", id)
+          .eq("status", "attending")
+          .limit(8);
+        const ids = (rsvps ?? []).map((r) => r.user_id).filter(Boolean);
+        if (ids.length) {
+          const { data: profs } = await supabase
+            .from("profiles")
+            .select("id, name, profile_photo_url, city")
+            .in("id", ids);
+          setAttendees(
+            (profs ?? []).map((p) => ({
+              user_id: p.id,
+              name: p.name,
+              profile_photo_url: p.profile_photo_url,
+              city: p.city,
+            }))
+          );
+        }
+      }
     })();
   }, [id]);
 
   const publicUrl = `${SITE}/e/${id}`;
   const isHost = !!user && !!event && event.host_user_id === user.id;
+  const capacityReached = !!event?.capacity && attendeeCount >= (event.capacity ?? 0);
+  const guestVisible = event?.guest_visibility !== false;
 
   const dateStr = event ? format(new Date(event.event_date + "T00:00:00"), "EEE, MMM d, yyyy") : "";
   const timeStr = event?.event_time ? formatTime(event.event_time) : "";
