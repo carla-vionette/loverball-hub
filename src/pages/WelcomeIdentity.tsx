@@ -8,7 +8,7 @@ import { Loader2, ArrowLeft, Camera } from "lucide-react";
 import { C, fonts } from "@/lib/editorialTheme";
 import { useToast } from "@/hooks/use-toast";
 import Seo from "@/components/Seo";
-import { CITY_OPTIONS, SPORTS_OPTIONS } from "@/lib/onboardingOptions";
+import { CITY_OPTIONS } from "@/lib/onboardingOptions";
 
 const LOOKING_FOR = [
   "Friends",
