@@ -21,6 +21,7 @@ import EventSubmissionForm from "@/components/EventSubmissionForm";
 import Seo from "@/components/Seo";
 import EditorialMasthead from "@/components/layout/EditorialMasthead";
 import { buildShareSummary, buildSharePreviewDescription } from "@/lib/eventShare";
+import { distanceMiles } from "@/lib/geocoding";
 
 
 const CATEGORIES = ["All", "watch_party", "game", "panel", "brunch", "networking", "other"];
