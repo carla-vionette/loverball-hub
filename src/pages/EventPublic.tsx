@@ -15,7 +15,7 @@ import { C, fonts } from "@/lib/editorialTheme";
 import { buildShareSummary, buildSharePreviewDescription } from "@/lib/eventShare";
 import SharePreview from "@/components/SharePreview";
 import SocialShareButtons from "@/components/SocialShareButtons";
-import EventRSVPDialog, { RsvpIntent } from "@/components/EventRSVPDialog";
+import type { RsvpIntent } from "@/components/EventRSVPDialog";
 import RsvpPhoneSheet from "@/components/rsvp/RsvpPhoneSheet";
 
 const SITE = "https://www.loverball.com";
