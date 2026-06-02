@@ -601,10 +601,11 @@ const Events = () => {
                         )}
                         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, rgba(10,10,11,0.1) 0%, rgba(10,10,11,0.55) 100%)" }} />
 
-                        {/* Eyebrow */}
+                        {/* Eyebrow — colored dot + type label */}
                         <div className="absolute top-3 left-3 flex items-center gap-1.5">
-                          <span className="px-2 py-0.5 rounded-full"
-                            style={{ background: "rgba(232,107,176,0.15)", border: "1px solid rgba(232,107,176,0.5)", color: "#E85D2F", fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 700, fontSize: 8.5, letterSpacing: "0.18em", textTransform: "uppercase" }}>
+                          <span className="px-2 py-0.5 rounded-full inline-flex items-center gap-1.5"
+                            style={{ background: "rgba(10,10,11,0.78)", border: `1px solid ${th.dot}66`, color: "#FAF5E9", fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 700, fontSize: 8.5, letterSpacing: "0.18em", textTransform: "uppercase", backdropFilter: "blur(6px)" }}>
+                            <span style={{ width: 6, height: 6, borderRadius: 999, background: th.dot, display: "inline-block" }} />
                             {th.label}
                           </span>
                           {ev.price === 0 && (
