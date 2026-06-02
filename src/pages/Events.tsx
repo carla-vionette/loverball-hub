@@ -140,6 +140,15 @@ const Events = () => {
         .eq("status", "active")
         .limit(1);
       setIsApprovedCreator(!!data && data.length > 0);
+
+      const { data: prof } = await supabase
+        .from("profiles")
+        .select("latitude, longitude")
+        .eq("id", user.id)
+        .maybeSingle();
+      if (prof && (prof as any).latitude != null && (prof as any).longitude != null) {
+        setUserLoc({ lat: (prof as any).latitude, lng: (prof as any).longitude });
+      }
     })();
   }, [user]);
 
