@@ -32,8 +32,7 @@ const WelcomeCircles = () => {
   const [people, setPeople] = useState<Person[]>([]);
   const [circles, setCircles] = useState<Circle[]>([]);
   const [events, setEvents] = useState<EventLite[]>([]);
-  const [userTeams, setUserTeams] = useState<string[]>([]);
-  const [userCity, setUserCity] = useState<string | null>(null);
+  // (state for current user's teams/city is read inline during the effect; no need to store)
 
   useEffect(() => {
     (async () => {
