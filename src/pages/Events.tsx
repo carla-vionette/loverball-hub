@@ -647,10 +647,13 @@ const Events = () => {
                           style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 10, color: "rgba(248,248,248,0.55)", letterSpacing: "0.04em" }}>
                           {ev.event_time && <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{fmtTime(ev.event_time)}</span>}
                           {(ev.venue_name || ev.city) && (
-                            <span className="flex items-center gap-1 truncate max-w-[180px]">
+                            <span className="flex items-center gap-1 truncate max-w-[200px]">
                               <MapPin className="w-3 h-3" style={{ color: "#E85D2F" }} />
                               {ev.venue_name}{ev.venue_name && ev.city ? ", " : ""}{ev.city}
                             </span>
+                          )}
+                          {dist != null && (
+                            <span style={{ color: "#2DD4BF" }}>{dist < 1 ? "<1" : Math.round(dist)} mi</span>
                           )}
                         </div>
 
