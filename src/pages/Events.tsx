@@ -408,6 +408,42 @@ const Events = () => {
             />
           </div>
 
+          {/* Radius toggle — only meaningful when we know where the user is */}
+          <div className="flex flex-wrap items-center gap-2 mb-7">
+            <span style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 10, letterSpacing: "0.18em", color: "rgba(248,248,248,0.55)", textTransform: "uppercase" }}>
+              {userLoc ? "Within" : "Radius"}
+            </span>
+            {[25, 50, 100, "national" as const].map((r) => {
+              const active = radius === r;
+              const label = r === "national" ? "National" : `${r} mi`;
+              return (
+                <button
+                  key={String(r)}
+                  onClick={() => setRadius(r as any)}
+                  className="px-3 py-1.5 rounded-full transition-all"
+                  style={{
+                    background: active ? "#FAF5E9" : "rgba(20,20,21,0.6)",
+                    color: active ? "#0a0a0a" : "rgba(248,248,248,0.7)",
+                    border: active ? "1px solid #FAF5E9" : "1px solid rgba(255,255,255,0.08)",
+                    fontFamily: "'Inter', system-ui, sans-serif",
+                    fontWeight: 700,
+                    fontSize: 10,
+                    letterSpacing: "0.08em",
+                    textTransform: "uppercase",
+                  }}
+                >
+                  {label}
+                </button>
+              );
+            })}
+            {!userLoc && user && (
+              <a href="/edit-profile" className="ml-1" style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 10, color: "#E85D2F", letterSpacing: "0.08em", textTransform: "uppercase" }}>
+                Add ZIP →
+              </a>
+            )}
+          </div>
+
+
           {/* FEATURED — cinematic */}
           {featured && (() => {
             const th = eventTheme[getVariant(featured.event_type)];
