@@ -21,6 +21,7 @@ import EventSubmissionForm from "@/components/EventSubmissionForm";
 import Seo from "@/components/Seo";
 import EditorialMasthead from "@/components/layout/EditorialMasthead";
 import { buildShareSummary, buildSharePreviewDescription } from "@/lib/eventShare";
+import { distanceMiles } from "@/lib/geocoding";
 
 
 const CATEGORIES = ["All", "watch_party", "game", "panel", "brunch", "networking", "other"];
@@ -49,12 +50,18 @@ interface DbEvent {
   capacity?: number | null;
   price?: number | null;
   event_tags?: string[] | null;
+  location_lat?: number | null;
+  location_lng?: number | null;
 }
 
+// Event color system:
+//   ⚫ Black   — External sports games (pro + collegiate)
+//   🩷 Raspberry — Loverball-hosted events
+//   🩵 Teal    — Curated culture / sports bars / watch parties
 type EventVariant = "external" | "hosted" | "cultural";
 const variantMap: Record<string, EventVariant> = {
   game: "external",
-  watch_party: "external",
+  watch_party: "cultural",
   networking: "hosted",
   brunch: "hosted",
   party: "hosted",
@@ -63,10 +70,10 @@ const variantMap: Record<string, EventVariant> = {
   other: "cultural",
 };
 const getVariant = (t?: string | null): EventVariant => (t && variantMap[t]) || "cultural";
-const eventTheme: Record<EventVariant, { accent: string; label: string }> = {
-  external: { accent: "#E85D2F", label: "Broadcast" },
-  hosted:   { accent: "#E85D2F", label: "Hosted" },
-  cultural: { accent: "#FAF5E9", label: "Cultural" },
+const eventTheme: Record<EventVariant, { accent: string; dot: string; label: string }> = {
+  external: { accent: "#0a0a0a", dot: "#0a0a0a", label: "Game" },
+  hosted:   { accent: "#E85D2F", dot: "#E85D2F", label: "Loverball" },
+  cultural: { accent: "#2DD4BF", dot: "#2DD4BF", label: "Watch Party" },
 };
 
 const fmtTime = (t: string) => {
@@ -105,6 +112,8 @@ const Events = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
+  const [userLoc, setUserLoc] = useState<{ lat: number; lng: number } | null>(null);
+  const [radius, setRadius] = useState<25 | 50 | 100 | "national">(50);
 
   const [gateEventId, setGateEventId] = useState<string | null>(null);
   const openGate = (id: string) => {
@@ -132,6 +141,15 @@ const Events = () => {
         .eq("status", "active")
         .limit(1);
       setIsApprovedCreator(!!data && data.length > 0);
+
+      const { data: prof } = await supabase
+        .from("profiles")
+        .select("latitude, longitude")
+        .eq("id", user.id)
+        .maybeSingle();
+      if (prof && (prof as any).latitude != null && (prof as any).longitude != null) {
+        setUserLoc({ lat: (prof as any).latitude, lng: (prof as any).longitude });
+      }
     })();
   }, [user]);
 
@@ -260,9 +278,24 @@ const Events = () => {
 
   const baseEvents = tab === "upcoming" ? upcomingEvents : pastEvents;
   const categoryFiltered = category === "All" ? baseEvents : baseEvents.filter(e => e.event_type === category);
+
+  // Proximity filter — only applied when user has lat/lng AND radius is numeric.
+  // Events without coords are always shown (treated as "national" reach).
+  const withDistance = categoryFiltered.map(e => {
+    let distance: number | null = null;
+    if (userLoc && e.location_lat != null && e.location_lng != null) {
+      distance = distanceMiles(userLoc.lat, userLoc.lng, e.location_lat, e.location_lng);
+    }
+    return { ev: e, distance };
+  });
+
+  const radiusFiltered = (userLoc && radius !== "national")
+    ? withDistance.filter(({ distance }) => distance == null || distance <= radius)
+    : withDistance;
+
   const q = searchQuery.trim().toLowerCase();
-  const filtered = q
-    ? categoryFiltered.filter(e =>
+  const filteredWithDist = q
+    ? radiusFiltered.filter(({ ev: e }) =>
         e.title.toLowerCase().includes(q) ||
         (e.city && e.city.toLowerCase().includes(q)) ||
         (e.venue_name && e.venue_name.toLowerCase().includes(q)) ||
@@ -270,7 +303,12 @@ const Events = () => {
         (e.sport_tags && e.sport_tags.some((t: string) => t.toLowerCase().includes(q))) ||
         (e.event_tags && e.event_tags.some((t: string) => t.toLowerCase().includes(q)))
       )
-    : categoryFiltered;
+    : radiusFiltered;
+
+  const filtered = filteredWithDist.map(x => x.ev);
+  const distanceById: Record<string, number | null> = Object.fromEntries(
+    filteredWithDist.map(x => [x.ev.id, x.distance])
+  );
 
   const featured = tab === "upcoming" && upcomingEvents.length
     ? upcomingEvents.reduce((closest, ev) => {
@@ -369,6 +407,42 @@ const Events = () => {
               style={{ fontFamily: "'Inter', system-ui, sans-serif", fontSize: 14 }}
             />
           </div>
+
+          {/* Radius toggle — only meaningful when we know where the user is */}
+          <div className="flex flex-wrap items-center gap-2 mb-7">
+            <span style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 10, letterSpacing: "0.18em", color: "rgba(248,248,248,0.55)", textTransform: "uppercase" }}>
+              {userLoc ? "Within" : "Radius"}
+            </span>
+            {[25, 50, 100, "national" as const].map((r) => {
+              const active = radius === r;
+              const label = r === "national" ? "National" : `${r} mi`;
+              return (
+                <button
+                  key={String(r)}
+                  onClick={() => setRadius(r as any)}
+                  className="px-3 py-1.5 rounded-full transition-all"
+                  style={{
+                    background: active ? "#FAF5E9" : "rgba(20,20,21,0.6)",
+                    color: active ? "#0a0a0a" : "rgba(248,248,248,0.7)",
+                    border: active ? "1px solid #FAF5E9" : "1px solid rgba(255,255,255,0.08)",
+                    fontFamily: "'Inter', system-ui, sans-serif",
+                    fontWeight: 700,
+                    fontSize: 10,
+                    letterSpacing: "0.08em",
+                    textTransform: "uppercase",
+                  }}
+                >
+                  {label}
+                </button>
+              );
+            })}
+            {!userLoc && user && (
+              <a href="/edit-profile" className="ml-1" style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 10, color: "#E85D2F", letterSpacing: "0.08em", textTransform: "uppercase" }}>
+                Add ZIP →
+              </a>
+            )}
+          </div>
+
 
           {/* FEATURED — cinematic */}
           {featured && (() => {
@@ -508,6 +582,7 @@ const Events = () => {
                 const sponsorSlot = cardIndex > 0 && cardIndex % 5 === 0;
                 const th = eventTheme[getVariant(ev.event_type)];
                 const d = new Date(ev.event_date);
+                const dist = distanceById[ev.id];
 
                 return (
                   <React.Fragment key={ev.id}>
@@ -526,10 +601,11 @@ const Events = () => {
                         )}
                         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, rgba(10,10,11,0.1) 0%, rgba(10,10,11,0.55) 100%)" }} />
 
-                        {/* Eyebrow */}
+                        {/* Eyebrow — colored dot + type label */}
                         <div className="absolute top-3 left-3 flex items-center gap-1.5">
-                          <span className="px-2 py-0.5 rounded-full"
-                            style={{ background: "rgba(232,107,176,0.15)", border: "1px solid rgba(232,107,176,0.5)", color: "#E85D2F", fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 700, fontSize: 8.5, letterSpacing: "0.18em", textTransform: "uppercase" }}>
+                          <span className="px-2 py-0.5 rounded-full inline-flex items-center gap-1.5"
+                            style={{ background: "rgba(10,10,11,0.78)", border: `1px solid ${th.dot}66`, color: "#FAF5E9", fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 700, fontSize: 8.5, letterSpacing: "0.18em", textTransform: "uppercase", backdropFilter: "blur(6px)" }}>
+                            <span style={{ width: 6, height: 6, borderRadius: 999, background: th.dot, display: "inline-block" }} />
                             {th.label}
                           </span>
                           {ev.price === 0 && (
@@ -571,10 +647,13 @@ const Events = () => {
                           style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 10, color: "rgba(248,248,248,0.55)", letterSpacing: "0.04em" }}>
                           {ev.event_time && <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{fmtTime(ev.event_time)}</span>}
                           {(ev.venue_name || ev.city) && (
-                            <span className="flex items-center gap-1 truncate max-w-[180px]">
+                            <span className="flex items-center gap-1 truncate max-w-[200px]">
                               <MapPin className="w-3 h-3" style={{ color: "#E85D2F" }} />
                               {ev.venue_name}{ev.venue_name && ev.city ? ", " : ""}{ev.city}
                             </span>
+                          )}
+                          {dist != null && (
+                            <span style={{ color: "#2DD4BF" }}>{dist < 1 ? "<1" : Math.round(dist)} mi</span>
                           )}
                         </div>
 

@@ -207,10 +207,21 @@ const EditProfile = () => {
         photoUrl = await uploadProfilePhoto();
       }
       
+      // Resolve zip → city/state/lat/lng (best-effort)
+      let geo: { city?: string; state?: string; latitude?: number | null; longitude?: number | null } = {};
+      if (zipCode && /^\d{5}$/.test(zipCode)) {
+        const { resolveZip } = await import("@/lib/geocoding");
+        const loc = await resolveZip(zipCode);
+        if (loc) geo = { city: loc.city, state: loc.state, latitude: loc.latitude, longitude: loc.longitude };
+      }
+
       const { error } = await supabase.from("profiles").update({
         name,
         pronouns,
-        city,
+        city: geo.city || city,
+        state: geo.state,
+        latitude: geo.latitude,
+        longitude: geo.longitude,
         zip_code: zipCode || null,
         favorite_sports: favoriteSports,
         favorite_teams_players: favTeams,
@@ -254,7 +265,7 @@ const EditProfile = () => {
   const canProceed = () => {
     switch (step) {
       case 1:
-        return name.trim() && city && /^\d{5}$/.test(zipCode);
+        return name.trim() && /^\d{5}$/.test(zipCode);
       case 2:
         return favoriteSports.length > 0;
       case 3:
@@ -375,7 +386,7 @@ const EditProfile = () => {
                 </div>
 
                 <div className="space-y-1.5">
-                  <Label htmlFor="zip" className="text-xs tracking-wider uppercase text-foreground/60">ZIP Code *</Label>
+                  <Label htmlFor="zip" className="text-xs tracking-wider uppercase text-foreground/60">Your City (ZIP Code) *</Label>
                   <Input
                     id="zip"
                     inputMode="numeric"
@@ -386,6 +397,7 @@ const EditProfile = () => {
                     onChange={(e) => setZipCode(e.target.value.replace(/[^0-9]/g, "").slice(0, 5))}
                     className="bg-background rounded-none h-10"
                   />
+                  <p className="text-[11px] text-foreground/50">We'll show you games, watch parties, and events near you.</p>
                 </div>
               </div>
             )}
