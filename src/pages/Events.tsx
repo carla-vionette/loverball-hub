@@ -49,12 +49,18 @@ interface DbEvent {
   capacity?: number | null;
   price?: number | null;
   event_tags?: string[] | null;
+  location_lat?: number | null;
+  location_lng?: number | null;
 }
 
+// Event color system:
+//   ⚫ Black   — External sports games (pro + collegiate)
+//   🩷 Raspberry — Loverball-hosted events
+//   🩵 Teal    — Curated culture / sports bars / watch parties
 type EventVariant = "external" | "hosted" | "cultural";
 const variantMap: Record<string, EventVariant> = {
   game: "external",
-  watch_party: "external",
+  watch_party: "cultural",
   networking: "hosted",
   brunch: "hosted",
   party: "hosted",
@@ -63,10 +69,10 @@ const variantMap: Record<string, EventVariant> = {
   other: "cultural",
 };
 const getVariant = (t?: string | null): EventVariant => (t && variantMap[t]) || "cultural";
-const eventTheme: Record<EventVariant, { accent: string; label: string }> = {
-  external: { accent: "#E85D2F", label: "Broadcast" },
-  hosted:   { accent: "#E85D2F", label: "Hosted" },
-  cultural: { accent: "#FAF5E9", label: "Cultural" },
+const eventTheme: Record<EventVariant, { accent: string; dot: string; label: string }> = {
+  external: { accent: "#0a0a0a", dot: "#0a0a0a", label: "Game" },
+  hosted:   { accent: "#E85D2F", dot: "#E85D2F", label: "Loverball" },
+  cultural: { accent: "#2DD4BF", dot: "#2DD4BF", label: "Watch Party" },
 };
 
 const fmtTime = (t: string) => {
