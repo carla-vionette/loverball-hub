@@ -47,8 +47,6 @@ const WelcomeCircles = () => {
       const myCity = me?.city || null;
       const myTeams: string[] = Array.isArray(me?.favorite_la_teams) ? me.favorite_la_teams : [];
       setName(myName);
-      setUserCity(myCity);
-      setUserTeams(myTeams);
 
       // People: same city, then overlap on teams
       const peopleQuery = supabase
