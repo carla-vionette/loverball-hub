@@ -558,7 +558,7 @@ const EventPublic = () => {
                 className="h-12 rounded-full text-[11px] uppercase tracking-[0.18em] border-0"
                 style={{ background: C.raspberry, color: "#fff", fontFamily: fonts.mono }}
               >
-                I'm in
+                {capacityReached ? "Join waitlist" : "I'm in"}
               </Button>
               <Button
                 onClick={() => handleRSVPIntent("waitlisted")}
