@@ -764,12 +764,11 @@ const Onboarding = () => {
               <GhostBtn onClick={() => exitToDestination(false)}>Skip</GhostBtn>
             </div>
             <div className="flex-1 flex flex-col">
-              <H>Where are you?</H>
-              <Sub>So we can match you to local watch parties + drops.</Sub>
-              <TextField className="mt-8" placeholder="City (e.g. Los Angeles)" value={city} onChange={(e) => setCity(e.target.value)} />
+              <H>Your City</H>
+              <Sub>We'll show you games, watch parties, and events near you.</Sub>
               <TextField
-                className="mt-4"
-                placeholder="ZIP code"
+                className="mt-8"
+                placeholder="ZIP code (e.g. 90001)"
                 value={zipCode}
                 onChange={(e) => setZipCode(e.target.value.replace(/[^0-9]/g, "").slice(0, 5))}
                 inputMode="numeric"
@@ -777,7 +776,7 @@ const Onboarding = () => {
                 maxLength={5}
               />
             </div>
-            <PrimaryBtn onClick={() => setStep(18)} disabled={zipCode.length > 0 && zipCode.length !== 5}>Next</PrimaryBtn>
+            <PrimaryBtn onClick={() => setStep(18)} disabled={!/^\d{5}$/.test(zipCode)}>Next</PrimaryBtn>
           </Page>
         );
 
