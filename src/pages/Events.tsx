@@ -284,9 +284,6 @@ const Events = () => {
   const withDistance = categoryFiltered.map(e => {
     let distance: number | null = null;
     if (userLoc && e.location_lat != null && e.location_lng != null) {
-      // Lazy require to avoid pulling lib into initial bundle
-      // eslint-disable-next-line @typescript-eslint/no-var-requires
-      const { distanceMiles } = require("@/lib/geocoding") as typeof import("@/lib/geocoding");
       distance = distanceMiles(userLoc.lat, userLoc.lng, e.location_lat, e.location_lng);
     }
     return { ev: e, distance };
