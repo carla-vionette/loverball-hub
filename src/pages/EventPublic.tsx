@@ -514,15 +514,14 @@ const EventPublic = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Event-contextual signup / sign-in for RSVP */}
-      <EventRSVPDialog
+      {/* Phone-OTP RSVP sheet (replaces legacy email dialog on the public invite path) */}
+      <RsvpPhoneSheet
         open={authOpen}
         onOpenChange={setAuthOpen}
         eventId={event.id}
         eventTitle={event.title}
-        eventImage={event.image_url}
         intent={authIntent}
-        onAuthed={applyRsvp}
+        onVerified={applyRsvp}
       />
     </>
   );
