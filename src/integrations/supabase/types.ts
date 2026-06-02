@@ -1678,8 +1678,10 @@ export type Database = {
           interested_in_la28: boolean | null
           interested_in_world_cup_la: boolean | null
           last_streak_week: string | null
+          latitude: number | null
           linkedin_url: string | null
           longest_streak: number
+          longitude: number | null
           looking_for_tags: string[] | null
           membership_tier: string | null
           name: string
@@ -1692,6 +1694,7 @@ export type Database = {
           sms_notifications_enabled: boolean | null
           sms_unsubscribed: boolean
           sports_experience_types: string[] | null
+          state: string | null
           tiktok_url: string | null
           total_points: number
           updated_at: string
@@ -1721,8 +1724,10 @@ export type Database = {
           interested_in_la28?: boolean | null
           interested_in_world_cup_la?: boolean | null
           last_streak_week?: string | null
+          latitude?: number | null
           linkedin_url?: string | null
           longest_streak?: number
+          longitude?: number | null
           looking_for_tags?: string[] | null
           membership_tier?: string | null
           name: string
@@ -1735,6 +1740,7 @@ export type Database = {
           sms_notifications_enabled?: boolean | null
           sms_unsubscribed?: boolean
           sports_experience_types?: string[] | null
+          state?: string | null
           tiktok_url?: string | null
           total_points?: number
           updated_at?: string
@@ -1764,8 +1770,10 @@ export type Database = {
           interested_in_la28?: boolean | null
           interested_in_world_cup_la?: boolean | null
           last_streak_week?: string | null
+          latitude?: number | null
           linkedin_url?: string | null
           longest_streak?: number
+          longitude?: number | null
           looking_for_tags?: string[] | null
           membership_tier?: string | null
           name?: string
@@ -1778,6 +1786,7 @@ export type Database = {
           sms_notifications_enabled?: boolean | null
           sms_unsubscribed?: boolean
           sports_experience_types?: string[] | null
+          state?: string | null
           tiktok_url?: string | null
           total_points?: number
           updated_at?: string
