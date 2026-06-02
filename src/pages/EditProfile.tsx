@@ -386,7 +386,7 @@ const EditProfile = () => {
                 </div>
 
                 <div className="space-y-1.5">
-                  <Label htmlFor="zip" className="text-xs tracking-wider uppercase text-foreground/60">ZIP Code *</Label>
+                  <Label htmlFor="zip" className="text-xs tracking-wider uppercase text-foreground/60">Your City (ZIP Code) *</Label>
                   <Input
                     id="zip"
                     inputMode="numeric"
@@ -397,6 +397,7 @@ const EditProfile = () => {
                     onChange={(e) => setZipCode(e.target.value.replace(/[^0-9]/g, "").slice(0, 5))}
                     className="bg-background rounded-none h-10"
                   />
+                  <p className="text-[11px] text-foreground/50">We'll show you games, watch parties, and events near you.</p>
                 </div>
               </div>
             )}
