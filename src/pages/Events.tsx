@@ -277,9 +277,27 @@ const Events = () => {
 
   const baseEvents = tab === "upcoming" ? upcomingEvents : pastEvents;
   const categoryFiltered = category === "All" ? baseEvents : baseEvents.filter(e => e.event_type === category);
+
+  // Proximity filter — only applied when user has lat/lng AND radius is numeric.
+  // Events without coords are always shown (treated as "national" reach).
+  const withDistance = categoryFiltered.map(e => {
+    let distance: number | null = null;
+    if (userLoc && e.location_lat != null && e.location_lng != null) {
+      // Lazy require to avoid pulling lib into initial bundle
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      const { distanceMiles } = require("@/lib/geocoding") as typeof import("@/lib/geocoding");
+      distance = distanceMiles(userLoc.lat, userLoc.lng, e.location_lat, e.location_lng);
+    }
+    return { ev: e, distance };
+  });
+
+  const radiusFiltered = (userLoc && radius !== "national")
+    ? withDistance.filter(({ distance }) => distance == null || distance <= radius)
+    : withDistance;
+
   const q = searchQuery.trim().toLowerCase();
-  const filtered = q
-    ? categoryFiltered.filter(e =>
+  const filteredWithDist = q
+    ? radiusFiltered.filter(({ ev: e }) =>
         e.title.toLowerCase().includes(q) ||
         (e.city && e.city.toLowerCase().includes(q)) ||
         (e.venue_name && e.venue_name.toLowerCase().includes(q)) ||
@@ -287,7 +305,12 @@ const Events = () => {
         (e.sport_tags && e.sport_tags.some((t: string) => t.toLowerCase().includes(q))) ||
         (e.event_tags && e.event_tags.some((t: string) => t.toLowerCase().includes(q)))
       )
-    : categoryFiltered;
+    : radiusFiltered;
+
+  const filtered = filteredWithDist.map(x => x.ev);
+  const distanceById: Record<string, number | null> = Object.fromEntries(
+    filteredWithDist.map(x => [x.ev.id, x.distance])
+  );
 
   const featured = tab === "upcoming" && upcomingEvents.length
     ? upcomingEvents.reduce((closest, ev) => {
