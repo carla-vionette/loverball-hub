@@ -31,6 +31,21 @@ interface PublicEvent {
   city: string | null;
   visibility: string;
   host_user_id: string | null;
+  capacity: number | null;
+  guest_visibility: boolean | null;
+  rsvp_approval_required: boolean | null;
+}
+
+interface HostInfo {
+  name: string | null;
+  profile_photo_url: string | null;
+}
+
+interface AttendeePreview {
+  user_id: string;
+  name: string | null;
+  profile_photo_url: string | null;
+  city: string | null;
 }
 
 const formatTime = (t: string) => {
