@@ -207,10 +207,21 @@ const EditProfile = () => {
         photoUrl = await uploadProfilePhoto();
       }
       
+      // Resolve zip → city/state/lat/lng (best-effort)
+      let geo: { city?: string; state?: string; latitude?: number | null; longitude?: number | null } = {};
+      if (zipCode && /^\d{5}$/.test(zipCode)) {
+        const { resolveZip } = await import("@/lib/geocoding");
+        const loc = await resolveZip(zipCode);
+        if (loc) geo = { city: loc.city, state: loc.state, latitude: loc.latitude, longitude: loc.longitude };
+      }
+
       const { error } = await supabase.from("profiles").update({
         name,
         pronouns,
-        city,
+        city: geo.city || city,
+        state: geo.state,
+        latitude: geo.latitude,
+        longitude: geo.longitude,
         zip_code: zipCode || null,
         favorite_sports: favoriteSports,
         favorite_teams_players: favTeams,
