@@ -4,8 +4,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Tv, MapPin, Calendar, Users, ArrowRight } from "lucide-react";
+import { Tv, MapPin, Calendar, Users, ArrowRight, Home } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useActiveArea } from "@/hooks/useActiveArea";
 
 interface WatchEvent {
   id: string;
@@ -66,8 +67,12 @@ function formatTime(t: string | null) {
 }
 
 const WhereToWatch = ({ excludeEventId, limit = 6 }: Props) => {
+  const { active: activeArea, isOverriding } = useActiveArea();
   const [events, setEvents] = useState<WatchEvent[] | null>(null);
   const [loading, setLoading] = useState(true);
+
+  const activeCity = activeArea?.city?.toLowerCase().trim() || null;
+  const activeZip = activeArea?.zip || null;
 
   useEffect(() => {
     let cancelled = false;
@@ -80,17 +85,27 @@ const WhereToWatch = ({ excludeEventId, limit = 6 }: Props) => {
         .gte("event_date", today)
         .eq("visibility", "public")
         .order("event_date", { ascending: true })
-        .limit(40);
+        .limit(60);
 
       if (cancelled) return;
 
       const filtered = (data || []).filter((e: any) => {
         if (excludeEventId && e.id === excludeEventId) return false;
         const type = (e.event_type || "").toLowerCase();
-        if (type === "watch_party" || type === "watch-party") return true;
-        const tags = [...(e.sport_tags || []), ...(e.event_tags || [])]
-          .map((t: string) => (t || "").toLowerCase().trim());
-        return tags.some((t) => RELEVANT_TAGS.includes(t));
+        const isWatchRelated =
+          type === "watch_party" ||
+          type === "watch-party" ||
+          [...(e.sport_tags || []), ...(e.event_tags || [])]
+            .map((t: string) => (t || "").toLowerCase().trim())
+            .some((t) => RELEVANT_TAGS.includes(t));
+        if (!isWatchRelated) return false;
+
+        // Area filter: city-level match when an active area is set.
+        // Events without a city are treated as national reach and always shown.
+        if (activeCity && e.city) {
+          return e.city.toLowerCase().includes(activeCity);
+        }
+        return true;
       });
 
       // Get RSVP counts for visible items
@@ -114,7 +129,7 @@ const WhereToWatch = ({ excludeEventId, limit = 6 }: Props) => {
     return () => {
       cancelled = true;
     };
-  }, [excludeEventId, limit]);
+  }, [excludeEventId, limit, activeCity]);
 
   return (
     <Card className="mt-6 border-primary/20">
@@ -129,7 +144,28 @@ const WhereToWatch = ({ excludeEventId, limit = 6 }: Props) => {
           </Link>
         </Button>
       </CardHeader>
-      <CardContent className="pt-0">
+      <CardContent className="pt-0 space-y-3">
+        {activeArea && (
+          <div className="flex items-center justify-between gap-2 text-[11px] flex-wrap">
+            <span className="text-muted-foreground inline-flex items-center gap-1">
+              <MapPin className="w-3 h-3 text-primary" />
+              {isOverriding ? (
+                <>Browsing <span className="font-semibold text-foreground">{activeZip || activeArea.city}</span> temporarily</>
+              ) : (
+                <>Showing events near <span className="font-semibold text-foreground">{activeZip || activeArea.city}</span></>
+              )}
+            </span>
+            {isOverriding && (
+              <button
+                type="button"
+                onClick={() => { sessionStorage.removeItem("lb:area:override"); window.location.reload(); }}
+                className="inline-flex items-center gap-1 text-[11px] font-semibold text-primary hover:underline"
+              >
+                <Home className="w-3 h-3" /> Back to my area
+              </button>
+            )}
+          </div>
+        )}
         {loading ? (
           <div className="space-y-2">
             {[0, 1, 2].map((i) => (

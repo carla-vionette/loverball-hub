@@ -22,6 +22,8 @@ import Seo from "@/components/Seo";
 import EditorialMasthead from "@/components/layout/EditorialMasthead";
 import { buildShareSummary, buildSharePreviewDescription } from "@/lib/eventShare";
 import { distanceMiles } from "@/lib/geocoding";
+import AreaSelector from "@/components/AreaSelector";
+import { useActiveArea } from "@/hooks/useActiveArea";
 
 
 const CATEGORIES = ["All", "watch_party", "game", "panel", "brunch", "networking", "other"];
@@ -112,7 +114,10 @@ const Events = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
-  const [userLoc, setUserLoc] = useState<{ lat: number; lng: number } | null>(null);
+  const { active: activeArea, isOverriding } = useActiveArea();
+  const userLoc = activeArea?.lat != null && activeArea?.lng != null
+    ? { lat: activeArea.lat, lng: activeArea.lng }
+    : null;
   const [radius, setRadius] = useState<25 | 50 | 100 | "national">(50);
 
   const [gateEventId, setGateEventId] = useState<string | null>(null);
@@ -142,14 +147,6 @@ const Events = () => {
         .limit(1);
       setIsApprovedCreator(!!data && data.length > 0);
 
-      const { data: prof } = await supabase
-        .from("profiles")
-        .select("latitude, longitude")
-        .eq("id", user.id)
-        .maybeSingle();
-      if (prof && (prof as any).latitude != null && (prof as any).longitude != null) {
-        setUserLoc({ lat: (prof as any).latitude, lng: (prof as any).longitude });
-      }
     })();
   }, [user]);
 
@@ -289,8 +286,17 @@ const Events = () => {
     return { ev: e, distance };
   });
 
-  const radiusFiltered = (userLoc && radius !== "national")
-    ? withDistance.filter(({ distance }) => distance == null || distance <= radius)
+  // Area filter: when an active area is set, restrict to that area.
+  // - Prefer distance from active lat/lng within radius
+  // - Else fall back to city-level match
+  // - Events with no coords AND no city are treated as national (always shown)
+  const activeCity = activeArea?.city?.toLowerCase().trim() || null;
+  const radiusFiltered = (activeArea && radius !== "national")
+    ? withDistance.filter(({ ev: e, distance }) => {
+        if (distance != null) return distance <= radius;
+        if (activeCity && e.city) return e.city.toLowerCase().includes(activeCity);
+        return true; // unknown location → don't hide
+      })
     : withDistance;
 
   const q = searchQuery.trim().toLowerCase();
@@ -408,6 +414,13 @@ const Events = () => {
             />
           </div>
 
+          {/* Area selector — saved home + temporary ZIP override */}
+          {user && (
+            <div className="mb-5">
+              <AreaSelector />
+            </div>
+          )}
+
           {/* Radius toggle — only meaningful when we know where the user is */}
           <div className="flex flex-wrap items-center gap-2 mb-7">
             <span style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 10, letterSpacing: "0.18em", color: "rgba(248,248,248,0.55)", textTransform: "uppercase" }}>
@@ -436,10 +449,10 @@ const Events = () => {
                 </button>
               );
             })}
-            {!userLoc && user && (
-              <a href="/edit-profile" className="ml-1" style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 10, color: "#E85D2F", letterSpacing: "0.08em", textTransform: "uppercase" }}>
-                Add ZIP →
-              </a>
+            {isOverriding && (
+              <span style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 10, color: "#2DD4BF", letterSpacing: "0.08em", textTransform: "uppercase" }}>
+                · Temporary view
+              </span>
             )}
           </div>
 
