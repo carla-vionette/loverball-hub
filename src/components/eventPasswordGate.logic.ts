@@ -45,12 +45,20 @@ export interface GateState {
   message: string | null;     // user-facing copy for the current state
 }
 
-/** Format ms as "Xm SSs" or "Ns". */
+/** Format ms as "Xm SSs" or "Ns" — used in inline copy. */
 export const formatRemaining = (ms: number): string => {
   const s = Math.max(0, Math.ceil(ms / 1000));
   const m = Math.floor(s / 60);
   const r = s % 60;
   return m > 0 ? `${m}m ${r.toString().padStart(2, "0")}s` : `${r}s`;
+};
+
+/** Format ms as a clock-style "M:SS" — used for the large countdown timer. */
+export const formatCountdown = (ms: number): string => {
+  const s = Math.max(0, Math.ceil(ms / 1000));
+  const m = Math.floor(s / 60);
+  const r = s % 60;
+  return `${m}:${r.toString().padStart(2, "0")}`;
 };
 
 /**
