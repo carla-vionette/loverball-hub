@@ -11,7 +11,9 @@
     "preview": "vite preview",
     "test:unit": "vitest run",
     "test:e2e:lockout": "bun run scripts/test-event-password-lockout.ts",
-    "test:e2e:lockout:ci": "bun run scripts/run-with-retry.ts -- bun run scripts/test-event-password-lockout.ts"
+    "test:e2e:lockout:ci": "bun run scripts/run-with-retry.ts -- bun run scripts/test-event-password-lockout.ts",
+    "test:rpc:lockout": "bun run scripts/test-rpc-lockout.ts",
+    "test:multitab:lockout": "bun run scripts/test-multitab-lockout.ts"
   },
   "dependencies": {
     "@fontsource/oswald": "^5.2.8",
