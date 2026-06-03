@@ -51,12 +51,20 @@ const EventBuilder = lazy(() => import("./pages/admin/EventBuilder"));
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
+      // Tuned for mobile users on 3G/slow LTE — keep data fresh for longer, refetch less.
       staleTime: 5 * 60 * 1000,
       gcTime: 30 * 60 * 1000,
       retry: 2,
-      retryDelay: (attempt) => Math.min(1000 * 2 ** attempt, 10000),
+      retryDelay: (attempt) => Math.min(1000 * 2 ** attempt, 30_000),
       refetchOnWindowFocus: false,
       refetchOnReconnect: 'always',
+      // Serve cached data while offline instead of throwing.
+      networkMode: 'offlineFirst',
+    },
+    mutations: {
+      // Don't retry mutations by default — fail fast and let the UI surface the error.
+      retry: 0,
+      networkMode: 'offlineFirst',
     },
   },
 });
