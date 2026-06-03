@@ -145,7 +145,28 @@ const WhereToWatch = ({ excludeEventId, limit = 6 }: Props) => {
           </Link>
         </Button>
       </CardHeader>
-      <CardContent className="pt-0">
+      <CardContent className="pt-0 space-y-3">
+        {activeArea && (
+          <div className="flex items-center justify-between gap-2 text-[11px] flex-wrap">
+            <span className="text-muted-foreground inline-flex items-center gap-1">
+              <MapPin className="w-3 h-3 text-primary" />
+              {isOverriding ? (
+                <>Browsing <span className="font-semibold text-foreground">{activeZip || activeArea.city}</span> temporarily</>
+              ) : (
+                <>Showing events near <span className="font-semibold text-foreground">{activeZip || activeArea.city}</span></>
+              )}
+            </span>
+            {isOverriding && (
+              <button
+                type="button"
+                onClick={() => { sessionStorage.removeItem("lb:area:override"); window.location.reload(); }}
+                className="inline-flex items-center gap-1 text-[11px] font-semibold text-primary hover:underline"
+              >
+                <Home className="w-3 h-3" /> Back to my area
+              </button>
+            )}
+          </div>
+        )}
         {loading ? (
           <div className="space-y-2">
             {[0, 1, 2].map((i) => (
