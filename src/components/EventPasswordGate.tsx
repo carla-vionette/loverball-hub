@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Lock, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,6 +14,7 @@ import {
   unlockKey,
   type VerifyResponse,
 } from "./eventPasswordGate.logic";
+import { subscribeGateBus, type GateBus } from "./eventPasswordGate.bus";
 
 interface Props {
   eventId: string;
@@ -92,8 +93,47 @@ const EventPasswordGate = ({ eventId, eventTitle, coverImage, onUnlock }: Props)
       setLockedUntil(0);
       setAttemptsLeft(MAX_ATTEMPTS);
       setLastError(null);
+      busRef.current?.publish({ type: "cleared", at: Date.now() });
     }
   }, [state.status, eventId]);
+
+  // ---- Cross-tab sync ----
+  // When any tab unlocks / triggers a lockout / hits the cooldown reset, every
+  // other tab viewing the same event reflects that without a manual refresh.
+  // Server is still the source of truth — this is a UX polish layer.
+  const busRef = useRef<GateBus | null>(null);
+  useEffect(() => {
+    const bus = subscribeGateBus(eventId, (msg) => {
+      switch (msg.type) {
+        case "unlocked":
+          markUnlocked(eventId);
+          onUnlock();
+          break;
+        case "locked":
+          setLockedUntil(msg.lockedUntil);
+          setAttemptsLeft(0);
+          writeNum(lockoutKey(eventId), msg.lockedUntil);
+          writeNum(attemptsLeftKey(eventId), 0);
+          setNow(Date.now());
+          break;
+        case "attempts":
+          setAttemptsLeft(msg.attemptsLeft);
+          writeNum(attemptsLeftKey(eventId), msg.attemptsLeft);
+          break;
+        case "cleared":
+          clearKeys(lockoutKey(eventId), attemptsLeftKey(eventId));
+          setLockedUntil(0);
+          setAttemptsLeft(MAX_ATTEMPTS);
+          setLastError(null);
+          break;
+      }
+    });
+    busRef.current = bus;
+    return () => {
+      bus.close();
+      busRef.current = null;
+    };
+  }, [eventId, onUnlock]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -116,6 +156,7 @@ const EventPasswordGate = ({ eventId, eventTitle, coverImage, onUnlock }: Props)
       const next = applyVerifyResponse((data ?? {}) as VerifyResponse, Date.now());
       if (next.unlocked) {
         markUnlocked(eventId);
+        busRef.current?.publish({ type: "unlocked", at: Date.now() });
         onUnlock();
         return;
       }
@@ -124,7 +165,20 @@ const EventPasswordGate = ({ eventId, eventTitle, coverImage, onUnlock }: Props)
       setLockedUntil(next.lockedUntil);
       setAttemptsLeft(next.attemptsLeft);
       setLastError(next.error);
-      if (next.lockedUntil > 0) writeNum(lockoutKey(eventId), next.lockedUntil);
+      if (next.lockedUntil > 0) {
+        writeNum(lockoutKey(eventId), next.lockedUntil);
+        busRef.current?.publish({
+          type: "locked",
+          lockedUntil: next.lockedUntil,
+          at: Date.now(),
+        });
+      } else {
+        busRef.current?.publish({
+          type: "attempts",
+          attemptsLeft: next.attemptsLeft,
+          at: Date.now(),
+        });
+      }
       writeNum(attemptsLeftKey(eventId), next.attemptsLeft);
     } catch {
       // Never echo backend error text — could leak internals or account info.

@@ -12,8 +12,14 @@
  */
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
-export const SUPABASE_URL = "https://nfjavjfxgxrpvieinpdp.supabase.co";
+// Env overrides let CI / local point at a different project if ever needed.
+// Defaults match the live Lovable Cloud project the app is wired to. The
+// test-only RPCs are SECURITY DEFINER and hard-restricted to the seeded test
+// event UUID, so the anon key is sufficient — no service role required.
+export const SUPABASE_URL =
+  process.env.LOCKOUT_TEST_SUPABASE_URL ?? "https://nfjavjfxgxrpvieinpdp.supabase.co";
 export const SUPABASE_ANON_KEY =
+  process.env.LOCKOUT_TEST_SUPABASE_ANON_KEY ??
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5mamF2amZ4Z3hycHZpZWlucGRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ0NDc4ODcsImV4cCI6MjA4MDAyMzg4N30.4JeTq8_D-g611y1ruIHFJwVmomnms6mNOWF6ORrkq0U";
 
 export const EVENT_ID = "00000000-0000-0000-0000-00000000beef";
