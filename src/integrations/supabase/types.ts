@@ -820,6 +820,38 @@ export type Database = {
         }
         Relationships: []
       }
+      event_password_attempts: {
+        Row: {
+          attempted_at: string
+          event_id: string
+          id: string
+          identifier: string
+          success: boolean
+        }
+        Insert: {
+          attempted_at?: string
+          event_id: string
+          id?: string
+          identifier: string
+          success?: boolean
+        }
+        Update: {
+          attempted_at?: string
+          event_id?: string
+          id?: string
+          identifier?: string
+          success?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_password_attempts_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       event_rsvps: {
         Row: {
           approval_status: string
@@ -2503,10 +2535,16 @@ export type Database = {
         Returns: boolean
       }
       validate_and_use_invite: { Args: { invite_code: string }; Returns: Json }
-      verify_event_password: {
-        Args: { p_event_id: string; p_password: string }
-        Returns: boolean
-      }
+      verify_event_password:
+        | { Args: { p_event_id: string; p_password: string }; Returns: boolean }
+        | {
+            Args: {
+              p_event_id: string
+              p_password: string
+              p_session_token?: string
+            }
+            Returns: Json
+          }
     }
     Enums: {
       app_role: "pending" | "member" | "admin"

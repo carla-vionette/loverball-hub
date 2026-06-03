@@ -15,9 +15,25 @@ interface Props {
 const unlockKey = (id: string) => `event_unlock_${id}`;
 const attemptsKey = (id: string) => `event_pw_attempts_${id}`;
 const lockoutKey = (id: string) => `event_pw_lockout_${id}`;
+const SESSION_TOKEN_KEY = "event_pw_session_token";
 
 const MAX_ATTEMPTS = 5;
-const LOCKOUT_MS = 5 * 60 * 1000; // 5 minutes
+const LOCKOUT_MS = 5 * 60 * 1000; // 5 minutes (client mirror; server is source of truth)
+
+const getSessionToken = (): string => {
+  try {
+    let t = localStorage.getItem(SESSION_TOKEN_KEY);
+    if (!t) {
+      const arr = new Uint8Array(16);
+      crypto.getRandomValues(arr);
+      t = Array.from(arr, (b) => b.toString(16).padStart(2, "0")).join("");
+      localStorage.setItem(SESSION_TOKEN_KEY, t);
+    }
+    return t;
+  } catch {
+    return Math.random().toString(36).slice(2) + Date.now().toString(36);
+  }
+};
 
 export const isEventUnlocked = (id: string) => {
   try {
@@ -113,31 +129,42 @@ const EventPasswordGate = ({ eventId, eventTitle, coverImage, onUnlock }: Props)
       const { data, error } = await supabase.rpc("verify_event_password", {
         p_event_id: eventId,
         p_password: password,
-      });
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        p_session_token: getSessionToken(),
+      } as any);
       if (error) throw error;
-      if (data === true) {
+      const res = (data ?? {}) as {
+        ok?: boolean;
+        locked?: boolean;
+        attempts_left?: number;
+        retry_after_seconds?: number;
+        error?: string;
+      };
+
+      if (res.ok === true) {
         markUnlocked(eventId);
         onUnlock();
         return;
       }
-      const next = getAttempts(eventId) + 1;
-      setAttempts(eventId, next);
+
       setPassword("");
 
-      if (next >= MAX_ATTEMPTS) {
-        const until = Date.now() + LOCKOUT_MS;
+      if (res.locked) {
+        const ms = Math.max(1000, (res.retry_after_seconds ?? 300) * 1000);
+        const until = Date.now() + ms;
         setLockoutUntil(eventId, until);
+        setAttempts(eventId, MAX_ATTEMPTS);
         setLockedUntilState(until);
         setNow(Date.now());
-        setErr(
-          `Too many wrong attempts. This device is locked out for ${formatRemaining(LOCKOUT_MS)}.`,
-        );
-      } else {
-        const left = MAX_ATTEMPTS - next;
-        setErr(
-          `That password didn't work. ${left} ${left === 1 ? "attempt" : "attempts"} left before a temporary lockout.`,
-        );
+        setErr(`Too many wrong attempts. Try again in ${formatRemaining(ms)}.`);
+        return;
       }
+
+      const left = res.attempts_left ?? Math.max(0, MAX_ATTEMPTS - (getAttempts(eventId) + 1));
+      setAttempts(eventId, MAX_ATTEMPTS - left);
+      setErr(
+        `That password didn't work. ${left} ${left === 1 ? "attempt" : "attempts"} left before a temporary lockout.`,
+      );
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : "Couldn't verify password.";
       setErr(msg);
