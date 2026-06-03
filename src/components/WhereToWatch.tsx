@@ -68,8 +68,12 @@ function formatTime(t: string | null) {
 }
 
 const WhereToWatch = ({ excludeEventId, limit = 6 }: Props) => {
+  const { active: activeArea, isOverriding, home } = useActiveArea();
   const [events, setEvents] = useState<WatchEvent[] | null>(null);
   const [loading, setLoading] = useState(true);
+
+  const activeCity = activeArea?.city?.toLowerCase().trim() || null;
+  const activeZip = activeArea?.zip || null;
 
   useEffect(() => {
     let cancelled = false;
@@ -82,17 +86,27 @@ const WhereToWatch = ({ excludeEventId, limit = 6 }: Props) => {
         .gte("event_date", today)
         .eq("visibility", "public")
         .order("event_date", { ascending: true })
-        .limit(40);
+        .limit(60);
 
       if (cancelled) return;
 
       const filtered = (data || []).filter((e: any) => {
         if (excludeEventId && e.id === excludeEventId) return false;
         const type = (e.event_type || "").toLowerCase();
-        if (type === "watch_party" || type === "watch-party") return true;
-        const tags = [...(e.sport_tags || []), ...(e.event_tags || [])]
-          .map((t: string) => (t || "").toLowerCase().trim());
-        return tags.some((t) => RELEVANT_TAGS.includes(t));
+        const isWatchRelated =
+          type === "watch_party" ||
+          type === "watch-party" ||
+          [...(e.sport_tags || []), ...(e.event_tags || [])]
+            .map((t: string) => (t || "").toLowerCase().trim())
+            .some((t) => RELEVANT_TAGS.includes(t));
+        if (!isWatchRelated) return false;
+
+        // Area filter: city-level match when an active area is set.
+        // Events without a city are treated as national reach and always shown.
+        if (activeCity && e.city) {
+          return e.city.toLowerCase().includes(activeCity);
+        }
+        return true;
       });
 
       // Get RSVP counts for visible items
@@ -116,7 +130,7 @@ const WhereToWatch = ({ excludeEventId, limit = 6 }: Props) => {
     return () => {
       cancelled = true;
     };
-  }, [excludeEventId, limit]);
+  }, [excludeEventId, limit, activeCity]);
 
   return (
     <Card className="mt-6 border-primary/20">
