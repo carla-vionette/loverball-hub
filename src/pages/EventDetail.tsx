@@ -895,7 +895,7 @@ const EventDetail = () => {
               </div>
             )}
             {variant === 'external' && !event.venue_name && (
-              <WhereToWatch eventCity={event.city} eventType={event.event_type} />
+              <WhereToWatch eventCity={event.city} eventType={event.event_type} excludeEventId={event.id} />
             )}
             <WhereToSit venueName={event.venue_name} eventType={event.event_type} />
 
