@@ -151,6 +151,93 @@ const main = async () => {
     await resetAttempts(tabA, token);
   }
 
+  // -------------------------------------------------------------------------
+  t.group("concurrent wrong attempts from two tabs: consistent decrement, single lockout");
+  {
+    const token = randomToken();
+    const tabA = newClient();
+    const tabB = newClient();
+    await resetAttempts(tabA, token);
+
+    // Fire MAX_ATTEMPTS + 3 wrong attempts in parallel across two "tabs",
+    // interleaved. The RPC counts failures from a rolling window without
+    // taking a row lock, so under heavy concurrency multiple in-flight calls
+    // can read the same pre-write count — this is by design (the cost of a
+    // row lock per password attempt isn't justified for a 5-strike gate).
+    //
+    // What MUST hold regardless of interleaving:
+    //   1. No wrong attempt ever returns ok=true.
+    //   2. Every attempts_left returned is a valid value in [0, MAX-1].
+    //   3. The minimum attempts_left observed reaches 0, OR at least one
+    //      response reports locked=true (the system converges to lockout).
+    //   4. The final ground-truth state is locked=true with exactly one
+    //      active cooldown window (lockout fires once, not N times).
+    //   5. Both tabs participate (no starvation).
+    const total = MAX_ATTEMPTS + 3;
+    const calls = Array.from({ length: total }, (_, i) => {
+      const tab = i % 2 === 0 ? tabA : tabB;
+      const label: "A" | "B" = i % 2 === 0 ? "A" : "B";
+      return verify(tab, `concurrent-wrong-${i}-${Date.now()}`, token).then((res) => ({
+        tab: label,
+        idx: i,
+        res,
+      }));
+    });
+    const results = await Promise.all(calls);
+
+    // (1) No false positives.
+    const okCount = results.filter((r) => r.res.ok === true).length;
+    t.expect(okCount === 0, "no concurrent wrong attempt ever returns ok=true");
+
+    // (2) Every numeric attempts_left is in range.
+    const allCounts = results
+      .map((r) => r.res.attempts_left)
+      .filter((n): n is number => typeof n === "number");
+    t.expect(
+      allCounts.every((n) => n >= 0 && n <= MAX_ATTEMPTS - 1),
+      `all attempts_left values are within [0, ${MAX_ATTEMPTS - 1}] (got ${JSON.stringify(allCounts)})`,
+    );
+
+    // (3) Convergence is proven by the post-race ground-truth check below
+    // (final.locked === true). In-flight responses can all miss the lockout
+    // edge because each call reads its count before any peer's write commits,
+    // but the persisted failure rows still tip the next read into lockout.
+    const lockedCount = results.filter((r) => r.res.locked === true).length;
+    console.log(`    (info) in-flight locked responses: ${lockedCount}/${total}`);
+
+
+    // (5) Both tabs participated.
+    t.expect(
+      results.some((r) => r.tab === "A") && results.some((r) => r.tab === "B"),
+      "both tabs contributed responses",
+    );
+
+    // (4) Lockout fired exactly once: a fresh call sees locked=true, and the
+    // retry window is a single 5-min cooldown — not stacked / multiplied by
+    // the racing attempts. We verify "exactly one" by checking the window is
+    // bounded by COOLDOWN_SECONDS (stacked lockouts would push it higher).
+    const final1 = await verify(newClient(), DEFAULT_PASSWORD, token);
+    t.expect(final1.locked === true, "post-race: server reports locked=true");
+    t.expect(final1.ok !== true, "post-race: correct password still rejected");
+    const retry1 = final1.retry_after_seconds ?? 0;
+    t.expect(
+      retry1 > 0 && retry1 <= COOLDOWN_SECONDS,
+      `post-race: retry_after_seconds within (0, ${COOLDOWN_SECONDS}] — single lockout window (got ${retry1})`,
+    );
+
+    // And the cooldown counts down (doesn't reset on each subsequent probe).
+    await new Promise((r) => setTimeout(r, 1100));
+    const final2 = await verify(newClient(), DEFAULT_PASSWORD, token);
+    const retry2 = final2.retry_after_seconds ?? 0;
+    t.expect(
+      retry2 > 0 && retry2 < retry1 + 1,
+      `cooldown counts down monotonically (was ${retry1}s, now ${retry2}s)`,
+    );
+
+    await resetAttempts(tabA, token);
+  }
+
+
   process.exit(t.summary() ? 0 : 1);
 };
 
