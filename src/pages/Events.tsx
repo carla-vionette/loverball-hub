@@ -414,6 +414,13 @@ const Events = () => {
             />
           </div>
 
+          {/* Area selector — saved home + temporary ZIP override */}
+          {user && (
+            <div className="mb-5">
+              <AreaSelector />
+            </div>
+          )}
+
           {/* Radius toggle — only meaningful when we know where the user is */}
           <div className="flex flex-wrap items-center gap-2 mb-7">
             <span style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 10, letterSpacing: "0.18em", color: "rgba(248,248,248,0.55)", textTransform: "uppercase" }}>
@@ -442,10 +449,10 @@ const Events = () => {
                 </button>
               );
             })}
-            {!userLoc && user && (
-              <a href="/edit-profile" className="ml-1" style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 10, color: "#E85D2F", letterSpacing: "0.08em", textTransform: "uppercase" }}>
-                Add ZIP →
-              </a>
+            {isOverriding && (
+              <span style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 10, color: "#2DD4BF", letterSpacing: "0.08em", textTransform: "uppercase" }}>
+                · Temporary view
+              </span>
             )}
           </div>
 
