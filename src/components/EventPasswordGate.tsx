@@ -256,7 +256,7 @@ const EventPasswordGate = ({ eventId, eventTitle, coverImage, onUnlock }: Props)
               Event password
             </label>
             <Input
-              id="event-password-input"
+              id={inputId}
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
