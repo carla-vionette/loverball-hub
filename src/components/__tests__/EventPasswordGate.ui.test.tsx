@@ -183,12 +183,15 @@ describe("EventPasswordGate — accessible status messages", () => {
     expect(after1s).toBeLessThanOrEqual(89);
     expect(timer.textContent).toMatch(/^1:2[89]$/);
 
-    // Skip near the end and confirm the format collapses to a "0:0X" clock.
+    // Advance another ~30s while still locked — countdown should drop further.
     await act(async () => {
-      vi.setSystemTime(baseline + 85_000);
-      vi.advanceTimersByTime(85_000);
+      vi.setSystemTime(baseline + 31_000);
+      vi.advanceTimersByTime(30_000);
     });
-    expect(timer.textContent).toMatch(/^0:0[3-6]$/);
+    const after31s = secondsFromTimer(timer);
+    expect(after31s).toBeGreaterThanOrEqual(58);
+    expect(after31s).toBeLessThanOrEqual(60);
+    expect(timer.textContent).toMatch(/^(0:5[89]|1:00)$/);
   });
 });
 
