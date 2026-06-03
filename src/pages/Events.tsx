@@ -286,8 +286,17 @@ const Events = () => {
     return { ev: e, distance };
   });
 
-  const radiusFiltered = (userLoc && radius !== "national")
-    ? withDistance.filter(({ distance }) => distance == null || distance <= radius)
+  // Area filter: when an active area is set, restrict to that area.
+  // - Prefer distance from active lat/lng within radius
+  // - Else fall back to city-level match
+  // - Events with no coords AND no city are treated as national (always shown)
+  const activeCity = activeArea?.city?.toLowerCase().trim() || null;
+  const radiusFiltered = (activeArea && radius !== "national")
+    ? withDistance.filter(({ ev: e, distance }) => {
+        if (distance != null) return distance <= radius;
+        if (activeCity && e.city) return e.city.toLowerCase().includes(activeCity);
+        return true; // unknown location → don't hide
+      })
     : withDistance;
 
   const q = searchQuery.trim().toLowerCase();
