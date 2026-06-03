@@ -147,6 +147,9 @@ const EventPublic = () => {
   const isHost = !!user && !!event && event.host_user_id === user.id;
   const capacityReached = !!event?.capacity && attendeeCount >= (event.capacity ?? 0);
   const guestVisible = event?.guest_visibility !== false;
+  const anonymizeGuests = event?.anonymize_guest_list === true;
+  const showGuestCount = event?.show_guest_count !== false;
+  const needsPassword = event?.password_required === true && !isHost && !unlocked;
 
   const dateStr = event ? format(new Date(event.event_date + "T00:00:00"), "EEE, MMM d, yyyy") : "";
   const timeStr = event?.event_time ? formatTime(event.event_time) : "";
