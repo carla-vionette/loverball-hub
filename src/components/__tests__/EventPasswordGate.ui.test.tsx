@@ -88,6 +88,11 @@ const attemptsRegion = (root: HTMLElement) =>
 const statusRegion = (root: HTMLElement) =>
   root.querySelector('[role="timer"], [role="alert"]') as HTMLElement;
 
+// Pull the integer second count out of the timer's aria-label
+// ("N seconds until you can try again").
+const secondsFromTimer = (timer: Element) =>
+  parseInt(timer.getAttribute("aria-label")?.match(/^(\d+)/)?.[1] ?? "-1", 10);
+
 const submitWith = async (root: HTMLElement, password: string) => {
   const input = inputIn(root);
   fireEvent.change(input, { target: { value: password } });
