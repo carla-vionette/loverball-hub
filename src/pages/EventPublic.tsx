@@ -299,6 +299,21 @@ const EventPublic = () => {
     );
   }
 
+  if (needsPassword) {
+    return (
+      <>
+        <Seo title={`${event.title} · Loverball`} description="Private event — password required" path={`/e/${id}`} />
+        <EventPasswordGate
+          eventId={event.id}
+          eventTitle={event.title}
+          coverImage={event.image_url}
+          onUnlock={() => setUnlocked(true)}
+        />
+      </>
+    );
+  }
+
+
   return (
     <>
       <Seo
