@@ -404,13 +404,25 @@ const EventPublic = () => {
             {event.title}
           </h1>
 
-          {/* Social proof — attendee avatar stack */}
+          {/* Social proof — verified attendee avatar stack */}
           {(guestVisible && attendeeCount > 0) && (
             <div className="flex items-center gap-3 mb-6">
               {attendees.length > 0 && (
                 <div className="flex -space-x-2">
-                  {attendees.slice(0, 5).map((a) =>
-                    a.profile_photo_url ? (
+                  {attendees.slice(0, 5).map((a) => {
+                    if (anonymizeGuests) {
+                      return (
+                        <div
+                          key={a.user_id}
+                          className="w-8 h-8 rounded-full border-2 flex items-center justify-center text-[10px] font-bold"
+                          style={{ borderColor: C.bg, background: C.surfaceHi, color: C.muted }}
+                          aria-label="Anonymous guest"
+                        >
+                          ?
+                        </div>
+                      );
+                    }
+                    return a.profile_photo_url ? (
                       <img
                         key={a.user_id}
                         src={a.profile_photo_url}
@@ -426,19 +438,28 @@ const EventPublic = () => {
                       >
                         {(a.name ?? "L").slice(0, 1).toUpperCase()}
                       </div>
-                    )
-                  )}
+                    );
+                  })}
                 </div>
               )}
               <span className="text-sm" style={{ color: C.text }}>
-                <span style={{ fontWeight: 600 }}>{attendeeCount}</span>{" "}
-                <span style={{ color: C.muted }}>
-                  {attendeeCount === 1 ? "woman" : "women"}
-                  {event.city ? ` from ${event.city}` : ""} going
-                </span>
+                {showGuestCount ? (
+                  <>
+                    <span style={{ fontWeight: 600 }}>{attendeeCount}</span>{" "}
+                    <span style={{ color: C.muted }}>
+                      {attendeeCount === 1 ? "woman" : "women"}
+                      {event.city ? ` from ${event.city}` : ""} going
+                    </span>
+                  </>
+                ) : (
+                  <span style={{ color: C.muted }}>
+                    {anonymizeGuests ? "Verified guests confirmed" : "A few women are going"}
+                  </span>
+                )}
               </span>
             </div>
           )}
+
 
           {/* Capacity badge when full */}
           {capacityReached && (
