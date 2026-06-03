@@ -264,7 +264,7 @@ const EventPasswordGate = ({ eventId, eventTitle, coverImage, onUnlock }: Props)
               autoComplete="off"
               disabled={isLocked}
               aria-invalid={state.status === "wrong" || state.status === "last_attempt"}
-              aria-describedby="event-password-status event-password-attempts"
+              aria-describedby={`${statusId} ${attemptsId}`}
               style={{
                 background: C.bg,
                 borderColor: C.borderStrong,
