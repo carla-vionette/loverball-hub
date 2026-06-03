@@ -2498,7 +2498,15 @@ export type Database = {
         }
         Returns: boolean
       }
+      set_event_password: {
+        Args: { p_event_id: string; p_password: string }
+        Returns: boolean
+      }
       validate_and_use_invite: { Args: { invite_code: string }; Returns: Json }
+      verify_event_password: {
+        Args: { p_event_id: string; p_password: string }
+        Returns: boolean
+      }
     }
     Enums: {
       app_role: "pending" | "member" | "admin"
