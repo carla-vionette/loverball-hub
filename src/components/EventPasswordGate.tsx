@@ -1,9 +1,19 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Lock, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import { C, fonts } from "@/lib/editorialTheme";
+import {
+  MAX_ATTEMPTS,
+  applyVerifyResponse,
+  deriveState,
+  getOrCreateSessionToken,
+  lockoutKey,
+  attemptsLeftKey,
+  unlockKey,
+  type VerifyResponse,
+} from "./eventPasswordGate.logic";
 
 interface Props {
   eventId: string;
@@ -12,26 +22,26 @@ interface Props {
   onUnlock: () => void;
 }
 
-const unlockKey = (id: string) => `event_unlock_${id}`;
-const attemptsKey = (id: string) => `event_pw_attempts_${id}`;
-const lockoutKey = (id: string) => `event_pw_lockout_${id}`;
-const SESSION_TOKEN_KEY = "event_pw_session_token";
-
-const MAX_ATTEMPTS = 5;
-const LOCKOUT_MS = 5 * 60 * 1000; // 5 minutes (client mirror; server is source of truth)
-
-const getSessionToken = (): string => {
+// ---- thin storage adapters (gate is the only consumer) ---------------------
+const readNum = (k: string) => {
   try {
-    let t = localStorage.getItem(SESSION_TOKEN_KEY);
-    if (!t) {
-      const arr = new Uint8Array(16);
-      crypto.getRandomValues(arr);
-      t = Array.from(arr, (b) => b.toString(16).padStart(2, "0")).join("");
-      localStorage.setItem(SESSION_TOKEN_KEY, t);
-    }
-    return t;
+    return parseInt(localStorage.getItem(k) || "0", 10) || 0;
   } catch {
-    return Math.random().toString(36).slice(2) + Date.now().toString(36);
+    return 0;
+  }
+};
+const writeNum = (k: string, n: number) => {
+  try {
+    localStorage.setItem(k, String(n));
+  } catch {
+    /* ignore */
+  }
+};
+const clearKeys = (...keys: string[]) => {
+  try {
+    keys.forEach((k) => localStorage.removeItem(k));
+  } catch {
+    /* ignore */
   }
 };
 
@@ -46,132 +56,87 @@ export const isEventUnlocked = (id: string) => {
 const markUnlocked = (id: string) => {
   try {
     sessionStorage.setItem(unlockKey(id), "1");
-    localStorage.removeItem(attemptsKey(id));
-    localStorage.removeItem(lockoutKey(id));
   } catch {
     /* ignore */
   }
-};
-
-const getAttempts = (id: string): number => {
-  try {
-    return parseInt(localStorage.getItem(attemptsKey(id)) || "0", 10) || 0;
-  } catch {
-    return 0;
-  }
-};
-
-const setAttempts = (id: string, n: number) => {
-  try {
-    localStorage.setItem(attemptsKey(id), String(n));
-  } catch {
-    /* ignore */
-  }
-};
-
-const getLockoutUntil = (id: string): number => {
-  try {
-    return parseInt(localStorage.getItem(lockoutKey(id)) || "0", 10) || 0;
-  } catch {
-    return 0;
-  }
-};
-
-const setLockoutUntil = (id: string, until: number) => {
-  try {
-    localStorage.setItem(lockoutKey(id), String(until));
-  } catch {
-    /* ignore */
-  }
-};
-
-const formatRemaining = (ms: number) => {
-  const s = Math.max(0, Math.ceil(ms / 1000));
-  const m = Math.floor(s / 60);
-  const r = s % 60;
-  return m > 0 ? `${m}m ${r.toString().padStart(2, "0")}s` : `${r}s`;
+  clearKeys(lockoutKey(id), attemptsLeftKey(id));
 };
 
 const EventPasswordGate = ({ eventId, eventTitle, coverImage, onUnlock }: Props) => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [err, setErr] = useState<string | null>(null);
-  const [lockedUntil, setLockedUntilState] = useState<number>(() => getLockoutUntil(eventId));
-  const [now, setNow] = useState<number>(Date.now());
+  const [lastError, setLastError] = useState<string | null>(null);
+  const [lockedUntil, setLockedUntil] = useState<number>(() => readNum(lockoutKey(eventId)));
+  const [attemptsLeft, setAttemptsLeft] = useState<number>(() => {
+    const stored = readNum(attemptsLeftKey(eventId));
+    return stored > 0 ? stored : MAX_ATTEMPTS;
+  });
+  const [now, setNow] = useState<number>(() => Date.now());
 
-  const remainingMs = Math.max(0, lockedUntil - now);
-  const isLocked = remainingMs > 0;
-  const attempts = getAttempts(eventId);
-  const attemptsLeft = Math.max(0, MAX_ATTEMPTS - attempts);
+  const state = useMemo(
+    () => deriveState({ lockedUntil, attemptsLeft, now, lastError }),
+    [lockedUntil, attemptsLeft, now, lastError],
+  );
 
+  // Tick once a second while a cooldown is active so the countdown updates.
   useEffect(() => {
-    if (!isLocked) return;
+    if (state.status !== "locked") return;
     const t = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(t);
-  }, [isLocked]);
+  }, [state.status]);
 
+  // When the cooldown just expired, clear stored deadline so the input re-enables.
   useEffect(() => {
-    if (isLocked) {
-      setErr(`Too many wrong attempts. Try again in ${formatRemaining(remainingMs)}.`);
+    if (state.status === "cooldown_expired") {
+      clearKeys(lockoutKey(eventId));
+      setLockedUntil(0);
+      setAttemptsLeft(MAX_ATTEMPTS);
+      setLastError(null);
     }
-  }, [isLocked, remainingMs]);
+  }, [state.status, eventId]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (isLocked) return;
+    if (state.status === "locked") return;
     if (!password.trim()) {
-      setErr("Enter the event password.");
+      setLastError("Enter the event password.");
       return;
     }
     setLoading(true);
-    setErr(null);
+    setLastError(null);
     try {
       const { data, error } = await supabase.rpc("verify_event_password", {
         p_event_id: eventId,
         p_password: password,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        p_session_token: getSessionToken(),
+        p_session_token: getOrCreateSessionToken(),
       } as any);
       if (error) throw error;
-      const res = (data ?? {}) as {
-        ok?: boolean;
-        locked?: boolean;
-        attempts_left?: number;
-        retry_after_seconds?: number;
-        error?: string;
-      };
 
-      if (res.ok === true) {
+      const next = applyVerifyResponse((data ?? {}) as VerifyResponse, Date.now());
+      if (next.unlocked) {
         markUnlocked(eventId);
         onUnlock();
         return;
       }
 
       setPassword("");
-
-      if (res.locked) {
-        const ms = Math.max(1000, (res.retry_after_seconds ?? 300) * 1000);
-        const until = Date.now() + ms;
-        setLockoutUntil(eventId, until);
-        setAttempts(eventId, MAX_ATTEMPTS);
-        setLockedUntilState(until);
-        setNow(Date.now());
-        setErr(`Too many wrong attempts. Try again in ${formatRemaining(ms)}.`);
-        return;
-      }
-
-      const left = res.attempts_left ?? Math.max(0, MAX_ATTEMPTS - (getAttempts(eventId) + 1));
-      setAttempts(eventId, MAX_ATTEMPTS - left);
-      setErr(
-        `That password didn't work. ${left} ${left === 1 ? "attempt" : "attempts"} left before a temporary lockout.`,
-      );
-    } catch (e: unknown) {
-      const msg = e instanceof Error ? e.message : "Couldn't verify password.";
-      setErr(msg);
+      setLockedUntil(next.lockedUntil);
+      setAttemptsLeft(next.attemptsLeft);
+      setLastError(next.error);
+      if (next.lockedUntil > 0) writeNum(lockoutKey(eventId), next.lockedUntil);
+      writeNum(attemptsLeftKey(eventId), next.attemptsLeft);
+    } catch {
+      // Never echo backend error text — could leak internals or account info.
+      setLastError("Couldn't verify password. Check your connection and try again.");
     } finally {
       setLoading(false);
     }
   };
+
+  const isLocked = state.status === "locked";
+  const showAttemptHint =
+    !isLocked && state.attemptsLeft < MAX_ATTEMPTS && state.attemptsLeft > 0;
 
   return (
     <div
@@ -232,6 +197,7 @@ const EventPasswordGate = ({ eventId, eventTitle, coverImage, onUnlock }: Props)
               autoFocus
               autoComplete="off"
               disabled={isLocked}
+              aria-invalid={state.status === "wrong" || state.status === "last_attempt"}
               style={{
                 background: C.bg,
                 borderColor: C.borderStrong,
@@ -241,43 +207,46 @@ const EventPasswordGate = ({ eventId, eventTitle, coverImage, onUnlock }: Props)
                 borderRadius: 14,
               }}
             />
-            {!isLocked && attempts > 0 && attemptsLeft > 0 && (
+            {showAttemptHint && (
               <div
                 className="mt-2 text-[11px]"
                 style={{ color: C.muted, fontFamily: fonts.mono, letterSpacing: "0.05em" }}
               >
-                {attemptsLeft} {attemptsLeft === 1 ? "attempt" : "attempts"} remaining
+                {state.attemptsLeft} {state.attemptsLeft === 1 ? "attempt" : "attempts"} remaining
               </div>
             )}
           </div>
 
-          {err && (
+          {state.message && (
             <div
+              role={isLocked ? "status" : "alert"}
               className="text-sm rounded-xl px-3 py-2"
               style={{
                 background: "rgba(232,93,47,0.08)",
                 color: C.raspberry,
                 border: `1px solid ${C.raspberry}33`,
               }}
-              role="alert"
-              aria-live="polite"
             >
-              {isLocked
-                ? `Too many wrong attempts. Try again in ${formatRemaining(remainingMs)}.`
-                : err}
+              {state.message}
             </div>
           )}
 
           <Button
             type="submit"
             disabled={loading || isLocked}
-            className="w-full h-14 rounded-full text-xs uppercase tracking-[0.22em] border-0 disabled:opacity-50"
-            style={{ background: C.raspberry, color: "#fff", fontFamily: fonts.mono }}
+            className="w-full"
+            style={{
+              background: C.raspberry,
+              color: "#fff",
+              height: 52,
+              fontSize: 16,
+              borderRadius: 14,
+            }}
           >
             {loading ? (
               <Loader2 className="w-4 h-4 animate-spin" />
             ) : isLocked ? (
-              `Locked · ${formatRemaining(remainingMs)}`
+              "Locked"
             ) : (
               "Unlock event"
             )}
