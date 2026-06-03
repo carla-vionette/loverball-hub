@@ -96,6 +96,44 @@ const EventPasswordGate = ({ eventId, eventTitle, coverImage, onUnlock }: Props)
     }
   }, [state.status, eventId]);
 
+  // ---- Cross-tab sync ----
+  // When any tab unlocks / triggers a lockout / hits the cooldown reset, every
+  // other tab viewing the same event reflects that without a manual refresh.
+  // Server is still the source of truth — this is a UX polish layer.
+  const busRef = useRef<GateBus | null>(null);
+  useEffect(() => {
+    const bus = subscribeGateBus(eventId, (msg) => {
+      switch (msg.type) {
+        case "unlocked":
+          markUnlocked(eventId);
+          onUnlock();
+          break;
+        case "locked":
+          setLockedUntil(msg.lockedUntil);
+          setAttemptsLeft(0);
+          writeNum(lockoutKey(eventId), msg.lockedUntil);
+          writeNum(attemptsLeftKey(eventId), 0);
+          setNow(Date.now());
+          break;
+        case "attempts":
+          setAttemptsLeft(msg.attemptsLeft);
+          writeNum(attemptsLeftKey(eventId), msg.attemptsLeft);
+          break;
+        case "cleared":
+          clearKeys(lockoutKey(eventId), attemptsLeftKey(eventId));
+          setLockedUntil(0);
+          setAttemptsLeft(MAX_ATTEMPTS);
+          setLastError(null);
+          break;
+      }
+    });
+    busRef.current = bus;
+    return () => {
+      bus.close();
+      busRef.current = null;
+    };
+  }, [eventId, onUnlock]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (state.status === "locked") return;
