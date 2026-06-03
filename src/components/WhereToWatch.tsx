@@ -4,8 +4,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Tv, MapPin, Calendar, Users, ArrowRight } from "lucide-react";
+import { Tv, MapPin, Calendar, Users, ArrowRight, Home } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useActiveArea } from "@/hooks/useActiveArea";
+import AreaSelector from "@/components/AreaSelector";
 
 interface WatchEvent {
   id: string;
