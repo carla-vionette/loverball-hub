@@ -15,9 +15,25 @@ interface Props {
 const unlockKey = (id: string) => `event_unlock_${id}`;
 const attemptsKey = (id: string) => `event_pw_attempts_${id}`;
 const lockoutKey = (id: string) => `event_pw_lockout_${id}`;
+const SESSION_TOKEN_KEY = "event_pw_session_token";
 
 const MAX_ATTEMPTS = 5;
-const LOCKOUT_MS = 5 * 60 * 1000; // 5 minutes
+const LOCKOUT_MS = 5 * 60 * 1000; // 5 minutes (client mirror; server is source of truth)
+
+const getSessionToken = (): string => {
+  try {
+    let t = localStorage.getItem(SESSION_TOKEN_KEY);
+    if (!t) {
+      const arr = new Uint8Array(16);
+      crypto.getRandomValues(arr);
+      t = Array.from(arr, (b) => b.toString(16).padStart(2, "0")).join("");
+      localStorage.setItem(SESSION_TOKEN_KEY, t);
+    }
+    return t;
+  } catch {
+    return Math.random().toString(36).slice(2) + Date.now().toString(36);
+  }
+};
 
 export const isEventUnlocked = (id: string) => {
   try {
