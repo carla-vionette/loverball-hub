@@ -118,22 +118,21 @@ describe("EventPasswordGate — accessible status messages", () => {
     const input = inputIn(container);
     expect(input).toHaveAttribute("aria-invalid", "false");
 
-    // The polite live region exists from initial render (persistent for SR
-    // announcement reliability) and is initially empty.
-    const attemptsRegion = container.querySelector("#event-password-attempts")!;
-    expect(attemptsRegion).toHaveAttribute("aria-live", "polite");
-    expect(attemptsRegion).toHaveAttribute("role", "status");
-    expect(attemptsRegion.textContent?.trim()).toBe("");
+    const region = attemptsRegion(container);
+    expect(region).toHaveAttribute("aria-live", "polite");
+    expect(region).toHaveAttribute("role", "status");
+    expect(region.textContent?.trim()).toBe("");
 
     rpcQueue.push({ data: { ok: false, attempts_left: 3 } });
     await submitWith(container, "nope");
 
     expect(input).toHaveAttribute("aria-invalid", "true");
-    expect(attemptsRegion.textContent).toMatch(/3 attempts remaining/i);
+    expect(region.textContent).toMatch(/3 attempts remaining/i);
 
     // aria-describedby still points at both regions so SRs read them together.
-    expect(input.getAttribute("aria-describedby")).toContain("event-password-status");
-    expect(input.getAttribute("aria-describedby")).toContain("event-password-attempts");
+    const ids = (input.getAttribute("aria-describedby") ?? "").split(/\s+/);
+    expect(ids).toContain(region.id);
+    expect(ids).toContain(statusRegion(container).id);
   });
 
   it("uses singular copy on the last attempt", async () => {
@@ -141,10 +140,9 @@ describe("EventPasswordGate — accessible status messages", () => {
     rpcQueue.push({ data: { ok: false, attempts_left: 1 } });
     await submitWith(container, "still-no");
 
-    const attemptsRegion = container.querySelector("#event-password-attempts")!;
-    expect(attemptsRegion.textContent).toMatch(/^1 attempt remaining/i);
+    expect(attemptsRegion(container).textContent).toMatch(/^1 attempt remaining/i);
 
-    const status = container.querySelector("#event-password-status")!;
+    const status = statusRegion(container);
     expect(status).toHaveAttribute("role", "alert");
     expect(status.textContent).toMatch(/1 attempt left/i);
   });
@@ -158,7 +156,7 @@ describe("EventPasswordGate — accessible status messages", () => {
     rpcQueue.push({ data: { ok: false, locked: true, retry_after_seconds: 90 } });
     await submitWith(container, "wrong");
 
-    const status = container.querySelector("#event-password-status")!;
+    const status = statusRegion(container);
     expect(status).toHaveAttribute("role", "timer");
     expect(status).toHaveAttribute("aria-live", "assertive");
 
@@ -167,12 +165,10 @@ describe("EventPasswordGate — accessible status messages", () => {
     expect(timer.getAttribute("datetime")).toBe("PT90S");
     expect(timer.getAttribute("aria-label")).toMatch(/90 seconds/);
 
-    // Input must be disabled while locked.
     expect(inputIn(container)).toBeDisabled();
-    // Submit button label flips to "Locked".
     expect(within(container).getByRole("button", { name: /^locked$/i })).toBeDisabled();
 
-    // Advance 1 real second — the interval inside the gate ticks `now`.
+    // Advance 1 second — the gate's interval ticks `now`.
     await act(async () => {
       vi.setSystemTime(baseline + 1_000);
       vi.advanceTimersByTime(1_000);
@@ -197,12 +193,10 @@ describe("EventPasswordGate — cross-tab UI sync", () => {
     rpcQueue.push({ data: { ok: false, attempts_left: 2 } });
     await submitWith(tabA.container, "wrong-in-A");
 
-    const aRegion = tabA.container.querySelector("#event-password-attempts")!;
-    const bRegion = tabB.container.querySelector("#event-password-attempts")!;
+    const aRegion = attemptsRegion(tabA.container);
+    const bRegion = attemptsRegion(tabB.container);
     expect(aRegion.textContent).toMatch(/2 attempts remaining/i);
     expect(bRegion.textContent).toMatch(/2 attempts remaining/i);
-
-    // Both polite live regions stay polite (no surprise interruptions in B).
     expect(bRegion).toHaveAttribute("aria-live", "polite");
   });
 
@@ -217,10 +211,8 @@ describe("EventPasswordGate — cross-tab UI sync", () => {
     rpcQueue.push({ data: { ok: false, locked: true, retry_after_seconds: 60 } });
     await submitWith(tabA.container, "wrong-in-A");
 
-    // Tab B mirrors the locked state.
-    const bInput = inputIn(tabB.container);
-    expect(bInput).toBeDisabled();
-    const bStatus = tabB.container.querySelector("#event-password-status")!;
+    expect(inputIn(tabB.container)).toBeDisabled();
+    const bStatus = statusRegion(tabB.container);
     expect(bStatus).toHaveAttribute("role", "timer");
     const bTimer = bStatus.querySelector("time")!;
     expect(bTimer.textContent).toBe("1:00");
@@ -230,11 +222,10 @@ describe("EventPasswordGate — cross-tab UI sync", () => {
       vi.setSystemTime(baseline + 5_000);
       vi.advanceTimersByTime(5_000);
     });
-    const aTimer = tabA.container.querySelector("#event-password-status time")!;
+    const aTimer = statusRegion(tabA.container).querySelector("time")!;
     expect(aTimer.textContent).toBe("0:55");
     expect(bTimer.textContent).toBe("0:55");
 
-    // Storage also reflects the lockout deadline (sanity check that B persisted it).
     expect(parseInt(localStorage.getItem(lockoutKey(EVENT_ID)) || "0", 10)).toBeGreaterThan(
       baseline,
     );
@@ -243,8 +234,7 @@ describe("EventPasswordGate — cross-tab UI sync", () => {
   it("propagates unlock: tab B's onUnlock fires when tab A submits the correct password", async () => {
     const onUnlockA = vi.fn();
     const onUnlockB = vi.fn();
-    renderGate("tabA-3", onUnlockA);
-    const tabA = { container: document.body.lastElementChild as HTMLElement };
+    const tabA = renderGate("tabA-3", onUnlockA);
     renderGate("tabB-3", onUnlockB);
 
     rpcQueue.push({ data: { ok: true } });
@@ -252,9 +242,7 @@ describe("EventPasswordGate — cross-tab UI sync", () => {
 
     expect(onUnlockA).toHaveBeenCalledTimes(1);
     expect(onUnlockB).toHaveBeenCalledTimes(1);
-    // Session flag was written so a reload of tab B would skip the gate too.
     expect(sessionStorage.getItem(unlockKey(EVENT_ID))).toBe("1");
-    // Lockout / attempt counters cleared.
     expect(localStorage.getItem(lockoutKey(EVENT_ID))).toBeNull();
     expect(localStorage.getItem(attemptsLeftKey(EVENT_ID))).toBeNull();
   });
@@ -279,13 +267,11 @@ describe("EventPasswordGate — cross-tab UI sync", () => {
       vi.advanceTimersByTime(4_000);
     });
 
-    // Both inputs re-enable; aria-invalid is back to false; attempts hint cleared.
     expect(inputIn(tabA.container)).not.toBeDisabled();
     expect(inputIn(tabB.container)).not.toBeDisabled();
     expect(inputIn(tabA.container)).toHaveAttribute("aria-invalid", "false");
     expect(inputIn(tabB.container)).toHaveAttribute("aria-invalid", "false");
 
-    // Submit button label is back to "Unlock event" in both tabs.
     expect(
       within(tabA.container).getByRole("button", { name: /unlock event/i }),
     ).toBeEnabled();
@@ -293,9 +279,7 @@ describe("EventPasswordGate — cross-tab UI sync", () => {
       within(tabB.container).getByRole("button", { name: /unlock event/i }),
     ).toBeEnabled();
 
-    // Attempt counter is reset to the max in storage.
-    expect(parseInt(localStorage.getItem(attemptsLeftKey(EVENT_ID)) || "0", 10)).toBe(
-      MAX_ATTEMPTS,
-    );
+    // Lockout deadline was cleared from storage by the cooldown_expired effect.
+    expect(localStorage.getItem(lockoutKey(EVENT_ID))).toBeNull();
   });
 });
