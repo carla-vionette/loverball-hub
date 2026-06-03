@@ -9,7 +9,9 @@
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
     "preview": "vite preview",
-    "test:e2e:lockout": "bun run scripts/test-event-password-lockout.ts"
+    "test:unit": "vitest run",
+    "test:e2e:lockout": "bun run scripts/test-event-password-lockout.ts",
+    "test:e2e:lockout:ci": "bun run scripts/run-with-retry.ts -- bun run scripts/test-event-password-lockout.ts"
   },
   "dependencies": {
     "@fontsource/oswald": "^5.2.8",
