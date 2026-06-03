@@ -237,6 +237,86 @@ const main = async () => {
     await resetAttempts(tabA, token);
   }
 
+  // -------------------------------------------------------------------------
+  t.group("retry_after_seconds is monotonically non-increasing under clock drift");
+  {
+    // Trigger a fresh lockout, then poll retry_after_seconds many times
+    // across multiple "tabs" (independent clients) with small real-time
+    // sleeps AND simulated server-side clock drift via ageAttempts (positive
+    // = attempts move further into the past = cooldown appears closer to
+    // expiry). The countdown must NEVER increase between successive reads,
+    // regardless of which tab reads or whether we nudge the clock.
+    const token = randomToken();
+    const seeder = newClient();
+    await resetAttempts(seeder, token);
+    await runWrongAttempts(seeder, token, MAX_ATTEMPTS);
+
+    const tabs = [newClient(), newClient(), newClient()];
+    const readings: { source: string; retry: number }[] = [];
+
+    const read = async (label: string, idx: number) => {
+      const r = await verify(tabs[idx % tabs.length], DEFAULT_PASSWORD, token);
+      t.expect(r.locked === true, `${label}: still locked`);
+      const retry = r.retry_after_seconds ?? 0;
+      readings.push({ source: label, retry });
+      return retry;
+    };
+
+    // Baseline reads across tabs.
+    await read("t0/tabA", 0);
+    await new Promise((r) => setTimeout(r, 1100));
+    await read("t1/tabB", 1);
+    await new Promise((r) => setTimeout(r, 1100));
+    await read("t2/tabC", 2);
+
+    // Simulate ~30s of server clock drift forward (attempts pushed into past).
+    await ageAttempts(seeder, token, 30);
+    await read("drift+30/tabA", 0);
+
+    // Another nudge + interleaved reads from all tabs.
+    await new Promise((r) => setTimeout(r, 800));
+    await ageAttempts(seeder, token, 15);
+    await read("drift+45/tabB", 1);
+    await read("drift+45/tabC", 2);
+    await new Promise((r) => setTimeout(r, 1100));
+    await read("drift+45+1s/tabA", 0);
+
+    // Assert strict monotonic non-increase across the entire timeline.
+    let monotonic = true;
+    let firstViolation = "";
+    for (let i = 1; i < readings.length; i++) {
+      if (readings[i].retry > readings[i - 1].retry) {
+        monotonic = false;
+        firstViolation = `${readings[i - 1].source}=${readings[i - 1].retry}s -> ${readings[i].source}=${readings[i].retry}s`;
+        break;
+      }
+    }
+    t.expect(
+      monotonic,
+      `retry_after_seconds never increases across ${readings.length} reads` +
+        (monotonic ? "" : ` (violation: ${firstViolation})`),
+    );
+
+    // And bounded by the original cooldown window.
+    t.expect(
+      readings.every((r) => r.retry > 0 && r.retry <= COOLDOWN_SECONDS),
+      `every reading within (0, ${COOLDOWN_SECONDS}] (got ${JSON.stringify(readings.map((r) => r.retry))})`,
+    );
+
+    // Total drop should reflect the elapsed real time + simulated drift
+    // (~45s drift + ~4s sleeps), not stay flat — proving the countdown is
+    // live, not a frozen snapshot.
+    const drop = readings[0].retry - readings[readings.length - 1].retry;
+    t.expect(
+      drop >= 40,
+      `countdown advanced by >= 40s across the run (dropped ${drop}s)`,
+    );
+
+    await resetAttempts(seeder, token);
+  }
+
+
+
 
   process.exit(t.summary() ? 0 : 1);
 };
