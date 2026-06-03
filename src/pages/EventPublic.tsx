@@ -81,13 +81,14 @@ const EventPublic = () => {
   const [host, setHost] = useState<HostInfo | null>(null);
   const [attendees, setAttendees] = useState<AttendeePreview[]>([]);
   const [attendeeCount, setAttendeeCount] = useState<number>(0);
+  const [unlocked, setUnlocked] = useState<boolean>(() => (id ? isEventUnlocked(id) : false));
 
   useEffect(() => {
     if (!id) return;
     (async () => {
       const { data } = await supabase
         .from("events")
-        .select("id, title, description, image_url, event_date, event_time, venue_name, city, visibility, host_user_id, capacity, guest_visibility, rsvp_approval_required")
+        .select("id, title, description, image_url, event_date, event_time, venue_name, city, visibility, host_user_id, capacity, guest_visibility, rsvp_approval_required, password_required, show_guest_count, anonymize_guest_list, waitlist_enabled")
         .eq("id", id)
         .maybeSingle();
       const ev = data as PublicEvent | null;
@@ -111,13 +112,15 @@ const EventPublic = () => {
         .eq("status", "attending");
       setAttendeeCount(count ?? 0);
 
-      // Avatar preview — only if host allows guest visibility (defaults to true)
+      // Verified attendee preview — only RSVPs that have completed identity,
+      // and only if the host hasn't hidden the guest list entirely.
       if (ev?.guest_visibility !== false) {
         const { data: rsvps } = await supabase
           .from("event_rsvps")
-          .select("user_id")
+          .select("user_id, identity_completed_at")
           .eq("event_id", id)
           .eq("status", "attending")
+          .not("identity_completed_at", "is", null)
           .limit(8);
         const ids = (rsvps ?? []).map((r) => r.user_id).filter(Boolean);
         if (ids.length) {
@@ -133,6 +136,8 @@ const EventPublic = () => {
               city: p.city,
             }))
           );
+        } else {
+          setAttendees([]);
         }
       }
     })();
