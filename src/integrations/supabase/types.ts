@@ -641,33 +641,233 @@ export type Database = {
           },
         ]
       }
+      event_invites: {
+        Row: {
+          created_at: string
+          event_id: string
+          expires_at: string | null
+          id: string
+          invite_link_token: string
+          invite_type: string
+          recipient_email: string | null
+          recipient_phone: string | null
+          sent_by_user_id: string | null
+          source: string | null
+          status: string
+          used_at: string | null
+          used_by_user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          event_id: string
+          expires_at?: string | null
+          id?: string
+          invite_link_token?: string
+          invite_type?: string
+          recipient_email?: string | null
+          recipient_phone?: string | null
+          sent_by_user_id?: string | null
+          source?: string | null
+          status?: string
+          used_at?: string | null
+          used_by_user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          event_id?: string
+          expires_at?: string | null
+          id?: string
+          invite_link_token?: string
+          invite_type?: string
+          recipient_email?: string | null
+          recipient_phone?: string | null
+          sent_by_user_id?: string | null
+          source?: string | null
+          status?: string
+          used_at?: string | null
+          used_by_user_id?: string | null
+        }
+        Relationships: []
+      }
+      event_match_members: {
+        Row: {
+          checked_in_with_match: boolean
+          created_at: string
+          event_match_id: string
+          id: string
+          response_status: string
+          role: string
+          user_id: string
+        }
+        Insert: {
+          checked_in_with_match?: boolean
+          created_at?: string
+          event_match_id: string
+          id?: string
+          response_status?: string
+          role?: string
+          user_id: string
+        }
+        Update: {
+          checked_in_with_match?: boolean
+          created_at?: string
+          event_match_id?: string
+          id?: string
+          response_status?: string
+          role?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_match_members_event_match_id_fkey"
+            columns: ["event_match_id"]
+            isOneToOne: false
+            referencedRelation: "event_matches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      event_matches: {
+        Row: {
+          conversation_id: string | null
+          created_at: string
+          created_by_user_id: string | null
+          event_id: string
+          id: string
+          label: string | null
+          match_type: string
+          meeting_location_label: string | null
+          meeting_time: string | null
+          status: string
+        }
+        Insert: {
+          conversation_id?: string | null
+          created_at?: string
+          created_by_user_id?: string | null
+          event_id: string
+          id?: string
+          label?: string | null
+          match_type?: string
+          meeting_location_label?: string | null
+          meeting_time?: string | null
+          status?: string
+        }
+        Update: {
+          conversation_id?: string | null
+          created_at?: string
+          created_by_user_id?: string | null
+          event_id?: string
+          id?: string
+          label?: string | null
+          match_type?: string
+          meeting_location_label?: string | null
+          meeting_time?: string | null
+          status?: string
+        }
+        Relationships: []
+      }
+      event_matchmaking_preferences: {
+        Row: {
+          age_range_optional: string | null
+          coming_solo: boolean
+          created_at: string
+          event_id: string
+          id: string
+          intent_tags: string[]
+          location_preference: string | null
+          match_mode_preference: string
+          meeting_window_preference: string | null
+          notes_optional: string | null
+          open_to_cross_team_match: boolean
+          social_energy: string | null
+          team_affinity_tags: string[]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          age_range_optional?: string | null
+          coming_solo?: boolean
+          created_at?: string
+          event_id: string
+          id?: string
+          intent_tags?: string[]
+          location_preference?: string | null
+          match_mode_preference?: string
+          meeting_window_preference?: string | null
+          notes_optional?: string | null
+          open_to_cross_team_match?: boolean
+          social_energy?: string | null
+          team_affinity_tags?: string[]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          age_range_optional?: string | null
+          coming_solo?: boolean
+          created_at?: string
+          event_id?: string
+          id?: string
+          intent_tags?: string[]
+          location_preference?: string | null
+          match_mode_preference?: string
+          meeting_window_preference?: string | null
+          notes_optional?: string | null
+          open_to_cross_team_match?: boolean
+          social_energy?: string | null
+          team_affinity_tags?: string[]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       event_rsvps: {
         Row: {
+          approval_status: string
+          attendance_status: string
+          checked_in_at: string | null
           created_at: string
           event_id: string
           guest_name: string | null
           guest_phone: string | null
           id: string
+          identity_completed_at: string | null
+          invite_id: string | null
+          invited_by_user_id: string | null
+          joined_event_chat_at: string | null
           plus_ones: number | null
           status: string
           user_id: string
         }
         Insert: {
+          approval_status?: string
+          attendance_status?: string
+          checked_in_at?: string | null
           created_at?: string
           event_id: string
           guest_name?: string | null
           guest_phone?: string | null
           id?: string
+          identity_completed_at?: string | null
+          invite_id?: string | null
+          invited_by_user_id?: string | null
+          joined_event_chat_at?: string | null
           plus_ones?: number | null
           status?: string
           user_id: string
         }
         Update: {
+          approval_status?: string
+          attendance_status?: string
+          checked_in_at?: string | null
           created_at?: string
           event_id?: string
           guest_name?: string | null
           guest_phone?: string | null
           id?: string
+          identity_completed_at?: string | null
+          invite_id?: string | null
+          invited_by_user_id?: string | null
+          joined_event_chat_at?: string | null
           plus_ones?: number | null
           status?: string
           user_id?: string
@@ -744,20 +944,26 @@ export type Database = {
       }
       events: {
         Row: {
+          allow_mutual_invites: boolean
+          allow_photo_uploads: boolean
           allow_plus_ones: boolean | null
+          anonymize_guest_list: boolean
           banner_image: string | null
           capacity: number | null
           city: string | null
           co_host_ids: string[] | null
           created_at: string
+          crew_mode_enabled: boolean
           description: string | null
           end_time: string | null
           event_date: string
           event_link: string | null
+          event_password_hash: string | null
           event_tags: string[] | null
           event_time: string | null
           event_type: string | null
           guest_visibility: boolean | null
+          hide_activity_timestamps: boolean
           host_user_id: string | null
           id: string
           image_url: string | null
@@ -767,9 +973,16 @@ export type Database = {
           location_lng: number | null
           location_map_url: string | null
           location_type: string | null
+          matchmaking_enabled: boolean
+          matchmaking_requires_approval: boolean
+          one_to_one_mode_enabled: boolean
+          open_invite_enabled: boolean
+          password_required: boolean
+          plus_one_limit: number
           price: number | null
           rsvp_approval_required: boolean | null
           rsvp_deadline: string | null
+          show_guest_count: boolean
           slug: string | null
           sport_tags: string[] | null
           status: string | null
@@ -781,22 +994,29 @@ export type Database = {
           venue_type: string | null
           virtual_link: string | null
           visibility: string
+          waitlist_enabled: boolean
         }
         Insert: {
+          allow_mutual_invites?: boolean
+          allow_photo_uploads?: boolean
           allow_plus_ones?: boolean | null
+          anonymize_guest_list?: boolean
           banner_image?: string | null
           capacity?: number | null
           city?: string | null
           co_host_ids?: string[] | null
           created_at?: string
+          crew_mode_enabled?: boolean
           description?: string | null
           end_time?: string | null
           event_date: string
           event_link?: string | null
+          event_password_hash?: string | null
           event_tags?: string[] | null
           event_time?: string | null
           event_type?: string | null
           guest_visibility?: boolean | null
+          hide_activity_timestamps?: boolean
           host_user_id?: string | null
           id?: string
           image_url?: string | null
@@ -806,9 +1026,16 @@ export type Database = {
           location_lng?: number | null
           location_map_url?: string | null
           location_type?: string | null
+          matchmaking_enabled?: boolean
+          matchmaking_requires_approval?: boolean
+          one_to_one_mode_enabled?: boolean
+          open_invite_enabled?: boolean
+          password_required?: boolean
+          plus_one_limit?: number
           price?: number | null
           rsvp_approval_required?: boolean | null
           rsvp_deadline?: string | null
+          show_guest_count?: boolean
           slug?: string | null
           sport_tags?: string[] | null
           status?: string | null
@@ -820,22 +1047,29 @@ export type Database = {
           venue_type?: string | null
           virtual_link?: string | null
           visibility?: string
+          waitlist_enabled?: boolean
         }
         Update: {
+          allow_mutual_invites?: boolean
+          allow_photo_uploads?: boolean
           allow_plus_ones?: boolean | null
+          anonymize_guest_list?: boolean
           banner_image?: string | null
           capacity?: number | null
           city?: string | null
           co_host_ids?: string[] | null
           created_at?: string
+          crew_mode_enabled?: boolean
           description?: string | null
           end_time?: string | null
           event_date?: string
           event_link?: string | null
+          event_password_hash?: string | null
           event_tags?: string[] | null
           event_time?: string | null
           event_type?: string | null
           guest_visibility?: boolean | null
+          hide_activity_timestamps?: boolean
           host_user_id?: string | null
           id?: string
           image_url?: string | null
@@ -845,9 +1079,16 @@ export type Database = {
           location_lng?: number | null
           location_map_url?: string | null
           location_type?: string | null
+          matchmaking_enabled?: boolean
+          matchmaking_requires_approval?: boolean
+          one_to_one_mode_enabled?: boolean
+          open_invite_enabled?: boolean
+          password_required?: boolean
+          plus_one_limit?: number
           price?: number | null
           rsvp_approval_required?: boolean | null
           rsvp_deadline?: string | null
+          show_guest_count?: boolean
           slug?: string | null
           sport_tags?: string[] | null
           status?: string | null
@@ -859,6 +1100,7 @@ export type Database = {
           venue_type?: string | null
           virtual_link?: string | null
           visibility?: string
+          waitlist_enabled?: boolean
         }
         Relationships: []
       }
