@@ -93,6 +93,7 @@ const EventPasswordGate = ({ eventId, eventTitle, coverImage, onUnlock }: Props)
       setLockedUntil(0);
       setAttemptsLeft(MAX_ATTEMPTS);
       setLastError(null);
+      busRef.current?.publish({ type: "cleared", at: Date.now() });
     }
   }, [state.status, eventId]);
 
