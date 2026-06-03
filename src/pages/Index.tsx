@@ -219,13 +219,13 @@ const Index = () => {
               <span
                 style={{
                   fontFamily: "'Anton', Impact, sans-serif", fontWeight: 400,
-                  fontSize: "clamp(52px, 9vw, 120px)", textTransform: "uppercase",
+                  fontSize: "clamp(52px, 9vw, 120px)",
                   display: "block",
                   color: "#E85D2F",
                   whiteSpace: "nowrap",
                 }}
               >
-                HER COMMUNITY.
+                Her Community.
               </span>
             </h1>
 
