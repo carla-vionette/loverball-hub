@@ -309,8 +309,7 @@ const MessagesPage = () => {
                           <img 
                             src={match.other_user.profile_photo_url} 
                             alt={match.other_user.name}
-                            className="w-full h-full object-cover"
-                          />
+                            className="w-full h-full object-cover" loading="lazy" decoding="async" />
                         ) : (
                           <span className="text-lg font-bold text-primary/50">
                             {match.other_user.name.charAt(0).toUpperCase()}
@@ -380,8 +379,7 @@ const MessagesPage = () => {
                         <img 
                           src={selectedMatch.other_user.profile_photo_url} 
                           alt={selectedMatch.other_user.name}
-                          className="w-full h-full object-cover"
-                        />
+                          className="w-full h-full object-cover" loading="lazy" decoding="async" />
                       ) : (
                         <span className="font-bold text-primary/50">
                           {selectedMatch.other_user.name.charAt(0).toUpperCase()}

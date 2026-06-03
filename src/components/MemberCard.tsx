@@ -33,8 +33,7 @@ const MemberCard = ({ profile, onSwipeLeft, onSwipeRight }: MemberCardProps) => 
           <img 
             src={profile.profile_photo_url} 
             alt={profile.name}
-            className="w-full h-full object-contain bg-muted"
-          />
+            className="w-full h-full object-contain bg-muted" loading="lazy" decoding="async" />
         ) : (
           <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/20 to-accent/20">
             <span className="text-8xl font-bold text-primary/30">

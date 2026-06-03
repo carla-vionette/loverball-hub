@@ -201,8 +201,7 @@ const Index = () => {
               src={loverballWordmark.url}
               alt="Loverball"
               className="block mb-6 w-[260px] md:w-[340px] lg:w-[400px] h-auto select-none"
-              draggable={false}
-            />
+              draggable={false} loading="lazy" decoding="async" />
             <div className="flex flex-wrap items-center gap-2 mb-6">
               <span style={{ background: "transparent", color: "#1A1A1A", border: `1px solid #E8E3DC`, fontFamily: fonts.mono, fontSize: 10, letterSpacing: "0.22em", textTransform: "uppercase", padding: "6px 12px", borderRadius: 999 }}>
                 Built in LA
@@ -292,7 +291,7 @@ const Index = () => {
                 className="relative overflow-hidden"
                 style={{ borderRadius: 12, aspectRatio: "4/5", background: C.surface, border: `1px solid ${C.borderStrong}` }}
               >
-                <img src={heroImage} alt="Women sports fans at a Loverball watch party" className="w-full h-full object-cover" />
+                <img src={heroImage} alt="Women sports fans at a Loverball watch party" className="w-full h-full object-cover" loading="eager" decoding="async" fetchPriority="high" width={800} height={1000} />
 
                 <div className="absolute top-4 left-4 flex items-center gap-1.5" style={{ background: C.raspberry, color: "#fff", borderRadius: 999, padding: "6px 12px", fontFamily: fonts.mono, fontSize: 10, letterSpacing: "0.22em", textTransform: "uppercase", fontWeight: 700, boxShadow: "0 8px 24px -8px rgba(232,93,47,0.7)" }}>
                   <span className="inline-block w-1.5 h-1.5 rounded-full bg-white animate-pulse" /> Your Team

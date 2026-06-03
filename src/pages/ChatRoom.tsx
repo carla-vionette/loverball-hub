@@ -115,7 +115,7 @@ const ChatRoom = () => {
         </Link>
         <div className="w-8 h-8 rounded-full bg-secondary/50 overflow-hidden flex-shrink-0">
           {otherUserPhoto ? (
-            <img src={otherUserPhoto} alt={otherUserName} className="w-full h-full object-cover" />
+            <img src={otherUserPhoto} alt={otherUserName} className="w-full h-full object-cover" loading="lazy" decoding="async" />
           ) : (
             <div className="w-full h-full flex items-center justify-center text-xs font-semibold text-muted-foreground">
               {otherUserName[0]}

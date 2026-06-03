@@ -400,10 +400,10 @@ const Onboarding = () => {
             </div>
             <div className="flex-1 flex flex-col items-center justify-center relative my-6">
               <div className="grid grid-cols-2 gap-3 w-full max-w-sm">
-                <img src={collage1} alt="" className="rounded-2xl aspect-[3/4] object-cover" />
+                <img src={collage1} alt="" className="rounded-2xl aspect-[3/4] object-cover" loading="lazy" decoding="async" />
                 <div className="space-y-3">
-                  <img src={collage2} alt="" className="rounded-2xl aspect-square object-cover" />
-                  <img src={collage3} alt="" className="rounded-2xl aspect-square object-cover" />
+                  <img src={collage2} alt="" className="rounded-2xl aspect-square object-cover" loading="lazy" decoding="async" />
+                  <img src={collage3} alt="" className="rounded-2xl aspect-square object-cover" loading="lazy" decoding="async" />
                 </div>
               </div>
               <motion.div
@@ -620,7 +620,7 @@ const Onboarding = () => {
                 style={{ background: C.surface, border: `2px dashed ${C.borderStrong}` }}
               >
                 {photoUrl ? (
-                  <img src={photoUrl} alt="You" className="w-full h-full object-cover" />
+                  <img src={photoUrl} alt="You" className="w-full h-full object-cover" loading="lazy" decoding="async" />
                 ) : (
                   <Camera size={36} color={C.muted} />
                 )}

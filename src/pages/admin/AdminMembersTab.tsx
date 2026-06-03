@@ -80,7 +80,7 @@ const AdminMembersTab = ({ members, onRefresh }: Props) => {
                     <TableCell>
                       <div className="flex items-center gap-3">
                         {member.profile_photo_url ? (
-                          <img src={member.profile_photo_url} alt={member.name} className="w-8 h-8 rounded-full object-cover" />
+                          <img src={member.profile_photo_url} alt={member.name} className="w-8 h-8 rounded-full object-cover" loading="lazy" decoding="async" />
                         ) : (
                           <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-medium text-sm">
                             {member.name.charAt(0).toUpperCase()}

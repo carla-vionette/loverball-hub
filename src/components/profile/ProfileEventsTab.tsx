@@ -59,8 +59,7 @@ const ProfileEventsTab = ({
               <img
                 src={rsvp.event.image_url}
                 alt=""
-                className="w-14 h-14 rounded-lg object-cover shrink-0"
-              />
+                className="w-14 h-14 rounded-lg object-cover shrink-0" loading="lazy" decoding="async" />
             ) : (
               <div className="w-14 h-14 rounded-lg bg-muted flex items-center justify-center shrink-0">
                 <Calendar className="w-5 h-5 text-muted-foreground" />

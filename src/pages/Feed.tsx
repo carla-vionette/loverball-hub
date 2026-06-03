@@ -203,8 +203,7 @@ const Feed = () => {
               <img
                 src={loverballLogo}
                 alt="Loverball — back to home"
-                className="h-10 sm:h-14 md:h-20 w-auto object-contain brightness-0 invert"
-              />
+                className="h-10 sm:h-14 md:h-20 w-auto object-contain brightness-0 invert" loading="lazy" decoding="async" />
             </a>
 
             <div className="flex items-center gap-1 p-1 rounded-full" style={{ background: "rgba(20,20,21,0.6)", border: "1px solid rgba(255,255,255,0.08)", backdropFilter: "blur(12px)" }}>

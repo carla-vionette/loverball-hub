@@ -151,8 +151,7 @@ export const EventFormFields = ({ formData, onChange }: EventFormFieldsProps) =>
                   <img 
                     src={formData.image_url} 
                     alt="Event cover" 
-                    className="w-full h-40 object-cover"
-                  />
+                    className="w-full h-40 object-cover" loading="lazy" decoding="async" />
                   <Button
                     type="button"
                     variant="destructive"
