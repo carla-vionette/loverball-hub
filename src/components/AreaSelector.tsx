@@ -30,7 +30,7 @@ const AreaSelector = ({ compact = false, className = "" }: Props) => {
   };
 
   const statusLabel = (() => {
-    if (!active) return "Set your area";
+    if (!active) return "Enter a ZIP to browse events";
     const label = active.zip || active.city || "your area";
     return isOverriding ? `Browsing ${label} temporarily` : `Showing events near ${label}`;
   })();
@@ -41,12 +41,16 @@ const AreaSelector = ({ compact = false, className = "" }: Props) => {
       role="region"
       aria-label="Event area selector"
     >
-      <div className="flex items-center gap-2 mb-2">
+      <div className="flex items-center gap-2 mb-1">
         <MapPin className="w-4 h-4 text-primary shrink-0" />
         <span className="text-xs font-semibold tracking-wider uppercase text-foreground/80 truncate">
-          {statusLabel}
+          Location filter
         </span>
       </div>
+
+      <p className="text-[11px] text-muted-foreground mb-2.5">
+        {statusLabel}
+      </p>
 
       {isOverriding && home?.zip && (
         <p className="text-[11px] text-muted-foreground mb-2">
@@ -60,11 +64,11 @@ const AreaSelector = ({ compact = false, className = "" }: Props) => {
           inputMode="numeric"
           pattern="\d*"
           maxLength={5}
-          placeholder={isOverriding ? "Try another ZIP" : "Enter a ZIP to browse another area"}
+          placeholder="ZIP code"
           value={zipInput}
           onChange={(e) => setZipInput(e.target.value.replace(/[^0-9]/g, "").slice(0, 5))}
           onKeyDown={(e) => { if (e.key === "Enter") handleApply(); }}
-          className="h-9 rounded-full text-sm flex-1"
+          className="h-9 text-sm flex-1"
           aria-label="ZIP code"
         />
         <div className="flex gap-2 flex-wrap">

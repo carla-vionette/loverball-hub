@@ -402,11 +402,11 @@ const Events = () => {
           </div>
 
           {/* Search bar */}
-          <div className="mb-7 relative">
+          <div className="mb-10 relative">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
               type="text"
-              placeholder="Search events, cities, venues..."
+              placeholder="Search events, teams, cities, venues..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-10 pr-4 py-3 rounded-full bg-muted/60 border-border/20 text-foreground placeholder:text-muted-foreground/60 focus-visible:ring-primary/40"
@@ -414,47 +414,45 @@ const Events = () => {
             />
           </div>
 
-          {/* Area selector — saved home + temporary ZIP override */}
+          {/* Location filter block */}
           {user && (
-            <div className="mb-5">
+            <div className="mb-7 space-y-3">
               <AreaSelector />
+              <div className="flex flex-wrap items-center gap-2">
+                <span style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 10, letterSpacing: "0.18em", color: "rgba(248,248,248,0.55)", textTransform: "uppercase" }}>
+                  {userLoc ? "Within" : "Radius"}
+                </span>
+                {[25, 50, 100, "national" as const].map((r) => {
+                  const active = radius === r;
+                  const label = r === "national" ? "National" : `${r} mi`;
+                  return (
+                    <button
+                      key={String(r)}
+                      onClick={() => setRadius(r as any)}
+                      className="px-3 py-1.5 rounded-full transition-all"
+                      style={{
+                        background: active ? "#FAF5E9" : "rgba(20,20,21,0.6)",
+                        color: active ? "#0a0a0a" : "rgba(248,248,248,0.7)",
+                        border: active ? "1px solid #FAF5E9" : "1px solid rgba(255,255,255,0.08)",
+                        fontFamily: "'Inter', system-ui, sans-serif",
+                        fontWeight: 700,
+                        fontSize: 10,
+                        letterSpacing: "0.08em",
+                        textTransform: "uppercase",
+                      }}
+                    >
+                      {label}
+                    </button>
+                  );
+                })}
+                {isOverriding && (
+                  <span style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 10, color: "#2DD4BF", letterSpacing: "0.08em", textTransform: "uppercase" }}>
+                    · Temporary view
+                  </span>
+                )}
+              </div>
             </div>
           )}
-
-          {/* Radius toggle — only meaningful when we know where the user is */}
-          <div className="flex flex-wrap items-center gap-2 mb-7">
-            <span style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 10, letterSpacing: "0.18em", color: "rgba(248,248,248,0.55)", textTransform: "uppercase" }}>
-              {userLoc ? "Within" : "Radius"}
-            </span>
-            {[25, 50, 100, "national" as const].map((r) => {
-              const active = radius === r;
-              const label = r === "national" ? "National" : `${r} mi`;
-              return (
-                <button
-                  key={String(r)}
-                  onClick={() => setRadius(r as any)}
-                  className="px-3 py-1.5 rounded-full transition-all"
-                  style={{
-                    background: active ? "#FAF5E9" : "rgba(20,20,21,0.6)",
-                    color: active ? "#0a0a0a" : "rgba(248,248,248,0.7)",
-                    border: active ? "1px solid #FAF5E9" : "1px solid rgba(255,255,255,0.08)",
-                    fontFamily: "'Inter', system-ui, sans-serif",
-                    fontWeight: 700,
-                    fontSize: 10,
-                    letterSpacing: "0.08em",
-                    textTransform: "uppercase",
-                  }}
-                >
-                  {label}
-                </button>
-              );
-            })}
-            {isOverriding && (
-              <span style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 10, color: "#2DD4BF", letterSpacing: "0.08em", textTransform: "uppercase" }}>
-                · Temporary view
-              </span>
-            )}
-          </div>
 
 
           {/* FEATURED — cinematic */}
