@@ -2532,6 +2532,19 @@ export type Database = {
         }
         Returns: boolean
       }
+      get_event_invite_by_token: {
+        Args: { p_token: string }
+        Returns: {
+          created_at: string
+          event_id: string
+          id: string
+          invite_link_token: string
+          recipient_email: string
+          recipient_phone: string
+          sent_by_user_id: string
+          status: string
+        }[]
+      }
       get_my_account_settings: { Args: never; Returns: Json }
       get_public_profile_columns: { Args: { target_id: string }; Returns: Json }
       get_safe_profile: { Args: { profile_id: string }; Returns: Json }
