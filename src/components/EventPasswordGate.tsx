@@ -243,7 +243,7 @@ const EventPasswordGate = ({ eventId, eventTitle, coverImage, onUnlock }: Props)
         >
           <div>
             <label
-              htmlFor="event-password-input"
+              htmlFor={inputId}
               className="block mb-2"
               style={{
                 fontFamily: fonts.mono,
