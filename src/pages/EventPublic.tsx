@@ -17,6 +17,7 @@ import SharePreview from "@/components/SharePreview";
 import SocialShareButtons from "@/components/SocialShareButtons";
 import type { RsvpIntent } from "@/components/EventRSVPDialog";
 import RsvpPhoneSheet from "@/components/rsvp/RsvpPhoneSheet";
+import EventPasswordGate, { isEventUnlocked } from "@/components/EventPasswordGate";
 
 const SITE = "https://www.loverball.com";
 
@@ -34,6 +35,10 @@ interface PublicEvent {
   capacity: number | null;
   guest_visibility: boolean | null;
   rsvp_approval_required: boolean | null;
+  password_required: boolean | null;
+  show_guest_count: boolean | null;
+  anonymize_guest_list: boolean | null;
+  waitlist_enabled: boolean | null;
 }
 
 interface HostInfo {
@@ -76,13 +81,14 @@ const EventPublic = () => {
   const [host, setHost] = useState<HostInfo | null>(null);
   const [attendees, setAttendees] = useState<AttendeePreview[]>([]);
   const [attendeeCount, setAttendeeCount] = useState<number>(0);
+  const [unlocked, setUnlocked] = useState<boolean>(() => (id ? isEventUnlocked(id) : false));
 
   useEffect(() => {
     if (!id) return;
     (async () => {
       const { data } = await supabase
         .from("events")
-        .select("id, title, description, image_url, event_date, event_time, venue_name, city, visibility, host_user_id, capacity, guest_visibility, rsvp_approval_required")
+        .select("id, title, description, image_url, event_date, event_time, venue_name, city, visibility, host_user_id, capacity, guest_visibility, rsvp_approval_required, password_required, show_guest_count, anonymize_guest_list, waitlist_enabled")
         .eq("id", id)
         .maybeSingle();
       const ev = data as PublicEvent | null;
@@ -106,13 +112,15 @@ const EventPublic = () => {
         .eq("status", "attending");
       setAttendeeCount(count ?? 0);
 
-      // Avatar preview — only if host allows guest visibility (defaults to true)
+      // Verified attendee preview — only RSVPs that have completed identity,
+      // and only if the host hasn't hidden the guest list entirely.
       if (ev?.guest_visibility !== false) {
         const { data: rsvps } = await supabase
           .from("event_rsvps")
-          .select("user_id")
+          .select("user_id, identity_completed_at")
           .eq("event_id", id)
           .eq("status", "attending")
+          .not("identity_completed_at", "is", null)
           .limit(8);
         const ids = (rsvps ?? []).map((r) => r.user_id).filter(Boolean);
         if (ids.length) {
@@ -128,6 +136,8 @@ const EventPublic = () => {
               city: p.city,
             }))
           );
+        } else {
+          setAttendees([]);
         }
       }
     })();
@@ -137,6 +147,9 @@ const EventPublic = () => {
   const isHost = !!user && !!event && event.host_user_id === user.id;
   const capacityReached = !!event?.capacity && attendeeCount >= (event.capacity ?? 0);
   const guestVisible = event?.guest_visibility !== false;
+  const anonymizeGuests = event?.anonymize_guest_list === true;
+  const showGuestCount = event?.show_guest_count !== false;
+  const needsPassword = event?.password_required === true && !isHost && !unlocked;
 
   const dateStr = event ? format(new Date(event.event_date + "T00:00:00"), "EEE, MMM d, yyyy") : "";
   const timeStr = event?.event_time ? formatTime(event.event_time) : "";
@@ -286,6 +299,21 @@ const EventPublic = () => {
     );
   }
 
+  if (needsPassword) {
+    return (
+      <>
+        <Seo title={`${event.title} · Loverball`} description="Private event — password required" path={`/e/${id}`} />
+        <EventPasswordGate
+          eventId={event.id}
+          eventTitle={event.title}
+          coverImage={event.image_url}
+          onUnlock={() => setUnlocked(true)}
+        />
+      </>
+    );
+  }
+
+
   return (
     <>
       <Seo
@@ -376,13 +404,25 @@ const EventPublic = () => {
             {event.title}
           </h1>
 
-          {/* Social proof — attendee avatar stack */}
+          {/* Social proof — verified attendee avatar stack */}
           {(guestVisible && attendeeCount > 0) && (
             <div className="flex items-center gap-3 mb-6">
               {attendees.length > 0 && (
                 <div className="flex -space-x-2">
-                  {attendees.slice(0, 5).map((a) =>
-                    a.profile_photo_url ? (
+                  {attendees.slice(0, 5).map((a) => {
+                    if (anonymizeGuests) {
+                      return (
+                        <div
+                          key={a.user_id}
+                          className="w-8 h-8 rounded-full border-2 flex items-center justify-center text-[10px] font-bold"
+                          style={{ borderColor: C.bg, background: C.surfaceHi, color: C.muted }}
+                          aria-label="Anonymous guest"
+                        >
+                          ?
+                        </div>
+                      );
+                    }
+                    return a.profile_photo_url ? (
                       <img
                         key={a.user_id}
                         src={a.profile_photo_url}
@@ -398,19 +438,28 @@ const EventPublic = () => {
                       >
                         {(a.name ?? "L").slice(0, 1).toUpperCase()}
                       </div>
-                    )
-                  )}
+                    );
+                  })}
                 </div>
               )}
               <span className="text-sm" style={{ color: C.text }}>
-                <span style={{ fontWeight: 600 }}>{attendeeCount}</span>{" "}
-                <span style={{ color: C.muted }}>
-                  {attendeeCount === 1 ? "woman" : "women"}
-                  {event.city ? ` from ${event.city}` : ""} going
-                </span>
+                {showGuestCount ? (
+                  <>
+                    <span style={{ fontWeight: 600 }}>{attendeeCount}</span>{" "}
+                    <span style={{ color: C.muted }}>
+                      {attendeeCount === 1 ? "woman" : "women"}
+                      {event.city ? ` from ${event.city}` : ""} going
+                    </span>
+                  </>
+                ) : (
+                  <span style={{ color: C.muted }}>
+                    {anonymizeGuests ? "Verified guests confirmed" : "A few women are going"}
+                  </span>
+                )}
               </span>
             </div>
           )}
+
 
           {/* Capacity badge when full */}
           {capacityReached && (
