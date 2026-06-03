@@ -17,6 +17,7 @@ import SharePreview from "@/components/SharePreview";
 import SocialShareButtons from "@/components/SocialShareButtons";
 import type { RsvpIntent } from "@/components/EventRSVPDialog";
 import RsvpPhoneSheet from "@/components/rsvp/RsvpPhoneSheet";
+import EventPasswordGate, { isEventUnlocked } from "@/components/EventPasswordGate";
 
 const SITE = "https://www.loverball.com";
 
@@ -34,6 +35,10 @@ interface PublicEvent {
   capacity: number | null;
   guest_visibility: boolean | null;
   rsvp_approval_required: boolean | null;
+  password_required: boolean | null;
+  show_guest_count: boolean | null;
+  anonymize_guest_list: boolean | null;
+  waitlist_enabled: boolean | null;
 }
 
 interface HostInfo {
