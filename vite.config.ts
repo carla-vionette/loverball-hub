@@ -110,47 +110,56 @@ export default defineConfig(({ mode }) => ({
     minify: 'esbuild',
     chunkSizeWarningLimit: 500,
     cssCodeSplit: true,
-    // Aggressive chunk splitting for slow connections
+    // Aggressive chunk splitting for slow connections.
+    // We use the FUNCTION form of manualChunks (not the object form) because
+    // the object form is sensitive to import order — with Radix importing React
+    // first, React was leaking into vendor-ui and vendor-react was almost empty,
+    // which broke the production build (createContext undefined).
     rollupOptions: {
       output: {
-        manualChunks: {
-          // Core React — cached once, never changes
-          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+        manualChunks(id) {
+          if (!id.includes('node_modules')) return;
+
+          // Core React — cached once, never changes. Match anything react / react-dom /
+          // react-router-dom and their scheduler/runtime deps so they ALL land here.
+          if (
+            id.match(/[\\/]node_modules[\\/](react|react-dom|react-router|react-router-dom|scheduler)[\\/]/) ||
+            id.match(/[\\/]node_modules[\\/]@remix-run[\\/]/)
+          ) {
+            return 'vendor-react';
+          }
+
           // UI framework — large but stable
-          'vendor-ui': [
-            '@radix-ui/react-dialog',
-            '@radix-ui/react-tabs',
-            '@radix-ui/react-select',
-            '@radix-ui/react-dropdown-menu',
-            '@radix-ui/react-popover',
-            '@radix-ui/react-tooltip',
-            '@radix-ui/react-scroll-area',
-            '@radix-ui/react-accordion',
-            '@radix-ui/react-alert-dialog',
-            '@radix-ui/react-avatar',
-            '@radix-ui/react-checkbox',
-            '@radix-ui/react-switch',
-            '@radix-ui/react-toggle',
-            '@radix-ui/react-toggle-group',
-            '@radix-ui/react-slider',
-            '@radix-ui/react-radio-group',
-            '@radix-ui/react-separator',
-            '@radix-ui/react-slot',
-            '@radix-ui/react-label',
-            '@radix-ui/react-progress',
-          ],
-          // Data/state — separate chunk
-          'vendor-data': ['@tanstack/react-query', 'zustand', '@supabase/supabase-js'],
+          if (id.includes('node_modules/@radix-ui/')) return 'vendor-ui';
+
+          // Data/state
+          if (
+            id.includes('node_modules/@tanstack/react-query') ||
+            id.includes('node_modules/zustand') ||
+            id.includes('node_modules/@supabase/')
+          ) {
+            return 'vendor-data';
+          }
+
           // Animation — only loaded when needed
-          'vendor-motion': ['framer-motion'],
-          // NOTE: recharts intentionally NOT in manualChunks. It is ~400 KB and
-          // only used in the admin analytics tab. Letting Vite tree-shake it into
-          // the admin lazy chunk keeps it out of the initial modulepreload list,
-          // so 3G/slow-LTE users who never visit /admin don't pay for it.
+          if (id.includes('node_modules/framer-motion')) return 'vendor-motion';
+
           // Forms
-          'vendor-forms': ['react-hook-form', '@hookform/resolvers', 'zod'],
+          if (
+            id.includes('node_modules/react-hook-form') ||
+            id.includes('node_modules/@hookform/') ||
+            id.includes('node_modules/zod')
+          ) {
+            return 'vendor-forms';
+          }
+
           // Date utilities
-          'vendor-date': ['date-fns'],
+          if (id.includes('node_modules/date-fns')) return 'vendor-date';
+
+          // NOTE: recharts is intentionally NOT split out. It is ~400 KB and only
+          // used in the admin analytics tab. Letting Vite tree-shake it into the
+          // admin lazy chunk keeps it out of the initial modulepreload list, so
+          // 3G/slow-LTE users who never visit /admin don't pay for it.
         },
       },
     },
