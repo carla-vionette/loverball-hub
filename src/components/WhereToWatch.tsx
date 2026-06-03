@@ -7,7 +7,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Tv, MapPin, Calendar, Users, ArrowRight, Home } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useActiveArea } from "@/hooks/useActiveArea";
-import AreaSelector from "@/components/AreaSelector";
+import { useActiveArea } from "@/hooks/useActiveArea";
 
 interface WatchEvent {
   id: string;
