@@ -176,17 +176,17 @@ const WhereToWatch = ({ excludeEventId, limit = 6 }: Props) => {
           <div className="text-center py-8 px-4">
             <Tv className="w-10 h-10 text-primary/50 mx-auto mb-3" />
             <p className="text-sm font-semibold text-foreground mb-1">
-              No upcoming watch parties
+              No watch locations available yet for this event
             </p>
             <p className="text-xs text-muted-foreground mb-4">
-              Check back soon or browse all events to find your next game day.
+              We only surface verified watch parties from the community — no editorial venue lists. Browse local events or host your own.
             </p>
-            <div className="flex gap-2 justify-center">
+            <div className="flex gap-2 justify-center flex-wrap">
               <Button asChild size="sm" variant="default">
-                <Link to="/events">Browse events</Link>
+                <Link to="/events">Browse local events</Link>
               </Button>
               <Button asChild size="sm" variant="outline">
-                <Link to="/club">Join the club</Link>
+                <Link to="/club">Host a watch party</Link>
               </Button>
             </div>
           </div>
