@@ -22,6 +22,8 @@ import Seo from "@/components/Seo";
 import EditorialMasthead from "@/components/layout/EditorialMasthead";
 import { buildShareSummary, buildSharePreviewDescription } from "@/lib/eventShare";
 import { distanceMiles } from "@/lib/geocoding";
+import AreaSelector from "@/components/AreaSelector";
+import { useActiveArea } from "@/hooks/useActiveArea";
 
 
 const CATEGORIES = ["All", "watch_party", "game", "panel", "brunch", "networking", "other"];
