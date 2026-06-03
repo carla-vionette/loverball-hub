@@ -143,8 +143,10 @@ export default defineConfig(({ mode }) => ({
           'vendor-data': ['@tanstack/react-query', 'zustand', '@supabase/supabase-js'],
           // Animation — only loaded when needed
           'vendor-motion': ['framer-motion'],
-          // Charts — only admin needs this
-          'vendor-charts': ['recharts'],
+          // NOTE: recharts intentionally NOT in manualChunks. It is ~400 KB and
+          // only used in the admin analytics tab. Letting Vite tree-shake it into
+          // the admin lazy chunk keeps it out of the initial modulepreload list,
+          // so 3G/slow-LTE users who never visit /admin don't pay for it.
           // Forms
           'vendor-forms': ['react-hook-form', '@hookform/resolvers', 'zod'],
           // Date utilities
