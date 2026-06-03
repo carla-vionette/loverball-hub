@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Lock, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,6 +14,7 @@ import {
   unlockKey,
   type VerifyResponse,
 } from "./eventPasswordGate.logic";
+import { subscribeGateBus, type GateBus } from "./eventPasswordGate.bus";
 
 interface Props {
   eventId: string;
