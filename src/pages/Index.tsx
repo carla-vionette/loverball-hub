@@ -212,14 +212,15 @@ const Index = () => {
               </span>
             </div>
 
-            <h1 className="mt-2" style={{ lineHeight: 0.92, letterSpacing: "-0.02em" }}>
-              <span style={{ fontFamily: "'Anton', Impact, sans-serif", fontWeight: 400, fontSize: "clamp(52px, 9vw, 120px)", textTransform: "uppercase", color: "#1A1A1A", display: "block", whiteSpace: "nowrap" }}>
+            <h1 className="mt-2" style={{ lineHeight: 0.92, letterSpacing: "-0.025em" }}>
+              <span style={{ fontFamily: "'Anton', Impact, sans-serif", fontWeight: 400, fontSize: "clamp(48px, 6.8vw, 108px)", textTransform: "uppercase", color: "#1A1A1A", display: "block", whiteSpace: "nowrap" }}>
                 Her Game.
               </span>
               <span
                 style={{
                   fontFamily: "'Anton', Impact, sans-serif", fontWeight: 400,
-                  fontSize: "clamp(52px, 9vw, 120px)",
+                  fontSize: "clamp(48px, 6.8vw, 108px)",
+                  textTransform: "uppercase",
                   display: "block",
                   color: "#E85D2F",
                   whiteSpace: "nowrap",
