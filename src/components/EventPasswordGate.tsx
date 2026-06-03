@@ -231,9 +231,15 @@ const EventPasswordGate = ({ eventId, eventTitle, coverImage, onUnlock }: Props)
           RSVP.
         </p>
 
-        <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+        <form
+          onSubmit={handleSubmit}
+          className="space-y-4"
+          noValidate
+          aria-busy={loading}
+        >
           <div>
             <label
+              htmlFor="event-password-input"
               className="block mb-2"
               style={{
                 fontFamily: fonts.mono,
@@ -246,6 +252,7 @@ const EventPasswordGate = ({ eventId, eventTitle, coverImage, onUnlock }: Props)
               Event password
             </label>
             <Input
+              id="event-password-input"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -253,6 +260,7 @@ const EventPasswordGate = ({ eventId, eventTitle, coverImage, onUnlock }: Props)
               autoComplete="off"
               disabled={isLocked}
               aria-invalid={state.status === "wrong" || state.status === "last_attempt"}
+              aria-describedby="event-password-status event-password-attempts"
               style={{
                 background: C.bg,
                 borderColor: C.borderStrong,
@@ -262,29 +270,72 @@ const EventPasswordGate = ({ eventId, eventTitle, coverImage, onUnlock }: Props)
                 borderRadius: 14,
               }}
             />
-            {showAttemptHint && (
-              <div
-                className="mt-2 text-[11px]"
-                style={{ color: C.muted, fontFamily: fonts.mono, letterSpacing: "0.05em" }}
-              >
-                {state.attemptsLeft} {state.attemptsLeft === 1 ? "attempt" : "attempts"} remaining
-              </div>
-            )}
+
+            {/* Attempts remaining — polite live region so screen readers
+                announce the count without interrupting typing. */}
+            <div
+              id="event-password-attempts"
+              role="status"
+              aria-live="polite"
+              aria-atomic="true"
+              className="mt-2 text-[11px] min-h-[1rem]"
+              style={{ color: C.muted, fontFamily: fonts.mono, letterSpacing: "0.05em" }}
+            >
+              {showAttemptHint
+                ? `${state.attemptsLeft} ${state.attemptsLeft === 1 ? "attempt" : "attempts"} remaining before lockout`
+                : ""}
+            </div>
           </div>
 
-          {state.message && (
-            <div
-              role={isLocked ? "status" : "alert"}
-              className="text-sm rounded-xl px-3 py-2"
-              style={{
-                background: "rgba(232,93,47,0.08)",
-                color: C.raspberry,
-                border: `1px solid ${C.raspberry}33`,
-              }}
-            >
-              {state.message}
-            </div>
-          )}
+          {/* Combined status / error region.
+              - Lockout uses role="timer" with the live countdown for visual
+                users plus aria-live="assertive" so screen readers hear the
+                lockout immediately when triggered (including cross-tab).
+              - Wrong-password errors use role="alert".
+              The empty wrapper persists in the DOM so live-region updates
+              are reliably announced. */}
+          <div
+            id="event-password-status"
+            role={isLocked ? "timer" : "alert"}
+            aria-live={isLocked ? "assertive" : "assertive"}
+            aria-atomic="true"
+            className={state.message ? "text-sm rounded-xl px-3 py-3" : "sr-only"}
+            style={
+              state.message
+                ? {
+                    background: "rgba(232,93,47,0.08)",
+                    color: C.raspberry,
+                    border: `1px solid ${C.raspberry}33`,
+                  }
+                : undefined
+            }
+          >
+            {isLocked ? (
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex-1">
+                  <div
+                    className="text-[10px] uppercase tracking-[0.25em] mb-1"
+                    style={{ fontFamily: fonts.mono, opacity: 0.85 }}
+                  >
+                    Locked — too many wrong attempts
+                  </div>
+                  <div className="text-[12px]" style={{ color: C.muted }}>
+                    The input will re-enable automatically when the countdown ends.
+                  </div>
+                </div>
+                <time
+                  dateTime={`PT${Math.max(0, Math.ceil(state.remainingMs / 1000))}S`}
+                  aria-label={`${Math.max(0, Math.ceil(state.remainingMs / 1000))} seconds until you can try again`}
+                  className="tabular-nums text-2xl font-semibold"
+                  style={{ fontFamily: fonts.mono, color: C.raspberry }}
+                >
+                  {formatCountdown(state.remainingMs)}
+                </time>
+              </div>
+            ) : (
+              state.message
+            )}
+          </div>
 
           <Button
             type="submit"
