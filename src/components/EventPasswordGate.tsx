@@ -65,6 +65,10 @@ const markUnlocked = (id: string) => {
 };
 
 const EventPasswordGate = ({ eventId, eventTitle, coverImage, onUnlock }: Props) => {
+  const reactId = useId();
+  const inputId = `event-password-input-${reactId}`;
+  const statusId = `event-password-status-${reactId}`;
+  const attemptsId = `event-password-attempts-${reactId}`;
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [lastError, setLastError] = useState<string | null>(null);
