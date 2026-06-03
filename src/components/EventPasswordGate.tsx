@@ -155,6 +155,7 @@ const EventPasswordGate = ({ eventId, eventTitle, coverImage, onUnlock }: Props)
       const next = applyVerifyResponse((data ?? {}) as VerifyResponse, Date.now());
       if (next.unlocked) {
         markUnlocked(eventId);
+        busRef.current?.publish({ type: "unlocked", at: Date.now() });
         onUnlock();
         return;
       }
@@ -163,7 +164,20 @@ const EventPasswordGate = ({ eventId, eventTitle, coverImage, onUnlock }: Props)
       setLockedUntil(next.lockedUntil);
       setAttemptsLeft(next.attemptsLeft);
       setLastError(next.error);
-      if (next.lockedUntil > 0) writeNum(lockoutKey(eventId), next.lockedUntil);
+      if (next.lockedUntil > 0) {
+        writeNum(lockoutKey(eventId), next.lockedUntil);
+        busRef.current?.publish({
+          type: "locked",
+          lockedUntil: next.lockedUntil,
+          at: Date.now(),
+        });
+      } else {
+        busRef.current?.publish({
+          type: "attempts",
+          attemptsLeft: next.attemptsLeft,
+          at: Date.now(),
+        });
+      }
       writeNum(attemptsLeftKey(eventId), next.attemptsLeft);
     } catch {
       // Never echo backend error text — could leak internals or account info.
