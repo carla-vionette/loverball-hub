@@ -278,7 +278,7 @@ const EventPasswordGate = ({ eventId, eventTitle, coverImage, onUnlock }: Props)
             {/* Attempts remaining — polite live region so screen readers
                 announce the count without interrupting typing. */}
             <div
-              id="event-password-attempts"
+              id={attemptsId}
               role="status"
               aria-live="polite"
               aria-atomic="true"
