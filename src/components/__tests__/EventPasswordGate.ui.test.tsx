@@ -268,7 +268,6 @@ describe("EventPasswordGate — cross-tab UI sync", () => {
 
     // Fast-forward past the 3s cooldown.
     await act(async () => {
-      vi.setSystemTime(baseline + 4_000);
       vi.advanceTimersByTime(4_000);
     });
 
