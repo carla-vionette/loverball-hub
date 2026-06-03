@@ -67,7 +67,7 @@ function formatTime(t: string | null) {
 }
 
 const WhereToWatch = ({ excludeEventId, limit = 6 }: Props) => {
-  const { active: activeArea, isOverriding, home } = useActiveArea();
+  const { active: activeArea, isOverriding } = useActiveArea();
   const [events, setEvents] = useState<WatchEvent[] | null>(null);
   const [loading, setLoading] = useState(true);
 
