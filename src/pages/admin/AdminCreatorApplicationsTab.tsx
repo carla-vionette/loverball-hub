@@ -283,13 +283,13 @@ const AdminCreatorApplicationsTab = ({ onRefresh }: Props) => {
                     {drawerApp.banner_url && (
                       <div>
                         <p className="text-xs font-semibold text-muted-foreground uppercase mb-1">Banner</p>
-                        <img src={drawerApp.banner_url} alt="Banner" className="w-full h-32 object-cover rounded-lg" />
+                        <img src={drawerApp.banner_url} alt="Banner" className="w-full h-32 object-cover rounded-lg" loading="lazy" decoding="async" />
                       </div>
                     )}
                     {drawerApp.logo_url && (
                       <div>
                         <p className="text-xs font-semibold text-muted-foreground uppercase mb-1">Logo</p>
-                        <img src={drawerApp.logo_url} alt="Logo" className="w-20 h-20 object-cover rounded-lg" />
+                        <img src={drawerApp.logo_url} alt="Logo" className="w-20 h-20 object-cover rounded-lg" loading="lazy" decoding="async" />
                       </div>
                     )}
                   </div>

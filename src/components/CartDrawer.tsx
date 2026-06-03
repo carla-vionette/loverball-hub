@@ -81,8 +81,7 @@ export const CartDrawer = () => {
                           <img
                             src={item.product.node.images.edges[0].node.url}
                             alt={item.product.node.title}
-                            className="w-full h-full object-cover"
-                          />
+                            className="w-full h-full object-cover" loading="lazy" decoding="async" />
                         )}
                       </div>
                       

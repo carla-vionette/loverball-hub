@@ -40,7 +40,7 @@ const AdminSidebar = ({ activeTab, onTabChange, pendingApps = 0, pendingCreators
   return (
     <aside className="w-60 flex-shrink-0 bg-card border-r border-border flex flex-col py-6 overflow-y-auto">
       <div className="flex items-center gap-3 px-5 pb-6 border-b border-border mb-4">
-        <img src={loverballLogo} alt="Loverball" className="w-[120px] h-auto" />
+        <img src={loverballLogo} alt="Loverball" className="w-[120px] h-auto" loading="lazy" decoding="async" />
         <span className="bg-primary/10 text-primary text-xs font-bold px-2 py-0.5 rounded-full">
           ADMIN
         </span>

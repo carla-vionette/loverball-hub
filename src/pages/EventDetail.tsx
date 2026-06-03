@@ -501,7 +501,7 @@ const EventDetail = () => {
             <button onClick={() => navigate('/events')} className="text-sm text-muted-foreground hover:text-foreground inline-flex items-center gap-1">
               <ArrowLeft className="w-4 h-4" /> Events
             </button>
-            <img src={loverballLogo} alt="Loverball" className="h-10" />
+            <img src={loverballLogo} alt="Loverball" className="h-10" loading="lazy" decoding="async" />
             <div className="w-12" />
           </div>
         </header>
@@ -511,7 +511,7 @@ const EventDetail = () => {
           <div className="rounded-2xl overflow-hidden bg-card border border-border">
             {event.image_url ? (
               <div className="aspect-[16/10] bg-muted">
-                <img src={event.image_url} alt={event.title} className="w-full h-full object-cover" />
+                <img src={event.image_url} alt={event.title} className="w-full h-full object-cover" loading="lazy" decoding="async" />
               </div>
             ) : (
               <div className={`aspect-[16/10] bg-gradient-to-br ${themeClass} flex items-center justify-center`}>
@@ -656,7 +656,7 @@ const EventDetail = () => {
           >
             <ArrowLeft className="w-5 h-5" />
           </Button>
-          <img src={loverballLogo} alt="Loverball" className="h-12 md:h-14" />
+          <img src={loverballLogo} alt="Loverball" className="h-12 md:h-14" loading="lazy" decoding="async" />
           <div className="flex items-center gap-1">
             <Button
               variant="ghost"

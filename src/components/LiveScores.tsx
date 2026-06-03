@@ -6,6 +6,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Calendar, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useNetworkQuality } from "@/hooks/useNetworkQuality";
 
 /**
  * LiveScores — Pulls real scoreboard data for LA teams via the
@@ -115,12 +116,16 @@ const GameRow = ({ game }: { game: Game }) => {
 
 const LiveScores = () => {
   const [tab, setTab] = useState<string>("all");
+  const { isSlow, saveData } = useNetworkQuality();
 
+  // On slow connections (3G or save-data), poll much less often and treat data as fresh
+  // for longer. Users can manually refresh by pulling-to-refresh or reopening.
   const { data, isLoading, isError } = useQuery({
     queryKey: ["sports-scoreboard-today"],
     queryFn: fetchScoreboard,
-    refetchInterval: 60_000,
-    staleTime: 30_000,
+    refetchInterval: isSlow ? false : 60_000,
+    staleTime: isSlow ? 5 * 60_000 : 30_000,
+    refetchOnWindowFocus: !saveData,
   });
 
   const allGames = useMemo<Game[]>(() => {

@@ -81,7 +81,7 @@ const SiteNav = () => {
     >
       <div className="max-w-7xl mx-auto px-5 md:px-10 py-4 flex items-center justify-between gap-6">
         <Link to="/" aria-label="Loverball home" className="flex items-center shrink-0">
-          <img src={navLogo} alt="Loverball" className="h-9 md:h-10 w-auto block" />
+          <img src={navLogo} alt="Loverball" className="h-9 md:h-10 w-auto block" loading="lazy" decoding="async" />
         </Link>
 
         <div className="hidden md:flex items-center gap-7 xl:gap-9">

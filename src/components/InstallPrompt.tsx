@@ -65,7 +65,7 @@ export default function InstallPrompt() {
         </button>
 
         <div className="flex items-start gap-3 pr-4">
-          <img src="/favicon.png" alt="Loverball" className="h-10 w-10 rounded-xl" />
+          <img src="/favicon.png" alt="Loverball" className="h-10 w-10 rounded-xl" loading="lazy" decoding="async" />
           <div className="flex-1">
             <p className="font-semibold text-foreground text-sm">Install Loverball</p>
             <p className="text-xs text-muted-foreground mt-0.5">

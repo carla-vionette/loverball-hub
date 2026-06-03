@@ -3,17 +3,13 @@ import { HelmetProvider } from "react-helmet-async";
 import App from "./App.tsx";
 import "./index.css";
 
-// Register service worker only in production to avoid stale dev/preview bundles
-if ("serviceWorker" in navigator) {
-  if (import.meta.env.PROD) {
-    window.addEventListener("load", () => {
-      navigator.serviceWorker.register("/sw.js").catch(() => {});
-    });
-  } else {
-    navigator.serviceWorker.getRegistrations().then((registrations) => {
-      registrations.forEach((registration) => registration.unregister());
-    });
-  }
+// Service worker is registered automatically by vite-plugin-pwa's virtual module.
+// In dev, we explicitly unregister any leftover SW from previous sessions to avoid
+// stale caches blocking iteration.
+if (import.meta.env.DEV && "serviceWorker" in navigator) {
+  navigator.serviceWorker.getRegistrations().then((registrations) => {
+    registrations.forEach((registration) => registration.unregister());
+  });
 }
 
 createRoot(document.getElementById("root")!).render(

@@ -1,14 +1,15 @@
-@import "@fontsource/poppins/400.css";
-@import "@fontsource/poppins/500.css";
-@import "@fontsource/poppins/600.css";
-@import "@fontsource/poppins/700.css";
-@import "@fontsource/poppins/800.css";
-@import "@fontsource/oswald/400.css";
-@import "@fontsource/oswald/600.css";
-@import "@fontsource/oswald/700.css";
-@import "@fontsource/pacifico/400.css";
-@import "@fontsource/playfair-display/400-italic.css";
-@import "@fontsource/playfair-display/600-italic.css";
+/* Self-hosted fonts (Latin subset). Replaces Google Fonts <link> in index.html. */
+/* Only the weights/styles actually referenced in the design system are loaded. */
+@import "@fontsource/inter/latin-400.css";
+@import "@fontsource/inter/latin-500.css";
+@import "@fontsource/inter/latin-600.css";
+@import "@fontsource/inter/latin-700.css";
+@import "@fontsource/anton/latin-400.css";
+@import "@fontsource/great-vibes/latin-400.css";
+@import "@fontsource/space-mono/latin-400.css";
+@import "@fontsource/space-mono/latin-700.css";
+@import "@fontsource/playfair-display/latin-400-italic.css";
+@import "@fontsource/playfair-display/latin-600-italic.css";
 
 @tailwind base;
 @tailwind components;
@@ -146,9 +147,9 @@
 :root {
   --font-heading: 'Anton', Impact, 'Anton', Impact, sans-serif;
   --font-display: 'Anton', Impact, 'Anton', Impact, sans-serif;
-  --font-body: 'Inter', 'Poppins', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   --font-serif: 'Playfair Display', Georgia, serif;
-  --font-script: 'Great Vibes', 'Pacifico', cursive;
+  --font-script: 'Great Vibes', cursive;
   --font-mono: 'Space Mono', ui-monospace, monospace;
 
   /* Heading defaults — pages can override per-element if needed */

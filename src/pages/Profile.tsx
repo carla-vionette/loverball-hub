@@ -269,8 +269,7 @@ const Profile = () => {
                       src={profile.profile_photo_url}
                       alt={profile.name}
                       className="w-full h-full object-contain"
-                      style={{ filter: "saturate(0.95) contrast(1.04)", background: "#0a0a0a" }}
-                    />
+                      style={{ filter: "saturate(0.95) contrast(1.04)", background: "#0a0a0a" }} loading="lazy" decoding="async" />
                   ) : (
                     <div
                       className="w-full h-full flex items-center justify-center"

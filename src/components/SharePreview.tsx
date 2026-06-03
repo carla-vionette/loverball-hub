@@ -38,8 +38,7 @@ const SharePreview = ({
             <img
               src={imageUrl}
               alt={title}
-              className="w-full h-full object-cover"
-            />
+              className="w-full h-full object-cover" loading="lazy" decoding="async" />
           ) : (
             <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/20 to-accent/20">
               <span className="text-4xl font-bold text-primary/30">LB</span>

@@ -134,7 +134,7 @@ export default function Signup() {
   return (
     <div className="min-h-[100dvh] bg-background flex flex-col">
       <header className="px-6 pt-8 pb-4 flex items-center justify-center">
-        <img src={loverballLogo} alt="Loverball" className="h-10 w-auto" />
+        <img src={loverballLogo} alt="Loverball" className="h-10 w-auto" loading="lazy" decoding="async" />
       </header>
 
       <main className="flex-1 flex flex-col px-6 py-6 max-w-md mx-auto w-full">

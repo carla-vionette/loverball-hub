@@ -2,13 +2,18 @@ import { Card } from "@/components/ui/card";
 import { Radio } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchWnbaGamesByDate, formatSportsDate, hasApiKey } from "@/services/sportsDataApi";
+import { useNetworkQuality } from "@/hooks/useNetworkQuality";
 
 const LiveScoreBanner = ({ userTeams }: { userTeams: string[] }) => {
+  const { isSlow, saveData } = useNetworkQuality();
   const { data: games } = useQuery({
     queryKey: ["live-scores-banner"],
     queryFn: () => fetchWnbaGamesByDate(formatSportsDate(new Date())),
     enabled: hasApiKey(),
-    refetchInterval: 60000,
+    // Stop background polling on slow/saver networks; user can pull-to-refresh.
+    refetchInterval: isSlow || saveData ? false : 60000,
+    staleTime: isSlow || saveData ? 5 * 60_000 : 30_000,
+    refetchOnWindowFocus: !saveData,
   });
 
   if (!games || !hasApiKey()) return null;

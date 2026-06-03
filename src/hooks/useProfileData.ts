@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { useNetworkQuality } from "@/hooks/useNetworkQuality";
 
 export type ProfileData = {
   id: string;
@@ -57,15 +58,17 @@ export type ProfileBundle = {
  */
 export function useProfileData() {
   const { user, loading: authLoading } = useAuth();
+  const { isSlow, saveData } = useNetworkQuality();
 
   return useQuery<ProfileBundle>({
     queryKey: ["profile-bundle", user?.id],
     enabled: !authLoading && !!user?.id,
     // Keep the bundle fresh: re-fetch on every mount and whenever the tab regains focus.
-    staleTime: 15_000,
+    // On slow/saver networks, extend cache lifetime aggressively to reduce data usage.
+    staleTime: isSlow || saveData ? 5 * 60_000 : 15_000,
     gcTime: 5 * 60_000,
-    refetchOnMount: "always",
-    refetchOnWindowFocus: true,
+    refetchOnMount: isSlow || saveData ? false : "always",
+    refetchOnWindowFocus: !saveData,
     refetchOnReconnect: true,
     queryFn: async () => {
       const uid = user!.id;

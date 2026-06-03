@@ -340,7 +340,7 @@ const EventPublic = () => {
         {/* Top bar */}
         <header className="flex items-center justify-between px-5 py-4 border-b" style={{ borderColor: C.border }}>
           <Link to="/" aria-label="Loverball home" className="flex items-center gap-2">
-            <img src={loverballLogo} alt="Loverball" className="h-9 w-auto" />
+            <img src={loverballLogo} alt="Loverball" className="h-9 w-auto" loading="lazy" decoding="async" />
           </Link>
           <button
             onClick={() => {
@@ -364,7 +364,7 @@ const EventPublic = () => {
             style={{ background: `linear-gradient(135deg, ${C.surface}, ${C.surfaceHi})` }}
           >
             {event.image_url ? (
-              <img src={event.image_url} alt={event.title} className="w-full h-full object-cover" />
+              <img src={event.image_url} alt={event.title} className="w-full h-full object-cover" loading="lazy" decoding="async" />
             ) : (
               <div className="w-full h-full flex items-center justify-center">
                 <span style={{ fontFamily: fonts.serif, fontStyle: "italic", color: C.raspberry, fontSize: 64 }}>L</span>
@@ -382,8 +382,7 @@ const EventPublic = () => {
                 <img
                   src={host.profile_photo_url}
                   alt={host.name ?? "Host"}
-                  className="w-6 h-6 rounded-full object-cover"
-                />
+                  className="w-6 h-6 rounded-full object-cover" loading="lazy" decoding="async" />
               ) : (
                 <div
                   className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold"
@@ -428,8 +427,7 @@ const EventPublic = () => {
                         src={a.profile_photo_url}
                         alt={a.name ?? "Attendee"}
                         className="w-8 h-8 rounded-full object-cover border-2"
-                        style={{ borderColor: C.bg }}
-                      />
+                        style={{ borderColor: C.bg }} loading="lazy" decoding="async" />
                     ) : (
                       <div
                         key={a.user_id}

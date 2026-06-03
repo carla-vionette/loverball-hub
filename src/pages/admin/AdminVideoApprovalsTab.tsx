@@ -64,7 +64,7 @@ const AdminVideoApprovalsTab = ({ videos, onRefresh }: Props) => {
                     <TableCell>
                       <div className="flex items-center gap-3">
                         {video.thumbnail && (
-                          <img src={video.thumbnail} alt="" className="w-16 h-10 object-cover rounded" />
+                          <img src={video.thumbnail} alt="" className="w-16 h-10 object-cover rounded" loading="lazy" decoding="async" />
                         )}
                         <span className="font-semibold">{video.title}</span>
                       </div>
