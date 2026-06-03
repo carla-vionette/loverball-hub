@@ -80,11 +80,17 @@ const renderGate = (key: string, onUnlock = vi.fn()) =>
 const inputIn = (root: HTMLElement) =>
   within(root).getByLabelText(/event password/i) as HTMLInputElement;
 
+// The gate renders two persistent live regions per instance — query each by
+// its aria attributes so the test works even though ids include a useId
+// suffix that varies between runs/tabs.
+const attemptsRegion = (root: HTMLElement) =>
+  root.querySelector('[aria-live="polite"]') as HTMLElement;
+const statusRegion = (root: HTMLElement) =>
+  root.querySelector('[role="timer"], [role="alert"]') as HTMLElement;
+
 const submitWith = async (root: HTMLElement, password: string) => {
   const input = inputIn(root);
   fireEvent.change(input, { target: { value: password } });
-  // The button's accessible name flips ("Unlock event" → "Locked" → spinner).
-  // Submitting the form directly is more robust.
   const form = input.closest("form")!;
   await act(async () => {
     fireEvent.submit(form);
