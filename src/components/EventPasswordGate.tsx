@@ -299,7 +299,7 @@ const EventPasswordGate = ({ eventId, eventTitle, coverImage, onUnlock }: Props)
               The empty wrapper persists in the DOM so live-region updates
               are reliably announced. */}
           <div
-            id="event-password-status"
+            id={statusId}
             role={isLocked ? "timer" : "alert"}
             aria-live={isLocked ? "assertive" : "assertive"}
             aria-atomic="true"
