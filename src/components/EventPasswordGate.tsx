@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { Lock, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -65,6 +65,10 @@ const markUnlocked = (id: string) => {
 };
 
 const EventPasswordGate = ({ eventId, eventTitle, coverImage, onUnlock }: Props) => {
+  const reactId = useId();
+  const inputId = `event-password-input-${reactId}`;
+  const statusId = `event-password-status-${reactId}`;
+  const attemptsId = `event-password-attempts-${reactId}`;
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [lastError, setLastError] = useState<string | null>(null);
@@ -239,7 +243,7 @@ const EventPasswordGate = ({ eventId, eventTitle, coverImage, onUnlock }: Props)
         >
           <div>
             <label
-              htmlFor="event-password-input"
+              htmlFor={inputId}
               className="block mb-2"
               style={{
                 fontFamily: fonts.mono,
@@ -252,7 +256,7 @@ const EventPasswordGate = ({ eventId, eventTitle, coverImage, onUnlock }: Props)
               Event password
             </label>
             <Input
-              id="event-password-input"
+              id={inputId}
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -260,7 +264,7 @@ const EventPasswordGate = ({ eventId, eventTitle, coverImage, onUnlock }: Props)
               autoComplete="off"
               disabled={isLocked}
               aria-invalid={state.status === "wrong" || state.status === "last_attempt"}
-              aria-describedby="event-password-status event-password-attempts"
+              aria-describedby={`${statusId} ${attemptsId}`}
               style={{
                 background: C.bg,
                 borderColor: C.borderStrong,
@@ -274,7 +278,7 @@ const EventPasswordGate = ({ eventId, eventTitle, coverImage, onUnlock }: Props)
             {/* Attempts remaining — polite live region so screen readers
                 announce the count without interrupting typing. */}
             <div
-              id="event-password-attempts"
+              id={attemptsId}
               role="status"
               aria-live="polite"
               aria-atomic="true"
@@ -295,7 +299,7 @@ const EventPasswordGate = ({ eventId, eventTitle, coverImage, onUnlock }: Props)
               The empty wrapper persists in the DOM so live-region updates
               are reliably announced. */}
           <div
-            id="event-password-status"
+            id={statusId}
             role={isLocked ? "timer" : "alert"}
             aria-live={isLocked ? "assertive" : "assertive"}
             aria-atomic="true"
