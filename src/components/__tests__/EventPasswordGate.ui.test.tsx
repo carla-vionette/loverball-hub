@@ -1,0 +1,295 @@
+/**
+ * UI-level tests for EventPasswordGate covering:
+ *   - aria-invalid flipping on wrong submit
+ *   - aria-live "attempts remaining" announcements
+ *   - timer countdown updating second-by-second
+ *   - cross-tab sync: wrong/locked/unlocked propagate between two mounted gates
+ *
+ * Two gates rendered in the same jsdom act as two tabs because they share
+ * the in-memory BroadcastChannel polyfill and the same localStorage.
+ */
+import { act, cleanup, fireEvent, render, screen, within } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+
+// ---- Supabase mock: every test sets the response via this queue ----
+const rpcQueue: Array<{ data?: unknown; error?: unknown }> = [];
+vi.mock("@/integrations/supabase/client", () => ({
+  supabase: {
+    rpc: vi.fn(async () => rpcQueue.shift() ?? { data: { ok: false, attempts_left: 4 } }),
+  },
+}));
+
+// Import AFTER the mock so the component picks up the mocked client.
+import EventPasswordGate from "../EventPasswordGate";
+import {
+  MAX_ATTEMPTS,
+  attemptsLeftKey,
+  lockoutKey,
+  unlockKey,
+} from "../eventPasswordGate.logic";
+
+// ---- In-memory BroadcastChannel polyfill (sender does NOT receive own msg) ----
+type Listener = (e: { data: unknown }) => void;
+const channels = new Map<string, Set<Listener>>();
+class FakeBroadcastChannel {
+  private listeners: Set<Listener>;
+  private _onmessage: Listener | null = null;
+  constructor(public name: string) {
+    let set = channels.get(name);
+    if (!set) {
+      set = new Set();
+      channels.set(name, set);
+    }
+    this.listeners = set;
+  }
+  set onmessage(fn: Listener) {
+    if (this._onmessage) this.listeners.delete(this._onmessage);
+    this._onmessage = fn;
+    this.listeners.add(fn);
+  }
+  get onmessage() {
+    return this._onmessage as Listener;
+  }
+  postMessage(data: unknown) {
+    for (const l of this.listeners) {
+      if (l === this._onmessage) continue;
+      l({ data });
+    }
+  }
+  close() {
+    if (this._onmessage) this.listeners.delete(this._onmessage);
+  }
+}
+
+const EVENT_ID = "evt-test-1";
+
+const renderGate = (key: string, onUnlock = vi.fn()) =>
+  render(
+    <EventPasswordGate
+      key={key}
+      eventId={EVENT_ID}
+      eventTitle="Test Event"
+      coverImage={null}
+      onUnlock={onUnlock}
+    />,
+    // Each render gets its own container so two "tabs" coexist without React
+    // key collisions.
+    { container: document.body.appendChild(document.createElement("div")) },
+  );
+
+const inputIn = (root: HTMLElement) =>
+  within(root).getByLabelText(/event password/i) as HTMLInputElement;
+
+const submitWith = async (root: HTMLElement, password: string) => {
+  const input = inputIn(root);
+  fireEvent.change(input, { target: { value: password } });
+  // The button's accessible name flips ("Unlock event" → "Locked" → spinner).
+  // Submitting the form directly is more robust.
+  const form = input.closest("form")!;
+  await act(async () => {
+    fireEvent.submit(form);
+  });
+};
+
+beforeEach(() => {
+  channels.clear();
+  rpcQueue.length = 0;
+  (globalThis as unknown as { BroadcastChannel: typeof FakeBroadcastChannel }).BroadcastChannel =
+    FakeBroadcastChannel;
+  localStorage.clear();
+  sessionStorage.clear();
+});
+
+afterEach(() => {
+  cleanup();
+  vi.useRealTimers();
+  vi.restoreAllMocks();
+});
+
+describe("EventPasswordGate — accessible status messages", () => {
+  it("flips aria-invalid and announces remaining attempts after a wrong submit", async () => {
+    const { container } = renderGate("solo-1");
+    const input = inputIn(container);
+    expect(input).toHaveAttribute("aria-invalid", "false");
+
+    // The polite live region exists from initial render (persistent for SR
+    // announcement reliability) and is initially empty.
+    const attemptsRegion = container.querySelector("#event-password-attempts")!;
+    expect(attemptsRegion).toHaveAttribute("aria-live", "polite");
+    expect(attemptsRegion).toHaveAttribute("role", "status");
+    expect(attemptsRegion.textContent?.trim()).toBe("");
+
+    rpcQueue.push({ data: { ok: false, attempts_left: 3 } });
+    await submitWith(container, "nope");
+
+    expect(input).toHaveAttribute("aria-invalid", "true");
+    expect(attemptsRegion.textContent).toMatch(/3 attempts remaining/i);
+
+    // aria-describedby still points at both regions so SRs read them together.
+    expect(input.getAttribute("aria-describedby")).toContain("event-password-status");
+    expect(input.getAttribute("aria-describedby")).toContain("event-password-attempts");
+  });
+
+  it("uses singular copy on the last attempt", async () => {
+    const { container } = renderGate("solo-2");
+    rpcQueue.push({ data: { ok: false, attempts_left: 1 } });
+    await submitWith(container, "still-no");
+
+    const attemptsRegion = container.querySelector("#event-password-attempts")!;
+    expect(attemptsRegion.textContent).toMatch(/^1 attempt remaining/i);
+
+    const status = container.querySelector("#event-password-status")!;
+    expect(status).toHaveAttribute("role", "alert");
+    expect(status.textContent).toMatch(/1 attempt left/i);
+  });
+
+  it("switches the status region into a live timer with a ticking countdown", async () => {
+    vi.useFakeTimers();
+    const baseline = new Date("2026-06-03T12:00:00Z").getTime();
+    vi.setSystemTime(baseline);
+
+    const { container } = renderGate("solo-3");
+    rpcQueue.push({ data: { ok: false, locked: true, retry_after_seconds: 90 } });
+    await submitWith(container, "wrong");
+
+    const status = container.querySelector("#event-password-status")!;
+    expect(status).toHaveAttribute("role", "timer");
+    expect(status).toHaveAttribute("aria-live", "assertive");
+
+    const timer = status.querySelector("time")!;
+    expect(timer.textContent).toBe("1:30");
+    expect(timer.getAttribute("datetime")).toBe("PT90S");
+    expect(timer.getAttribute("aria-label")).toMatch(/90 seconds/);
+
+    // Input must be disabled while locked.
+    expect(inputIn(container)).toBeDisabled();
+    // Submit button label flips to "Locked".
+    expect(within(container).getByRole("button", { name: /^locked$/i })).toBeDisabled();
+
+    // Advance 1 real second — the interval inside the gate ticks `now`.
+    await act(async () => {
+      vi.setSystemTime(baseline + 1_000);
+      vi.advanceTimersByTime(1_000);
+    });
+    expect(timer.textContent).toBe("1:29");
+    expect(timer.getAttribute("aria-label")).toMatch(/89 seconds/);
+
+    // Skip near the end and confirm the format collapses to "0:05".
+    await act(async () => {
+      vi.setSystemTime(baseline + 85_000);
+      vi.advanceTimersByTime(85_000);
+    });
+    expect(timer.textContent).toBe("0:05");
+  });
+});
+
+describe("EventPasswordGate — cross-tab UI sync", () => {
+  it("propagates a wrong-attempt count from tab A's live region to tab B", async () => {
+    const tabA = renderGate("tabA-1");
+    const tabB = renderGate("tabB-1");
+
+    rpcQueue.push({ data: { ok: false, attempts_left: 2 } });
+    await submitWith(tabA.container, "wrong-in-A");
+
+    const aRegion = tabA.container.querySelector("#event-password-attempts")!;
+    const bRegion = tabB.container.querySelector("#event-password-attempts")!;
+    expect(aRegion.textContent).toMatch(/2 attempts remaining/i);
+    expect(bRegion.textContent).toMatch(/2 attempts remaining/i);
+
+    // Both polite live regions stay polite (no surprise interruptions in B).
+    expect(bRegion).toHaveAttribute("aria-live", "polite");
+  });
+
+  it("propagates a lockout: tab B disables its input and shows the same countdown", async () => {
+    vi.useFakeTimers();
+    const baseline = new Date("2026-06-03T12:00:00Z").getTime();
+    vi.setSystemTime(baseline);
+
+    const tabA = renderGate("tabA-2");
+    const tabB = renderGate("tabB-2");
+
+    rpcQueue.push({ data: { ok: false, locked: true, retry_after_seconds: 60 } });
+    await submitWith(tabA.container, "wrong-in-A");
+
+    // Tab B mirrors the locked state.
+    const bInput = inputIn(tabB.container);
+    expect(bInput).toBeDisabled();
+    const bStatus = tabB.container.querySelector("#event-password-status")!;
+    expect(bStatus).toHaveAttribute("role", "timer");
+    const bTimer = bStatus.querySelector("time")!;
+    expect(bTimer.textContent).toBe("1:00");
+
+    // Both tabs tick down in lockstep.
+    await act(async () => {
+      vi.setSystemTime(baseline + 5_000);
+      vi.advanceTimersByTime(5_000);
+    });
+    const aTimer = tabA.container.querySelector("#event-password-status time")!;
+    expect(aTimer.textContent).toBe("0:55");
+    expect(bTimer.textContent).toBe("0:55");
+
+    // Storage also reflects the lockout deadline (sanity check that B persisted it).
+    expect(parseInt(localStorage.getItem(lockoutKey(EVENT_ID)) || "0", 10)).toBeGreaterThan(
+      baseline,
+    );
+  });
+
+  it("propagates unlock: tab B's onUnlock fires when tab A submits the correct password", async () => {
+    const onUnlockA = vi.fn();
+    const onUnlockB = vi.fn();
+    renderGate("tabA-3", onUnlockA);
+    const tabA = { container: document.body.lastElementChild as HTMLElement };
+    renderGate("tabB-3", onUnlockB);
+
+    rpcQueue.push({ data: { ok: true } });
+    await submitWith(tabA.container, "correct-pw");
+
+    expect(onUnlockA).toHaveBeenCalledTimes(1);
+    expect(onUnlockB).toHaveBeenCalledTimes(1);
+    // Session flag was written so a reload of tab B would skip the gate too.
+    expect(sessionStorage.getItem(unlockKey(EVENT_ID))).toBe("1");
+    // Lockout / attempt counters cleared.
+    expect(localStorage.getItem(lockoutKey(EVENT_ID))).toBeNull();
+    expect(localStorage.getItem(attemptsLeftKey(EVENT_ID))).toBeNull();
+  });
+
+  it("re-enables both tabs simultaneously when the lockout countdown reaches zero", async () => {
+    vi.useFakeTimers();
+    const baseline = new Date("2026-06-03T12:00:00Z").getTime();
+    vi.setSystemTime(baseline);
+
+    const tabA = renderGate("tabA-4");
+    const tabB = renderGate("tabB-4");
+
+    rpcQueue.push({ data: { ok: false, locked: true, retry_after_seconds: 3 } });
+    await submitWith(tabA.container, "wrong");
+
+    expect(inputIn(tabA.container)).toBeDisabled();
+    expect(inputIn(tabB.container)).toBeDisabled();
+
+    // Fast-forward past the 3s cooldown.
+    await act(async () => {
+      vi.setSystemTime(baseline + 4_000);
+      vi.advanceTimersByTime(4_000);
+    });
+
+    // Both inputs re-enable; aria-invalid is back to false; attempts hint cleared.
+    expect(inputIn(tabA.container)).not.toBeDisabled();
+    expect(inputIn(tabB.container)).not.toBeDisabled();
+    expect(inputIn(tabA.container)).toHaveAttribute("aria-invalid", "false");
+    expect(inputIn(tabB.container)).toHaveAttribute("aria-invalid", "false");
+
+    // Submit button label is back to "Unlock event" in both tabs.
+    expect(
+      within(tabA.container).getByRole("button", { name: /unlock event/i }),
+    ).toBeEnabled();
+    expect(
+      within(tabB.container).getByRole("button", { name: /unlock event/i }),
+    ).toBeEnabled();
+
+    // Attempt counter is reset to the max in storage.
+    expect(parseInt(localStorage.getItem(attemptsLeftKey(EVENT_ID)) || "0", 10)).toBe(
+      MAX_ATTEMPTS,
+    );
+  });
+});
