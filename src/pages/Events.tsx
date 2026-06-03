@@ -114,7 +114,10 @@ const Events = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
-  const [userLoc, setUserLoc] = useState<{ lat: number; lng: number } | null>(null);
+  const { active: activeArea, isOverriding } = useActiveArea();
+  const userLoc = activeArea?.lat != null && activeArea?.lng != null
+    ? { lat: activeArea.lat, lng: activeArea.lng }
+    : null;
   const [radius, setRadius] = useState<25 | 50 | 100 | "national">(50);
 
   const [gateEventId, setGateEventId] = useState<string | null>(null);
