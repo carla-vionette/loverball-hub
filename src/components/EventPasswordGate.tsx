@@ -129,31 +129,42 @@ const EventPasswordGate = ({ eventId, eventTitle, coverImage, onUnlock }: Props)
       const { data, error } = await supabase.rpc("verify_event_password", {
         p_event_id: eventId,
         p_password: password,
-      });
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        p_session_token: getSessionToken(),
+      } as any);
       if (error) throw error;
-      if (data === true) {
+      const res = (data ?? {}) as {
+        ok?: boolean;
+        locked?: boolean;
+        attempts_left?: number;
+        retry_after_seconds?: number;
+        error?: string;
+      };
+
+      if (res.ok === true) {
         markUnlocked(eventId);
         onUnlock();
         return;
       }
-      const next = getAttempts(eventId) + 1;
-      setAttempts(eventId, next);
+
       setPassword("");
 
-      if (next >= MAX_ATTEMPTS) {
-        const until = Date.now() + LOCKOUT_MS;
+      if (res.locked) {
+        const ms = Math.max(1000, (res.retry_after_seconds ?? 300) * 1000);
+        const until = Date.now() + ms;
         setLockoutUntil(eventId, until);
+        setAttempts(eventId, MAX_ATTEMPTS);
         setLockedUntilState(until);
         setNow(Date.now());
-        setErr(
-          `Too many wrong attempts. This device is locked out for ${formatRemaining(LOCKOUT_MS)}.`,
-        );
-      } else {
-        const left = MAX_ATTEMPTS - next;
-        setErr(
-          `That password didn't work. ${left} ${left === 1 ? "attempt" : "attempts"} left before a temporary lockout.`,
-        );
+        setErr(`Too many wrong attempts. Try again in ${formatRemaining(ms)}.`);
+        return;
       }
+
+      const left = res.attempts_left ?? Math.max(0, MAX_ATTEMPTS - (getAttempts(eventId) + 1));
+      setAttempts(eventId, MAX_ATTEMPTS - left);
+      setErr(
+        `That password didn't work. ${left} ${left === 1 ? "attempt" : "attempts"} left before a temporary lockout.`,
+      );
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : "Couldn't verify password.";
       setErr(msg);
