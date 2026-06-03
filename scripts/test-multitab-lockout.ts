@@ -151,6 +151,75 @@ const main = async () => {
     await resetAttempts(tabA, token);
   }
 
+  // -------------------------------------------------------------------------
+  t.group("concurrent wrong attempts from two tabs: consistent decrement, single lockout");
+  {
+    const token = randomToken();
+    const tabA = newClient();
+    const tabB = newClient();
+    await resetAttempts(tabA, token);
+
+    // Fire MAX_ATTEMPTS + 3 wrong attempts in parallel across two "tabs",
+    // interleaved. The server serializes them via the (event_id, identifier)
+    // row, so the final state must be deterministic regardless of arrival
+    // order: attempts_left walks monotonically from MAX_ATTEMPTS-1 down to 0
+    // exactly once, and every remaining response reports locked=true.
+    const total = MAX_ATTEMPTS + 3;
+    const calls = Array.from({ length: total }, (_, i) => {
+      const tab = i % 2 === 0 ? tabA : tabB;
+      const label: "A" | "B" = i % 2 === 0 ? "A" : "B";
+      return verify(tab, `concurrent-wrong-${i}-${Date.now()}`, token).then((res) => ({
+        tab: label,
+        idx: i,
+        res,
+      }));
+    });
+    const results = await Promise.all(calls);
+
+    const okCount = results.filter((r) => r.res.ok === true).length;
+    const lockedCount = results.filter((r) => r.res.locked === true).length;
+    t.expect(okCount === 0, "no concurrent wrong attempt ever returns ok=true");
+    t.expect(
+      lockedCount >= total - MAX_ATTEMPTS,
+      `at least ${total - MAX_ATTEMPTS} responses report locked=true (got ${lockedCount})`,
+    );
+
+    // The set of attempts_left values from non-locked responses must be
+    // exactly {MAX_ATTEMPTS-1 .. 0} — no duplicates, no skips.
+    const nonLocked = results.filter((r) => r.res.locked !== true);
+    const counts = nonLocked
+      .map((r) => r.res.attempts_left)
+      .filter((n): n is number => typeof n === "number")
+      .sort((a, b) => b - a);
+    const expected = Array.from({ length: MAX_ATTEMPTS }, (_, i) => MAX_ATTEMPTS - 1 - i);
+    t.expect(
+      counts.length === MAX_ATTEMPTS,
+      `exactly ${MAX_ATTEMPTS} non-locked responses carry attempts_left (got ${counts.length})`,
+    );
+    t.expect(
+      JSON.stringify(counts) === JSON.stringify(expected),
+      `attempts_left sequence ${JSON.stringify(expected)} (got ${JSON.stringify(counts)})`,
+    );
+
+    // Both tabs participated — neither was completely starved by the other.
+    t.expect(
+      results.some((r) => r.tab === "A") && results.some((r) => r.tab === "B"),
+      "both tabs contributed responses",
+    );
+
+    // Lockout fired exactly once and persisted (not re-armed by later races).
+    const final = await verify(newClient(), DEFAULT_PASSWORD, token);
+    t.expect(final.locked === true, "post-race: server reports locked=true");
+    t.expect(final.ok !== true, "post-race: correct password still rejected");
+    t.expect(
+      (final.retry_after_seconds ?? 0) > 0 &&
+        (final.retry_after_seconds ?? 0) <= COOLDOWN_SECONDS,
+      `post-race: retry_after_seconds within (0, ${COOLDOWN_SECONDS}]`,
+    );
+
+    await resetAttempts(tabA, token);
+  }
+
   process.exit(t.summary() ? 0 : 1);
 };
 
