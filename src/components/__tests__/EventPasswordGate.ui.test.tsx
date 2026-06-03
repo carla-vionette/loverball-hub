@@ -174,24 +174,20 @@ describe("EventPasswordGate — accessible status messages", () => {
     expect(within(container).getByRole("button", { name: /^locked$/i })).toBeDisabled();
 
     // Advance 1 second — the gate's interval ticks `now`, the countdown drops.
+    // (advanceTimersByTime also advances Date.now with fake timers, so we
+    // don't need a parallel setSystemTime call here.)
     await act(async () => {
-      vi.setSystemTime(baseline + 1_000);
       vi.advanceTimersByTime(1_000);
     });
-    const after1s = secondsFromTimer(timer);
-    expect(after1s).toBeGreaterThanOrEqual(88);
-    expect(after1s).toBeLessThanOrEqual(89);
-    expect(timer.textContent).toMatch(/^1:2[89]$/);
+    expect(secondsFromTimer(timer)).toBe(89);
+    expect(timer.textContent).toBe("1:29");
 
-    // Advance another ~30s while still locked — countdown should drop further.
+    // Advance another 30s while still locked — countdown drops further in lockstep.
     await act(async () => {
-      vi.setSystemTime(baseline + 31_000);
       vi.advanceTimersByTime(30_000);
     });
-    const after31s = secondsFromTimer(timer);
-    expect(after31s).toBeGreaterThanOrEqual(58);
-    expect(after31s).toBeLessThanOrEqual(60);
-    expect(timer.textContent).toMatch(/^(0:5[89]|1:00)$/);
+    expect(secondsFromTimer(timer)).toBe(59);
+    expect(timer.textContent).toBe("0:59");
   });
 });
 
