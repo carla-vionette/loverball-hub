@@ -118,7 +118,7 @@ const EventPreviewCard = ({ eventId }: EventPreviewCardProps) => {
         
         <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
           <Calendar className="w-3 h-3 flex-shrink-0" />
-          <span>{format(new Date(event.event_date), 'EEE, MMM d')}</span>
+          <span>{format(parseEventDate(event.event_date), 'EEE, MMM d')}</span>
           {event.event_time && (
             <>
               <Clock className="w-3 h-3 flex-shrink-0 ml-2" />
