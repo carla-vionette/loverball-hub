@@ -115,6 +115,9 @@ const App = () => (
                 <Route path="/onboarding" element={<Onboarding />} />
                 <Route path="/terms" element={<Terms />} />
                 <Route path="/privacy" element={<Privacy />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/membership" element={<Membership />} />
+                <Route path="/contact" element={<Contact />} />
 
                 {/* Core tabs: WATCH, EVENTS, CLUB, PROFILE */}
                 <Route path="/feed" element={<Feed />} />
