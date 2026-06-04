@@ -37,12 +37,14 @@ import Seo from "@/components/Seo";
 import DesktopNav from "@/components/DesktopNav";
 import { getUserTier } from "@/services/subscriptionService";
 import { buildShareSummary, buildSharePreviewDescription } from "@/lib/eventShare";
+import { resolveEventImage, handleEventImageError } from "@/lib/eventImage";
 
 interface Event {
   id: string;
   title: string;
   description?: string | null;
   image_url?: string | null;
+  banner_image?: string | null;
   event_date: string;
   event_time?: string | null;
   end_time?: string | null;
