@@ -14,7 +14,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { 
   ArrowLeft, Loader2, Download, UserPlus, Phone, Mail, Users, 
   CheckCircle, Clock, XCircle, HelpCircle, Search, RefreshCw,
-  ArrowUpFromLine, Pencil
+  ArrowUpFromLine, Pencil, Check, X
 } from 'lucide-react';
 import { format } from 'date-fns';
 
@@ -29,6 +29,7 @@ interface Event {
 interface Attendee {
   id: string;
   status: string;
+  approval_status: string | null;
   user_id: string;
   plus_ones: number | null;
   name: string | null;
@@ -119,6 +120,7 @@ const AdminAttendeeManager = () => {
       const transformedData = (data || []).map((item: any) => ({
         id: item.id,
         status: item.status,
+        approval_status: item.approval_status || null,
         user_id: item.user_id,
         plus_ones: item.plus_ones,
         name: item.guest_name,
@@ -178,6 +180,26 @@ const AdminAttendeeManager = () => {
       }
     } catch (error: any) {
       toast({ title: 'Error updating status', variant: 'destructive' });
+    }
+  };
+
+  const updateApprovalStatus = async (attendeeId: string, decision: 'approved' | 'rejected') => {
+    const attendee = attendees.find(a => a.id === attendeeId);
+    try {
+      const { error } = await supabase
+        .from('event_rsvps')
+        .update({ approval_status: decision })
+        .eq('id', attendeeId);
+      if (error) throw error;
+      setAttendees(prev => prev.map(a =>
+        a.id === attendeeId ? { ...a, approval_status: decision } : a
+      ));
+      if (attendee?.profile) {
+        sendStatusNotification(attendee.user_id, id!, decision === 'approved' ? 'attending' : 'no', attendee.status);
+      }
+      toast({ title: decision === 'approved' ? 'RSVP approved' : 'RSVP rejected' });
+    } catch (e: any) {
+      toast({ title: 'Error updating approval', description: e.message, variant: 'destructive' });
     }
   };
 
@@ -653,7 +675,35 @@ const AdminAttendeeManager = () => {
                             </span>
                           </TableCell>
                           <TableCell>
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              {attendee.approval_status === 'pending' && (
+                                <>
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={() => updateApprovalStatus(attendee.id, 'approved')}
+                                    className="text-green-600 border-green-500/30 hover:bg-green-500/10 h-8"
+                                  >
+                                    <Check className="w-4 h-4 mr-1" />
+                                    Approve
+                                  </Button>
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={() => updateApprovalStatus(attendee.id, 'rejected')}
+                                    className="text-red-600 border-red-500/30 hover:bg-red-500/10 h-8"
+                                  >
+                                    <X className="w-4 h-4 mr-1" />
+                                    Reject
+                                  </Button>
+                                </>
+                              )}
+                              {attendee.approval_status === 'rejected' && (
+                                <Badge variant="outline" className="bg-red-500/10 text-red-600 border-red-500/20">Rejected</Badge>
+                              )}
+                              {attendee.approval_status === 'approved' && (
+                                <Badge variant="outline" className="bg-green-500/10 text-green-600 border-green-500/20">Approved</Badge>
+                              )}
                               {attendee.status === 'waitlist' && (
                                 <Button
                                   size="sm"
