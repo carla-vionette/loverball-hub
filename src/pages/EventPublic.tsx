@@ -330,7 +330,7 @@ const EventPublic = () => {
         title={ogTitle}
         description={shortDesc}
         path={`/e/${id}`}
-        image={event.image_url || undefined}
+        image={resolveEventImage(event)}
         imageAlt={`${event.title} — Loverball event cover`}
         type="event"
         jsonLd={{
