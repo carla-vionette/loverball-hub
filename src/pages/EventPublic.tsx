@@ -340,7 +340,7 @@ const EventPublic = () => {
           startDate: `${event.event_date}T${event.event_time || "00:00"}`,
           eventStatus: "https://schema.org/EventScheduled",
           location: { "@type": "Place", name: event.venue_name || "TBA", address: event.city || "" },
-          image: event.image_url ? [event.image_url] : undefined,
+          image: [resolveEventImage(event)],
           description: shortDesc,
           organizer: { "@type": "Organization", name: "Loverball", url: "https://www.loverball.com/" },
         }}
