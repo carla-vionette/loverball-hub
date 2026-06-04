@@ -33,6 +33,7 @@ interface PublicEvent {
   title: string;
   description: string | null;
   image_url: string | null;
+  banner_image: string | null;
   event_date: string;
   event_time: string | null;
   venue_name: string | null;
