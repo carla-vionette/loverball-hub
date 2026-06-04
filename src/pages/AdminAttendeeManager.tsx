@@ -789,6 +789,24 @@ const AdminAttendeeManager = () => {
             )}
           </CardContent>
         </Card>
+
+        {/* Remove Attendee Confirmation */}
+        <AlertDialog open={removeDialogOpen} onOpenChange={setRemoveDialogOpen}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Remove Attendee</AlertDialogTitle>
+              <AlertDialogDescription>
+                Are you sure you want to remove <strong>{attendeeToRemove?.name || attendeeToRemove?.profile?.name || 'this attendee'}</strong>? This will delete their RSVP and cannot be undone.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel onClick={() => setAttendeeToRemove(null)}>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={removeAttendee} className="bg-red-600 hover:bg-red-700">
+                Remove
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </main>
     </div>
   );
