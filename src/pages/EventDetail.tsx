@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Calendar, Clock, MapPin, Users, Lock, Share2, ArrowLeft, Loader2, Check, X, HelpCircle, Video, ExternalLink, Copy, Link2, MessageCircle, CalendarPlus } from "lucide-react";
+import { Calendar, Clock, MapPin, Users, Lock, Share2, ArrowLeft, Loader2, Check, X, HelpCircle, Video, ExternalLink, Copy, Link2, MessageCircle, CalendarPlus, Settings } from "lucide-react";
 import { downloadICS } from "@/lib/ics";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useGestures } from "@/hooks/useGestures";
@@ -99,7 +99,7 @@ const themeStyles: Record<string, string> = {
 const EventDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { user, isMember, loading: authLoading } = useAuth();
+  const { user, isMember, isAdmin, loading: authLoading } = useAuth();
   const { toast } = useToast();
   const [event, setEvent] = useState<Event | null>(null);
   const [loading, setLoading] = useState(true);
@@ -780,6 +780,17 @@ const EventDetail = () => {
                 {event.host_user_id && (
                   <div className="rounded-xl bg-card border border-border/30 p-3">
                     <EventHostProfile hostId={event.host_user_id} coHostIds={event.co_host_ids as string[] | undefined} />
+                    {user && (isAdmin || user.id === event.host_user_id || (event.co_host_ids || []).includes(user.id)) && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="w-full mt-3"
+                        onClick={() => navigate(`/admin/events/${event.id}/edit`)}
+                      >
+                        <Settings className="w-3.5 h-3.5 mr-2" />
+                        Dashboard
+                      </Button>
+                    )}
                   </div>
                 )}
                 {event.description && (
