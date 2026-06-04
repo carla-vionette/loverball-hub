@@ -46,11 +46,14 @@ const pillStyle = {
 };
 
 const SiteNav = () => {
-  const { user } = useAuth();
+  const { user, isAdmin } = useAuth();
   const navigate = useNavigate();
   const { pathname, search } = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const navItems = user ? MEMBER_NAV_ITEMS : PUBLIC_NAV_ITEMS;
+  const baseNavItems = user ? MEMBER_NAV_ITEMS : PUBLIC_NAV_ITEMS;
+  const navItems: Array<[string, string]> = isAdmin
+    ? [...baseNavItems, ["Admin", "/admin"]]
+    : baseNavItems;
 
   const isActive = (to: string) => {
     const [toPath, toQuery] = to.split("?");
