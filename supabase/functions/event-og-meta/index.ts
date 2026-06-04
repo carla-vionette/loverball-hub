@@ -121,14 +121,18 @@ Deno.serve(async (req: Request) => {
     const fallbackImage = `${baseUrl}/og-image.png`;
 
     // Convert relative image URLs to absolute https
+    // Prefer the event's own cover photo (image_url), then banner_image, then branded fallback.
+    const rawCover = (event.image_url && event.image_url.trim())
+      || (event.banner_image && event.banner_image.trim())
+      || '';
     let ogImage = fallbackImage;
-    if (event.image_url) {
-      if (event.image_url.startsWith('https://')) {
-        ogImage = event.image_url;
-      } else if (event.image_url.startsWith('http://')) {
-        ogImage = 'https://' + event.image_url.slice(7);
+    if (rawCover) {
+      if (rawCover.startsWith('https://')) {
+        ogImage = rawCover;
+      } else if (rawCover.startsWith('http://')) {
+        ogImage = 'https://' + rawCover.slice(7);
       } else {
-        ogImage = `${baseUrl}${event.image_url.startsWith('/') ? '' : '/'}${event.image_url}`;
+        ogImage = `${baseUrl}${rawCover.startsWith('/') ? '' : '/'}${rawCover}`;
       }
     }
 
