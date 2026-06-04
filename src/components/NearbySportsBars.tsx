@@ -96,7 +96,6 @@ const NearbySportsBars = ({ eventLat, eventLng, radiusM = 12000, limit = 8 }: Pr
 out center tags 60;`;
     const data = await fetchOverpass(query);
     if (!data?.elements) {
-      setError("Couldn't reach the OpenStreetMap search service. Try again.");
       setBars([]);
       setLoading(false);
       return;
@@ -201,14 +200,11 @@ out center tags 60;`;
           <p className="text-xs text-destructive">{error}</p>
         )}
 
-        {center && !loading && bars && bars.length === 0 && !error && (
+        {center && !loading && bars && bars.length === 0 && (
           <div className="text-center py-6 px-2">
             <Tv className="w-8 h-8 text-primary/50 mx-auto mb-2" />
             <p className="text-sm font-semibold text-foreground mb-1">
-              No sports bars found nearby
-            </p>
-            <p className="text-xs text-muted-foreground">
-              Try a different ZIP — we search OpenStreetMap for bars and pubs tagged for sports viewing.
+              No sports bars found nearby. Try a different ZIP code.
             </p>
           </div>
         )}
