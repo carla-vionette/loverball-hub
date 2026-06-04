@@ -18,6 +18,7 @@ import SocialShareButtons from "@/components/SocialShareButtons";
 import type { RsvpIntent } from "@/components/EventRSVPDialog";
 import RsvpPhoneSheet from "@/components/rsvp/RsvpPhoneSheet";
 import EventPasswordGate, { isEventUnlocked } from "@/components/EventPasswordGate";
+import { resolveEventImage, handleEventImageError } from "@/lib/eventImage";
 
 const SITE = "https://www.loverball.com";
 const SUPABASE_PROJECT_ID = import.meta.env.VITE_SUPABASE_PROJECT_ID;
