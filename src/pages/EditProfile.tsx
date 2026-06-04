@@ -93,7 +93,7 @@ const EditProfile = () => {
       setName(profile.name || "");
       setPronouns(profile.pronouns || "");
       setCity(profile.city || "");
-      setZipCode((profile as any).zip_code || "");
+      // zip_code is owner-only; fetched via SECURITY DEFINER RPC below.
       
       
       setFavoriteSports(profile.favorite_sports || []);
