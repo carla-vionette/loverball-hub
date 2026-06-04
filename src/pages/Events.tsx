@@ -25,6 +25,7 @@ import { buildShareSummary, buildSharePreviewDescription } from "@/lib/eventShar
 import { distanceMiles } from "@/lib/geocoding";
 import AreaSelector from "@/components/AreaSelector";
 import { useActiveArea } from "@/hooks/useActiveArea";
+import { resolveEventImage, handleEventImageError } from "@/lib/eventImage";
 
 
 const CATEGORIES = ["All", "watch_party", "game", "panel", "brunch", "networking", "other"];
