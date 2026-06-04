@@ -18,6 +18,7 @@ import SocialShareButtons from "@/components/SocialShareButtons";
 import type { RsvpIntent } from "@/components/EventRSVPDialog";
 import RsvpPhoneSheet from "@/components/rsvp/RsvpPhoneSheet";
 import EventPasswordGate, { isEventUnlocked } from "@/components/EventPasswordGate";
+import { resolveEventImage, handleEventImageError } from "@/lib/eventImage";
 
 const SITE = "https://www.loverball.com";
 const SUPABASE_PROJECT_ID = import.meta.env.VITE_SUPABASE_PROJECT_ID;
@@ -33,6 +34,7 @@ interface PublicEvent {
   title: string;
   description: string | null;
   image_url: string | null;
+  banner_image: string | null;
   event_date: string;
   event_time: string | null;
   venue_name: string | null;
@@ -95,7 +97,7 @@ const EventPublic = () => {
     (async () => {
       const { data } = await supabase
         .from("events")
-        .select("id, title, description, image_url, event_date, event_time, venue_name, city, visibility, host_user_id, capacity, guest_visibility, rsvp_approval_required, password_required, show_guest_count, anonymize_guest_list, waitlist_enabled")
+        .select("id, title, description, image_url, banner_image, event_date, event_time, venue_name, city, visibility, host_user_id, capacity, guest_visibility, rsvp_approval_required, password_required, show_guest_count, anonymize_guest_list, waitlist_enabled")
         .eq("id", id)
         .maybeSingle();
       const ev = data as PublicEvent | null;
@@ -163,7 +165,7 @@ const EventPublic = () => {
   const timeStr = event?.event_time ? formatTime(event.event_time) : "";
   const locStr = [event?.venue_name, event?.city].filter(Boolean).join(", ");
   const shortDesc = event ? buildSharePreviewDescription(event) : "";
-  const ogImage = event?.image_url || `${SITE}/og-image.png`;
+  const ogImage = event ? resolveEventImage(event) : `${SITE}/og-image.png`;
   const ogTitle = event ? `${event.title} · Loverball` : "Loverball Event";
 
   const handleShare = useCallback(() => {
@@ -314,7 +316,7 @@ const EventPublic = () => {
         <EventPasswordGate
           eventId={event.id}
           eventTitle={event.title}
-          coverImage={event.image_url}
+          coverImage={resolveEventImage(event)}
           onUnlock={() => setUnlocked(true)}
         />
       </>
@@ -328,7 +330,7 @@ const EventPublic = () => {
         title={ogTitle}
         description={shortDesc}
         path={`/e/${id}`}
-        image={event.image_url || undefined}
+        image={resolveEventImage(event)}
         imageAlt={`${event.title} — Loverball event cover`}
         type="event"
         jsonLd={{
@@ -338,7 +340,7 @@ const EventPublic = () => {
           startDate: `${event.event_date}T${event.event_time || "00:00"}`,
           eventStatus: "https://schema.org/EventScheduled",
           location: { "@type": "Place", name: event.venue_name || "TBA", address: event.city || "" },
-          image: event.image_url ? [event.image_url] : undefined,
+          image: [resolveEventImage(event)],
           description: shortDesc,
           organizer: { "@type": "Organization", name: "Loverball", url: "https://www.loverball.com/" },
         }}
@@ -371,13 +373,14 @@ const EventPublic = () => {
             className="w-full aspect-[1.91/1] rounded-2xl overflow-hidden mb-6"
             style={{ background: `linear-gradient(135deg, ${C.surface}, ${C.surfaceHi})` }}
           >
-            {event.image_url ? (
-              <img src={event.image_url} alt={event.title} className="w-full h-full object-cover" loading="lazy" decoding="async" />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center">
-                <span style={{ fontFamily: fonts.serif, fontStyle: "italic", color: C.raspberry, fontSize: 64 }}>L</span>
-              </div>
-            )}
+            <img
+              src={resolveEventImage(event)}
+              alt={event.title}
+              className="w-full h-full object-cover"
+              loading="lazy"
+              decoding="async"
+              onError={handleEventImageError}
+            />
           </div>
 
           {/* Host / community line */}
@@ -701,7 +704,7 @@ const EventPublic = () => {
               <SharePreview
                 title={`${event.title} · Loverball`}
                 description={shortDesc}
-                imageUrl={event.image_url}
+                imageUrl={resolveEventImage(event)}
                 siteName="loverball.com"
                 eventDate={dateStr}
                 eventTime={timeStr || null}

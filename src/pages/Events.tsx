@@ -25,6 +25,7 @@ import { buildShareSummary, buildSharePreviewDescription } from "@/lib/eventShar
 import { distanceMiles } from "@/lib/geocoding";
 import AreaSelector from "@/components/AreaSelector";
 import { useActiveArea } from "@/hooks/useActiveArea";
+import { resolveEventImage, handleEventImageError } from "@/lib/eventImage";
 
 
 const CATEGORIES = ["All", "watch_party", "game", "panel", "brunch", "networking", "other"];
@@ -43,6 +44,7 @@ interface DbEvent {
   title: string;
   description?: string | null;
   image_url?: string | null;
+  banner_image?: string | null;
   event_date: string;
   event_time?: string | null;
   venue_name?: string | null;
@@ -469,12 +471,13 @@ const Events = () => {
                 onClick={() => openTile(featured.id)}
               >
                 <div className="relative h-72 md:h-[420px] overflow-hidden">
-                  {featured.image_url ? (
-                    <img src={featured.image_url} alt={featured.title} loading="eager"
-                      className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700" />
-                  ) : (
-                    <div className="w-full h-full" style={{ background: `linear-gradient(135deg, ${th.accent}, #0a0a0a)` }} />
-                  )}
+                  <img
+                    src={resolveEventImage(featured)}
+                    alt={featured.title}
+                    loading="eager"
+                    onError={handleEventImageError}
+                    className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700"
+                  />
                   {/* layered overlays */}
                   <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, rgba(10,10,11,0.35) 0%, rgba(10,10,11,0.15) 40%, rgba(10,10,11,0.92) 100%)" }} />
                   <div className="absolute inset-0" style={{ background: "radial-gradient(120% 80% at 30% 20%, rgba(0,0,0,0) 50%, rgba(0,0,0,0.4) 100%)" }} />
@@ -607,12 +610,13 @@ const Events = () => {
                     >
                       {/* Cinematic header w/ date stamp */}
                       <div className="relative h-44 overflow-hidden">
-                        {ev.image_url ? (
-                          <img src={ev.image_url} alt={ev.title} loading="lazy"
-                            className="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-500" />
-                        ) : (
-                          <div className="w-full h-full" style={{ background: `linear-gradient(135deg, ${th.accent}40, #0a0a0a)` }} />
-                        )}
+                        <img
+                          src={resolveEventImage(ev)}
+                          alt={ev.title}
+                          loading="lazy"
+                          onError={handleEventImageError}
+                          className="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-500"
+                        />
                         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, rgba(10,10,11,0.1) 0%, rgba(10,10,11,0.55) 100%)" }} />
 
                         {/* Eyebrow — colored dot + type label */}
@@ -749,7 +753,7 @@ const Events = () => {
                 <SharePreview
                   title={`${shareEvent.title} · Loverball`}
                   description={buildSharePreviewDescription(shareEvent)}
-                  imageUrl={shareEvent.image_url}
+                  imageUrl={resolveEventImage(shareEvent)}
                   siteName="loverball.com"
                   eventDate={format(parseEventDate(shareEvent.event_date), "EEE, MMM d, yyyy")}
                   eventTime={shareEvent.event_time ? fmtTime(shareEvent.event_time) : null}

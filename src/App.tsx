@@ -40,6 +40,9 @@ const Friends = lazy(() => import("./pages/Friends"));
 const CheckoutSuccess = lazy(() => import("./pages/CheckoutSuccess"));
 const Terms = lazy(() => import("./pages/Terms"));
 const Privacy = lazy(() => import("./pages/Privacy"));
+const About = lazy(() => import("./pages/About"));
+const Membership = lazy(() => import("./pages/Membership"));
+const Contact = lazy(() => import("./pages/Contact"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 // Admin pages
@@ -112,6 +115,9 @@ const App = () => (
                 <Route path="/onboarding" element={<Onboarding />} />
                 <Route path="/terms" element={<Terms />} />
                 <Route path="/privacy" element={<Privacy />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/membership" element={<Membership />} />
+                <Route path="/contact" element={<Contact />} />
 
                 {/* Core tabs: WATCH, EVENTS, CLUB, PROFILE */}
                 <Route path="/feed" element={<Feed />} />
@@ -167,10 +173,7 @@ const App = () => (
                 <Route path="/club/drafts" element={<Navigate to="/club" replace />} />
                 <Route path="/inbox" element={<Navigate to="/messages" replace />} />
                 <Route path="/dms" element={<Navigate to="/messages" replace />} />
-                <Route path="/about" element={<Navigate to="/" replace />} />
-                <Route path="/contact" element={<Navigate to="/" replace />} />
-                <Route path="/membership" element={<Navigate to="/profile" replace />} />
-                <Route path="/pricing" element={<Navigate to="/profile" replace />} />
+                <Route path="/pricing" element={<Navigate to="/membership" replace />} />
                 <Route path="/billing" element={<Navigate to="/profile" replace />} />
                 <Route path="/invites" element={<Navigate to="/profile" replace />} />
                 <Route path="/invite/:code" element={<Navigate to="/" replace />} />

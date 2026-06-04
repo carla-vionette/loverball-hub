@@ -78,7 +78,7 @@ type SortId = typeof SORTS[number]["id"];
 
 const Club = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
 
   const [tab, setTab] = useState<TabId>("discover");
   const [members, setMembers] = useState<Member[]>([]);
@@ -95,6 +95,9 @@ const Club = () => {
   const [chatsLoading, setChatsLoading] = useState(false);
 
   useEffect(() => {
+    // Don't fetch protected data until auth is confirmed and a user exists.
+    if (authLoading) return;
+    if (!user) { setLoading(false); return; }
     let cancelled = false;
     (async () => {
       try {
@@ -107,7 +110,7 @@ const Club = () => {
         if (cancelled) return;
 
         if (allRes.error) {
-          setError(allRes.error);
+          setError("We couldn't load the Club right now. Please try again in a moment.");
           setMembers([]);
         } else {
           const list = Array.isArray(allRes.data) ? allRes.data : [];
@@ -160,7 +163,7 @@ const Club = () => {
     return () => {
       cancelled = true;
     };
-  }, [user]);
+  }, [user, authLoading]);
 
   // Lightweight chat preview via direct_messages
   useEffect(() => {
@@ -276,6 +279,96 @@ const Club = () => {
       return next;
     });
   };
+
+  // Signed-out marketing state — never expose protected fetch errors here.
+  if (!authLoading && !user) {
+    return (
+      <div style={{ background: C.bg, color: C.text, fontFamily: fonts.sans }} className="min-h-screen pb-32 md:pb-12">
+        <Seo
+          title="The Club — Find Your Sports People | Loverball"
+          description="Loverball's members community for women sports fans. Sign in or join to meet your people."
+          path="/club"
+        />
+        <MobileHeader />
+        <DesktopNav />
+        <BottomNav />
+
+        <main className="max-w-3xl mx-auto px-5 md:px-8 pt-24 md:pt-20">
+          <section
+            className="relative overflow-hidden rounded-3xl px-6 md:px-12 py-12 md:py-16 text-center"
+            style={{
+              background: `radial-gradient(120% 100% at 0% 0%, ${C.raspberry}22 0%, transparent 60%), radial-gradient(120% 100% at 100% 100%, ${C.pink}1f 0%, transparent 55%), ${C.surface}`,
+              border: `1px solid ${C.border}`,
+            }}
+          >
+            <Slug>The Club</Slug>
+            <H1 className="mt-3" style={{ fontSize: "clamp(30px, 5vw, 52px)", lineHeight: 0.95 }}>
+              Find your <span style={{ color: C.raspberry }}>sports people.</span>
+            </H1>
+            <Body muted size={15} className="mt-4 max-w-md mx-auto">
+              The Club is Loverball's members-only home. Connect with women fans by team and city,
+              join private chats, and RSVP to members-only watch parties.
+            </Body>
+
+            <ul className="mt-8 grid sm:grid-cols-3 gap-3 text-left max-w-2xl mx-auto">
+              {[
+                { h: "Meet your match", b: "Fans you'll actually click with — by team, sport, and city." },
+                { h: "Private chats", b: "DM members and join group circles for your teams." },
+                { h: "Real-life events", b: "Members-only watch parties and meetups." },
+              ].map((f) => (
+                <li
+                  key={f.h}
+                  className="p-4 rounded-2xl"
+                  style={{ background: C.bg, border: `1px solid ${C.border}` }}
+                >
+                  <div style={{ fontFamily: fonts.mono, fontSize: 10, letterSpacing: "0.18em", textTransform: "uppercase", color: C.raspberry, fontWeight: 600 }}>
+                    {f.h}
+                  </div>
+                  <div className="mt-1.5" style={{ color: C.muted, fontSize: 13, lineHeight: 1.5 }}>
+                    {f.b}
+                  </div>
+                </li>
+              ))}
+            </ul>
+
+            <div className="mt-9 flex flex-wrap gap-3 justify-center">
+              <Button
+                onClick={() => navigate("/auth?mode=signin")}
+                className="rounded-full h-12 px-7"
+                style={{
+                  background: C.raspberry,
+                  color: "#fff",
+                  fontFamily: fonts.mono,
+                  fontSize: 12,
+                  letterSpacing: "0.16em",
+                  textTransform: "uppercase",
+                  fontWeight: 600,
+                }}
+              >
+                Sign in
+              </Button>
+              <Button
+                onClick={() => navigate("/membership")}
+                variant="outline"
+                className="rounded-full h-12 px-7"
+                style={{
+                  background: "transparent",
+                  color: C.text,
+                  border: `1px solid ${C.borderStrong || "rgba(255,255,255,0.15)"}`,
+                  fontFamily: fonts.mono,
+                  fontSize: 12,
+                  letterSpacing: "0.16em",
+                  textTransform: "uppercase",
+                }}
+              >
+                Join membership
+              </Button>
+            </div>
+          </section>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div style={{ background: C.bg, color: C.text, fontFamily: fonts.sans }} className="min-h-screen pb-32 md:pb-12">
