@@ -622,7 +622,7 @@ const EventDetail = () => {
             location: event.location_type === "virtual"
               ? { "@type": "VirtualLocation", url: event.virtual_link || "https://www.loverball.com" }
               : { "@type": "Place", name: event.venue_name || "TBA", address: event.city || "" },
-            image: event.image_url ? [event.image_url] : undefined,
+            image: [resolveEventImage(event)],
             description: event.description || event.title,
             organizer: { "@type": "Organization", name: "Loverball", url: "https://www.loverball.com/" },
           }}
