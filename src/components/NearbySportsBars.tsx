@@ -81,6 +81,17 @@ const NearbySportsBars = ({ eventLat, eventLng, radiusM = 5000, limit = 8 }: Pro
   const [manualCenter, setManualCenter] = useState<{ lat: number; lng: number; zip: string } | null>(null);
   const [resolvingZip, setResolvingZip] = useState(false);
 
+  // Restore saved ZIP on mount
+  useEffect(() => {
+    const saved = localStorage.getItem("sportsBarsZip");
+    if (saved && isValidUsZip(saved)) {
+      zipToLatLng(saved).then((loc) => {
+        if (loc) setManualCenter(loc);
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // Resolve center: event > manual > active area
   const center =
     (eventLat != null && eventLng != null && { lat: eventLat, lng: eventLng, source: "event" as const }) ||
@@ -161,6 +172,7 @@ out center tags 80;`;
       return;
     }
     setManualCenter(loc);
+    localStorage.setItem("sportsBarsZip", loc.zip);
   };
 
   return (
@@ -274,7 +286,7 @@ out center tags 80;`;
               <p className="text-[10px] text-muted-foreground">Source: OpenStreetMap</p>
               <button
                 type="button"
-                onClick={() => { setManualCenter(null); setZipInput(""); setBars(null); }}
+                onClick={() => { setManualCenter(null); setZipInput(""); setBars(null); localStorage.removeItem("sportsBarsZip"); }}
                 className="text-[11px] font-semibold text-primary hover:underline"
               >
                 Change ZIP
