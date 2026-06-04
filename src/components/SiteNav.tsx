@@ -4,7 +4,7 @@ import { Menu, X } from "lucide-react";
 import { C, fonts } from "@/lib/editorialTheme";
 import { useAuth } from "@/hooks/useAuth";
 import NotificationBell from "@/components/NotificationBell";
-import navLogo from "@/assets/loverball-logo.png";
+import navLogo from "@/assets/loverball-logo-black.png";
 
 /**
  * SiteNav — single shared top navigation used on every public/editorial page.
