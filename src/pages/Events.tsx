@@ -12,6 +12,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
+import { parseEventDate } from "@/lib/eventDate";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import BottomNav from "@/components/BottomNav";
 import DesktopNav from "@/components/DesktopNav";
@@ -270,8 +271,8 @@ const Events = () => {
   // Events move to "past" 24 hours after their event_date
   const cutoff = new Date(now.getTime() - 24 * 60 * 60 * 1000);
 
-  const upcomingEvents = events.filter(e => new Date(e.event_date) >= cutoff);
-  const pastEvents = events.filter(e => new Date(e.event_date) < cutoff).reverse();
+  const upcomingEvents = events.filter(e => parseEventDate(e.event_date) >= cutoff);
+  const pastEvents = events.filter(e => parseEventDate(e.event_date) < cutoff).reverse();
 
   const baseEvents = tab === "upcoming" ? upcomingEvents : pastEvents;
   const categoryFiltered = category === "All" ? baseEvents : baseEvents.filter(e => e.event_type === category);
@@ -318,8 +319,8 @@ const Events = () => {
 
   const featured = tab === "upcoming" && upcomingEvents.length
     ? upcomingEvents.reduce((closest, ev) => {
-        const diff = Math.abs(new Date(ev.event_date).getTime() - now.getTime());
-        const closestDiff = Math.abs(new Date(closest.event_date).getTime() - now.getTime());
+        const diff = Math.abs(parseEventDate(ev.event_date).getTime() - now.getTime());
+        const closestDiff = Math.abs(parseEventDate(closest.event_date).getTime() - now.getTime());
         return diff < closestDiff ? ev : closest;
       })
     : null;
@@ -458,7 +459,7 @@ const Events = () => {
           {/* FEATURED — cinematic */}
           {featured && (() => {
             const th = eventTheme[getVariant(featured.event_type)];
-            const d = new Date(featured.event_date);
+            const d = parseEventDate(featured.event_date);
             return (
               <div
                 className="relative overflow-hidden mb-10 cursor-pointer group rounded-[24px]"
@@ -592,7 +593,7 @@ const Events = () => {
                 const cardIndex = idx + 1;
                 const sponsorSlot = cardIndex > 0 && cardIndex % 5 === 0;
                 const th = eventTheme[getVariant(ev.event_type)];
-                const d = new Date(ev.event_date);
+                const d = parseEventDate(ev.event_date);
                 const dist = distanceById[ev.id];
 
                 return (
@@ -748,7 +749,7 @@ const Events = () => {
                   description={buildSharePreviewDescription(shareEvent)}
                   imageUrl={shareEvent.image_url}
                   siteName="loverball.com"
-                  eventDate={format(new Date(shareEvent.event_date), "EEE, MMM d, yyyy")}
+                  eventDate={format(parseEventDate(shareEvent.event_date), "EEE, MMM d, yyyy")}
                   eventTime={shareEvent.event_time ? fmtTime(shareEvent.event_time) : null}
                   venue={shareEvent.venue_name || null}
                   city={shareEvent.city || null}
