@@ -17,6 +17,7 @@ import Index from "./pages/Index";
 
 // ── Lazy-loaded secondary pages ──
 const Auth = lazy(() => import("./pages/Auth"));
+const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const Signup = lazy(() => import("./pages/Signup"));
 const Feed = lazy(() => import("./pages/Feed"));
 const Events = lazy(() => import("./pages/Events"));
@@ -111,6 +112,7 @@ const App = () => (
                 {/* Public */}
                 <Route path="/" element={<Index />} />
                 <Route path="/auth" element={<Auth />} />
+                <Route path="/reset-password" element={<ResetPassword />} />
                 <Route path="/signup" element={<Navigate to="/onboarding" replace />} />
                 <Route path="/onboarding" element={<Onboarding />} />
                 <Route path="/terms" element={<Terms />} />

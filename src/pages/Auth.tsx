@@ -310,7 +310,7 @@ const Auth = () => {
     setLoading(true);
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
-        redirectTo: `${authOrigin}/auth?reset=true`,
+        redirectTo: `${window.location.origin}/reset-password`,
       });
       if (error) throw error;
       setMode("reset_sent");
