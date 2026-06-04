@@ -286,7 +286,7 @@ out center tags 80;`;
               <p className="text-[10px] text-muted-foreground">Source: OpenStreetMap</p>
               <button
                 type="button"
-                onClick={() => { setManualCenter(null); setZipInput(""); setBars(null); }}
+                onClick={() => { setManualCenter(null); setZipInput(""); setBars(null); localStorage.removeItem("sportsBarsZip"); }}
                 className="text-[11px] font-semibold text-primary hover:underline"
               >
                 Change ZIP
