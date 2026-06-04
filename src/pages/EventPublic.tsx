@@ -96,7 +96,7 @@ const EventPublic = () => {
     (async () => {
       const { data } = await supabase
         .from("events")
-        .select("id, title, description, image_url, event_date, event_time, venue_name, city, visibility, host_user_id, capacity, guest_visibility, rsvp_approval_required, password_required, show_guest_count, anonymize_guest_list, waitlist_enabled")
+        .select("id, title, description, image_url, banner_image, event_date, event_time, venue_name, city, visibility, host_user_id, capacity, guest_visibility, rsvp_approval_required, password_required, show_guest_count, anonymize_guest_list, waitlist_enabled")
         .eq("id", id)
         .maybeSingle();
       const ev = data as PublicEvent | null;
