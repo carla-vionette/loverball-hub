@@ -120,6 +120,7 @@ const AdminAttendeeManager = () => {
       const transformedData = (data || []).map((item: any) => ({
         id: item.id,
         status: item.status,
+        approval_status: item.approval_status || null,
         user_id: item.user_id,
         plus_ones: item.plus_ones,
         name: item.guest_name,
