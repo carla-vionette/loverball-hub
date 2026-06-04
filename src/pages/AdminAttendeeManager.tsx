@@ -34,6 +34,7 @@ interface Attendee {
   name: string | null;
   phone: string | null;
   created_at: string;
+  email: string | null;
   profile: {
     name: string;
     phone_number?: string | null;
