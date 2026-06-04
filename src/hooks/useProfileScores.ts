@@ -157,3 +157,39 @@ export function useProfileScores(favoriteTeams: string[] = []) {
 
   return { games: filteredGames, loading, error, refetch: fetchScores, hasFavorites: favoriteTeams.length > 0 };
 }
+
+/**
+ * Search the SportsDataIO-backed edge function for games across leagues.
+ * Returns live, most-recent-final, and next-upcoming games for the query.
+ */
+export function useSportsSearch() {
+  const [results, setResults] = useState<GameScore[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const search = async (query: string) => {
+    const q = query.trim();
+    if (q.length < 2) { setResults([]); setError(null); return; }
+    setLoading(true);
+    setError(null);
+    try {
+      const { data, error: fnError } = await supabase.functions.invoke(
+        "sports-search",
+        { body: { query: q } }
+      );
+      if (fnError) throw fnError;
+      const games = (data?.games ?? []) as GameScore[];
+      setResults(games);
+    } catch (err: any) {
+      setError(err?.message || "Search failed");
+      setResults([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const clear = () => { setResults([]); setError(null); };
+
+  return { results, loading, error, search, clear };
+}
+
