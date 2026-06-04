@@ -14,7 +14,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { 
   ArrowLeft, Loader2, Download, UserPlus, Phone, Mail, Users, 
   CheckCircle, Clock, XCircle, HelpCircle, Search, RefreshCw,
-  ArrowUpFromLine, Pencil, Check, X
+  ArrowUpFromLine, Pencil, Check, X, Trash2
 } from 'lucide-react';
 import { format } from 'date-fns';
 
