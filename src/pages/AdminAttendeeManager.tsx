@@ -603,6 +603,19 @@ const AdminAttendeeManager = () => {
                             )}
                           </TableCell>
                           <TableCell>
+                            {attendee.email ? (
+                              <a
+                                href={`mailto:${attendee.email}`}
+                                className="flex items-center gap-1 text-primary hover:underline text-sm"
+                              >
+                                <Mail className="w-3 h-3" />
+                                {attendee.email}
+                              </a>
+                            ) : (
+                              <span className="text-muted-foreground">-</span>
+                            )}
+                          </TableCell>
+                          <TableCell>
                             <div className="flex items-center gap-2">
                               <StatusIcon className={`w-4 h-4 ${
                                 config.color === 'bg-green-500' ? 'text-green-500' :
