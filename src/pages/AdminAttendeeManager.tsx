@@ -402,6 +402,57 @@ const AdminAttendeeManager = () => {
       </header>
 
       <main className="max-w-7xl mx-auto p-4 md:p-6 space-y-6">
+        {/* Attendee Count Summary */}
+        <Card className="bg-gradient-to-r from-primary/10 via-primary/5 to-background border-primary/20">
+          <CardContent className="pt-5 pb-5">
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div>
+                <p className="text-xs uppercase tracking-wider text-muted-foreground mb-1">Attendee Summary</p>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-4xl font-bold text-primary">{totalHeadcount}</span>
+                  {event?.capacity && (
+                    <span className="text-lg text-muted-foreground">/ {event.capacity} capacity</span>
+                  )}
+                </div>
+                <p className="text-sm text-muted-foreground mt-1">
+                  {stats.attending} attending + {stats.totalPlusOnes} plus ones · {stats.total} total RSVPs
+                </p>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {stats.pendingApproval > 0 && (
+                  <Badge variant="outline" className="bg-yellow-500/10 text-yellow-700 border-yellow-500/30">
+                    <Clock className="w-3 h-3 mr-1" />{stats.pendingApproval} pending approval
+                  </Badge>
+                )}
+                {stats.waitlist > 0 && (
+                  <Badge variant="outline" className="bg-orange-500/10 text-orange-700 border-orange-500/30">
+                    {stats.waitlist} on waitlist
+                  </Badge>
+                )}
+                {stats.maybe > 0 && (
+                  <Badge variant="outline">{stats.maybe} maybe</Badge>
+                )}
+                {stats.declined > 0 && (
+                  <Badge variant="outline" className="bg-red-500/10 text-red-700 border-red-500/30">
+                    {stats.declined} declined
+                  </Badge>
+                )}
+              </div>
+            </div>
+            {capacityPct !== null && (
+              <div className="mt-4">
+                <div className="h-2 w-full rounded-full bg-muted overflow-hidden">
+                  <div
+                    className={`h-full transition-all ${capacityPct >= 100 ? 'bg-red-500' : capacityPct >= 80 ? 'bg-orange-500' : 'bg-primary'}`}
+                    style={{ width: `${capacityPct}%` }}
+                  />
+                </div>
+                <p className="text-xs text-muted-foreground mt-1">{capacityPct}% of capacity</p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
         {/* Stats Cards */}
         <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
           <Card>
