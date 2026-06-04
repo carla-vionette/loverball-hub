@@ -99,7 +99,7 @@ const themeStyles: Record<string, string> = {
 const EventDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { user, isMember, loading: authLoading } = useAuth();
+  const { user, isMember, isAdmin, loading: authLoading } = useAuth();
   const { toast } = useToast();
   const [event, setEvent] = useState<Event | null>(null);
   const [loading, setLoading] = useState(true);
