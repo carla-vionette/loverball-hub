@@ -316,7 +316,7 @@ const EventPublic = () => {
         <EventPasswordGate
           eventId={event.id}
           eventTitle={event.title}
-          coverImage={event.image_url}
+          coverImage={resolveEventImage(event)}
           onUnlock={() => setUnlocked(true)}
         />
       </>
