@@ -403,11 +403,13 @@ const EventDetail = () => {
     }
   };
 
-  // Use the published app URL for sharing
-  // Rich link previews require server-side OG tags which SPAs can't provide directly
-  // For now, use the direct event URL - users will see the event page
+  // Share URLs route through the event-og-meta edge function so link-preview
+  // crawlers (iMessage/WhatsApp/Slack/Twitter/FB) see real Open Graph + Twitter
+  // Card tags. Humans get a 0s meta-refresh to the canonical /e/:id page.
   const getShareUrl = () => {
-    return `https://www.loverball.com/e/${event?.id}`;
+    const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
+    if (!event?.id) return `https://www.loverball.com/e/`;
+    return `https://${projectId}.supabase.co/functions/v1/event-og-meta?id=${event.id}`;
   };
 
   const handleShare = () => {
