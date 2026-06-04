@@ -108,6 +108,8 @@ const EditProfile = () => {
       // Operational settings live behind a SECURITY DEFINER RPC
       const { data: acct } = await supabase.rpc("get_my_account_settings" as any);
       setSmsNotifications(((acct as any)?.sms_notifications_enabled) ?? true);
+      const { data: loc } = await supabase.rpc("get_my_location" as any);
+      setZipCode((loc as any)?.zip_code || "");
       setProfilePhotoPreview(profile.profile_photo_url || null);
       
       setInitialLoading(false);
