@@ -25,7 +25,7 @@ import EventCheckIn from "@/components/EventCheckIn";
 import AttendeeListModal from "@/components/AttendeeListModal";
 import GoingSoloToggle from "@/components/GoingSoloToggle";
 import YouveMetCard from "@/components/YouveMetCard";
-import WhereToWatch from "@/components/WhereToWatch";
+import NearbySportsBars from "@/components/NearbySportsBars";
 import WhereToSit from "@/components/WhereToSit";
 import EventTagBadges from "@/components/EventTagBadges";
 import EarlyAccessBanner from "@/components/EarlyAccessBanner";
@@ -912,8 +912,11 @@ const EventDetail = () => {
                 <EventCheckIn eventId={event.id} eventDate={event.event_date} eventCity={event.city} />
               </div>
             )}
-            {variant === 'external' && !event.venue_name && (
-              <WhereToWatch eventCity={event.city} eventType={event.event_type} excludeEventId={event.id} />
+            {!event.venue_name && (
+              <NearbySportsBars
+                eventLat={(event as any).location_lat ?? null}
+                eventLng={(event as any).location_lng ?? null}
+              />
             )}
             <WhereToSit venueName={event.venue_name} eventType={event.event_type} />
 
