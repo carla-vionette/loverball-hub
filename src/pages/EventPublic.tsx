@@ -21,13 +21,11 @@ import EventPasswordGate, { isEventUnlocked } from "@/components/EventPasswordGa
 import { resolveEventImage, handleEventImageError } from "@/lib/eventImage";
 
 const SITE = "https://www.loverball.com";
-const SUPABASE_PROJECT_ID = import.meta.env.VITE_SUPABASE_PROJECT_ID;
-// Share URLs go through an edge function that renders Open Graph meta tags
-// for link-preview crawlers (iMessage, WhatsApp, Slack, Twitter, FB) — the
-// SPA shell at /e/:id can't serve OG tags itself. Humans get a 0s meta-refresh
-// redirect back to the canonical /e/:id page.
-const buildShareUrl = (eventId: string) =>
-  `https://${SUPABASE_PROJECT_ID}.supabase.co/functions/v1/event-og-meta?id=${eventId}`;
+// Share the canonical /e/:id URL. The page below emits proper per-route OG +
+// Twitter Card meta via <Seo/>, which iMessage/Twitter/Slack/FB unfurl. The
+// previous edge-function URL was being labeled as a generic "Text Document"
+// by Apple's link preview because it pointed at a *.supabase.co API endpoint.
+const buildShareUrl = (eventId: string) => `${SITE}/e/${eventId}`;
 
 interface PublicEvent {
   id: string;
