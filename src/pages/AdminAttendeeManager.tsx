@@ -183,6 +183,26 @@ const AdminAttendeeManager = () => {
     }
   };
 
+  const updateApprovalStatus = async (attendeeId: string, decision: 'approved' | 'rejected') => {
+    const attendee = attendees.find(a => a.id === attendeeId);
+    try {
+      const { error } = await supabase
+        .from('event_rsvps')
+        .update({ approval_status: decision })
+        .eq('id', attendeeId);
+      if (error) throw error;
+      setAttendees(prev => prev.map(a =>
+        a.id === attendeeId ? { ...a, approval_status: decision } : a
+      ));
+      if (attendee?.profile) {
+        sendStatusNotification(attendee.user_id, id!, decision === 'approved' ? 'attending' : 'no', attendee.status);
+      }
+      toast({ title: decision === 'approved' ? 'RSVP approved' : 'RSVP rejected' });
+    } catch (e: any) {
+      toast({ title: 'Error updating approval', description: e.message, variant: 'destructive' });
+    }
+  };
+
   const addManualAttendee = async () => {
     if (!newAttendeeName.trim()) {
       toast({ title: 'Name is required', variant: 'destructive' });
