@@ -165,7 +165,7 @@ const EventPublic = () => {
   const timeStr = event?.event_time ? formatTime(event.event_time) : "";
   const locStr = [event?.venue_name, event?.city].filter(Boolean).join(", ");
   const shortDesc = event ? buildSharePreviewDescription(event) : "";
-  const ogImage = event?.image_url || `${SITE}/og-image.png`;
+  const ogImage = event ? resolveEventImage(event) : `${SITE}/og-image.png`;
   const ogTitle = event ? `${event.title} · Loverball` : "Loverball Event";
 
   const handleShare = useCallback(() => {
