@@ -118,7 +118,7 @@ Deno.serve(async (req: Request) => {
     // Get OG image URL - use event image or fallback to branded image
     // IMPORTANT: Must be absolute URLs for social media crawlers
     const baseUrl = 'https://www.loverball.com';
-    const fallbackImage = `${baseUrl}/images/og-default.png`;
+    const fallbackImage = `${baseUrl}/og-image.png`;
     
     // Convert relative image URLs to absolute
     let ogImage = fallbackImage;
