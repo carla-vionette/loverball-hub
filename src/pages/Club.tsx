@@ -110,7 +110,7 @@ const Club = () => {
         if (cancelled) return;
 
         if (allRes.error) {
-          setError(allRes.error);
+          setError("We couldn't load the Club right now. Please try again in a moment.");
           setMembers([]);
         } else {
           const list = Array.isArray(allRes.data) ? allRes.data : [];
