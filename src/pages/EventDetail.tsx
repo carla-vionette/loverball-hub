@@ -158,7 +158,7 @@ const EventDetail = () => {
       ? event.description.substring(0, 150) + (event.description.length > 150 ? '...' : '')
       : `Join us on ${formatEventDate()}`;
     
-    const imageUrl = event.image_url || '/og-image.png';
+    const imageUrl = resolveEventImage(event);
     const pageUrl = `${window.location.origin}/event/${event.id}`;
 
     // Update document title
