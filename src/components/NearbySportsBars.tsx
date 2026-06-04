@@ -81,6 +81,17 @@ const NearbySportsBars = ({ eventLat, eventLng, radiusM = 5000, limit = 8 }: Pro
   const [manualCenter, setManualCenter] = useState<{ lat: number; lng: number; zip: string } | null>(null);
   const [resolvingZip, setResolvingZip] = useState(false);
 
+  // Restore saved ZIP on mount
+  useEffect(() => {
+    const saved = localStorage.getItem("sportsBarsZip");
+    if (saved && isValidUsZip(saved)) {
+      zipToLatLng(saved).then((loc) => {
+        if (loc) setManualCenter(loc);
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // Resolve center: event > manual > active area
   const center =
     (eventLat != null && eventLng != null && { lat: eventLat, lng: eventLng, source: "event" as const }) ||
