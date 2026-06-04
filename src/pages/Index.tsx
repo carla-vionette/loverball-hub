@@ -509,6 +509,13 @@ const Index = () => {
               <p className="mt-3 max-w-md" style={{ color: C.muted, fontSize: 14, lineHeight: 1.55 }}>
                 A members community for women sports fans. Built in LA.
               </p>
+              <a
+                href="mailto:hello@loverball.com"
+                className="mt-5 inline-block hover:opacity-80 transition-opacity"
+                style={{ fontFamily: fonts.mono, fontSize: 13, letterSpacing: "0.08em", color: C.text, borderBottom: `1px solid ${C.raspberry}`, paddingBottom: 2 }}
+              >
+                hello@loverball.com
+              </a>
             </div>
 
             <div className="md:col-span-6 grid grid-cols-2 gap-8">
