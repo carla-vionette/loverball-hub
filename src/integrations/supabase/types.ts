@@ -2519,6 +2519,7 @@ export type Database = {
           id: string
           plus_ones: number
           profile_city: string
+          profile_email: string
           profile_instagram_url: string
           profile_name: string
           profile_photo_url: string
