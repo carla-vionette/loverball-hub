@@ -7,6 +7,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Tv, MapPin, Calendar, Users, ArrowRight, Home } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useActiveArea } from "@/hooks/useActiveArea";
+import { handleEventImageError, resolveEventImage } from "@/lib/eventImage";
+
 
 interface WatchEvent {
   id: string;
@@ -203,19 +205,13 @@ const WhereToWatch = ({ excludeEventId, limit = 6 }: Props) => {
                   className="flex items-stretch gap-3 p-3 rounded-xl border border-border/40 hover:bg-muted/50 hover:border-primary/30 transition-colors min-h-[5rem]"
                 >
                   <div className="w-16 h-16 rounded-lg overflow-hidden bg-primary/10 flex items-center justify-center shrink-0">
-                    {e.image_url ? (
-                      <img
-                        src={e.image_url}
-                        alt=""
-                        loading="lazy"
-                        className="w-full h-full object-cover"
-                        onError={(ev) => {
-                          (ev.currentTarget as HTMLImageElement).style.display = "none";
-                        }}
-                      />
-                    ) : (
-                      <Tv className="w-5 h-5 text-primary" />
-                    )}
+                    <img
+                      src={resolveEventImage(e)}
+                      alt={e.title}
+                      loading="lazy"
+                      className="w-full h-full object-cover"
+                      onError={handleEventImageError}
+                    />
                   </div>
                   <div className="flex-1 min-w-0 flex flex-col justify-between">
                     <div className="flex items-start gap-2">
