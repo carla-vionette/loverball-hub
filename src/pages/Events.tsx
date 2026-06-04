@@ -753,7 +753,7 @@ const Events = () => {
                 <SharePreview
                   title={`${shareEvent.title} · Loverball`}
                   description={buildSharePreviewDescription(shareEvent)}
-                  imageUrl={shareEvent.image_url}
+                  imageUrl={resolveEventImage(shareEvent)}
                   siteName="loverball.com"
                   eventDate={format(parseEventDate(shareEvent.event_date), "EEE, MMM d, yyyy")}
                   eventTime={shareEvent.event_time ? fmtTime(shareEvent.event_time) : null}
