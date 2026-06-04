@@ -373,13 +373,14 @@ const EventPublic = () => {
             className="w-full aspect-[1.91/1] rounded-2xl overflow-hidden mb-6"
             style={{ background: `linear-gradient(135deg, ${C.surface}, ${C.surfaceHi})` }}
           >
-            {event.image_url ? (
-              <img src={event.image_url} alt={event.title} className="w-full h-full object-cover" loading="lazy" decoding="async" />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center">
-                <span style={{ fontFamily: fonts.serif, fontStyle: "italic", color: C.raspberry, fontSize: 64 }}>L</span>
-              </div>
-            )}
+            <img
+              src={resolveEventImage(event)}
+              alt={event.title}
+              className="w-full h-full object-cover"
+              loading="lazy"
+              decoding="async"
+              onError={handleEventImageError}
+            />
           </div>
 
           {/* Host / community line */}
