@@ -280,6 +280,25 @@ const AdminAttendeeManager = () => {
     }
   };
 
+  const removeAttendee = async () => {
+    if (!attendeeToRemove) return;
+    try {
+      const { error } = await supabase
+        .from('event_rsvps')
+        .delete()
+        .eq('id', attendeeToRemove.id);
+
+      if (error) throw error;
+
+      setAttendees(prev => prev.filter(a => a.id !== attendeeToRemove.id));
+      toast({ title: `${attendeeToRemove.name || attendeeToRemove.profile?.name || 'Attendee'} removed` });
+      setRemoveDialogOpen(false);
+      setAttendeeToRemove(null);
+    } catch (error: any) {
+      toast({ title: 'Error removing attendee', description: error.message, variant: 'destructive' });
+    }
+  };
+
   const exportCSV = () => {
     if (attendees.length === 0) return;
 
