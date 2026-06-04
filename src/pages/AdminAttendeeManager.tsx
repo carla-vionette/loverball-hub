@@ -85,6 +85,8 @@ const AdminAttendeeManager = () => {
   const [newAttendeePhone, setNewAttendeePhone] = useState('');
   const [newAttendeePlusOnes, setNewAttendeePlusOnes] = useState('0');
   const [newAttendeeStatus, setNewAttendeeStatus] = useState('attending');
+  const [removeDialogOpen, setRemoveDialogOpen] = useState(false);
+  const [attendeeToRemove, setAttendeeToRemove] = useState<Attendee | null>(null);
 
   useEffect(() => {
     if (!isAdmin) {
