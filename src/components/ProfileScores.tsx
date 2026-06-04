@@ -1,10 +1,11 @@
-import React, { useState, useMemo } from "react";
-import { useProfileScores, type GameScore } from "@/hooks/useProfileScores";
+import React, { useEffect, useState } from "react";
+import { useProfileScores, useSportsSearch, type GameScore } from "@/hooks/useProfileScores";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Trophy, Clock, Radio, RefreshCw, Search } from "lucide-react";
+import { Trophy, Clock, Radio, RefreshCw, Search, Loader2 } from "lucide-react";
+
 
 
 const STATUS_CONFIG: Record<
@@ -89,7 +90,17 @@ interface ProfileScoresProps {
 
 const ProfileScores: React.FC<ProfileScoresProps> = ({ favoriteTeams = [] }) => {
   const { games, loading, error, refetch, hasFavorites } = useProfileScores(favoriteTeams);
+  const { results: searchResults, loading: searching, error: searchError, search, clear } = useSportsSearch();
   const [query, setQuery] = useState("");
+
+  // Debounced API search whenever query changes.
+  useEffect(() => {
+    const q = query.trim();
+    if (q.length < 2) { clear(); return; }
+    const t = setTimeout(() => { search(q); }, 350);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [query]);
 
   const SearchBar = (
     <div className="relative mb-3">
@@ -101,19 +112,24 @@ const ProfileScores: React.FC<ProfileScoresProps> = ({ favoriteTeams = [] }) => 
         type="search"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        placeholder="Search teams or leagues..."
-        className="h-9 pl-9 text-sm rounded-full placeholder:text-[#6B6B6B]"
+        placeholder="Search any team, city, or league (NBA, MLB, MLS...)"
+        className="h-9 pl-9 pr-9 text-sm rounded-full placeholder:text-[#6B6B6B]"
         style={{
           background: "#FFFFFF",
           border: "1px solid #E8E3DC",
           color: "#1A1A1A",
         }}
       />
+      {searching && (
+        <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 animate-spin text-muted-foreground" />
+      )}
     </div>
   );
 
+  const hasQuery = query.trim().length >= 2;
 
-  if (loading) {
+  // Initial loading state (only when no query is active).
+  if (loading && !hasQuery) {
     return (
       <div>
         {SearchBar}
@@ -130,7 +146,16 @@ const ProfileScores: React.FC<ProfileScoresProps> = ({ favoriteTeams = [] }) => 
     );
   }
 
-  if (error || games.length === 0) {
+  // Source of truth: when the user is searching, use API results; otherwise show feed.
+  const sourceGames: GameScore[] = hasQuery ? searchResults : games;
+  const liveGames = sourceGames.filter((g) => g.status === "live");
+  const recentGames = sourceGames.filter((g) => g.status === "final");
+  const upcomingGames = sourceGames.filter((g) => g.status === "upcoming");
+  const ordered = [...liveGames, ...recentGames, ...upcomingGames];
+  const displayGames = ordered.slice(0, hasQuery ? 12 : 6);
+
+  // Empty / error fallback when no query.
+  if (!hasQuery && (error || sourceGames.length === 0)) {
     return (
       <div>
         {SearchBar}
@@ -142,26 +167,12 @@ const ProfileScores: React.FC<ProfileScoresProps> = ({ favoriteTeams = [] }) => 
           <p className="text-xs text-muted-foreground">
             {hasFavorites
               ? "We'll show live scores here the moment your teams take the floor."
-              : "Add favorite teams in your profile to see real-time scores here."}
+              : "Search any team, city, or league above to pull live, recent, and upcoming games."}
           </p>
         </Card>
       </div>
     );
   }
-
-  const liveGames = games.filter((g) => g.status === "live");
-  const recentGames = games.filter((g) => g.status === "final");
-  const upcomingGames = games.filter((g) => g.status === "upcoming");
-  const ordered = [...liveGames, ...recentGames, ...upcomingGames];
-  const q = query.trim().toLowerCase();
-  const filtered = q
-    ? ordered.filter((g) =>
-        `${g.awayTeam} ${g.homeTeam} ${g.sport ?? ""} ${g.statusDetail ?? ""}`
-          .toLowerCase()
-          .includes(q)
-      )
-    : ordered;
-  const displayGames = filtered.slice(0, 6);
 
   return (
     <div>
@@ -174,22 +185,33 @@ const ProfileScores: React.FC<ProfileScoresProps> = ({ favoriteTeams = [] }) => 
               {liveGames.length} Live
             </span>
           )}
+          {hasQuery && !searching && (
+            <span className="text-[10px] text-muted-foreground">
+              {displayGames.length} result{displayGames.length === 1 ? "" : "s"} for "{query.trim()}"
+            </span>
+          )}
         </div>
         <Button
           variant="ghost"
           size="sm"
           className="h-7 w-7 p-0"
-          onClick={refetch}
-          disabled={loading}
+          onClick={hasQuery ? () => search(query.trim()) : refetch}
+          disabled={loading || searching}
         >
           <RefreshCw
-            className={`w-3.5 h-3.5 text-muted-foreground ${loading ? "animate-spin" : ""}`}
+            className={`w-3.5 h-3.5 text-muted-foreground ${(loading || searching) ? "animate-spin" : ""}`}
           />
         </Button>
       </div>
       {displayGames.length === 0 ? (
         <Card className="p-4 text-center bg-card border-border/30">
-          <p className="text-xs text-muted-foreground">No results for "{query}"</p>
+          <p className="text-xs text-muted-foreground">
+            {searching
+              ? `Searching for "${query.trim()}"...`
+              : searchError
+                ? "Search is temporarily unavailable. Try again in a moment."
+                : `No games found for "${query.trim()}". Try a team name, city, or league (NBA, WNBA, MLB, MLS...).`}
+          </p>
         </Card>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -201,6 +223,7 @@ const ProfileScores: React.FC<ProfileScoresProps> = ({ favoriteTeams = [] }) => 
     </div>
   );
 };
+
 
 
 export default ProfileScores;
