@@ -675,7 +675,35 @@ const AdminAttendeeManager = () => {
                             </span>
                           </TableCell>
                           <TableCell>
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              {attendee.approval_status === 'pending' && (
+                                <>
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={() => updateApprovalStatus(attendee.id, 'approved')}
+                                    className="text-green-600 border-green-500/30 hover:bg-green-500/10 h-8"
+                                  >
+                                    <Check className="w-4 h-4 mr-1" />
+                                    Approve
+                                  </Button>
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={() => updateApprovalStatus(attendee.id, 'rejected')}
+                                    className="text-red-600 border-red-500/30 hover:bg-red-500/10 h-8"
+                                  >
+                                    <X className="w-4 h-4 mr-1" />
+                                    Reject
+                                  </Button>
+                                </>
+                              )}
+                              {attendee.approval_status === 'rejected' && (
+                                <Badge variant="outline" className="bg-red-500/10 text-red-600 border-red-500/20">Rejected</Badge>
+                              )}
+                              {attendee.approval_status === 'approved' && (
+                                <Badge variant="outline" className="bg-green-500/10 text-green-600 border-green-500/20">Approved</Badge>
+                              )}
                               {attendee.status === 'waitlist' && (
                                 <Button
                                   size="sm"
