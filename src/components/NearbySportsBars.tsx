@@ -5,7 +5,23 @@ import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tv, MapPin, ExternalLink, Navigation } from "lucide-react";
 import { useActiveArea } from "@/hooks/useActiveArea";
-import { resolveZip, isValidUsZip, distanceMiles } from "@/lib/geocoding";
+import { isValidUsZip, distanceMiles } from "@/lib/geocoding";
+
+async function zipToLatLng(zip: string): Promise<{ lat: number; lng: number; zip: string } | null> {
+  try {
+    const res = await fetch(`https://api.zippopotam.us/us/${zip}`);
+    if (!res.ok) return null;
+    const data = await res.json();
+    const place = data?.places?.[0];
+    if (!place) return null;
+    const lat = parseFloat(place.latitude);
+    const lng = parseFloat(place.longitude);
+    if (!isFinite(lat) || !isFinite(lng)) return null;
+    return { lat, lng, zip: data["post code"] || zip };
+  } catch {
+    return null;
+  }
+}
 
 interface Bar {
   id: string;
