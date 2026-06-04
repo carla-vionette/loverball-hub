@@ -72,7 +72,7 @@ function buildAddress(tags: Record<string, string>): string | undefined {
   return parts.length ? parts.join(", ") : undefined;
 }
 
-const NearbySportsBars = ({ eventLat, eventLng, radiusM = 12000, limit = 8 }: Props) => {
+const NearbySportsBars = ({ eventLat, eventLng, radiusM = 5000, limit = 8 }: Props) => {
   const { active } = useActiveArea();
   const [bars, setBars] = useState<Bar[] | null>(null);
   const [loading, setLoading] = useState(false);
