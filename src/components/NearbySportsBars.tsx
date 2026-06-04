@@ -5,7 +5,23 @@ import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tv, MapPin, ExternalLink, Navigation } from "lucide-react";
 import { useActiveArea } from "@/hooks/useActiveArea";
-import { resolveZip, isValidUsZip, distanceMiles } from "@/lib/geocoding";
+import { isValidUsZip, distanceMiles } from "@/lib/geocoding";
+
+async function zipToLatLng(zip: string): Promise<{ lat: number; lng: number; zip: string } | null> {
+  try {
+    const res = await fetch(`https://api.zippopotam.us/us/${zip}`);
+    if (!res.ok) return null;
+    const data = await res.json();
+    const place = data?.places?.[0];
+    if (!place) return null;
+    const lat = parseFloat(place.latitude);
+    const lng = parseFloat(place.longitude);
+    if (!isFinite(lat) || !isFinite(lng)) return null;
+    return { lat, lng, zip: data["post code"] || zip };
+  } catch {
+    return null;
+  }
+}
 
 interface Bar {
   id: string;
@@ -56,7 +72,7 @@ function buildAddress(tags: Record<string, string>): string | undefined {
   return parts.length ? parts.join(", ") : undefined;
 }
 
-const NearbySportsBars = ({ eventLat, eventLng, radiusM = 12000, limit = 8 }: Props) => {
+const NearbySportsBars = ({ eventLat, eventLng, radiusM = 5000, limit = 8 }: Props) => {
   const { active } = useActiveArea();
   const [bars, setBars] = useState<Bar[] | null>(null);
   const [loading, setLoading] = useState(false);
@@ -86,14 +102,10 @@ const NearbySportsBars = ({ eventLat, eventLng, radiusM = 12000, limit = 8 }: Pr
     const query = `
 [out:json][timeout:20];
 (
-  node["amenity"~"^(bar|pub)$"]["sports_bar"="yes"](around:${r},${lat},${lng});
-  node["amenity"~"^(bar|pub)$"]["sport"](around:${r},${lat},${lng});
-  node["amenity"~"^(bar|pub)$"]["name"~"sport|sports",i](around:${r},${lat},${lng});
-  way["amenity"~"^(bar|pub)$"]["sports_bar"="yes"](around:${r},${lat},${lng});
-  way["amenity"~"^(bar|pub)$"]["sport"](around:${r},${lat},${lng});
-  way["amenity"~"^(bar|pub)$"]["name"~"sport|sports",i](around:${r},${lat},${lng});
+  node["amenity"~"^(bar|pub)$"](around:${r},${lat},${lng});
+  way["amenity"~"^(bar|pub)$"](around:${r},${lat},${lng});
 );
-out center tags 60;`;
+out center tags 80;`;
     const data = await fetchOverpass(query);
     if (!data?.elements) {
       setBars([]);
@@ -142,13 +154,13 @@ out center tags 60;`;
     }
     setResolvingZip(true);
     setError(null);
-    const loc = await resolveZip(clean);
+    const loc = await zipToLatLng(clean);
     setResolvingZip(false);
-    if (!loc || loc.latitude == null || loc.longitude == null) {
+    if (!loc) {
       setError("ZIP not found.");
       return;
     }
-    setManualCenter({ lat: loc.latitude, lng: loc.longitude, zip: loc.zip_code });
+    setManualCenter(loc);
   };
 
   return (
