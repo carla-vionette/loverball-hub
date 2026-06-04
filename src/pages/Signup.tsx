@@ -60,7 +60,6 @@ export default function Signup() {
           options: {
             shouldCreateUser: true,
             data: { name: name.trim() },
-            emailRedirectTo: `${window.location.origin}/finish-profile`,
           },
         });
         if (error) throw error;
