@@ -1012,6 +1012,7 @@ export type Database = {
           password_required: boolean
           plus_one_limit: number
           price: number | null
+          promoted: boolean
           rsvp_approval_required: boolean | null
           rsvp_deadline: string | null
           show_guest_count: boolean
@@ -1065,6 +1066,7 @@ export type Database = {
           password_required?: boolean
           plus_one_limit?: number
           price?: number | null
+          promoted?: boolean
           rsvp_approval_required?: boolean | null
           rsvp_deadline?: string | null
           show_guest_count?: boolean
@@ -1118,6 +1120,7 @@ export type Database = {
           password_required?: boolean
           plus_one_limit?: number
           price?: number | null
+          promoted?: boolean
           rsvp_approval_required?: boolean | null
           rsvp_deadline?: string | null
           show_guest_count?: boolean

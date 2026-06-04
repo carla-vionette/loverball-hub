@@ -55,6 +55,7 @@ interface DbEvent {
   event_tags?: string[] | null;
   location_lat?: number | null;
   location_lng?: number | null;
+  promoted?: boolean | null;
 }
 
 // Event color system:
@@ -158,6 +159,7 @@ const Events = () => {
           .from("events")
           .select("*")
           .eq("status", "published")
+          .order("promoted", { ascending: false })
           .order("event_date");
         if (error) throw error;
         setEvents(data || []);
