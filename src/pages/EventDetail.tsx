@@ -405,13 +405,14 @@ const EventDetail = () => {
     }
   };
 
-  // Share URLs route through the event-og-meta edge function so link-preview
-  // crawlers (iMessage/WhatsApp/Slack/Twitter/FB) see real Open Graph + Twitter
-  // Card tags. Humans get a 0s meta-refresh to the canonical /e/:id page.
+  // Share the canonical loverball.com/e/:id URL. The public event page emits
+  // per-route Open Graph + Twitter Card meta via <Seo/> (react-helmet-async),
+  // which JS-executing link-preview crawlers (Apple, Twitter, Slack, FB) read.
+  // Sharing the raw supabase.co edge-function URL caused iMessage to label the
+  // preview as a generic "Text Document" instead of rendering the OG card.
   const getShareUrl = () => {
-    const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
     if (!event?.id) return `https://www.loverball.com/e/`;
-    return `https://${projectId}.supabase.co/functions/v1/event-og-meta?id=${event.id}`;
+    return `https://www.loverball.com/e/${event.id}`;
   };
 
   const handleShare = () => {
