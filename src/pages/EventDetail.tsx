@@ -514,15 +514,16 @@ const EventDetail = () => {
         <main className="max-w-2xl mx-auto px-4 py-5 space-y-5 pb-32">
           {/* Tile-level preview */}
           <div className="rounded-2xl overflow-hidden bg-card border border-border">
-            {event.image_url ? (
-              <div className="aspect-[16/10] bg-muted">
-                <img src={event.image_url} alt={event.title} className="w-full h-full object-cover" loading="lazy" decoding="async" />
-              </div>
-            ) : (
-              <div className={`aspect-[16/10] bg-gradient-to-br ${themeClass} flex items-center justify-center`}>
-                <Calendar className="w-16 h-16 text-primary/30" />
-              </div>
-            )}
+            <div className="aspect-[16/10] bg-muted">
+              <img
+                src={resolveEventImage(event)}
+                alt={event.title}
+                className="w-full h-full object-cover"
+                loading="lazy"
+                decoding="async"
+                onError={handleEventImageError}
+              />
+            </div>
             <div className="p-5 space-y-2">
               {event.event_type && (
                 <Badge className="bg-primary text-primary-foreground">{eventTypeLabels[event.event_type] || event.event_type}</Badge>
