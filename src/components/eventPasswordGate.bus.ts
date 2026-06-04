@@ -1,24 +1,19 @@
 /**
  * Cross-tab sync bus for the event password gate.
  *
- * Goal: when one tab successfully unlocks or gets locked-out for an event,
- * every other open tab viewing the same event reflects that immediately —
- * without any manual refresh.
+ * Goal: when one tab successfully unlocks an event, every other open tab
+ * viewing the same event reflects that immediately — without any manual refresh.
  *
- * The server remains the source of truth for lockouts; this is a UX polish
- * layer. We use BroadcastChannel where available (modern browsers) and fall
- * back to a `storage` event on localStorage (works across tabs in every
- * browser we support, including Safari).
+ * The server remains the source of truth; this is a UX polish layer. We use
+ * BroadcastChannel where available (modern browsers) and fall back to a
+ * `storage` event on localStorage (works across tabs in every browser we
+ * support, including Safari).
  *
  * Messages are per-event so two events open in different tabs don't bleed
  * into each other.
  */
 
-export type GateBusMessage =
-  | { type: "unlocked"; at: number }
-  | { type: "locked"; lockedUntil: number; at: number }
-  | { type: "attempts"; attemptsLeft: number; at: number }
-  | { type: "cleared"; at: number };
+export type GateBusMessage = { type: "unlocked"; at: number };
 
 type Handler = (msg: GateBusMessage) => void;
 
