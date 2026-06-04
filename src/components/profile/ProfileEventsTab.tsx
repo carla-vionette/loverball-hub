@@ -3,6 +3,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { Calendar } from "lucide-react";
 import { format } from "date-fns";
 import { motion } from "framer-motion";
+import { handleEventImageError, resolveEventImage } from "@/lib/eventImage";
 
 interface RSVPEvent {
   id: string;
@@ -10,11 +11,15 @@ interface RSVPEvent {
   event: {
     id: string;
     title: string;
+    description?: string | null;
     event_date: string;
     event_time: string | null;
     venue_name: string | null;
     city: string | null;
     image_url: string | null;
+    banner_image?: string | null;
+    event_type?: string | null;
+    sport_tags?: string[] | null;
   };
 }
 
@@ -49,36 +54,37 @@ const ProfileEventsTab = ({
         <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground px-1">
           {label}
         </h4>
-        {items.map((rsvp) => (
-          <Card
-            key={rsvp.id}
-            className="p-3 flex items-center gap-3 cursor-pointer hover:border-primary/30 transition-colors"
-            onClick={() => onNavigate(`/event/${rsvp.event.id}`)}
-          >
-            {rsvp.event.image_url ? (
+        {items.map((rsvp) => {
+          const eventImage = resolveEventImage(rsvp.event);
+          return (
+            <Card
+              key={rsvp.id}
+              className="p-3 flex items-center gap-3 cursor-pointer hover:border-primary/30 transition-colors"
+              onClick={() => onNavigate(`/event/${rsvp.event.id}`)}
+            >
               <img
-                src={rsvp.event.image_url}
-                alt=""
-                className="w-14 h-14 rounded-lg object-cover shrink-0" loading="lazy" decoding="async" />
-            ) : (
-              <div className="w-14 h-14 rounded-lg bg-muted flex items-center justify-center shrink-0">
-                <Calendar className="w-5 h-5 text-muted-foreground" />
+                src={eventImage}
+                alt={rsvp.event.title}
+                className="w-14 h-14 rounded-lg object-cover shrink-0"
+                loading="lazy"
+                decoding="async"
+                onError={handleEventImageError}
+              />
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-semibold text-foreground line-clamp-1">
+                  {rsvp.event.title}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  {rsvp.event.venue_name || rsvp.event.city || "TBD"} ·{" "}
+                  {format(new Date(rsvp.event.event_date), "MMM d, yyyy")}
+                </p>
               </div>
-            )}
-            <div className="min-w-0 flex-1">
-              <p className="text-sm font-semibold text-foreground line-clamp-1">
-                {rsvp.event.title}
-              </p>
-              <p className="text-xs text-muted-foreground">
-                {rsvp.event.venue_name || rsvp.event.city || "TBD"} ·{" "}
-                {format(new Date(rsvp.event.event_date), "MMM d, yyyy")}
-              </p>
-            </div>
-            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-primary/10 text-primary capitalize shrink-0">
-              {rsvp.status}
-            </span>
-          </Card>
-        ))}
+              <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-primary/10 text-primary capitalize shrink-0">
+                {rsvp.status}
+              </span>
+            </Card>
+          );
+        })}
       </div>
     ) : null;
 
