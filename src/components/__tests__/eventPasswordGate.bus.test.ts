@@ -76,47 +76,6 @@ describe("subscribeGateBus", () => {
     busB.close();
   });
 
-  it("delivers lockout with lockedUntil to sibling tabs", () => {
-    const a = collect();
-    const b = collect();
-    const busA = subscribeGateBus("evt-2", a.handler);
-    const busB = subscribeGateBus("evt-2", b.handler);
-
-    busA.publish({ type: "locked", lockedUntil: 12345, at: 99 });
-
-    expect(b.got).toEqual([
-      expect.objectContaining({ type: "locked", lockedUntil: 12345 }),
-    ]);
-    busA.close();
-    busB.close();
-  });
-
-  it("delivers attempts updates so a wrong submit in A updates B's counter", () => {
-    const b = collect();
-    const busA = subscribeGateBus("evt-3", () => {});
-    const busB = subscribeGateBus("evt-3", b.handler);
-
-    busA.publish({ type: "attempts", attemptsLeft: 2, at: 1 });
-
-    expect(b.got).toEqual([
-      expect.objectContaining({ type: "attempts", attemptsLeft: 2 }),
-    ]);
-    busA.close();
-    busB.close();
-  });
-
-  it("delivers cleared so all tabs re-enable input simultaneously after cooldown", () => {
-    const b = collect();
-    const busA = subscribeGateBus("evt-4", () => {});
-    const busB = subscribeGateBus("evt-4", b.handler);
-
-    busA.publish({ type: "cleared", at: 1 });
-
-    expect(b.got).toEqual([expect.objectContaining({ type: "cleared" })]);
-    busA.close();
-    busB.close();
-  });
-
   it("isolates traffic per event id", () => {
     const b = collect();
     const busA = subscribeGateBus("evt-A", () => {});
