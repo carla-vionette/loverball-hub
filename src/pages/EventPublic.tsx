@@ -704,7 +704,7 @@ const EventPublic = () => {
               <SharePreview
                 title={`${event.title} · Loverball`}
                 description={shortDesc}
-                imageUrl={event.image_url}
+                imageUrl={resolveEventImage(event)}
                 siteName="loverball.com"
                 eventDate={dateStr}
                 eventTime={timeStr || null}
