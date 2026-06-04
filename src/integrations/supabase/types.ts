@@ -2513,6 +2513,7 @@ export type Database = {
       admin_get_event_attendees: {
         Args: { p_event_id: string }
         Returns: {
+          approval_status: string
           created_at: string
           guest_name: string
           guest_phone: string
