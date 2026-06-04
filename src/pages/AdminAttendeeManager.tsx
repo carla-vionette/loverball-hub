@@ -567,6 +567,7 @@ const AdminAttendeeManager = () => {
                   <TableHeader>
                     <TableRow>
                       <TableHead>Name</TableHead>
+                      <TableHead>Email</TableHead>
                       <TableHead>Status</TableHead>
                       <TableHead>Plus Ones</TableHead>
                       <TableHead>Phone</TableHead>
