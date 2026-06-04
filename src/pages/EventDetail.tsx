@@ -912,7 +912,7 @@ const EventDetail = () => {
                 <EventCheckIn eventId={event.id} eventDate={event.event_date} eventCity={event.city} />
               </div>
             )}
-            {!event.venue_name && (
+            {(event.event_type === 'watch_party' || event.location_type === 'virtual') && (
               <NearbySportsBars
                 eventLat={(event as any).location_lat ?? null}
                 eventLng={(event as any).location_lng ?? null}
