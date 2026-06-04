@@ -780,6 +780,17 @@ const EventDetail = () => {
                 {event.host_user_id && (
                   <div className="rounded-xl bg-card border border-border/30 p-3">
                     <EventHostProfile hostId={event.host_user_id} coHostIds={event.co_host_ids as string[] | undefined} />
+                    {user && (isAdmin || user.id === event.host_user_id || (event.co_host_ids || []).includes(user.id)) && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="w-full mt-3"
+                        onClick={() => navigate(`/admin/events/${event.id}/edit`)}
+                      >
+                        <Settings className="w-3.5 h-3.5 mr-2" />
+                        Dashboard
+                      </Button>
+                    )}
                   </div>
                 )}
                 {event.description && (
