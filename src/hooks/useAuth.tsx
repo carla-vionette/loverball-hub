@@ -35,13 +35,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const { data, error } = await supabase
       .from('user_roles')
       .select('role')
-      .eq('user_id', userId)
-      .maybeSingle();
-    
-    if (error) {
+      .eq('user_id', userId);
+
+    if (error || !data || data.length === 0) {
       return null;
     }
-    return data?.role as AppRole | null;
+    const roles = data.map((r) => r.role as AppRole);
+    // Highest privilege wins
+    if (roles.includes('admin')) return 'admin';
+    if (roles.includes('member')) return 'member';
+    return roles[0] ?? null;
   }, []);
 
   const applySession = useCallback(async (nextSession: Session | null) => {
