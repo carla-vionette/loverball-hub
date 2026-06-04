@@ -231,24 +231,36 @@ export default function Signup() {
                 <ArrowLeft className="w-4 h-4" /> Back
               </button>
 
-              <div className="mb-8">
+              <div className="mb-6">
                 <h1 className="text-3xl font-serif tracking-tight text-foreground">Enter your code</h1>
-                <p className="text-foreground/60 mt-2 text-base">
-                  Sent to <span className="text-foreground font-medium">{sentTo}</span>
-                </p>
+                <p className="text-foreground/60 mt-2 text-base">We sent a 6-digit code to verify you.</p>
               </div>
 
               <form onSubmit={handleVerify} className="space-y-5 flex-1">
-                <Input
-                  autoFocus
-                  inputMode="numeric"
-                  pattern="[0-9]*"
-                  maxLength={6}
-                  value={otp}
-                  onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))}
-                  placeholder="••••••"
-                  className="h-16 text-center text-2xl tracking-[0.5em] rounded-2xl"
-                />
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-foreground">
+                    {method === "email" ? "Email" : "Phone"}
+                  </label>
+                  <Input
+                    value={sentTo}
+                    disabled
+                    className="h-14 text-base rounded-2xl opacity-60 cursor-not-allowed"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-foreground">6-digit code</label>
+                  <Input
+                    autoFocus
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    maxLength={6}
+                    value={otp}
+                    onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))}
+                    placeholder="••••••"
+                    className="h-16 text-center text-2xl tracking-[0.5em] rounded-2xl"
+                  />
+                </div>
 
                 <Button
                   type="submit"
