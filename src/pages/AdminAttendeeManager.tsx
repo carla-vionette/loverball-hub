@@ -249,9 +249,10 @@ const AdminAttendeeManager = () => {
   const exportCSV = () => {
     if (attendees.length === 0) return;
 
-    const headers = ['Name', 'Status', 'Plus Ones', 'Phone', 'City', 'Instagram', 'RSVP Date'];
+    const headers = ['Name', 'Email', 'Status', 'Plus Ones', 'Phone', 'City', 'Instagram', 'RSVP Date'];
     const rows = attendees.map(a => [
       a.name || a.profile?.name || 'Unknown',
+      a.email || '',
       statusConfig[a.status]?.label || a.status,
       a.plus_ones || 0,
       a.phone || a.profile?.phone_number || '',
