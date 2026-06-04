@@ -173,10 +173,7 @@ const App = () => (
                 <Route path="/club/drafts" element={<Navigate to="/club" replace />} />
                 <Route path="/inbox" element={<Navigate to="/messages" replace />} />
                 <Route path="/dms" element={<Navigate to="/messages" replace />} />
-                <Route path="/about" element={<Navigate to="/" replace />} />
-                <Route path="/contact" element={<Navigate to="/" replace />} />
-                <Route path="/membership" element={<Navigate to="/profile" replace />} />
-                <Route path="/pricing" element={<Navigate to="/profile" replace />} />
+                <Route path="/pricing" element={<Navigate to="/membership" replace />} />
                 <Route path="/billing" element={<Navigate to="/profile" replace />} />
                 <Route path="/invites" element={<Navigate to="/profile" replace />} />
                 <Route path="/invite/:code" element={<Navigate to="/" replace />} />
