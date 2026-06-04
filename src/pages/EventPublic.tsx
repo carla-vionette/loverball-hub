@@ -150,7 +150,8 @@ const EventPublic = () => {
     })();
   }, [id]);
 
-  const publicUrl = `${SITE}/e/${id}`;
+  const canonicalUrl = `${SITE}/e/${id}`;
+  const publicUrl = id ? buildShareUrl(id) : canonicalUrl;
   const isHost = !!user && !!event && event.host_user_id === user.id;
   const capacityReached = !!event?.capacity && attendeeCount >= (event.capacity ?? 0);
   const guestVisible = event?.guest_visibility !== false;
