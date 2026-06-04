@@ -68,8 +68,10 @@ const ResetPassword = () => {
       return;
     }
     setStatus("success");
-    toast({ title: "Password updated" });
-    setTimeout(() => navigate("/feed"), 1200);
+    toast({ title: "Password updated", description: "Sign in with your new password." });
+    // Sign out the recovery session so the user logs in fresh with the new password.
+    await supabase.auth.signOut();
+    setTimeout(() => navigate("/auth?mode=signin&reset=success"), 1500);
   };
 
   return (
