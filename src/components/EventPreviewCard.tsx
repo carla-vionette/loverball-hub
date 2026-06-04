@@ -3,20 +3,23 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Calendar, MapPin, Clock, Loader2 } from 'lucide-react';
+import { Calendar, MapPin, Clock } from 'lucide-react';
 import { format } from 'date-fns';
 import { parseEventDate } from '@/lib/eventDate';
+import { handleEventImageError, resolveEventImage } from '@/lib/eventImage';
 
 interface EventData {
   id: string;
   title: string;
   description: string | null;
   image_url: string | null;
+  banner_image?: string | null;
   event_date: string;
   event_time: string | null;
   venue_name: string | null;
   city: string | null;
   event_type: string | null;
+  sport_tags?: string[] | null;
 }
 
 interface EventPreviewCardProps {
@@ -45,7 +48,7 @@ const EventPreviewCard = ({ eventId }: EventPreviewCardProps) => {
       try {
         const { data, error } = await supabase
           .from('events')
-          .select('id, title, description, image_url, event_date, event_time, venue_name, city, event_type')
+          .select('id, title, description, image_url, banner_image, event_date, event_time, venue_name, city, event_type, sport_tags')
           .eq('id', eventId)
           .maybeSingle();
 
@@ -84,36 +87,31 @@ const EventPreviewCard = ({ eventId }: EventPreviewCardProps) => {
   }
 
   if (error || !event) {
-    return null; // Don't show anything if event can't be loaded
+    return null;
   }
+
+  const eventImage = resolveEventImage(event);
 
   return (
     <Card 
       className="w-full max-w-sm overflow-hidden cursor-pointer hover:shadow-md transition-shadow border-border/50"
       onClick={() => navigate(`/event/${event.id}`)}
     >
-      {/* Image */}
       <div className="relative h-24 bg-gradient-to-br from-primary/20 to-accent/20">
-        {event.image_url ? (
-          <img 
-            src={event.image_url} 
-            alt={event.title}
-            loading="lazy"
-            className="w-full h-full object-cover"
-          />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center">
-            <Calendar className="w-8 h-8 text-primary/40" />
-          </div>
-        )}
+        <img 
+          src={eventImage}
+          alt={event.title}
+          loading="lazy"
+          className="w-full h-full object-cover"
+          onError={handleEventImageError}
+        />
         {event.event_type && (
-          <Badge className="absolute top-2 left-2 text-xs bg-primary text-white">
+          <Badge className="absolute top-2 left-2 text-xs bg-primary text-primary-foreground">
             {eventTypeLabels[event.event_type] || event.event_type}
           </Badge>
         )}
       </div>
 
-      {/* Content */}
       <CardContent className="p-3 space-y-1.5">
         <h4 className="font-semibold text-sm line-clamp-1">{event.title}</h4>
         

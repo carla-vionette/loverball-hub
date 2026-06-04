@@ -7,6 +7,7 @@ import { Calendar, Clock, MapPin, Check, Share2 } from "lucide-react";
 import { format } from "date-fns";
 import { C, fonts } from "@/lib/editorialTheme";
 import Seo from "@/components/Seo";
+import { resolveEventImage } from "@/lib/eventImage";
 
 interface Ev {
   id: string;
@@ -16,6 +17,9 @@ interface Ev {
   venue_name: string | null;
   city: string | null;
   image_url: string | null;
+  banner_image?: string | null;
+  event_type?: string | null;
+  sport_tags?: string[] | null;
 }
 
 const formatTime = (t: string) => {
@@ -37,7 +41,7 @@ const RsvpConfirmed = () => {
     if (!eventId) return;
     (async () => {
       const [{ data: ev }, { count }, { data: { user } }] = await Promise.all([
-        supabase.from("events").select("id, title, event_date, event_time, venue_name, city, image_url").eq("id", eventId).maybeSingle(),
+        supabase.from("events").select("id, title, event_date, event_time, venue_name, city, image_url, banner_image, event_type, sport_tags").eq("id", eventId).maybeSingle(),
         supabase.from("event_rsvps").select("*", { count: "exact", head: true }).eq("event_id", eventId).eq("status", "attending"),
         supabase.auth.getUser(),
       ]);
@@ -53,6 +57,7 @@ const RsvpConfirmed = () => {
   const dateStr = event ? format(new Date(event.event_date + "T00:00:00"), "EEE, MMM d") : "";
   const timeStr = event?.event_time ? formatTime(event.event_time) : "";
   const loc = [event?.venue_name, event?.city].filter(Boolean).join(", ");
+  const eventImage = event ? resolveEventImage(event) : null;
 
   const heading =
     status === "waitlisted" ? "You're on the list." :
@@ -108,8 +113,8 @@ const RsvpConfirmed = () => {
             <div
               className="aspect-[1.91/1] w-full"
               style={{
-                background: event.image_url
-                  ? `url(${event.image_url}) center/cover`
+                background: eventImage
+                  ? `url(${eventImage}) center/cover`
                   : `linear-gradient(135deg, ${C.raspberry}, ${C.surfaceHi})`,
               }}
             />
@@ -128,47 +133,23 @@ const RsvpConfirmed = () => {
                   variant="outline"
                   onClick={() => {
                     const url = `${window.location.origin}/e/${event.id}`;
-                    if (typeof navigator.share === "function") {
-                      navigator.share({ title: event.title, url }).catch(() => { /* cancelled */ });
-                    } else {
-                      navigator.clipboard.writeText(url);
-                    }
+                    navigator.clipboard.writeText(url);
                   }}
-                  className="flex-1 h-11 rounded-full text-xs uppercase tracking-[0.18em] bg-transparent"
-                  style={{ borderColor: C.borderStrong, color: C.text, fontFamily: fonts.mono }}
                 >
-                  <Share2 className="w-3.5 h-3.5 mr-2" /> Bring a friend
+                  <Share2 className="w-4 h-4 mr-2" /> Share
                 </Button>
+                <Button onClick={() => navigate(continueTo)}>{continueLabel}</Button>
               </div>
             </div>
           </motion.div>
         )}
-      </main>
 
-      {/* Sticky CTA */}
-      <div
-        className="fixed bottom-0 left-0 right-0 border-t px-5 pt-3 pb-[calc(env(safe-area-inset-bottom)+12px)]"
-        style={{ background: C.surface, borderColor: C.border }}
-      >
-        <div className="max-w-md mx-auto flex flex-col gap-2">
-          <Button
-            onClick={() => navigate(continueTo)}
-            className="w-full h-14 rounded-full text-xs uppercase tracking-[0.22em] border-0"
-            style={{ background: C.raspberry, color: "#fff", fontFamily: fonts.mono }}
-          >
-            {continueLabel}
-          </Button>
-          {!returning && (
-            <Link
-              to="/feed"
-              className="text-center text-[11px] uppercase tracking-[0.18em] py-2 opacity-60 hover:opacity-100"
-              style={{ color: C.muted, fontFamily: fonts.mono }}
-            >
-              Skip for now
-            </Link>
-          )}
+        <div className="text-center">
+          <Link to="/events" className="text-sm underline underline-offset-4" style={{ color: C.muted }}>
+            Browse more events
+          </Link>
         </div>
-      </div>
+      </main>
     </div>
   );
 };
