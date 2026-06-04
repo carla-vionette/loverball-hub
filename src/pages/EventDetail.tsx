@@ -605,7 +605,7 @@ const EventDetail = () => {
           title={`${event.title} · Loverball`}
           description={buildSharePreviewDescription(event).slice(0, 200)}
           path={`/e/${event.id}`}
-          image={event.image_url || undefined}
+          image={resolveEventImage(event)}
           imageAlt={`${event.title} — Loverball event cover`}
           type="event"
           jsonLd={{
