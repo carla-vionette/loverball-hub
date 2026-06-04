@@ -1041,12 +1041,6 @@ const EventDetail = () => {
                 city={event.city || null}
               />
 
-              {/* Social Share Buttons */}
-              <SocialShareButtons
-                url={getShareUrl()}
-                text={buildShareSummary(event)}
-              />
-              
               {/* Share Actions */}
               <div className="flex gap-2">
                 <Button 
@@ -1057,15 +1051,32 @@ const EventDetail = () => {
                   <Copy className="w-4 h-4 mr-2" />
                   Copy Link
                 </Button>
-                {typeof navigator.share === 'function' && (
-                  <Button 
-                    className="flex-1"
-                    onClick={handleNativeShare}
+                <Button 
+                  variant="outline" 
+                  className="flex-1"
+                  asChild
+                >
+                  <a
+                    href={`mailto:?subject=${encodeURIComponent(event.title)}&body=${encodeURIComponent(buildShareSummary(event) + "\n\n" + getShareUrl())}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
                   >
-                    <Share2 className="w-4 h-4 mr-2" />
-                    Share
-                  </Button>
-                )}
+                    <Mail className="w-4 h-4 mr-2" />
+                    Email
+                  </a>
+                </Button>
+                <Button 
+                  variant="outline" 
+                  className="flex-1"
+                  asChild
+                >
+                  <a
+                    href={`sms:?&body=${encodeURIComponent(buildShareSummary(event) + "\n\n" + getShareUrl())}`}
+                  >
+                    <Smartphone className="w-4 h-4 mr-2" />
+                    Text
+                  </a>
+                </Button>
               </div>
               
               {/* Share URL Preview */}

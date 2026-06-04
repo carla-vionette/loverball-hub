@@ -713,12 +713,6 @@ const EventPublic = () => {
                 city={event.city}
               />
 
-              {/* Social Share Buttons */}
-              <SocialShareButtons
-                url={publicUrl}
-                text={buildShareSummary(event)}
-              />
-
               <div className="flex gap-2">
                 <Button
                   variant="outline"
@@ -728,15 +722,32 @@ const EventPublic = () => {
                 >
                   <Copy className="w-3.5 h-3.5 mr-2" /> Copy Link
                 </Button>
-                {typeof navigator.share === "function" && (
-                  <Button
-                    className="flex-1 h-11 rounded-full text-xs uppercase tracking-[0.2em] border-0"
-                    style={{ background: C.raspberry, color: "#fff", fontFamily: fonts.mono }}
-                    onClick={handleNativeShare}
+                <Button
+                  variant="outline"
+                  className="flex-1 h-11 rounded-full text-xs uppercase tracking-[0.2em] bg-transparent"
+                  style={{ borderColor: C.borderStrong, color: C.text, fontFamily: fonts.mono }}
+                  asChild
+                >
+                  <a
+                    href={`mailto:?subject=${encodeURIComponent(event.title)}&body=${encodeURIComponent(buildShareSummary(event) + "\n\n" + publicUrl)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
                   >
-                    <Share2 className="w-3.5 h-3.5 mr-2" /> Share
-                  </Button>
-                )}
+                    <Mail className="w-3.5 h-3.5 mr-2" /> Email
+                  </a>
+                </Button>
+                <Button
+                  variant="outline"
+                  className="flex-1 h-11 rounded-full text-xs uppercase tracking-[0.2em] bg-transparent"
+                  style={{ borderColor: C.borderStrong, color: C.text, fontFamily: fonts.mono }}
+                  asChild
+                >
+                  <a
+                    href={`sms:?&body=${encodeURIComponent(buildShareSummary(event) + "\n\n" + publicUrl)}`}
+                  >
+                    <Smartphone className="w-3.5 h-3.5 mr-2" /> Text
+                  </a>
+                </Button>
               </div>
               <div className="rounded-xl p-3" style={{ background: C.bg, border: `1px solid ${C.borderStrong}` }}>
                 <p className="text-xs mb-1 flex items-center gap-1" style={{ color: C.muted, fontFamily: fonts.mono, letterSpacing: "0.04em" }}>
