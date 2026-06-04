@@ -108,60 +108,13 @@ export default defineConfig(({ mode }) => ({
   build: {
     target: 'es2020',
     minify: 'esbuild',
-    chunkSizeWarningLimit: 500,
+    chunkSizeWarningLimit: 800,
     cssCodeSplit: true,
-    // Aggressive chunk splitting for slow connections.
-    // We use the FUNCTION form of manualChunks (not the object form) because
-    // the object form is sensitive to import order — with Radix importing React
-    // first, React was leaking into vendor-ui and vendor-react was almost empty,
-    // which broke the production build (createContext undefined).
-    rollupOptions: {
-      output: {
-        manualChunks(id) {
-          if (!id.includes('node_modules')) return;
-
-          // Core React — cached once, never changes. Match anything react / react-dom /
-          // react-router-dom and their scheduler/runtime deps so they ALL land here.
-          if (
-            id.match(/[\\/]node_modules[\\/](react|react-dom|react-router|react-router-dom|scheduler)[\\/]/) ||
-            id.match(/[\\/]node_modules[\\/]@remix-run[\\/]/)
-          ) {
-            return 'vendor-react';
-          }
-
-          // UI framework — large but stable
-          if (id.includes('node_modules/@radix-ui/')) return 'vendor-ui';
-
-          // Data/state
-          if (
-            id.includes('node_modules/@tanstack/react-query') ||
-            id.includes('node_modules/zustand') ||
-            id.includes('node_modules/@supabase/')
-          ) {
-            return 'vendor-data';
-          }
-
-          // Animation — only loaded when needed
-          if (id.includes('node_modules/framer-motion')) return 'vendor-motion';
-
-          // Forms
-          if (
-            id.includes('node_modules/react-hook-form') ||
-            id.includes('node_modules/@hookform/') ||
-            id.includes('node_modules/zod')
-          ) {
-            return 'vendor-forms';
-          }
-
-          // Date utilities
-          if (id.includes('node_modules/date-fns')) return 'vendor-date';
-
-          // NOTE: recharts is intentionally NOT split out. It is ~400 KB and only
-          // used in the admin analytics tab. Letting Vite tree-shake it into the
-          // admin lazy chunk keeps it out of the initial modulepreload list, so
-          // 3G/slow-LTE users who never visit /admin don't pay for it.
-        },
-      },
-    },
+    // NOTE: Custom manualChunks was removed because splitting React, react-query,
+    // and @supabase into separate chunks caused a production-only runtime error:
+    //   "Cannot read properties of undefined (reading 'createContext')"
+    // The CJS↔ESM interop for react-query resolves React as `undefined` when it
+    // lives in a sibling chunk loaded in parallel. Letting Vite/Rollup do default
+    // chunking keeps React co-located with its consumers and ships a working bundle.
   },
 }));
