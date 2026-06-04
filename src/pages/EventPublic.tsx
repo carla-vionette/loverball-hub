@@ -20,6 +20,13 @@ import RsvpPhoneSheet from "@/components/rsvp/RsvpPhoneSheet";
 import EventPasswordGate, { isEventUnlocked } from "@/components/EventPasswordGate";
 
 const SITE = "https://www.loverball.com";
+const SUPABASE_PROJECT_ID = import.meta.env.VITE_SUPABASE_PROJECT_ID;
+// Share URLs go through an edge function that renders Open Graph meta tags
+// for link-preview crawlers (iMessage, WhatsApp, Slack, Twitter, FB) — the
+// SPA shell at /e/:id can't serve OG tags itself. Humans get a 0s meta-refresh
+// redirect back to the canonical /e/:id page.
+const buildShareUrl = (eventId: string) =>
+  `https://${SUPABASE_PROJECT_ID}.supabase.co/functions/v1/event-og-meta?id=${eventId}`;
 
 interface PublicEvent {
   id: string;
