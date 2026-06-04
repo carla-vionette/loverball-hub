@@ -110,11 +110,16 @@ export default defineConfig(({ mode }) => ({
     minify: 'esbuild',
     chunkSizeWarningLimit: 800,
     cssCodeSplit: true,
-    // NOTE: Custom manualChunks was removed because splitting React, react-query,
-    // and @supabase into separate chunks caused a production-only runtime error:
-    //   "Cannot read properties of undefined (reading 'createContext')"
-    // The CJS↔ESM interop for react-query resolves React as `undefined` when it
-    // lives in a sibling chunk loaded in parallel. Letting Vite/Rollup do default
-    // chunking keeps React co-located with its consumers and ships a working bundle.
+    rollupOptions: {
+      output: {
+        // Explicitly disable manualChunks. A previous split into
+        // vendor-react / vendor-data / vendor-ui produced a circular ESM
+        // import between vendor-data and vendor-react, causing a runtime
+        // "Cannot read properties of undefined (reading 'createContext')"
+        // that blanks the page on first load of routes like /e/:id.
+        // Letting Rollup co-locate React with its consumers avoids it.
+        manualChunks: undefined,
+      },
+    },
   },
 }));
