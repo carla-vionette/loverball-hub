@@ -178,13 +178,15 @@ Deno.serve(async (req) => {
     // If query is just a league abbreviation, don't filter by team text.
     const isLeagueOnly = !!LEAGUE_ALIASES[q.toLowerCase()];
 
-    const raw = (await Promise.all(leagues.map(fetchLeagueWindow))).flat();
+    const perLeague = await Promise.all(
+      leagues.map(async (lg) => ({ lg, items: await fetchLeagueWindow(lg) }))
+    );
     const normalized: GameOut[] = [];
-    for (let i = 0; i < raw.length; i++) {
-      const g = raw[i];
-      const lg = leagues[0]; // best-effort; raw is mixed but tagged by request order
-      const out = normalize(g, lg);
-      if (out) normalized.push(out);
+    for (const { lg, items } of perLeague) {
+      for (const g of items) {
+        const out = normalize(g, lg);
+        if (out) normalized.push(out);
+      }
     }
 
     const filtered = isLeagueOnly
