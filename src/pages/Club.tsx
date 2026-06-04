@@ -78,7 +78,7 @@ type SortId = typeof SORTS[number]["id"];
 
 const Club = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
 
   const [tab, setTab] = useState<TabId>("discover");
   const [members, setMembers] = useState<Member[]>([]);
@@ -95,6 +95,9 @@ const Club = () => {
   const [chatsLoading, setChatsLoading] = useState(false);
 
   useEffect(() => {
+    // Don't fetch protected data until auth is confirmed and a user exists.
+    if (authLoading) return;
+    if (!user) { setLoading(false); return; }
     let cancelled = false;
     (async () => {
       try {
