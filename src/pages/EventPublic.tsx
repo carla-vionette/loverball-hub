@@ -8,13 +8,13 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Calendar, Clock, MapPin, Share2, Copy, Mail, Loader2, ArrowLeft, Check, HelpCircle, X, Link2 } from "lucide-react";
+import { Calendar, Clock, MapPin, Share2, Copy, Mail, Smartphone, Loader2, ArrowLeft, Check, HelpCircle, X, Link2 } from "lucide-react";
 import { format } from "date-fns";
 import loverballLogo from "@/assets/loverball-script-logo.png";
 import { C, fonts } from "@/lib/editorialTheme";
 import { buildShareSummary, buildSharePreviewDescription } from "@/lib/eventShare";
 import SharePreview from "@/components/SharePreview";
-import SocialShareButtons from "@/components/SocialShareButtons";
+
 import type { RsvpIntent } from "@/components/EventRSVPDialog";
 import RsvpPhoneSheet from "@/components/rsvp/RsvpPhoneSheet";
 import EventPasswordGate, { isEventUnlocked } from "@/components/EventPasswordGate";

@@ -761,12 +761,6 @@ const Events = () => {
                   city={shareEvent.city || null}
                 />
 
-                {/* Social Share Buttons */}
-                <SocialShareButtons
-                  url={getShareUrl(shareEvent)}
-                  text={buildShareSummary(shareEvent)}
-                />
-
                 <div className="flex gap-2">
                   <Button
                     variant="outline"
@@ -776,15 +770,32 @@ const Events = () => {
                   >
                     <Copy className="w-4 h-4 mr-2" /> Copy Link
                   </Button>
-                  {typeof navigator.share === "function" && (
-                    <Button
-                      className="flex-1 h-11 rounded-full"
-                      style={{ background: "#E85D2F", color: "#fff", fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: 12, letterSpacing: "0.12em", textTransform: "uppercase" }}
-                      onClick={handleNativeShare}
+                  <Button
+                    variant="outline"
+                    className="flex-1 h-11 rounded-full bg-transparent"
+                    style={{ borderColor: "rgba(255,255,255,0.12)", color: "#FAF5E9", fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: 12, letterSpacing: "0.12em", textTransform: "uppercase" }}
+                    asChild
+                  >
+                    <a
+                      href={`mailto:?subject=${encodeURIComponent(shareEvent.title)}&body=${encodeURIComponent(buildShareSummary(shareEvent) + "\n\n" + getShareUrl(shareEvent))}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
                     >
-                      <Share2 className="w-4 h-4 mr-2" /> Share
-                    </Button>
-                  )}
+                      <Mail className="w-4 h-4 mr-2" /> Email
+                    </a>
+                  </Button>
+                  <Button
+                    variant="outline"
+                    className="flex-1 h-11 rounded-full bg-transparent"
+                    style={{ borderColor: "rgba(255,255,255,0.12)", color: "#FAF5E9", fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: 12, letterSpacing: "0.12em", textTransform: "uppercase" }}
+                    asChild
+                  >
+                    <a
+                      href={`sms:?&body=${encodeURIComponent(buildShareSummary(shareEvent) + "\n\n" + getShareUrl(shareEvent))}`}
+                    >
+                      <Smartphone className="w-4 h-4 mr-2" /> Text
+                    </a>
+                  </Button>
                 </div>
                 <div className="rounded-xl p-3" style={{ background: "rgba(20,20,21,0.6)", border: "1px solid rgba(255,255,255,0.08)" }}>
                   <p className="text-xs mb-1 flex items-center gap-1" style={{ color: "rgba(248,248,248,0.5)", fontFamily: "'Space Mono', ui-monospace, monospace", letterSpacing: "0.04em" }}>
