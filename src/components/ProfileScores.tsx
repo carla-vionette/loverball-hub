@@ -1,10 +1,11 @@
-import React, { useState, useMemo } from "react";
-import { useProfileScores, type GameScore } from "@/hooks/useProfileScores";
+import React, { useEffect, useState } from "react";
+import { useProfileScores, useSportsSearch, type GameScore } from "@/hooks/useProfileScores";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Trophy, Clock, Radio, RefreshCw, Search } from "lucide-react";
+import { Trophy, Clock, Radio, RefreshCw, Search, Loader2 } from "lucide-react";
+
 
 
 const STATUS_CONFIG: Record<
