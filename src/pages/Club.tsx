@@ -163,7 +163,7 @@ const Club = () => {
     return () => {
       cancelled = true;
     };
-  }, [user]);
+  }, [user, authLoading]);
 
   // Lightweight chat preview via direct_messages
   useEffect(() => {
