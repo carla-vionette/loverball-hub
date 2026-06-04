@@ -2,12 +2,12 @@ import React, { useState, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Calendar, MapPin, Users, Clock, Loader2, PlusCircle, Send, Search, Share2, Copy, Link2 } from "lucide-react";
+import { Calendar, MapPin, Users, Clock, Loader2, PlusCircle, Send, Search, Share2, Copy, Link2, Mail, Smartphone } from "lucide-react";
 import EventTagBadges from "@/components/EventTagBadges";
 import SponsorCard from "@/components/SponsorCard";
 import RsvpAvatarBar from "@/components/RsvpAvatarBar";
 import SharePreview from "@/components/SharePreview";
-import SocialShareButtons from "@/components/SocialShareButtons";
+
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
