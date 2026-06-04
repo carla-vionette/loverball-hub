@@ -175,6 +175,30 @@ out center tags 80;`;
     localStorage.setItem("sportsBarsZip", loc.zip);
   };
 
+  const detectLocation = () => {
+    if (!("geolocation" in navigator)) {
+      setError("Geolocation is not supported by your browser.");
+      return;
+    }
+    setResolvingZip(true);
+    setError(null);
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setResolvingZip(false);
+        setManualCenter({
+          lat: pos.coords.latitude,
+          lng: pos.coords.longitude,
+          zip: "your location",
+        });
+      },
+      () => {
+        setResolvingZip(false);
+        setError("Could not get your location. Try entering a ZIP code.");
+      },
+      { timeout: 10000 }
+    );
+  };
+
   return (
     <Card className="mt-6 border-primary/20">
       <CardHeader className="pb-3">
@@ -193,7 +217,7 @@ out center tags 80;`;
         {!center && (
           <form onSubmit={submitZip} className="space-y-2">
             <p className="text-xs text-muted-foreground">
-              Enter your ZIP to find sports bars near you.
+              Enter your ZIP or use your location to find sports bars near you.
             </p>
             <div className="flex gap-2">
               <Input
@@ -205,9 +229,20 @@ out center tags 80;`;
                 className="h-9"
               />
               <Button type="submit" size="sm" disabled={resolvingZip}>
-                {resolvingZip ? "…" : "Find"}
+                {resolvingZip ? "…" : "Find Bars"}
               </Button>
             </div>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={detectLocation}
+              disabled={resolvingZip}
+              className="w-full h-9 gap-1.5"
+            >
+              <Navigation className="w-3.5 h-3.5" />
+              Use my current location
+            </Button>
             {error && <p className="text-xs text-destructive">{error}</p>}
           </form>
         )}
