@@ -345,10 +345,14 @@ const AdminAttendeeManager = () => {
     maybe: attendees.filter(a => a.status === 'maybe').length,
     waitlist: attendees.filter(a => a.status === 'waitlist').length,
     declined: attendees.filter(a => ['no', 'declined'].includes(a.status)).length,
+    pendingApproval: attendees.filter(a => a.approval_status === 'pending').length,
+    approved: attendees.filter(a => a.approval_status === 'approved').length,
+    rejected: attendees.filter(a => a.approval_status === 'rejected').length,
     totalPlusOnes: attendees.reduce((sum, a) => sum + (a.plus_ones || 0), 0),
   };
 
   const totalHeadcount = stats.attending + stats.totalPlusOnes;
+  const capacityPct = event?.capacity ? Math.min(100, Math.round((totalHeadcount / event.capacity) * 100)) : null;
 
   if (loading) {
     return (
