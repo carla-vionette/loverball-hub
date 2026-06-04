@@ -173,7 +173,7 @@ const ResetPassword = () => {
               Password updated
             </h1>
             <p style={{ fontFamily: fonts.sans, color: C.muted }}>
-              Signing you in…
+              Redirecting you to sign in…
             </p>
           </div>
         )}
