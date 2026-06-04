@@ -121,7 +121,16 @@ Deno.serve(async (req) => {
     const excludeIds = url.searchParams.get("exclude")?.split(",").filter(Boolean) || [];
     const includeIds = url.searchParams.get("include")?.split(",").filter(Boolean) || [];
     const singleId = url.searchParams.get("id");
-    const selectFields = url.searchParams.get("select") || "*";
+    // SECURITY: Hardcode allowed columns. Never accept user-supplied select strings,
+    // because this function uses the service-role client and would bypass RLS,
+    // allowing attackers to embed related sensitive tables (e.g. profiles_sensitive).
+    const selectFields = [
+      'id', 'name', 'bio', 'city', 'profile_photo_url',
+      'favorite_sports', 'favorite_la_teams', 'favorite_teams_players',
+      'primary_role', 'pronouns', 'industries', 'looking_for_tags',
+      'other_interests', 'membership_tier', 'total_points',
+      'current_streak', 'created_at'
+    ].join(', ');
 
     let profileData: any = null;
     let queryError: any = null;
