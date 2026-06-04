@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Calendar, Clock, MapPin, Users, Lock, Share2, ArrowLeft, Loader2, Check, X, HelpCircle, Video, ExternalLink, Copy, Link2, MessageCircle, CalendarPlus, Settings } from "lucide-react";
+import { Calendar, Clock, MapPin, Users, Lock, Share2, ArrowLeft, Loader2, Check, X, HelpCircle, Video, ExternalLink, Copy, Link2, MessageCircle, CalendarPlus, Settings, Mail, Smartphone } from "lucide-react";
 import { downloadICS } from "@/lib/ics";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useGestures } from "@/hooks/useGestures";
@@ -17,7 +17,7 @@ import { parseEventDate } from "@/lib/eventDate";
 import { motion, AnimatePresence } from "framer-motion";
 import loverballLogo from "@/assets/loverball-script-logo.png";
 import SharePreview from "@/components/SharePreview";
-import SocialShareButtons from "@/components/SocialShareButtons";
+
 import WhosGoing from "@/components/WhosGoing";
 import RsvpAvatarBar from "@/components/RsvpAvatarBar";
 import { trackEventRSVP, trackContentView } from "@/lib/analytics";
@@ -1041,12 +1041,6 @@ const EventDetail = () => {
                 city={event.city || null}
               />
 
-              {/* Social Share Buttons */}
-              <SocialShareButtons
-                url={getShareUrl()}
-                text={buildShareSummary(event)}
-              />
-              
               {/* Share Actions */}
               <div className="flex gap-2">
                 <Button 
@@ -1057,15 +1051,32 @@ const EventDetail = () => {
                   <Copy className="w-4 h-4 mr-2" />
                   Copy Link
                 </Button>
-                {typeof navigator.share === 'function' && (
-                  <Button 
-                    className="flex-1"
-                    onClick={handleNativeShare}
+                <Button 
+                  variant="outline" 
+                  className="flex-1"
+                  asChild
+                >
+                  <a
+                    href={`mailto:?subject=${encodeURIComponent(event.title)}&body=${encodeURIComponent(buildShareSummary(event) + "\n\n" + getShareUrl())}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
                   >
-                    <Share2 className="w-4 h-4 mr-2" />
-                    Share
-                  </Button>
-                )}
+                    <Mail className="w-4 h-4 mr-2" />
+                    Email
+                  </a>
+                </Button>
+                <Button 
+                  variant="outline" 
+                  className="flex-1"
+                  asChild
+                >
+                  <a
+                    href={`sms:?&body=${encodeURIComponent(buildShareSummary(event) + "\n\n" + getShareUrl())}`}
+                  >
+                    <Smartphone className="w-4 h-4 mr-2" />
+                    Text
+                  </a>
+                </Button>
               </div>
               
               {/* Share URL Preview */}
