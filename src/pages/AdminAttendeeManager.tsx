@@ -29,6 +29,7 @@ interface Event {
 interface Attendee {
   id: string;
   status: string;
+  approval_status: string | null;
   user_id: string;
   plus_ones: number | null;
   name: string | null;
