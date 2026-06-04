@@ -116,68 +116,86 @@ Deno.serve(async (req: Request) => {
     ogDescription += ' RSVP to hang with women who love sports.';
 
     // Get OG image URL - use event image or fallback to branded image
-    // IMPORTANT: Must be absolute URLs for social media crawlers
+    // IMPORTANT: Must be absolute https URLs for iMessage/WhatsApp crawlers
     const baseUrl = 'https://www.loverball.com';
     const fallbackImage = `${baseUrl}/og-image.png`;
-    
-    // Convert relative image URLs to absolute
+
+    // Convert relative image URLs to absolute https
     let ogImage = fallbackImage;
     if (event.image_url) {
-      if (event.image_url.startsWith('http')) {
+      if (event.image_url.startsWith('https://')) {
         ogImage = event.image_url;
+      } else if (event.image_url.startsWith('http://')) {
+        ogImage = 'https://' + event.image_url.slice(7);
       } else {
-        // Relative URL - prepend base URL
         ogImage = `${baseUrl}${event.image_url.startsWith('/') ? '' : '/'}${event.image_url}`;
       }
     }
-    
+
+    // Infer image MIME type for Apple/WhatsApp (helps avoid "file attachment" rendering)
+    const lowerImg = ogImage.toLowerCase().split('?')[0];
+    let ogImageType = 'image/png';
+    if (lowerImg.endsWith('.jpg') || lowerImg.endsWith('.jpeg')) ogImageType = 'image/jpeg';
+    else if (lowerImg.endsWith('.webp')) ogImageType = 'image/webp';
+    else if (lowerImg.endsWith('.gif')) ogImageType = 'image/gif';
+
     const eventUrl = `${baseUrl}/e/${event.id}`;
+    const imageAlt = `${event.title} – Loverball event`;
 
     console.log(`OG Title: ${ogTitle}`);
     console.log(`OG Description: ${ogDescription}`);
-    console.log(`OG Image: ${ogImage}`);
+    console.log(`OG Image: ${ogImage} (${ogImageType})`);
 
-    // Return HTML with OG meta tags for social crawlers
-    // Keep HTML minimal and clean for better crawler parsing
+    // Minimal HTML doc — crawlers (Applebot, WhatsApp, facebookexternalhit, Twitterbot, Slackbot)
+    // parse the <head>; real browsers follow the meta refresh / inline script to /e/{id}.
     const html = `<!DOCTYPE html>
-<html lang="en">
+<html lang="en" prefix="og: https://ogp.me/ns#">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>${escapeHtml(ogTitle)}</title>
+<link rel="canonical" href="${escapeHtml(eventUrl)}">
+<meta name="description" content="${escapeHtml(ogDescription)}">
 <meta property="og:type" content="website">
+<meta property="og:site_name" content="Loverball">
 <meta property="og:url" content="${escapeHtml(eventUrl)}">
 <meta property="og:title" content="${escapeHtml(ogTitle)}">
 <meta property="og:description" content="${escapeHtml(ogDescription)}">
 <meta property="og:image" content="${escapeHtml(ogImage)}">
+<meta property="og:image:secure_url" content="${escapeHtml(ogImage)}">
+<meta property="og:image:type" content="${ogImageType}">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:site_name" content="Loverball">
+<meta property="og:image:alt" content="${escapeHtml(imageAlt)}">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@loverball">
+<meta name="twitter:url" content="${escapeHtml(eventUrl)}">
 <meta name="twitter:title" content="${escapeHtml(ogTitle)}">
 <meta name="twitter:description" content="${escapeHtml(ogDescription)}">
 <meta name="twitter:image" content="${escapeHtml(ogImage)}">
-<meta name="description" content="${escapeHtml(ogDescription)}">
+<meta name="twitter:image:alt" content="${escapeHtml(imageAlt)}">
 <link rel="image_src" href="${escapeHtml(ogImage)}">
+<meta name="apple-mobile-web-app-title" content="Loverball">
 <meta http-equiv="refresh" content="0;url=${escapeHtml(eventUrl)}">
 </head>
 <body>
-<p>Redirecting to <a href="${escapeHtml(eventUrl)}">${escapeHtml(event.title)}</a>...</p>
+<p>Redirecting to <a href="${escapeHtml(eventUrl)}">${escapeHtml(event.title)}</a>…</p>
+<script>window.location.replace(${JSON.stringify(eventUrl)});</script>
 </body>
 </html>`;
 
-    // Create response with explicit HTML content type
-    const response = new Response(html, {
+    return new Response(html, {
       status: 200,
       headers: new Headers({
         ...corsHeaders,
         'Content-Type': 'text/html; charset=utf-8',
+        'Content-Length': String(new TextEncoder().encode(html).length),
         'Cache-Control': 'public, max-age=300, s-maxage=300',
         'X-Content-Type-Options': 'nosniff',
+        'X-Robots-Tag': 'noindex',
+        'Vary': 'User-Agent',
       }),
     });
-
-    return response;
 
   } catch (error: unknown) {
     console.error('Error in event-og-meta function:', error);
