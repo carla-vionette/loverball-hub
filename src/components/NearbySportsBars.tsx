@@ -102,14 +102,10 @@ const NearbySportsBars = ({ eventLat, eventLng, radiusM = 5000, limit = 8 }: Pro
     const query = `
 [out:json][timeout:20];
 (
-  node["amenity"~"^(bar|pub)$"]["sports_bar"="yes"](around:${r},${lat},${lng});
-  node["amenity"~"^(bar|pub)$"]["sport"](around:${r},${lat},${lng});
-  node["amenity"~"^(bar|pub)$"]["name"~"sport|sports",i](around:${r},${lat},${lng});
-  way["amenity"~"^(bar|pub)$"]["sports_bar"="yes"](around:${r},${lat},${lng});
-  way["amenity"~"^(bar|pub)$"]["sport"](around:${r},${lat},${lng});
-  way["amenity"~"^(bar|pub)$"]["name"~"sport|sports",i](around:${r},${lat},${lng});
+  node["amenity"~"^(bar|pub)$"](around:${r},${lat},${lng});
+  way["amenity"~"^(bar|pub)$"](around:${r},${lat},${lng});
 );
-out center tags 60;`;
+out center tags 80;`;
     const data = await fetchOverpass(query);
     if (!data?.elements) {
       setBars([]);
