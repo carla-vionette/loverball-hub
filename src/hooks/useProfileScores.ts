@@ -123,15 +123,16 @@ export function useProfileScores(favoriteTeams: string[] = []) {
 
     try {
       setLoading(true);
+      // Use sports-search with no query → returns live/recent/upcoming across ALL major
+      // leagues (NBA, WNBA, MLB, NHL, NFL, MLS, NWSL) from ESPN's public scoreboard.
       const { data, error: fnError } = await supabase.functions.invoke(
-        "la-sports-ticker",
-        { body: { category: "both", gender: "both" } }
+        "sports-search",
+        { body: {} }
       );
 
       if (fnError) throw fnError;
 
-      const tickerData = data as TickerData;
-      const parsed = parseTickerItems(tickerData.items || []);
+      const parsed = ((data?.games ?? []) as GameScore[]);
       _scoreCache = { data: parsed, ts: Date.now() };
       setGames(parsed);
       setError(null);
@@ -141,6 +142,7 @@ export function useProfileScores(favoriteTeams: string[] = []) {
       setLoading(false);
     }
   };
+
 
   useEffect(() => {
     fetchScores();
