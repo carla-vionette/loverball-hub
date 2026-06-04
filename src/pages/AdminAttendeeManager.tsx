@@ -123,6 +123,7 @@ const AdminAttendeeManager = () => {
         plus_ones: item.plus_ones,
         name: item.guest_name,
         phone: item.guest_phone,
+        email: item.profile_email || null,
         created_at: item.created_at,
         profile: item.profile_name || item.profile_city || item.profile_photo_url || item.profile_instagram_url ? {
           name: item.profile_name,
