@@ -159,6 +159,7 @@ const Events = () => {
           .from("events")
           .select("*")
           .eq("status", "published")
+          .order("promoted", { ascending: false })
           .order("event_date");
         if (error) throw error;
         setEvents(data || []);
