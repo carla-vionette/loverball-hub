@@ -40,6 +40,9 @@ const Friends = lazy(() => import("./pages/Friends"));
 const CheckoutSuccess = lazy(() => import("./pages/CheckoutSuccess"));
 const Terms = lazy(() => import("./pages/Terms"));
 const Privacy = lazy(() => import("./pages/Privacy"));
+const About = lazy(() => import("./pages/About"));
+const Membership = lazy(() => import("./pages/Membership"));
+const Contact = lazy(() => import("./pages/Contact"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 // Admin pages
