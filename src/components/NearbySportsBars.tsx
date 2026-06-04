@@ -154,13 +154,13 @@ out center tags 80;`;
     }
     setResolvingZip(true);
     setError(null);
-    const loc = await resolveZip(clean);
+    const loc = await zipToLatLng(clean);
     setResolvingZip(false);
-    if (!loc || loc.latitude == null || loc.longitude == null) {
+    if (!loc) {
       setError("ZIP not found.");
       return;
     }
-    setManualCenter({ lat: loc.latitude, lng: loc.longitude, zip: loc.zip_code });
+    setManualCenter(loc);
   };
 
   return (
