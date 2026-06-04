@@ -50,11 +50,9 @@ export function useActiveArea() {
     }
     let cancelled = false;
     (async () => {
-      const { data } = await supabase
-        .from("profiles")
-        .select("zip_code, city, latitude, longitude")
-        .eq("id", user.id)
-        .maybeSingle();
+      // Location is owner-only — read via SECURITY DEFINER RPC instead of selecting
+      // the columns directly (column SELECT is revoked from authenticated).
+      const { data } = await supabase.rpc("get_my_location" as any);
       if (cancelled) return;
       if (data) {
         setHome({
