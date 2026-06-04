@@ -172,6 +172,7 @@ out center tags 80;`;
       return;
     }
     setManualCenter(loc);
+    localStorage.setItem("sportsBarsZip", loc.zip);
   };
 
   return (
