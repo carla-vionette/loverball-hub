@@ -610,12 +610,13 @@ const Events = () => {
                     >
                       {/* Cinematic header w/ date stamp */}
                       <div className="relative h-44 overflow-hidden">
-                        {ev.image_url ? (
-                          <img src={ev.image_url} alt={ev.title} loading="lazy"
-                            className="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-500" />
-                        ) : (
-                          <div className="w-full h-full" style={{ background: `linear-gradient(135deg, ${th.accent}40, #0a0a0a)` }} />
-                        )}
+                        <img
+                          src={resolveEventImage(ev)}
+                          alt={ev.title}
+                          loading="lazy"
+                          onError={handleEventImageError}
+                          className="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-500"
+                        />
                         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, rgba(10,10,11,0.1) 0%, rgba(10,10,11,0.55) 100%)" }} />
 
                         {/* Eyebrow — colored dot + type label */}
