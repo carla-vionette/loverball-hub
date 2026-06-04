@@ -5,6 +5,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Calendar, MapPin, Clock, Loader2 } from 'lucide-react';
 import { format } from 'date-fns';
+import { parseEventDate } from '@/lib/eventDate';
 
 interface EventData {
   id: string;
