@@ -11,10 +11,20 @@ import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { 
   ArrowLeft, Loader2, Download, UserPlus, Phone, Mail, Users, 
   CheckCircle, Clock, XCircle, HelpCircle, Search, RefreshCw,
-  ArrowUpFromLine, Pencil, Check, X
+  ArrowUpFromLine, Pencil, Check, X, Trash2
 } from 'lucide-react';
 import { format } from 'date-fns';
 
@@ -75,6 +85,8 @@ const AdminAttendeeManager = () => {
   const [newAttendeePhone, setNewAttendeePhone] = useState('');
   const [newAttendeePlusOnes, setNewAttendeePlusOnes] = useState('0');
   const [newAttendeeStatus, setNewAttendeeStatus] = useState('attending');
+  const [removeDialogOpen, setRemoveDialogOpen] = useState(false);
+  const [attendeeToRemove, setAttendeeToRemove] = useState<Attendee | null>(null);
 
   useEffect(() => {
     if (!isAdmin) {
@@ -265,6 +277,25 @@ const AdminAttendeeManager = () => {
       }
     } catch (error: any) {
       toast({ title: 'Error promoting attendee', variant: 'destructive' });
+    }
+  };
+
+  const removeAttendee = async () => {
+    if (!attendeeToRemove) return;
+    try {
+      const { error } = await supabase
+        .from('event_rsvps')
+        .delete()
+        .eq('id', attendeeToRemove.id);
+
+      if (error) throw error;
+
+      setAttendees(prev => prev.filter(a => a.id !== attendeeToRemove.id));
+      toast({ title: `${attendeeToRemove.name || attendeeToRemove.profile?.name || 'Attendee'} removed` });
+      setRemoveDialogOpen(false);
+      setAttendeeToRemove(null);
+    } catch (error: any) {
+      toast({ title: 'Error removing attendee', description: error.message, variant: 'destructive' });
     }
   };
 
@@ -729,6 +760,18 @@ const AdminAttendeeManager = () => {
                                   <SelectItem value="no">Declined</SelectItem>
                                 </SelectContent>
                               </Select>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => {
+                                  setAttendeeToRemove(attendee);
+                                  setRemoveDialogOpen(true);
+                                }}
+                                className="text-red-600 border-red-500/30 hover:bg-red-500/10 h-8"
+                                title="Remove attendee"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </Button>
                             </div>
                           </TableCell>
                         </TableRow>
@@ -746,6 +789,24 @@ const AdminAttendeeManager = () => {
             )}
           </CardContent>
         </Card>
+
+        {/* Remove Attendee Confirmation */}
+        <AlertDialog open={removeDialogOpen} onOpenChange={setRemoveDialogOpen}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Remove Attendee</AlertDialogTitle>
+              <AlertDialogDescription>
+                Are you sure you want to remove <strong>{attendeeToRemove?.name || attendeeToRemove?.profile?.name || 'this attendee'}</strong>? This will delete their RSVP and cannot be undone.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel onClick={() => setAttendeeToRemove(null)}>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={removeAttendee} className="bg-red-600 hover:bg-red-700">
+                Remove
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </main>
     </div>
   );
