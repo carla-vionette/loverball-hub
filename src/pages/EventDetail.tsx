@@ -13,6 +13,7 @@ import { downloadICS } from "@/lib/ics";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useGestures } from "@/hooks/useGestures";
 import { format, differenceInDays, differenceInHours, differenceInMinutes, isPast } from "date-fns";
+import { parseEventDate } from "@/lib/eventDate";
 import { motion, AnimatePresence } from "framer-motion";
 import loverballLogo from "@/assets/loverball-script-logo.png";
 import SharePreview from "@/components/SharePreview";
@@ -142,7 +143,7 @@ const EventDetail = () => {
     if (!event) return;
 
     const formatEventDate = () => {
-      const date = new Date(event.event_date);
+      const date = parseEventDate(event.event_date);
       return date.toLocaleDateString('en-US', {
         weekday: 'long',
         month: 'long',
@@ -525,7 +526,7 @@ const EventDetail = () => {
               <h1 className="font-display text-2xl uppercase tracking-tight leading-tight">{event.title}</h1>
               <p className="text-sm text-muted-foreground flex items-center gap-1.5">
                 <Calendar className="w-4 h-4" />
-                {format(new Date(event.event_date), "EEE, MMM d, yyyy")}
+                {format(parseEventDate(event.event_date), "EEE, MMM d, yyyy")}
                 {event.event_time ? ` · ${formatTime(event.event_time)}` : ""}
               </p>
               {(event.venue_name || event.city) && (
@@ -735,7 +736,7 @@ const EventDetail = () => {
                 </div>
                 <h1 className="font-display text-2xl leading-tight mb-1">{event.title}</h1>
                 <div className="text-xs opacity-90 mb-2 flex flex-wrap gap-x-3 gap-y-1">
-                  <span className="inline-flex items-center gap-1"><Calendar className="w-3.5 h-3.5" />{format(new Date(event.event_date), 'EEE, MMM d')}{event.event_time ? ` · ${formatTime(event.event_time)}` : ''}</span>
+                  <span className="inline-flex items-center gap-1"><Calendar className="w-3.5 h-3.5" />{format(parseEventDate(event.event_date), 'EEE, MMM d')}{event.event_time ? ` · ${formatTime(event.event_time)}` : ''}</span>
                   {(event.venue_name || event.city) && (
                     <span className="inline-flex items-center gap-1"><MapPin className="w-3.5 h-3.5" />{event.venue_name || event.city}</span>
                   )}
@@ -1017,7 +1018,7 @@ const EventDetail = () => {
                 title={`${event.title} | Loverball`}
                 description={buildSharePreviewDescription(event)}
                 imageUrl={event.image_url}
-                eventDate={format(new Date(event.event_date), "EEE, MMM d, yyyy")}
+                eventDate={format(parseEventDate(event.event_date), "EEE, MMM d, yyyy")}
                 eventTime={event.event_time ? formatTime(event.event_time) : null}
                 venue={event.venue_name || null}
                 city={event.city || null}
