@@ -760,6 +760,18 @@ const AdminAttendeeManager = () => {
                                   <SelectItem value="no">Declined</SelectItem>
                                 </SelectContent>
                               </Select>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => {
+                                  setAttendeeToRemove(attendee);
+                                  setRemoveDialogOpen(true);
+                                }}
+                                className="text-red-600 border-red-500/30 hover:bg-red-500/10 h-8"
+                                title="Remove attendee"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </Button>
                             </div>
                           </TableCell>
                         </TableRow>
