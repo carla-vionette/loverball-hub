@@ -48,6 +48,9 @@ interface PublicEvent {
   show_guest_count: boolean | null;
   anonymize_guest_list: boolean | null;
   waitlist_enabled: boolean | null;
+  event_type?: string | null;
+  sport_tags?: string[] | null;
+  event_tags?: string[] | null;
 }
 
 interface HostInfo {
@@ -97,7 +100,7 @@ const EventPublic = () => {
     (async () => {
       const { data } = await supabase
         .from("events")
-        .select("id, title, description, image_url, banner_image, event_date, event_time, venue_name, city, visibility, host_user_id, capacity, guest_visibility, rsvp_approval_required, password_required, show_guest_count, anonymize_guest_list, waitlist_enabled")
+        .select("id, title, description, image_url, banner_image, event_date, event_time, venue_name, city, visibility, host_user_id, capacity, guest_visibility, rsvp_approval_required, password_required, show_guest_count, anonymize_guest_list, waitlist_enabled, event_type, sport_tags, event_tags")
         .eq("id", id)
         .maybeSingle();
       const ev = data as PublicEvent | null;
