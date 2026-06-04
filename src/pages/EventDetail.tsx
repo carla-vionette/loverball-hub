@@ -1022,7 +1022,7 @@ const EventDetail = () => {
               <SharePreview
                 title={`${event.title} | Loverball`}
                 description={buildSharePreviewDescription(event)}
-                imageUrl={event.image_url}
+                imageUrl={resolveEventImage(event)}
                 eventDate={format(parseEventDate(event.event_date), "EEE, MMM d, yyyy")}
                 eventTime={event.event_time ? formatTime(event.event_time) : null}
                 venue={event.venue_name || null}
