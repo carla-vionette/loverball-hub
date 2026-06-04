@@ -471,12 +471,13 @@ const Events = () => {
                 onClick={() => openTile(featured.id)}
               >
                 <div className="relative h-72 md:h-[420px] overflow-hidden">
-                  {featured.image_url ? (
-                    <img src={featured.image_url} alt={featured.title} loading="eager"
-                      className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700" />
-                  ) : (
-                    <div className="w-full h-full" style={{ background: `linear-gradient(135deg, ${th.accent}, #0a0a0a)` }} />
-                  )}
+                  <img
+                    src={resolveEventImage(featured)}
+                    alt={featured.title}
+                    loading="eager"
+                    onError={handleEventImageError}
+                    className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700"
+                  />
                   {/* layered overlays */}
                   <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, rgba(10,10,11,0.35) 0%, rgba(10,10,11,0.15) 40%, rgba(10,10,11,0.92) 100%)" }} />
                   <div className="absolute inset-0" style={{ background: "radial-gradient(120% 80% at 30% 20%, rgba(0,0,0,0) 50%, rgba(0,0,0,0.4) 100%)" }} />
