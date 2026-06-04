@@ -34,6 +34,7 @@ interface Attendee {
   name: string | null;
   phone: string | null;
   created_at: string;
+  email: string | null;
   profile: {
     name: string;
     phone_number?: string | null;
@@ -122,6 +123,7 @@ const AdminAttendeeManager = () => {
         plus_ones: item.plus_ones,
         name: item.guest_name,
         phone: item.guest_phone,
+        email: item.profile_email || null,
         created_at: item.created_at,
         profile: item.profile_name || item.profile_city || item.profile_photo_url || item.profile_instagram_url ? {
           name: item.profile_name,
@@ -247,9 +249,10 @@ const AdminAttendeeManager = () => {
   const exportCSV = () => {
     if (attendees.length === 0) return;
 
-    const headers = ['Name', 'Status', 'Plus Ones', 'Phone', 'City', 'Instagram', 'RSVP Date'];
+    const headers = ['Name', 'Email', 'Status', 'Plus Ones', 'Phone', 'City', 'Instagram', 'RSVP Date'];
     const rows = attendees.map(a => [
       a.name || a.profile?.name || 'Unknown',
+      a.email || '',
       statusConfig[a.status]?.label || a.status,
       a.plus_ones || 0,
       a.phone || a.profile?.phone_number || '',
@@ -564,6 +567,7 @@ const AdminAttendeeManager = () => {
                   <TableHeader>
                     <TableRow>
                       <TableHead>Name</TableHead>
+                      <TableHead>Email</TableHead>
                       <TableHead>Status</TableHead>
                       <TableHead>Plus Ones</TableHead>
                       <TableHead>Phone</TableHead>
@@ -596,6 +600,19 @@ const AdminAttendeeManager = () => {
                               >
                                 Instagram
                               </a>
+                            )}
+                          </TableCell>
+                          <TableCell>
+                            {attendee.email ? (
+                              <a
+                                href={`mailto:${attendee.email}`}
+                                className="flex items-center gap-1 text-primary hover:underline text-sm"
+                              >
+                                <Mail className="w-3 h-3" />
+                                {attendee.email}
+                              </a>
+                            ) : (
+                              <span className="text-muted-foreground">-</span>
                             )}
                           </TableCell>
                           <TableCell>
