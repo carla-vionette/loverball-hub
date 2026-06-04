@@ -55,6 +55,7 @@ interface DbEvent {
   event_tags?: string[] | null;
   location_lat?: number | null;
   location_lng?: number | null;
+  promoted?: boolean | null;
 }
 
 // Event color system:
