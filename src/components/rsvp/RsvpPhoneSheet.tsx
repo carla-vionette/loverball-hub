@@ -49,6 +49,7 @@ function normalizePhone(raw: string): string | null {
 }
 
 const RESEND_SECONDS = 30;
+const gradientBg = `radial-gradient(circle at 30% 20%, ${C.raspberry}22, transparent 60%), radial-gradient(circle at 70% 80%, ${C.pink}22, transparent 60%)`;
 
 const RsvpPhoneSheet = ({ open, onOpenChange, eventId, eventTitle, intent, onVerified }: Props) => {
   const { toast } = useToast();
