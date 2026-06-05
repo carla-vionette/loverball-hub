@@ -162,6 +162,9 @@ const Auth = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
+  const modeParam = searchParams.get('mode');
+  const isSignup = modeParam === 'signup';
+
   const initialMode = ((): AuthMode => {
     if (searchParams.get('reset') === 'true') return 'reset_password';
     return 'email';
@@ -177,7 +180,10 @@ const Auth = () => {
 
   const redirectTo = searchParams.get('redirect') || '/feed';
   const authOrigin = window.location.origin;
-  const emailRedirectTo = `${authOrigin}${redirectTo}`;
+  // New users (signup) → land in onboarding to finish their profile, then exit to /feed.
+  // Returning users (signin) → land directly at their redirect target (default /feed).
+  const postAuthPath = isSignup ? '/onboarding?step=finish&welcome=1' : redirectTo;
+  const emailRedirectTo = `${authOrigin}${postAuthPath}`;
 
   useEffect(() => {
     if (searchParams.get('reset') === 'true') setMode('reset_password');
@@ -256,11 +262,12 @@ const Auth = () => {
         .eq('id', data.user.id)
         .maybeSingle();
 
+      const dest = profile?.name ? redirectTo : '/onboarding?step=finish&welcome=1';
       if (profile?.name) {
         setSplashName(profile.name);
-        setPendingRedirect(redirectTo);
+        setPendingRedirect(dest);
       } else {
-        navigate(redirectTo);
+        navigate(dest);
       }
     } catch (err: any) {
       toast({ title: "Couldn't sign in", description: err.message, variant: "destructive" });
@@ -347,8 +354,8 @@ const Auth = () => {
                 className="space-y-8"
               >
                 <div className="text-center space-y-2">
-                  <AuthH1>JOIN US!</AuthH1>
-                  <AuthBody muted center>Sign up or sign in with your email.</AuthBody>
+                  <AuthH1>{isSignup ? "JOIN US!" : "WELCOME BACK"}</AuthH1>
+                  <AuthBody muted center>{isSignup ? "Sign up with your email — we'll send a magic link." : "Sign in with your email — we'll send a magic link."}</AuthBody>
                 </div>
 
                 <form onSubmit={handleSendMagicLink} className="space-y-4">

@@ -29,7 +29,7 @@ export default function Signup() {
   // If already signed in, push them forward
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) navigate("/finish-profile", { replace: true });
+      if (session) navigate("/onboarding?step=finish&welcome=1", { replace: true });
     });
   }, [navigate]);
 
@@ -346,7 +346,7 @@ export default function Signup() {
               </p>
               <div className="mt-10 w-full space-y-3">
                 <Button
-                  onClick={() => navigate("/finish-profile")}
+                  onClick={() => navigate("/onboarding?step=finish&welcome=1")}
                   className="w-full h-14 rounded-2xl text-base font-semibold"
                 >
                   Finish profile
