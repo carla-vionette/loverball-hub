@@ -1015,15 +1015,24 @@ const EventDetail = () => {
       {!user && !isEventPast && (
         <div className="fixed bottom-0 left-0 right-0 bg-background border-t border-border p-4">
           <div className="max-w-4xl mx-auto">
-            <Button 
-              className="w-full py-6 text-base"
-              onClick={() => navigate(`/auth?redirect=/event/${id}`)}
-            >
-              Sign In to RSVP
-            </Button>
+            <div className="flex gap-2">
+              <Button className="flex-1 py-6" onClick={() => handleRSVP('yes')}>
+                <Check className="w-5 h-5 mr-2" /> Going
+              </Button>
+              <Button variant="outline" className="flex-1 py-6" onClick={() => handleRSVP('maybe')}>
+                <HelpCircle className="w-5 h-5 mr-2" /> Maybe
+              </Button>
+              <Button variant="outline" className="flex-1 py-6" onClick={() => handleRSVP('no')}>
+                <X className="w-5 h-5 mr-2" /> Can't Go
+              </Button>
+            </div>
+            <p className="text-[11px] text-muted-foreground text-center mt-2">
+              Sign up takes 10 seconds — we'll bring you back here.
+            </p>
           </div>
         </div>
       )}
+
 
       {/* Share Dialog */}
       <Dialog open={showShareDialog} onOpenChange={setShowShareDialog}>
