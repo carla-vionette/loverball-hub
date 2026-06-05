@@ -123,7 +123,7 @@ const App = () => (
 
                 <Route path="/auth" element={<Auth />} />
                 <Route path="/reset-password" element={<ResetPassword />} />
-                <Route path="/signup" element={<Navigate to="/onboarding" replace />} />
+                <Route path="/signup" element={<Navigate to="/auth?mode=signup" replace />} />
                 <Route path="/onboarding" element={<Onboarding />} />
                 <Route path="/terms" element={<Terms />} />
                 <Route path="/privacy" element={<Privacy />} />
