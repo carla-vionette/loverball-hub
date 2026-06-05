@@ -189,16 +189,33 @@ export default function Signup() {
                       {method === "email" ? <><Phone className="w-3 h-3" /> Use phone</> : <><Mail className="w-3 h-3" /> Use email</>}
                     </button>
                   </div>
-                  <Input
-                    id="contact"
-                    type={method === "email" ? "email" : "tel"}
-                    inputMode={method === "email" ? "email" : "tel"}
-                    autoComplete={method === "email" ? "email" : "tel"}
-                    value={contact}
-                    onChange={(e) => setContact(e.target.value)}
-                    placeholder={method === "email" ? "you@example.com" : "(555) 123-4567"}
-                    className="h-14 text-base rounded-2xl"
-                  />
+                  {method === "phone" ? (
+                    <div className="flex items-center h-14 rounded-2xl border border-input bg-background focus-within:ring-2 focus-within:ring-ring overflow-hidden">
+                      <span className="pl-4 pr-2 text-base text-foreground/60 select-none">+1</span>
+                      <input
+                        id="contact"
+                        type="tel"
+                        inputMode="numeric"
+                        autoComplete="tel-national"
+                        value={contact}
+                        onChange={(e) => setContact(formatUSPhone(e.target.value))}
+                        placeholder="(555) 123-4567"
+                        maxLength={14}
+                        className="flex-1 h-full bg-transparent text-base outline-none pr-4"
+                      />
+                    </div>
+                  ) : (
+                    <Input
+                      id="contact"
+                      type="email"
+                      inputMode="email"
+                      autoComplete="email"
+                      value={contact}
+                      onChange={(e) => setContact(e.target.value)}
+                      placeholder="you@example.com"
+                      className="h-14 text-base rounded-2xl"
+                    />
+                  )}
                   <p className="text-xs text-foreground/50 pt-1">
                     We'll {method === "email" ? "email" : "text"} you a confirmation code.
                     {method === "phone" && " US mobile numbers only — if it fails, switch to email."}
