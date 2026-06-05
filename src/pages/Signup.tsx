@@ -14,15 +14,26 @@ type Method = "email" | "phone";
 type Step = "details" | "verify" | "done";
 
 const emailSchema = z.string().trim().email("Please enter a valid email");
-// Loose phone validation — Supabase requires E.164. We'll normalize US numbers.
-const phoneSchema = z.string().trim().min(7, "Enter a valid phone number");
 
-const normalizePhone = (raw: string) => {
-  const digits = raw.replace(/[^\d+]/g, "");
-  if (digits.startsWith("+")) return digits;
-  if (digits.length === 10) return `+1${digits}`;
-  if (digits.length === 11 && digits.startsWith("1")) return `+${digits}`;
-  return digits.startsWith("+") ? digits : `+${digits}`;
+// US phone normalization → strict E.164 (+1XXXXXXXXXX).
+// Returns null when the input isn't a valid US mobile number.
+const normalizeUSPhone = (raw: string): string | null => {
+  const digits = raw.replace(/\D/g, "");
+  let ten = digits;
+  if (ten.length === 11 && ten.startsWith("1")) ten = ten.slice(1);
+  if (ten.length !== 10) return null;
+  // NANP: area code & exchange code can't start with 0 or 1
+  if (/^[01]/.test(ten) || /^[01]/.test(ten.slice(3))) return null;
+  return `+1${ten}`;
+};
+
+// Pretty-format as the user types: "(555) 123-4567"
+const formatUSPhone = (raw: string): string => {
+  const digits = raw.replace(/\D/g, "").replace(/^1/, "").slice(0, 10);
+  if (digits.length === 0) return "";
+  if (digits.length <= 3) return `(${digits}`;
+  if (digits.length <= 6) return `(${digits.slice(0, 3)}) ${digits.slice(3)}`;
+  return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
 };
 
 export default function Signup() {
@@ -42,7 +53,7 @@ export default function Signup() {
     });
   }, [navigate]);
 
-  const sentTo = method === "email" ? contact : normalizePhone(contact);
+  const sentTo = method === "email" ? contact : (normalizeUSPhone(contact) ?? contact);
 
   const handleSend = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -64,9 +75,8 @@ export default function Signup() {
         });
         if (error) throw error;
       } else {
-        const parsed = phoneSchema.safeParse(contact);
-        if (!parsed.success) throw new Error(parsed.error.errors[0].message);
-        const phone = normalizePhone(parsed.data);
+        const phone = normalizeUSPhone(contact);
+        if (!phone) throw new Error("Enter a valid 10-digit US mobile number");
         const { error } = await supabase.auth.signInWithOtp({
           phone,
           options: {
@@ -109,7 +119,7 @@ export default function Signup() {
     try {
       const { data, error } = method === "email"
         ? await supabase.auth.verifyOtp({ email: contact.trim(), token: otp.trim(), type: "email" })
-        : await supabase.auth.verifyOtp({ phone: normalizePhone(contact), token: otp.trim(), type: "sms" });
+        : await supabase.auth.verifyOtp({ phone: normalizeUSPhone(contact) ?? "", token: otp.trim(), type: "sms" });
       if (error) throw error;
       if (!data.user) throw new Error("Verification failed");
 
@@ -179,16 +189,33 @@ export default function Signup() {
                       {method === "email" ? <><Phone className="w-3 h-3" /> Use phone</> : <><Mail className="w-3 h-3" /> Use email</>}
                     </button>
                   </div>
-                  <Input
-                    id="contact"
-                    type={method === "email" ? "email" : "tel"}
-                    inputMode={method === "email" ? "email" : "tel"}
-                    autoComplete={method === "email" ? "email" : "tel"}
-                    value={contact}
-                    onChange={(e) => setContact(e.target.value)}
-                    placeholder={method === "email" ? "you@example.com" : "(555) 123-4567"}
-                    className="h-14 text-base rounded-2xl"
-                  />
+                  {method === "phone" ? (
+                    <div className="flex items-center h-14 rounded-2xl border border-input bg-background focus-within:ring-2 focus-within:ring-ring overflow-hidden">
+                      <span className="pl-4 pr-2 text-base text-foreground/60 select-none">+1</span>
+                      <input
+                        id="contact"
+                        type="tel"
+                        inputMode="numeric"
+                        autoComplete="tel-national"
+                        value={contact}
+                        onChange={(e) => setContact(formatUSPhone(e.target.value))}
+                        placeholder="(555) 123-4567"
+                        maxLength={14}
+                        className="flex-1 h-full bg-transparent text-base outline-none pr-4"
+                      />
+                    </div>
+                  ) : (
+                    <Input
+                      id="contact"
+                      type="email"
+                      inputMode="email"
+                      autoComplete="email"
+                      value={contact}
+                      onChange={(e) => setContact(e.target.value)}
+                      placeholder="you@example.com"
+                      className="h-14 text-base rounded-2xl"
+                    />
+                  )}
                   <p className="text-xs text-foreground/50 pt-1">
                     We'll {method === "email" ? "email" : "text"} you a confirmation code.
                     {method === "phone" && " US mobile numbers only — if it fails, switch to email."}
