@@ -865,8 +865,36 @@ const EventDetail = () => {
             )}
 
             {/* Full who's going + comments below the fold */}
-            {id && <WhosGoing eventId={id} refreshKey={guestRefreshKey} />}
-            {id && <div id="event-chat"><EventComments eventId={id} /></div>}
+            {id && user && <WhosGoing eventId={id} refreshKey={guestRefreshKey} />}
+            {id && user && <div id="event-chat"><EventComments eventId={id} /></div>}
+            {id && !user && (
+              <div className="rounded-2xl border border-primary/30 bg-primary/5 p-6 text-center space-y-3">
+                <Lock className="w-6 h-6 mx-auto text-primary" />
+                <p className="text-base font-semibold">Sign up to see who's going and join the chat</p>
+                <p className="text-xs text-muted-foreground">Free · takes 10 seconds</p>
+                <div className="grid grid-cols-2 gap-2 pt-1">
+                  <Button
+                    className="rounded-full h-11"
+                    onClick={() => {
+                      sessionStorage.setItem('postAuthRedirect', `/event/${id}`);
+                      navigate('/signup');
+                    }}
+                  >
+                    Sign Up — Free
+                  </Button>
+                  <Button
+                    variant="outline"
+                    className="rounded-full h-11"
+                    onClick={() => {
+                      sessionStorage.setItem('postAuthRedirect', `/event/${id}`);
+                      navigate(`/auth?redirect=${encodeURIComponent(`/event/${id}`)}`);
+                    }}
+                  >
+                    Sign In
+                  </Button>
+                </div>
+              </div>
+            )}
 
             {/* Calendar */}
             {!isEventPast && (
