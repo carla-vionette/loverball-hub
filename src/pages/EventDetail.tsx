@@ -834,10 +834,7 @@ const EventDetail = () => {
                       <Button
                         size="sm"
                         className="flex-1 rounded-full h-9 text-xs"
-                        onClick={() => {
-                          sessionStorage.setItem('postAuthRedirect', `/event/${id}`);
-                          navigate('/signup');
-                        }}
+                        onClick={() => navigate(`/auth?mode=signup&redirect=${encodeURIComponent(`/event/${id}`)}`)}
                       >
                         Sign up — free
                       </Button>
@@ -845,13 +842,11 @@ const EventDetail = () => {
                         size="sm"
                         variant="outline"
                         className="flex-1 rounded-full h-9 text-xs"
-                        onClick={() => {
-                          sessionStorage.setItem('postAuthRedirect', `/event/${id}`);
-                          navigate(`/auth?redirect=${encodeURIComponent(`/event/${id}`)}`);
-                        }}
+                        onClick={() => navigate(`/auth?mode=signin&redirect=${encodeURIComponent(`/event/${id}`)}`)}
                       >
                         Sign in
                       </Button>
+
                     </div>
                   </div>
                 </div>
