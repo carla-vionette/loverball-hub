@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { C, fonts } from "@/lib/editorialTheme";
+import { normalizeUSPhone, formatUSPhone, friendlyPhoneAuthError } from "@/lib/phone";
 import loverballLogo from "@/assets/loverball-script-logo.png";
 import collage1 from "@/assets/community-women.jpg";
 import collage2 from "@/assets/brunch-basketball.jpg";
@@ -17,13 +18,8 @@ import collage3 from "@/assets/community-event.jpg";
 
 const TOTAL_CORE_SCREENS = 14;
 
-const COUNTRIES = [
-  { code: "+1", flag: "🇺🇸", label: "US" },
-  { code: "+1", flag: "🇨🇦", label: "CA" },
-  { code: "+44", flag: "🇬🇧", label: "UK" },
-  { code: "+52", flag: "🇲🇽", label: "MX" },
-  { code: "+61", flag: "🇦🇺", label: "AU" },
-];
+// Phone auth is US-only (Twilio is configured for US numbers).
+// See src/lib/phone.ts for normalization + formatting helpers.
 
 const LEAGUES = ["WNBA", "NWSL", "NCAA", "NFL", "FIFA", "F1", "Flag Football", "MLB", "NBA", "MLS"];
 const TEAMS_BY_LEAGUE: Record<string, string[]> = {
@@ -163,7 +159,7 @@ const Onboarding = () => {
 
   // form state
   const [channel, setChannel] = useState<"phone" | "email">("phone");
-  const [country, setCountry] = useState(COUNTRIES[0]);
+  // Phone auth is US-only; no country selector.
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
@@ -206,7 +202,7 @@ const Onboarding = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
-  const fullPhone = useMemo(() => `${country.code}${phone.replace(/\D/g, "")}`, [country, phone]);
+  const fullPhone = useMemo(() => normalizeUSPhone(phone) ?? "", [phone]);
   const firstName = name.trim().split(/\s+/)[0] || "friend";
 
   const next = useCallback(() => setStep((s) => s + 1), []);
@@ -246,13 +242,19 @@ const Onboarding = () => {
     setLoading(true);
     try {
       if (channel === "phone") {
-        if (phone.replace(/\D/g, "").length < 7) {
-          toast({ title: "Add a valid number", variant: "destructive" });
+        const e164 = normalizeUSPhone(phone);
+        if (!e164) {
+          toast({
+            title: "Enter a valid US mobile number",
+            description: "10 digits, e.g. (555) 123-4567.",
+            variant: "destructive",
+          });
           setLoading(false);
           return;
         }
-        const { error } = await supabase.auth.signInWithOtp({ phone: fullPhone });
+        const { error } = await supabase.auth.signInWithOtp({ phone: e164 });
         if (error) {
+          const friendly = friendlyPhoneAuthError(error.message);
           if (isPhoneProviderError(error.message)) {
             toast({
               title: "Texts aren't working right now — try email?",
@@ -260,6 +262,11 @@ const Onboarding = () => {
               variant: "destructive",
             });
             switchToEmail();
+            setLoading(false);
+            return;
+          }
+          if (friendly) {
+            toast({ ...friendly, variant: "destructive" });
             setLoading(false);
             return;
           }
@@ -291,14 +298,19 @@ const Onboarding = () => {
     setLoading(true);
     try {
       const { error } = channel === "phone"
-        ? await supabase.auth.verifyOtp({ phone: fullPhone, token: otp, type: "sms" })
-        : await supabase.auth.verifyOtp({ email: email.trim(), token: otp, type: "email" });
+        ? await supabase.auth.verifyOtp({ phone: fullPhone, token: otp.trim(), type: "sms" })
+        : await supabase.auth.verifyOtp({ email: email.trim(), token: otp.trim(), type: "email" });
       if (error) throw error;
       setOtpVerified(true);
       // identifier (phone or email) is already stored on auth.users by Supabase
       setStep(7);
     } catch (e: any) {
-      toast({ title: "Code didn't work", description: e?.message ?? "Double-check & try again", variant: "destructive" });
+      const friendly = friendlyPhoneAuthError(e?.message ?? "");
+      toast({
+        title: friendly?.title ?? "Code didn't work",
+        description: friendly?.description ?? (e?.message || "Double-check & try again"),
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }
@@ -445,7 +457,7 @@ const Onboarding = () => {
       /* 4 & 5. Phone / Email entry */
       case 3:
       case 4: {
-        const canSendPhone = phone.replace(/\D/g, "").length >= 7;
+        const canSendPhone = normalizeUSPhone(phone) !== null;
         const canSendEmail = /^\S+@\S+\.\S+$/.test(email.trim());
         return (
           <Page key="phone">
@@ -455,25 +467,26 @@ const Onboarding = () => {
               <Sub>Just for event drops. No spam 💌</Sub>
 
               {channel === "phone" ? (
-                <div className="mt-8 flex gap-2">
-                  <select
-                    value={`${country.flag}${country.code}`}
-                    onChange={(e) => {
-                      const c = COUNTRIES.find((x) => `${x.flag}${x.code}` === e.target.value);
-                      if (c) setCountry(c);
+                <div className="mt-8 flex gap-2 items-stretch">
+                  <div
+                    className="flex items-center justify-center select-none"
+                    aria-hidden="true"
+                    style={{
+                      height: 60, borderRadius: 16, padding: "0 16px",
+                      background: C.surface, color: C.text,
+                      border: `1.5px solid ${C.borderStrong}`,
+                      fontFamily: fonts.sans, fontSize: 16, fontWeight: 600,
+                      whiteSpace: "nowrap",
                     }}
-                    className="focus:outline-none"
-                    style={{ height: 60, borderRadius: 16, padding: "0 14px", background: C.surface, color: C.text, border: `1.5px solid ${C.borderStrong}`, fontFamily: fonts.sans, fontSize: 16 }}
                   >
-                    {COUNTRIES.map((c) => (
-                      <option key={`${c.flag}${c.label}`} value={`${c.flag}${c.code}`}>{c.flag} {c.code}</option>
-                    ))}
-                  </select>
+                    🇺🇸 +1
+                  </div>
                   <TextField
                     type="tel" inputMode="tel" autoComplete="tel"
                     placeholder="(310) 555-0123"
                     value={phone}
-                    onChange={(e) => { setPhone(e.target.value); if (step === 3) setStep(4); }}
+                    maxLength={14}
+                    onChange={(e) => { setPhone(formatUSPhone(e.target.value)); if (step === 3) setStep(4); }}
                   />
                 </div>
               ) : (
@@ -526,7 +539,7 @@ const Onboarding = () => {
               <H>{channel === "phone" ? "Verify your number" : "Verify your email"}</H>
               <Sub>
                 We sent a 6-digit code to{" "}
-                {channel === "phone" ? `${country.code} ${phone}` : email}.
+                {channel === "phone" ? `+1 ${phone}` : email}.
               </Sub>
 
               <input

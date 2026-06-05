@@ -8,6 +8,7 @@ import { Loader2, ArrowLeft } from "lucide-react";
 import { C, fonts } from "@/lib/editorialTheme";
 import { useToast } from "@/hooks/use-toast";
 import type { RsvpIntent } from "@/components/EventRSVPDialog";
+import { normalizeUSPhone, formatUSPhone, friendlyPhoneAuthError } from "@/lib/phone";
 
 interface Props {
   open: boolean;
@@ -40,14 +41,9 @@ const inputStyle: React.CSSProperties = {
 const intentLabel = (i: RsvpIntent) =>
   i === "attending" ? "you're in" : i === "waitlisted" ? "maybe" : "can't go";
 
-/** Normalize to E.164 (US default). */
+/** Normalize to strict E.164 US (+1XXXXXXXXXX). Returns null when invalid. */
 function normalizePhone(raw: string): string | null {
-  const digits = raw.replace(/\D/g, "");
-  if (!digits) return null;
-  if (raw.trim().startsWith("+")) return "+" + digits;
-  if (digits.length === 10) return "+1" + digits;
-  if (digits.length === 11 && digits.startsWith("1")) return "+" + digits;
-  return null;
+  return normalizeUSPhone(raw);
 }
 
 const RESEND_SECONDS = 30;
@@ -106,7 +102,8 @@ const RsvpPhoneSheet = ({ open, onOpenChange, eventId, eventTitle, intent, onVer
       setStep("otp");
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : "Couldn't send code. Try again.";
-      setErr(msg);
+      const friendly = friendlyPhoneAuthError(msg);
+      setErr(friendly ? `${friendly.title}. ${friendly.description}` : msg);
     } finally {
       setLoading(false);
     }
@@ -117,7 +114,10 @@ const RsvpPhoneSheet = ({ open, onOpenChange, eventId, eventTitle, intent, onVer
     setErr(null);
     if (!firstName.trim()) { setErr("Add your first name."); return; }
     const normalized = normalizePhone(phoneRaw);
-    if (!normalized) { setErr("Enter a valid mobile number."); return; }
+    if (!normalized) {
+      setErr("Enter a valid 10-digit US mobile number, e.g. (555) 123-4567.");
+      return;
+    }
     setPhoneE164(normalized);
     persistIntent();
     await sendCode(normalized);
@@ -131,7 +131,7 @@ const RsvpPhoneSheet = ({ open, onOpenChange, eventId, eventTitle, intent, onVer
     try {
       const { data, error } = await supabase.auth.verifyOtp({
         phone: phoneE164,
-        token: code,
+        token: code.trim(),
         type: "sms",
       });
       if (error) throw error;
@@ -156,7 +156,8 @@ const RsvpPhoneSheet = ({ open, onOpenChange, eventId, eventTitle, intent, onVer
       }
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : "That code didn't match. Try again.";
-      setErr(msg);
+      const friendly = friendlyPhoneAuthError(msg);
+      setErr(friendly ? `${friendly.title}. ${friendly.description}` : msg);
       // shake-like: clear after a beat to encourage retry
       setCode("");
       setTimeout(() => codeInputRef.current?.focus(), 30);
@@ -220,18 +221,35 @@ const RsvpPhoneSheet = ({ open, onOpenChange, eventId, eventTitle, intent, onVer
                 </div>
                 <div>
                   <label style={labelStyle}>Mobile number</label>
-                  <Input
-                    type="tel"
-                    inputMode="tel"
-                    placeholder="(555) 123-4567"
-                    value={phoneRaw}
-                    onChange={(e) => setPhoneRaw(e.target.value)}
-                    autoComplete="tel"
-                    style={inputStyle}
-                    required
-                  />
+                  <div className="flex gap-2 items-stretch">
+                    <div
+                      className="flex items-center justify-center select-none"
+                      aria-hidden="true"
+                      style={{
+                        ...inputStyle,
+                        width: 78,
+                        padding: "0 12px",
+                        fontFamily: fonts.sans,
+                        fontWeight: 600,
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      🇺🇸 +1
+                    </div>
+                    <Input
+                      type="tel"
+                      inputMode="tel"
+                      placeholder="(555) 123-4567"
+                      value={phoneRaw}
+                      onChange={(e) => setPhoneRaw(formatUSPhone(e.target.value))}
+                      maxLength={14}
+                      autoComplete="tel"
+                      style={{ ...inputStyle, flex: 1 }}
+                      required
+                    />
+                  </div>
                   <p className="mt-2 text-[11px]" style={{ color: C.muted, fontFamily: fonts.mono, letterSpacing: "0.1em" }}>
-                    US numbers default to +1 · add + for international
+                    US mobile numbers only · standard message rates apply
                   </p>
                 </div>
 
