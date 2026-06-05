@@ -11,11 +11,52 @@ export async function getUserSubscription(userId: string): Promise<Subscription 
   return data as Subscription | null;
 }
 
+// Beta trial: every signed-up user gets full ('local' tier) access
+// for BETA_TRIAL_DAYS days from their profile creation date.
+export const BETA_TRIAL_DAYS = 30;
+
+export interface BetaTrialStatus {
+  inTrial: boolean;
+  daysRemaining: number;
+  trialEndsAt: Date | null;
+}
+
+export async function getBetaTrialStatus(userId: string): Promise<BetaTrialStatus> {
+  const { data } = await supabase
+    .from('profiles')
+    .select('created_at')
+    .eq('id', userId)
+    .maybeSingle();
+
+  if (!data?.created_at) {
+    return { inTrial: false, daysRemaining: 0, trialEndsAt: null };
+  }
+
+  const createdAt = new Date(data.created_at);
+  const trialEndsAt = new Date(createdAt.getTime() + BETA_TRIAL_DAYS * 24 * 60 * 60 * 1000);
+  const msRemaining = trialEndsAt.getTime() - Date.now();
+  const daysRemaining = Math.max(0, Math.ceil(msRemaining / (24 * 60 * 60 * 1000)));
+
+  return {
+    inTrial: msRemaining > 0,
+    daysRemaining,
+    trialEndsAt,
+  };
+}
+
 export async function getUserTier(userId: string): Promise<SubscriptionPlan> {
+  // Active paid subscription always wins
   const sub = await getUserSubscription(userId);
+  if (sub && sub.status === 'active' && sub.plan !== 'free') return sub.plan;
+
+  // Beta trial grants top-tier access for the first 30 days post-signup
+  const trial = await getBetaTrialStatus(userId);
+  if (trial.inTrial) return 'local';
+
   if (!sub || sub.status !== 'active') return 'free';
   return sub.plan;
 }
+
 
 export async function fetchAllSubscriptions(): Promise<SubscriptionWithUser[]> {
   const { data, error } = await supabase
