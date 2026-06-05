@@ -462,7 +462,7 @@ const Onboarding = () => {
       /* 4 & 5. Phone / Email entry */
       case 3:
       case 4: {
-        const canSendPhone = phone.replace(/\D/g, "").length >= 7;
+        const canSendPhone = normalizeUSPhone(phone) !== null;
         const canSendEmail = /^\S+@\S+\.\S+$/.test(email.trim());
         return (
           <Page key="phone">
@@ -472,25 +472,26 @@ const Onboarding = () => {
               <Sub>Just for event drops. No spam 💌</Sub>
 
               {channel === "phone" ? (
-                <div className="mt-8 flex gap-2">
-                  <select
-                    value={`${country.flag}${country.code}`}
-                    onChange={(e) => {
-                      const c = COUNTRIES.find((x) => `${x.flag}${x.code}` === e.target.value);
-                      if (c) setCountry(c);
+                <div className="mt-8 flex gap-2 items-stretch">
+                  <div
+                    className="flex items-center justify-center select-none"
+                    aria-hidden="true"
+                    style={{
+                      height: 60, borderRadius: 16, padding: "0 16px",
+                      background: C.surface, color: C.text,
+                      border: `1.5px solid ${C.borderStrong}`,
+                      fontFamily: fonts.sans, fontSize: 16, fontWeight: 600,
+                      whiteSpace: "nowrap",
                     }}
-                    className="focus:outline-none"
-                    style={{ height: 60, borderRadius: 16, padding: "0 14px", background: C.surface, color: C.text, border: `1.5px solid ${C.borderStrong}`, fontFamily: fonts.sans, fontSize: 16 }}
                   >
-                    {COUNTRIES.map((c) => (
-                      <option key={`${c.flag}${c.label}`} value={`${c.flag}${c.code}`}>{c.flag} {c.code}</option>
-                    ))}
-                  </select>
+                    🇺🇸 +1
+                  </div>
                   <TextField
                     type="tel" inputMode="tel" autoComplete="tel"
                     placeholder="(310) 555-0123"
                     value={phone}
-                    onChange={(e) => { setPhone(e.target.value); if (step === 3) setStep(4); }}
+                    maxLength={14}
+                    onChange={(e) => { setPhone(formatUSPhone(e.target.value)); if (step === 3) setStep(4); }}
                   />
                 </div>
               ) : (
