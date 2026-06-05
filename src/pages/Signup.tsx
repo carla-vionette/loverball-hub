@@ -10,6 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import loverballLogo from "@/assets/loverball-script-logo.png";
 import { isAuthEmailRateLimitError } from "@/lib/authErrors";
 import { normalizeUSPhone, formatUSPhone } from "@/lib/phone";
+import { FEATURES } from "@/lib/features";
 
 type Method = "email" | "phone";
 type Step = "details" | "verify" | "done";
@@ -201,13 +202,15 @@ export default function Signup() {
                     <label htmlFor="contact" className="text-sm font-medium text-foreground">
                       {method === "email" ? "Email" : "Phone"}
                     </label>
-                    <button
-                      type="button"
-                      onClick={() => { setMethod(method === "email" ? "phone" : "email"); setContact(""); }}
-                      className="text-xs font-medium text-primary inline-flex items-center gap-1"
-                    >
-                      {method === "email" ? <><Phone className="w-3 h-3" /> Use phone</> : <><Mail className="w-3 h-3" /> Use email</>}
-                    </button>
+                    {FEATURES.phoneAuth && (
+                      <button
+                        type="button"
+                        onClick={() => { setMethod(method === "email" ? "phone" : "email"); setContact(""); }}
+                        className="text-xs font-medium text-primary inline-flex items-center gap-1"
+                      >
+                        {method === "email" ? <><Phone className="w-3 h-3" /> Use phone</> : <><Mail className="w-3 h-3" /> Use email</>}
+                      </button>
+                    )}
                   </div>
                   {method === "phone" ? (
                     <div className="flex items-center h-14 rounded-2xl border border-input bg-background focus-within:ring-2 focus-within:ring-ring overflow-hidden">
