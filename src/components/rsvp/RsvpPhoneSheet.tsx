@@ -97,21 +97,62 @@ const RsvpPhoneSheet = ({ open, onOpenChange, eventId, eventTitle, intent, onVer
     try { if (firstName.trim()) localStorage.setItem("pending_first_name", firstName.trim()); } catch { /* ignore */ }
   };
 
-  const sendCode = async (phoneToSend: string) => {
+  const isValidEmail = (s: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s.trim());
+
+  const switchToEmail = (reason?: string) => {
+    setMethod("email");
+    setStep("capture");
+    setCode("");
+    setErr(null);
+    setInfo(
+      reason ||
+        "Text messages aren't available right now — we'll send your code by email instead."
+    );
+  };
+
+  const sendPhoneCode = async (phoneToSend: string) => {
     setLoading(true);
     setErr(null);
     try {
       const { error } = await supabase.auth.signInWithOtp({
         phone: phoneToSend,
-        options: { channel: "sms" },
+        options: { channel: "sms" }, // force plain SMS — no Silent Network Auth / WhatsApp
       });
       if (error) throw error;
       setResendIn(RESEND_SECONDS);
       setStep("otp");
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : "Couldn't send code. Try again.";
+      // Soft-fail: if SMS isn't available, route the user to email instead of blocking RSVP.
+      if (isPhoneProviderUnavailable(msg)) {
+        switchToEmail();
+        return;
+      }
       const friendly = friendlyPhoneAuthError(msg);
       setErr(friendly ? `${friendly.title}. ${friendly.description}` : msg);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const sendEmailCode = async (emailToSend: string) => {
+    setLoading(true);
+    setErr(null);
+    try {
+      const { error } = await supabase.auth.signInWithOtp({
+        email: emailToSend,
+        options: {
+          shouldCreateUser: true,
+          emailRedirectTo: `${window.location.origin}/e/${eventId}`,
+        },
+      });
+      if (error) throw error;
+      setResendIn(RESEND_SECONDS);
+      setStep("otp");
+      setInfo(null);
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : "Couldn't send code. Try again.";
+      setErr(msg);
     } finally {
       setLoading(false);
     }
@@ -121,14 +162,24 @@ const RsvpPhoneSheet = ({ open, onOpenChange, eventId, eventTitle, intent, onVer
     e.preventDefault();
     setErr(null);
     if (!firstName.trim()) { setErr("Add your first name."); return; }
+    persistIntent();
+
+    if (method === "email") {
+      if (!isValidEmail(email)) {
+        setErr("Enter a valid email address.");
+        return;
+      }
+      await sendEmailCode(email.trim());
+      return;
+    }
+
     const normalized = normalizePhone(phoneRaw);
     if (!normalized) {
       setErr("Enter a valid 10-digit US mobile number, e.g. (555) 123-4567.");
       return;
     }
     setPhoneE164(normalized);
-    persistIntent();
-    await sendCode(normalized);
+    await sendPhoneCode(normalized);
   };
 
   const handleVerify = async (e?: React.FormEvent) => {
@@ -137,11 +188,18 @@ const RsvpPhoneSheet = ({ open, onOpenChange, eventId, eventTitle, intent, onVer
     setLoading(true);
     setErr(null);
     try {
-      const { data, error } = await supabase.auth.verifyOtp({
-        phone: phoneE164,
-        token: code.trim(),
-        type: "sms",
-      });
+      const { data, error } =
+        method === "email"
+          ? await supabase.auth.verifyOtp({
+              email: email.trim(),
+              token: code.trim(),
+              type: "email",
+            })
+          : await supabase.auth.verifyOtp({
+              phone: phoneE164,
+              token: code.trim(),
+              type: "sms",
+            });
       if (error) throw error;
       const uid = data.user?.id;
       if (uid) {
@@ -158,7 +216,6 @@ const RsvpPhoneSheet = ({ open, onOpenChange, eventId, eventTitle, intent, onVer
         }
         await onVerified(intent);
         onOpenChange(false);
-        // Returning users with a complete profile skip identity; everyone else lands on confirmation
         const isReturning = !!existing?.has_completed_onboarding;
         navigate(`/rsvp/confirmed/${eventId}?returning=${isReturning ? "1" : "0"}`, { replace: false });
       }
@@ -166,7 +223,6 @@ const RsvpPhoneSheet = ({ open, onOpenChange, eventId, eventTitle, intent, onVer
       const msg = e instanceof Error ? e.message : "That code didn't match. Try again.";
       const friendly = friendlyPhoneAuthError(msg);
       setErr(friendly ? `${friendly.title}. ${friendly.description}` : msg);
-      // shake-like: clear after a beat to encourage retry
       setCode("");
       setTimeout(() => codeInputRef.current?.focus(), 30);
     } finally {
@@ -175,10 +231,18 @@ const RsvpPhoneSheet = ({ open, onOpenChange, eventId, eventTitle, intent, onVer
   };
 
   const handleResend = async () => {
-    if (resendIn > 0 || !phoneE164) return;
-    await sendCode(phoneE164);
-    toast({ title: "Code sent", description: "Check your texts." });
+    if (resendIn > 0) return;
+    if (method === "email") {
+      if (!email) return;
+      await sendEmailCode(email.trim());
+      toast({ title: "Code sent", description: "Check your inbox (and spam)." });
+    } else {
+      if (!phoneE164) return;
+      await sendPhoneCode(phoneE164);
+      toast({ title: "Code sent", description: "Check your texts." });
+    }
   };
+
 
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
