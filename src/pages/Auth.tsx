@@ -162,6 +162,9 @@ const Auth = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
+  const modeParam = searchParams.get('mode');
+  const isSignup = modeParam === 'signup';
+
   const initialMode = ((): AuthMode => {
     if (searchParams.get('reset') === 'true') return 'reset_password';
     return 'email';
@@ -177,7 +180,10 @@ const Auth = () => {
 
   const redirectTo = searchParams.get('redirect') || '/feed';
   const authOrigin = window.location.origin;
-  const emailRedirectTo = `${authOrigin}${redirectTo}`;
+  // New users (signup) → land in onboarding to finish their profile, then exit to /feed.
+  // Returning users (signin) → land directly at their redirect target (default /feed).
+  const postAuthPath = isSignup ? '/onboarding?step=finish&welcome=1' : redirectTo;
+  const emailRedirectTo = `${authOrigin}${postAuthPath}`;
 
   useEffect(() => {
     if (searchParams.get('reset') === 'true') setMode('reset_password');
