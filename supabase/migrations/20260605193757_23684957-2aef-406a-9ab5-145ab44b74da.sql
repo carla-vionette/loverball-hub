@@ -1,0 +1,1 @@
+UPDATE public.events SET visibility='public' WHERE id='bbcbee9f-56a9-430b-a2d5-97472cc17c4a';
