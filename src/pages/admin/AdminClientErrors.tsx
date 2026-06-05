@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { Fragment, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Loader2, RefreshCw, Download, ArrowLeft } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
@@ -200,9 +200,8 @@ const AdminClientErrors = () => {
                   {rows.map((r) => {
                     const isOpen = expanded === r.id;
                     return (
-                      <>
+                      <Fragment key={r.id}>
                         <tr
-                          key={r.id}
                           className="border-t border-border hover:bg-muted/30 cursor-pointer"
                           onClick={() => setExpanded(isOpen ? null : r.id)}
                         >
@@ -225,7 +224,7 @@ const AdminClientErrors = () => {
                           </td>
                         </tr>
                         {isOpen && (
-                          <tr key={r.id + '-d'} className="bg-muted/20 border-t border-border">
+                          <tr className="bg-muted/20 border-t border-border">
                             <td colSpan={5} className="px-4 py-4 space-y-3 text-xs">
                               <div>
                                 <div className="font-semibold mb-1">URL</div>
@@ -254,7 +253,7 @@ const AdminClientErrors = () => {
                             </td>
                           </tr>
                         )}
-                      </>
+                      </Fragment>
                     );
                   })}
                 </tbody>
