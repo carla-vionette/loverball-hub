@@ -9,7 +9,7 @@ import { Loader2, ArrowLeft } from "lucide-react";
 import { C, fonts } from "@/lib/editorialTheme";
 import { useToast } from "@/hooks/use-toast";
 import type { RsvpIntent } from "@/components/EventRSVPDialog";
-import { normalizeUSPhone, formatUSPhone, friendlyPhoneAuthError, isPhoneProviderUnavailable } from "@/lib/phone";
+import { normalizeUSPhone, formatUSPhone, friendlyPhoneAuthError } from "@/lib/phone";
 import loverballLogo from "@/assets/loverball-script-logo.png";
 
 interface Props {
@@ -121,15 +121,11 @@ const RsvpPhoneSheet = ({ open, onOpenChange, eventId, eventTitle, intent, onVer
       if (error) throw error;
       setResendIn(RESEND_SECONDS);
       setStep("otp");
-    } catch (e: unknown) {
-      const msg = e instanceof Error ? e.message : "Couldn't send code. Try again.";
-      // Soft-fail: if SMS isn't available, route the user to email instead of blocking RSVP.
-      if (isPhoneProviderUnavailable(msg)) {
-        switchToEmail();
-        return;
-      }
-      const friendly = friendlyPhoneAuthError(msg);
-      setErr(friendly ? `${friendly.title}. ${friendly.description}` : msg);
+    } catch {
+      // SMS is the flaky channel — on ANY send failure, fail open to email so the
+      // user can still RSVP rather than dead-ending on the phone step.
+      switchToEmail("Text isn't going through — enter your email and we'll send the code there.");
+      return;
     } finally {
       setLoading(false);
     }
