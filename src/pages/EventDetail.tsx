@@ -194,13 +194,13 @@ const EventDetail = () => {
     };
   }, [event]);
 
-  // Fetch event for everyone (including guests)
+  // Fetch event for everyone (including guests); attendee list only for signed-in users
   useEffect(() => {
     if (id) {
       fetchEvent();
-      fetchAttendees();
+      if (user) fetchAttendees();
     }
-  }, [id]);
+  }, [id, user]);
 
   // Only fetch RSVP status for authenticated users
   useEffect(() => {
