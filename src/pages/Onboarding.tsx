@@ -18,13 +18,8 @@ import collage3 from "@/assets/community-event.jpg";
 
 const TOTAL_CORE_SCREENS = 14;
 
-const COUNTRIES = [
-  { code: "+1", flag: "🇺🇸", label: "US" },
-  { code: "+1", flag: "🇨🇦", label: "CA" },
-  { code: "+44", flag: "🇬🇧", label: "UK" },
-  { code: "+52", flag: "🇲🇽", label: "MX" },
-  { code: "+61", flag: "🇦🇺", label: "AU" },
-];
+// Phone auth is US-only (Twilio is configured for US numbers).
+// See src/lib/phone.ts for normalization + formatting helpers.
 
 const LEAGUES = ["WNBA", "NWSL", "NCAA", "NFL", "FIFA", "F1", "Flag Football", "MLB", "NBA", "MLS"];
 const TEAMS_BY_LEAGUE: Record<string, string[]> = {
@@ -164,7 +159,7 @@ const Onboarding = () => {
 
   // form state
   const [channel, setChannel] = useState<"phone" | "email">("phone");
-  const [country, setCountry] = useState(COUNTRIES[0]);
+  // Phone auth is US-only; no country selector.
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
