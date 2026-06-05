@@ -303,14 +303,19 @@ const Onboarding = () => {
     setLoading(true);
     try {
       const { error } = channel === "phone"
-        ? await supabase.auth.verifyOtp({ phone: fullPhone, token: otp, type: "sms" })
-        : await supabase.auth.verifyOtp({ email: email.trim(), token: otp, type: "email" });
+        ? await supabase.auth.verifyOtp({ phone: fullPhone, token: otp.trim(), type: "sms" })
+        : await supabase.auth.verifyOtp({ email: email.trim(), token: otp.trim(), type: "email" });
       if (error) throw error;
       setOtpVerified(true);
       // identifier (phone or email) is already stored on auth.users by Supabase
       setStep(7);
     } catch (e: any) {
-      toast({ title: "Code didn't work", description: e?.message ?? "Double-check & try again", variant: "destructive" });
+      const friendly = friendlyPhoneAuthError(e?.message ?? "");
+      toast({
+        title: friendly?.title ?? "Code didn't work",
+        description: friendly?.description ?? (e?.message || "Double-check & try again"),
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }
