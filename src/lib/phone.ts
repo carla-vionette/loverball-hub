@@ -39,10 +39,10 @@ export const friendlyPhoneAuthError = (
 ): { title: string; description: string } | null => {
   const msg = String(message || "");
   const lower = msg.toLowerCase();
-  if (/provider.*not.*enabled|phone.*disabled|sms.*not.*enabled|unsupported.*provider/.test(lower)) {
+  if (/provider.*not.*enabled|phone.*disabled|sms.*not.*enabled|unsupported.*provider|unsupported.*phone|sms.*provider/.test(lower)) {
     return {
-      title: "Phone sign-in is temporarily unavailable",
-      description: "Use email instead — we'll get you in right away.",
+      title: "Text messages aren't available right now",
+      description: "We'll RSVP you with email instead — it only takes a sec.",
     };
   }
   if (/unsupported carrier|not a mobile number|landline/.test(lower)) {
@@ -71,3 +71,16 @@ export const friendlyPhoneAuthError = (
   }
   return null;
 };
+
+/**
+ * True when a Supabase auth error indicates phone SMS delivery is unavailable
+ * (provider not enabled, unsupported carrier, SMS misconfigured). Callers
+ * should fall back to email-based auth rather than blocking the user.
+ */
+export const isPhoneProviderUnavailable = (message?: string | null): boolean => {
+  const lower = String(message || "").toLowerCase();
+  return /provider.*not.*enabled|phone.*disabled|sms.*not.*enabled|unsupported.*provider|unsupported.*phone|sms.*provider|unsupported carrier|not a mobile number|landline|invalid.*from.*number/.test(
+    lower
+  );
+};
+
