@@ -91,7 +91,7 @@ const EventRSVPDialog = ({
       if (!firstName.trim()) return "Please enter your first name.";
       if (!lastName.trim()) return "Please enter your last name.";
     }
-    if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email.trim()))
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()))
       return "Enter a valid email address.";
     if (password.length < 6) return "Password must be at least 6 characters.";
     return null;
@@ -162,7 +162,7 @@ const EventRSVPDialog = ({
   };
 
   const handleForgot = async () => {
-    if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email.trim())) {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
       setError("Enter your email above first, then tap reset.");
       return;
     }

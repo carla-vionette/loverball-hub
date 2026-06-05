@@ -12,6 +12,20 @@ if (import.meta.env.DEV && "serviceWorker" in navigator) {
   });
 }
 
+// Production self-heal: a stale precached app shell can reference a hashed entry/route
+// chunk that has been purged from the server (404), which leaves #root empty (blank page).
+// When a dynamic import fails, unregister all SWs once and reload to pull a fresh shell.
+if (import.meta.env.PROD && "serviceWorker" in navigator) {
+  window.addEventListener("vite:preloadError", () => {
+    if (sessionStorage.getItem("sw-recovered")) return;
+    sessionStorage.setItem("sw-recovered", "1");
+    navigator.serviceWorker
+      .getRegistrations()
+      .then((rs) => Promise.all(rs.map((r) => r.unregister())))
+      .finally(() => window.location.reload());
+  });
+}
+
 createRoot(document.getElementById("root")!).render(
   <HelmetProvider>
     <App />

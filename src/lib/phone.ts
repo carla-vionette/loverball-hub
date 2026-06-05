@@ -79,7 +79,7 @@ export const friendlyPhoneAuthError = (
  */
 export const isPhoneProviderUnavailable = (message?: string | null): boolean => {
   const lower = String(message || "").toLowerCase();
-  return /provider.*not.*enabled|phone.*disabled|sms.*not.*enabled|unsupported.*provider|unsupported.*phone|sms.*provider|unsupported carrier|not a mobile number|landline|invalid.*from.*number/.test(
+  return /provider.*not.*enabled|phone.*disabled|sms.*not.*enabled|unsupported.*provider|unsupported.*phone|sms.*provider|unsupported carrier|not a mobile number|landline|invalid.*from.*number|error sending sms|sms.*send.*fail|signups.*not allowed|otp.*disabled|unable to process|messaging service/.test(
     lower
   );
 };
