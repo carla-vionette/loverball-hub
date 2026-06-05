@@ -398,8 +398,6 @@ const Onboarding = () => {
                 transition={{ duration: 0.7, ease: "easeOut" }}
               />
             </div>
-            <div aria-hidden className="pointer-events-none absolute inset-0 -z-10"
-              style={{ background: `radial-gradient(circle at 30% 20%, ${C.raspberry}22, transparent 60%), radial-gradient(circle at 70% 80%, ${C.pink}22, transparent 60%)` }} />
           </Page>
         );
 
