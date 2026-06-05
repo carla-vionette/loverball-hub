@@ -487,7 +487,7 @@ const RsvpPhoneSheet = ({ open, onOpenChange, eventId, eventTitle, intent, onVer
                     onClick={() => { setStep("capture"); setCode(""); setErr(null); }}
                     className="flex items-center gap-1 hover:opacity-100 opacity-80"
                   >
-                    <ArrowLeft className="w-3 h-3" /> Edit number
+                    <ArrowLeft className="w-3 h-3" /> {method === "email" ? "Edit email" : "Edit number"}
                   </button>
                   <button
                     type="button"
