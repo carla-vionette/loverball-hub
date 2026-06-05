@@ -1,0 +1,1 @@
+UPDATE public.events SET event_tags = array_append(event_tags, 'Official Loverball Private Event Members Only'), visibility = 'invite_only' WHERE id = 'bbcbee9f-56a9-430b-a2d5-97472cc17c4a';
