@@ -9,7 +9,7 @@ import { Loader2, ArrowLeft } from "lucide-react";
 import { C, fonts } from "@/lib/editorialTheme";
 import { useToast } from "@/hooks/use-toast";
 import type { RsvpIntent } from "@/components/EventRSVPDialog";
-import { normalizeUSPhone, formatUSPhone, friendlyPhoneAuthError } from "@/lib/phone";
+import { normalizeUSPhone, formatUSPhone, friendlyPhoneAuthError, isPhoneProviderUnavailable } from "@/lib/phone";
 import loverballLogo from "@/assets/loverball-script-logo.png";
 
 interface Props {
