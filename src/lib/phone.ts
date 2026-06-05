@@ -39,10 +39,10 @@ export const friendlyPhoneAuthError = (
 ): { title: string; description: string } | null => {
   const msg = String(message || "");
   const lower = msg.toLowerCase();
-  if (/provider.*not.*enabled|phone.*disabled|sms.*not.*enabled|unsupported.*provider/.test(lower)) {
+  if (/provider.*not.*enabled|phone.*disabled|sms.*not.*enabled|unsupported.*provider|unsupported.*phone|sms.*provider/.test(lower)) {
     return {
-      title: "Phone sign-in is temporarily unavailable",
-      description: "Use email instead — we'll get you in right away.",
+      title: "Text messages aren't available right now",
+      description: "We'll RSVP you with email instead — it only takes a sec.",
     };
   }
   if (/unsupported carrier|not a mobile number|landline/.test(lower)) {
