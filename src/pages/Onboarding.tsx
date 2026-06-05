@@ -207,7 +207,7 @@ const Onboarding = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
-  const fullPhone = useMemo(() => `${country.code}${phone.replace(/\D/g, "")}`, [country, phone]);
+  const fullPhone = useMemo(() => normalizeUSPhone(phone) ?? "", [phone]);
   const firstName = name.trim().split(/\s+/)[0] || "friend";
 
   const next = useCallback(() => setStep((s) => s + 1), []);
@@ -247,13 +247,19 @@ const Onboarding = () => {
     setLoading(true);
     try {
       if (channel === "phone") {
-        if (phone.replace(/\D/g, "").length < 7) {
-          toast({ title: "Add a valid number", variant: "destructive" });
+        const e164 = normalizeUSPhone(phone);
+        if (!e164) {
+          toast({
+            title: "Enter a valid US mobile number",
+            description: "10 digits, e.g. (555) 123-4567.",
+            variant: "destructive",
+          });
           setLoading(false);
           return;
         }
-        const { error } = await supabase.auth.signInWithOtp({ phone: fullPhone });
+        const { error } = await supabase.auth.signInWithOtp({ phone: e164 });
         if (error) {
+          const friendly = friendlyPhoneAuthError(error.message);
           if (isPhoneProviderError(error.message)) {
             toast({
               title: "Texts aren't working right now — try email?",
@@ -261,6 +267,11 @@ const Onboarding = () => {
               variant: "destructive",
             });
             switchToEmail();
+            setLoading(false);
+            return;
+          }
+          if (friendly) {
+            toast({ ...friendly, variant: "destructive" });
             setLoading(false);
             return;
           }
