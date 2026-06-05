@@ -7,6 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { C, fonts } from "@/lib/editorialTheme";
 import { normalizeUSPhone, formatUSPhone, friendlyPhoneAuthError } from "@/lib/phone";
+import { FEATURES } from "@/lib/features";
 import loverballLogo from "@/assets/loverball-script-logo.png";
 
 /* =========================================================
@@ -158,7 +159,7 @@ const Onboarding = () => {
   const [loading, setLoading] = useState(false);
 
   // form state
-  const [channel, setChannel] = useState<"phone" | "email">("phone");
+  const [channel, setChannel] = useState<"phone" | "email">(FEATURES.phoneAuth ? "phone" : "email");
   // Phone auth is US-only; no country selector.
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
@@ -511,19 +512,21 @@ const Onboarding = () => {
                   : "We'll only email codes & event drops. Unsubscribe anytime."}
               </Trust>
 
-              <div className="mt-5">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setOtp("");
-                    setChannel(channel === "phone" ? "email" : "phone");
-                  }}
-                  className="text-xs underline opacity-80 hover:opacity-100"
-                  style={{ fontFamily: fonts.mono, color: C.pink, letterSpacing: "0.08em" }}
-                >
-                  {channel === "phone" ? "Use email instead" : "Use phone instead"}
-                </button>
-              </div>
+              {FEATURES.phoneAuth && (
+                <div className="mt-5">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setOtp("");
+                      setChannel(channel === "phone" ? "email" : "phone");
+                    }}
+                    className="text-xs underline opacity-80 hover:opacity-100"
+                    style={{ fontFamily: fonts.mono, color: C.pink, letterSpacing: "0.08em" }}
+                  >
+                    {channel === "phone" ? "Use email instead" : "Use phone instead"}
+                  </button>
+                </div>
+              )}
             </div>
             <PrimaryBtn
               onClick={sendOtp}
