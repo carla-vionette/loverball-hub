@@ -8,9 +8,6 @@ import { useAuth } from "@/hooks/useAuth";
 import { C, fonts } from "@/lib/editorialTheme";
 import { normalizeUSPhone, formatUSPhone, friendlyPhoneAuthError } from "@/lib/phone";
 import loverballLogo from "@/assets/loverball-script-logo.png";
-import collage1 from "@/assets/community-women.jpg";
-import collage2 from "@/assets/brunch-basketball.jpg";
-import collage3 from "@/assets/community-event.jpg";
 
 /* =========================================================
    LOVERBALL · Unified 14-screen onboarding (Partiful-style)
@@ -411,17 +408,26 @@ const Onboarding = () => {
               <GhostBtn onClick={() => setStep(2)}>Skip</GhostBtn>
             </div>
             <div className="flex-1 flex flex-col items-center justify-center relative my-6">
-              <div className="grid grid-cols-2 gap-3 w-full max-w-sm">
-                <img src={collage1} alt="" className="rounded-2xl aspect-[3/4] object-cover" loading="lazy" decoding="async" />
-                <div className="space-y-3">
-                  <img src={collage2} alt="" className="rounded-2xl aspect-square object-cover" loading="lazy" decoding="async" />
-                  <img src={collage3} alt="" className="rounded-2xl aspect-square object-cover" loading="lazy" decoding="async" />
-                </div>
+              <div className="relative flex items-center justify-center w-full max-w-sm aspect-[3/4]">
+                <div
+                  className="absolute inset-0 rounded-3xl opacity-30"
+                  style={{ background: `radial-gradient(circle at 40% 40%, ${C.raspberry}, transparent 60%), radial-gradient(circle at 70% 70%, ${C.pink}, transparent 60%)` }}
+                />
+                <motion.img
+                  src={loverballLogo}
+                  alt="Loverball"
+                  className="relative z-10 h-24 w-auto"
+                  style={{ filter: "brightness(0) invert(1)" }}
+                  initial={{ scale: 0.9, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ duration: 0.6, ease: "easeOut" }}
+                />
               </div>
               <motion.div
-                initial={{ rotate: -6, opacity: 0, y: 10 }} animate={{ rotate: -6, opacity: 1, y: 0 }}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3, duration: 0.5 }}
-                className="absolute -bottom-2 left-3 max-w-[240px] p-4 rounded-2xl"
+                className="mt-6 max-w-[280px] p-5 rounded-2xl"
                 style={{ background: C.neon, color: "#1a1a1a", boxShadow: "0 10px 30px -10px rgba(0,0,0,0.5)" }}
               >
                 <p style={{ fontFamily: fonts.sans, fontSize: 14, lineHeight: 1.3, fontWeight: 600 }}>
