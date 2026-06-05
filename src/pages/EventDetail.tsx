@@ -916,24 +916,19 @@ const EventDetail = () => {
                 <div className="grid grid-cols-2 gap-2 pt-1">
                   <Button
                     className="rounded-full h-11"
-                    onClick={() => {
-                      sessionStorage.setItem('postAuthRedirect', `/event/${id}`);
-                      navigate('/signup');
-                    }}
+                    onClick={() => navigate(`/auth?mode=signup&redirect=${encodeURIComponent(`/event/${id}`)}`)}
                   >
                     Sign Up — Free
                   </Button>
                   <Button
                     variant="outline"
                     className="rounded-full h-11"
-                    onClick={() => {
-                      sessionStorage.setItem('postAuthRedirect', `/event/${id}`);
-                      navigate(`/auth?redirect=${encodeURIComponent(`/event/${id}`)}`);
-                    }}
+                    onClick={() => navigate(`/auth?mode=signin&redirect=${encodeURIComponent(`/event/${id}`)}`)}
                   >
                     Sign In
                   </Button>
                 </div>
+
               </div>
             )}
 
