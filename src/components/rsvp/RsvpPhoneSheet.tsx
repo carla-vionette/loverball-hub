@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { Drawer, DrawerContent } from "@/components/ui/drawer";
 import { Input } from "@/components/ui/input";
@@ -9,6 +10,7 @@ import { C, fonts } from "@/lib/editorialTheme";
 import { useToast } from "@/hooks/use-toast";
 import type { RsvpIntent } from "@/components/EventRSVPDialog";
 import { normalizeUSPhone, formatUSPhone, friendlyPhoneAuthError } from "@/lib/phone";
+import loverballLogo from "@/assets/loverball-script-logo.png";
 
 interface Props {
   open: boolean;
