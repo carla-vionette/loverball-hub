@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Sparkles, Clock } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
-import { getBetaTrialStatus, getUserSubscription, BETA_TRIAL_DAYS } from '@/services/subscriptionService';
+import { getBetaTrialStatus, getUserSubscription, BETA_TRIAL_DAYS, PERMANENT_ACCESS_EMAILS } from '@/services/subscriptionService';
 import UpgradeModal from './UpgradeModal';
 
 interface BetaTrialBannerProps {
@@ -28,7 +28,9 @@ const BetaTrialBanner = ({ className = '' }: BetaTrialBannerProps) => {
     })();
   }, [user]);
 
-  if (!user || hasPaidPlan || daysRemaining === null) return null;
+  const email = user?.email?.toLowerCase();
+  const isPermanent = !!email && PERMANENT_ACCESS_EMAILS.includes(email);
+  if (!user || isPermanent || hasPaidPlan || daysRemaining === null) return null;
 
   const expired = !inTrial;
 
