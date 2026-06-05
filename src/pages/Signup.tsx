@@ -119,7 +119,7 @@ export default function Signup() {
     try {
       const { data, error } = method === "email"
         ? await supabase.auth.verifyOtp({ email: contact.trim(), token: otp.trim(), type: "email" })
-        : await supabase.auth.verifyOtp({ phone: normalizePhone(contact), token: otp.trim(), type: "sms" });
+        : await supabase.auth.verifyOtp({ phone: normalizeUSPhone(contact) ?? "", token: otp.trim(), type: "sms" });
       if (error) throw error;
       if (!data.user) throw new Error("Verification failed");
 
