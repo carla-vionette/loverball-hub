@@ -2,6 +2,9 @@ import { createRoot } from "react-dom/client";
 import { HelmetProvider } from "react-helmet-async";
 import App from "./App.tsx";
 import "./index.css";
+import { installErrorReporting } from "./lib/errorReporter";
+
+installErrorReporting();
 
 // Service worker is registered automatically by vite-plugin-pwa's virtual module.
 // In dev, we explicitly unregister any leftover SW from previous sessions to avoid
