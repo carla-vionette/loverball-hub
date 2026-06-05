@@ -8,9 +8,8 @@ import loverballLogo from "@/assets/loverball-script-logo.png";
 import WelcomeSplash from "@/components/WelcomeSplash";
 import { C, fonts } from "@/lib/editorialTheme";
 import { isAuthEmailRateLimitError } from "@/lib/authErrors";
-import { normalizeUSPhone } from "@/lib/phone";
 
-type AuthMode = "join" | "signin" | "confirm" | "reset_sent" | "reset_password";
+type AuthMode = "email" | "sent" | "password" | "reset_sent" | "reset_password";
 
 /* ─── Editorial styled input ─── */
 const EditorialInput = (props: React.ComponentProps<"input">) => (
@@ -80,16 +79,18 @@ const EditorialBtn = ({
   </button>
 );
 
-/* ─── Editorial outline pill button (Google) ─── */
+/* ─── Editorial outline pill button ─── */
 const EditorialOutlineBtn = ({
   children,
   onClick,
+  type = "button",
 }: {
   children: React.ReactNode;
   onClick?: () => void;
+  type?: "button" | "submit";
 }) => (
   <button
-    type="button"
+    type={type}
     onClick={onClick}
     style={{
       fontFamily: fonts.mono,
@@ -134,7 +135,6 @@ const AuthH1 = ({ children }: { children: React.ReactNode }) => (
   </h1>
 );
 
-/* ─── Body text ─── */
 const AuthBody = ({
   children,
   muted = false,
@@ -157,13 +157,6 @@ const AuthBody = ({
   </p>
 );
 
-/* ─── Mono label ─── */
-const Mono = ({ children, color = C.muted }: { children: React.ReactNode; color?: string }) => (
-  <span style={{ fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.22em", textTransform: "uppercase", color }}>
-    {children}
-  </span>
-);
-
 const Auth = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -171,18 +164,11 @@ const Auth = () => {
 
   const initialMode = ((): AuthMode => {
     if (searchParams.get('reset') === 'true') return 'reset_password';
-    const m = searchParams.get('mode');
-    if (m === 'signin' || m === 'login') return 'signin';
-    if (m === 'signup' || m === 'join') return 'join';
-    if (searchParams.get('signup') === 'true') return 'join';
-    return 'join';
+    return 'email';
   })();
 
   const [mode, setMode] = useState<AuthMode>(initialMode);
-  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [countryCode, setCountryCode] = useState("+1");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [resendLoading, setResendLoading] = useState(false);
@@ -191,80 +177,39 @@ const Auth = () => {
 
   const redirectTo = searchParams.get('redirect') || '/feed';
   const authOrigin = window.location.origin;
+  const emailRedirectTo = `${authOrigin}${redirectTo}`;
 
   useEffect(() => {
-    if (searchParams.get('reset') === 'true') { setMode('reset_password'); return; }
-    const m = searchParams.get('mode');
-    if (m === 'signin' || m === 'login') setMode('signin');
-    else if (m === 'signup' || m === 'join') setMode('join');
-    else if (searchParams.get('signup') === 'true') setMode('join');
+    if (searchParams.get('reset') === 'true') setMode('reset_password');
   }, [searchParams]);
 
-  // E.164 helpers — US uses the shared validator (strict NANP, 10 digits).
-  const normalizePhone = (cc: string, raw: string) => {
-    if (cc === "+1") return normalizeUSPhone(raw) ?? "";
-    let digits = raw.replace(/\D+/g, "");
-    if (!digits) return "";
-    return `${cc}${digits}`;
-  };
-  const isValidE164 = (p: string) => /^\+[1-9]\d{6,14}$/.test(p);
-
-  // ── Sign up ──────────────────────────────────────────────────────────
-  const handleSignUp = async (e: React.FormEvent) => {
+  // ── Send magic link (creates user if needed) ─────────────────────────
+  const handleSendMagicLink = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name.trim()) {
-      toast({ title: "What's your name?", variant: "destructive" });
-      return;
-    }
-    if (!email.trim() || !email.includes("@")) {
+    const trimmed = email.trim().toLowerCase();
+    if (!trimmed || !trimmed.includes("@")) {
       toast({ title: "Enter a valid email", variant: "destructive" });
       return;
     }
-    const fullPhone = normalizePhone(countryCode, phone);
-    if (!isValidE164(fullPhone)) {
-      toast({ title: "Enter a valid phone number", description: "Include area code, digits only.", variant: "destructive" });
-      return;
-    }
-
     setLoading(true);
     try {
-      const tempPassword = crypto.randomUUID();
-      const { error, data } = await supabase.auth.signUp({
-        email: email.trim().toLowerCase(),
-        password: tempPassword,
+      const { error } = await supabase.auth.signInWithOtp({
+        email: trimmed,
         options: {
-          data: { name: name.trim(), phone: fullPhone },
-          emailRedirectTo: `${authOrigin}/finish-profile`,
+          shouldCreateUser: true,
+          emailRedirectTo,
         },
       });
-
       if (error) throw error;
-
-      // Persist phone, email, and free membership immediately on the profile (if session present).
-      if (data.user) {
-        await supabase.from("profiles").upsert(
-          {
-            id: data.user.id,
-            name: name.trim(),
-            email: email.trim().toLowerCase(),
-            phone: fullPhone,
-            membership_tier: "free",
-            in_app_notifications_enabled: true,
-            email_notifications_enabled: true,
-            sms_notifications_enabled: true,
-          },
-          { onConflict: "id" },
-        );
-      }
-
-      if (data.user && !data.session) setMode("confirm");
-      else if (data.user && data.session) navigate("/finish-profile");
+      setMode("sent");
     } catch (err: any) {
       const message = err?.message ?? "";
       toast({
-        title: isAuthEmailRateLimitError(message) ? "Email confirmations are temporarily delayed" : "Hmm, something went wrong",
+        title: isAuthEmailRateLimitError(message)
+          ? "Email sign-in is temporarily delayed"
+          : "Couldn't send sign-in link",
         description: isAuthEmailRateLimitError(message)
-          ? "Email signups are being throttled right now. Use Google for immediate access, or try email again in a little bit."
+          ? "Sign-in emails are being throttled. Try again in a moment."
           : message,
         variant: "destructive",
       });
@@ -273,8 +218,29 @@ const Auth = () => {
     }
   };
 
-  // ── Sign in ──────────────────────────────────────────────────────────
-  const handleSignIn = async (e: React.FormEvent) => {
+  const handleResend = async () => {
+    if (!email) return;
+    setResendLoading(true);
+    try {
+      const { error } = await supabase.auth.signInWithOtp({
+        email: email.trim().toLowerCase(),
+        options: { shouldCreateUser: true, emailRedirectTo },
+      });
+      if (error) throw error;
+      toast({ title: "Sent! Check your inbox." });
+    } catch (err: any) {
+      toast({
+        title: isAuthEmailRateLimitError(err?.message) ? "Resend is temporarily delayed" : "Couldn't resend",
+        description: err?.message,
+        variant: "destructive",
+      });
+    } finally {
+      setResendLoading(false);
+    }
+  };
+
+  // ── Password sign-in (secondary) ──────────────────────────────────────
+  const handlePasswordSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     try {
@@ -303,7 +269,6 @@ const Auth = () => {
     }
   };
 
-  // ── Forgot password ──────────────────────────────────────────────────
   const handleForgotPassword = async () => {
     if (!email.trim()) {
       toast({ title: "Enter your email first", variant: "destructive" });
@@ -312,7 +277,7 @@ const Auth = () => {
     setLoading(true);
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
-        redirectTo: `${window.location.origin}/reset-password`,
+        redirectTo: `${authOrigin}/reset-password`,
       });
       if (error) throw error;
       setMode("reset_sent");
@@ -323,7 +288,6 @@ const Auth = () => {
     }
   };
 
-  // ── Reset password ───────────────────────────────────────────────────
   const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -336,42 +300,6 @@ const Auth = () => {
       toast({ title: "Error", description: err.message, variant: "destructive" });
     } finally {
       setLoading(false);
-    }
-  };
-
-  // ── Resend confirmation ──────────────────────────────────────────────
-  const handleResend = async () => {
-    if (!email) return;
-    setResendLoading(true);
-    try {
-      const { error } = await supabase.auth.resend({
-        type: 'signup',
-        email,
-        options: { emailRedirectTo: `${authOrigin}/finish-profile` },
-      });
-      if (error) throw error;
-      toast({ title: "Sent! Check your inbox." });
-    } catch (err: any) {
-      toast({
-        title: isAuthEmailRateLimitError(err?.message) ? "Resend is temporarily delayed" : "Couldn't resend",
-        description: isAuthEmailRateLimitError(err?.message)
-          ? "Confirmation emails are being throttled right now. Use Google for immediate access, or try again shortly."
-          : undefined,
-        variant: "destructive",
-      });
-    } finally {
-      setResendLoading(false);
-    }
-  };
-
-  // ── Google OAuth (Lovable Cloud managed) ─────────────────────────────
-  const handleGoogleAuth = async () => {
-    const { lovable } = await import('@/integrations/lovable/index');
-    const result = await lovable.auth.signInWithOAuth('google', {
-      redirect_uri: `${authOrigin}/finish-profile`,
-    });
-    if (result.error) {
-      toast({ title: 'Google sign-in failed', description: result.error.message, variant: 'destructive' });
     }
   };
 
@@ -388,12 +316,6 @@ const Auth = () => {
     position: "relative",
   };
 
-  const dividerStyle: React.CSSProperties = {
-    flex: 1,
-    height: 1,
-    background: C.border,
-  };
-
   return (
     <>
       {splashName && pendingRedirect && (
@@ -402,7 +324,6 @@ const Auth = () => {
 
       <div style={pageBg}>
         <div aria-hidden className="pointer-events-none absolute inset-0 -z-10" style={{ background: gradientBg }} />
-        {/* Logo */}
         <motion.div
           initial={{ opacity: 0, y: -12 }}
           animate={{ opacity: 1, y: 0 }}
@@ -415,10 +336,10 @@ const Auth = () => {
         <div className="w-full max-w-sm">
           <AnimatePresence mode="wait">
 
-            {/* ── Join screen ── */}
-            {mode === "join" && (
+            {/* ── Email magic-link entry ── */}
+            {mode === "email" && (
               <motion.div
-                key="join"
+                key="email"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -16 }}
@@ -427,106 +348,57 @@ const Auth = () => {
               >
                 <div className="text-center space-y-2">
                   <AuthH1>JOIN US!</AuthH1>
-                  <AuthBody muted center>Sign up in seconds.</AuthBody>
+                  <AuthBody muted center>Sign up or sign in with your email.</AuthBody>
                 </div>
 
-                <form onSubmit={handleSignUp} className="space-y-4">
-                  <EditorialInput
-                    type="text"
-                    placeholder="Your name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    required
-                    autoFocus
-                  />
+                <form onSubmit={handleSendMagicLink} className="space-y-4">
                   <EditorialInput
                     type="email"
                     placeholder="Email address"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
+                    autoFocus
+                    autoComplete="email"
                   />
-                  <div className="flex gap-2">
-                    <select
-                      value={countryCode}
-                      onChange={(e) => setCountryCode(e.target.value)}
-                      style={{
-                        fontFamily: fonts.sans,
-                        fontSize: 16,
-                        height: 56,
-                        padding: "0 12px",
-                        borderRadius: 16,
-                        border: `1px solid ${C.borderStrong}`,
-                        background: C.surface,
-                        color: C.text,
-                        outline: "none",
-                        minWidth: 100,
-                      }}
-                      aria-label="Country code"
-                    >
-                      <option value="+1">🇺🇸 +1</option>
-                      <option value="+44">🇬🇧 +44</option>
-                      <option value="+61">🇦🇺 +61</option>
-                      <option value="+33">🇫🇷 +33</option>
-                      <option value="+49">🇩🇪 +49</option>
-                      <option value="+52">🇲🇽 +52</option>
-                      <option value="+34">🇪🇸 +34</option>
-                      <option value="+39">🇮🇹 +39</option>
-                      <option value="+81">🇯🇵 +81</option>
-                      <option value="+91">🇮🇳 +91</option>
-                      <option value="+55">🇧🇷 +55</option>
-                    </select>
-                    <EditorialInput
-                      type="tel"
-                      placeholder="Phone number"
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
-                      required
-                      inputMode="tel"
-                    />
-                  </div>
-                  <p style={{ fontFamily: fonts.mono, fontSize: 10, letterSpacing: "0.14em", textTransform: "uppercase", color: C.muted, textAlign: "center" }}>
-                    Free forever · No card required
-                  </p>
                   <EditorialBtn type="submit" loading={loading}>
-                    Continue free
+                    Continue with Email
                   </EditorialBtn>
                 </form>
 
-                <div className="relative flex items-center gap-4">
-                  <div style={dividerStyle} />
-                  <Mono>or</Mono>
-                  <div style={dividerStyle} />
-                </div>
+                <button
+                  type="button"
+                  onClick={() => setMode("password")}
+                  style={{
+                    fontFamily: fonts.sans,
+                    fontSize: 14,
+                    color: C.muted,
+                    width: "100%",
+                    textAlign: "center",
+                  }}
+                  className="hover:text-[#FAF5E9] transition-colors"
+                >
+                  Sign in with password
+                </button>
 
-                <EditorialOutlineBtn onClick={handleGoogleAuth}>
-                  <svg className="h-5 w-5" viewBox="0 0 24 24" style={{ flexShrink: 0 }}>
-                    <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
-                    <path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
-                    <path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
-                    <path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
-                  </svg>
-                  Continue with Google
-                </EditorialOutlineBtn>
-
-                <p style={{ fontFamily: fonts.sans, fontSize: 14, textAlign: "center", color: C.muted }}>
-                  Already a member?{" "}
-                  <button
-                    type="button"
-                    onClick={() => setMode("signin")}
-                    style={{ color: C.raspberry, fontWeight: 600, borderBottom: `1px solid ${C.raspberry}`, paddingBottom: 1 }}
-                    className="hover:opacity-80 transition-opacity"
-                  >
-                    Sign in
-                  </button>
+                <p
+                  style={{
+                    fontFamily: fonts.sans,
+                    fontSize: 12,
+                    color: C.muted,
+                    textAlign: "center",
+                  }}
+                  className="opacity-70"
+                >
+                  Phone sign-in coming soon.
                 </p>
               </motion.div>
             )}
 
-            {/* ── Confirmation screen ── */}
-            {mode === "confirm" && (
+            {/* ── Magic link sent ── */}
+            {mode === "sent" && (
               <motion.div
-                key="confirm"
+                key="sent"
                 initial={{ opacity: 0, scale: 0.96 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.96 }}
@@ -554,12 +426,12 @@ const Auth = () => {
                       color: C.text,
                     }}
                   >
-                    You're almost in.
+                    Check your email for your sign-in link.
                   </h2>
                   <AuthBody muted center>
-                    Check your email at{" "}
-                    <span style={{ fontWeight: 600, color: C.text }}>{email}</span>{" "}
-                    to confirm and finish setting up.
+                    We sent a link to{" "}
+                    <span style={{ fontWeight: 600, color: C.text }}>{email}</span>.
+                    Tap it to finish signing in.
                   </AuthBody>
                 </div>
 
@@ -575,13 +447,13 @@ const Auth = () => {
                     style={{ color: C.raspberry, fontWeight: 600, borderBottom: `1px solid ${C.raspberry}` }}
                     className="hover:opacity-80 transition-opacity"
                   >
-                    {resendLoading ? "Sending…" : "resend the email"}
+                    {resendLoading ? "Sending…" : "resend the link"}
                   </button>
                 </div>
 
                 <button
                   type="button"
-                  onClick={() => setMode("join")}
+                  onClick={() => setMode("email")}
                   style={{ fontFamily: fonts.sans, fontSize: 14, color: C.muted, display: "flex", alignItems: "center", gap: 6, margin: "0 auto" }}
                   className="hover:text-[#FAF5E9] transition-colors"
                 >
@@ -591,10 +463,10 @@ const Auth = () => {
               </motion.div>
             )}
 
-            {/* ── Sign in screen ── */}
-            {mode === "signin" && (
+            {/* ── Password sign in (secondary) ── */}
+            {mode === "password" && (
               <motion.div
-                key="signin"
+                key="password"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -16 }}
@@ -603,10 +475,10 @@ const Auth = () => {
               >
                 <div className="text-center space-y-2">
                   <AuthH1>Welcome back</AuthH1>
-                  <AuthBody muted center>Sign in to your account.</AuthBody>
+                  <AuthBody muted center>Sign in with your password.</AuthBody>
                 </div>
 
-                <form onSubmit={handleSignIn} className="space-y-4">
+                <form onSubmit={handlePasswordSignIn} className="space-y-4">
                   <EditorialInput
                     type="email"
                     placeholder="Email address"
@@ -614,6 +486,7 @@ const Auth = () => {
                     onChange={(e) => setEmail(e.target.value)}
                     required
                     autoFocus
+                    autoComplete="email"
                   />
                   <EditorialInput
                     type="password"
@@ -621,6 +494,7 @@ const Auth = () => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
+                    autoComplete="current-password"
                   />
 
                   <div className="text-right">
@@ -640,33 +514,15 @@ const Auth = () => {
                   </EditorialBtn>
                 </form>
 
-                <div className="relative flex items-center gap-4">
-                  <div style={dividerStyle} />
-                  <Mono>or</Mono>
-                  <div style={dividerStyle} />
-                </div>
-
-                <EditorialOutlineBtn onClick={handleGoogleAuth}>
-                  <svg className="h-5 w-5" viewBox="0 0 24 24" style={{ flexShrink: 0 }}>
-                    <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
-                    <path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
-                    <path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
-                    <path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
-                  </svg>
-                  Continue with Google
-                </EditorialOutlineBtn>
-
-                <p style={{ fontFamily: fonts.sans, fontSize: 14, textAlign: "center", color: C.muted }}>
-                  New here?{" "}
-                  <button
-                    type="button"
-                    onClick={() => { setMode("join"); setPassword(""); }}
-                    style={{ color: C.raspberry, fontWeight: 600, borderBottom: `1px solid ${C.raspberry}`, paddingBottom: 1 }}
-                    className="hover:opacity-80 transition-opacity"
-                  >
-                    JOIN US!
-                  </button>
-                </p>
+                <button
+                  type="button"
+                  onClick={() => { setMode("email"); setPassword(""); }}
+                  style={{ fontFamily: fonts.sans, fontSize: 14, color: C.muted, display: "flex", alignItems: "center", gap: 6, margin: "0 auto" }}
+                  className="hover:text-[#FAF5E9] transition-colors"
+                >
+                  <ArrowLeft size={14} />
+                  Back to email sign-in
+                </button>
               </motion.div>
             )}
 
@@ -704,7 +560,7 @@ const Auth = () => {
                 </div>
                 <button
                   type="button"
-                  onClick={() => setMode("signin")}
+                  onClick={() => setMode("password")}
                   style={{ fontFamily: fonts.sans, fontSize: 14, color: C.muted, display: "flex", alignItems: "center", gap: 6, margin: "0 auto" }}
                   className="hover:text-[#FAF5E9] transition-colors"
                 >
@@ -737,6 +593,7 @@ const Auth = () => {
                     required
                     minLength={6}
                     autoFocus
+                    autoComplete="new-password"
                   />
                   <EditorialBtn type="submit" loading={loading}>
                     Update password
