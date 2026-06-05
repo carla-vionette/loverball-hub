@@ -544,7 +544,7 @@ const Onboarding = () => {
               <H>{channel === "phone" ? "Verify your number" : "Verify your email"}</H>
               <Sub>
                 We sent a 6-digit code to{" "}
-                {channel === "phone" ? `${country.code} ${phone}` : email}.
+                {channel === "phone" ? `+1 ${phone}` : email}.
               </Sub>
 
               <input
