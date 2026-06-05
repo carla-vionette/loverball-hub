@@ -201,8 +201,14 @@ const Auth = () => {
 
   // E.164 helpers
   const normalizePhone = (cc: string, raw: string) => {
-    const digits = raw.replace(/\D+/g, "");
+    let digits = raw.replace(/\D+/g, "");
     if (!digits) return "";
+    // For US (+1), strip a leading "1" if the user typed it, and require exactly 10 digits.
+    if (cc === "+1") {
+      if (digits.length === 11 && digits.startsWith("1")) digits = digits.slice(1);
+      if (digits.length !== 10) return "";
+      if (/^[01]/.test(digits) || /^[01]/.test(digits.slice(3))) return "";
+    }
     return `${cc}${digits}`;
   };
   const isValidE164 = (p: string) => /^\+[1-9]\d{6,14}$/.test(p);
