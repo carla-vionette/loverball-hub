@@ -54,22 +54,27 @@ const gradientBg = `radial-gradient(circle at 30% 20%, ${C.raspberry}22, transpa
 const RsvpPhoneSheet = ({ open, onOpenChange, eventId, eventTitle, intent, onVerified }: Props) => {
   const { toast } = useToast();
   const navigate = useNavigate();
+  const [method, setMethod] = useState<"phone" | "email">("phone");
   const [step, setStep] = useState<"capture" | "otp">("capture");
   const [firstName, setFirstName] = useState("");
   const [phoneRaw, setPhoneRaw] = useState("");
   const [phoneE164, setPhoneE164] = useState("");
+  const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState<string | null>(null);
+  const [info, setInfo] = useState<string | null>(null);
   const [resendIn, setResendIn] = useState(0);
   const codeInputRef = useRef<HTMLInputElement>(null);
 
   // Reset when reopened
   useEffect(() => {
     if (!open) return;
+    setMethod("phone");
     setStep("capture");
     setCode("");
     setErr(null);
+    setInfo(null);
     setLoading(false);
     setResendIn(0);
   }, [open]);
