@@ -8,6 +8,7 @@ import { Loader2, ArrowLeft } from "lucide-react";
 import { C, fonts } from "@/lib/editorialTheme";
 import { useToast } from "@/hooks/use-toast";
 import type { RsvpIntent } from "@/components/EventRSVPDialog";
+import { normalizeUSPhone, formatUSPhone, friendlyPhoneAuthError } from "@/lib/phone";
 
 interface Props {
   open: boolean;
@@ -40,14 +41,9 @@ const inputStyle: React.CSSProperties = {
 const intentLabel = (i: RsvpIntent) =>
   i === "attending" ? "you're in" : i === "waitlisted" ? "maybe" : "can't go";
 
-/** Normalize to E.164 (US default). */
+/** Normalize to strict E.164 US (+1XXXXXXXXXX). Returns null when invalid. */
 function normalizePhone(raw: string): string | null {
-  const digits = raw.replace(/\D/g, "");
-  if (!digits) return null;
-  if (raw.trim().startsWith("+")) return "+" + digits;
-  if (digits.length === 10) return "+1" + digits;
-  if (digits.length === 11 && digits.startsWith("1")) return "+" + digits;
-  return null;
+  return normalizeUSPhone(raw);
 }
 
 const RESEND_SECONDS = 30;
