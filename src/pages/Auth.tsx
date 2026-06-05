@@ -8,6 +8,7 @@ import loverballLogo from "@/assets/loverball-script-logo.png";
 import WelcomeSplash from "@/components/WelcomeSplash";
 import { C, fonts } from "@/lib/editorialTheme";
 import { isAuthEmailRateLimitError } from "@/lib/authErrors";
+import { normalizeUSPhone } from "@/lib/phone";
 
 type AuthMode = "join" | "signin" | "confirm" | "reset_sent" | "reset_password";
 
@@ -199,16 +200,11 @@ const Auth = () => {
     else if (searchParams.get('signup') === 'true') setMode('join');
   }, [searchParams]);
 
-  // E.164 helpers
+  // E.164 helpers — US uses the shared validator (strict NANP, 10 digits).
   const normalizePhone = (cc: string, raw: string) => {
+    if (cc === "+1") return normalizeUSPhone(raw) ?? "";
     let digits = raw.replace(/\D+/g, "");
     if (!digits) return "";
-    // For US (+1), strip a leading "1" if the user typed it, and require exactly 10 digits.
-    if (cc === "+1") {
-      if (digits.length === 11 && digits.startsWith("1")) digits = digits.slice(1);
-      if (digits.length !== 10) return "";
-      if (/^[01]/.test(digits) || /^[01]/.test(digits.slice(3))) return "";
-    }
     return `${cc}${digits}`;
   };
   const isValidE164 = (p: string) => /^\+[1-9]\d{6,14}$/.test(p);
