@@ -14,15 +14,26 @@ type Method = "email" | "phone";
 type Step = "details" | "verify" | "done";
 
 const emailSchema = z.string().trim().email("Please enter a valid email");
-// Loose phone validation — Supabase requires E.164. We'll normalize US numbers.
-const phoneSchema = z.string().trim().min(7, "Enter a valid phone number");
 
-const normalizePhone = (raw: string) => {
-  const digits = raw.replace(/[^\d+]/g, "");
-  if (digits.startsWith("+")) return digits;
-  if (digits.length === 10) return `+1${digits}`;
-  if (digits.length === 11 && digits.startsWith("1")) return `+${digits}`;
-  return digits.startsWith("+") ? digits : `+${digits}`;
+// US phone normalization → strict E.164 (+1XXXXXXXXXX).
+// Returns null when the input isn't a valid US mobile number.
+const normalizeUSPhone = (raw: string): string | null => {
+  const digits = raw.replace(/\D/g, "");
+  let ten = digits;
+  if (ten.length === 11 && ten.startsWith("1")) ten = ten.slice(1);
+  if (ten.length !== 10) return null;
+  // NANP: area code & exchange code can't start with 0 or 1
+  if (/^[01]/.test(ten) || /^[01]/.test(ten.slice(3))) return null;
+  return `+1${ten}`;
+};
+
+// Pretty-format as the user types: "(555) 123-4567"
+const formatUSPhone = (raw: string): string => {
+  const digits = raw.replace(/\D/g, "").replace(/^1/, "").slice(0, 10);
+  if (digits.length === 0) return "";
+  if (digits.length <= 3) return `(${digits}`;
+  if (digits.length <= 6) return `(${digits.slice(0, 3)}) ${digits.slice(3)}`;
+  return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
 };
 
 export default function Signup() {
