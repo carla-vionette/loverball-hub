@@ -375,6 +375,8 @@ const Auth = () => {
     }
   };
 
+  const gradientBg = `radial-gradient(circle at 30% 20%, ${C.raspberry}22, transparent 60%), radial-gradient(circle at 70% 80%, ${C.pink}22, transparent 60%)`;
+
   const pageBg: React.CSSProperties = {
     background: C.bg,
     minHeight: "100vh",
@@ -383,6 +385,7 @@ const Auth = () => {
     alignItems: "center",
     justifyContent: "center",
     padding: "48px 20px",
+    position: "relative",
   };
 
   const dividerStyle: React.CSSProperties = {
@@ -398,6 +401,7 @@ const Auth = () => {
       )}
 
       <div style={pageBg}>
+        <div aria-hidden className="pointer-events-none absolute inset-0 -z-10" style={{ background: gradientBg }} />
         {/* Logo */}
         <motion.div
           initial={{ opacity: 0, y: -12 }}

@@ -160,9 +160,10 @@ export default function Signup() {
   };
 
   return (
-    <div className="min-h-[100dvh] bg-background flex flex-col">
+    <div className="min-h-[100dvh] flex flex-col relative" style={{ background: "#FAF7F2" }}>
+      <div aria-hidden className="pointer-events-none absolute inset-0 -z-10" style={{ background: "radial-gradient(circle at 30% 20%, #E85D2F22, transparent 60%), radial-gradient(circle at 70% 80%, #E85D2F22, transparent 60%)" }} />
       <header className="px-6 pt-8 pb-4 flex items-center justify-center">
-        <img src={loverballLogo} alt="Loverball" className="h-10 w-auto" loading="lazy" decoding="async" />
+        <img src={loverballLogo} alt="Loverball" className="h-10 w-auto" style={{ filter: "brightness(0) invert(1)" }} loading="lazy" decoding="async" />
       </header>
 
       <main className="flex-1 flex flex-col px-6 py-6 max-w-md mx-auto w-full">

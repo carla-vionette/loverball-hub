@@ -34,15 +34,18 @@ const TEAMS_BY_LEAGUE: Record<string, string[]> = {
 const VIBES = ["Casual fan", "Die-hard", "Host", "Just here for the fits"] as const;
 
 /* ---------- atoms ---------- */
+const gradientBg = `radial-gradient(circle at 30% 20%, ${C.raspberry}22, transparent 60%), radial-gradient(circle at 70% 80%, ${C.pink}22, transparent 60%)`;
+
 const Page = ({ children }: { children: ReactNode }) => (
   <motion.div
     initial={{ opacity: 0, y: 12 }}
     animate={{ opacity: 1, y: 0 }}
     exit={{ opacity: 0, y: -8 }}
     transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-    className="flex flex-col min-h-[100dvh] px-6 pt-14 pb-8"
+    className="flex flex-col min-h-[100dvh] px-6 pt-14 pb-8 relative"
     style={{ background: C.bg, color: C.text }}
   >
+    <div aria-hidden className="pointer-events-none absolute inset-0 -z-10" style={{ background: gradientBg }} />
     {children}
   </motion.div>
 );
@@ -395,8 +398,6 @@ const Onboarding = () => {
                 transition={{ duration: 0.7, ease: "easeOut" }}
               />
             </div>
-            <div aria-hidden className="pointer-events-none absolute inset-0 -z-10"
-              style={{ background: `radial-gradient(circle at 30% 20%, ${C.raspberry}22, transparent 60%), radial-gradient(circle at 70% 80%, ${C.pink}22, transparent 60%)` }} />
           </Page>
         );
 
