@@ -735,38 +735,79 @@ const EventDetail = () => {
               </div>
             )}
 
-            {/* RSVP AVATAR BAR — social proof near action */}
+            {/* RSVP AVATAR BAR — social proof near action (gated for guests) */}
             <div className="rounded-xl bg-card border border-border/30 p-3">
               <div className="flex justify-between items-baseline mb-2.5">
                 <span className="text-[10px] font-semibold tracking-[0.1em] text-muted-foreground">
                   {variant === 'hosted' ? 'GOING' : variant === 'cultural' ? 'GOING' : 'WHO ELSE IS GOING'}
                 </span>
                 <span className="text-[11px] font-semibold text-primary">
-                  {variant === 'hosted' && event.capacity
-                    ? `${goingCount} of ${event.capacity} spots`
-                    : `${goingCount} member${goingCount === 1 ? '' : 's'}`}
+                  {user
+                    ? (variant === 'hosted' && event.capacity
+                        ? `${goingCount} of ${event.capacity} spots`
+                        : `${goingCount} member${goingCount === 1 ? '' : 's'}`)
+                    : 'Members only'}
                 </span>
               </div>
-              <RsvpAvatarBar
-                attendees={attendees
-                  .filter((a) => a.profile)
-                  .map((a) => ({
-                    id: a.user_id,
-                    name: a.profile!.name,
-                    profile_photo_url: a.profile!.profile_photo_url,
-                  }))}
-                totalCount={goingCount}
-                maxAvatars={5}
-                size="md"
-                onViewAllClick={() => setShowAttendeeList(true)}
-              />
+              {user ? (
+                <>
+                  <RsvpAvatarBar
+                    attendees={attendees
+                      .filter((a) => a.profile)
+                      .map((a) => ({
+                        id: a.user_id,
+                        name: a.profile!.name,
+                        profile_photo_url: a.profile!.profile_photo_url,
+                      }))}
+                    totalCount={goingCount}
+                    maxAvatars={5}
+                    size="md"
+                    onViewAllClick={() => setShowAttendeeList(true)}
+                  />
 
-              {/* Hosted: fan modes mix chips */}
-              {variant === 'hosted' && goingCount > 0 && (
-                <div className="flex gap-1.5 flex-wrap mt-2.5">
-                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-[hsl(173_58%_39%)]/10 text-[hsl(173_58%_25%)]">Athletes</span>
-                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-primary/10 text-primary">New converts</span>
-                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-muted text-muted-foreground">Vibes</span>
+                  {/* Hosted: fan modes mix chips */}
+                  {variant === 'hosted' && goingCount > 0 && (
+                    <div className="flex gap-1.5 flex-wrap mt-2.5">
+                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-[hsl(173_58%_39%)]/10 text-[hsl(173_58%_25%)]">Athletes</span>
+                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-primary/10 text-primary">New converts</span>
+                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-muted text-muted-foreground">Vibes</span>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div className="relative">
+                  <div className="flex -space-x-2 blur-[6px] pointer-events-none select-none mb-3">
+                    {[0,1,2,3,4].map((i) => (
+                      <div key={i} className="w-10 h-10 rounded-full bg-primary/20 border-2 border-background" />
+                    ))}
+                  </div>
+                  <div className="rounded-lg border border-primary/30 bg-primary/5 p-3 text-center space-y-2">
+                    <Lock className="w-4 h-4 mx-auto text-primary" />
+                    <p className="text-xs font-semibold">Sign up to see who's going</p>
+                    <div className="flex gap-2">
+                      <Button
+                        size="sm"
+                        className="flex-1 rounded-full h-9 text-xs"
+                        onClick={() => {
+                          sessionStorage.setItem('postAuthRedirect', `/event/${id}`);
+                          navigate('/signup');
+                        }}
+                      >
+                        Sign up — free
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="flex-1 rounded-full h-9 text-xs"
+                        onClick={() => {
+                          sessionStorage.setItem('postAuthRedirect', `/event/${id}`);
+                          navigate(`/auth?redirect=${encodeURIComponent(`/event/${id}`)}`);
+                        }}
+                      >
+                        Sign in
+                      </Button>
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
