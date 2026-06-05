@@ -26,7 +26,8 @@ const ProtectedRoute = ({
   }
 
   if (!user) {
-    return <Navigate to="/" state={{ from: location }} replace />;
+    const redirect = encodeURIComponent(location.pathname + location.search);
+    return <Navigate to={`/auth?mode=signin&redirect=${redirect}`} state={{ from: location }} replace />;
   }
 
   if (requireAdmin && !isAdmin) {
