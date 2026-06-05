@@ -29,6 +29,7 @@ import NearbySportsBars from "@/components/NearbySportsBars";
 import WhereToSit from "@/components/WhereToSit";
 import EventTagBadges from "@/components/EventTagBadges";
 import EarlyAccessBanner from "@/components/EarlyAccessBanner";
+import BetaTrialBanner from "@/components/BetaTrialBanner";
 import LockedFeature from "@/components/LockedFeature";
 import EventComments from "@/components/EventComments";
 
@@ -724,6 +725,7 @@ const EventDetail = () => {
         return (
         <main className="pt-16 md:pt-4 pb-32">
           <div className="max-w-xl mx-auto px-4 py-4 space-y-3">
+            <BetaTrialBanner />
             {/* HERO CARD */}
             <div className={`relative overflow-hidden rounded-2xl p-4 ${heroClass}`}>
               <div className="absolute -top-5 -right-5 w-20 h-20 rounded-full bg-primary/20" />
