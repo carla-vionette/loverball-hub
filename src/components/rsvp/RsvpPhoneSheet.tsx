@@ -178,10 +178,27 @@ const RsvpPhoneSheet = ({ open, onOpenChange, eventId, eventTitle, intent, onVer
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
       <DrawerContent
-        className="border-0 px-0 pb-[env(safe-area-inset-bottom)]"
-        style={{ background: C.surface, color: C.text }}
+        className="border-0 px-0 pb-[env(safe-area-inset-bottom)] relative"
+        style={{ background: `${gradientBg}, ${C.bg}`, color: C.text }}
       >
         <div className="mx-auto w-full max-w-md px-5 pt-2 pb-6">
+          {/* Logo */}
+          <motion.div
+            initial={{ opacity: 0, y: -12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="mb-6 flex justify-center"
+          >
+            <img
+              src={loverballLogo}
+              alt="Loverball"
+              className="w-[120px] h-auto"
+              style={{ filter: "brightness(0) invert(1)" }}
+              loading="lazy"
+              decoding="async"
+            />
+          </motion.div>
+
           {/* Event chip */}
           <div className="text-center mb-4">
             <div
