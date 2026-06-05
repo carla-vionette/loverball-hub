@@ -262,11 +262,12 @@ const Auth = () => {
         .eq('id', data.user.id)
         .maybeSingle();
 
+      const dest = profile?.name ? redirectTo : '/onboarding?step=finish&welcome=1';
       if (profile?.name) {
         setSplashName(profile.name);
-        setPendingRedirect(redirectTo);
+        setPendingRedirect(dest);
       } else {
-        navigate(redirectTo);
+        navigate(dest);
       }
     } catch (err: any) {
       toast({ title: "Couldn't sign in", description: err.message, variant: "destructive" });
