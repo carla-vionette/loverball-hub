@@ -14,6 +14,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 
 // ── Eager-load primary routes ──
 import Index from "./pages/Index";
+import HomeFallback from "./components/HomeFallback";
 
 // ── Lazy-loaded secondary pages ──
 const Auth = lazy(() => import("./pages/Auth"));
