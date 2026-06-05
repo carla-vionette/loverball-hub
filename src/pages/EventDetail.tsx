@@ -322,7 +322,15 @@ const EventDetail = () => {
 
   const handleRSVP = async (status: 'yes' | 'maybe' | 'no') => {
     if (!user) {
-      navigate(`/auth?redirect=/event/${id}`);
+      // Stash pending RSVP intent so we can auto-complete it after auth.
+      try {
+        sessionStorage.setItem(
+          'lb-pending-rsvp',
+          JSON.stringify({ eventId: id, status, ts: Date.now() })
+        );
+      } catch {}
+      const back = encodeURIComponent(`/event/${id}`);
+      navigate(`/auth?mode=signup&redirect=/event/${id}`);
       return;
     }
 
@@ -395,6 +403,21 @@ const EventDetail = () => {
         title: status === 'yes' ? "🎉 You're going!" : status === 'maybe' ? "Marked as maybe" : "RSVP updated",
         description: status === 'yes' ? "We'll see you there!" : undefined,
       });
+
+      // After RSVP'ing, prompt new users / incomplete profiles to finish setup,
+      // then return to the event page.
+      if (status === 'yes') {
+        try {
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('name')
+            .eq('id', user.id)
+            .maybeSingle();
+          if (!profile?.name) {
+            navigate(`/onboarding?event=${event.id}&step=finish&welcome=1`, { replace: true });
+          }
+        } catch {}
+      }
     } catch (error: any) {
       toast({
         title: 'Error',
@@ -405,6 +428,7 @@ const EventDetail = () => {
       setRsvping(false);
     }
   };
+
 
   // Share the canonical loverball.com/e/:id URL. The public event page emits
   // per-route Open Graph + Twitter Card meta via <Seo/> (react-helmet-async),
