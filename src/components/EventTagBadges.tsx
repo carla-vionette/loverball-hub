@@ -7,6 +7,7 @@ const TAG_STYLES: Record<string, { emoji: string; className: string }> = {
   "Traveling Fans": { emoji: "✈️", className: "bg-primary/15 text-primary border-primary/30" },
   "21+": { emoji: "🍷", className: "bg-destructive/15 text-destructive border-destructive/30" },
   "Free Entry": { emoji: "🎟️", className: "bg-success/15 text-success border-success/30" },
+  "Official Loverball Private Event Members Only": { emoji: "🔒", className: "bg-[hsl(350_80%_55%)]/15 text-[hsl(350_80%_45%)] border-[hsl(350_80%_55%)]/30" },
 };
 
 interface Props {
