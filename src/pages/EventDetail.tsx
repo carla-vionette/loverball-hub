@@ -914,7 +914,8 @@ const EventDetail = () => {
                 <EventCheckIn eventId={event.id} eventDate={event.event_date} eventCity={event.city} />
               </div>
             )}
-            {(event.event_type === 'watch_party' || event.location_type === 'virtual') && (
+            {(event.event_type === 'watch_party' || event.location_type === 'virtual') &&
+              !event.title.toLowerCase().includes('fifa world cup') && (
               <NearbySportsBars
                 eventLat={(event as any).location_lat ?? null}
                 eventLng={(event as any).location_lng ?? null}
