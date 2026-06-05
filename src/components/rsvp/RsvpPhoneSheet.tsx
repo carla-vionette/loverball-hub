@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { Drawer, DrawerContent } from "@/components/ui/drawer";
 import { Input } from "@/components/ui/input";
@@ -9,6 +10,7 @@ import { C, fonts } from "@/lib/editorialTheme";
 import { useToast } from "@/hooks/use-toast";
 import type { RsvpIntent } from "@/components/EventRSVPDialog";
 import { normalizeUSPhone, formatUSPhone, friendlyPhoneAuthError } from "@/lib/phone";
+import loverballLogo from "@/assets/loverball-script-logo.png";
 
 interface Props {
   open: boolean;
@@ -47,6 +49,7 @@ function normalizePhone(raw: string): string | null {
 }
 
 const RESEND_SECONDS = 30;
+const gradientBg = `radial-gradient(circle at 30% 20%, ${C.raspberry}22, transparent 60%), radial-gradient(circle at 70% 80%, ${C.pink}22, transparent 60%)`;
 
 const RsvpPhoneSheet = ({ open, onOpenChange, eventId, eventTitle, intent, onVerified }: Props) => {
   const { toast } = useToast();
@@ -175,10 +178,27 @@ const RsvpPhoneSheet = ({ open, onOpenChange, eventId, eventTitle, intent, onVer
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
       <DrawerContent
-        className="border-0 px-0 pb-[env(safe-area-inset-bottom)]"
-        style={{ background: C.surface, color: C.text }}
+        className="border-0 px-0 pb-[env(safe-area-inset-bottom)] relative"
+        style={{ background: `${gradientBg}, ${C.bg}`, color: C.text }}
       >
         <div className="mx-auto w-full max-w-md px-5 pt-2 pb-6">
+          {/* Logo */}
+          <motion.div
+            initial={{ opacity: 0, y: -12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="mb-6 flex justify-center"
+          >
+            <img
+              src={loverballLogo}
+              alt="Loverball"
+              className="w-[120px] h-auto"
+              style={{ filter: "brightness(0) invert(1)" }}
+              loading="lazy"
+              decoding="async"
+            />
+          </motion.div>
+
           {/* Event chip */}
           <div className="text-center mb-4">
             <div
