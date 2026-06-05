@@ -351,10 +351,10 @@ const EventDetail = () => {
           JSON.stringify({ eventId: id, status, ts: Date.now() })
         );
       } catch {}
-      const back = encodeURIComponent(`/event/${id}`);
-      navigate(`/auth?mode=signup&redirect=/event/${id}`);
+      navigate(`/auth?mode=signup&redirect=${encodeURIComponent(`/event/${id}`)}`);
       return;
     }
+
 
     if (!event) return;
 
