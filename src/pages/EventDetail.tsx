@@ -209,6 +209,28 @@ const EventDetail = () => {
     }
   }, [user, id]);
 
+  // Resume any pending RSVP intent after the user authenticates.
+  useEffect(() => {
+    if (!user || !id || authLoading) return;
+    let intent: { eventId?: string; status?: 'yes' | 'maybe' | 'no'; ts?: number } | null = null;
+    try {
+      const raw = sessionStorage.getItem('lb-pending-rsvp');
+      if (raw) intent = JSON.parse(raw);
+    } catch {}
+    if (!intent || intent.eventId !== id || !intent.status) return;
+    // Expire intents older than 30 minutes
+    if (intent.ts && Date.now() - intent.ts > 30 * 60 * 1000) {
+      sessionStorage.removeItem('lb-pending-rsvp');
+      return;
+    }
+    sessionStorage.removeItem('lb-pending-rsvp');
+    // Defer until event is loaded so handleRSVP can validate
+    const t = setTimeout(() => handleRSVP(intent!.status as 'yes' | 'maybe' | 'no'), 200);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, id, authLoading, event]);
+
+
   // Countdown timer
   useEffect(() => {
     if (!event) return;
@@ -322,9 +344,17 @@ const EventDetail = () => {
 
   const handleRSVP = async (status: 'yes' | 'maybe' | 'no') => {
     if (!user) {
-      navigate(`/auth?redirect=/event/${id}`);
+      // Stash pending RSVP intent so we can auto-complete it after auth.
+      try {
+        sessionStorage.setItem(
+          'lb-pending-rsvp',
+          JSON.stringify({ eventId: id, status, ts: Date.now() })
+        );
+      } catch {}
+      navigate(`/auth?mode=signup&redirect=${encodeURIComponent(`/event/${id}`)}`);
       return;
     }
+
 
     if (!event) return;
 
@@ -395,6 +425,21 @@ const EventDetail = () => {
         title: status === 'yes' ? "🎉 You're going!" : status === 'maybe' ? "Marked as maybe" : "RSVP updated",
         description: status === 'yes' ? "We'll see you there!" : undefined,
       });
+
+      // After RSVP'ing, prompt new users / incomplete profiles to finish setup,
+      // then return to the event page.
+      if (status === 'yes') {
+        try {
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('name')
+            .eq('id', user.id)
+            .maybeSingle();
+          if (!profile?.name) {
+            navigate(`/onboarding?event=${event.id}&step=finish&welcome=1`, { replace: true });
+          }
+        } catch {}
+      }
     } catch (error: any) {
       toast({
         title: 'Error',
@@ -405,6 +450,7 @@ const EventDetail = () => {
       setRsvping(false);
     }
   };
+
 
   // Share the canonical loverball.com/e/:id URL. The public event page emits
   // per-route Open Graph + Twitter Card meta via <Seo/> (react-helmet-async),
@@ -788,10 +834,7 @@ const EventDetail = () => {
                       <Button
                         size="sm"
                         className="flex-1 rounded-full h-9 text-xs"
-                        onClick={() => {
-                          sessionStorage.setItem('postAuthRedirect', `/event/${id}`);
-                          navigate('/signup');
-                        }}
+                        onClick={() => navigate(`/auth?mode=signup&redirect=${encodeURIComponent(`/event/${id}`)}`)}
                       >
                         Sign up — free
                       </Button>
@@ -799,13 +842,11 @@ const EventDetail = () => {
                         size="sm"
                         variant="outline"
                         className="flex-1 rounded-full h-9 text-xs"
-                        onClick={() => {
-                          sessionStorage.setItem('postAuthRedirect', `/event/${id}`);
-                          navigate(`/auth?redirect=${encodeURIComponent(`/event/${id}`)}`);
-                        }}
+                        onClick={() => navigate(`/auth?mode=signin&redirect=${encodeURIComponent(`/event/${id}`)}`)}
                       >
                         Sign in
                       </Button>
+
                     </div>
                   </div>
                 </div>
@@ -875,24 +916,19 @@ const EventDetail = () => {
                 <div className="grid grid-cols-2 gap-2 pt-1">
                   <Button
                     className="rounded-full h-11"
-                    onClick={() => {
-                      sessionStorage.setItem('postAuthRedirect', `/event/${id}`);
-                      navigate('/signup');
-                    }}
+                    onClick={() => navigate(`/auth?mode=signup&redirect=${encodeURIComponent(`/event/${id}`)}`)}
                   >
                     Sign Up — Free
                   </Button>
                   <Button
                     variant="outline"
                     className="rounded-full h-11"
-                    onClick={() => {
-                      sessionStorage.setItem('postAuthRedirect', `/event/${id}`);
-                      navigate(`/auth?redirect=${encodeURIComponent(`/event/${id}`)}`);
-                    }}
+                    onClick={() => navigate(`/auth?mode=signin&redirect=${encodeURIComponent(`/event/${id}`)}`)}
                   >
                     Sign In
                   </Button>
                 </div>
+
               </div>
             )}
 
@@ -979,15 +1015,24 @@ const EventDetail = () => {
       {!user && !isEventPast && (
         <div className="fixed bottom-0 left-0 right-0 bg-background border-t border-border p-4">
           <div className="max-w-4xl mx-auto">
-            <Button 
-              className="w-full py-6 text-base"
-              onClick={() => navigate(`/auth?redirect=/event/${id}`)}
-            >
-              Sign In to RSVP
-            </Button>
+            <div className="flex gap-2">
+              <Button className="flex-1 py-6" onClick={() => handleRSVP('yes')}>
+                <Check className="w-5 h-5 mr-2" /> Going
+              </Button>
+              <Button variant="outline" className="flex-1 py-6" onClick={() => handleRSVP('maybe')}>
+                <HelpCircle className="w-5 h-5 mr-2" /> Maybe
+              </Button>
+              <Button variant="outline" className="flex-1 py-6" onClick={() => handleRSVP('no')}>
+                <X className="w-5 h-5 mr-2" /> Can't Go
+              </Button>
+            </div>
+            <p className="text-[11px] text-muted-foreground text-center mt-2">
+              Sign up takes 10 seconds — we'll bring you back here.
+            </p>
           </div>
         </div>
       )}
+
 
       {/* Share Dialog */}
       <Dialog open={showShareDialog} onOpenChange={setShowShareDialog}>
