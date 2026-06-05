@@ -1,6 +1,7 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { AlertTriangle } from "lucide-react";
+import { reportClientError } from "@/lib/errorReporter";
 
 interface ErrorBoundaryProps {
   children: React.ReactNode;
@@ -30,6 +31,12 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
     console.error("[ErrorBoundary] Caught error:", error.message);
     console.error("[ErrorBoundary] Stack:", error.stack);
     console.error("[ErrorBoundary] Component stack:", errorInfo.componentStack);
+    void reportClientError({
+      message: error.message,
+      stack: error.stack ?? null,
+      componentStack: errorInfo.componentStack ?? null,
+      source: "ErrorBoundary",
+    });
   }
 
   handleReset = () => {

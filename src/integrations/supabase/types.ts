@@ -244,6 +244,45 @@ export type Database = {
           },
         ]
       }
+      client_errors: {
+        Row: {
+          component_stack: string | null
+          created_at: string
+          id: string
+          message: string
+          route: string | null
+          source: string | null
+          stack: string | null
+          url: string | null
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          component_stack?: string | null
+          created_at?: string
+          id?: string
+          message: string
+          route?: string | null
+          source?: string | null
+          stack?: string | null
+          url?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          component_stack?: string | null
+          created_at?: string
+          id?: string
+          message?: string
+          route?: string | null
+          source?: string | null
+          stack?: string | null
+          url?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       community_groups: {
         Row: {
           created_at: string
