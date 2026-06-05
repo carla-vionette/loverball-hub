@@ -52,6 +52,7 @@ const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
 const AdminEventEditor = lazy(() => import("./pages/AdminEventEditor"));
 const AdminAttendeeManager = lazy(() => import("./pages/AdminAttendeeManager"));
 const EventBuilder = lazy(() => import("./pages/admin/EventBuilder"));
+const AdminClientErrors = lazy(() => import("./pages/admin/AdminClientErrors"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -158,6 +159,7 @@ const App = () => (
                 <Route path="/admin/events/:id/edit" element={<ProtectedRoute requireAdmin><AdminEventEditor /></ProtectedRoute>} />
                 <Route path="/admin/events/:id/attendees" element={<ProtectedRoute requireAdmin><AdminAttendeeManager /></ProtectedRoute>} />
                 <Route path="/admin/events/:id/builder" element={<ProtectedRoute requireAdmin><EventBuilder /></ProtectedRoute>} />
+                <Route path="/admin/errors" element={<ProtectedRoute requireAdmin><AdminClientErrors /></ProtectedRoute>} />
 
                 {/* Legacy redirects → 4 core tabs */}
                 <Route path="/index" element={<Navigate to="/" replace />} />
