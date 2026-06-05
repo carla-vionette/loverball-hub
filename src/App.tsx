@@ -14,6 +14,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 
 // ── Eager-load primary routes ──
 import Index from "./pages/Index";
+import HomeFallback from "./components/HomeFallback";
 
 // ── Lazy-loaded secondary pages ──
 const Auth = lazy(() => import("./pages/Auth"));
@@ -110,7 +111,15 @@ const App = () => (
             <Suspense fallback={<PageFallback />}>
               <Routes>
                 {/* Public */}
-                <Route path="/" element={<Index />} />
+                <Route
+                  path="/"
+                  element={
+                    <ErrorBoundary fallback={<HomeFallback />}>
+                      <Index />
+                    </ErrorBoundary>
+                  }
+                />
+
                 <Route path="/auth" element={<Auth />} />
                 <Route path="/reset-password" element={<ResetPassword />} />
                 <Route path="/signup" element={<Navigate to="/onboarding" replace />} />
