@@ -69,7 +69,7 @@ const SiteNav = () => {
   };
 
   const goSignIn = () => navigate("/auth?mode=signin");
-  const goJoin = () => navigate("/onboarding");
+  const goJoin = () => navigate("/auth?mode=signup");
 
   return (
     <nav
