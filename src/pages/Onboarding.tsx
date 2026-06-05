@@ -8,9 +8,6 @@ import { useAuth } from "@/hooks/useAuth";
 import { C, fonts } from "@/lib/editorialTheme";
 import { normalizeUSPhone, formatUSPhone, friendlyPhoneAuthError } from "@/lib/phone";
 import loverballLogo from "@/assets/loverball-script-logo.png";
-import collage1 from "@/assets/community-women.jpg";
-import collage2 from "@/assets/brunch-basketball.jpg";
-import collage3 from "@/assets/community-event.jpg";
 
 /* =========================================================
    LOVERBALL · Unified 14-screen onboarding (Partiful-style)
