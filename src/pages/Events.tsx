@@ -26,6 +26,7 @@ import { distanceMiles } from "@/lib/geocoding";
 import AreaSelector from "@/components/AreaSelector";
 import { useActiveArea } from "@/hooks/useActiveArea";
 import { resolveEventImage, handleEventImageError } from "@/lib/eventImage";
+import BetaTrialBanner from "@/components/BetaTrialBanner";
 
 
 const CATEGORIES = ["All", "watch_party", "game", "panel", "brunch", "networking", "other"];
@@ -352,6 +353,7 @@ const Events = () => {
 
       <main className="pb-24 md:pb-0">
         <div className="max-w-6xl mx-auto px-5 md:px-10 py-8">
+          <BetaTrialBanner className="mb-6" />
           <EditorialMasthead
             section="Events"
             meta={`${upcomingEvents.length} on deck`}
