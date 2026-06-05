@@ -75,9 +75,8 @@ export default function Signup() {
         });
         if (error) throw error;
       } else {
-        const parsed = phoneSchema.safeParse(contact);
-        if (!parsed.success) throw new Error(parsed.error.errors[0].message);
-        const phone = normalizePhone(parsed.data);
+        const phone = normalizeUSPhone(contact);
+        if (!phone) throw new Error("Enter a valid 10-digit US mobile number");
         const { error } = await supabase.auth.signInWithOtp({
           phone,
           options: {
