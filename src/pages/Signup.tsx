@@ -53,7 +53,7 @@ export default function Signup() {
     });
   }, [navigate]);
 
-  const sentTo = method === "email" ? contact : normalizePhone(contact);
+  const sentTo = method === "email" ? contact : (normalizeUSPhone(contact) ?? contact);
 
   const handleSend = async (e: React.FormEvent) => {
     e.preventDefault();
