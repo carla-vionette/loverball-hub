@@ -161,7 +161,19 @@ export default function Signup() {
       }
       setStep("done");
     } catch (err: any) {
-      toast({ title: "Invalid code", description: err.message, variant: "destructive" });
+      const msg = String(err?.message || "");
+      const lower = msg.toLowerCase();
+      const expired = /expired|invalid.*token|token.*expired/i.test(lower);
+      const wrong = /invalid.*otp|invalid.*code|otp.*invalid|incorrect/i.test(lower);
+      toast({
+        title: expired ? "Code expired" : wrong ? "That code didn't work" : "Verification failed",
+        description: expired
+          ? "Tap Resend to get a fresh 6-digit code."
+          : wrong
+          ? "Double-check the 6 digits we sent — or tap Resend."
+          : msg || "Please try again.",
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }
