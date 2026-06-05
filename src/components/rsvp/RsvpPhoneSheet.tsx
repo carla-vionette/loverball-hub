@@ -156,7 +156,8 @@ const RsvpPhoneSheet = ({ open, onOpenChange, eventId, eventTitle, intent, onVer
       }
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : "That code didn't match. Try again.";
-      setErr(msg);
+      const friendly = friendlyPhoneAuthError(msg);
+      setErr(friendly ? `${friendly.title}. ${friendly.description}` : msg);
       // shake-like: clear after a beat to encourage retry
       setCode("");
       setTimeout(() => codeInputRef.current?.focus(), 30);
@@ -220,18 +221,35 @@ const RsvpPhoneSheet = ({ open, onOpenChange, eventId, eventTitle, intent, onVer
                 </div>
                 <div>
                   <label style={labelStyle}>Mobile number</label>
-                  <Input
-                    type="tel"
-                    inputMode="tel"
-                    placeholder="(555) 123-4567"
-                    value={phoneRaw}
-                    onChange={(e) => setPhoneRaw(e.target.value)}
-                    autoComplete="tel"
-                    style={inputStyle}
-                    required
-                  />
+                  <div className="flex gap-2 items-stretch">
+                    <div
+                      className="flex items-center justify-center select-none"
+                      aria-hidden="true"
+                      style={{
+                        ...inputStyle,
+                        width: 78,
+                        padding: "0 12px",
+                        fontFamily: fonts.sans,
+                        fontWeight: 600,
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      🇺🇸 +1
+                    </div>
+                    <Input
+                      type="tel"
+                      inputMode="tel"
+                      placeholder="(555) 123-4567"
+                      value={phoneRaw}
+                      onChange={(e) => setPhoneRaw(formatUSPhone(e.target.value))}
+                      maxLength={14}
+                      autoComplete="tel"
+                      style={{ ...inputStyle, flex: 1 }}
+                      required
+                    />
+                  </div>
                   <p className="mt-2 text-[11px]" style={{ color: C.muted, fontFamily: fonts.mono, letterSpacing: "0.1em" }}>
-                    US numbers default to +1 · add + for international
+                    US mobile numbers only · standard message rates apply
                   </p>
                 </div>
 
