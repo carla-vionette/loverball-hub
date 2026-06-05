@@ -102,7 +102,8 @@ const RsvpPhoneSheet = ({ open, onOpenChange, eventId, eventTitle, intent, onVer
       setStep("otp");
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : "Couldn't send code. Try again.";
-      setErr(msg);
+      const friendly = friendlyPhoneAuthError(msg);
+      setErr(friendly ? `${friendly.title}. ${friendly.description}` : msg);
     } finally {
       setLoading(false);
     }
@@ -113,7 +114,10 @@ const RsvpPhoneSheet = ({ open, onOpenChange, eventId, eventTitle, intent, onVer
     setErr(null);
     if (!firstName.trim()) { setErr("Add your first name."); return; }
     const normalized = normalizePhone(phoneRaw);
-    if (!normalized) { setErr("Enter a valid mobile number."); return; }
+    if (!normalized) {
+      setErr("Enter a valid 10-digit US mobile number, e.g. (555) 123-4567.");
+      return;
+    }
     setPhoneE164(normalized);
     persistIntent();
     await sendCode(normalized);
@@ -127,7 +131,7 @@ const RsvpPhoneSheet = ({ open, onOpenChange, eventId, eventTitle, intent, onVer
     try {
       const { data, error } = await supabase.auth.verifyOtp({
         phone: phoneE164,
-        token: code,
+        token: code.trim(),
         type: "sms",
       });
       if (error) throw error;
