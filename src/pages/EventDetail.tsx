@@ -495,111 +495,6 @@ const EventDetail = () => {
     );
   }
 
-  if (!authLoading && !user) {
-    const goingCount = attendeeCounts.yes;
-    const preview = attendees.slice(0, 5);
-    const gateRedirect = () => {
-      sessionStorage.setItem('postAuthRedirect', `/event/${id}`);
-    };
-    return (
-      <div className="min-h-screen bg-background">
-        <header className="sticky top-0 z-40 bg-background/90 backdrop-blur-sm border-b border-border">
-          <div className="max-w-2xl mx-auto px-4 h-14 flex items-center justify-between">
-            <button onClick={() => navigate('/events')} className="text-sm text-muted-foreground hover:text-foreground inline-flex items-center gap-1">
-              <ArrowLeft className="w-4 h-4" /> Events
-            </button>
-            <img src={loverballLogo} alt="Loverball" className="h-10" loading="lazy" decoding="async" />
-            <div className="w-12" />
-          </div>
-        </header>
-
-        <main className="max-w-2xl mx-auto px-4 py-5 space-y-5 pb-32">
-          {/* Tile-level preview */}
-          <div className="rounded-2xl overflow-hidden bg-card border border-border">
-            <div className="aspect-[16/10] bg-muted">
-              <img
-                src={resolveEventImage(event)}
-                alt={event.title}
-                className="w-full h-full object-cover"
-                loading="lazy"
-                decoding="async"
-                onError={handleEventImageError}
-              />
-            </div>
-            <div className="p-5 space-y-2">
-              {event.event_type && (
-                <Badge className="bg-primary text-primary-foreground">{eventTypeLabels[event.event_type] || event.event_type}</Badge>
-              )}
-              <h1 className="font-display text-2xl uppercase tracking-tight leading-tight">{event.title}</h1>
-              <p className="text-sm text-muted-foreground flex items-center gap-1.5">
-                <Calendar className="w-4 h-4" />
-                {format(parseEventDate(event.event_date), "EEE, MMM d, yyyy")}
-                {event.event_time ? ` · ${formatTime(event.event_time)}` : ""}
-              </p>
-              {(event.venue_name || event.city) && (
-                <p className="text-sm text-muted-foreground flex items-center gap-1.5">
-                  <MapPin className="w-4 h-4" />
-                  {event.venue_name}{event.venue_name && event.city ? ", " : ""}{event.city}
-                </p>
-              )}
-            </div>
-          </div>
-
-          {/* Who's going teaser (blurred) */}
-          <div className="rounded-2xl border border-border bg-card p-5">
-            <div className="flex items-center justify-between mb-3">
-              <h2 className="font-semibold text-sm flex items-center gap-2">
-                <Users className="w-4 h-4 text-primary" /> Who's going
-              </h2>
-              <span className="text-xs text-muted-foreground">
-                {goingCount > 0 ? `${goingCount} women going` : "Be one of the first"}
-              </span>
-            </div>
-            <div className="relative">
-              <div className="flex -space-x-2 blur-[6px] pointer-events-none select-none">
-                {(preview.length > 0 ? preview : [1,2,3,4,5]).map((a: any, i) => (
-                  <Avatar key={i} className="w-11 h-11 border-2 border-background">
-                    <AvatarImage src={a?.profile?.profile_photo_url || undefined} />
-                    <AvatarFallback className="bg-primary/20 text-primary">•</AvatarFallback>
-                  </Avatar>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Chat teaser */}
-          <div className="rounded-2xl border border-border bg-card p-5">
-            <h2 className="font-semibold text-sm flex items-center gap-2 mb-3">
-              <MessageCircle className="w-4 h-4 text-primary" /> Event chat
-            </h2>
-            <div className="space-y-2">
-              {["Who's pulling up early? 🙋‍♀️", "Anyone coming solo?", "Where are we meeting first?"].map((t) => (
-                <div key={t} className="rounded-xl bg-muted/60 px-3 py-2 text-sm text-foreground/70 blur-[2px] select-none">
-                  {t}
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Warm gate */}
-          <div className="rounded-2xl border border-primary/30 bg-primary/5 p-6 text-center space-y-3">
-            <Lock className="w-6 h-6 mx-auto text-primary" />
-            <p className="text-base font-semibold">Sign up to see who's going, join the chat, and connect before the event.</p>
-            <p className="text-xs text-muted-foreground">Takes 10 seconds. It's free.</p>
-            <div className="space-y-2 pt-1">
-              <Button className="w-full rounded-full h-11" onClick={() => { gateRedirect(); navigate('/signup'); }}>
-                Sign Up — It's Free
-              </Button>
-              <Button variant="outline" className="w-full rounded-full h-11" onClick={() => { gateRedirect(); navigate(`/auth?redirect=${encodeURIComponent(`/event/${id}`)}`); }}>
-                I already have an account
-              </Button>
-            </div>
-          </div>
-        </main>
-      </div>
-    );
-  }
-
   return (
     <div ref={gestureRef} className="min-h-screen bg-background">
       {event && (
@@ -840,38 +735,79 @@ const EventDetail = () => {
               </div>
             )}
 
-            {/* RSVP AVATAR BAR — social proof near action */}
+            {/* RSVP AVATAR BAR — social proof near action (gated for guests) */}
             <div className="rounded-xl bg-card border border-border/30 p-3">
               <div className="flex justify-between items-baseline mb-2.5">
                 <span className="text-[10px] font-semibold tracking-[0.1em] text-muted-foreground">
                   {variant === 'hosted' ? 'GOING' : variant === 'cultural' ? 'GOING' : 'WHO ELSE IS GOING'}
                 </span>
                 <span className="text-[11px] font-semibold text-primary">
-                  {variant === 'hosted' && event.capacity
-                    ? `${goingCount} of ${event.capacity} spots`
-                    : `${goingCount} member${goingCount === 1 ? '' : 's'}`}
+                  {user
+                    ? (variant === 'hosted' && event.capacity
+                        ? `${goingCount} of ${event.capacity} spots`
+                        : `${goingCount} member${goingCount === 1 ? '' : 's'}`)
+                    : 'Members only'}
                 </span>
               </div>
-              <RsvpAvatarBar
-                attendees={attendees
-                  .filter((a) => a.profile)
-                  .map((a) => ({
-                    id: a.user_id,
-                    name: a.profile!.name,
-                    profile_photo_url: a.profile!.profile_photo_url,
-                  }))}
-                totalCount={goingCount}
-                maxAvatars={5}
-                size="md"
-                onViewAllClick={() => setShowAttendeeList(true)}
-              />
+              {user ? (
+                <>
+                  <RsvpAvatarBar
+                    attendees={attendees
+                      .filter((a) => a.profile)
+                      .map((a) => ({
+                        id: a.user_id,
+                        name: a.profile!.name,
+                        profile_photo_url: a.profile!.profile_photo_url,
+                      }))}
+                    totalCount={goingCount}
+                    maxAvatars={5}
+                    size="md"
+                    onViewAllClick={() => setShowAttendeeList(true)}
+                  />
 
-              {/* Hosted: fan modes mix chips */}
-              {variant === 'hosted' && goingCount > 0 && (
-                <div className="flex gap-1.5 flex-wrap mt-2.5">
-                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-[hsl(173_58%_39%)]/10 text-[hsl(173_58%_25%)]">Athletes</span>
-                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-primary/10 text-primary">New converts</span>
-                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-muted text-muted-foreground">Vibes</span>
+                  {/* Hosted: fan modes mix chips */}
+                  {variant === 'hosted' && goingCount > 0 && (
+                    <div className="flex gap-1.5 flex-wrap mt-2.5">
+                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-[hsl(173_58%_39%)]/10 text-[hsl(173_58%_25%)]">Athletes</span>
+                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-primary/10 text-primary">New converts</span>
+                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-muted text-muted-foreground">Vibes</span>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div className="relative">
+                  <div className="flex -space-x-2 blur-[6px] pointer-events-none select-none mb-3">
+                    {[0,1,2,3,4].map((i) => (
+                      <div key={i} className="w-10 h-10 rounded-full bg-primary/20 border-2 border-background" />
+                    ))}
+                  </div>
+                  <div className="rounded-lg border border-primary/30 bg-primary/5 p-3 text-center space-y-2">
+                    <Lock className="w-4 h-4 mx-auto text-primary" />
+                    <p className="text-xs font-semibold">Sign up to see who's going</p>
+                    <div className="flex gap-2">
+                      <Button
+                        size="sm"
+                        className="flex-1 rounded-full h-9 text-xs"
+                        onClick={() => {
+                          sessionStorage.setItem('postAuthRedirect', `/event/${id}`);
+                          navigate('/signup');
+                        }}
+                      >
+                        Sign up — free
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="flex-1 rounded-full h-9 text-xs"
+                        onClick={() => {
+                          sessionStorage.setItem('postAuthRedirect', `/event/${id}`);
+                          navigate(`/auth?redirect=${encodeURIComponent(`/event/${id}`)}`);
+                        }}
+                      >
+                        Sign in
+                      </Button>
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
@@ -929,8 +865,36 @@ const EventDetail = () => {
             )}
 
             {/* Full who's going + comments below the fold */}
-            {id && <WhosGoing eventId={id} refreshKey={guestRefreshKey} />}
-            {id && <div id="event-chat"><EventComments eventId={id} /></div>}
+            {id && user && <WhosGoing eventId={id} refreshKey={guestRefreshKey} />}
+            {id && user && <div id="event-chat"><EventComments eventId={id} /></div>}
+            {id && !user && (
+              <div className="rounded-2xl border border-primary/30 bg-primary/5 p-6 text-center space-y-3">
+                <Lock className="w-6 h-6 mx-auto text-primary" />
+                <p className="text-base font-semibold">Sign up to see who's going and join the chat</p>
+                <p className="text-xs text-muted-foreground">Free · takes 10 seconds</p>
+                <div className="grid grid-cols-2 gap-2 pt-1">
+                  <Button
+                    className="rounded-full h-11"
+                    onClick={() => {
+                      sessionStorage.setItem('postAuthRedirect', `/event/${id}`);
+                      navigate('/signup');
+                    }}
+                  >
+                    Sign Up — Free
+                  </Button>
+                  <Button
+                    variant="outline"
+                    className="rounded-full h-11"
+                    onClick={() => {
+                      sessionStorage.setItem('postAuthRedirect', `/event/${id}`);
+                      navigate(`/auth?redirect=${encodeURIComponent(`/event/${id}`)}`);
+                    }}
+                  >
+                    Sign In
+                  </Button>
+                </div>
+              </div>
+            )}
 
             {/* Calendar */}
             {!isEventPast && (
