@@ -44,8 +44,25 @@ export async function getBetaTrialStatus(userId: string): Promise<BetaTrialStatu
   };
 }
 
+// Permanent full-access allowlist (founders / staff).
+// Emails are compared case-insensitively.
+export const PERMANENT_ACCESS_EMAILS = [
+  'carla@stori.digital',
+  'carla@loverball.com',
+];
+
+export async function hasPermanentAccess(): Promise<boolean> {
+  const { data } = await supabase.auth.getUser();
+  const email = data?.user?.email?.toLowerCase();
+  if (!email) return false;
+  return PERMANENT_ACCESS_EMAILS.includes(email);
+}
+
 export async function getUserTier(userId: string): Promise<SubscriptionPlan> {
-  // Active paid subscription always wins
+  // Permanent allowlist always wins
+  if (await hasPermanentAccess()) return 'local';
+
+  // Active paid subscription
   const sub = await getUserSubscription(userId);
   if (sub && sub.status === 'active' && sub.plan !== 'free') return sub.plan;
 
@@ -56,6 +73,7 @@ export async function getUserTier(userId: string): Promise<SubscriptionPlan> {
   if (!sub || sub.status !== 'active') return 'free';
   return sub.plan;
 }
+
 
 
 export async function fetchAllSubscriptions(): Promise<SubscriptionWithUser[]> {
