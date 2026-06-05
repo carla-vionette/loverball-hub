@@ -209,6 +209,28 @@ const EventDetail = () => {
     }
   }, [user, id]);
 
+  // Resume any pending RSVP intent after the user authenticates.
+  useEffect(() => {
+    if (!user || !id || authLoading) return;
+    let intent: { eventId?: string; status?: 'yes' | 'maybe' | 'no'; ts?: number } | null = null;
+    try {
+      const raw = sessionStorage.getItem('lb-pending-rsvp');
+      if (raw) intent = JSON.parse(raw);
+    } catch {}
+    if (!intent || intent.eventId !== id || !intent.status) return;
+    // Expire intents older than 30 minutes
+    if (intent.ts && Date.now() - intent.ts > 30 * 60 * 1000) {
+      sessionStorage.removeItem('lb-pending-rsvp');
+      return;
+    }
+    sessionStorage.removeItem('lb-pending-rsvp');
+    // Defer until event is loaded so handleRSVP can validate
+    const t = setTimeout(() => handleRSVP(intent!.status as 'yes' | 'maybe' | 'no'), 200);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, id, authLoading, event]);
+
+
   // Countdown timer
   useEffect(() => {
     if (!event) return;
