@@ -89,15 +89,38 @@ export default function Signup() {
       setStep("verify");
     } catch (err: any) {
       const msg = String(err?.message || "");
+      const lower = msg.toLowerCase();
       const isCarrier = /unsupported carrier|not a mobile number|invalid.*phone|sms.*not.*supported|landline/i.test(msg);
-      if (method === "phone" && isCarrier) {
+      const isRateLimit = /rate|too many|429/i.test(lower);
+      const isInvalidPhone = /invalid.*phone|invalid.*number|phone.*format/i.test(lower);
+      const isProviderDisabled = /provider.*not.*enabled|phone.*disabled|sms.*not.*enabled/i.test(lower);
+
+      if (method === "phone" && isProviderDisabled) {
         toast({
-          title: "That number can't receive our code",
-          description: "Your carrier isn't supported yet. Switching you to email — way more reliable.",
+          title: "Phone sign-up is temporarily unavailable",
+          description: "Use email instead — we'll get you in right away.",
           variant: "destructive",
         });
         setMethod("email");
         setContact("");
+      } else if (method === "phone" && isCarrier) {
+        toast({
+          title: "That number can't receive our code",
+          description: "Your carrier isn't supported. Try a different mobile number or use email.",
+          variant: "destructive",
+        });
+      } else if (method === "phone" && isInvalidPhone) {
+        toast({
+          title: "That phone number doesn't look right",
+          description: "Enter a 10-digit US mobile number, e.g. (555) 123-4567.",
+          variant: "destructive",
+        });
+      } else if (isRateLimit) {
+        toast({
+          title: "Too many attempts",
+          description: "Wait a minute before requesting another code.",
+          variant: "destructive",
+        });
       } else if (method === "email" && isAuthEmailRateLimitError(msg)) {
         toast({
           title: "Email confirmations are temporarily delayed",
@@ -105,7 +128,11 @@ export default function Signup() {
           variant: "destructive",
         });
       } else {
-        toast({ title: "Couldn't send code", description: msg || "Try again in a moment.", variant: "destructive" });
+        toast({
+          title: method === "phone" ? "Couldn't send your code" : "Couldn't send code",
+          description: msg || "Something went wrong. Try again in a moment.",
+          variant: "destructive",
+        });
       }
     } finally {
       setLoading(false);
@@ -134,7 +161,19 @@ export default function Signup() {
       }
       setStep("done");
     } catch (err: any) {
-      toast({ title: "Invalid code", description: err.message, variant: "destructive" });
+      const msg = String(err?.message || "");
+      const lower = msg.toLowerCase();
+      const expired = /expired|invalid.*token|token.*expired/i.test(lower);
+      const wrong = /invalid.*otp|invalid.*code|otp.*invalid|incorrect/i.test(lower);
+      toast({
+        title: expired ? "Code expired" : wrong ? "That code didn't work" : "Verification failed",
+        description: expired
+          ? "Tap Resend to get a fresh 6-digit code."
+          : wrong
+          ? "Double-check the 6 digits we sent — or tap Resend."
+          : msg || "Please try again.",
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }
