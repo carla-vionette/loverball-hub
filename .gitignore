@@ -24,6 +24,6 @@ dist-ssr
 *.sw?
 
 # Environment variables
-.env
+# NOTE: .env is managed by Lovable Cloud and must be committed so
+# VITE_SUPABASE_URL / VITE_SUPABASE_PUBLISHABLE_KEY are available in the production build.
 .env.local
-.env.production
