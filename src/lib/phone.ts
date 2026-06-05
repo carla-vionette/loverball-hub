@@ -71,3 +71,16 @@ export const friendlyPhoneAuthError = (
   }
   return null;
 };
+
+/**
+ * True when a Supabase auth error indicates phone SMS delivery is unavailable
+ * (provider not enabled, unsupported carrier, SMS misconfigured). Callers
+ * should fall back to email-based auth rather than blocking the user.
+ */
+export const isPhoneProviderUnavailable = (message?: string | null): boolean => {
+  const lower = String(message || "").toLowerCase();
+  return /provider.*not.*enabled|phone.*disabled|sms.*not.*enabled|unsupported.*provider|unsupported.*phone|sms.*provider|unsupported carrier|not a mobile number|landline|invalid.*from.*number/.test(
+    lower
+  );
+};
+
