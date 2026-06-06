@@ -516,18 +516,28 @@ const RsvpPhoneSheet = ({ open, onOpenChange, eventId, eventTitle, intent, onVer
                   onChange={(e) => {
                     const v = e.target.value.replace(/\D/g, "").slice(0, 6);
                     setCode(v);
+                    if (fieldErrors.code) clearFieldError("code");
                     if (v.length === 6) {
                       // auto-submit
                       setTimeout(() => handleVerify(), 0);
                     }
                   }}
                   className="text-center"
-                  style={{ ...inputStyle, fontSize: 26, letterSpacing: "0.5em", paddingLeft: 20 }}
+                  style={{
+                    ...inputStyle,
+                    fontSize: 26,
+                    letterSpacing: "0.5em",
+                    paddingLeft: 20,
+                    borderColor: fieldErrors.code ? C.raspberry : inputStyle.borderColor,
+                  }}
+                  aria-invalid={!!fieldErrors.code}
+                  aria-describedby={fieldErrors.code ? "rsvp-code-err" : undefined}
                   required
                 />
 
-                {err && (
+                {fieldErrors.code && (
                   <div
+                    id="rsvp-code-err"
                     className="text-sm rounded-xl px-3 py-2 text-center"
                     style={{
                       background: "rgba(232,93,47,0.08)",
@@ -536,7 +546,7 @@ const RsvpPhoneSheet = ({ open, onOpenChange, eventId, eventTitle, intent, onVer
                     }}
                     role="alert"
                   >
-                    {err}
+                    {fieldErrors.code}
                   </div>
                 )}
 
