@@ -386,7 +386,7 @@ const EventRSVPDialog = ({
                   </button>
                 )}
               </div>
-            </>
+            </div>
           )}
         </div>
       </DialogContent>
