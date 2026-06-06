@@ -212,7 +212,11 @@ const RsvpPhoneSheet = ({ open, onOpenChange, eventId, eventTitle, intent, onVer
 
   const handleVerify = async (e?: React.FormEvent) => {
     e?.preventDefault();
-    if (code.length !== 6) return;
+    if (!/^\d{6}$/.test(code)) {
+      setFieldErrors((p) => ({ ...p, code: "Enter the 6-digit code we sent you." }));
+      return;
+    }
+    setFieldErrors((p) => ({ ...p, code: undefined }));
     setLoading(true);
     setErr(null);
     try {
