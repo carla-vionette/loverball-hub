@@ -4,7 +4,7 @@
  * Who's Going grouped by RSVP type, and realtime game chat.
  */
 import { useEffect, useMemo, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { format } from "date-fns";
 import { ArrowLeft, MapPin, Send, Users } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
