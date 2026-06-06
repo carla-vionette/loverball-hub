@@ -152,8 +152,8 @@ const App = () => (
                 {/* Supporting routes (not in nav) */}
                 
                 <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
-                <Route path="/messages" element={<ProtectedRoute><MessagesPage /></ProtectedRoute>} />
-                <Route path="/messages/:chatId" element={<ProtectedRoute><ChatRoom /></ProtectedRoute>} />
+                <Route path="/messages" element={<ProtectedRoute><TrialGate feature="Chats"><MessagesPage /></TrialGate></ProtectedRoute>} />
+                <Route path="/messages/:chatId" element={<ProtectedRoute><TrialGate feature="Chats"><ChatRoom /></TrialGate></ProtectedRoute>} />
                 <Route path="/friends" element={<ProtectedRoute><Friends /></ProtectedRoute>} />
                 <Route path="/checkout-success" element={<ProtectedRoute><CheckoutSuccess /></ProtectedRoute>} />
 
