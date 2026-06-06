@@ -586,6 +586,7 @@ const RsvpPhoneSheet = ({ open, onOpenChange, eventId, eventTitle, intent, onVer
               </form>
             </div>
           )}
+          </div>
         </div>
       </DrawerContent>
     </Drawer>
