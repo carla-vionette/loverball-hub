@@ -220,7 +220,7 @@ const EventRSVPDialog = ({
           </div>
         </div>
 
-        <div className="px-5 py-5 flex flex-col items-center">
+        <div className="px-5 pt-10 pb-6 flex flex-col items-center justify-center min-h-[50vh]">
           {sent ? (
             <div className="bg-white rounded-2xl shadow-lg p-6 sm:p-8 w-full text-center">
               <h3
