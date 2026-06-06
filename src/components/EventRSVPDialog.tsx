@@ -25,23 +25,26 @@ interface Props {
 const intentLabel = (i: RsvpIntent) =>
   i === "attending" ? "Going" : i === "waitlisted" ? "Maybe" : "Can't go";
 
-const inputStyle: React.CSSProperties = {
-  background: C.bg,
-  borderColor: C.borderStrong,
-  color: C.text,
-  height: 48,
-  fontSize: 16,
+const inputBaseClass =
+  "w-full rounded-2xl border-2 border-[#D4CFC5] bg-white shadow-sm text-[#1A1A1A] placeholder:text-[#9CA3AF] focus-visible:border-[#E85D2F] focus-visible:ring-0 focus-visible:ring-offset-0 transition-colors";
+
+const inputHeightStyle: React.CSSProperties = {
+  height: 52,
+  fontSize: 17,
 };
 
 const labelStyle: React.CSSProperties = {
   fontFamily: fonts.mono,
-  color: C.muted,
-  fontSize: 11,
+  color: "#374151",
+  fontSize: 12,
   letterSpacing: "0.18em",
   textTransform: "uppercase",
   display: "block",
-  marginBottom: 6,
+  marginBottom: 8,
+  fontWeight: 600,
 };
+
+const gradientBg = `radial-gradient(circle at 30% 20%, ${C.raspberry}22, transparent 60%), radial-gradient(circle at 70% 80%, ${C.pink}22, transparent 60%)`;
 
 const EventRSVPDialog = ({
   open,
