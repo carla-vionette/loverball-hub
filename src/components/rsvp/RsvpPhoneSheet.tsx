@@ -371,7 +371,7 @@ const RsvpPhoneSheet = ({ open, onOpenChange, eventId, eventTitle, intent, onVer
                 </div>
 
                 {method === "phone" ? (
-                  <div>
+                  <div className="flex flex-col w-full">
                     <label style={labelStyle} htmlFor="rsvp-phone">Mobile number</label>
                     <div className="flex gap-2 items-stretch">
                       <div
