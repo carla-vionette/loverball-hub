@@ -41,7 +41,7 @@ const inputStyle: React.CSSProperties = {
 };
 
 const intentLabel = (i: RsvpIntent) =>
-  i === "attending" ? "you're in" : i === "waitlisted" ? "maybe" : "can't go";
+  i === "attending" ? "going" : i === "waitlisted" ? "maybe" : "can't go";
 
 /** Normalize to strict E.164 US (+1XXXXXXXXXX). Returns null when invalid. */
 function normalizePhone(raw: string): string | null {
@@ -54,7 +54,7 @@ const gradientBg = `radial-gradient(circle at 30% 20%, ${C.raspberry}22, transpa
 const RsvpPhoneSheet = ({ open, onOpenChange, eventId, eventTitle, intent, onVerified }: Props) => {
   const { toast } = useToast();
   const navigate = useNavigate();
-  const [method, setMethod] = useState<"phone" | "email">("phone");
+  const [method, setMethod] = useState<"phone" | "email">("email");
   const [step, setStep] = useState<"capture" | "otp">("capture");
   const [firstName, setFirstName] = useState("");
   const [phoneRaw, setPhoneRaw] = useState("");
@@ -70,7 +70,7 @@ const RsvpPhoneSheet = ({ open, onOpenChange, eventId, eventTitle, intent, onVer
   // Reset when reopened
   useEffect(() => {
     if (!open) return;
-    setMethod("phone");
+    setMethod("email");
     setStep("capture");
     setCode("");
     setErr(null);
@@ -286,7 +286,7 @@ const RsvpPhoneSheet = ({ open, onOpenChange, eventId, eventTitle, intent, onVer
                 className="text-center mb-1"
                 style={{ fontFamily: fonts.serif, fontStyle: "italic", fontSize: 30, lineHeight: 1.05 }}
               >
-                Lock in your spot.
+                Reserve your spot.
               </h2>
               <p className="text-center mb-6" style={{ color: C.muted, fontSize: 13 }}>
                 {method === "email"
