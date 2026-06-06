@@ -1,17 +1,19 @@
 /**
  * Loverball Feed — primary home screen.
- * Order: Live & Recent Scores → My Events → From Your Sports → Where to Watch.
- * All video components are intentionally hidden for the beta launch.
+ * Order: Live & Recent Scores (collapsible) → My Events → Where to Watch
+ *        (your teams + channels + tickets) → Suggested Events → From Your Sports.
  */
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { CalendarDays, ChevronRight } from "lucide-react";
+import { CalendarDays, ChevronRight, ChevronDown } from "lucide-react";
 import BottomNav from "@/components/BottomNav";
 import DesktopNav from "@/components/DesktopNav";
 import Seo from "@/components/Seo";
 import LiveScores from "@/components/LiveScores";
 import MySportsFeed from "@/components/MySportsFeed";
 import WhereToWatch from "@/components/WhereToWatch";
+import ProfileWhereToWatch from "@/components/ProfileWhereToWatch";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -156,25 +158,38 @@ const Feed = () => {
           <h1 className="font-display text-3xl mt-1">Your daily lineup</h1>
         </header>
 
-        {/* 1. Live & recent scores */}
+        {/* 1. Live & recent scores (collapsible) */}
         <section className="px-4 mt-4">
-          <h2 className="font-display text-xl uppercase tracking-tight mb-3">Live & Recent Scores</h2>
-          <LiveScores />
+          <Collapsible defaultOpen>
+            <CollapsibleTrigger className="group flex w-full items-center justify-between mb-3">
+              <h2 className="font-display text-xl uppercase tracking-tight">Live & Recent Scores</h2>
+              <ChevronDown className="w-5 h-5 text-[#6B6B6B] transition-transform group-data-[state=closed]:-rotate-90" />
+            </CollapsibleTrigger>
+            <CollapsibleContent>
+              <LiveScores />
+            </CollapsibleContent>
+          </Collapsible>
         </section>
 
         {/* 2. My events */}
         <MyEventsRail />
 
-        {/* 3. From your sports */}
+        {/* 3. Where to watch — your teams, the channels carrying their games, tickets */}
+        <section className="px-4 mt-8">
+          <h2 className="font-display text-xl uppercase tracking-tight mb-3">Where to Watch</h2>
+          <ProfileWhereToWatch favoriteTeams={userTeams} />
+        </section>
+
+        {/* 4. Suggested events */}
+        <section className="px-4 mt-8">
+          <h2 className="font-display text-xl uppercase tracking-tight mb-3">Suggested Events</h2>
+          <WhereToWatch />
+        </section>
+
+        {/* 5. From your sports (last) */}
         <section className="px-4 mt-8">
           <h2 className="font-display text-xl uppercase tracking-tight mb-3">From Your Sports</h2>
           <MySportsFeed userSports={userSports} userTeams={userTeams} userCity={userCity} />
-        </section>
-
-        {/* 4. Where to watch */}
-        <section className="px-4 mt-8">
-          <h2 className="font-display text-xl uppercase tracking-tight mb-3">Where to Watch</h2>
-          <WhereToWatch />
         </section>
       </main>
       <BottomNav />
