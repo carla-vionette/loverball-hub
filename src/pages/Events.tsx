@@ -138,6 +138,12 @@ const Events = () => {
     setGateOpen(true);
   };
   const openTile = (id: string) => {
+    // Mock sports events have no DB row — open the ticket URL or no-op.
+    const mock = localSports.find(e => e.id === id);
+    if (mock) {
+      if (mock.__ticket_url) window.open(mock.__ticket_url, "_blank", "noopener,noreferrer");
+      return;
+    }
     // Public event pages are viewable by anyone; logged-out users land on the
     // /e/:id public view (attendee list + chat remain gated behind sign-in).
     if (user) goTo(`/event/${id}`);
