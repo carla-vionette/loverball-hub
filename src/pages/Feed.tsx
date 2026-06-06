@@ -1,284 +1,184 @@
-import { useRef, useState, useEffect, useCallback } from "react";
-import FeedVideoPlayer from "@/components/video/FeedVideoPlayer";
-import { FEED_VIDEOS, type FeedVideoItem } from "@/lib/feedVideoData";
+/**
+ * Loverball Feed — primary home screen.
+ * Order: Live & Recent Scores → My Events → From Your Sports → Where to Watch.
+ * All video components are intentionally hidden for the beta launch.
+ */
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { CalendarDays, ChevronRight } from "lucide-react";
 import BottomNav from "@/components/BottomNav";
 import DesktopNav from "@/components/DesktopNav";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Play } from "lucide-react";
 import Seo from "@/components/Seo";
-import loverballLogo from "@/assets/loverball-script-logo.png";
-import FeedStoriesPanel from "@/components/FeedStoriesPanel";
+import LiveScores from "@/components/LiveScores";
+import MySportsFeed from "@/components/MySportsFeed";
+import WhereToWatch from "@/components/WhereToWatch";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 
-type FeedTab = "foryou" | "following" | "stories";
+interface RsvpEvent {
+  id: string;
+  title: string;
+  event_date: string;
+  event_time: string | null;
+  venue_name: string | null;
+  city: string | null;
+  image_url: string | null;
+}
 
-const FeedSkeleton = () => (
-  <div className="h-screen w-full bg-black flex flex-col items-center justify-center gap-4 snap-start">
-    <div className="relative w-full h-full">
-      {/* Shimmer overlay */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/60" />
-      {/* Fake action sidebar */}
-      <div className="absolute right-3 bottom-36 flex flex-col items-center gap-5">
-        <Skeleton className="w-11 h-11 rounded-full bg-white/10" />
-        <Skeleton className="w-7 h-7 rounded-full bg-white/10" />
-        <Skeleton className="w-7 h-7 rounded-full bg-white/10" />
-        <Skeleton className="w-7 h-7 rounded-full bg-white/10" />
-        <Skeleton className="w-7 h-7 rounded-full bg-white/10" />
-      </div>
-      {/* Fake bottom text */}
-      <div className="absolute left-3 bottom-24 space-y-2">
-        <Skeleton className="h-4 w-28 bg-white/10 rounded" />
-        <Skeleton className="h-3 w-48 bg-white/10 rounded" />
-        <Skeleton className="h-3 w-36 bg-white/10 rounded" />
-      </div>
-      {/* Center spinner */}
-      <div className="absolute inset-0 flex items-center justify-center">
-        <div className="w-12 h-12 border-2 border-white/20 border-t-primary rounded-full animate-spin" />
-      </div>
-    </div>
-  </div>
-);
+const MyEventsRail = () => {
+  const { user } = useAuth();
+  const [events, setEvents] = useState<RsvpEvent[]>([]);
+  const [loading, setLoading] = useState(true);
 
-const EmptyState = () => (
-  <div className="h-screen w-full bg-black flex flex-col items-center justify-center gap-4 snap-start">
-    <div className="w-20 h-20 rounded-full bg-white/10 flex items-center justify-center">
-      <Play className="w-10 h-10 text-white/40" />
-    </div>
-    <h2 className="text-white text-lg font-semibold">No videos yet</h2>
-      <p className="text-white/50 text-sm text-center max-w-[260px]">
-        Videos from creators you follow will appear here. Explore the Feed to discover content.
-      </p>
-  </div>
-);
-
-const Feed = () => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const initialTab: FeedTab =
-    typeof window !== "undefined" &&
-    new URLSearchParams(window.location.search).get("tab") === "stories"
-      ? "stories"
-      : "foryou";
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [isMuted, setIsMuted] = useState(true);
-  const [activeTab, setActiveTab] = useState<FeedTab>(initialTab);
-  const [isLoading, setIsLoading] = useState(true);
-  const observerRef = useRef<IntersectionObserver | null>(null);
-  const videoRefs = useRef<Map<number, HTMLDivElement>>(new Map());
-
-  // Separate feeds
-  const forYouVideos = FEED_VIDEOS;
-  const followingVideos = FEED_VIDEOS.filter((v) => v.isFollowing);
-
-  const [videos, setVideos] = useState<FeedVideoItem[]>(forYouVideos);
-
-  // Simulate initial load
   useEffect(() => {
-    const t = setTimeout(() => setIsLoading(false), 600);
-    return () => clearTimeout(t);
-  }, []);
-
-  // Switch tabs
-  useEffect(() => {
-    setActiveIndex(0);
-    setVideos(activeTab === "following" ? followingVideos : forYouVideos);
-    containerRef.current?.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
-  }, [activeTab]);
-
-  // IntersectionObserver
-  useEffect(() => {
-    observerRef.current = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting && entry.intersectionRatio > 0.6) {
-            const idx = Number(entry.target.getAttribute("data-index"));
-            if (!isNaN(idx)) setActiveIndex(idx);
-          }
-        });
-      },
-      { root: containerRef.current, threshold: 0.6 }
-    );
-    return () => observerRef.current?.disconnect();
-  }, [videos]);
-
-  const setVideoRef = useCallback((el: HTMLDivElement | null, index: number) => {
-    if (el) {
-      videoRefs.current.set(index, el);
-      observerRef.current?.observe(el);
+    if (!user) {
+      setLoading(false);
+      return;
     }
-  }, []);
-
-  // Infinite scroll for "For You"
-  useEffect(() => {
-    if (activeTab !== "foryou") return;
-    if (activeIndex >= videos.length - 2) {
-      const shuffled = [...FEED_VIDEOS]
-        .sort(() => Math.random() - 0.5)
-        .map((v, i) => ({ ...v, id: `${v.id}_${videos.length + i}` }));
-      setVideos((prev) => [...prev, ...shuffled]);
-    }
-  }, [activeIndex, videos.length, activeTab]);
-
-  // Preload next video
-  useEffect(() => {
-    const nextVideo = videos[activeIndex + 1];
-    if (nextVideo?.videoUrl) {
-      const link = document.createElement("link");
-      link.rel = "preload";
-      link.as = "video";
-      link.href = nextVideo.videoUrl;
-      link.setAttribute("data-feed-preload", "true");
-      // Remove old preload links
-      document.querySelectorAll('link[data-feed-preload]').forEach((el) => el.remove());
-      document.head.appendChild(link);
-      return () => { link.remove(); };
-    }
-  }, [activeIndex, videos]);
-
-  const currentVideos = videos;
-  const isEmpty = !isLoading && currentVideos.length === 0;
+    (async () => {
+      const { data } = await supabase
+        .from("event_rsvps")
+        .select("event_id, events:event_id(id, title, event_date, event_time, venue_name, city, image_url)")
+        .eq("user_id", user.id)
+        .eq("status", "going")
+        .order("created_at", { ascending: false })
+        .limit(8);
+      const rows = (data ?? [])
+        .map((r) => (r as { events: RsvpEvent | null }).events)
+        .filter((e): e is RsvpEvent => !!e && new Date(e.event_date) >= new Date(Date.now() - 24 * 60 * 60 * 1000));
+      setEvents(rows);
+      setLoading(false);
+    })();
+  }, [user?.id]);
 
   return (
-    <>
-      <DesktopNav />
-      <div className="fixed inset-0 bg-black z-30 md:top-[74px]">
-
-      <Seo
-        title="Video Feed | Loverball"
-        description="The Loverball FEED — the latest women's sports videos, highlights, and creator content in an immersive scroll."
-        path="/feed"
-      />
-      <h1 className="sr-only">Loverball Video Feed</h1>
-      {/* Editorial masthead */}
-      <div className="absolute top-0 left-0 right-0 z-40 pointer-events-auto">
-        <div
-          className="pt-[max(env(safe-area-inset-top),12px)] md:pt-[74px] pb-3 px-5"
-          style={{
-            background:
-              "linear-gradient(180deg, rgba(10,10,11,0.85) 0%, rgba(10,10,11,0.55) 60%, rgba(10,10,11,0) 100%)",
-          }}
-        >
-          <div className="flex items-end justify-between mb-2.5">
-            <div className="flex items-baseline gap-2">
-              <span
-                style={{
-                  fontFamily: "'Space Mono', ui-monospace, monospace",
-                  fontSize: 10,
-                  letterSpacing: "0.22em",
-                  color: "#E85D2F",
-                  textTransform: "uppercase",
-                }}
-              >
-                {"\n"}
-              </span>
-              <span
-                style={{
-                  fontFamily: "'Space Mono', ui-monospace, monospace",
-                  fontSize: 10,
-                  letterSpacing: "0.22em",
-                  color: "rgba(248,248,248,0.5)",
-                  textTransform: "uppercase",
-                }}
-              >
-                THE FEED
-              </span>
-            </div>
-            <span
-              style={{
-                fontFamily: "'Playfair Display', serif",
-                fontStyle: "italic",
-                fontWeight: 600,
-                fontSize: 13,
-                color: "rgba(248,248,248,0.55)",
-              }}
-            >
-              dispatches
-            </span>
-          </div>
-
-          <div className="flex items-center justify-between">
-            <a
-              href="/"
-              aria-label="Back to Loverball home"
-              className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E85D2F] rounded md:hidden"
-            >
-              <img
-                src={loverballLogo}
-                alt="Loverball — back to home"
-                className="h-10 sm:h-14 md:h-20 w-auto object-contain brightness-0 invert" loading="lazy" decoding="async" />
-            </a>
-
-            <div className="flex items-center gap-1 p-1 rounded-full" style={{ background: "rgba(20,20,21,0.6)", border: "1px solid rgba(255,255,255,0.08)", backdropFilter: "blur(12px)" }}>
-              {[
-                { key: "following" as const, label: "Following" },
-                { key: "foryou" as const, label: "For You" },
-                { key: "stories" as const, label: "Stories" },
-              ].map((t) => {
-                const active = activeTab === t.key;
-                return (
-                  <button
-                    key={t.key}
-                    onClick={() => setActiveTab(t.key)}
-                    className="px-3 py-1 rounded-full transition-all"
-                    style={{
-                      background: active ? "#E85D2F" : "transparent",
-                      color: active ? "#fff" : "rgba(248,248,248,0.65)",
-                      fontFamily: "'Inter', system-ui, sans-serif",
-                      fontWeight: 700,
-                      fontSize: 11,
-                      letterSpacing: "0.08em",
-                      textTransform: "uppercase",
-                    }}
-                  >
-                    {t.label}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Hairline rule */}
-          <div className="mt-2.5 h-px w-full" style={{ background: "rgba(255,255,255,0.08)" }} />
+    <section className="px-4 mt-6">
+      <header className="flex items-center justify-between mb-3">
+        <h2 className="font-display text-xl uppercase tracking-tight">My Events</h2>
+        <Link to="/events" className="text-xs uppercase tracking-widest text-[#E85D2F] flex items-center gap-1">
+          All <ChevronRight className="w-3 h-3" />
+        </Link>
+      </header>
+      {loading ? (
+        <div className="flex gap-3 overflow-x-auto">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="min-w-[220px] h-32 rounded-xl bg-muted/40 animate-pulse" />
+          ))}
         </div>
-      </div>
-
-      {/* Video container */}
-      {activeTab === "stories" ? (
-        <FeedStoriesPanel />
-      ) : (
-        <div
-          ref={containerRef}
-          className="h-full overflow-y-scroll snap-y snap-mandatory scrollbar-hide"
+      ) : events.length === 0 ? (
+        <Link
+          to="/events"
+          className="block rounded-xl border border-dashed border-[#E8E3DC] p-5 text-center"
         >
-          {isLoading ? (
-            <>
-              <FeedSkeleton />
-              <FeedSkeleton />
-            </>
-          ) : isEmpty ? (
-            <EmptyState />
-          ) : (
-            currentVideos.map((video, index) => (
+          <CalendarDays className="w-5 h-5 mx-auto text-[#6B6B6B] mb-2" />
+          <p className="text-sm text-[#1A1A1A] font-medium">No upcoming RSVPs</p>
+          <p className="text-xs text-[#6B6B6B] mt-1">Browse events and lock in your first one.</p>
+        </Link>
+      ) : (
+        <div className="flex gap-3 overflow-x-auto pb-1 -mx-4 px-4 snap-x snap-mandatory">
+          {events.map((ev) => (
+            <Link
+              key={ev.id}
+              to={`/event/${ev.id}`}
+              className="min-w-[240px] max-w-[240px] snap-start rounded-xl overflow-hidden bg-white border border-[#E8E3DC]"
+            >
               <div
-                key={video.id}
-                ref={(el) => setVideoRef(el, index)}
-                data-index={index}
-                className="h-screen w-full snap-start snap-always"
-              >
-                <FeedVideoPlayer
-                  video={video}
-                  isActive={index === activeIndex}
-                  isMuted={isMuted}
-                  onToggleMute={() => setIsMuted(!isMuted)}
-                />
+                className="h-24 w-full bg-cover bg-center"
+                style={{
+                  backgroundImage: ev.image_url
+                    ? `url(${ev.image_url})`
+                    : "linear-gradient(135deg,#E85D2F,#FAF5E9)",
+                }}
+              />
+              <div className="p-3">
+                <p className="text-xs uppercase tracking-widest text-[#E85D2F]">
+                  {new Date(ev.event_date).toLocaleDateString(undefined, { month: "short", day: "numeric" })}
+                  {ev.event_time ? ` · ${ev.event_time.slice(0, 5)}` : ""}
+                </p>
+                <p className="font-semibold text-sm mt-1 line-clamp-2">{ev.title}</p>
+                {ev.venue_name && (
+                  <p className="text-xs text-[#6B6B6B] mt-1 truncate">{ev.venue_name}</p>
+                )}
               </div>
-            ))
-          )}
+            </Link>
+          ))}
         </div>
       )}
+    </section>
+  );
+};
 
-      {/* Bottom nav (mobile only) */}
+const Feed = () => {
+  const { user } = useAuth();
+  const [userSports, setUserSports] = useState<string[]>([]);
+  const [userTeams, setUserTeams] = useState<string[]>([]);
+  const [userCity, setUserCity] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!user) return;
+    (async () => {
+      const { data } = await supabase
+        .from("profiles")
+        .select("favorite_sports, favorite_teams, favorite_teams_players, pro_leagues, city")
+        .eq("id", user.id)
+        .maybeSingle();
+      const sports = [
+        ...((data?.favorite_sports as string[] | null) ?? []),
+        ...((data?.pro_leagues as string[] | null) ?? []),
+      ];
+      const teams = [
+        ...((data?.favorite_teams as string[] | null) ?? []),
+        ...((data?.favorite_teams_players as string[] | null) ?? []),
+      ];
+      setUserSports(sports);
+      setUserTeams(teams);
+      setUserCity((data?.city as string | null) ?? null);
+    })();
+  }, [user?.id]);
+
+  return (
+    <div className="min-h-[100dvh] bg-[#FAF7F2] text-[#1A1A1A]">
+      <Seo
+        title="Loverball Feed"
+        description="Live scores, your upcoming events, your sports news, and where to watch."
+        path="/feed"
+      />
+      <DesktopNav />
+      <main className="max-w-2xl mx-auto pb-32 md:pt-[88px]">
+        {/* Editorial masthead */}
+        <header className="px-4 pt-6 pb-2">
+          <p
+            className="text-[10px] tracking-[0.22em] uppercase text-[#E85D2F]"
+            style={{ fontFamily: "'Space Mono', ui-monospace, monospace" }}
+          >
+            The Feed
+          </p>
+          <h1 className="font-display text-3xl mt-1">Your daily lineup</h1>
+        </header>
+
+        {/* 1. Live & recent scores */}
+        <section className="px-4 mt-4">
+          <h2 className="font-display text-xl uppercase tracking-tight mb-3">Live & Recent Scores</h2>
+          <LiveScores />
+        </section>
+
+        {/* 2. My events */}
+        <MyEventsRail />
+
+        {/* 3. From your sports */}
+        <section className="px-4 mt-8">
+          <h2 className="font-display text-xl uppercase tracking-tight mb-3">From Your Sports</h2>
+          <MySportsFeed userSports={userSports} userTeams={userTeams} userCity={userCity} />
+        </section>
+
+        {/* 4. Where to watch */}
+        <section className="px-4 mt-8">
+          <h2 className="font-display text-xl uppercase tracking-tight mb-3">Where to Watch</h2>
+          <WhereToWatch />
+        </section>
+      </main>
       <BottomNav />
     </div>
-    </>
   );
 };
 
