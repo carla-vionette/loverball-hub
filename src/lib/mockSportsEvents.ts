@@ -336,9 +336,7 @@ async function fetchSeatGeekEvents(opts: {
 
   try {
     const { data, error } = await supabase.functions.invoke("seatgeek-events", {
-      method: "GET",
-      // supabase-js appends these as query params for GET
-      body: params as any,
+      body: params,
     });
     if (error) {
       console.warn("seatgeek-events invoke failed", error.message);

@@ -126,13 +126,26 @@ Deno.serve(async (req) => {
     });
   }
 
-  // ── Validate input ───────────────────────────────────────────────────
-  const url = new URL(req.url);
-  const zip = (url.searchParams.get("zip") || "").trim();
-  const lat = url.searchParams.get("lat");
-  const lng = url.searchParams.get("lng");
-  const range = url.searchParams.get("range") || "50mi";
-  const perPage = Math.min(parseInt(url.searchParams.get("per_page") || "50", 10) || 50, 100);
+  // ── Validate input (accepts GET query params OR POST JSON body) ──────
+  let zip = "", lat: string | null = null, lng: string | null = null;
+  let range = "50mi"; let perPage = 50;
+  if (req.method === "POST") {
+    try {
+      const body = await req.json().catch(() => ({}));
+      zip = String(body?.zip ?? "").trim();
+      if (body?.lat != null) lat = String(body.lat);
+      if (body?.lng != null) lng = String(body.lng);
+      if (body?.range) range = String(body.range);
+      if (body?.per_page) perPage = Math.min(parseInt(String(body.per_page), 10) || 50, 100);
+    } catch { /* fall through to validation */ }
+  } else {
+    const url = new URL(req.url);
+    zip = (url.searchParams.get("zip") || "").trim();
+    lat = url.searchParams.get("lat");
+    lng = url.searchParams.get("lng");
+    range = url.searchParams.get("range") || range;
+    perPage = Math.min(parseInt(url.searchParams.get("per_page") || "50", 10) || 50, 100);
+  }
 
   const hasZip = /^\d{5}$/.test(zip);
   const hasLatLng = lat && lng && !isNaN(+lat) && !isNaN(+lng);
