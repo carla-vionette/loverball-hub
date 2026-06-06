@@ -216,9 +216,9 @@ const EventRSVPDialog = ({
           </div>
         </div>
 
-        <div className="px-5 py-5">
+        <div className="px-5 py-5 flex flex-col items-center">
           {sent ? (
-            <div className="text-center py-3">
+            <div className="bg-white rounded-2xl shadow-lg p-6 sm:p-8 w-full text-center">
               <h3
                 style={{
                   fontFamily: fonts.serif,
@@ -236,14 +236,14 @@ const EventRSVPDialog = ({
               </p>
               <Button
                 onClick={() => onOpenChange(false)}
-                className="mt-5 w-full h-11 rounded-full text-xs uppercase tracking-[0.2em] border-0"
-                style={{ background: C.raspberry, color: "#fff", fontFamily: fonts.mono }}
+                className="mt-5 w-full rounded-full py-3 text-white font-bold tracking-[0.22em] border-0 uppercase"
+                style={{ background: C.raspberry, fontFamily: fonts.mono, fontSize: 12 }}
               >
                 Got it
               </Button>
             </div>
           ) : (
-            <>
+            <div className="bg-white rounded-2xl shadow-lg p-6 sm:p-8 w-full">
               <p
                 className="mb-4"
                 style={{ color: C.muted, fontSize: 13, lineHeight: 1.55 }}
