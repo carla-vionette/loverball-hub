@@ -27,6 +27,9 @@ import AreaSelector from "@/components/AreaSelector";
 import { useActiveArea } from "@/hooks/useActiveArea";
 import { resolveEventImage, handleEventImageError } from "@/lib/eventImage";
 import BetaTrialBanner from "@/components/BetaTrialBanner";
+import ZipPromptCard from "@/components/events/ZipPromptCard";
+import SportsFilterBar, { type SportsFilter } from "@/components/events/SportsFilterBar";
+import { fetchLocalSportsEvents, type MockDbEvent } from "@/lib/mockSportsEvents";
 
 
 const CATEGORIES = ["All", "watch_party", "game", "panel", "brunch", "networking", "other"];
@@ -119,11 +122,14 @@ const Events = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
-  const { active: activeArea, isOverriding } = useActiveArea();
+  const { active: activeArea, home: homeArea, isOverriding } = useActiveArea();
   const userLoc = activeArea?.lat != null && activeArea?.lng != null
     ? { lat: activeArea.lat, lng: activeArea.lng }
     : null;
   const [radius, setRadius] = useState<25 | 50 | 100 | "national">(50);
+  const [sportsFilter, setSportsFilter] = useState<SportsFilter>("all");
+  const [localSports, setLocalSports] = useState<MockDbEvent[]>([]);
+  const needsZip = !!user && !homeArea?.zip && !activeArea?.zip;
 
   const [gateEventId, setGateEventId] = useState<string | null>(null);
   const openGate = (id: string) => {
