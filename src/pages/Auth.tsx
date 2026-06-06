@@ -257,7 +257,13 @@ const Auth = () => {
   };
 
   const handleResend = async () => {
-    if (!email || resendLoading || cooldownUntil > Date.now()) return;
+    if (!email || resendLoading || cooldownUntil > Date.now()) {
+      console.log(`[magic-link] resend blocked — email=${!!email} resendLoading=${resendLoading} cooldownUntil=${cooldownUntil} now=${Date.now()}`);
+      return;
+    }
+    const startTime = Date.now();
+    const maskedEmail = email.trim().toLowerCase().replace(/(.{2}).*@/, "$1***@");
+    console.log(`[magic-link] resend START email=${maskedEmail} t=${startTime}`);
     setResendLoading(true);
     try {
       const { error } = await supabase.auth.signInWithOtp({
@@ -265,13 +271,18 @@ const Auth = () => {
         options: { shouldCreateUser: true, emailRedirectTo },
       });
       if (error) throw error;
-      setCooldownUntil(Date.now() + 30_000);
+      const cooldownMs = 30_000;
+      const cooldownEnd = Date.now() + cooldownMs;
+      console.log(`[magic-link] resend OK email=${maskedEmail} duration=${Date.now() - startTime}ms cooldown=${cooldownMs}ms until=${cooldownEnd}`);
+      setCooldownUntil(cooldownEnd);
       setNow(Date.now());
       toast({ title: "Sent! Check your inbox." });
     } catch (err: any) {
       const message = err?.message ?? "";
-      if (isAuthEmailRateLimitError(message)) {
-        const wait = parseRetryAfterSeconds(message);
+      const isThrottle = isAuthEmailRateLimitError(message);
+      const wait = isThrottle ? parseRetryAfterSeconds(message) : 0;
+      console.log(`[magic-link] resend FAIL email=${maskedEmail} duration=${Date.now() - startTime}ms throttle=${isThrottle} wait=${wait}s message="${message}"`);
+      if (isThrottle) {
         setCooldownUntil(Date.now() + wait * 1000);
         setNow(Date.now());
         toast({
