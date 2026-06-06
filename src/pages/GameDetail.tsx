@@ -9,6 +9,7 @@ import { format } from "date-fns";
 import { ArrowLeft, MapPin, Send, Users } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { useGameBackNavigation } from "@/hooks/useGameBackNavigation";
 import { toast } from "@/hooks/use-toast";
 import BottomNav from "@/components/BottomNav";
 import DesktopNav from "@/components/DesktopNav";
@@ -73,6 +74,7 @@ const RSVP_BUTTONS: { type: RsvpType; label: string }[] = [
 const GameDetail = () => {
   const { id: gameId } = useParams<{ id: string }>();
   const { user } = useAuth();
+  const { goBack } = useGameBackNavigation();
   const [game, setGame] = useState<Game | null>(null);
   const [loading, setLoading] = useState(true);
   const [rsvps, setRsvps] = useState<RsvpRow[]>([]);
@@ -215,9 +217,13 @@ const GameDetail = () => {
       <Seo title={`${matchupTitle} · Loverball`} description={`${game.league} · ${format(startDate, "EEE MMM d, h:mm a")}`} path={`/game/${game.id}`} />
       <DesktopNav />
       <main className="max-w-2xl mx-auto px-4 pt-6 pb-40 md:pt-[88px]">
-        <Link to="/feed" className="inline-flex items-center gap-2 text-[12px] uppercase mb-4" style={{ color: "rgba(250,245,233,0.6)", letterSpacing: "0.16em", fontFamily: "'Space Mono', monospace" }}>
+        <button
+          onClick={goBack}
+          className="inline-flex items-center gap-2 text-[12px] uppercase mb-4 cursor-pointer"
+          style={{ color: "rgba(250,245,233,0.6)", letterSpacing: "0.16em", fontFamily: "'Space Mono', monospace" }}
+        >
           <ArrowLeft className="w-3.5 h-3.5" /> Back
-        </Link>
+        </button>
 
         {/* Header */}
         <div className="rounded-2xl p-5 mb-5" style={{ background: PANEL, border: BORDER }}>
