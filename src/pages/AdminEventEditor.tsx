@@ -296,10 +296,12 @@ const AdminEventEditor = () => {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => window.open(`/event/${id}`, '_blank')}
+                asChild
               >
-                <Eye className="w-4 h-4 mr-2" />
-                View
+                <a href={`/event/${id}`} target="_blank" rel="noopener noreferrer">
+                  <Eye className="w-4 h-4 mr-2" />
+                  View
+                </a>
               </Button>
             )}
 
