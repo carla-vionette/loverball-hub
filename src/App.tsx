@@ -26,6 +26,7 @@ const Feed = lazy(() => import("./pages/Feed"));
 const Events = lazy(() => import("./pages/Events"));
 const EventDetail = lazy(() => import("./pages/EventDetail"));
 const EventPublic = lazy(() => import("./pages/EventPublic"));
+const GameDetail = lazy(() => import("./pages/GameDetail"));
 
 const Profile = lazy(() => import("./pages/Profile"));
 const EditProfile = lazy(() => import("./pages/EditProfile"));
@@ -140,6 +141,8 @@ const App = () => (
                 <Route path="/event/:id" element={<TrialGate feature="Events"><EventDetail /></TrialGate>} />
                 <Route path="/events/:id" element={<TrialGate feature="Events"><EventDetail /></TrialGate>} />
                 <Route path="/e/:id" element={<EventPublic />} />
+                <Route path="/game/:id" element={<GameDetail />} />
+                <Route path="/games/:id" element={<GameDetail />} />
                 <Route path="/rsvp/confirmed/:eventId" element={<RsvpConfirmed />} />
                 <Route path="/welcome/identity" element={<WelcomeIdentity />} />
                 <Route path="/welcome/circles" element={<WelcomeCircles />} />

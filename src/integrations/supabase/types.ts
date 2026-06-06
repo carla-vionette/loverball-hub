@@ -1283,6 +1283,160 @@ export type Database = {
           },
         ]
       }
+      game_chats: {
+        Row: {
+          created_at: string
+          game_id: string
+          id: string
+          message: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          game_id: string
+          id?: string
+          message: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          game_id?: string
+          id?: string
+          message?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "game_chats_game_id_fkey"
+            columns: ["game_id"]
+            isOneToOne: false
+            referencedRelation: "games"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      game_rsvps: {
+        Row: {
+          created_at: string
+          game_id: string
+          going_solo: boolean
+          id: string
+          plus_one_count: number
+          rsvp_type: string
+          updated_at: string
+          user_id: string
+          watch_party_venue: string | null
+        }
+        Insert: {
+          created_at?: string
+          game_id: string
+          going_solo?: boolean
+          id?: string
+          plus_one_count?: number
+          rsvp_type: string
+          updated_at?: string
+          user_id: string
+          watch_party_venue?: string | null
+        }
+        Update: {
+          created_at?: string
+          game_id?: string
+          going_solo?: boolean
+          id?: string
+          plus_one_count?: number
+          rsvp_type?: string
+          updated_at?: string
+          user_id?: string
+          watch_party_venue?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "game_rsvps_game_id_fkey"
+            columns: ["game_id"]
+            isOneToOne: false
+            referencedRelation: "games"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      games: {
+        Row: {
+          away_team: string
+          away_team_slug: string | null
+          created_at: string
+          division_level: string | null
+          external_game_id: string | null
+          external_source: string | null
+          game_start_at: string
+          home_team: string
+          home_team_slug: string | null
+          id: string
+          is_local: boolean
+          league: string
+          market_region: string | null
+          raw_payload: Json | null
+          sport: string
+          status: string
+          updated_at: string
+          venue_city: string | null
+          venue_lat: number | null
+          venue_lng: number | null
+          venue_name: string | null
+          venue_state: string | null
+          zip_code: string | null
+        }
+        Insert: {
+          away_team: string
+          away_team_slug?: string | null
+          created_at?: string
+          division_level?: string | null
+          external_game_id?: string | null
+          external_source?: string | null
+          game_start_at: string
+          home_team: string
+          home_team_slug?: string | null
+          id?: string
+          is_local?: boolean
+          league: string
+          market_region?: string | null
+          raw_payload?: Json | null
+          sport: string
+          status?: string
+          updated_at?: string
+          venue_city?: string | null
+          venue_lat?: number | null
+          venue_lng?: number | null
+          venue_name?: string | null
+          venue_state?: string | null
+          zip_code?: string | null
+        }
+        Update: {
+          away_team?: string
+          away_team_slug?: string | null
+          created_at?: string
+          division_level?: string | null
+          external_game_id?: string | null
+          external_source?: string | null
+          game_start_at?: string
+          home_team?: string
+          home_team_slug?: string | null
+          id?: string
+          is_local?: boolean
+          league?: string
+          market_region?: string | null
+          raw_payload?: Json | null
+          sport?: string
+          status?: string
+          updated_at?: string
+          venue_city?: string | null
+          venue_lat?: number | null
+          venue_lng?: number | null
+          venue_name?: string | null
+          venue_state?: string | null
+          zip_code?: string | null
+        }
+        Relationships: []
+      }
       group_members: {
         Row: {
           group_id: string
