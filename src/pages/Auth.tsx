@@ -203,6 +203,7 @@ const Auth = () => {
   // ── Send magic link (creates user if needed) ─────────────────────────
   const handleSendMagicLink = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (loading || cooldownUntil > Date.now()) return;
     const trimmed = email.trim().toLowerCase();
     if (!trimmed || !trimmed.includes("@")) {
       toast({ title: "Enter a valid email", variant: "destructive" });
@@ -218,25 +219,35 @@ const Auth = () => {
         },
       });
       if (error) throw error;
+      // Small built-in cooldown to prevent accidental duplicate sends.
+      setCooldownUntil(Date.now() + 30_000);
+      setNow(Date.now());
       setMode("sent");
     } catch (err: any) {
       const message = err?.message ?? "";
-      toast({
-        title: isAuthEmailRateLimitError(message)
-          ? "Email sign-in is temporarily delayed"
-          : "Couldn't send sign-in link",
-        description: isAuthEmailRateLimitError(message)
-          ? "Sign-in emails are being throttled. Try again in a moment."
-          : message,
-        variant: "destructive",
-      });
+      if (isAuthEmailRateLimitError(message)) {
+        const wait = parseRetryAfterSeconds(message);
+        setCooldownUntil(Date.now() + wait * 1000);
+        setNow(Date.now());
+        toast({
+          title: "Email sign-in is temporarily delayed",
+          description: `Too many requests. Try again in ${wait} second${wait === 1 ? "" : "s"}.`,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Couldn't send sign-in link",
+          description: message,
+          variant: "destructive",
+        });
+      }
     } finally {
       setLoading(false);
     }
   };
 
   const handleResend = async () => {
-    if (!email) return;
+    if (!email || resendLoading || cooldownUntil > Date.now()) return;
     setResendLoading(true);
     try {
       const { error } = await supabase.auth.signInWithOtp({
@@ -244,13 +255,27 @@ const Auth = () => {
         options: { shouldCreateUser: true, emailRedirectTo },
       });
       if (error) throw error;
+      setCooldownUntil(Date.now() + 30_000);
+      setNow(Date.now());
       toast({ title: "Sent! Check your inbox." });
     } catch (err: any) {
-      toast({
-        title: isAuthEmailRateLimitError(err?.message) ? "Resend is temporarily delayed" : "Couldn't resend",
-        description: err?.message,
-        variant: "destructive",
-      });
+      const message = err?.message ?? "";
+      if (isAuthEmailRateLimitError(message)) {
+        const wait = parseRetryAfterSeconds(message);
+        setCooldownUntil(Date.now() + wait * 1000);
+        setNow(Date.now());
+        toast({
+          title: "Resend is temporarily delayed",
+          description: `Please wait ${wait} second${wait === 1 ? "" : "s"} before requesting another link.`,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Couldn't resend",
+          description: message,
+          variant: "destructive",
+        });
+      }
     } finally {
       setResendLoading(false);
     }
