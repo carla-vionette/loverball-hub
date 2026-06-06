@@ -58,22 +58,24 @@ Deno.serve(async (req: Request) => {
 
     console.log(`Event found: ${event.title}`);
 
-    // Format date nicely — force UTC to avoid timezone drift (event_date is a plain YYYY-MM-DD)
+    // Format date in Pacific time (event_date is a plain YYYY-MM-DD; anchor at noon to avoid DST edges)
     const eventDate = new Date(event.event_date + 'T12:00:00Z');
     const formattedDate = eventDate.toLocaleDateString('en-US', {
       weekday: 'short',
       month: 'short',
       day: 'numeric',
-      timeZone: 'UTC',
+      timeZone: 'America/Los_Angeles',
     });
 
-    // Format time if available
+    // Format time if available — interpret event_time as Pacific local time
     let timeStr = '';
     if (event.event_time) {
       const [hours, minutes] = event.event_time.split(':');
-      const date = new Date();
-      date.setHours(parseInt(hours), parseInt(minutes));
-      timeStr = date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+      const h = parseInt(hours);
+      const m = parseInt(minutes);
+      const period = h >= 12 ? 'PM' : 'AM';
+      const h12 = h % 12 === 0 ? 12 : h % 12;
+      timeStr = `${h12}:${String(m).padStart(2, '0')} ${period} PT`;
     }
 
     // Build OG title with event name, date, and time
