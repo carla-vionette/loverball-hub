@@ -132,8 +132,10 @@ const Events = () => {
     setGateOpen(true);
   };
   const openTile = (id: string) => {
+    // Public event pages are viewable by anyone; logged-out users land on the
+    // /e/:id public view (attendee list + chat remain gated behind sign-in).
     if (user) goTo(`/event/${id}`);
-    else openGate(id);
+    else goTo(`/e/${id}`);
   };
   const requestRsvp = (id: string) => {
     if (user) setRsvpId(id);
