@@ -11,6 +11,8 @@ import NetworkStatus from "@/components/NetworkStatus";
 import InstallPrompt from "@/components/InstallPrompt";
 import { usePageTracking } from "@/hooks/usePageTracking";
 import ProtectedRoute from "./components/ProtectedRoute";
+import TrialGate from "./components/TrialGate";
+import BetaBanner from "./components/BetaBanner";
 
 // ── Eager-load primary routes ──
 import Index from "./pages/Index";
@@ -109,6 +111,7 @@ const App = () => (
             <NetworkStatus />
             <InstallPrompt />
             <PageTracker />
+            <BetaBanner />
             <Suspense fallback={<PageFallback />}>
               <Routes>
                 {/* Public */}
@@ -133,15 +136,15 @@ const App = () => (
 
                 {/* Core tabs: WATCH, EVENTS, CLUB, PROFILE */}
                 <Route path="/feed" element={<Feed />} />
-                <Route path="/events" element={<Events />} />
-                <Route path="/event/:id" element={<EventDetail />} />
-                <Route path="/events/:id" element={<EventDetail />} />
+                <Route path="/events" element={<TrialGate feature="Events"><Events /></TrialGate>} />
+                <Route path="/event/:id" element={<TrialGate feature="Events"><EventDetail /></TrialGate>} />
+                <Route path="/events/:id" element={<TrialGate feature="Events"><EventDetail /></TrialGate>} />
                 <Route path="/e/:id" element={<EventPublic />} />
                 <Route path="/rsvp/confirmed/:eventId" element={<RsvpConfirmed />} />
                 <Route path="/welcome/identity" element={<WelcomeIdentity />} />
                 <Route path="/welcome/circles" element={<WelcomeCircles />} />
                 <Route path="/welcome/first-move" element={<WelcomeFirstMove />} />
-                <Route path="/club" element={<Club />} />
+                <Route path="/club" element={<TrialGate feature="the Member Club"><Club /></TrialGate>} />
                 <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
                 <Route path="/profile/:id" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
                 <Route path="/profile/edit" element={<ProtectedRoute><EditProfile /></ProtectedRoute>} />
@@ -149,8 +152,8 @@ const App = () => (
                 {/* Supporting routes (not in nav) */}
                 
                 <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
-                <Route path="/messages" element={<ProtectedRoute><MessagesPage /></ProtectedRoute>} />
-                <Route path="/messages/:chatId" element={<ProtectedRoute><ChatRoom /></ProtectedRoute>} />
+                <Route path="/messages" element={<ProtectedRoute><TrialGate feature="Chats"><MessagesPage /></TrialGate></ProtectedRoute>} />
+                <Route path="/messages/:chatId" element={<ProtectedRoute><TrialGate feature="Chats"><ChatRoom /></TrialGate></ProtectedRoute>} />
                 <Route path="/friends" element={<ProtectedRoute><Friends /></ProtectedRoute>} />
                 <Route path="/checkout-success" element={<ProtectedRoute><CheckoutSuccess /></ProtectedRoute>} />
 

@@ -1,855 +1,388 @@
-import { useState, useEffect, useRef, useMemo, useCallback, ReactNode } from "react";
+/**
+ * Loverball Beta onboarding wizard — 4 steps:
+ *  1. Contact & identity (phone, birthdate, zip)
+ *  2. Sports fandoms (pro leagues, college leagues, teams typeahead)
+ *  3. Vibe & personality tags
+ *  4. Confirm & enter
+ *
+ * Saves all selections to `profiles` and marks has_completed_onboarding=true,
+ * then routes to /feed.
+ */
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight, ArrowLeft, Camera, Check, Loader2, X, Phone, Sparkles } from "lucide-react";
+import { ChevronRight, ChevronLeft, X, Search, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
-import { C, fonts } from "@/lib/editorialTheme";
-import { normalizeUSPhone, formatUSPhone, friendlyPhoneAuthError } from "@/lib/phone";
-import loverballLogo from "@/assets/loverball-script-logo.png";
+import { useToast } from "@/hooks/use-toast";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import Seo from "@/components/Seo";
 
-/* =========================================================
-   LOVERBALL · Unified 14-screen onboarding (Partiful-style)
-   ========================================================= */
+const PRO_LEAGUES = [
+  "NFL", "NBA", "WNBA", "NWSL", "PWHL", "MLB", "MLS", "USWNT", "USMNT", "LPGA", "WTA", "F1",
+];
+const COLLEGE_LEAGUES = [
+  "NCAA Football",
+  "NCAA Women's Basketball",
+  "NCAA Men's Basketball",
+  "NCAA Women's Soccer",
+  "NCAA Volleyball",
+  "NCAA Softball",
+  "NCAA Gymnastics",
+];
 
-const TOTAL_CORE_SCREENS = 14;
+const VIBE_TAGS: { label: string; emoji: string }[] = [
+  { emoji: "🍻", label: "I love watch parties" },
+  { emoji: "🙃", label: "I'm a little shy" },
+  { emoji: "👯", label: "Here to make new friends" },
+  { emoji: "🌱", label: "Building community" },
+  { emoji: "💃", label: "I love to dance" },
+  { emoji: "🍽️", label: "Total foodie" },
+  { emoji: "🎨", label: "Into culture & art" },
+  { emoji: "🎵", label: "Music is life" },
+  { emoji: "✈️", label: "I travel for games" },
+  { emoji: "📱", label: "I follow sports on social" },
+  { emoji: "🏟️", label: "Season ticket energy" },
+  { emoji: "🧠", label: "I'm a stats nerd" },
+  { emoji: "🎉", label: "I'm the hype person" },
+  { emoji: "🤝", label: "Looking for a sports crew" },
+];
 
-// Phone auth is US-only (Twilio is configured for US numbers).
-// See src/lib/phone.ts for normalization + formatting helpers.
-
-const LEAGUES = ["WNBA", "NWSL", "NCAA", "NFL", "FIFA", "F1", "Flag Football", "MLB", "NBA", "MLS"];
-const TEAMS_BY_LEAGUE: Record<string, string[]> = {
-  WNBA: ["LA Sparks", "NY Liberty", "Las Vegas Aces", "Indiana Fever", "Seattle Storm", "Chicago Sky"],
-  NWSL: ["Angel City FC", "Gotham FC", "Portland Thorns", "San Diego Wave", "Bay FC"],
-  NCAA: ["UConn", "LSU", "South Carolina", "Iowa", "Stanford", "USC"],
-  NFL: ["49ers", "Eagles", "Chiefs", "Cowboys", "Rams"],
-  FIFA: ["USWNT", "England", "Spain", "Brazil", "Germany"],
-  F1: ["Ferrari", "Mercedes", "Red Bull", "McLaren"],
-  "Flag Football": ["Team USA", "LA Wildcats"],
-  MLB: ["Dodgers", "Yankees", "Red Sox"],
-  NBA: ["Lakers", "Celtics", "Warriors"],
-  MLS: ["LAFC", "LA Galaxy", "Inter Miami"],
-};
-const VIBES = ["Casual fan", "Die-hard", "Host", "Just here for the fits"] as const;
-
-/* ---------- atoms ---------- */
-const gradientBg = `radial-gradient(circle at 30% 20%, ${C.raspberry}22, transparent 60%), radial-gradient(circle at 70% 80%, ${C.pink}22, transparent 60%)`;
-
-const Page = ({ children }: { children: ReactNode }) => (
-  <motion.div
-    initial={{ opacity: 0, y: 12 }}
-    animate={{ opacity: 1, y: 0 }}
-    exit={{ opacity: 0, y: -8 }}
-    transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-    className="flex flex-col min-h-[100dvh] px-6 pt-14 pb-8 relative"
-    style={{ background: C.bg, color: C.text }}
-  >
-    <div aria-hidden className="pointer-events-none absolute inset-0 -z-10" style={{ background: gradientBg }} />
-    {children}
-  </motion.div>
-);
-
-const H = ({ children }: { children: ReactNode }) => (
-  <h1 style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: "clamp(34px, 8vw, 48px)", lineHeight: 1, letterSpacing: "-0.01em", textTransform: "uppercase" }}>
-    {children}
-  </h1>
-);
-
-const Sub = ({ children }: { children: ReactNode }) => (
-  <p className="mt-3" style={{ fontFamily: fonts.sans, color: C.muted, fontSize: 16, lineHeight: 1.5 }}>
-    {children}
-  </p>
-);
-
-const Trust = ({ children }: { children: ReactNode }) => (
-  <p className="mt-2 text-xs" style={{ fontFamily: fonts.mono, color: C.muted, opacity: 0.75 }}>
-    {children}
-  </p>
-);
-
-const PrimaryBtn = ({
-  children, onClick, disabled, loading, type = "button",
-}: { children: ReactNode; onClick?: () => void; disabled?: boolean; loading?: boolean; type?: "button" | "submit"; }) => (
-  <button
-    type={type}
-    onClick={onClick}
-    disabled={disabled || loading}
-    className="w-full flex items-center justify-center gap-2 transition-all active:scale-[0.98] hover:opacity-95 disabled:opacity-40 disabled:cursor-not-allowed"
-    style={{
-      height: 56, borderRadius: 999, border: "none",
-      background: `linear-gradient(95deg, ${C.raspberry} 0%, ${C.pink} 100%)`,
-      color: "#fff", fontFamily: fonts.mono, fontSize: 13,
-      letterSpacing: "0.18em", textTransform: "uppercase", fontWeight: 600,
-      boxShadow: "0 10px 30px -10px rgba(232,93,47,0.55)",
-    }}
-  >
-    {loading ? <Loader2 className="animate-spin" size={18} /> : children}
-    {!loading && <ArrowRight size={16} />}
-  </button>
-);
-
-const GhostBtn = ({ children, onClick }: { children: ReactNode; onClick?: () => void }) => (
-  <button onClick={onClick} className="text-xs hover:opacity-100 opacity-70 transition" style={{ fontFamily: fonts.mono, color: C.text, letterSpacing: "0.18em", textTransform: "uppercase" }}>
-    {children}
-  </button>
-);
-
-const TextField = (props: React.InputHTMLAttributes<HTMLInputElement>) => (
-  <input
-    {...props}
-    className={`w-full focus:outline-none placeholder:opacity-40 ${props.className ?? ""}`}
-    style={{
-      height: 60, borderRadius: 16, padding: "0 20px",
-      background: C.surface, color: C.text,
-      border: `1.5px solid ${C.borderStrong}`,
-      fontFamily: fonts.sans, fontSize: 18,
-      ...props.style,
-    }}
-  />
-);
-
-const TopBar = ({ step, onBack, onSkip }: { step: number; onBack?: () => void; onSkip?: () => void }) => (
-  <div className="flex items-center justify-between mb-8 -mt-4">
-    {onBack ? (
-      <button onClick={onBack} aria-label="Back" className="p-2 -ml-2 opacity-70 hover:opacity-100"><ArrowLeft size={20} /></button>
-    ) : <span className="w-8" />}
-    <div className="flex-1 mx-4 h-[3px] rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.08)" }}>
-      <motion.div
-        initial={false}
-        animate={{ width: `${(step / TOTAL_CORE_SCREENS) * 100}%` }}
-        transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-        className="h-full"
-        style={{ background: `linear-gradient(90deg, ${C.raspberry}, ${C.pink}, ${C.neon})` }}
-      />
-    </div>
-    {onSkip ? <GhostBtn onClick={onSkip}>Skip</GhostBtn> : <span className="w-8" />}
-  </div>
-);
-
-const Chip = ({ active, children, onClick }: { active?: boolean; children: ReactNode; onClick?: () => void }) => (
-  <button
-    onClick={onClick}
-    className="transition-all active:scale-95"
-    style={{
-      padding: "10px 16px", borderRadius: 999, fontFamily: fonts.mono, fontSize: 12, letterSpacing: "0.12em", textTransform: "uppercase",
-      border: `1.5px solid ${active ? C.pink : C.borderStrong}`,
-      background: active ? `linear-gradient(95deg, ${C.raspberry}, ${C.pink})` : "transparent",
-      color: active ? "#fff" : C.text,
-    }}
-  >
-    {children}
-  </button>
-);
-
-/* ====================================================== */
+interface TeamRow {
+  id: string;
+  name: string;
+  league: string;
+  level: string;
+}
 
 const Onboarding = () => {
   const navigate = useNavigate();
   const [params] = useSearchParams();
+  const redirect = params.get("redirect") || "/feed";
+  const { user, loading: authLoading } = useAuth();
   const { toast } = useToast();
-  const { user } = useAuth();
 
-  const eventId = params.get("event") || params.get("eventId");
-  const finishOnly = params.get("step") === "finish";
+  const [step, setStep] = useState(1);
+  const [saving, setSaving] = useState(false);
 
-  // step 0 = splash (auto), 1..14 = core screens; 15..18 = finish-profile substeps
-  const [step, setStep] = useState<number>(finishOnly ? 15 : 0);
-  const [loading, setLoading] = useState(false);
-
-  // form state
-  const [channel, setChannel] = useState<"phone" | "email">("phone");
-  // Phone auth is US-only; no country selector.
+  // step 1
   const [phone, setPhone] = useState("");
-  const [email, setEmail] = useState("");
-  const [otp, setOtp] = useState("");
-  const [otpVerified, setOtpVerified] = useState(false);
-  const [resendSec, setResendSec] = useState(25);
-  const [name, setName] = useState("");
-  const [photoUrl, setPhotoUrl] = useState<string | null>(null);
-  const [photoFile, setPhotoFile] = useState<File | null>(null);
-  const [birthday, setBirthday] = useState(""); // YYYY-MM-DD
+  const [birthdate, setBirthdate] = useState("");
+  const [zip, setZip] = useState("");
+  const [firstName, setFirstName] = useState("");
 
-  // finish profile
-  const [leagues, setLeagues] = useState<string[]>([]);
+  // step 2
+  const [proLeagues, setProLeagues] = useState<string[]>([]);
+  const [collegeLeagues, setCollegeLeagues] = useState<string[]>([]);
   const [teams, setTeams] = useState<string[]>([]);
-  const [city, setCity] = useState("");
-  const [zipCode, setZipCode] = useState("");
-  const [vibe, setVibe] = useState<string>("");
+  const [teamQuery, setTeamQuery] = useState("");
+  const [teamResults, setTeamResults] = useState<TeamRow[]>([]);
 
-  const fileRef = useRef<HTMLInputElement>(null);
+  // step 3
+  const [vibes, setVibes] = useState<string[]>([]);
 
-  /* splash → auto advance */
   useEffect(() => {
-    if (step !== 0) return;
-    const t = setTimeout(() => setStep(1), 1400);
-    return () => clearTimeout(t);
-  }, [step]);
+    if (!authLoading && !user) {
+      navigate(`/auth?mode=signup&redirect=${encodeURIComponent(`/onboarding?redirect=${redirect}`)}`);
+    }
+  }, [authLoading, user, navigate, redirect]);
 
-  /* resend timer */
+  // Hydrate first name + existing values
   useEffect(() => {
-    if (step !== 6 || resendSec <= 0) return;
-    const t = setTimeout(() => setResendSec((s) => s - 1), 1000);
-    return () => clearTimeout(t);
-  }, [step, resendSec]);
+    if (!user) return;
+    (async () => {
+      const { data } = await supabase
+        .from("profiles")
+        .select("name, phone_number, birthdate, zip_code, pro_leagues, college_leagues, favorite_teams, vibe_tags")
+        .eq("id", user.id)
+        .maybeSingle();
+      if (!data) return;
+      setFirstName((data.name ?? "").split(" ")[0] || "");
+      setPhone(data.phone_number ?? "");
+      setBirthdate(data.birthdate ?? "");
+      setZip(data.zip_code ?? "");
+      setProLeagues(data.pro_leagues ?? []);
+      setCollegeLeagues(data.college_leagues ?? []);
+      setTeams(data.favorite_teams ?? []);
+      setVibes(data.vibe_tags ?? []);
+    })();
+  }, [user?.id]);
 
-  /* If user already signed in & lands on / onboarding (homepage path) - resume at name step */
+  // Team typeahead
   useEffect(() => {
-    if (user && step >= 1 && step <= 7) {
-      setOtpVerified(true);
-      if (step < 8) setStep(8);
+    const q = teamQuery.trim();
+    if (q.length < 2) {
+      setTeamResults([]);
+      return;
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user]);
+    let cancelled = false;
+    const t = setTimeout(async () => {
+      const { data } = await supabase
+        .from("teams_directory")
+        .select("id, name, league, level")
+        .ilike("name", `%${q}%`)
+        .limit(8);
+      if (!cancelled) setTeamResults(data ?? []);
+    }, 180);
+    return () => {
+      cancelled = true;
+      clearTimeout(t);
+    };
+  }, [teamQuery]);
 
-  const fullPhone = useMemo(() => normalizeUSPhone(phone) ?? "", [phone]);
-  const firstName = name.trim().split(/\s+/)[0] || "friend";
-
-  const next = useCallback(() => setStep((s) => s + 1), []);
-  const back = useCallback(() => setStep((s) => Math.max(1, s - 1)), []);
-
-  /* ---------- routing on finish ---------- */
-  const finishCoreFlow = useCallback(() => {
-    // After screen 14 welcome → show finish-profile prompt (step 15)
-    setStep(15);
-  }, []);
-
-  const exitToDestination = useCallback((completedFinish: boolean) => {
-    if (eventId) {
-      navigate(`/event/${eventId}${completedFinish ? "?welcome=1" : "?welcome=1&finish=1"}`, { replace: true });
-    } else {
-      navigate(`/feed${completedFinish ? "?welcome=1" : "?welcome=1&finish=1"}`, { replace: true });
-    }
-  }, [eventId, navigate]);
-
-  /* ---------- supabase actions ---------- */
-  const isPhoneProviderError = (msg: string) => {
-    const m = (msg || "").toLowerCase();
-    return (
-      m.includes("phone") || m.includes("sms") || m.includes("twilio") ||
-      m.includes("provider") || m.includes("not enabled") ||
-      m.includes("unsupported") || m.includes("disabled")
-    );
+  const toggle = (list: string[], setList: (v: string[]) => void, value: string) => {
+    setList(list.includes(value) ? list.filter((v) => v !== value) : [...list, value]);
   };
 
-  const switchToEmail = () => {
-    setChannel("email");
-    setOtp("");
-    setStep(3);
-  };
+  const ageOk = useMemo(() => {
+    if (!birthdate) return false;
+    const dob = new Date(birthdate);
+    const cutoff = new Date();
+    cutoff.setFullYear(cutoff.getFullYear() - 18);
+    return dob <= cutoff;
+  }, [birthdate]);
 
-  const sendOtp = async () => {
-    setLoading(true);
-    try {
-      if (channel === "phone") {
-        const e164 = normalizeUSPhone(phone);
-        if (!e164) {
-          toast({
-            title: "Enter a valid US mobile number",
-            description: "10 digits, e.g. (555) 123-4567.",
-            variant: "destructive",
-          });
-          setLoading(false);
-          return;
-        }
-        const { error } = await supabase.auth.signInWithOtp({ phone: e164 });
-        if (error) {
-          const friendly = friendlyPhoneAuthError(error.message);
-          if (isPhoneProviderError(error.message)) {
-            toast({
-              title: "Texts aren't working right now — try email?",
-              description: "We'll switch you over with your info intact.",
-              variant: "destructive",
-            });
-            switchToEmail();
-            setLoading(false);
-            return;
-          }
-          if (friendly) {
-            toast({ ...friendly, variant: "destructive" });
-            setLoading(false);
-            return;
-          }
-          throw error;
-        }
-      } else {
-        if (!/^\S+@\S+\.\S+$/.test(email.trim())) {
-          toast({ title: "Add a valid email", variant: "destructive" });
-          setLoading(false);
-          return;
-        }
-        const { error } = await supabase.auth.signInWithOtp({
-          email: email.trim(),
-          options: { shouldCreateUser: true },
-        });
-        if (error) throw error;
-      }
-      setResendSec(25);
-      setStep(6);
-    } catch (e: any) {
-      toast({ title: "Couldn't send code", description: e?.message ?? "Try again", variant: "destructive" });
-    } finally {
-      setLoading(false);
-    }
-  };
+  const step1Valid = phone.replace(/\D/g, "").length >= 10 && ageOk && /^\d{5}$/.test(zip);
+  const step2Valid = proLeagues.length + collegeLeagues.length > 0 || teams.length > 0;
+  const step3Valid = vibes.length > 0;
 
-  const verifyOtp = async () => {
-    if (otp.length !== 6) return;
-    setLoading(true);
-    try {
-      const { error } = channel === "phone"
-        ? await supabase.auth.verifyOtp({ phone: fullPhone, token: otp.trim(), type: "sms" })
-        : await supabase.auth.verifyOtp({ email: email.trim(), token: otp.trim(), type: "email" });
-      if (error) throw error;
-      setOtpVerified(true);
-      // identifier (phone or email) is already stored on auth.users by Supabase
-      setStep(7);
-    } catch (e: any) {
-      const friendly = friendlyPhoneAuthError(e?.message ?? "");
-      toast({
-        title: friendly?.title ?? "Code didn't work",
-        description: friendly?.description ?? (e?.message || "Double-check & try again"),
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
+  const next = () => setStep((s) => Math.min(4, s + 1));
+  const back = () => setStep((s) => Math.max(1, s - 1));
 
-  const saveProfilePartial = async (patch: Record<string, any>) => {
-    const { data: { user: u } } = await supabase.auth.getUser();
-    if (!u) return;
-    await supabase.from("profiles").upsert({ id: u.id, name: name || "Member", ...patch, updated_at: new Date().toISOString() });
-  };
-
-  const uploadPhoto = async (file: File) => {
-    const { data: { user: u } } = await supabase.auth.getUser();
-    if (!u) return null;
-    const ext = file.name.split(".").pop() || "jpg";
-    const path = `${u.id}/avatar-${Date.now()}.${ext}`;
-    const { error } = await supabase.storage.from("profile-photos").upload(path, file, { upsert: true });
-    if (error) { toast({ title: "Upload failed", description: error.message, variant: "destructive" }); return null; }
-    const { data } = supabase.storage.from("profile-photos").getPublicUrl(path);
-    return data.publicUrl;
-  };
-
-  const handlePhotoPick = async (file: File) => {
-    setPhotoFile(file);
-    setPhotoUrl(URL.createObjectURL(file));
-    const url = await uploadPhoto(file);
-    if (url) {
-      setPhotoUrl(url);
-      await saveProfilePartial({ profile_photo_url: url });
-    }
-  };
-
-  const completeCore = async () => {
-    await saveProfilePartial({
-      name: name || "Member",
-      profile_photo_url: photoUrl ?? undefined,
-      // store birthday into bio via dedicated col? schema has no birthday — keep month/day only in bio for now
-      bio: birthday ? `🎂 ${birthday.slice(5)}` : undefined,
-    });
-    finishCoreFlow();
-  };
-
-  const completeFinish = async () => {
-    setLoading(true);
-    try {
-      let resolved: { city?: string; state?: string; latitude?: number | null; longitude?: number | null } = {};
-      if (zipCode && /^\d{5}$/.test(zipCode)) {
-        const { resolveZip } = await import("@/lib/geocoding");
-        const loc = await resolveZip(zipCode);
-        if (loc) resolved = { city: loc.city, state: loc.state, latitude: loc.latitude, longitude: loc.longitude };
-      }
-      await saveProfilePartial({
-        favorite_sports: leagues,
-        favorite_teams_players: teams,
-        city: resolved.city || city || undefined,
-        state: resolved.state,
-        latitude: resolved.latitude,
-        longitude: resolved.longitude,
-        zip_code: zipCode || undefined,
-        bio: vibe?.trim() || undefined,
-        other_interests: vibe ? [vibe] : [],
+  const handleFinish = async () => {
+    if (!user) return;
+    setSaving(true);
+    const { error } = await supabase
+      .from("profiles")
+      .update({
+        phone_number: phone,
+        birthdate,
+        zip_code: zip,
+        pro_leagues: proLeagues,
+        college_leagues: collegeLeagues,
+        favorite_teams: teams,
+        vibe_tags: vibes,
         has_completed_onboarding: true,
-      } as any);
-      toast({ title: "You're in 💅🏾", description: "Badge unlocked + event recs are live." });
-      exitToDestination(true);
-    } finally {
-      setLoading(false);
+        trial_started_at: new Date().toISOString(),
+      })
+      .eq("id", user.id);
+    setSaving(false);
+    if (error) {
+      toast({ title: "Couldn't save your profile", description: error.message, variant: "destructive" });
+      return;
     }
+    toast({ title: `Welcome to Loverball${firstName ? `, ${firstName}` : ""}!` });
+    navigate(redirect, { replace: true });
   };
 
-  /* ====================================================== */
-  /* RENDER                                                  */
-  /* ====================================================== */
-
-  const renderStep = () => {
-    switch (step) {
-      /* 1. Splash */
-      case 0:
-        return (
-          <Page key="splash">
-            <div className="flex-1 flex items-center justify-center">
-              <motion.img
-                src={loverballLogo} alt="Loverball" className="h-32"
-                initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
-                transition={{ duration: 0.7, ease: "easeOut" }}
-              />
-            </div>
-          </Page>
-        );
-
-      /* 2. Social proof collage */
-      case 1:
-        return (
-          <Page key="collage">
-            <div className="flex justify-end">
-              <GhostBtn onClick={() => setStep(2)}>Skip</GhostBtn>
-            </div>
-            <div className="flex-1 flex flex-col items-center justify-center relative my-6">
-              <div className="relative flex items-center justify-center w-full max-w-sm aspect-[3/4]">
-                <div
-                  className="absolute inset-0 rounded-3xl opacity-30"
-                  style={{ background: `radial-gradient(circle at 40% 40%, ${C.raspberry}, transparent 60%), radial-gradient(circle at 70% 70%, ${C.pink}, transparent 60%)` }}
-                />
-                <motion.img
-                  src={loverballLogo}
-                  alt="Loverball"
-                  className="relative z-10 h-24 w-auto"
-                  style={{ filter: "brightness(0) invert(1)" }}
-                  initial={{ scale: 0.9, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{ duration: 0.6, ease: "easeOut" }}
-                />
-              </div>
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3, duration: 0.5 }}
-                className="mt-6 max-w-[280px] p-5 rounded-2xl"
-                style={{ background: C.neon, color: "#1a1a1a", boxShadow: "0 10px 30px -10px rgba(0,0,0,0.5)" }}
-              >
-                <p style={{ fontFamily: fonts.sans, fontSize: 14, lineHeight: 1.3, fontWeight: 600 }}>
-                  "Best watch party I've ever been to 😭🔥"
-                </p>
-                <p className="mt-1 text-[10px] opacity-70" style={{ fontFamily: fonts.mono, letterSpacing: "0.14em", textTransform: "uppercase" }}>
-                  — Mel, NWSL fan
-                </p>
-              </motion.div>
-            </div>
-            <PrimaryBtn onClick={() => setStep(2)}>Keep going</PrimaryBtn>
-          </Page>
-        );
-
-      /* 3. Hero / Get Started */
-      case 2:
-        return (
-          <Page key="hero">
-            <TopBar step={2} />
-            <div className="flex-1 flex flex-col justify-center">
-              <H>Where women fans ball out together.</H>
-              <Sub>Watch parties, group chats, ticket drops, and the realest sports community on the internet.</Sub>
-            </div>
-            <div className="space-y-3">
-              <PrimaryBtn onClick={() => setStep(3)}>Get started</PrimaryBtn>
-              <p className="text-[11px] text-center" style={{ color: C.muted, fontFamily: fonts.mono }}>
-                By continuing you agree to our <a href="/terms" className="underline">Terms</a> & <a href="/privacy" className="underline">Privacy</a>.
-              </p>
-            </div>
-          </Page>
-        );
-
-      /* 4 & 5. Phone / Email entry */
-      case 3:
-      case 4: {
-        const canSendPhone = normalizeUSPhone(phone) !== null;
-        const canSendEmail = /^\S+@\S+\.\S+$/.test(email.trim());
-        return (
-          <Page key="phone">
-            <TopBar step={3} onBack={back} />
-            <div className="flex-1 flex flex-col justify-start">
-              <H>Join the league</H>
-              <Sub>Just for event drops. No spam 💌</Sub>
-
-              {channel === "phone" ? (
-                <div className="mt-8 flex gap-2 items-stretch">
-                  <div
-                    className="flex items-center justify-center select-none"
-                    aria-hidden="true"
-                    style={{
-                      height: 60, borderRadius: 16, padding: "0 16px",
-                      background: C.surface, color: C.text,
-                      border: `1.5px solid ${C.borderStrong}`,
-                      fontFamily: fonts.sans, fontSize: 16, fontWeight: 600,
-                      whiteSpace: "nowrap",
-                    }}
-                  >
-                    🇺🇸 +1
-                  </div>
-                  <TextField
-                    type="tel" inputMode="tel" autoComplete="tel"
-                    placeholder="(310) 555-0123"
-                    value={phone}
-                    maxLength={14}
-                    onChange={(e) => { setPhone(formatUSPhone(e.target.value)); if (step === 3) setStep(4); }}
-                  />
-                </div>
-              ) : (
-                <TextField
-                  className="mt-8"
-                  type="email" inputMode="email" autoComplete="email"
-                  placeholder="you@loverball.com"
-                  value={email}
-                  onChange={(e) => { setEmail(e.target.value); if (step === 3) setStep(4); }}
-                />
-              )}
-              <Trust>
-                {channel === "phone"
-                  ? "Message & data rates may apply. We use this to verify you & send event drops."
-                  : "We'll only email codes & event drops. Unsubscribe anytime."}
-              </Trust>
-
-              <div className="mt-5">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setOtp("");
-                    setChannel(channel === "phone" ? "email" : "phone");
-                  }}
-                  className="text-xs underline opacity-80 hover:opacity-100"
-                  style={{ fontFamily: fonts.mono, color: C.pink, letterSpacing: "0.08em" }}
-                >
-                  {channel === "phone" ? "Use email instead" : "Use phone instead"}
-                </button>
-              </div>
-            </div>
-            <PrimaryBtn
-              onClick={sendOtp}
-              loading={loading}
-              disabled={channel === "phone" ? !canSendPhone : !canSendEmail}
-            >
-              {channel === "phone" ? "Send code" : "Send code (email)"}
-            </PrimaryBtn>
-          </Page>
-        );
-      }
-
-      /* 6 & 7. Verify OTP */
-      case 5:
-      case 6:
-        return (
-          <Page key="otp">
-            <TopBar step={5} onBack={back} />
-            <div className="flex-1 flex flex-col justify-start">
-              <H>{channel === "phone" ? "Verify your number" : "Verify your email"}</H>
-              <Sub>
-                We sent a 6-digit code to{" "}
-                {channel === "phone" ? `+1 ${phone}` : email}.
-              </Sub>
-
-              <input
-                value={otp}
-                onChange={(e) => { const v = e.target.value.replace(/\D/g, "").slice(0, 6); setOtp(v); }}
-                inputMode="numeric" autoComplete="one-time-code" maxLength={6}
-                placeholder="• • • • • •"
-                className="mt-8 w-full text-center focus:outline-none placeholder:opacity-30"
-                style={{ height: 76, borderRadius: 20, background: C.surface, color: C.text, border: `1.5px solid ${C.borderStrong}`, fontFamily: fonts.mono, fontSize: 36, letterSpacing: "0.5em" }}
-              />
-
-              <div className="mt-5 flex items-center justify-between text-xs" style={{ fontFamily: fonts.mono, color: C.muted }}>
-                <span>Didn't receive it?</span>
-                {resendSec > 0 ? (
-                  <span>Resend in {resendSec}s</span>
-                ) : (
-                  <button onClick={sendOtp} className="underline" style={{ color: C.pink }}>Resend code</button>
-                )}
-              </div>
-
-              {channel === "phone" && (
-                <div className="mt-4">
-                  <button
-                    type="button"
-                    onClick={switchToEmail}
-                    className="text-xs underline opacity-80 hover:opacity-100"
-                    style={{ fontFamily: fonts.mono, color: C.pink }}
-                  >
-                    Use email instead
-                  </button>
-                </div>
-              )}
-            </div>
-            <PrimaryBtn onClick={verifyOtp} loading={loading} disabled={otp.length !== 6}>Next</PrimaryBtn>
-          </Page>
-        );
-
-
-      /* 8. OTP verified state — instant transition to name */
-      case 7:
-        return (
-          <Page key="verified">
-            <div className="flex-1 flex flex-col items-center justify-center">
-              <motion.div
-                initial={{ scale: 0.6, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
-                transition={{ type: "spring", stiffness: 220, damping: 18 }}
-                className="w-20 h-20 rounded-full flex items-center justify-center mb-6"
-                style={{ background: `linear-gradient(135deg, ${C.raspberry}, ${C.pink})` }}
-              >
-                <Check size={36} color="#fff" />
-              </motion.div>
-              <H>You're in</H>
-              <Sub>Let's get your roster set up.</Sub>
-            </div>
-            <PrimaryBtn onClick={() => setStep(8)}>Continue</PrimaryBtn>
-          </Page>
-        );
-
-      /* 9. Name */
-      case 8:
-      case 9:
-        return (
-          <Page key="name">
-            <TopBar step={8} onBack={back} />
-            <div className="flex-1 flex flex-col">
-              <H>What should we call you?</H>
-              <Sub>So your section knows who's pulling up 💁🏽‍♀️</Sub>
-              <TextField
-                className="mt-8"
-                placeholder="A'ja Wilson"
-                value={name}
-                onChange={(e) => { setName(e.target.value); if (step === 8 && e.target.value.length > 0) setStep(9); }}
-              />
-            </div>
-            <PrimaryBtn onClick={async () => { await saveProfilePartial({ name }); setStep(10); }} disabled={name.trim().length < 1}>Next</PrimaryBtn>
-          </Page>
-        );
-
-      /* 10. Profile pic */
-      case 10:
-        return (
-          <Page key="pic">
-            <TopBar step={10} onBack={back} onSkip={() => setStep(11)} />
-            <div className="flex-1 flex flex-col items-center">
-              <H>Drop a pic</H>
-              <Sub>So your crew spots you in the guest list.</Sub>
-
-              <button
-                onClick={() => fileRef.current?.click()}
-                className="mt-10 w-40 h-40 rounded-full flex items-center justify-center overflow-hidden relative active:scale-95 transition"
-                style={{ background: C.surface, border: `2px dashed ${C.borderStrong}` }}
-              >
-                {photoUrl ? (
-                  <img src={photoUrl} alt="You" className="w-full h-full object-cover" loading="lazy" decoding="async" />
-                ) : (
-                  <Camera size={36} color={C.muted} />
-                )}
-              </button>
-              <input
-                ref={fileRef} type="file" accept="image/*" className="hidden"
-                onChange={(e) => e.target.files?.[0] && handlePhotoPick(e.target.files[0])}
-              />
-
-              <div className="mt-8 p-4 rounded-2xl max-w-sm" style={{ background: C.surface, border: `1px solid ${C.border}` }}>
-                <p className="text-sm" style={{ color: C.text, fontFamily: fonts.sans }}>
-                  💡 <b>Pro tip:</b> Members with pics get <span style={{ color: C.neon }}>8x more event invites</span> 👀
-                </p>
-              </div>
-            </div>
-            <PrimaryBtn onClick={() => setStep(11)}>{photoUrl ? "Looks good" : "Continue"}</PrimaryBtn>
-          </Page>
-        );
-
-      /* 11 & 12. Birthday */
-      case 11:
-      case 12:
-        return (
-          <Page key="bday">
-            <TopBar step={11} onBack={back} />
-            <div className="flex-1 flex flex-col">
-              <H>When's your birthday?</H>
-              <Sub>We'll plan something 🎂</Sub>
-              <TextField
-                type="date" className="mt-8"
-                value={birthday}
-                onChange={(e) => { setBirthday(e.target.value); if (step === 11) setStep(12); }}
-              />
-              <Trust>Your birth year is kept private.</Trust>
-            </div>
-            <PrimaryBtn onClick={async () => { await completeCoreBirthday(); }} disabled={!birthday}>Done</PrimaryBtn>
-          </Page>
-        );
-
-      /* 13. Contact sync */
-      case 13:
-        return (
-          <Page key="contacts">
-            <TopBar step={13} onBack={back} onSkip={() => setStep(14)} />
-            <div className="flex-1 flex flex-col items-center justify-center">
-              <div className="w-24 h-24 rounded-full flex items-center justify-center mb-8"
-                style={{ background: `linear-gradient(135deg, ${C.raspberry}33, ${C.pink}33)`, border: `1px solid ${C.borderStrong}` }}>
-                <Phone size={36} color={C.pink} />
-              </div>
-              <H>See who's already in</H>
-              <Sub>Sync contacts to find your fan fam.</Sub>
-              <Trust>We never store your contacts.</Trust>
-            </div>
-            <PrimaryBtn onClick={() => {
-              toast({ title: "Contact sync coming to the app soon ✨" });
-              setStep(14);
-            }}>Continue</PrimaryBtn>
-          </Page>
-        );
-
-      /* 14. Welcome */
-      case 14:
-        return (
-          <Page key="welcome">
-            <div className="flex-1 flex flex-col justify-center">
-              <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ duration: 0.6 }}>
-                <p style={{ fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.3em", textTransform: "uppercase", color: C.neon }}>You're official</p>
-                <h1 className="mt-3" style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: "clamp(40px, 10vw, 60px)", lineHeight: 1, textTransform: "uppercase" }}>
-                  Welcome to <span style={{ background: `linear-gradient(95deg, ${C.raspberry}, ${C.pink}, ${C.neon})`, WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent" }}>{firstName}</span>
-                </h1>
-                <Sub>Your next watch party is closer than you think.</Sub>
-              </motion.div>
-
-              <div className="mt-8 p-5 rounded-2xl" style={{ background: C.surface, border: `1px solid ${C.borderStrong}` }}>
-                <p style={{ fontFamily: fonts.mono, fontSize: 10, letterSpacing: "0.2em", textTransform: "uppercase", color: C.muted }}>Hero card</p>
-                <p className="mt-2 text-lg" style={{ fontFamily: fonts.sans }}>
-                  {eventId ? "Your RSVP is one tap away 🎟️" : "Pick from this week's drops 🏀"}
-                </p>
-                <p className="mt-1 text-xs flex items-center gap-1" style={{ color: C.pink, fontFamily: fonts.mono, letterSpacing: "0.14em", textTransform: "uppercase" }}>
-                  <Sparkles size={12} /> Ask the Commissioner
-                </p>
-              </div>
-            </div>
-            <PrimaryBtn onClick={completeCore}>Let's go</PrimaryBtn>
-          </Page>
-        );
-
-      /* ============ POST-ONBOARDING: Finish Profile ============ */
-      /* 15. Leagues */
-      case 15:
-        return (
-          <Page key="leagues">
-            <div className="flex items-center justify-between mb-8 -mt-4">
-              <span className="text-xs" style={{ color: C.neon, fontFamily: fonts.mono, letterSpacing: "0.2em", textTransform: "uppercase" }}>Bonus · Unlock recs</span>
-              <GhostBtn onClick={() => exitToDestination(false)}>Skip</GhostBtn>
-            </div>
-            <div className="flex-1 flex flex-col">
-              <H>Pick your leagues 🔥</H>
-              <Sub>We'll tune your feed + event drops.</Sub>
-              <div className="mt-8 flex flex-wrap gap-2">
-                {LEAGUES.map((l) => (
-                  <Chip key={l} active={leagues.includes(l)} onClick={() => setLeagues((p) => p.includes(l) ? p.filter((x) => x !== l) : [...p, l])}>{l}</Chip>
-                ))}
-              </div>
-            </div>
-            <PrimaryBtn onClick={() => setStep(16)} disabled={leagues.length === 0}>Next</PrimaryBtn>
-          </Page>
-        );
-
-      /* 16. Teams */
-      case 16: {
-        const teamOptions = Array.from(new Set(leagues.flatMap((l) => TEAMS_BY_LEAGUE[l] ?? [])));
-        return (
-          <Page key="teams">
-            <div className="flex items-center justify-between mb-8 -mt-4">
-              <button onClick={() => setStep(15)} aria-label="Back" className="p-2 -ml-2 opacity-70"><ArrowLeft size={20} /></button>
-              <GhostBtn onClick={() => exitToDestination(false)}>Skip</GhostBtn>
-            </div>
-            <div className="flex-1 flex flex-col">
-              <H>Pick your teams 💛</H>
-              <Sub>Filtered by your leagues — pick as many as you want.</Sub>
-              <div className="mt-8 flex flex-wrap gap-2">
-                {teamOptions.length === 0 ? (
-                  <p style={{ color: C.muted, fontFamily: fonts.sans }}>Pick a league first.</p>
-                ) : teamOptions.map((t) => (
-                  <Chip key={t} active={teams.includes(t)} onClick={() => setTeams((p) => p.includes(t) ? p.filter((x) => x !== t) : [...p, t])}>{t}</Chip>
-                ))}
-              </div>
-            </div>
-            <PrimaryBtn onClick={() => setStep(17)}>Next</PrimaryBtn>
-          </Page>
-        );
-      }
-
-      /* 17. City */
-      case 17:
-        return (
-          <Page key="city">
-            <div className="flex items-center justify-between mb-8 -mt-4">
-              <button onClick={() => setStep(16)} aria-label="Back" className="p-2 -ml-2 opacity-70"><ArrowLeft size={20} /></button>
-              <GhostBtn onClick={() => exitToDestination(false)}>Skip</GhostBtn>
-            </div>
-            <div className="flex-1 flex flex-col">
-              <H>Your City</H>
-              <Sub>We'll show you games, watch parties, and events near you.</Sub>
-              <TextField
-                className="mt-8"
-                placeholder="ZIP code (e.g. 90001)"
-                value={zipCode}
-                onChange={(e) => setZipCode(e.target.value.replace(/[^0-9]/g, "").slice(0, 5))}
-                inputMode="numeric"
-                pattern="[0-9]*"
-                maxLength={5}
-              />
-            </div>
-            <PrimaryBtn onClick={() => setStep(18)} disabled={!/^\d{5}$/.test(zipCode)}>Next</PrimaryBtn>
-          </Page>
-        );
-
-      /* 18. Vibe */
-      case 18:
-        return (
-          <Page key="vibe">
-            <div className="flex items-center justify-between mb-8 -mt-4">
-              <button onClick={() => setStep(17)} aria-label="Back" className="p-2 -ml-2 opacity-70"><ArrowLeft size={20} /></button>
-              <GhostBtn onClick={() => exitToDestination(false)}>Skip</GhostBtn>
-            </div>
-            <div className="flex-1 flex flex-col">
-              <H>Your vibe?</H>
-              <Sub>Describe yourself in a sentence — fans will see this on your profile.</Sub>
-              <textarea
-                value={vibe}
-                onChange={(e) => setVibe(e.target.value.slice(0, 140))}
-                placeholder="e.g. Die-hard Sparks fan who shows up for every home game in full kit"
-                rows={4}
-                className="mt-8 w-full px-5 py-4 rounded-2xl resize-none outline-none focus:ring-2"
-                style={{
-                  background: C.surface,
-                  border: `1.5px solid ${vibe ? C.pink : C.borderStrong}`,
-                  fontFamily: fonts.sans,
-                  fontSize: 17,
-                  color: C.text,
-                }}
-              />
-              <p className="mt-2 text-xs" style={{ color: C.muted, fontFamily: fonts.mono }}>
-                {vibe.length}/140
-              </p>
-            </div>
-            <PrimaryBtn onClick={completeFinish} loading={loading} disabled={!vibe.trim()}>Unlock my feed</PrimaryBtn>
-          </Page>
-        );
-
-      default:
-        return null;
-    }
-  };
-
-  // wrapper for case 12 "Done" button
-  async function completeCoreBirthday() {
-    setStep(13);
+  if (authLoading || !user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <Loader2 className="w-6 h-6 animate-spin text-primary" />
+      </div>
+    );
   }
 
   return (
-    <div className="min-h-[100dvh]" style={{ background: C.bg }}>
-      <AnimatePresence mode="wait">
-        {renderStep()}
-      </AnimatePresence>
+    <div className="min-h-[100dvh] bg-[#FAF7F2] text-[#1A1A1A]">
+      <Seo title="Set up your Loverball profile" description="Tell us your fandoms so we can build your feed." path="/onboarding" />
+      <div className="max-w-xl mx-auto px-5 pt-8 pb-32">
+        {/* Progress */}
+        <div className="flex items-center gap-2 mb-8">
+          {[1, 2, 3, 4].map((n) => (
+            <div
+              key={n}
+              className="h-1 flex-1 rounded-full transition-colors"
+              style={{ background: n <= step ? "#E85D2F" : "#E8E3DC" }}
+            />
+          ))}
+        </div>
+
+        {step === 1 && (
+          <div className="space-y-6">
+            <header>
+              <p className="text-xs uppercase tracking-widest text-[#6B6B6B]">Step 1 of 4</p>
+              <h1 className="font-display text-3xl mt-2">A few details to get started</h1>
+            </header>
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="phone">Phone number</Label>
+                <Input id="phone" inputMode="tel" placeholder="+1 555 555 5555"
+                  value={phone} onChange={(e) => setPhone(e.target.value)} />
+              </div>
+              <div>
+                <Label htmlFor="dob">Birthdate</Label>
+                <Input id="dob" type="date" value={birthdate} onChange={(e) => setBirthdate(e.target.value)} />
+                {birthdate && !ageOk && (
+                  <p className="text-xs text-[#E85D2F] mt-1">You must be 18 or older to join Loverball.</p>
+                )}
+              </div>
+              <div>
+                <Label htmlFor="zip">Zip code</Label>
+                <Input id="zip" inputMode="numeric" maxLength={5} placeholder="90210"
+                  value={zip} onChange={(e) => setZip(e.target.value.replace(/\D/g, "").slice(0, 5))} />
+              </div>
+            </div>
+          </div>
+        )}
+
+        {step === 2 && (
+          <div className="space-y-6">
+            <header>
+              <p className="text-xs uppercase tracking-widest text-[#6B6B6B]">Step 2 of 4</p>
+              <h1 className="font-display text-3xl mt-2">What do you watch?</h1>
+            </header>
+
+            <section>
+              <h2 className="text-sm font-semibold uppercase tracking-wide mb-2">Pro leagues</h2>
+              <div className="flex flex-wrap gap-2">
+                {PRO_LEAGUES.map((l) => (
+                  <Chip key={l} label={l} active={proLeagues.includes(l)}
+                    onClick={() => toggle(proLeagues, setProLeagues, l)} />
+                ))}
+              </div>
+            </section>
+
+            <section>
+              <h2 className="text-sm font-semibold uppercase tracking-wide mb-2">College</h2>
+              <div className="flex flex-wrap gap-2">
+                {COLLEGE_LEAGUES.map((l) => (
+                  <Chip key={l} label={l} active={collegeLeagues.includes(l)}
+                    onClick={() => toggle(collegeLeagues, setCollegeLeagues, l)} />
+                ))}
+              </div>
+            </section>
+
+            <section>
+              <h2 className="text-sm font-semibold uppercase tracking-wide mb-2">Your teams</h2>
+              <div className="relative">
+                <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#6B6B6B]" />
+                <Input className="pl-9" placeholder="Search teams (e.g. Lakers, USC)"
+                  value={teamQuery} onChange={(e) => setTeamQuery(e.target.value)} />
+                {teamResults.length > 0 && (
+                  <ul className="absolute z-10 mt-1 w-full bg-white border border-[#E8E3DC] rounded-md shadow-sm overflow-hidden">
+                    {teamResults.map((t) => (
+                      <li key={t.id}>
+                        <button type="button"
+                          onClick={() => {
+                            if (!teams.includes(t.name)) setTeams([...teams, t.name]);
+                            setTeamQuery("");
+                            setTeamResults([]);
+                          }}
+                          className="w-full text-left px-3 py-2 hover:bg-[#FAF5E9] text-sm flex items-center justify-between"
+                        >
+                          <span>{t.name}</span>
+                          <span className="text-xs text-[#6B6B6B] uppercase tracking-wide">{t.league}</span>
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+              {teams.length > 0 && (
+                <div className="flex flex-wrap gap-2 mt-3">
+                  {teams.map((t) => (
+                    <span key={t}
+                      className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium"
+                      style={{ background: "#E85D2F", color: "#fff" }}>
+                      {t}
+                      <button aria-label={`Remove ${t}`}
+                        onClick={() => setTeams(teams.filter((x) => x !== t))}
+                        className="ml-1 opacity-80 hover:opacity-100">
+                        <X className="w-3 h-3" />
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              )}
+              {teams.length === 0 && (
+                <p className="text-xs text-[#6B6B6B] mt-2">
+                  Start typing a team name. We'll match common misspellings.
+                </p>
+              )}
+            </section>
+          </div>
+        )}
+
+        {step === 3 && (
+          <div className="space-y-6">
+            <header>
+              <p className="text-xs uppercase tracking-widest text-[#6B6B6B]">Step 3 of 4</p>
+              <h1 className="font-display text-3xl mt-2">Tell us who you are — pick everything that fits.</h1>
+            </header>
+            <div className="flex flex-wrap gap-2">
+              {VIBE_TAGS.map((v) => (
+                <Chip key={v.label} label={`${v.emoji} ${v.label}`}
+                  active={vibes.includes(v.label)}
+                  onClick={() => toggle(vibes, setVibes, v.label)} />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {step === 4 && (
+          <div className="space-y-6 text-center pt-8">
+            <header>
+              <p className="text-xs uppercase tracking-widest text-[#6B6B6B]">Step 4 of 4</p>
+              <h1 className="font-display text-4xl mt-3">
+                Welcome to Loverball{firstName ? `, ${firstName}` : ""}.
+              </h1>
+              <p className="text-[#6B6B6B] mt-3">Your feed is ready.</p>
+            </header>
+            <div className="bg-white border border-[#E8E3DC] rounded-2xl p-5 text-left text-sm space-y-2">
+              <Row k="Phone" v={phone} />
+              <Row k="Birthday" v={birthdate} />
+              <Row k="Zip" v={zip} />
+              <Row k="Pro leagues" v={proLeagues.join(", ") || "—"} />
+              <Row k="College" v={collegeLeagues.join(", ") || "—"} />
+              <Row k="Teams" v={teams.join(", ") || "—"} />
+              <Row k="Vibe" v={`${vibes.length} selected`} />
+            </div>
+          </div>
+        )}
+
+        {/* Footer nav */}
+        <div className="fixed bottom-0 left-0 right-0 bg-[#FAF7F2]/95 backdrop-blur border-t border-[#E8E3DC] px-5 py-4">
+          <div className="max-w-xl mx-auto flex items-center justify-between gap-3">
+            <Button variant="ghost" size="lg" onClick={back} disabled={step === 1}>
+              <ChevronLeft className="w-4 h-4 mr-1" /> Back
+            </Button>
+            {step < 4 ? (
+              <Button size="lg" onClick={next}
+                disabled={(step === 1 && !step1Valid) || (step === 2 && !step2Valid) || (step === 3 && !step3Valid)}>
+                Continue <ChevronRight className="w-4 h-4 ml-1" />
+              </Button>
+            ) : (
+              <Button size="lg" onClick={handleFinish} disabled={saving}>
+                {saving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
+                Enter Loverball →
+              </Button>
+            )}
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
+
+const Chip = ({ label, active, onClick }: { label: string; active: boolean; onClick: () => void }) => (
+  <button type="button" onClick={onClick}
+    className="px-3.5 py-2 rounded-full text-sm font-medium transition-colors border"
+    style={{
+      background: active ? "#E85D2F" : "#FFFFFF",
+      borderColor: active ? "#E85D2F" : "#E8E3DC",
+      color: active ? "#FFFFFF" : "#1A1A1A",
+    }}>
+    {label}
+  </button>
+);
+
+const Row = ({ k, v }: { k: string; v: string }) => (
+  <div className="flex justify-between gap-3">
+    <span className="text-[#6B6B6B]">{k}</span>
+    <span className="font-medium text-right truncate max-w-[60%]">{v || "—"}</span>
+  </div>
+);
 
 export default Onboarding;
