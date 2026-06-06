@@ -27,6 +27,9 @@ import AreaSelector from "@/components/AreaSelector";
 import { useActiveArea } from "@/hooks/useActiveArea";
 import { resolveEventImage, handleEventImageError } from "@/lib/eventImage";
 import BetaTrialBanner from "@/components/BetaTrialBanner";
+import ZipPromptCard from "@/components/events/ZipPromptCard";
+import SportsFilterBar, { type SportsFilter } from "@/components/events/SportsFilterBar";
+import { fetchLocalSportsEvents, type MockDbEvent } from "@/lib/mockSportsEvents";
 
 
 const CATEGORIES = ["All", "watch_party", "game", "panel", "brunch", "networking", "other"];
@@ -119,11 +122,14 @@ const Events = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
-  const { active: activeArea, isOverriding } = useActiveArea();
+  const { active: activeArea, home: homeArea, isOverriding } = useActiveArea();
   const userLoc = activeArea?.lat != null && activeArea?.lng != null
     ? { lat: activeArea.lat, lng: activeArea.lng }
     : null;
   const [radius, setRadius] = useState<25 | 50 | 100 | "national">(50);
+  const [sportsFilter, setSportsFilter] = useState<SportsFilter>("all");
+  const [localSports, setLocalSports] = useState<MockDbEvent[]>([]);
+  const needsZip = !!user && !homeArea?.zip && !activeArea?.zip;
 
   const [gateEventId, setGateEventId] = useState<string | null>(null);
   const openGate = (id: string) => {
@@ -132,6 +138,12 @@ const Events = () => {
     setGateOpen(true);
   };
   const openTile = (id: string) => {
+    // Mock sports events have no DB row — open the ticket URL or no-op.
+    const mock = localSports.find(e => e.id === id);
+    if (mock) {
+      if (mock.__ticket_url) window.open(mock.__ticket_url, "_blank", "noopener,noreferrer");
+      return;
+    }
     // Public event pages are viewable by anyone; logged-out users land on the
     // /e/:id public view (attendee list + chat remain gated behind sign-in).
     if (user) goTo(`/event/${id}`);
@@ -233,6 +245,19 @@ const Events = () => {
     }
   }, [user]);
 
+  // Auto-populate local pro + college games whenever the active area changes.
+  // Stays mock-backed until USE_MOCK_DATA is flipped in mockSportsEvents.ts.
+  useEffect(() => {
+    let cancelled = false;
+    const zip = activeArea?.zip || null;
+    const city = activeArea?.city || null;
+    if (!zip && !city) { setLocalSports([]); return; }
+    fetchLocalSportsEvents({ zip, city }).then((rows) => {
+      if (!cancelled) setLocalSports(rows);
+    });
+    return () => { cancelled = true; };
+  }, [activeArea?.zip, activeArea?.city]);
+
   const handleRsvp = async (status: string) => {
     if (!user || !rsvpId) { toast({ title: "Sign in required", variant: "destructive" }); return; }
     await supabase.from("event_rsvps").upsert(
@@ -278,15 +303,34 @@ const Events = () => {
   // Events move to "past" 24 hours after their event_date
   const cutoff = new Date(now.getTime() - 24 * 60 * 60 * 1000);
 
-  const upcomingEvents = events.filter(e => parseEventDate(e.event_date) >= cutoff);
-  const pastEvents = events.filter(e => parseEventDate(e.event_date) < cutoff).reverse();
+  // Merge mock external sports events into the same pipeline so they get
+  // ZIP/radius filtering, color-coded dots, and chronological sort for free.
+  const combinedEvents = [...events, ...(localSports as unknown as DbEvent[])];
+  const upcomingEvents = combinedEvents.filter(e => parseEventDate(e.event_date) >= cutoff);
+  const pastEvents = combinedEvents.filter(e => parseEventDate(e.event_date) < cutoff).reverse();
 
   const baseEvents = tab === "upcoming" ? upcomingEvents : pastEvents;
   const categoryFiltered = category === "All" ? baseEvents : baseEvents.filter(e => e.event_type === category);
 
+  // Sports filter chip row — operates on both real games + mock external events.
+  const weekCutoff = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+  const sportsFiltered = categoryFiltered.filter((e) => {
+    const m = (e as unknown as MockDbEvent).__mock ? (e as unknown as MockDbEvent) : null;
+    switch (sportsFilter) {
+      case "pro":     return m?.__sport_kind === "pro";
+      case "college": return m?.__sport_kind === "college";
+      case "womens":
+        return m ? m.__is_womens : (e.sport_tags || []).some(t => /women|wnba|nwsl|ncaaw/i.test(t));
+      case "week":
+        return parseEventDate(e.event_date) <= weekCutoff;
+      case "all":
+      default:        return true;
+    }
+  });
+
   // Proximity filter — only applied when user has lat/lng AND radius is numeric.
   // Events without coords are always shown (treated as "national" reach).
-  const withDistance = categoryFiltered.map(e => {
+  const withDistance = sportsFiltered.map(e => {
     let distance: number | null = null;
     if (userLoc && e.location_lat != null && e.location_lng != null) {
       distance = distanceMiles(userLoc.lat, userLoc.lng, e.location_lat, e.location_lng);
@@ -356,6 +400,7 @@ const Events = () => {
       <main className="pb-24 md:pb-0">
         <div className="max-w-6xl mx-auto px-5 md:px-10 py-8">
           <BetaTrialBanner className="mb-6" />
+          {needsZip && <ZipPromptCard />}
           <EditorialMasthead
             section="Events"
             meta={`${upcomingEvents.length} on deck`}
@@ -544,6 +589,9 @@ const Events = () => {
               </div>
             );
           })()}
+
+          {/* SPORTS FILTER — All / Pro / College / Women's / This Week */}
+          <SportsFilterBar value={sportsFilter} onChange={setSportsFilter} />
 
           {/* CATEGORY CHIPS */}
           <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-3 -mx-5 px-5 mb-7">
