@@ -26,6 +26,7 @@ const Feed = lazy(() => import("./pages/Feed"));
 const Events = lazy(() => import("./pages/Events"));
 const EventDetail = lazy(() => import("./pages/EventDetail"));
 const EventPublic = lazy(() => import("./pages/EventPublic"));
+const GameDetail = lazy(() => import("./pages/GameDetail"));
 
 const Profile = lazy(() => import("./pages/Profile"));
 const EditProfile = lazy(() => import("./pages/EditProfile"));
