@@ -23,7 +23,7 @@ export interface ShareableEvent {
  * Includes title, date/time, venue, and a short description.
  */
 export function buildShareSummary(ev: ShareableEvent): string {
-  const dateStr = format(new Date(ev.event_date), "EEE, MMM d, yyyy");
+  const dateStr = format(parseEventDate(ev.event_date), "EEE, MMM d, yyyy");
   const timeStr = ev.event_time ? fmtTime(ev.event_time) : "";
   const locStr = [ev.venue_name, ev.city].filter(Boolean).join(", ");
 
@@ -48,7 +48,7 @@ export function buildShareSummary(ev: ShareableEvent): string {
  * Format: "Fri, Jun 12 @ 7:00 PM · The Venue, LA. Short description..."
  */
 export function buildSharePreviewDescription(ev: ShareableEvent): string {
-  const dateStr = format(new Date(ev.event_date), "EEE, MMM d, yyyy");
+  const dateStr = format(parseEventDate(ev.event_date), "EEE, MMM d, yyyy");
   const timeStr = ev.event_time ? fmtTime(ev.event_time) : "";
   const locStr = [ev.venue_name, ev.city].filter(Boolean).join(", ");
 
