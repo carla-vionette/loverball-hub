@@ -286,7 +286,7 @@ const RsvpPhoneSheet = ({ open, onOpenChange, eventId, eventTitle, intent, onVer
                 className="text-center mb-1"
                 style={{ fontFamily: fonts.serif, fontStyle: "italic", fontSize: 30, lineHeight: 1.05 }}
               >
-                Lock in your spot.
+                Reserve your spot.
               </h2>
               <p className="text-center mb-6" style={{ color: C.muted, fontSize: 13 }}>
                 {method === "email"
