@@ -132,9 +132,9 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: 'Members@loverball.com',
+        from: 'no-reply@loverball.com',
         to: email,
-        subject: `Welcome to Loverball, ${firstName}! 🏀`,
+        subject: 'Welcome to Loverball',
         html: htmlBody,
       }),
     });
