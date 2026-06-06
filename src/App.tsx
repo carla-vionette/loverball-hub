@@ -136,15 +136,15 @@ const App = () => (
 
                 {/* Core tabs: WATCH, EVENTS, CLUB, PROFILE */}
                 <Route path="/feed" element={<Feed />} />
-                <Route path="/events" element={<Events />} />
-                <Route path="/event/:id" element={<EventDetail />} />
-                <Route path="/events/:id" element={<EventDetail />} />
+                <Route path="/events" element={<TrialGate feature="Events"><Events /></TrialGate>} />
+                <Route path="/event/:id" element={<TrialGate feature="Events"><EventDetail /></TrialGate>} />
+                <Route path="/events/:id" element={<TrialGate feature="Events"><EventDetail /></TrialGate>} />
                 <Route path="/e/:id" element={<EventPublic />} />
                 <Route path="/rsvp/confirmed/:eventId" element={<RsvpConfirmed />} />
                 <Route path="/welcome/identity" element={<WelcomeIdentity />} />
                 <Route path="/welcome/circles" element={<WelcomeCircles />} />
                 <Route path="/welcome/first-move" element={<WelcomeFirstMove />} />
-                <Route path="/club" element={<Club />} />
+                <Route path="/club" element={<TrialGate feature="the Member Club"><Club /></TrialGate>} />
                 <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
                 <Route path="/profile/:id" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
                 <Route path="/profile/edit" element={<ProtectedRoute><EditProfile /></ProtectedRoute>} />
