@@ -400,6 +400,7 @@ const Events = () => {
       <main className="pb-24 md:pb-0">
         <div className="max-w-6xl mx-auto px-5 md:px-10 py-8">
           <BetaTrialBanner className="mb-6" />
+          {needsZip && <ZipPromptCard />}
           <EditorialMasthead
             section="Events"
             meta={`${upcomingEvents.length} on deck`}
