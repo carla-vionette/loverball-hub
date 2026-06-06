@@ -346,7 +346,7 @@ const RsvpPhoneSheet = ({ open, onOpenChange, eventId, eventTitle, intent, onVer
               )}
 
               <form onSubmit={handleCaptureSubmit} className="flex flex-col gap-4 w-full" noValidate>
-                <div>
+                <div className="flex flex-col w-full">
                   <label style={labelStyle} htmlFor="rsvp-first-name">First name</label>
                   <Input
                     id="rsvp-first-name"
