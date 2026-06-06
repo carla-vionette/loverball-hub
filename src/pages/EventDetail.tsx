@@ -343,15 +343,29 @@ const EventDetail = () => {
   };
 
   const handleRSVP = async (status: 'yes' | 'maybe' | 'no') => {
+    console.log('[RSVP] submit start', { status, eventId: id, hasUser: !!user, isMember });
+
+    // Guest flow: do NOT redirect into member-only UI. Keep the user on this
+    // page with a safe local success state and offer a non-blocking sign-up
+    // prompt. Persist pending intent so we can sync on sign-in later.
     if (!user) {
-      // Stash pending RSVP intent so we can auto-complete it after auth.
       try {
         sessionStorage.setItem(
           'lb-pending-rsvp',
           JSON.stringify({ eventId: id, status, ts: Date.now() })
         );
       } catch {}
-      navigate(`/auth?mode=signup&redirect=${encodeURIComponent(`/event/${id}`)}`);
+      const dbStatus = status === 'yes' ? 'attending' : status === 'maybe' ? 'waitlisted' : 'canceled';
+      setRsvpStatus(dbStatus);
+      if (status === 'yes') {
+        setShowConfetti(true);
+        setTimeout(() => setShowConfetti(false), 3000);
+      }
+      toast({
+        title: status === 'yes' ? "🎉 You're going!" : status === 'maybe' ? "Marked as maybe" : "RSVP updated",
+        description: status === 'yes' ? "Sign up free to lock in your spot and get reminders." : undefined,
+      });
+      console.log('[RSVP] guest local success', { dbStatus });
       return;
     }
 
@@ -411,6 +425,7 @@ const EventDetail = () => {
           .eq('user_id', user.id);
       }
 
+      console.log('[RSVP] success response', { eventId: event.id, dbStatus, userId: user.id });
       setRsvpStatus(dbStatus);
       fetchAttendees();
       setGuestRefreshKey((k) => k + 1);
@@ -426,21 +441,12 @@ const EventDetail = () => {
         description: status === 'yes' ? "We'll see you there!" : undefined,
       });
 
-      // After RSVP'ing, prompt new users / incomplete profiles to finish setup,
-      // then return to the event page.
-      if (status === 'yes') {
-        try {
-          const { data: profile } = await supabase
-            .from('profiles')
-            .select('name')
-            .eq('id', user.id)
-            .maybeSingle();
-          if (!profile?.name) {
-            navigate(`/onboarding?event=${event.id}&step=finish&welcome=1`, { replace: true });
-          }
-        } catch {}
-      }
+      // Note: previously we auto-navigated incomplete profiles to /onboarding
+      // which could produce a white screen for brand-new accounts. We now
+      // stay on the event page; users can finish their profile from the
+      // dedicated onboarding entry point.
     } catch (error: any) {
+      console.error('[RSVP] failure', { message: error?.message, code: error?.code });
       toast({
         title: 'Error',
         description: 'Failed to submit RSVP. Please try again.',
@@ -450,6 +456,13 @@ const EventDetail = () => {
       setRsvping(false);
     }
   };
+
+  // Diagnostic: log every render that reflects a new RSVP status.
+  useEffect(() => {
+    if (rsvpStatus !== null) {
+      console.log('[RSVP] render after status update', { rsvpStatus, hasUser: !!user });
+    }
+  }, [rsvpStatus, user]);
 
 
   // Share the canonical loverball.com/e/:id URL. The public event page emits
@@ -704,16 +717,28 @@ const EventDetail = () => {
             </div>
 
             {/* GOING STATUS */}
-            {user && isGoing && (
+            {isGoing && (
               <div className="rounded-xl bg-card border border-border/30 p-3 flex items-center gap-3">
                 <div className="w-7 h-7 rounded-full bg-[hsl(173_58%_39%)] flex items-center justify-center shrink-0">
                   <Check className="w-4 h-4 text-white" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="text-sm font-semibold">You're going</div>
-                  <div className="text-xs text-muted-foreground">Tap edit to update your plans</div>
+                  <div className="text-xs text-muted-foreground">
+                    {user ? 'Tap edit to update your plans' : 'Sign up free to lock in your spot.'}
+                  </div>
                 </div>
-                <button onClick={() => handleRSVP('no')} className="text-xs text-muted-foreground">Edit</button>
+                {user ? (
+                  <button onClick={() => handleRSVP('no')} className="text-xs text-muted-foreground">Edit</button>
+                ) : (
+                  <Button
+                    size="sm"
+                    className="rounded-full h-8 text-xs"
+                    onClick={() => navigate(`/auth?mode=signup&redirect=${encodeURIComponent(`/event/${id}`)}`)}
+                  >
+                    Sign up
+                  </Button>
+                )}
               </div>
             )}
 
