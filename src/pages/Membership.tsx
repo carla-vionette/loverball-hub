@@ -39,33 +39,22 @@ const TIERS = [
     highlight: false,
   },
   {
-    name: "All-Access",
-    price: "$15",
+    name: "The Club",
+    price: "$35",
     cadence: "/ month",
-    blurb: "The full members-only home.",
+    blurb: "The full Loverball experience.",
     features: [
       "Unlimited group chats & circles",
       "Smart fan matching",
       "Members-only events & watch parties",
       "RSVP priority",
       "Full creator library",
-    ],
-    cta: "Start All-Access",
-    highlight: true,
-  },
-  {
-    name: "The Club",
-    price: "$35",
-    cadence: "/ month",
-    blurb: "The full Loverball experience.",
-    features: [
-      "Everything in All-Access",
       "Founding-member perks",
       "Early access to drops",
       "VIP events & city meetups",
     ],
     cta: "Join The Club",
-    highlight: false,
+    highlight: true,
   },
 ];
 
