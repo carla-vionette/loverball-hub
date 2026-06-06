@@ -1,18 +1,21 @@
 /**
- * Loverball Feed — Live & Recent Scores, Where to Watch, From Your Sports.
- * Identity, Inbox, and My Events stay on /profile.
+ * Loverball Feed — Inbox, My Events, Live & Recent Scores, Where to Watch, From Your Sports.
+ * Identity + What's New stay on /profile.
  */
 import { useEffect, useState } from "react";
-import { ChevronDown, Radio, Tv } from "lucide-react";
+import { Calendar, ChevronDown, ChevronRight, Radio, Ticket, Tv } from "lucide-react";
+import { format } from "date-fns";
 import { motion } from "framer-motion";
 import BottomNav from "@/components/BottomNav";
 import DesktopNav from "@/components/DesktopNav";
 import Seo from "@/components/Seo";
+import ProfileInbox from "@/components/profile/ProfileInbox";
 import ProfileScores from "@/components/ProfileScores";
 import ProfileWhereToWatch from "@/components/ProfileWhereToWatch";
 import MySportsFeed from "@/components/MySportsFeed";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { useAuth } from "@/hooks/useAuth";
+import { useProfileData } from "@/hooks/useProfileData";
 import { supabase } from "@/integrations/supabase/client";
 
 const staggerContainer = {
@@ -33,11 +36,20 @@ const goTo = (path: string) => { window.location.href = path; };
 
 const Feed = () => {
   const { user } = useAuth();
+  const { data: profileBundle } = useProfileData();
   const [userSports, setUserSports] = useState<string[]>([]);
   const [userTeams, setUserTeams] = useState<string[]>([]);
   const [userCity, setUserCity] = useState<string | null>(null);
+  const [eventsOpen, setEventsOpen] = useState(true);
   const [scoresOpen, setScoresOpen] = useState(true);
   const [watchOpen, setWatchOpen] = useState(true);
+
+  const rsvpEvents = profileBundle?.rsvpEvents ?? [];
+  const visibleRsvps = rsvpEvents.filter(r => {
+    const s = (r.status || "").toLowerCase();
+    return s !== "declined" && s !== "cancelled" && s !== "canceled";
+  });
+
 
   useEffect(() => {
     if (!user) return;
