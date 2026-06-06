@@ -7,7 +7,11 @@
 // filtering and click routing (since mock events have no DB row).
 
 import { addDays, format } from "date-fns";
+import { supabase } from "@/integrations/supabase/client";
 
+// Flip to `false` to hit the live SeatGeek proxy edge function instead of
+// returning mock metro fixtures. Requires the SEATGEEK_CLIENT_ID secret
+// to be configured on the seatgeek-events function.
 export const USE_MOCK_DATA = true;
 
 export type SportKind = "pro" | "college";
@@ -260,11 +264,102 @@ export function toDbShape(m: MockSportsEvent): MockDbEvent {
   };
 }
 
+// SeatGeek response shape from the seatgeek-events edge function. Already
+// normalized server-side, so this mirrors MockSportsEvent 1:1.
+interface SeatGeekProxyEvent {
+  id: string;
+  title: string;
+  team_home: string;
+  team_away: string;
+  venue_name: string;
+  venue_address: string;
+  city: string;
+  date_time: string;
+  league: League;
+  sport_kind: SportKind;
+  is_womens: boolean;
+  ticket_url?: string;
+  image_url?: string | null;
+}
+
+const LEAGUE_SPORT_FALLBACK: Record<string, string> = {
+  NFL: "football", NBA: "basketball", WNBA: "basketball",
+  NWSL: "soccer", MLS: "soccer", MLB: "baseball", NHL: "hockey",
+  NCAAF: "football", NCAAM: "basketball", NCAAW: "basketball",
+  NCAA_SOCCER: "soccer",
+};
+
+function liveToDbShape(e: SeatGeekProxyEvent): MockDbEvent {
+  const d = new Date(e.date_time);
+  const sport = LEAGUE_SPORT_FALLBACK[e.league] || "sports";
+  return {
+    id: e.id,
+    title: e.title,
+    description: `${e.league} · ${e.venue_name}`,
+    image_url: e.image_url ?? null,
+    banner_image: null,
+    event_date: format(d, "yyyy-MM-dd"),
+    event_time: format(d, "HH:mm"),
+    venue_name: e.venue_name,
+    city: e.city,
+    event_type: "game",
+    sport_tags: [sport],
+    visibility: "public",
+    capacity: null,
+    price: null,
+    event_tags: [e.league, e.is_womens ? "women" : "open", e.sport_kind],
+    location_lat: null,
+    location_lng: null,
+    promoted: false,
+    __mock: true,
+    __league: e.league,
+    __sport_kind: e.sport_kind,
+    __is_womens: e.is_womens,
+    __ticket_url: e.ticket_url,
+  };
+}
+
+async function fetchSeatGeekEvents(opts: {
+  zip?: string | null;
+  lat?: number | null;
+  lng?: number | null;
+  range?: string;
+}): Promise<MockDbEvent[]> {
+  const params: Record<string, string> = { range: opts.range || "50mi" };
+  if (opts.zip && /^\d{5}$/.test(opts.zip)) params.zip = opts.zip;
+  else if (opts.lat != null && opts.lng != null) {
+    params.lat = String(opts.lat);
+    params.lng = String(opts.lng);
+  } else {
+    return [];
+  }
+
+  try {
+    const { data, error } = await supabase.functions.invoke("seatgeek-events", {
+      method: "GET",
+      // supabase-js appends these as query params for GET
+      body: params as any,
+    });
+    if (error) {
+      console.warn("seatgeek-events invoke failed", error.message);
+      return [];
+    }
+    const events = (data?.events || []) as SeatGeekProxyEvent[];
+    return events.map(liveToDbShape);
+  } catch (err) {
+    console.warn("seatgeek-events network error", err);
+    return [];
+  }
+}
+
 export function fetchLocalSportsEvents(opts: {
   zip?: string | null;
   city?: string | null;
+  lat?: number | null;
+  lng?: number | null;
 }): Promise<MockDbEvent[]> {
-  // Single seam — flip USE_MOCK_DATA / replace this body to call SeatGeek.
-  if (!USE_MOCK_DATA) return Promise.resolve([]);
-  return Promise.resolve(buildMockSportsEvents(opts).map(toDbShape));
+  if (USE_MOCK_DATA) {
+    return Promise.resolve(buildMockSportsEvents(opts).map(toDbShape));
+  }
+  return fetchSeatGeekEvents(opts);
 }
