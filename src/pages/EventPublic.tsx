@@ -529,7 +529,7 @@ const EventPublic = () => {
                     RSVP as a guest
                   </p>
                   <p className="text-xs" style={{ color: C.muted, lineHeight: 1.5 }}>
-                    Tap below to reserve your spot. You'll verify with your phone to confirm. Sign in to see who else is going and join the chat.
+                    You can reserve your spot without signing in — just tap Going, Maybe or Can't go below. Want to see who's going or chat with other guests? Sign in first.
                   </p>
                 </div>
                 <Button
