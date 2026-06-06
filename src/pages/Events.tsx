@@ -132,8 +132,14 @@ const Events = () => {
   const needsZip = !!user && !homeArea?.zip && !activeArea?.zip;
 
   const [gateEventId, setGateEventId] = useState<string | null>(null);
-  const openGate = (id: string) => {
+  const openGate = (id: string, intent: 'yes' | 'maybe' | 'no' = 'yes') => {
     sessionStorage.setItem("postAuthRedirect", `/event/${id}`);
+    try {
+      sessionStorage.setItem(
+        'lb-pending-rsvp',
+        JSON.stringify({ eventId: id, status: intent, ts: Date.now() })
+      );
+    } catch { /* ignore */ }
     setGateEventId(id);
     setGateOpen(true);
   };
