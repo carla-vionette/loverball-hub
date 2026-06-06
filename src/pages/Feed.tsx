@@ -88,25 +88,6 @@ const Feed = () => {
           animate="show"
           className="space-y-6 min-w-0"
         >
-          {/* INBOX */}
-          <motion.div variants={staggerItem}>
-            {user ? (
-              <ProfileInbox />
-            ) : (
-              <div className="rounded-2xl p-6 text-center" style={{ background: PANEL, border: PANEL_BORDER }}>
-                <p className="text-[13px]" style={{ color: "rgba(250,245,233,0.65)" }}>
-                  Sign in to see your alerts, messages, friends, and activity.
-                </p>
-                <button
-                  onClick={() => goTo("/auth")}
-                  className="mt-4 text-[11px] uppercase font-bold tracking-[0.16em] px-4 py-2 rounded-full"
-                  style={{ background: PINK, color: "#0a0a0a", fontFamily: "Inter, sans-serif" }}
-                >
-                  Sign in
-                </button>
-              </div>
-            )}
-          </motion.div>
 
           {/* MY EVENTS */}
           <motion.div variants={staggerItem}>
