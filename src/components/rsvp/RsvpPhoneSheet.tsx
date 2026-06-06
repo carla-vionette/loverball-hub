@@ -347,20 +347,31 @@ const RsvpPhoneSheet = ({ open, onOpenChange, eventId, eventTitle, intent, onVer
 
               <form onSubmit={handleCaptureSubmit} className="space-y-4" noValidate>
                 <div>
-                  <label style={labelStyle}>First name</label>
+                  <label style={labelStyle} htmlFor="rsvp-first-name">First name</label>
                   <Input
+                    id="rsvp-first-name"
                     value={firstName}
-                    onChange={(e) => setFirstName(e.target.value)}
+                    onChange={(e) => { setFirstName(e.target.value); clearFieldError("firstName"); }}
                     autoComplete="given-name"
-                    style={inputStyle}
+                    style={{
+                      ...inputStyle,
+                      borderColor: fieldErrors.firstName ? C.raspberry : inputStyle.borderColor,
+                    }}
+                    aria-invalid={!!fieldErrors.firstName}
+                    aria-describedby={fieldErrors.firstName ? "rsvp-first-name-err" : undefined}
                     required
                     autoFocus
                   />
+                  {fieldErrors.firstName && (
+                    <p id="rsvp-first-name-err" className="mt-2 text-[12px]" style={{ color: C.raspberry }} role="alert">
+                      {fieldErrors.firstName}
+                    </p>
+                  )}
                 </div>
 
                 {method === "phone" ? (
                   <div>
-                    <label style={labelStyle}>Mobile number</label>
+                    <label style={labelStyle} htmlFor="rsvp-phone">Mobile number</label>
                     <div className="flex gap-2 items-stretch">
                       <div
                         className="flex items-center justify-center select-none"
@@ -377,37 +388,62 @@ const RsvpPhoneSheet = ({ open, onOpenChange, eventId, eventTitle, intent, onVer
                         🇺🇸 +1
                       </div>
                       <Input
+                        id="rsvp-phone"
                         type="tel"
                         inputMode="tel"
                         placeholder="(555) 123-4567"
                         value={phoneRaw}
-                        onChange={(e) => setPhoneRaw(formatUSPhone(e.target.value))}
+                        onChange={(e) => { setPhoneRaw(formatUSPhone(e.target.value)); clearFieldError("phone"); }}
                         maxLength={14}
                         autoComplete="tel"
-                        style={{ ...inputStyle, flex: 1 }}
+                        style={{
+                          ...inputStyle,
+                          flex: 1,
+                          borderColor: fieldErrors.phone ? C.raspberry : inputStyle.borderColor,
+                        }}
+                        aria-invalid={!!fieldErrors.phone}
+                        aria-describedby={fieldErrors.phone ? "rsvp-phone-err" : undefined}
                         required
                       />
                     </div>
-                    <p className="mt-2 text-[11px]" style={{ color: C.muted, fontFamily: fonts.mono, letterSpacing: "0.1em" }}>
-                      US mobile numbers only · standard message rates apply
-                    </p>
+                    {fieldErrors.phone ? (
+                      <p id="rsvp-phone-err" className="mt-2 text-[12px]" style={{ color: C.raspberry }} role="alert">
+                        {fieldErrors.phone}
+                      </p>
+                    ) : (
+                      <p className="mt-2 text-[11px]" style={{ color: C.muted, fontFamily: fonts.mono, letterSpacing: "0.1em" }}>
+                        US mobile numbers only · standard message rates apply
+                      </p>
+                    )}
                   </div>
                 ) : (
                   <div>
-                    <label style={labelStyle}>Email</label>
+                    <label style={labelStyle} htmlFor="rsvp-email">Email</label>
                     <Input
+                      id="rsvp-email"
                       type="email"
                       inputMode="email"
                       placeholder="you@example.com"
                       value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      onChange={(e) => { setEmail(e.target.value); clearFieldError("email"); }}
                       autoComplete="email"
-                      style={inputStyle}
+                      style={{
+                        ...inputStyle,
+                        borderColor: fieldErrors.email ? C.raspberry : inputStyle.borderColor,
+                      }}
+                      aria-invalid={!!fieldErrors.email}
+                      aria-describedby={fieldErrors.email ? "rsvp-email-err" : undefined}
                       required
                     />
-                    <p className="mt-2 text-[11px]" style={{ color: C.muted, fontFamily: fonts.mono, letterSpacing: "0.1em" }}>
-                      We'll send a 6-digit code to your inbox
-                    </p>
+                    {fieldErrors.email ? (
+                      <p id="rsvp-email-err" className="mt-2 text-[12px]" style={{ color: C.raspberry }} role="alert">
+                        {fieldErrors.email}
+                      </p>
+                    ) : (
+                      <p className="mt-2 text-[11px]" style={{ color: C.muted, fontFamily: fonts.mono, letterSpacing: "0.1em" }}>
+                        We'll send a 6-digit code to your inbox
+                      </p>
+                    )}
                   </div>
                 )}
 
