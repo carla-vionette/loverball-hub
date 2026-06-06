@@ -61,6 +61,7 @@ const EventRSVPDialog = ({
   onAuthed,
 }: Props) => {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [mode, setMode] = useState<"signup" | "signin">("signup");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
