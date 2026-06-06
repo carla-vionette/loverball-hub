@@ -404,8 +404,8 @@ const Auth = () => {
                     autoFocus
                     autoComplete="email"
                   />
-                  <EditorialBtn type="submit" loading={loading}>
-                    Continue with Email
+                  <EditorialBtn type="submit" loading={loading} disabled={inCooldown}>
+                    {inCooldown ? `Try again in ${cooldownSeconds}s` : "Continue with Email"}
                   </EditorialBtn>
                 </form>
 
