@@ -280,10 +280,11 @@ const RsvpPhoneSheet = ({ open, onOpenChange, eventId, eventTitle, intent, onVer
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
       <DrawerContent
-        className="border-0 px-0 pb-[env(safe-area-inset-bottom)] relative"
+        className="border-0 px-0 pb-[env(safe-area-inset-bottom)] relative max-h-[100dvh] h-[100dvh] overflow-y-auto"
         style={{ background: `${gradientBg}, ${C.bg}`, color: C.text }}
       >
-        <div className="mx-auto w-full max-w-md px-5 pt-2 pb-6">
+        <div className="min-h-[100dvh] w-full flex items-center justify-center px-4 py-6">
+          <div className="w-full max-w-[420px] mx-auto flex flex-col gap-4">
           {/* Logo */}
           <motion.div
             initial={{ opacity: 0, y: -12 }}
