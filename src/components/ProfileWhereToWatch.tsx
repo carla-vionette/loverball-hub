@@ -107,6 +107,15 @@ const GameCard: React.FC<{ game: Game }> = ({ game }) => {
           <Tv className="w-3 h-3" /> Check local listings
         </div>
       )}
+      <a
+        href={`https://www.ticketmaster.com/search?q=${encodeURIComponent(game.homeTeam.name)}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        onClick={(e) => e.stopPropagation()}
+        className="mt-2 inline-flex items-center gap-1 text-[10px] font-semibold text-primary hover:underline"
+      >
+        <Ticket className="w-3 h-3" /> Get tickets
+      </a>
     </Card>
   );
 };
