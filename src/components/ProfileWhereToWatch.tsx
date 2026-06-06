@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Tv, Search, Calendar, X, Radio } from "lucide-react";
+import { Tv, Search, Calendar, X, Radio, Ticket } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { getTeamLeague } from "@/lib/teamLeagueMap";
 
