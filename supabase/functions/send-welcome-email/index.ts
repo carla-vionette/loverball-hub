@@ -74,25 +74,36 @@ serve(async (req) => {
         <table width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;">
           <!-- Header -->
           <tr>
-            <td style="background-color:#000000;padding:32px 24px;text-align:center;border-radius:12px 12px 0 0;">
-              <h1 style="margin:0;font-size:28px;font-weight:800;color:#00E5FF;letter-spacing:1px;">LOVERBALL</h1>
+            <td style="background-color:#0A1128;padding:32px 24px;text-align:center;border-radius:12px 12px 0 0;">
+              <h1 style="margin:0;font-size:28px;font-weight:700;color:#FF4D3A;letter-spacing:1px;font-family:Oswald,Impact,sans-serif;">LOVERBALL</h1>
             </td>
           </tr>
           <!-- Body -->
           <tr>
             <td style="background-color:#f8f8f8;padding:32px 24px;">
-              <h2 style="margin:0 0 16px;font-size:22px;color:#111111;">Welcome to the squad, ${firstName}! 🏀</h2>
+              <p style="margin:0 0 20px;font-size:16px;color:#111111;line-height:1.6;">
+                Hi ${firstName},
+              </p>
               <p style="margin:0 0 16px;font-size:15px;color:#333333;line-height:1.6;">
-                You're officially part of Loverball — the community for women who live and breathe sports.
+                Welcome to Loverball — a community built for women sports fans.
+              </p>
+              <p style="margin:0 0 16px;font-size:15px;color:#333333;line-height:1.6;">
+                Loverball is where sports, culture, and community come together. It's a place to discover events, RSVP to experiences, connect with other members, and be part of a fan community built around showing up together.
               </p>
               <p style="margin:0 0 24px;font-size:15px;color:#333333;line-height:1.6;">
-                Get ready to discover events, connect with fans, and rep your favorite teams. We're hype to have you here. 🔥
+                We also want to be clear about how we email: we don't spam. You'll only hear from us about events, important updates related to your RSVPs or activity, and the notifications you choose to receive.
+              </p>
+              <p style="margin:0 0 24px;font-size:15px;color:#333333;line-height:1.6;">
+                We're so glad you're here and excited to have you in the community.
+              </p>
+              <p style="margin:0 0 24px;font-size:15px;color:#333333;line-height:1.6;">
+                — Team Loverball
               </p>
               <table cellpadding="0" cellspacing="0" style="margin:0 auto;">
                 <tr>
-                  <td style="background-color:#00E5FF;border-radius:8px;">
-                    <a href="https://loverball-hub.lovable.app/home" style="display:inline-block;padding:14px 32px;color:#000000;font-size:14px;font-weight:700;text-decoration:none;letter-spacing:0.5px;">
-                      EXPLORE LOVERBALL →
+                  <td style="background-color:#FF4D3A;border-radius:8px;">
+                    <a href="https://www.loverball.com/home" style="display:inline-block;padding:14px 32px;color:#ffffff;font-size:14px;font-weight:600;text-decoration:none;letter-spacing:0.5px;">
+                      View upcoming events →
                     </a>
                   </td>
                 </tr>
@@ -121,9 +132,9 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: 'Members@loverball.com',
+        from: 'no-reply@loverball.com',
         to: email,
-        subject: `Welcome to Loverball, ${firstName}! 🏀`,
+        subject: 'Welcome to Loverball',
         html: htmlBody,
       }),
     });
