@@ -74,6 +74,7 @@ const RSVP_BUTTONS: { type: RsvpType; label: string }[] = [
 const GameDetail = () => {
   const { id: gameId } = useParams<{ id: string }>();
   const { user } = useAuth();
+  const { goBack } = useGameBackNavigation();
   const [game, setGame] = useState<Game | null>(null);
   const [loading, setLoading] = useState(true);
   const [rsvps, setRsvps] = useState<RsvpRow[]>([]);
