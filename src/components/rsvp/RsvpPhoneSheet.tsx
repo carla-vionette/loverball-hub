@@ -70,7 +70,7 @@ const RsvpPhoneSheet = ({ open, onOpenChange, eventId, eventTitle, intent, onVer
   // Reset when reopened
   useEffect(() => {
     if (!open) return;
-    setMethod("phone");
+    setMethod("email");
     setStep("capture");
     setCode("");
     setErr(null);
