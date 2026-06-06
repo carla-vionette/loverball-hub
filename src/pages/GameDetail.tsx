@@ -4,11 +4,12 @@
  * Who's Going grouped by RSVP type, and realtime game chat.
  */
 import { useEffect, useMemo, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { format } from "date-fns";
 import { ArrowLeft, MapPin, Send, Users } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { useGameBackNavigation } from "@/hooks/useGameBackNavigation";
 import { toast } from "@/hooks/use-toast";
 import BottomNav from "@/components/BottomNav";
 import DesktopNav from "@/components/DesktopNav";
