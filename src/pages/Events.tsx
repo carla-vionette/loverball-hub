@@ -312,6 +312,22 @@ const Events = () => {
   const baseEvents = tab === "upcoming" ? upcomingEvents : pastEvents;
   const categoryFiltered = category === "All" ? baseEvents : baseEvents.filter(e => e.event_type === category);
 
+  // Sports filter chip row — operates on both real games + mock external events.
+  const weekCutoff = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+  const sportsFiltered = categoryFiltered.filter((e) => {
+    const m = (e as unknown as MockDbEvent).__mock ? (e as unknown as MockDbEvent) : null;
+    switch (sportsFilter) {
+      case "pro":     return m?.__sport_kind === "pro";
+      case "college": return m?.__sport_kind === "college";
+      case "womens":
+        return m ? m.__is_womens : (e.sport_tags || []).some(t => /women|wnba|nwsl|ncaaw/i.test(t));
+      case "week":
+        return parseEventDate(e.event_date) <= weekCutoff;
+      case "all":
+      default:        return true;
+    }
+  });
+
   // Proximity filter — only applied when user has lat/lng AND radius is numeric.
   // Events without coords are always shown (treated as "national" reach).
   const withDistance = categoryFiltered.map(e => {
