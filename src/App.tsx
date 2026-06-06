@@ -99,6 +99,8 @@ const PageFallback = () => (
 
 const PageTracker = () => {
   usePageTracking();
+  useGameOriginTracker();
+  useGameScrollRestore();
   return null;
 };
 
