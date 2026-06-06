@@ -41,7 +41,7 @@ const inputStyle: React.CSSProperties = {
 };
 
 const intentLabel = (i: RsvpIntent) =>
-  i === "attending" ? "you're in" : i === "waitlisted" ? "maybe" : "can't go";
+  i === "attending" ? "going" : i === "waitlisted" ? "maybe" : "can't go";
 
 /** Normalize to strict E.164 US (+1XXXXXXXXXX). Returns null when invalid. */
 function normalizePhone(raw: string): string | null {
