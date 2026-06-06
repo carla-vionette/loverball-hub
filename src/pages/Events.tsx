@@ -856,7 +856,7 @@ const Events = () => {
                     asChild
                   >
                     <a
-                      href={`sms:?&body=${encodeURIComponent(buildShareSummary(shareEvent) + "\n\n" + getShareUrl(shareEvent))}`}
+                      href={`sms:?&body=${encodeURIComponent(buildShareSummary(shareEvent) + "\n\n" + getSmsShareUrl(shareEvent))}`}
                     >
                       <Smartphone className="w-4 h-4 mr-2" /> Text
                     </a>
