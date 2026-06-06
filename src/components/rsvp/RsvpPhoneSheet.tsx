@@ -254,7 +254,8 @@ const RsvpPhoneSheet = ({ open, onOpenChange, eventId, eventTitle, intent, onVer
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : "That code didn't match. Try again.";
       const friendly = friendlyPhoneAuthError(msg);
-      setErr(friendly ? `${friendly.title}. ${friendly.description}` : msg);
+      const message = friendly ? `${friendly.title}. ${friendly.description}` : msg;
+      setFieldErrors((p) => ({ ...p, code: message }));
       setCode("");
       setTimeout(() => codeInputRef.current?.focus(), 30);
     } finally {
