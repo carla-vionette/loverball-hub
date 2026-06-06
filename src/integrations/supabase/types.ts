@@ -1977,7 +1977,9 @@ export type Database = {
           age_range: string | null
           billing_period: string | null
           bio: string | null
+          birthdate: string | null
           city: string | null
+          college_leagues: string[] | null
           created_at: string
           current_streak: number
           email_notifications_enabled: boolean
@@ -1985,7 +1987,9 @@ export type Database = {
           fan_vibe: string | null
           favorite_la_teams: string[] | null
           favorite_sports: string[] | null
+          favorite_teams: string[] | null
           favorite_teams_players: string[] | null
+          grandfathered: boolean
           has_completed_onboarding: boolean
           id: string
           in_app_notifications_enabled: boolean
@@ -2004,7 +2008,9 @@ export type Database = {
           neighborhood: string | null
           other_interests: string[] | null
           participation_preferences: string[] | null
+          phone_number: string | null
           primary_role: string | null
+          pro_leagues: string[] | null
           profile_photo_url: string | null
           pronouns: string | null
           sms_notifications_enabled: boolean | null
@@ -2013,8 +2019,10 @@ export type Database = {
           state: string | null
           tiktok_url: string | null
           total_points: number
+          trial_started_at: string | null
           updated_at: string
           username: string | null
+          vibe_tags: string[] | null
           website_url: string | null
           zip_code: string | null
         }
@@ -2023,7 +2031,9 @@ export type Database = {
           age_range?: string | null
           billing_period?: string | null
           bio?: string | null
+          birthdate?: string | null
           city?: string | null
+          college_leagues?: string[] | null
           created_at?: string
           current_streak?: number
           email_notifications_enabled?: boolean
@@ -2031,7 +2041,9 @@ export type Database = {
           fan_vibe?: string | null
           favorite_la_teams?: string[] | null
           favorite_sports?: string[] | null
+          favorite_teams?: string[] | null
           favorite_teams_players?: string[] | null
+          grandfathered?: boolean
           has_completed_onboarding?: boolean
           id: string
           in_app_notifications_enabled?: boolean
@@ -2050,7 +2062,9 @@ export type Database = {
           neighborhood?: string | null
           other_interests?: string[] | null
           participation_preferences?: string[] | null
+          phone_number?: string | null
           primary_role?: string | null
+          pro_leagues?: string[] | null
           profile_photo_url?: string | null
           pronouns?: string | null
           sms_notifications_enabled?: boolean | null
@@ -2059,8 +2073,10 @@ export type Database = {
           state?: string | null
           tiktok_url?: string | null
           total_points?: number
+          trial_started_at?: string | null
           updated_at?: string
           username?: string | null
+          vibe_tags?: string[] | null
           website_url?: string | null
           zip_code?: string | null
         }
@@ -2069,7 +2085,9 @@ export type Database = {
           age_range?: string | null
           billing_period?: string | null
           bio?: string | null
+          birthdate?: string | null
           city?: string | null
+          college_leagues?: string[] | null
           created_at?: string
           current_streak?: number
           email_notifications_enabled?: boolean
@@ -2077,7 +2095,9 @@ export type Database = {
           fan_vibe?: string | null
           favorite_la_teams?: string[] | null
           favorite_sports?: string[] | null
+          favorite_teams?: string[] | null
           favorite_teams_players?: string[] | null
+          grandfathered?: boolean
           has_completed_onboarding?: boolean
           id?: string
           in_app_notifications_enabled?: boolean
@@ -2096,7 +2116,9 @@ export type Database = {
           neighborhood?: string | null
           other_interests?: string[] | null
           participation_preferences?: string[] | null
+          phone_number?: string | null
           primary_role?: string | null
+          pro_leagues?: string[] | null
           profile_photo_url?: string | null
           pronouns?: string | null
           sms_notifications_enabled?: boolean | null
@@ -2105,8 +2127,10 @@ export type Database = {
           state?: string | null
           tiktok_url?: string | null
           total_points?: number
+          trial_started_at?: string | null
           updated_at?: string
           username?: string | null
+          vibe_tags?: string[] | null
           website_url?: string | null
           zip_code?: string | null
         }
@@ -2349,6 +2373,39 @@ export type Database = {
           id?: string
           team_key?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      teams_directory: {
+        Row: {
+          city: string | null
+          created_at: string
+          id: string
+          league: string
+          level: string
+          name: string
+          short_name: string | null
+          sport: string | null
+        }
+        Insert: {
+          city?: string | null
+          created_at?: string
+          id?: string
+          league: string
+          level: string
+          name: string
+          short_name?: string | null
+          sport?: string | null
+        }
+        Update: {
+          city?: string | null
+          created_at?: string
+          id?: string
+          league?: string
+          level?: string
+          name?: string
+          short_name?: string | null
+          sport?: string | null
         }
         Relationships: []
       }
