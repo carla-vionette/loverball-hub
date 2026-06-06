@@ -486,11 +486,15 @@ const Auth = () => {
                   <button
                     type="button"
                     onClick={handleResend}
-                    disabled={resendLoading}
-                    style={{ color: C.raspberry, fontWeight: 600, borderBottom: `1px solid ${C.raspberry}` }}
-                    className="hover:opacity-80 transition-opacity"
+                    disabled={resendLoading || inCooldown}
+                    style={{ color: C.raspberry, fontWeight: 600, borderBottom: `1px solid ${C.raspberry}`, opacity: (resendLoading || inCooldown) ? 0.6 : 1 }}
+                    className="hover:opacity-80 transition-opacity disabled:cursor-not-allowed"
                   >
-                    {resendLoading ? "Sending…" : "resend the link"}
+                    {resendLoading
+                      ? "Sending…"
+                      : inCooldown
+                        ? `resend in ${cooldownSeconds}s`
+                        : "resend the link"}
                   </button>
                 </div>
 
