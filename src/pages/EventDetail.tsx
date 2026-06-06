@@ -465,14 +465,20 @@ const EventDetail = () => {
   }, [rsvpStatus, user]);
 
 
-  // Share the canonical loverball.com/e/:id URL. The public event page emits
-  // per-route Open Graph + Twitter Card meta via <Seo/> (react-helmet-async),
-  // which JS-executing link-preview crawlers (Apple, Twitter, Slack, FB) read.
-  // Sharing the raw supabase.co edge-function URL caused iMessage to label the
-  // preview as a generic "Text Document" instead of rendering the OG card.
+  // Share the canonical loverball.com/e/:id URL for copy/web shares — the
+  // public event page emits per-route OG meta via <Seo/> for JS-executing
+  // crawlers (Twitter, Slack, FB).
   const getShareUrl = () => {
     if (!event?.id) return `https://www.loverball.com/e/`;
     return `https://www.loverball.com/e/${event.id}`;
+  };
+
+  // For SMS/iMessage previews, share the edge-function URL. It returns a tiny
+  // HTML doc with the event's cover image as og:image (non-JS crawler friendly)
+  // and redirects real browsers to /e/:id.
+  const getSmsShareUrl = () => {
+    if (!event?.id) return getShareUrl();
+    return `https://nfjavjfxgxrpvieinpdp.supabase.co/functions/v1/event-og-meta?id=${event.id}`;
   };
 
   const handleShare = () => {
@@ -1111,7 +1117,7 @@ const EventDetail = () => {
                   asChild
                 >
                   <a
-                    href={`sms:?&body=${encodeURIComponent(buildShareSummary(event) + "\n\n" + getShareUrl())}`}
+                    href={`sms:?&body=${encodeURIComponent(buildShareSummary(event) + "\n\n" + getSmsShareUrl())}`}
                   >
                     <Smartphone className="w-4 h-4 mr-2" />
                     Text

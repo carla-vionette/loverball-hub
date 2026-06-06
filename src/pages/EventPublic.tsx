@@ -21,11 +21,12 @@ import EventPasswordGate, { isEventUnlocked } from "@/components/EventPasswordGa
 import { resolveEventImage, handleEventImageError } from "@/lib/eventImage";
 
 const SITE = "https://www.loverball.com";
-// Share the canonical /e/:id URL. The page below emits proper per-route OG +
-// Twitter Card meta via <Seo/>, which iMessage/Twitter/Slack/FB unfurl. The
-// previous edge-function URL was being labeled as a generic "Text Document"
-// by Apple's link preview because it pointed at a *.supabase.co API endpoint.
+// Canonical share URL for copy/web shares — emits per-route OG via <Seo/>.
 const buildShareUrl = (eventId: string) => `${SITE}/e/${eventId}`;
+// Crawler-friendly URL for SMS/iMessage: the edge function returns static
+// HTML with the event's cover image as og:image and redirects browsers to /e/:id.
+const buildSmsShareUrl = (eventId: string) =>
+  `https://nfjavjfxgxrpvieinpdp.supabase.co/functions/v1/event-og-meta?id=${eventId}`;
 
 interface PublicEvent {
   id: string;
@@ -772,7 +773,7 @@ const EventPublic = () => {
                   asChild
                 >
                   <a
-                    href={`sms:?&body=${encodeURIComponent(buildShareSummary(event) + "\n\n" + publicUrl)}`}
+                    href={`sms:?&body=${encodeURIComponent(buildShareSummary(event) + "\n\n" + buildSmsShareUrl(id!))}`}
                   >
                     <Smartphone className="w-3.5 h-3.5 mr-2" /> Text
                   </a>
