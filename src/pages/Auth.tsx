@@ -121,12 +121,12 @@ const EditorialOutlineBtn = ({
 const AuthH1 = ({ children }: { children: React.ReactNode }) => (
   <h1
     style={{
-      fontFamily: fonts.serif,
-      fontStyle: "italic",
-      fontWeight: 500,
+      fontFamily: "'Anton', Impact, sans-serif",
+      fontWeight: 400,
       fontSize: "clamp(32px, 6vw, 48px)",
-      lineHeight: 1.0,
-      letterSpacing: "-0.02em",
+      lineHeight: 0.95,
+      letterSpacing: "-0.01em",
+      textTransform: "uppercase",
       color: C.text,
       textAlign: "center",
     }}
