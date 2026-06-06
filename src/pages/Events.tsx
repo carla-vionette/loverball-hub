@@ -251,12 +251,14 @@ const Events = () => {
     let cancelled = false;
     const zip = activeArea?.zip || null;
     const city = activeArea?.city || null;
-    if (!zip && !city) { setLocalSports([]); return; }
-    fetchLocalSportsEvents({ zip, city }).then((rows) => {
+    const lat = activeArea?.lat ?? null;
+    const lng = activeArea?.lng ?? null;
+    if (!zip && !city && lat == null) { setLocalSports([]); return; }
+    fetchLocalSportsEvents({ zip, city, lat, lng }).then((rows) => {
       if (!cancelled) setLocalSports(rows);
     });
     return () => { cancelled = true; };
-  }, [activeArea?.zip, activeArea?.city]);
+  }, [activeArea?.zip, activeArea?.city, activeArea?.lat, activeArea?.lng]);
 
   const handleRsvp = async (status: string) => {
     if (!user || !rsvpId) { toast({ title: "Sign in required", variant: "destructive" }); return; }
