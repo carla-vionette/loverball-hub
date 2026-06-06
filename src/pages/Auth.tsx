@@ -175,6 +175,17 @@ const Auth = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [resendLoading, setResendLoading] = useState(false);
+  const [cooldownUntil, setCooldownUntil] = useState<number>(0);
+  const [now, setNow] = useState<number>(() => Date.now());
+
+  useEffect(() => {
+    if (cooldownUntil <= Date.now()) return;
+    const id = window.setInterval(() => setNow(Date.now()), 500);
+    return () => window.clearInterval(id);
+  }, [cooldownUntil]);
+
+  const cooldownSeconds = Math.max(0, Math.ceil((cooldownUntil - now) / 1000));
+  const inCooldown = cooldownSeconds > 0;
   const [splashName, setSplashName] = useState<string | null>(null);
   const [pendingRedirect, setPendingRedirect] = useState<string | null>(null);
 
