@@ -418,7 +418,7 @@ const EventPublic = () => {
           {/* Social proof — verified attendee avatar stack */}
           {(guestVisible && attendeeCount > 0) && (
             <div className="flex items-center gap-3 mb-6">
-              {attendees.length > 0 && (
+              {user && attendees.length > 0 && (
                 <div className="flex -space-x-2">
                   {attendees.slice(0, 5).map((a) => {
                     if (anonymizeGuests) {
