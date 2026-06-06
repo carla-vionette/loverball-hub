@@ -47,36 +47,6 @@
   <body>
     <a href="#main-content" class="skip-link" tabindex="0" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;" onfocus="this.style.position='fixed';this.style.left='8px';this.style.top='8px';this.style.width='auto';this.style.height='auto';this.style.overflow='visible';" onblur="this.style.position='absolute';this.style.left='-9999px';this.style.width='1px';this.style.height='1px';this.style.overflow='hidden';">Skip to main content</a>
     <div id="root"></div>
-    <script>
-      // Blank-screen self-heal: if React hasn't mounted into #root within 7s,
-      // a stale service worker / precached old bundle is the most likely cause.
-      // Unregister all SWs, clear caches, and reload once. Guarded by
-      // sessionStorage so we never loop.
-      (function () {
-        var KEY = 'lb-blank-recovered';
-        setTimeout(function () {
-          try {
-            var root = document.getElementById('root');
-            if (!root || root.childElementCount > 0) return;
-            if (sessionStorage.getItem(KEY)) return;
-            sessionStorage.setItem(KEY, '1');
-            var done = function () { window.location.reload(); };
-            var jobs = [];
-            if ('serviceWorker' in navigator) {
-              jobs.push(navigator.serviceWorker.getRegistrations()
-                .then(function (rs) { return Promise.all(rs.map(function (r) { return r.unregister(); })); })
-                .catch(function () {}));
-            }
-            if (window.caches && caches.keys) {
-              jobs.push(caches.keys()
-                .then(function (ks) { return Promise.all(ks.map(function (k) { return caches.delete(k); })); })
-                .catch(function () {}));
-            }
-            Promise.all(jobs).then(done, done);
-          } catch (e) { /* noop */ }
-        }, 7000);
-      })();
-    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
