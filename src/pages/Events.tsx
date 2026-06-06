@@ -245,6 +245,19 @@ const Events = () => {
     }
   }, [user]);
 
+  // Auto-populate local pro + college games whenever the active area changes.
+  // Stays mock-backed until USE_MOCK_DATA is flipped in mockSportsEvents.ts.
+  useEffect(() => {
+    let cancelled = false;
+    const zip = activeArea?.zip || null;
+    const city = activeArea?.city || null;
+    if (!zip && !city) { setLocalSports([]); return; }
+    fetchLocalSportsEvents({ zip, city }).then((rows) => {
+      if (!cancelled) setLocalSports(rows);
+    });
+    return () => { cancelled = true; };
+  }, [activeArea?.zip, activeArea?.city]);
+
   const handleRsvp = async (status: string) => {
     if (!user || !rsvpId) { toast({ title: "Sign in required", variant: "destructive" }); return; }
     await supabase.from("event_rsvps").upsert(
@@ -290,8 +303,11 @@ const Events = () => {
   // Events move to "past" 24 hours after their event_date
   const cutoff = new Date(now.getTime() - 24 * 60 * 60 * 1000);
 
-  const upcomingEvents = events.filter(e => parseEventDate(e.event_date) >= cutoff);
-  const pastEvents = events.filter(e => parseEventDate(e.event_date) < cutoff).reverse();
+  // Merge mock external sports events into the same pipeline so they get
+  // ZIP/radius filtering, color-coded dots, and chronological sort for free.
+  const combinedEvents = [...events, ...(localSports as unknown as DbEvent[])];
+  const upcomingEvents = combinedEvents.filter(e => parseEventDate(e.event_date) >= cutoff);
+  const pastEvents = combinedEvents.filter(e => parseEventDate(e.event_date) < cutoff).reverse();
 
   const baseEvents = tab === "upcoming" ? upcomingEvents : pastEvents;
   const categoryFiltered = category === "All" ? baseEvents : baseEvents.filter(e => e.event_type === category);
