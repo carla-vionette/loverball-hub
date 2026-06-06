@@ -28,16 +28,20 @@ const labelStyle: React.CSSProperties = {
   letterSpacing: "0.18em",
   textTransform: "uppercase",
   display: "block",
+  width: "100%",
   marginBottom: 8,
   fontWeight: 600,
 };
 
 const inputBaseClass =
-  "w-full rounded-2xl border-2 border-[#D4CFC5] bg-white shadow-sm text-[#1A1A1A] placeholder:text-[#9CA3AF] focus-visible:border-[#E85D2F] focus-visible:ring-0 focus-visible:ring-offset-0 transition-colors";
+  "block w-full rounded-2xl border-2 border-[#D4CFC5] bg-white shadow-sm text-[#1A1A1A] placeholder:text-[#9CA3AF] focus-visible:border-[#E85D2F] focus-visible:ring-0 focus-visible:ring-offset-0 transition-colors";
 
 const inputHeightStyle: React.CSSProperties = {
   height: 52,
+  minHeight: 44,
   fontSize: 17,
+  display: "block",
+  width: "100%",
 };
 
 const intentLabel = (i: RsvpIntent) =>
