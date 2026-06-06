@@ -65,7 +65,16 @@ const RsvpPhoneSheet = ({ open, onOpenChange, eventId, eventTitle, intent, onVer
   const [err, setErr] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
   const [resendIn, setResendIn] = useState(0);
+  const [fieldErrors, setFieldErrors] = useState<{
+    firstName?: string;
+    email?: string;
+    phone?: string;
+    code?: string;
+  }>({});
   const codeInputRef = useRef<HTMLInputElement>(null);
+
+  const clearFieldError = (k: "firstName" | "email" | "phone" | "code") =>
+    setFieldErrors((p) => (p[k] ? { ...p, [k]: undefined } : p));
 
   // Reset when reopened
   useEffect(() => {
@@ -77,6 +86,7 @@ const RsvpPhoneSheet = ({ open, onOpenChange, eventId, eventTitle, intent, onVer
     setInfo(null);
     setLoading(false);
     setResendIn(0);
+    setFieldErrors({});
   }, [open]);
 
   // Resend timer
