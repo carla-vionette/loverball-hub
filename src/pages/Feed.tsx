@@ -1,17 +1,19 @@
 /**
  * Loverball Feed — primary home screen.
- * Order: Live & Recent Scores → My Events → From Your Sports → Where to Watch.
- * All video components are intentionally hidden for the beta launch.
+ * Order: Live & Recent Scores (collapsible) → My Events → Where to Watch
+ *        (your teams + channels + tickets) → Suggested Events → From Your Sports.
  */
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { CalendarDays, ChevronRight } from "lucide-react";
+import { CalendarDays, ChevronRight, ChevronDown } from "lucide-react";
 import BottomNav from "@/components/BottomNav";
 import DesktopNav from "@/components/DesktopNav";
 import Seo from "@/components/Seo";
 import LiveScores from "@/components/LiveScores";
 import MySportsFeed from "@/components/MySportsFeed";
 import WhereToWatch from "@/components/WhereToWatch";
+import ProfileWhereToWatch from "@/components/ProfileWhereToWatch";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 
