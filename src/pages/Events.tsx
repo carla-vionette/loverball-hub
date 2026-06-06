@@ -330,7 +330,7 @@ const Events = () => {
 
   // Proximity filter — only applied when user has lat/lng AND radius is numeric.
   // Events without coords are always shown (treated as "national" reach).
-  const withDistance = categoryFiltered.map(e => {
+  const withDistance = sportsFiltered.map(e => {
     let distance: number | null = null;
     if (userLoc && e.location_lat != null && e.location_lng != null) {
       distance = distanceMiles(userLoc.lat, userLoc.lng, e.location_lat, e.location_lng);
