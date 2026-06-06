@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, ArrowLeft, Mail, CheckCircle2 } from "lucide-react";
-import loverballLogo from "@/assets/loverball-script-logo.png";
+import loverballLogo from "@/assets/loverball-logo-black.png";
 import WelcomeSplash from "@/components/WelcomeSplash";
 import { C, fonts } from "@/lib/editorialTheme";
 import { isAuthEmailRateLimitError } from "@/lib/authErrors";
