@@ -145,8 +145,11 @@ const EventRSVPDialog = ({
           return;
         }
         if (data.session) {
-          await onAuthed(intent);
+          // Account created — send them to finish their profile.
+          // pending_rsvp_<eventId> remains in localStorage and is applied
+          // automatically when they return to the event page.
           onOpenChange(false);
+          navigate(`/onboarding?redirect=${encodeURIComponent(`/e/${eventId}`)}`);
         } else {
           setSent(true);
         }
