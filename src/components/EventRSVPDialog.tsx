@@ -183,8 +183,8 @@ const EventRSVPDialog = ({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="border-0 p-0 overflow-hidden max-w-md gap-0"
-        style={{ background: C.surface, color: C.text }}
+        className="border-0 p-0 overflow-hidden max-w-md gap-0 mx-auto"
+        style={{ background: `${gradientBg}, ${C.bg}`, color: C.text }}
       >
         {/* Event header band keeps invitation context */}
         <div
