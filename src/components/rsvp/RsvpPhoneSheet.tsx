@@ -23,21 +23,21 @@ interface Props {
 
 const labelStyle: React.CSSProperties = {
   fontFamily: fonts.mono,
-  color: C.muted,
-  fontSize: 11,
-  letterSpacing: "0.2em",
+  color: "#374151",
+  fontSize: 12,
+  letterSpacing: "0.18em",
   textTransform: "uppercase",
   display: "block",
   marginBottom: 8,
+  fontWeight: 600,
 };
 
-const inputStyle: React.CSSProperties = {
-  background: C.bg,
-  borderColor: C.borderStrong,
-  color: C.text,
+const inputBaseClass =
+  "w-full rounded-2xl border-2 border-[#D4CFC5] bg-white shadow-sm text-[#1A1A1A] placeholder:text-[#9CA3AF] focus-visible:border-[#E85D2F] focus-visible:ring-0 focus-visible:ring-offset-0 transition-colors";
+
+const inputHeightStyle: React.CSSProperties = {
   height: 52,
   fontSize: 17,
-  borderRadius: 16,
 };
 
 const intentLabel = (i: RsvpIntent) =>
@@ -126,14 +126,12 @@ const RsvpPhoneSheet = ({ open, onOpenChange, eventId, eventTitle, intent, onVer
     try {
       const { error } = await supabase.auth.signInWithOtp({
         phone: phoneToSend,
-        options: { channel: "sms" }, // force plain SMS — no Silent Network Auth / WhatsApp
+        options: { channel: "sms" },
       });
       if (error) throw error;
       setResendIn(RESEND_SECONDS);
       setStep("otp");
     } catch {
-      // SMS is the flaky channel — on ANY send failure, fail open to email so the
-      // user can still RSVP rather than dead-ending on the phone step.
       switchToEmail("Text isn't going through — enter your email and we'll send the code there.");
       return;
     } finally {
@@ -235,7 +233,6 @@ const RsvpPhoneSheet = ({ open, onOpenChange, eventId, eventTitle, intent, onVer
       if (error) throw error;
       const uid = data.user?.id;
       if (uid) {
-        // Upsert profile with first name (don't overwrite existing name).
         const { data: existing } = await supabase
           .from("profiles")
           .select("id, name, has_completed_onboarding")
@@ -276,7 +273,6 @@ const RsvpPhoneSheet = ({ open, onOpenChange, eventId, eventTitle, intent, onVer
     }
   };
 
-
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
       <DrawerContent
@@ -289,7 +285,7 @@ const RsvpPhoneSheet = ({ open, onOpenChange, eventId, eventTitle, intent, onVer
             initial={{ opacity: 0, y: -12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="mb-6 flex justify-center"
+            className="mb-5 flex justify-center"
           >
             <img
               src={loverballLogo}
@@ -318,7 +314,7 @@ const RsvpPhoneSheet = ({ open, onOpenChange, eventId, eventTitle, intent, onVer
           </div>
 
           {step === "capture" && (
-            <>
+            <div className="bg-white rounded-2xl shadow-lg p-6 sm:p-8">
               <h2
                 className="text-center mb-1"
                 style={{ fontFamily: fonts.serif, fontStyle: "italic", fontSize: 30, lineHeight: 1.05 }}
@@ -333,7 +329,7 @@ const RsvpPhoneSheet = ({ open, onOpenChange, eventId, eventTitle, intent, onVer
 
               {info && (
                 <div
-                  className="text-sm rounded-xl px-3 py-2 mb-3"
+                  className="text-sm rounded-xl px-3 py-2 mb-4"
                   style={{
                     background: `${C.raspberry}14`,
                     color: C.text,
@@ -353,9 +349,10 @@ const RsvpPhoneSheet = ({ open, onOpenChange, eventId, eventTitle, intent, onVer
                     value={firstName}
                     onChange={(e) => { setFirstName(e.target.value); clearFieldError("firstName"); }}
                     autoComplete="given-name"
+                    className={inputBaseClass}
                     style={{
-                      ...inputStyle,
-                      borderColor: fieldErrors.firstName ? C.raspberry : inputStyle.borderColor,
+                      ...inputHeightStyle,
+                      borderColor: fieldErrors.firstName ? C.raspberry : undefined,
                     }}
                     aria-invalid={!!fieldErrors.firstName}
                     aria-describedby={fieldErrors.firstName ? "rsvp-first-name-err" : undefined}
@@ -374,15 +371,17 @@ const RsvpPhoneSheet = ({ open, onOpenChange, eventId, eventTitle, intent, onVer
                     <label style={labelStyle} htmlFor="rsvp-phone">Mobile number</label>
                     <div className="flex gap-2 items-stretch">
                       <div
-                        className="flex items-center justify-center select-none"
+                        className="flex items-center justify-center select-none rounded-2xl border-2 border-[#D4CFC5] bg-white shadow-sm"
                         aria-hidden="true"
                         style={{
-                          ...inputStyle,
                           width: 78,
                           padding: "0 12px",
                           fontFamily: fonts.sans,
                           fontWeight: 600,
                           whiteSpace: "nowrap",
+                          height: 52,
+                          fontSize: 17,
+                          color: "#1A1A1A",
                         }}
                       >
                         🇺🇸 +1
@@ -396,10 +395,10 @@ const RsvpPhoneSheet = ({ open, onOpenChange, eventId, eventTitle, intent, onVer
                         onChange={(e) => { setPhoneRaw(formatUSPhone(e.target.value)); clearFieldError("phone"); }}
                         maxLength={14}
                         autoComplete="tel"
+                        className={`${inputBaseClass} flex-1`}
                         style={{
-                          ...inputStyle,
-                          flex: 1,
-                          borderColor: fieldErrors.phone ? C.raspberry : inputStyle.borderColor,
+                          ...inputHeightStyle,
+                          borderColor: fieldErrors.phone ? C.raspberry : undefined,
                         }}
                         aria-invalid={!!fieldErrors.phone}
                         aria-describedby={fieldErrors.phone ? "rsvp-phone-err" : undefined}
@@ -427,9 +426,10 @@ const RsvpPhoneSheet = ({ open, onOpenChange, eventId, eventTitle, intent, onVer
                       value={email}
                       onChange={(e) => { setEmail(e.target.value); clearFieldError("email"); }}
                       autoComplete="email"
+                      className={inputBaseClass}
                       style={{
-                        ...inputStyle,
-                        borderColor: fieldErrors.email ? C.raspberry : inputStyle.borderColor,
+                        ...inputHeightStyle,
+                        borderColor: fieldErrors.email ? C.raspberry : undefined,
                       }}
                       aria-invalid={!!fieldErrors.email}
                       aria-describedby={fieldErrors.email ? "rsvp-email-err" : undefined}
@@ -464,35 +464,37 @@ const RsvpPhoneSheet = ({ open, onOpenChange, eventId, eventTitle, intent, onVer
                 <Button
                   type="submit"
                   disabled={loading}
-                  className="w-full h-14 rounded-full text-xs uppercase tracking-[0.22em] border-0"
-                  style={{ background: C.raspberry, color: "#fff", fontFamily: fonts.mono }}
+                  className="w-full rounded-full py-3 text-white font-bold tracking-[0.22em] border-0 uppercase"
+                  style={{ background: C.raspberry, fontFamily: fonts.mono, fontSize: 12 }}
                 >
                   {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Send code"}
                 </Button>
 
-                <button
-                  type="button"
-                  onClick={() => {
-                    setErr(null);
-                    setInfo(null);
-                    setMethod((m) => (m === "phone" ? "email" : "phone"));
-                  }}
-                  className="w-full text-center text-[11px] uppercase tracking-[0.2em] hover:opacity-100 opacity-80"
-                  style={{ color: C.muted, fontFamily: fonts.mono }}
-                >
-                  {method === "phone" ? "Use email instead" : "Use phone instead"}
-                </button>
+                <div className="border-t border-[#E5E7EB] pt-4 mt-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setErr(null);
+                      setInfo(null);
+                      setMethod((m) => (m === "phone" ? "email" : "phone"));
+                    }}
+                    className="w-full text-center text-xs font-medium underline hover:opacity-100 opacity-90"
+                    style={{ color: C.raspberry, fontFamily: fonts.mono, letterSpacing: "0.12em", textTransform: "uppercase" }}
+                  >
+                    {method === "phone" ? "Use email instead" : "Use phone instead"}
+                  </button>
+                </div>
 
                 <p className="text-center text-[11px]" style={{ color: C.muted }}>
                   By continuing you agree to our <a href="/terms" className="underline">Terms</a> and{" "}
                   <a href="/privacy" className="underline">Privacy</a>.
                 </p>
               </form>
-            </>
+            </div>
           )}
 
           {step === "otp" && (
-            <>
+            <div className="bg-white rounded-2xl shadow-lg p-6 sm:p-8">
               <h2
                 className="text-center mb-1"
                 style={{ fontFamily: fonts.serif, fontStyle: "italic", fontSize: 30, lineHeight: 1.05 }}
@@ -502,7 +504,6 @@ const RsvpPhoneSheet = ({ open, onOpenChange, eventId, eventTitle, intent, onVer
               <p className="text-center mb-5" style={{ color: C.muted, fontSize: 13 }}>
                 Code sent to <span style={{ color: C.text }}>{method === "email" ? email : phoneE164}</span>
               </p>
-
 
               <form onSubmit={handleVerify} className="space-y-4" noValidate>
                 <Input
@@ -518,17 +519,16 @@ const RsvpPhoneSheet = ({ open, onOpenChange, eventId, eventTitle, intent, onVer
                     setCode(v);
                     if (fieldErrors.code) clearFieldError("code");
                     if (v.length === 6) {
-                      // auto-submit
                       setTimeout(() => handleVerify(), 0);
                     }
                   }}
-                  className="text-center"
+                  className={`${inputBaseClass} text-center`}
                   style={{
-                    ...inputStyle,
+                    ...inputHeightStyle,
                     fontSize: 26,
                     letterSpacing: "0.5em",
                     paddingLeft: 20,
-                    borderColor: fieldErrors.code ? C.raspberry : inputStyle.borderColor,
+                    borderColor: fieldErrors.code ? C.raspberry : undefined,
                   }}
                   aria-invalid={!!fieldErrors.code}
                   aria-describedby={fieldErrors.code ? "rsvp-code-err" : undefined}
@@ -553,8 +553,8 @@ const RsvpPhoneSheet = ({ open, onOpenChange, eventId, eventTitle, intent, onVer
                 <Button
                   type="submit"
                   disabled={loading || code.length !== 6}
-                  className="w-full h-14 rounded-full text-xs uppercase tracking-[0.22em] border-0"
-                  style={{ background: C.raspberry, color: "#fff", fontFamily: fonts.mono }}
+                  className="w-full rounded-full py-3 text-white font-bold tracking-[0.22em] border-0 uppercase"
+                  style={{ background: C.raspberry, fontFamily: fonts.mono, fontSize: 12 }}
                 >
                   {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : `Verify & RSVP ${intentLabel(intent)}`}
                 </Button>
@@ -579,7 +579,7 @@ const RsvpPhoneSheet = ({ open, onOpenChange, eventId, eventTitle, intent, onVer
                   </button>
                 </div>
               </form>
-            </>
+            </div>
           )}
         </div>
       </DrawerContent>
