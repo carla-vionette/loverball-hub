@@ -94,19 +94,32 @@ const Onboarding = () => {
     (async () => {
       const { data } = await supabase
         .from("profiles")
-        .select("name, phone_number, birthdate, zip_code, pro_leagues, college_leagues, favorite_teams, vibe_tags")
+        .select("name, pro_leagues, college_leagues, favorite_teams, vibe_tags")
         .eq("id", user.id)
         .maybeSingle();
-      if (!data) return;
-      setFirstName((data.name ?? "").split(" ")[0] || "");
-      setPhone(data.phone_number ?? "");
-      setBirthdate(data.birthdate ?? "");
-      setZip(data.zip_code ?? "");
-      setProLeagues(data.pro_leagues ?? []);
-      setCollegeLeagues(data.college_leagues ?? []);
-      setTeams(data.favorite_teams ?? []);
-      setVibes(data.vibe_tags ?? []);
+      if (data) {
+        setFirstName((data.name ?? "").split(" ")[0] || "");
+        setProLeagues(data.pro_leagues ?? []);
+        setCollegeLeagues(data.college_leagues ?? []);
+        setTeams(data.favorite_teams ?? []);
+        setVibes(data.vibe_tags ?? []);
+      }
+      // Sensitive PII: read via owner-only sources
+      const { data: sensitive } = await supabase
+        .from("profiles_sensitive" as any)
+        .select("phone_number, birthday")
+        .eq("id", user.id)
+        .maybeSingle();
+      if (sensitive) {
+        setPhone((sensitive as any).phone_number ?? "");
+        setBirthdate((sensitive as any).birthday ?? "");
+      }
+      const { data: loc } = await supabase.rpc("get_my_location");
+      if (loc && typeof loc === "object") {
+        setZip(((loc as any).zip_code as string) ?? "");
+      }
     })();
+
   }, [user?.id]);
 
   // Team typeahead
