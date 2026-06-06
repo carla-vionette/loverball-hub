@@ -7,7 +7,7 @@ import { ArrowRight, ArrowLeft, Mail, CheckCircle2 } from "lucide-react";
 import loverballLogo from "@/assets/loverball-logo-black.png";
 import WelcomeSplash from "@/components/WelcomeSplash";
 import { C, fonts } from "@/lib/editorialTheme";
-import { isAuthEmailRateLimitError } from "@/lib/authErrors";
+import { isAuthEmailRateLimitError, parseRetryAfterSeconds } from "@/lib/authErrors";
 
 type AuthMode = "email" | "sent" | "password" | "reset_sent" | "reset_password";
 
