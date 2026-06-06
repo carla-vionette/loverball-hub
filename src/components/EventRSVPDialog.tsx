@@ -321,7 +321,7 @@ const EventRSVPDialog = ({
 
                 {error && (
                   <div
-                    className="text-sm rounded-md px-3 py-2"
+                    className="text-sm rounded-xl px-3 py-2"
                     style={{
                       background: "rgba(232,93,47,0.08)",
                       color: C.raspberry,
