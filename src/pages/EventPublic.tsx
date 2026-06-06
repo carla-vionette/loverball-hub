@@ -459,6 +459,7 @@ const EventPublic = () => {
                     <span style={{ color: C.muted }}>
                       {attendeeCount === 1 ? "woman" : "women"}
                       {event.city ? ` from ${event.city}` : ""} going
+                      {!user && " · sign in to see who"}
                     </span>
                   </>
                 ) : (
