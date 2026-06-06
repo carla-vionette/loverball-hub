@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, ArrowLeft, Mail, CheckCircle2 } from "lucide-react";
-import loverballLogo from "@/assets/loverball-script-logo.png";
+import loverballLogo from "@/assets/loverball-logo-black.png";
 import WelcomeSplash from "@/components/WelcomeSplash";
 import { C, fonts } from "@/lib/editorialTheme";
 import { isAuthEmailRateLimitError } from "@/lib/authErrors";
@@ -337,7 +337,7 @@ const Auth = () => {
           transition={{ duration: 0.5 }}
           className="mb-10"
         >
-          <img src={loverballLogo} alt="Loverball" className="w-[160px] h-auto mx-auto" style={{ filter: "brightness(0) invert(1)" }} loading="lazy" decoding="async" />
+          <img src={loverballLogo} alt="Loverball" className="h-9 md:h-10 w-auto mx-auto" loading="lazy" decoding="async" />
         </motion.div>
 
         <div className="w-full max-w-sm">
