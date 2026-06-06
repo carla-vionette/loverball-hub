@@ -67,7 +67,7 @@ const Membership = () => {
     <div style={{ background: C.bg, color: C.text, fontFamily: fonts.sans }} className="min-h-screen">
       <Seo
         title="Membership — Loverball"
-        description="Free to join. Upgrade to All-Access for unlimited group chats, smart matching, and members-only events."
+        description="Free to join. Upgrade to The Club for the full members-only experience."
         path="/membership"
       />
 
