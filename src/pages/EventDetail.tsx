@@ -1117,7 +1117,7 @@ const EventDetail = () => {
                   asChild
                 >
                   <a
-                    href={`sms:?&body=${encodeURIComponent(buildShareSummary(event) + "\n\n" + getShareUrl())}`}
+                    href={`sms:?&body=${encodeURIComponent(buildShareSummary(event) + "\n\n" + getSmsShareUrl())}`}
                   >
                     <Smartphone className="w-4 h-4 mr-2" />
                     Text
