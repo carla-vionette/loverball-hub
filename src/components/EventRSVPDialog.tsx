@@ -336,8 +336,8 @@ const EventRSVPDialog = ({
                 <Button
                   type="submit"
                   disabled={loading}
-                  className="w-full h-12 rounded-full text-xs uppercase tracking-[0.2em] border-0 mt-1"
-                  style={{ background: C.raspberry, color: "#fff", fontFamily: fonts.mono }}
+                  className="w-full rounded-full py-3 text-white font-bold tracking-[0.22em] border-0 uppercase mt-1"
+                  style={{ background: C.raspberry, fontFamily: fonts.mono, fontSize: 12 }}
                 >
                   {loading ? (
                     <Loader2 className="w-4 h-4 animate-spin" />
