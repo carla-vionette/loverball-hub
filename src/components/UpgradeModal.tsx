@@ -49,30 +49,10 @@ const UpgradeModal = ({ open, onOpenChange, requiredTier = 'digital' }: UpgradeM
         <DialogHeader>
           <DialogTitle className="font-display text-xl uppercase">Upgrade Required</DialogTitle>
           <DialogDescription>
-            This content requires {requiredTier === 'local' ? 'The Club' : 'an All Access'} plan or higher.
+            This content requires The Club membership.
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-3 mt-4">
-          {requiredTier !== 'local' && (
-            <div className="border rounded-lg p-4">
-              <div className="flex items-center justify-between mb-2">
-                <div>
-                  <p className="font-semibold">⚡ All Access</p>
-                  <p className="text-sm text-muted-foreground">$15/month</p>
-                </div>
-                <Button size="sm" onClick={() => handleUpgrade('digital')} disabled={!!loading}>
-                  {loading === 'digital' ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Upgrade'}
-                </Button>
-              </div>
-              <ul className="space-y-1">
-                {['Full attendee lists', 'Direct messages', 'Early RSVPs', 'Priority waitlist'].map((f) => (
-                  <li key={f} className="text-xs text-muted-foreground flex items-center gap-1.5">
-                    <Check className="w-3 h-3 text-primary" /> {f}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
           <div className="border rounded-lg p-4 border-primary/30 bg-primary/5">
             <div className="flex items-center justify-between mb-2">
               <div>
@@ -84,7 +64,7 @@ const UpgradeModal = ({ open, onOpenChange, requiredTier = 'digital' }: UpgradeM
               </Button>
             </div>
             <ul className="space-y-1">
-              {['Everything in All Access', 'Exclusive events', 'Ticket discounts', 'Reserved seating', 'VIP perks'].map((f) => (
+              {['Unlimited group chats & circles', 'Smart fan matching', 'Members-only events', 'Exclusive events', 'Ticket discounts', 'Reserved seating', 'VIP perks'].map((f) => (
                 <li key={f} className="text-xs text-muted-foreground flex items-center gap-1.5">
                   <Check className="w-3 h-3 text-primary" /> {f}
                 </li>
