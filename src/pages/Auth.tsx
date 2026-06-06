@@ -203,12 +203,17 @@ const Auth = () => {
   // ── Send magic link (creates user if needed) ─────────────────────────
   const handleSendMagicLink = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (loading || cooldownUntil > Date.now()) return;
+    if (loading || cooldownUntil > Date.now()) {
+      console.log(`[magic-link] send blocked — loading=${loading} cooldownUntil=${cooldownUntil} now=${Date.now()}`);
+      return;
+    }
     const trimmed = email.trim().toLowerCase();
     if (!trimmed || !trimmed.includes("@")) {
       toast({ title: "Enter a valid email", variant: "destructive" });
       return;
     }
+    const startTime = Date.now();
+    console.log(`[magic-link] send START email=${trimmed.replace(/(.{2}).*@/, "$1***@")} t=${startTime}`);
     setLoading(true);
     try {
       const { error } = await supabase.auth.signInWithOtp({
@@ -219,14 +224,19 @@ const Auth = () => {
         },
       });
       if (error) throw error;
+      const cooldownMs = 30_000;
+      const cooldownEnd = Date.now() + cooldownMs;
+      console.log(`[magic-link] send OK email=${trimmed.replace(/(.{2}).*@/, "$1***@")} duration=${Date.now() - startTime}ms cooldown=${cooldownMs}ms until=${cooldownEnd}`);
       // Small built-in cooldown to prevent accidental duplicate sends.
-      setCooldownUntil(Date.now() + 30_000);
+      setCooldownUntil(cooldownEnd);
       setNow(Date.now());
       setMode("sent");
     } catch (err: any) {
       const message = err?.message ?? "";
-      if (isAuthEmailRateLimitError(message)) {
-        const wait = parseRetryAfterSeconds(message);
+      const isThrottle = isAuthEmailRateLimitError(message);
+      const wait = isThrottle ? parseRetryAfterSeconds(message) : 0;
+      console.log(`[magic-link] send FAIL email=${trimmed.replace(/(.{2}).*@/, "$1***@")} duration=${Date.now() - startTime}ms throttle=${isThrottle} wait=${wait}s message="${message}"`);
+      if (isThrottle) {
         setCooldownUntil(Date.now() + wait * 1000);
         setNow(Date.now());
         toast({
