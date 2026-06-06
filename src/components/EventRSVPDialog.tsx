@@ -274,7 +274,8 @@ const EventRSVPDialog = ({
                         value={firstName}
                         onChange={(e) => setFirstName(e.target.value)}
                         autoComplete="given-name"
-                        style={inputStyle}
+                        className={inputBaseClass}
+                        style={inputHeightStyle}
                         required
                       />
                     </div>
@@ -284,7 +285,8 @@ const EventRSVPDialog = ({
                         value={lastName}
                         onChange={(e) => setLastName(e.target.value)}
                         autoComplete="family-name"
-                        style={inputStyle}
+                        className={inputBaseClass}
+                        style={inputHeightStyle}
                         required
                       />
                     </div>
@@ -298,7 +300,8 @@ const EventRSVPDialog = ({
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     autoComplete="email"
-                    style={inputStyle}
+                    className={inputBaseClass}
+                    style={inputHeightStyle}
                     required
                   />
                 </div>
@@ -310,7 +313,8 @@ const EventRSVPDialog = ({
                     onChange={(e) => setPassword(e.target.value)}
                     autoComplete={mode === "signup" ? "new-password" : "current-password"}
                     minLength={6}
-                    style={inputStyle}
+                    className={inputBaseClass}
+                    style={inputHeightStyle}
                     required
                   />
                 </div>
