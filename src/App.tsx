@@ -10,6 +10,7 @@ import { ErrorBoundary } from "@/components/ui/error-boundary";
 import NetworkStatus from "@/components/NetworkStatus";
 import InstallPrompt from "@/components/InstallPrompt";
 import { usePageTracking } from "@/hooks/usePageTracking";
+import { useGameOriginTracker, useGameScrollRestore } from "@/hooks/useGameBackNavigation";
 import ProtectedRoute from "./components/ProtectedRoute";
 import TrialGate from "./components/TrialGate";
 import BetaBanner from "./components/BetaBanner";
