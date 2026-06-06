@@ -717,16 +717,28 @@ const EventDetail = () => {
             </div>
 
             {/* GOING STATUS */}
-            {user && isGoing && (
+            {isGoing && (
               <div className="rounded-xl bg-card border border-border/30 p-3 flex items-center gap-3">
                 <div className="w-7 h-7 rounded-full bg-[hsl(173_58%_39%)] flex items-center justify-center shrink-0">
                   <Check className="w-4 h-4 text-white" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="text-sm font-semibold">You're going</div>
-                  <div className="text-xs text-muted-foreground">Tap edit to update your plans</div>
+                  <div className="text-xs text-muted-foreground">
+                    {user ? 'Tap edit to update your plans' : 'Sign up free to lock in your spot.'}
+                  </div>
                 </div>
-                <button onClick={() => handleRSVP('no')} className="text-xs text-muted-foreground">Edit</button>
+                {user ? (
+                  <button onClick={() => handleRSVP('no')} className="text-xs text-muted-foreground">Edit</button>
+                ) : (
+                  <Button
+                    size="sm"
+                    className="rounded-full h-8 text-xs"
+                    onClick={() => navigate(`/auth?mode=signup&redirect=${encodeURIComponent(`/event/${id}`)}`)}
+                  >
+                    Sign up
+                  </Button>
+                )}
               </div>
             )}
 
