@@ -279,7 +279,7 @@ const Index = () => {
             </div>
 
             <p className="mt-6" style={{ fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.16em", textTransform: "uppercase", color: "#6B6B6B" }}>
-              Open membership · A home for women in sports
+              OPEN MEMBERSHIP · A HOME FOR WOMEN WHO LOVE SPORTS
             </p>
 
           </div>
