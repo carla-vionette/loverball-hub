@@ -284,6 +284,11 @@ const Events = () => {
   };
 
   const getShareUrl = (ev: DbEvent) => `https://www.loverball.com/e/${ev.id}`;
+  // Crawler-friendly URL for SMS/iMessage previews. The edge function returns
+  // a tiny HTML doc with proper OG tags (event cover image) and redirects real
+  // browsers to /e/:id, so iMessage shows the event photo in the link preview.
+  const getSmsShareUrl = (ev: DbEvent) =>
+    `https://nfjavjfxgxrpvieinpdp.supabase.co/functions/v1/event-og-meta?id=${ev.id}`;
 
   const copyShareLink = () => {
     if (!shareEvent) return;
