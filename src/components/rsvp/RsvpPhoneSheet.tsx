@@ -420,7 +420,7 @@ const RsvpPhoneSheet = ({ open, onOpenChange, eventId, eventTitle, intent, onVer
                     )}
                   </div>
                 ) : (
-                  <div>
+                  <div className="flex flex-col w-full">
                     <label style={labelStyle} htmlFor="rsvp-email">Email</label>
                     <Input
                       id="rsvp-email"
