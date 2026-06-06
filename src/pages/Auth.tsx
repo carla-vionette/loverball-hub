@@ -337,7 +337,7 @@ const Auth = () => {
           transition={{ duration: 0.5 }}
           className="mb-10"
         >
-          <img src={loverballLogo} alt="Loverball" className="w-[160px] h-auto mx-auto" style={{ filter: "brightness(0) invert(1)" }} loading="lazy" decoding="async" />
+          <img src={loverballLogo} alt="Loverball" className="h-9 md:h-10 w-auto mx-auto" loading="lazy" decoding="async" />
         </motion.div>
 
         <div className="w-full max-w-sm">
