@@ -516,6 +516,33 @@ const EventPublic = () => {
 
           {/* RSVP — Partiful-style intent buttons */}
           <div className="mb-4">
+            {!user && (
+              <div
+                className="mb-3 px-4 py-3 rounded-xl flex items-start gap-3"
+                style={{
+                  background: "rgba(232,93,47,0.08)",
+                  border: `1px solid ${C.raspberry}44`,
+                }}
+              >
+                <div className="flex-1">
+                  <p className="text-sm mb-1" style={{ color: C.text, fontWeight: 600 }}>
+                    RSVP as a guest
+                  </p>
+                  <p className="text-xs" style={{ color: C.muted, lineHeight: 1.5 }}>
+                    Tap below to reserve your spot. You'll verify with your phone to confirm. Sign in to see who else is going and join the chat.
+                  </p>
+                </div>
+                <Button
+                  onClick={() => navigate(`/auth?redirect=${encodeURIComponent(`/e/${id}`)}`)}
+                  size="sm"
+                  className="h-9 rounded-full text-[11px] uppercase tracking-[0.18em] border-0 shrink-0"
+                  style={{ background: C.raspberry, color: "#fff", fontFamily: fonts.mono }}
+                >
+                  Sign in
+                </Button>
+              </div>
+            )}
+
             {rsvpStatus && (
               <div
                 className="flex items-center gap-2 mb-3 px-4 py-3 rounded-xl"
