@@ -167,23 +167,45 @@ const RsvpPhoneSheet = ({ open, onOpenChange, eventId, eventTitle, intent, onVer
   const handleCaptureSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErr(null);
-    if (!firstName.trim()) { setErr("Add your first name."); return; }
+
+    const errors: typeof fieldErrors = {};
+    const name = firstName.trim();
+    if (!name) {
+      errors.firstName = "Please enter your first name.";
+    } else if (name.length < 2) {
+      errors.firstName = "First name must be at least 2 characters.";
+    } else if (name.length > 50) {
+      errors.firstName = "First name must be 50 characters or fewer.";
+    }
+
+    if (method === "email") {
+      const trimmed = email.trim();
+      if (!trimmed) {
+        errors.email = "Please enter your email address.";
+      } else if (!isValidEmail(trimmed)) {
+        errors.email = "That doesn't look like a valid email — try name@example.com.";
+      }
+    } else {
+      const normalized = normalizePhone(phoneRaw);
+      if (!phoneRaw.trim()) {
+        errors.phone = "Please enter your mobile number.";
+      } else if (!normalized) {
+        errors.phone = "Enter a valid 10-digit US mobile number, e.g. (555) 123-4567.";
+      }
+    }
+
+    if (Object.keys(errors).length > 0) {
+      setFieldErrors(errors);
+      return;
+    }
+    setFieldErrors({});
     persistIntent();
 
     if (method === "email") {
-      if (!isValidEmail(email)) {
-        setErr("Enter a valid email address.");
-        return;
-      }
       await sendEmailCode(email.trim());
       return;
     }
-
-    const normalized = normalizePhone(phoneRaw);
-    if (!normalized) {
-      setErr("Enter a valid 10-digit US mobile number, e.g. (555) 123-4567.");
-      return;
-    }
+    const normalized = normalizePhone(phoneRaw)!;
     setPhoneE164(normalized);
     await sendPhoneCode(normalized);
   };
