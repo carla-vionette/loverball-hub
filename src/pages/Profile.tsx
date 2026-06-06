@@ -443,7 +443,9 @@ const Profile = () => {
                     </p>
                   </div>
                 </div>
+                <ProfileInbox />
               </motion.div>
+
 
 
             </div>
