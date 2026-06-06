@@ -11,6 +11,8 @@ import NetworkStatus from "@/components/NetworkStatus";
 import InstallPrompt from "@/components/InstallPrompt";
 import { usePageTracking } from "@/hooks/usePageTracking";
 import ProtectedRoute from "./components/ProtectedRoute";
+import TrialGate from "./components/TrialGate";
+import BetaBanner from "./components/BetaBanner";
 
 // ── Eager-load primary routes ──
 import Index from "./pages/Index";
