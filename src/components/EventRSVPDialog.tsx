@@ -25,23 +25,26 @@ interface Props {
 const intentLabel = (i: RsvpIntent) =>
   i === "attending" ? "Going" : i === "waitlisted" ? "Maybe" : "Can't go";
 
-const inputStyle: React.CSSProperties = {
-  background: C.bg,
-  borderColor: C.borderStrong,
-  color: C.text,
-  height: 48,
-  fontSize: 16,
+const inputBaseClass =
+  "w-full rounded-2xl border-2 border-[#D4CFC5] bg-white shadow-sm text-[#1A1A1A] placeholder:text-[#9CA3AF] focus-visible:border-[#E85D2F] focus-visible:ring-0 focus-visible:ring-offset-0 transition-colors";
+
+const inputHeightStyle: React.CSSProperties = {
+  height: 52,
+  fontSize: 17,
 };
 
 const labelStyle: React.CSSProperties = {
   fontFamily: fonts.mono,
-  color: C.muted,
-  fontSize: 11,
+  color: "#374151",
+  fontSize: 12,
   letterSpacing: "0.18em",
   textTransform: "uppercase",
   display: "block",
-  marginBottom: 6,
+  marginBottom: 8,
+  fontWeight: 600,
 };
+
+const gradientBg = `radial-gradient(circle at 30% 20%, ${C.raspberry}22, transparent 60%), radial-gradient(circle at 70% 80%, ${C.pink}22, transparent 60%)`;
 
 const EventRSVPDialog = ({
   open,
@@ -180,8 +183,8 @@ const EventRSVPDialog = ({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="border-0 p-0 overflow-hidden max-w-md gap-0"
-        style={{ background: C.surface, color: C.text }}
+        className="border-0 p-0 overflow-hidden max-w-md gap-0 mx-auto"
+        style={{ background: `${gradientBg}, ${C.bg}`, color: C.text }}
       >
         {/* Event header band keeps invitation context */}
         <div
@@ -213,9 +216,9 @@ const EventRSVPDialog = ({
           </div>
         </div>
 
-        <div className="px-5 py-5">
+        <div className="px-5 py-5 flex flex-col items-center">
           {sent ? (
-            <div className="text-center py-3">
+            <div className="bg-white rounded-2xl shadow-lg p-6 sm:p-8 w-full text-center">
               <h3
                 style={{
                   fontFamily: fonts.serif,
@@ -233,14 +236,14 @@ const EventRSVPDialog = ({
               </p>
               <Button
                 onClick={() => onOpenChange(false)}
-                className="mt-5 w-full h-11 rounded-full text-xs uppercase tracking-[0.2em] border-0"
-                style={{ background: C.raspberry, color: "#fff", fontFamily: fonts.mono }}
+                className="mt-5 w-full rounded-full py-3 text-white font-bold tracking-[0.22em] border-0 uppercase"
+                style={{ background: C.raspberry, fontFamily: fonts.mono, fontSize: 12 }}
               >
                 Got it
               </Button>
             </div>
           ) : (
-            <>
+            <div className="bg-white rounded-2xl shadow-lg p-6 sm:p-8 w-full">
               <p
                 className="mb-4"
                 style={{ color: C.muted, fontSize: 13, lineHeight: 1.55 }}
@@ -271,7 +274,8 @@ const EventRSVPDialog = ({
                         value={firstName}
                         onChange={(e) => setFirstName(e.target.value)}
                         autoComplete="given-name"
-                        style={inputStyle}
+                        className={inputBaseClass}
+                        style={inputHeightStyle}
                         required
                       />
                     </div>
@@ -281,7 +285,8 @@ const EventRSVPDialog = ({
                         value={lastName}
                         onChange={(e) => setLastName(e.target.value)}
                         autoComplete="family-name"
-                        style={inputStyle}
+                        className={inputBaseClass}
+                        style={inputHeightStyle}
                         required
                       />
                     </div>
@@ -295,7 +300,8 @@ const EventRSVPDialog = ({
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     autoComplete="email"
-                    style={inputStyle}
+                    className={inputBaseClass}
+                    style={inputHeightStyle}
                     required
                   />
                 </div>
@@ -307,14 +313,15 @@ const EventRSVPDialog = ({
                     onChange={(e) => setPassword(e.target.value)}
                     autoComplete={mode === "signup" ? "new-password" : "current-password"}
                     minLength={6}
-                    style={inputStyle}
+                    className={inputBaseClass}
+                    style={inputHeightStyle}
                     required
                   />
                 </div>
 
                 {error && (
                   <div
-                    className="text-sm rounded-md px-3 py-2"
+                    className="text-sm rounded-xl px-3 py-2"
                     style={{
                       background: "rgba(232,93,47,0.08)",
                       color: C.raspberry,
@@ -329,8 +336,8 @@ const EventRSVPDialog = ({
                 <Button
                   type="submit"
                   disabled={loading}
-                  className="w-full h-12 rounded-full text-xs uppercase tracking-[0.2em] border-0 mt-1"
-                  style={{ background: C.raspberry, color: "#fff", fontFamily: fonts.mono }}
+                  className="w-full rounded-full py-3 text-white font-bold tracking-[0.22em] border-0 uppercase mt-1"
+                  style={{ background: C.raspberry, fontFamily: fonts.mono, fontSize: 12 }}
                 >
                   {loading ? (
                     <Loader2 className="w-4 h-4 animate-spin" />
@@ -379,7 +386,7 @@ const EventRSVPDialog = ({
                   </button>
                 )}
               </div>
-            </>
+            </div>
           )}
         </div>
       </DialogContent>
