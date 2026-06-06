@@ -58,12 +58,13 @@ Deno.serve(async (req: Request) => {
 
     console.log(`Event found: ${event.title}`);
 
-    // Format date nicely
-    const eventDate = new Date(event.event_date + 'T00:00:00');
+    // Format date nicely — force UTC to avoid timezone drift (event_date is a plain YYYY-MM-DD)
+    const eventDate = new Date(event.event_date + 'T12:00:00Z');
     const formattedDate = eventDate.toLocaleDateString('en-US', {
       weekday: 'short',
       month: 'short',
       day: 'numeric',
+      timeZone: 'UTC',
     });
 
     // Format time if available
