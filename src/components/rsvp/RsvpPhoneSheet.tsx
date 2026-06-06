@@ -65,7 +65,16 @@ const RsvpPhoneSheet = ({ open, onOpenChange, eventId, eventTitle, intent, onVer
   const [err, setErr] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
   const [resendIn, setResendIn] = useState(0);
+  const [fieldErrors, setFieldErrors] = useState<{
+    firstName?: string;
+    email?: string;
+    phone?: string;
+    code?: string;
+  }>({});
   const codeInputRef = useRef<HTMLInputElement>(null);
+
+  const clearFieldError = (k: "firstName" | "email" | "phone" | "code") =>
+    setFieldErrors((p) => (p[k] ? { ...p, [k]: undefined } : p));
 
   // Reset when reopened
   useEffect(() => {
@@ -77,6 +86,7 @@ const RsvpPhoneSheet = ({ open, onOpenChange, eventId, eventTitle, intent, onVer
     setInfo(null);
     setLoading(false);
     setResendIn(0);
+    setFieldErrors({});
   }, [open]);
 
   // Resend timer
@@ -157,30 +167,56 @@ const RsvpPhoneSheet = ({ open, onOpenChange, eventId, eventTitle, intent, onVer
   const handleCaptureSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErr(null);
-    if (!firstName.trim()) { setErr("Add your first name."); return; }
+
+    const errors: typeof fieldErrors = {};
+    const name = firstName.trim();
+    if (!name) {
+      errors.firstName = "Please enter your first name.";
+    } else if (name.length < 2) {
+      errors.firstName = "First name must be at least 2 characters.";
+    } else if (name.length > 50) {
+      errors.firstName = "First name must be 50 characters or fewer.";
+    }
+
+    if (method === "email") {
+      const trimmed = email.trim();
+      if (!trimmed) {
+        errors.email = "Please enter your email address.";
+      } else if (!isValidEmail(trimmed)) {
+        errors.email = "That doesn't look like a valid email — try name@example.com.";
+      }
+    } else {
+      const normalized = normalizePhone(phoneRaw);
+      if (!phoneRaw.trim()) {
+        errors.phone = "Please enter your mobile number.";
+      } else if (!normalized) {
+        errors.phone = "Enter a valid 10-digit US mobile number, e.g. (555) 123-4567.";
+      }
+    }
+
+    if (Object.keys(errors).length > 0) {
+      setFieldErrors(errors);
+      return;
+    }
+    setFieldErrors({});
     persistIntent();
 
     if (method === "email") {
-      if (!isValidEmail(email)) {
-        setErr("Enter a valid email address.");
-        return;
-      }
       await sendEmailCode(email.trim());
       return;
     }
-
-    const normalized = normalizePhone(phoneRaw);
-    if (!normalized) {
-      setErr("Enter a valid 10-digit US mobile number, e.g. (555) 123-4567.");
-      return;
-    }
+    const normalized = normalizePhone(phoneRaw)!;
     setPhoneE164(normalized);
     await sendPhoneCode(normalized);
   };
 
   const handleVerify = async (e?: React.FormEvent) => {
     e?.preventDefault();
-    if (code.length !== 6) return;
+    if (!/^\d{6}$/.test(code)) {
+      setFieldErrors((p) => ({ ...p, code: "Enter the 6-digit code we sent you." }));
+      return;
+    }
+    setFieldErrors((p) => ({ ...p, code: undefined }));
     setLoading(true);
     setErr(null);
     try {
@@ -218,7 +254,8 @@ const RsvpPhoneSheet = ({ open, onOpenChange, eventId, eventTitle, intent, onVer
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : "That code didn't match. Try again.";
       const friendly = friendlyPhoneAuthError(msg);
-      setErr(friendly ? `${friendly.title}. ${friendly.description}` : msg);
+      const message = friendly ? `${friendly.title}. ${friendly.description}` : msg;
+      setFieldErrors((p) => ({ ...p, code: message }));
       setCode("");
       setTimeout(() => codeInputRef.current?.focus(), 30);
     } finally {
@@ -310,20 +347,31 @@ const RsvpPhoneSheet = ({ open, onOpenChange, eventId, eventTitle, intent, onVer
 
               <form onSubmit={handleCaptureSubmit} className="space-y-4" noValidate>
                 <div>
-                  <label style={labelStyle}>First name</label>
+                  <label style={labelStyle} htmlFor="rsvp-first-name">First name</label>
                   <Input
+                    id="rsvp-first-name"
                     value={firstName}
-                    onChange={(e) => setFirstName(e.target.value)}
+                    onChange={(e) => { setFirstName(e.target.value); clearFieldError("firstName"); }}
                     autoComplete="given-name"
-                    style={inputStyle}
+                    style={{
+                      ...inputStyle,
+                      borderColor: fieldErrors.firstName ? C.raspberry : inputStyle.borderColor,
+                    }}
+                    aria-invalid={!!fieldErrors.firstName}
+                    aria-describedby={fieldErrors.firstName ? "rsvp-first-name-err" : undefined}
                     required
                     autoFocus
                   />
+                  {fieldErrors.firstName && (
+                    <p id="rsvp-first-name-err" className="mt-2 text-[12px]" style={{ color: C.raspberry }} role="alert">
+                      {fieldErrors.firstName}
+                    </p>
+                  )}
                 </div>
 
                 {method === "phone" ? (
                   <div>
-                    <label style={labelStyle}>Mobile number</label>
+                    <label style={labelStyle} htmlFor="rsvp-phone">Mobile number</label>
                     <div className="flex gap-2 items-stretch">
                       <div
                         className="flex items-center justify-center select-none"
@@ -340,37 +388,62 @@ const RsvpPhoneSheet = ({ open, onOpenChange, eventId, eventTitle, intent, onVer
                         🇺🇸 +1
                       </div>
                       <Input
+                        id="rsvp-phone"
                         type="tel"
                         inputMode="tel"
                         placeholder="(555) 123-4567"
                         value={phoneRaw}
-                        onChange={(e) => setPhoneRaw(formatUSPhone(e.target.value))}
+                        onChange={(e) => { setPhoneRaw(formatUSPhone(e.target.value)); clearFieldError("phone"); }}
                         maxLength={14}
                         autoComplete="tel"
-                        style={{ ...inputStyle, flex: 1 }}
+                        style={{
+                          ...inputStyle,
+                          flex: 1,
+                          borderColor: fieldErrors.phone ? C.raspberry : inputStyle.borderColor,
+                        }}
+                        aria-invalid={!!fieldErrors.phone}
+                        aria-describedby={fieldErrors.phone ? "rsvp-phone-err" : undefined}
                         required
                       />
                     </div>
-                    <p className="mt-2 text-[11px]" style={{ color: C.muted, fontFamily: fonts.mono, letterSpacing: "0.1em" }}>
-                      US mobile numbers only · standard message rates apply
-                    </p>
+                    {fieldErrors.phone ? (
+                      <p id="rsvp-phone-err" className="mt-2 text-[12px]" style={{ color: C.raspberry }} role="alert">
+                        {fieldErrors.phone}
+                      </p>
+                    ) : (
+                      <p className="mt-2 text-[11px]" style={{ color: C.muted, fontFamily: fonts.mono, letterSpacing: "0.1em" }}>
+                        US mobile numbers only · standard message rates apply
+                      </p>
+                    )}
                   </div>
                 ) : (
                   <div>
-                    <label style={labelStyle}>Email</label>
+                    <label style={labelStyle} htmlFor="rsvp-email">Email</label>
                     <Input
+                      id="rsvp-email"
                       type="email"
                       inputMode="email"
                       placeholder="you@example.com"
                       value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      onChange={(e) => { setEmail(e.target.value); clearFieldError("email"); }}
                       autoComplete="email"
-                      style={inputStyle}
+                      style={{
+                        ...inputStyle,
+                        borderColor: fieldErrors.email ? C.raspberry : inputStyle.borderColor,
+                      }}
+                      aria-invalid={!!fieldErrors.email}
+                      aria-describedby={fieldErrors.email ? "rsvp-email-err" : undefined}
                       required
                     />
-                    <p className="mt-2 text-[11px]" style={{ color: C.muted, fontFamily: fonts.mono, letterSpacing: "0.1em" }}>
-                      We'll send a 6-digit code to your inbox
-                    </p>
+                    {fieldErrors.email ? (
+                      <p id="rsvp-email-err" className="mt-2 text-[12px]" style={{ color: C.raspberry }} role="alert">
+                        {fieldErrors.email}
+                      </p>
+                    ) : (
+                      <p className="mt-2 text-[11px]" style={{ color: C.muted, fontFamily: fonts.mono, letterSpacing: "0.1em" }}>
+                        We'll send a 6-digit code to your inbox
+                      </p>
+                    )}
                   </div>
                 )}
 
@@ -443,18 +516,28 @@ const RsvpPhoneSheet = ({ open, onOpenChange, eventId, eventTitle, intent, onVer
                   onChange={(e) => {
                     const v = e.target.value.replace(/\D/g, "").slice(0, 6);
                     setCode(v);
+                    if (fieldErrors.code) clearFieldError("code");
                     if (v.length === 6) {
                       // auto-submit
                       setTimeout(() => handleVerify(), 0);
                     }
                   }}
                   className="text-center"
-                  style={{ ...inputStyle, fontSize: 26, letterSpacing: "0.5em", paddingLeft: 20 }}
+                  style={{
+                    ...inputStyle,
+                    fontSize: 26,
+                    letterSpacing: "0.5em",
+                    paddingLeft: 20,
+                    borderColor: fieldErrors.code ? C.raspberry : inputStyle.borderColor,
+                  }}
+                  aria-invalid={!!fieldErrors.code}
+                  aria-describedby={fieldErrors.code ? "rsvp-code-err" : undefined}
                   required
                 />
 
-                {err && (
+                {fieldErrors.code && (
                   <div
+                    id="rsvp-code-err"
                     className="text-sm rounded-xl px-3 py-2 text-center"
                     style={{
                       background: "rgba(232,93,47,0.08)",
@@ -463,7 +546,7 @@ const RsvpPhoneSheet = ({ open, onOpenChange, eventId, eventTitle, intent, onVer
                     }}
                     role="alert"
                   >
-                    {err}
+                    {fieldErrors.code}
                   </div>
                 )}
 
