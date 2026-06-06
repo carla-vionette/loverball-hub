@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
@@ -60,6 +61,7 @@ const EventRSVPDialog = ({
   onAuthed,
 }: Props) => {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [mode, setMode] = useState<"signup" | "signin">("signup");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -143,8 +145,11 @@ const EventRSVPDialog = ({
           return;
         }
         if (data.session) {
-          await onAuthed(intent);
+          // Account created — send them to finish their profile.
+          // pending_rsvp_<eventId> remains in localStorage and is applied
+          // automatically when they return to the event page.
           onOpenChange(false);
+          navigate(`/onboarding?redirect=${encodeURIComponent(`/e/${eventId}`)}`);
         } else {
           setSent(true);
         }
