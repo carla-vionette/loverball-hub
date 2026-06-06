@@ -7,7 +7,7 @@ import { ArrowRight, ArrowLeft, Mail, CheckCircle2 } from "lucide-react";
 import loverballLogo from "@/assets/loverball-logo-black.png";
 import WelcomeSplash from "@/components/WelcomeSplash";
 import { C, fonts } from "@/lib/editorialTheme";
-import { isAuthEmailRateLimitError } from "@/lib/authErrors";
+import { isAuthEmailRateLimitError, parseRetryAfterSeconds } from "@/lib/authErrors";
 
 type AuthMode = "email" | "sent" | "password" | "reset_sent" | "reset_password";
 
@@ -175,6 +175,17 @@ const Auth = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [resendLoading, setResendLoading] = useState(false);
+  const [cooldownUntil, setCooldownUntil] = useState<number>(0);
+  const [now, setNow] = useState<number>(() => Date.now());
+
+  useEffect(() => {
+    if (cooldownUntil <= Date.now()) return;
+    const id = window.setInterval(() => setNow(Date.now()), 500);
+    return () => window.clearInterval(id);
+  }, [cooldownUntil]);
+
+  const cooldownSeconds = Math.max(0, Math.ceil((cooldownUntil - now) / 1000));
+  const inCooldown = cooldownSeconds > 0;
   const [splashName, setSplashName] = useState<string | null>(null);
   const [pendingRedirect, setPendingRedirect] = useState<string | null>(null);
 
@@ -192,6 +203,7 @@ const Auth = () => {
   // ── Send magic link (creates user if needed) ─────────────────────────
   const handleSendMagicLink = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (loading || cooldownUntil > Date.now()) return;
     const trimmed = email.trim().toLowerCase();
     if (!trimmed || !trimmed.includes("@")) {
       toast({ title: "Enter a valid email", variant: "destructive" });
@@ -207,25 +219,35 @@ const Auth = () => {
         },
       });
       if (error) throw error;
+      // Small built-in cooldown to prevent accidental duplicate sends.
+      setCooldownUntil(Date.now() + 30_000);
+      setNow(Date.now());
       setMode("sent");
     } catch (err: any) {
       const message = err?.message ?? "";
-      toast({
-        title: isAuthEmailRateLimitError(message)
-          ? "Email sign-in is temporarily delayed"
-          : "Couldn't send sign-in link",
-        description: isAuthEmailRateLimitError(message)
-          ? "Sign-in emails are being throttled. Try again in a moment."
-          : message,
-        variant: "destructive",
-      });
+      if (isAuthEmailRateLimitError(message)) {
+        const wait = parseRetryAfterSeconds(message);
+        setCooldownUntil(Date.now() + wait * 1000);
+        setNow(Date.now());
+        toast({
+          title: "Email sign-in is temporarily delayed",
+          description: `Too many requests. Try again in ${wait} second${wait === 1 ? "" : "s"}.`,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Couldn't send sign-in link",
+          description: message,
+          variant: "destructive",
+        });
+      }
     } finally {
       setLoading(false);
     }
   };
 
   const handleResend = async () => {
-    if (!email) return;
+    if (!email || resendLoading || cooldownUntil > Date.now()) return;
     setResendLoading(true);
     try {
       const { error } = await supabase.auth.signInWithOtp({
@@ -233,13 +255,27 @@ const Auth = () => {
         options: { shouldCreateUser: true, emailRedirectTo },
       });
       if (error) throw error;
+      setCooldownUntil(Date.now() + 30_000);
+      setNow(Date.now());
       toast({ title: "Sent! Check your inbox." });
     } catch (err: any) {
-      toast({
-        title: isAuthEmailRateLimitError(err?.message) ? "Resend is temporarily delayed" : "Couldn't resend",
-        description: err?.message,
-        variant: "destructive",
-      });
+      const message = err?.message ?? "";
+      if (isAuthEmailRateLimitError(message)) {
+        const wait = parseRetryAfterSeconds(message);
+        setCooldownUntil(Date.now() + wait * 1000);
+        setNow(Date.now());
+        toast({
+          title: "Resend is temporarily delayed",
+          description: `Please wait ${wait} second${wait === 1 ? "" : "s"} before requesting another link.`,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Couldn't resend",
+          description: message,
+          variant: "destructive",
+        });
+      }
     } finally {
       setResendLoading(false);
     }
@@ -368,8 +404,8 @@ const Auth = () => {
                     autoFocus
                     autoComplete="email"
                   />
-                  <EditorialBtn type="submit" loading={loading}>
-                    Continue with Email
+                  <EditorialBtn type="submit" loading={loading} disabled={inCooldown}>
+                    {inCooldown ? `Try again in ${cooldownSeconds}s` : "Continue with Email"}
                   </EditorialBtn>
                 </form>
 
@@ -450,11 +486,15 @@ const Auth = () => {
                   <button
                     type="button"
                     onClick={handleResend}
-                    disabled={resendLoading}
-                    style={{ color: C.raspberry, fontWeight: 600, borderBottom: `1px solid ${C.raspberry}` }}
-                    className="hover:opacity-80 transition-opacity"
+                    disabled={resendLoading || inCooldown}
+                    style={{ color: C.raspberry, fontWeight: 600, borderBottom: `1px solid ${C.raspberry}`, opacity: (resendLoading || inCooldown) ? 0.6 : 1 }}
+                    className="hover:opacity-80 transition-opacity disabled:cursor-not-allowed"
                   >
-                    {resendLoading ? "Sending…" : "resend the link"}
+                    {resendLoading
+                      ? "Sending…"
+                      : inCooldown
+                        ? `resend in ${cooldownSeconds}s`
+                        : "resend the link"}
                   </button>
                 </div>
 
