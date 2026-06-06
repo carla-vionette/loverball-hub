@@ -1,4 +1,6 @@
 import { format } from "date-fns";
+import { parseEventDate } from "./eventDate";
+
 
 function fmtTime(t: string) {
   const [h, m] = t.split(":");
