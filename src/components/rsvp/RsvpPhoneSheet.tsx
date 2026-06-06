@@ -28,16 +28,20 @@ const labelStyle: React.CSSProperties = {
   letterSpacing: "0.18em",
   textTransform: "uppercase",
   display: "block",
+  width: "100%",
   marginBottom: 8,
   fontWeight: 600,
 };
 
 const inputBaseClass =
-  "w-full rounded-2xl border-2 border-[#D4CFC5] bg-white shadow-sm text-[#1A1A1A] placeholder:text-[#9CA3AF] focus-visible:border-[#E85D2F] focus-visible:ring-0 focus-visible:ring-offset-0 transition-colors";
+  "block w-full rounded-2xl border-2 border-[#D4CFC5] bg-white shadow-sm text-[#1A1A1A] placeholder:text-[#9CA3AF] focus-visible:border-[#E85D2F] focus-visible:ring-0 focus-visible:ring-offset-0 transition-colors";
 
 const inputHeightStyle: React.CSSProperties = {
   height: 52,
+  minHeight: 44,
   fontSize: 17,
+  display: "block",
+  width: "100%",
 };
 
 const intentLabel = (i: RsvpIntent) =>
@@ -341,8 +345,8 @@ const RsvpPhoneSheet = ({ open, onOpenChange, eventId, eventTitle, intent, onVer
                 </div>
               )}
 
-              <form onSubmit={handleCaptureSubmit} className="space-y-4" noValidate>
-                <div>
+              <form onSubmit={handleCaptureSubmit} className="flex flex-col gap-4 w-full" noValidate>
+                <div className="flex flex-col w-full">
                   <label style={labelStyle} htmlFor="rsvp-first-name">First name</label>
                   <Input
                     id="rsvp-first-name"
@@ -367,7 +371,7 @@ const RsvpPhoneSheet = ({ open, onOpenChange, eventId, eventTitle, intent, onVer
                 </div>
 
                 {method === "phone" ? (
-                  <div>
+                  <div className="flex flex-col w-full">
                     <label style={labelStyle} htmlFor="rsvp-phone">Mobile number</label>
                     <div className="flex gap-2 items-stretch">
                       <div
@@ -416,7 +420,7 @@ const RsvpPhoneSheet = ({ open, onOpenChange, eventId, eventTitle, intent, onVer
                     )}
                   </div>
                 ) : (
-                  <div>
+                  <div className="flex flex-col w-full">
                     <label style={labelStyle} htmlFor="rsvp-email">Email</label>
                     <Input
                       id="rsvp-email"
