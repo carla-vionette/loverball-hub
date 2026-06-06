@@ -590,6 +590,9 @@ const Events = () => {
             );
           })()}
 
+          {/* SPORTS FILTER — All / Pro / College / Women's / This Week */}
+          <SportsFilterBar value={sportsFilter} onChange={setSportsFilter} />
+
           {/* CATEGORY CHIPS */}
           <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-3 -mx-5 px-5 mb-7">
             {CATEGORIES.map(c => {
