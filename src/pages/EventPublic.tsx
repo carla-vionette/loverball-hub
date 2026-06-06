@@ -526,12 +526,13 @@ const EventPublic = () => {
               >
                 <div className="flex-1">
                   <p className="text-sm mb-1" style={{ color: C.text, fontWeight: 600 }}>
-                    RSVP as a guest
+                    Sign in to RSVP
                   </p>
                   <p className="text-xs" style={{ color: C.muted, lineHeight: 1.5 }}>
-                    You can reserve your spot without signing in — just tap Going, Maybe or Can't go below. Want to see who's going or chat with other guests? Sign in first.
+                    Reserve your spot, see who's going, and chat with other attendees. It only takes a second.
                   </p>
                 </div>
+
                 <Button
                   onClick={() => navigate(`/auth?redirect=${encodeURIComponent(`/e/${id}`)}`)}
                   size="sm"
