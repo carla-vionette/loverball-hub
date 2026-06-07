@@ -30,6 +30,8 @@ import ZipPromptCard from "@/components/events/ZipPromptCard";
 import SportsFilterBar, { type SportsFilter } from "@/components/events/SportsFilterBar";
 import { fetchLocalSportsEvents, type MockDbEvent } from "@/lib/mockSportsEvents";
 import WatchPartyBarModal from "@/components/events/WatchPartyBarModal";
+import EventChatThread, { SYSTEM_PREFIX } from "@/components/events/EventChatThread";
+import { MessageCircle } from "lucide-react";
 import type { SportsBar } from "@/data/laSportsBars";
 
 
@@ -137,6 +139,24 @@ const Events = () => {
   const [gameRsvps, setGameRsvps] = useState<Record<string, GameRsvp>>({});
   const [gameCounts, setGameCounts] = useState<Record<string, number>>({});
   const [barModalEventId, setBarModalEventId] = useState<string | null>(null);
+  const [openChatId, setOpenChatId] = useState<string | null>(null);
+
+  // Helper: post a system message into an event's chat (visually distinct in UI).
+  const postSystemMessage = async (eventId: string, text: string) => {
+    if (!user) return;
+    try {
+      await supabase.from('event_chat_messages').insert({
+        event_id: eventId,
+        user_id: user.id,
+        message: `${SYSTEM_PREFIX} ${text}`.slice(0, 1000),
+      });
+    } catch { /* non-fatal */ }
+  };
+
+  const displayName = (): string => {
+    const meta = (user as { user_metadata?: { name?: string; full_name?: string }; email?: string } | null);
+    return meta?.user_metadata?.name || meta?.user_metadata?.full_name || meta?.email?.split('@')[0] || 'someone';
+  };
 
   const [gateEventId, setGateEventId] = useState<string | null>(null);
   const openGate = (id: string, intent: 'yes' | 'maybe' | 'no' = 'yes') => {
@@ -315,6 +335,7 @@ const Events = () => {
     if (error) { toast({ title: 'Could not save RSVP', variant: 'destructive' }); return; }
     setGameRsvps(p => ({ ...p, [eventId]: { type: 'stadium' } }));
     if (wasNew) setGameCounts(p => ({ ...p, [eventId]: (p[eventId] || 0) + 1 }));
+    postSystemMessage(eventId, `@${displayName()} is going to the game 🏟️`);
     toast({ title: 'Going! 🏟️' });
   };
 
@@ -334,6 +355,7 @@ const Events = () => {
     if (error) { toast({ title: 'Could not save watch party', variant: 'destructive' }); return; }
     setGameRsvps(p => ({ ...p, [eventId]: { type: 'bar', bar_id: bar.id, bar_name: bar.name } }));
     if (wasNew) setGameCounts(p => ({ ...p, [eventId]: (p[eventId] || 0) + 1 }));
+    postSystemMessage(eventId, `@${displayName()} is watching @ ${bar.name} 🍺`);
     toast({ title: `Watch party at ${bar.name} 🍺` });
     setBarModalEventId(null);
   };
@@ -872,6 +894,22 @@ const Events = () => {
                                       {isBar && gRsvp?.bar_name ? `Watching @ ${gRsvp.bar_name} 🍺` : "Watch Party 🍺"}
                                     </span>
                                   </Button>
+                                </div>
+                                <div className="pt-2" onClick={(e) => e.stopPropagation()}>
+                                  <button
+                                    type="button"
+                                    onClick={() => setOpenChatId(openChatId === ev.id ? null : ev.id)}
+                                    className="flex items-center gap-1.5 transition-opacity hover:opacity-80"
+                                    style={{ fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: 10, letterSpacing: "0.08em", textTransform: "uppercase", color: "#E85D2F" }}
+                                  >
+                                    <MessageCircle className="w-3.5 h-3.5" />
+                                    {openChatId === ev.id ? "Hide chat" : "Open event chat"}
+                                  </button>
+                                  {openChatId === ev.id && (
+                                    <div className="pt-2">
+                                      <EventChatThread eventId={ev.id} />
+                                    </div>
+                                  )}
                                 </div>
                               </>
                             );
