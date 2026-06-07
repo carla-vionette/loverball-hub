@@ -7,7 +7,6 @@ import {
 } from "lucide-react";
 import { C, fonts } from "@/lib/editorialTheme";
 import { H1, Slug, Body } from "@/components/editorial/primitives";
-import BottomNav from "@/components/BottomNav";
 import MobileHeader from "@/components/MobileHeader";
 import DesktopNav from "@/components/DesktopNav";
 import AddFriendButton from "@/components/AddFriendButton";
@@ -291,7 +290,6 @@ const Club = () => {
         />
         <MobileHeader />
         <DesktopNav />
-        <BottomNav />
 
         <main className="max-w-3xl mx-auto px-5 md:px-8 pt-24 md:pt-20">
           <section
@@ -379,7 +377,6 @@ const Club = () => {
       />
       <MobileHeader />
       <DesktopNav />
-      <BottomNav />
 
       <main className="max-w-[1400px] mx-auto px-4 md:px-8 pt-16 md:pt-8">
         {/* HERO */}

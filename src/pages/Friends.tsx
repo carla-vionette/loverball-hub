@@ -13,7 +13,6 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import AttendeeProfileDrawer from "@/components/AttendeeProfileDrawer";
-import BottomNav from "@/components/BottomNav";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { format } from "date-fns";
 
@@ -645,7 +644,6 @@ const Friends = () => {
   // ─── Desktop: Split panel layout ───
   return (
     <div className="min-h-screen bg-background">
-      <BottomNav />
 
       <main className="pb-24 md:pb-0">
         {/* Mobile layout */}

@@ -11,7 +11,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useGameBackNavigation } from "@/hooks/useGameBackNavigation";
 import { toast } from "@/hooks/use-toast";
-import BottomNav from "@/components/BottomNav";
 import DesktopNav from "@/components/DesktopNav";
 import Seo from "@/components/Seo";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -373,7 +372,6 @@ const GameDetail = () => {
           </form>
         </div>
       </main>
-      <BottomNav />
     </div>
   );
 };

@@ -14,7 +14,6 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
-import BottomNav from "@/components/BottomNav";
 import DesktopNav from "@/components/DesktopNav";
 import Seo from "@/components/Seo";
 import ProfileInbox from "@/components/profile/ProfileInbox";
@@ -186,7 +185,6 @@ const Profile = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-background">
-        <BottomNav />
         <main className="pb-20 md:pb-8 pt-16 md:pt-2">
           <div className="max-w-4xl mx-auto px-4 py-8 space-y-6 animate-pulse">
             <div className="flex items-start gap-4">
@@ -236,7 +234,6 @@ const Profile = () => {
         path="/profile"
       />
       <DesktopNav />
-      <BottomNav />
 
       <main
         className="pb-20 md:pb-10 transition-[margin] duration-200"

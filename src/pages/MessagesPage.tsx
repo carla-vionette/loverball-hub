@@ -251,7 +251,6 @@ const MessagesPage = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <BottomNav />
       
       <main className="pb-20 md:pb-0 h-screen">
         <div className="h-full flex">

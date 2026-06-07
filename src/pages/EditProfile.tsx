@@ -27,7 +27,6 @@ import {
 } from "@/lib/onboardingOptions";
 import { X, Camera, Loader2, ArrowLeft } from "lucide-react";
 import loverballLogo from "@/assets/loverball-script-logo.png";
-import BottomNav from "@/components/BottomNav";
 import { useAuth } from "@/hooks/useAuth";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -291,7 +290,6 @@ const EditProfile = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <BottomNav />
 
       <main className="pb-20 md:pb-6 pt-14 md:pt-6">
         <div className="max-w-xl mx-auto px-4">
