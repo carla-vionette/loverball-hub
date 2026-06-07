@@ -919,7 +919,26 @@ const Events = () => {
                           const isStadium = gRsvp?.type === 'stadium';
                           const isBar = gRsvp?.type === 'bar';
 
-                          if (isGame && user) {
+                          if (isGame) {
+                            const gateTip = "Join Loverball to connect with fans at this game";
+                            const wrap = (node: React.ReactNode) =>
+                              user ? node : (
+                                <TooltipProvider delayDuration={150}>
+                                  <Tooltip>
+                                    <TooltipTrigger asChild>
+                                      <span
+                                        className="inline-block w-full"
+                                        onClick={(e) => { e.stopPropagation(); openGate(ev.id); }}
+                                      >
+                                        {node}
+                                      </span>
+                                    </TooltipTrigger>
+                                    <TooltipContent side="top" style={{ background: "#161616", color: "#FAF5E9", border: "1px solid rgba(255,255,255,0.12)", fontFamily: "'Inter', sans-serif", fontSize: 11 }}>
+                                      {gateTip}
+                                    </TooltipContent>
+                                  </Tooltip>
+                                </TooltipProvider>
+                              );
                             return (
                               <>
                                 {ev.event_tags && ev.event_tags.length > 0 && (
@@ -943,35 +962,41 @@ const Events = () => {
                                   {gCount} {gCount === 1 ? 'member' : 'members'} going
                                 </div>
                                 <div className="grid grid-cols-2 gap-2 pt-2" style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }} onClick={(e) => e.stopPropagation()}>
-                                  <Button
-                                    size="sm"
-                                    className="rounded-full h-9 px-2 transition-all"
-                                    style={{
-                                      background: isStadium ? "#E85D2F" : "transparent",
-                                      color: isStadium ? "#fff" : "#FAF5E9",
-                                      border: isStadium ? "1px solid #E85D2F" : "1px solid rgba(255,255,255,0.14)",
-                                      fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 700, fontSize: 10, letterSpacing: "0.08em", textTransform: "uppercase",
-                                    }}
-                                    onClick={() => toggleStadium(ev.id)}
-                                  >
-                                    {isStadium ? "Going! 🏟️" : "I'm Going 🏟️"}
-                                  </Button>
-                                  <Button
-                                    size="sm"
-                                    title={isBar && gRsvp?.bar_name ? `Watching @ ${gRsvp.bar_name}` : undefined}
-                                    className="rounded-full h-9 px-2 transition-all truncate"
-                                    style={{
-                                      background: isBar ? "#2DD4BF" : "transparent",
-                                      color: isBar ? "#0a0a0a" : "#FAF5E9",
-                                      border: isBar ? "1px solid #2DD4BF" : "1px solid rgba(255,255,255,0.14)",
-                                      fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 700, fontSize: 10, letterSpacing: "0.08em", textTransform: "uppercase",
-                                    }}
-                                    onClick={() => openBarPicker(ev.id)}
-                                  >
-                                    <span className="truncate">
-                                      {isBar && gRsvp?.bar_name ? `Watching @ ${gRsvp.bar_name} 🍺` : "Watch Party 🍺"}
-                                    </span>
-                                  </Button>
+                                  {wrap(
+                                    <Button
+                                      size="sm"
+                                      disabled={!user}
+                                      className="rounded-full h-9 px-2 transition-all w-full disabled:opacity-60 disabled:cursor-not-allowed"
+                                      style={{
+                                        background: isStadium ? "#E85D2F" : "transparent",
+                                        color: isStadium ? "#fff" : "#FAF5E9",
+                                        border: isStadium ? "1px solid #E85D2F" : "1px solid rgba(255,255,255,0.14)",
+                                        fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 700, fontSize: 10, letterSpacing: "0.08em", textTransform: "uppercase",
+                                      }}
+                                      onClick={() => toggleStadium(ev.id)}
+                                    >
+                                      {isStadium ? "Going! 🏟️" : "I'm Going 🏟️"}
+                                    </Button>
+                                  )}
+                                  {wrap(
+                                    <Button
+                                      size="sm"
+                                      disabled={!user}
+                                      title={isBar && gRsvp?.bar_name ? `Watching @ ${gRsvp.bar_name}` : undefined}
+                                      className="rounded-full h-9 px-2 transition-all truncate w-full disabled:opacity-60 disabled:cursor-not-allowed"
+                                      style={{
+                                        background: isBar ? "#2DD4BF" : "transparent",
+                                        color: isBar ? "#0a0a0a" : "#FAF5E9",
+                                        border: isBar ? "1px solid #2DD4BF" : "1px solid rgba(255,255,255,0.14)",
+                                        fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 700, fontSize: 10, letterSpacing: "0.08em", textTransform: "uppercase",
+                                      }}
+                                      onClick={() => openBarPicker(ev.id)}
+                                    >
+                                      <span className="truncate">
+                                        {isBar && gRsvp?.bar_name ? `Watching @ ${gRsvp.bar_name} 🍺` : "Watch Party 🍺"}
+                                      </span>
+                                    </Button>
+                                  )}
                                 </div>
                                 <div className="pt-2" onClick={(e) => e.stopPropagation()}>
                                   <button
