@@ -1054,7 +1054,8 @@ const Events = () => {
           onOpenChange={(o) => { if (!o) setBarModalEventId(null); }}
           eventTitle={events.find(e => e.id === barModalEventId)?.title}
           selectedBarId={barModalEventId ? gameRsvps[barModalEventId]?.bar_id || null : null}
-          onSelect={selectBar}
+          userLoc={userLoc}
+          onConfirm={selectBar}
         />
 
         {/* Event Submission Form */}
