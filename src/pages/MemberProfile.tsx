@@ -8,7 +8,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import AddFriendButton from "@/components/AddFriendButton";
-import BottomNav from "@/components/BottomNav";
 import DesktopNav from "@/components/DesktopNav";
 import Seo from "@/components/Seo";
 import { C, fonts } from "@/lib/editorialTheme";
@@ -170,7 +169,6 @@ const MemberProfile = ({ memberId }: Props) => {
     <div className="min-h-screen pb-32 md:pb-12" style={{ background: C.bg, color: C.text, fontFamily: fonts.sans }}>
       <Seo title={`${profile.name || "Member"} | Loverball`} description={profile.bio || `Connect with ${profile.name} on Loverball.`} path={`/profile/${memberId}`} />
       <DesktopNav />
-      <BottomNav />
 
       <main className="max-w-4xl mx-auto px-4 md:px-8 pt-20 md:pt-10">
         <button

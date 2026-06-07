@@ -9,6 +9,7 @@ import { AuthProvider } from "@/hooks/useAuth";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
 import NetworkStatus from "@/components/NetworkStatus";
 import InstallPrompt from "@/components/InstallPrompt";
+import BottomNav from "@/components/BottomNav";
 import { usePageTracking } from "@/hooks/usePageTracking";
 import { useGameOriginTracker, useGameScrollRestore } from "@/hooks/useGameBackNavigation";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -116,6 +117,7 @@ const App = () => (
             <InstallPrompt />
             <PageTracker />
             <BetaBanner />
+            <BottomNav />
             <Suspense fallback={<PageFallback />}>
               <Routes>
                 {/* Public */}

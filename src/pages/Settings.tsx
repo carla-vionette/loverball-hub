@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import BottomNav from "@/components/BottomNav";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Input } from "@/components/ui/input";
@@ -562,7 +561,6 @@ const Settings = () => {
         </Tabs>
       </main>
 
-      <BottomNav />
     </div>
   );
 };

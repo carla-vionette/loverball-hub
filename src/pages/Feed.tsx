@@ -6,7 +6,6 @@ import { useEffect, useState } from "react";
 import { Calendar, ChevronDown, ChevronRight, Radio, Ticket, Tv } from "lucide-react";
 import { format } from "date-fns";
 import { motion } from "framer-motion";
-import BottomNav from "@/components/BottomNav";
 import DesktopNav from "@/components/DesktopNav";
 import Seo from "@/components/Seo";
 import ProfileInbox from "@/components/profile/ProfileInbox";
@@ -269,7 +268,6 @@ const Feed = () => {
           </motion.div>
         </motion.div>
       </main>
-      <BottomNav />
     </div>
   );
 };

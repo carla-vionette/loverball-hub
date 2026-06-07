@@ -3,7 +3,6 @@ import { Link, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { CheckCircle, ShoppingBag, ArrowLeft } from "lucide-react";
-import BottomNav from "@/components/BottomNav";
 
 const CheckoutSuccess = () => {
   const [searchParams] = useSearchParams();
@@ -11,7 +10,6 @@ const CheckoutSuccess = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <BottomNav />
 
       <main className="pb-24 md:pb-0 flex items-center justify-center min-h-screen">
         <Card className="max-w-md w-full mx-4 border-border/30">

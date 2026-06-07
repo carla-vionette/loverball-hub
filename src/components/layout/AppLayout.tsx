@@ -1,5 +1,4 @@
 import { ReactNode } from 'react';
-import { useAuth } from '@/hooks/useAuth';
 import BottomNav from '@/components/BottomNav';
 
 interface AppLayoutProps {
@@ -8,9 +7,7 @@ interface AppLayoutProps {
 }
 
 const AppLayout = ({ children, hideNav = false }: AppLayoutProps) => {
-  const { user } = useAuth();
-
-  if (hideNav || !user) {
+  if (hideNav) {
     return <>{children}</>;
   }
 

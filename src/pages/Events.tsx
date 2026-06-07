@@ -14,7 +14,6 @@ import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { parseEventDate } from "@/lib/eventDate";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import BottomNav from "@/components/BottomNav";
 import DesktopNav from "@/components/DesktopNav";
 import { Input } from "@/components/ui/input";
 import AttendeeProfileDrawer from "@/components/AttendeeProfileDrawer";
@@ -392,7 +391,6 @@ const Events = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-background">
-        <BottomNav />
         <main className="pb-20 md:pb-0 flex items-center justify-center">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </main>
@@ -408,7 +406,6 @@ const Events = () => {
         path="/events"
       />
       <DesktopNav />
-      <BottomNav />
 
       <main className="pb-24 md:pb-0">
         <div className="max-w-6xl mx-auto px-5 md:px-10 py-8">

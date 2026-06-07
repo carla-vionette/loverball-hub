@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import BottomNav from '@/components/BottomNav';
+
 import EditorialMasthead from '@/components/layout/EditorialMasthead';
 import EventPreviewCard from '@/components/EventPreviewCard';
 import LinkPreviewCard from '@/components/LinkPreviewCard';
@@ -251,7 +251,6 @@ const MessagesPage = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <BottomNav />
       
       <main className="pb-20 md:pb-0 h-screen">
         <div className="h-full flex">
