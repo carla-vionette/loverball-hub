@@ -153,6 +153,10 @@ export function buildMockSportsEvents(opts: {
   const metro = metroForCity(opts.city) || metroForZip(opts.zip);
   const out: MockSportsEvent[] = [];
   const today = new Date();
+  // Curated LA events are merged in via fetchLocalSportsEvents below so
+  // they appear before procedurally-generated ones for the LA metro.
+
+
 
   // Pro events — schedule one per league over the next ~3 weeks.
   let day = 2;
