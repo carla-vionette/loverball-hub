@@ -29,6 +29,8 @@ import BetaTrialBanner from "@/components/BetaTrialBanner";
 import ZipPromptCard from "@/components/events/ZipPromptCard";
 import SportsFilterBar, { type SportsFilter } from "@/components/events/SportsFilterBar";
 import { fetchLocalSportsEvents, type MockDbEvent } from "@/lib/mockSportsEvents";
+import WatchPartyBarModal from "@/components/events/WatchPartyBarModal";
+import type { SportsBar } from "@/data/laSportsBars";
 
 
 const CATEGORIES = ["All", "watch_party", "game", "panel", "brunch", "networking", "other"];
