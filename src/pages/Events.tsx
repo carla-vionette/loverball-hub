@@ -29,6 +29,8 @@ import BetaTrialBanner from "@/components/BetaTrialBanner";
 import ZipPromptCard from "@/components/events/ZipPromptCard";
 import SportsFilterBar, { type SportsFilter } from "@/components/events/SportsFilterBar";
 import { fetchLocalSportsEvents, type MockDbEvent } from "@/lib/mockSportsEvents";
+import WatchPartyBarModal from "@/components/events/WatchPartyBarModal";
+import type { SportsBar } from "@/data/laSportsBars";
 
 
 const CATEGORIES = ["All", "watch_party", "game", "panel", "brunch", "networking", "other"];
@@ -129,6 +131,12 @@ const Events = () => {
   const [sportsFilter, setSportsFilter] = useState<SportsFilter>("all");
   const [localSports, setLocalSports] = useState<MockDbEvent[]>([]);
   const needsZip = !!user && !homeArea?.zip && !activeArea?.zip;
+
+  // Game RSVPs (stadium / bar) — backed by external_event_rsvps. Keyed by event id (text).
+  type GameRsvp = { type: 'stadium' | 'bar'; bar_id?: string | null; bar_name?: string | null };
+  const [gameRsvps, setGameRsvps] = useState<Record<string, GameRsvp>>({});
+  const [gameCounts, setGameCounts] = useState<Record<string, number>>({});
+  const [barModalEventId, setBarModalEventId] = useState<string | null>(null);
 
   const [gateEventId, setGateEventId] = useState<string | null>(null);
   const openGate = (id: string, intent: 'yes' | 'maybe' | 'no' = 'yes') => {
@@ -264,6 +272,71 @@ const Events = () => {
     });
     return () => { cancelled = true; };
   }, [activeArea?.zip, activeArea?.city, activeArea?.lat, activeArea?.lng]);
+
+  // Load game RSVPs (stadium / bar) for game-type events from external_event_rsvps
+  useEffect(() => {
+    const gameIds = events.filter(e => e.event_type === 'game').map(e => e.id);
+    if (gameIds.length === 0) return;
+    (async () => {
+      const { data: rows } = await supabase
+        .from('external_event_rsvps')
+        .select('event_id, user_id, rsvp_type, bar_id, bar_name')
+        .in('event_id', gameIds);
+      if (!rows) return;
+      const cts: Record<string, number> = {};
+      const mine: Record<string, GameRsvp> = {};
+      rows.forEach((r: any) => {
+        cts[r.event_id] = (cts[r.event_id] || 0) + 1;
+        if (user && r.user_id === user.id) {
+          mine[r.event_id] = { type: r.rsvp_type, bar_id: r.bar_id, bar_name: r.bar_name };
+        }
+      });
+      setGameCounts(cts);
+      setGameRsvps(mine);
+    })();
+  }, [events, user]);
+
+  const toggleStadium = async (eventId: string) => {
+    if (!user) { openGate(eventId); return; }
+    const existing = gameRsvps[eventId];
+    if (existing?.type === 'stadium') {
+      // undo
+      await supabase.from('external_event_rsvps').delete().eq('event_id', eventId).eq('user_id', user.id);
+      setGameRsvps(p => { const n = { ...p }; delete n[eventId]; return n; });
+      setGameCounts(p => ({ ...p, [eventId]: Math.max(0, (p[eventId] || 1) - 1) }));
+      toast({ title: 'RSVP removed' });
+      return;
+    }
+    const wasNew = !existing;
+    const { error } = await supabase.from('external_event_rsvps').upsert(
+      { event_id: eventId, user_id: user.id, rsvp_type: 'stadium', bar_id: null, bar_name: null },
+      { onConflict: 'event_id,user_id' }
+    );
+    if (error) { toast({ title: 'Could not save RSVP', variant: 'destructive' }); return; }
+    setGameRsvps(p => ({ ...p, [eventId]: { type: 'stadium' } }));
+    if (wasNew) setGameCounts(p => ({ ...p, [eventId]: (p[eventId] || 0) + 1 }));
+    toast({ title: 'Going! 🏟️' });
+  };
+
+  const openBarPicker = (eventId: string) => {
+    if (!user) { openGate(eventId); return; }
+    setBarModalEventId(eventId);
+  };
+
+  const selectBar = async (bar: SportsBar) => {
+    if (!user || !barModalEventId) return;
+    const eventId = barModalEventId;
+    const wasNew = !gameRsvps[eventId];
+    const { error } = await supabase.from('external_event_rsvps').upsert(
+      { event_id: eventId, user_id: user.id, rsvp_type: 'bar', bar_id: bar.id, bar_name: bar.name },
+      { onConflict: 'event_id,user_id' }
+    );
+    if (error) { toast({ title: 'Could not save watch party', variant: 'destructive' }); return; }
+    setGameRsvps(p => ({ ...p, [eventId]: { type: 'bar', bar_id: bar.id, bar_name: bar.name } }));
+    if (wasNew) setGameCounts(p => ({ ...p, [eventId]: (p[eventId] || 0) + 1 }));
+    toast({ title: `Watch party at ${bar.name} 🍺` });
+    setBarModalEventId(null);
+  };
 
   const handleRsvp = async (status: string) => {
     if (!user || !rsvpId) { toast({ title: "Sign in required", variant: "destructive" }); return; }
@@ -739,58 +812,126 @@ const Events = () => {
                           )}
                         </div>
 
-                        {user ? (
-                          <>
-                            {ev.event_tags && ev.event_tags.length > 0 && (
-                              <div onClick={(e) => e.stopPropagation()}>
-                                <EventTagBadges tags={ev.event_tags} size="sm" />
-                              </div>
-                            )}
-                            {/* RSVP Avatar Bar — social proof */}
-                            <div className="pt-1" onClick={(e) => e.stopPropagation()}>
-                              <RsvpAvatarBar
-                                attendees={eventAttendees[ev.id] || []}
-                                totalCount={ct}
-                                size="sm"
-                                maxAvatars={5}
-                                onAvatarClick={(attendee) => {
-                                  setSelectedProfile({ ...attendee, bio: null });
-                                  setDrawerOpen(true);
-                                }}
-                                onViewAllClick={() => openTile(ev.id)}
-                              />
+                        {(() => {
+                          const isGame = ev.event_type === 'game';
+                          const gRsvp = gameRsvps[ev.id];
+                          const gCount = gameCounts[ev.id] || 0;
+                          const isStadium = gRsvp?.type === 'stadium';
+                          const isBar = gRsvp?.type === 'bar';
+
+                          if (isGame && user) {
+                            return (
+                              <>
+                                {ev.event_tags && ev.event_tags.length > 0 && (
+                                  <div onClick={(e) => e.stopPropagation()}>
+                                    <EventTagBadges tags={ev.event_tags} size="sm" />
+                                  </div>
+                                )}
+                                <div className="pt-1" onClick={(e) => e.stopPropagation()}>
+                                  <RsvpAvatarBar
+                                    attendees={eventAttendees[ev.id] || []}
+                                    totalCount={gCount}
+                                    size="sm"
+                                    maxAvatars={5}
+                                    onAvatarClick={(attendee) => { setSelectedProfile({ ...attendee, bio: null }); setDrawerOpen(true); }}
+                                    onViewAllClick={() => openTile(ev.id)}
+                                  />
+                                </div>
+                                <div className="flex items-center gap-1.5 pt-1"
+                                  style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 10, color: "rgba(248,248,248,0.6)", letterSpacing: "0.04em", textTransform: "uppercase" }}>
+                                  <Users className="w-3 h-3" />
+                                  {gCount} {gCount === 1 ? 'member' : 'members'} going
+                                </div>
+                                {isBar && gRsvp?.bar_name && (
+                                  <p style={{ fontFamily: "'Playfair Display', serif", fontStyle: 'italic', fontSize: 12, color: '#2DD4BF', margin: 0 }}>
+                                    🍺 You're watching at {gRsvp.bar_name}
+                                  </p>
+                                )}
+                                <div className="grid grid-cols-2 gap-2 pt-2" style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }} onClick={(e) => e.stopPropagation()}>
+                                  <Button
+                                    size="sm"
+                                    className="rounded-full h-9 px-2 transition-all"
+                                    style={{
+                                      background: isStadium ? "#E85D2F" : "transparent",
+                                      color: isStadium ? "#fff" : "#FAF5E9",
+                                      border: isStadium ? "1px solid #E85D2F" : "1px solid rgba(255,255,255,0.14)",
+                                      fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 700, fontSize: 10, letterSpacing: "0.08em", textTransform: "uppercase",
+                                    }}
+                                    onClick={() => toggleStadium(ev.id)}
+                                  >
+                                    {isStadium ? "Going! 🏟️" : "I'm Going 🏟️"}
+                                  </Button>
+                                  <Button
+                                    size="sm"
+                                    className="rounded-full h-9 px-2 transition-all"
+                                    style={{
+                                      background: isBar ? "#2DD4BF" : "transparent",
+                                      color: isBar ? "#0a0a0a" : "#FAF5E9",
+                                      border: isBar ? "1px solid #2DD4BF" : "1px solid rgba(255,255,255,0.14)",
+                                      fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 700, fontSize: 10, letterSpacing: "0.08em", textTransform: "uppercase",
+                                    }}
+                                    onClick={() => openBarPicker(ev.id)}
+                                  >
+                                    {isBar ? "Change Bar 🍺" : "Watch Party 🍺"}
+                                  </Button>
+                                </div>
+                              </>
+                            );
+                          }
+
+                          if (user) {
+                            return (
+                              <>
+                                {ev.event_tags && ev.event_tags.length > 0 && (
+                                  <div onClick={(e) => e.stopPropagation()}>
+                                    <EventTagBadges tags={ev.event_tags} size="sm" />
+                                  </div>
+                                )}
+                                <div className="pt-1" onClick={(e) => e.stopPropagation()}>
+                                  <RsvpAvatarBar
+                                    attendees={eventAttendees[ev.id] || []}
+                                    totalCount={ct}
+                                    size="sm"
+                                    maxAvatars={5}
+                                    onAvatarClick={(attendee) => { setSelectedProfile({ ...attendee, bio: null }); setDrawerOpen(true); }}
+                                    onViewAllClick={() => openTile(ev.id)}
+                                  />
+                                </div>
+                                <div className="flex items-center justify-between pt-2" style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+                                  <span className="flex items-center gap-1"
+                                    style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 10, color: "rgba(248,248,248,0.5)", letterSpacing: "0.04em" }}>
+                                    <Users className="w-3 h-3" />{ct}{ev.capacity ? `/${ev.capacity}` : ""}
+                                  </span>
+                                  {rsvp ? (
+                                    <span className="px-3 py-1 rounded-full capitalize"
+                                      style={{ background: rsvp === "attending" ? "rgba(232,93,47,0.15)" : "rgba(255,255,255,0.06)", color: rsvp === "attending" ? "#E85D2F" : "rgba(248,248,248,0.6)", border: rsvp === "attending" ? "1px solid rgba(232,93,47,0.35)" : "1px solid rgba(255,255,255,0.08)", fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 700, fontSize: 10, letterSpacing: "0.08em", textTransform: "uppercase" }}>
+                                      {rsvp === "attending" ? "Going ✓" : rsvp}
+                                    </span>
+                                  ) : (
+                                    <Button size="sm" className="rounded-full h-8 px-4"
+                                      style={{ background: "#E85D2F", color: "#fff", fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 700, fontSize: 10, letterSpacing: "0.1em", textTransform: "uppercase" }}
+                                      onClick={e => { e.stopPropagation(); setRsvpId(ev.id); }}>
+                                      RSVP
+                                    </Button>
+                                  )}
+                                </div>
+                              </>
+                            );
+                          }
+
+                          return (
+                            <div className="pt-2 flex items-center justify-between gap-2" style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+                              <p style={{ fontFamily: "'Playfair Display', serif", fontStyle: "italic", fontSize: 12, color: "rgba(248,248,248,0.55)", margin: 0 }}>
+                                Sign up to see who's going
+                              </p>
+                              <Button size="sm" className="rounded-full h-8 px-4"
+                                style={{ background: "transparent", color: "#E85D2F", border: "1px solid rgba(232,93,47,0.4)", fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 700, fontSize: 10, letterSpacing: "0.1em", textTransform: "uppercase" }}
+                                onClick={e => { e.stopPropagation(); openGate(ev.id); }}>
+                                Unlock
+                              </Button>
                             </div>
-                            <div className="flex items-center justify-between pt-2" style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
-                              <span className="flex items-center gap-1"
-                                style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 10, color: "rgba(248,248,248,0.5)", letterSpacing: "0.04em" }}>
-                                <Users className="w-3 h-3" />{ct}{ev.capacity ? `/${ev.capacity}` : ""}
-                              </span>
-                              {rsvp ? (
-                                <span className="px-3 py-1 rounded-full capitalize"
-                                  style={{ background: rsvp === "attending" ? "rgba(232,93,47,0.15)" : "rgba(255,255,255,0.06)", color: rsvp === "attending" ? "#E85D2F" : "rgba(248,248,248,0.6)", border: rsvp === "attending" ? "1px solid rgba(232,93,47,0.35)" : "1px solid rgba(255,255,255,0.08)", fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 700, fontSize: 10, letterSpacing: "0.08em", textTransform: "uppercase" }}>
-                                  {rsvp === "attending" ? "Going ✓" : rsvp}
-                                </span>
-                              ) : (
-                                <Button size="sm" className="rounded-full h-8 px-4"
-                                  style={{ background: "#E85D2F", color: "#fff", fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 700, fontSize: 10, letterSpacing: "0.1em", textTransform: "uppercase" }}
-                                  onClick={e => { e.stopPropagation(); setRsvpId(ev.id); }}>
-                                  RSVP
-                                </Button>
-                              )}
-                            </div>
-                          </>
-                        ) : (
-                          <div className="pt-2 flex items-center justify-between gap-2" style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
-                            <p style={{ fontFamily: "'Playfair Display', serif", fontStyle: "italic", fontSize: 12, color: "rgba(248,248,248,0.55)", margin: 0 }}>
-                              Sign up to see who's going
-                            </p>
-                            <Button size="sm" className="rounded-full h-8 px-4"
-                              style={{ background: "transparent", color: "#E85D2F", border: "1px solid rgba(232,93,47,0.4)", fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 700, fontSize: 10, letterSpacing: "0.1em", textTransform: "uppercase" }}
-                              onClick={e => { e.stopPropagation(); openGate(ev.id); }}>
-                              Unlock
-                            </Button>
-                          </div>
-                        )}
+                          );
+                        })()}
                       </div>
                     </article>
                     {sponsorSlot && <SponsorCard index={Math.floor(cardIndex / 5) - 1} />}
@@ -905,6 +1046,15 @@ const Events = () => {
           profile={selectedProfile}
           open={drawerOpen}
           onOpenChange={setDrawerOpen}
+        />
+
+        {/* Watch Party Bar Selector */}
+        <WatchPartyBarModal
+          open={!!barModalEventId}
+          onOpenChange={(o) => { if (!o) setBarModalEventId(null); }}
+          eventTitle={events.find(e => e.id === barModalEventId)?.title}
+          selectedBarId={barModalEventId ? gameRsvps[barModalEventId]?.bar_id || null : null}
+          onSelect={selectBar}
         />
 
         {/* Event Submission Form */}
