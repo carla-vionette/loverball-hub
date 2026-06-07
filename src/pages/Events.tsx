@@ -30,6 +30,8 @@ import ZipPromptCard from "@/components/events/ZipPromptCard";
 import SportsFilterBar, { type SportsFilter } from "@/components/events/SportsFilterBar";
 import { fetchLocalSportsEvents, type MockDbEvent } from "@/lib/mockSportsEvents";
 import WatchPartyBarModal from "@/components/events/WatchPartyBarModal";
+import EventChatThread, { SYSTEM_PREFIX } from "@/components/events/EventChatThread";
+import { MessageCircle } from "lucide-react";
 import type { SportsBar } from "@/data/laSportsBars";
 
 
@@ -137,6 +139,24 @@ const Events = () => {
   const [gameRsvps, setGameRsvps] = useState<Record<string, GameRsvp>>({});
   const [gameCounts, setGameCounts] = useState<Record<string, number>>({});
   const [barModalEventId, setBarModalEventId] = useState<string | null>(null);
+  const [openChatId, setOpenChatId] = useState<string | null>(null);
+
+  // Helper: post a system message into an event's chat (visually distinct in UI).
+  const postSystemMessage = async (eventId: string, text: string) => {
+    if (!user) return;
+    try {
+      await supabase.from('event_chat_messages').insert({
+        event_id: eventId,
+        user_id: user.id,
+        message: `${SYSTEM_PREFIX} ${text}`.slice(0, 1000),
+      });
+    } catch { /* non-fatal */ }
+  };
+
+  const displayName = (): string => {
+    const meta = (user as { user_metadata?: { name?: string; full_name?: string }; email?: string } | null);
+    return meta?.user_metadata?.name || meta?.user_metadata?.full_name || meta?.email?.split('@')[0] || 'someone';
+  };
 
   const [gateEventId, setGateEventId] = useState<string | null>(null);
   const openGate = (id: string, intent: 'yes' | 'maybe' | 'no' = 'yes') => {
