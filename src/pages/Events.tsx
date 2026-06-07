@@ -31,7 +31,8 @@ import SportsFilterBar, { type SportsFilter } from "@/components/events/SportsFi
 import { fetchLocalSportsEvents, type MockDbEvent } from "@/lib/mockSportsEvents";
 import WatchPartyBarModal from "@/components/events/WatchPartyBarModal";
 import EventChatThread, { SYSTEM_PREFIX } from "@/components/events/EventChatThread";
-import { MessageCircle } from "lucide-react";
+import { MessageCircle, BookmarkCheck } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import type { SportsBar } from "@/data/laSportsBars";
 
 
@@ -112,6 +113,7 @@ const Events = () => {
   const [events, setEvents] = useState<DbEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [category, setCategory] = useState("All");
+  const [myPlansOnly, setMyPlansOnly] = useState(false);
   const [rsvpId, setRsvpId] = useState<string | null>(null);
   const [userRsvps, setUserRsvps] = useState<Record<string, string>>({});
   const [counts, setCounts] = useState<Record<string, number>>({});
