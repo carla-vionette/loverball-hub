@@ -273,6 +273,71 @@ const Events = () => {
     return () => { cancelled = true; };
   }, [activeArea?.zip, activeArea?.city, activeArea?.lat, activeArea?.lng]);
 
+  // Load game RSVPs (stadium / bar) for game-type events from external_event_rsvps
+  useEffect(() => {
+    const gameIds = events.filter(e => e.event_type === 'game').map(e => e.id);
+    if (gameIds.length === 0) return;
+    (async () => {
+      const { data: rows } = await supabase
+        .from('external_event_rsvps')
+        .select('event_id, user_id, rsvp_type, bar_id, bar_name')
+        .in('event_id', gameIds);
+      if (!rows) return;
+      const cts: Record<string, number> = {};
+      const mine: Record<string, GameRsvp> = {};
+      rows.forEach((r: any) => {
+        cts[r.event_id] = (cts[r.event_id] || 0) + 1;
+        if (user && r.user_id === user.id) {
+          mine[r.event_id] = { type: r.rsvp_type, bar_id: r.bar_id, bar_name: r.bar_name };
+        }
+      });
+      setGameCounts(cts);
+      setGameRsvps(mine);
+    })();
+  }, [events, user]);
+
+  const toggleStadium = async (eventId: string) => {
+    if (!user) { openGate(eventId); return; }
+    const existing = gameRsvps[eventId];
+    if (existing?.type === 'stadium') {
+      // undo
+      await supabase.from('external_event_rsvps').delete().eq('event_id', eventId).eq('user_id', user.id);
+      setGameRsvps(p => { const n = { ...p }; delete n[eventId]; return n; });
+      setGameCounts(p => ({ ...p, [eventId]: Math.max(0, (p[eventId] || 1) - 1) }));
+      toast({ title: 'RSVP removed' });
+      return;
+    }
+    const wasNew = !existing;
+    const { error } = await supabase.from('external_event_rsvps').upsert(
+      { event_id: eventId, user_id: user.id, rsvp_type: 'stadium', bar_id: null, bar_name: null },
+      { onConflict: 'event_id,user_id' }
+    );
+    if (error) { toast({ title: 'Could not save RSVP', variant: 'destructive' }); return; }
+    setGameRsvps(p => ({ ...p, [eventId]: { type: 'stadium' } }));
+    if (wasNew) setGameCounts(p => ({ ...p, [eventId]: (p[eventId] || 0) + 1 }));
+    toast({ title: 'Going! 🏟️' });
+  };
+
+  const openBarPicker = (eventId: string) => {
+    if (!user) { openGate(eventId); return; }
+    setBarModalEventId(eventId);
+  };
+
+  const selectBar = async (bar: SportsBar) => {
+    if (!user || !barModalEventId) return;
+    const eventId = barModalEventId;
+    const wasNew = !gameRsvps[eventId];
+    const { error } = await supabase.from('external_event_rsvps').upsert(
+      { event_id: eventId, user_id: user.id, rsvp_type: 'bar', bar_id: bar.id, bar_name: bar.name },
+      { onConflict: 'event_id,user_id' }
+    );
+    if (error) { toast({ title: 'Could not save watch party', variant: 'destructive' }); return; }
+    setGameRsvps(p => ({ ...p, [eventId]: { type: 'bar', bar_id: bar.id, bar_name: bar.name } }));
+    if (wasNew) setGameCounts(p => ({ ...p, [eventId]: (p[eventId] || 0) + 1 }));
+    toast({ title: `Watch party at ${bar.name} 🍺` });
+    setBarModalEventId(null);
+  };
+
   const handleRsvp = async (status: string) => {
     if (!user || !rsvpId) { toast({ title: "Sign in required", variant: "destructive" }); return; }
     await supabase.from("event_rsvps").upsert(
