@@ -335,6 +335,7 @@ const Events = () => {
     if (error) { toast({ title: 'Could not save RSVP', variant: 'destructive' }); return; }
     setGameRsvps(p => ({ ...p, [eventId]: { type: 'stadium' } }));
     if (wasNew) setGameCounts(p => ({ ...p, [eventId]: (p[eventId] || 0) + 1 }));
+    postSystemMessage(eventId, `@${displayName()} is going to the game 🏟️`);
     toast({ title: 'Going! 🏟️' });
   };
 
@@ -354,6 +355,7 @@ const Events = () => {
     if (error) { toast({ title: 'Could not save watch party', variant: 'destructive' }); return; }
     setGameRsvps(p => ({ ...p, [eventId]: { type: 'bar', bar_id: bar.id, bar_name: bar.name } }));
     if (wasNew) setGameCounts(p => ({ ...p, [eventId]: (p[eventId] || 0) + 1 }));
+    postSystemMessage(eventId, `@${displayName()} is watching @ ${bar.name} 🍺`);
     toast({ title: `Watch party at ${bar.name} 🍺` });
     setBarModalEventId(null);
   };
