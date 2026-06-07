@@ -498,9 +498,42 @@ const Events = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background">
-        <main className="pb-20 md:pb-0 flex items-center justify-center">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      <div className="min-h-screen" style={{ background: "#0a0a0a" }}>
+        <DesktopNav />
+        <main className="pb-24 md:pb-0">
+          <div className="max-w-6xl mx-auto px-5 md:px-10 py-8">
+            <div className="space-y-6">
+              {/* Masthead skeleton */}
+              <div className="space-y-3">
+                <div className="h-3 w-32 rounded-full shimmer-cream" />
+                <div className="h-12 w-64 rounded-lg shimmer-cream" />
+                <div className="h-3 w-40 rounded-full shimmer-cream" />
+              </div>
+              {/* Filter chip skeletons */}
+              <div className="flex gap-2 overflow-hidden">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <div key={i} className="h-8 w-24 rounded-full shimmer-cream flex-shrink-0" />
+                ))}
+              </div>
+              {/* Event card skeletons */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <div key={i} className="rounded-3xl overflow-hidden" style={{ background: "rgba(250,245,233,0.04)", border: "1px solid rgba(250,245,233,0.06)" }}>
+                    <div className="aspect-[4/3] shimmer-cream" />
+                    <div className="p-4 space-y-3">
+                      <div className="h-3 w-20 rounded-full shimmer-cream" />
+                      <div className="h-5 w-3/4 rounded-md shimmer-cream" />
+                      <div className="h-3 w-1/2 rounded-full shimmer-cream" />
+                      <div className="flex gap-2 pt-2">
+                        <div className="h-9 flex-1 rounded-full shimmer-cream" />
+                        <div className="h-9 flex-1 rounded-full shimmer-cream" />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
         </main>
       </div>
     );
