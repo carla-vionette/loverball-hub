@@ -286,8 +286,10 @@ const Events = () => {
   // Crawler-friendly URL for SMS/iMessage previews. The edge function returns
   // a tiny HTML doc with proper OG tags (event cover image) and redirects real
   // browsers to /e/:id, so iMessage shows the event photo in the link preview.
+  // The `v` param busts iMessage/WhatsApp link-preview caches when the event
+  // cover image changes. Bump it whenever an event's flyer is updated.
   const getSmsShareUrl = (ev: DbEvent) =>
-    `https://nfjavjfxgxrpvieinpdp.supabase.co/functions/v1/event-og-meta?id=${ev.id}`;
+    `https://nfjavjfxgxrpvieinpdp.supabase.co/functions/v1/event-og-meta?id=${ev.id}&v=2`;
 
   const copyShareLink = () => {
     if (!shareEvent) return;

@@ -25,8 +25,9 @@ const SITE = "https://www.loverball.com";
 const buildShareUrl = (eventId: string) => `${SITE}/e/${eventId}`;
 // Crawler-friendly URL for SMS/iMessage: the edge function returns static
 // HTML with the event's cover image as og:image and redirects browsers to /e/:id.
+// `v` busts iMessage/WhatsApp link-preview caches when the cover image changes.
 const buildSmsShareUrl = (eventId: string) =>
-  `https://nfjavjfxgxrpvieinpdp.supabase.co/functions/v1/event-og-meta?id=${eventId}`;
+  `https://nfjavjfxgxrpvieinpdp.supabase.co/functions/v1/event-og-meta?id=${eventId}&v=2`;
 
 interface PublicEvent {
   id: string;
