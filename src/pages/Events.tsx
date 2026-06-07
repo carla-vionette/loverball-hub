@@ -1048,6 +1048,15 @@ const Events = () => {
           onOpenChange={setDrawerOpen}
         />
 
+        {/* Watch Party Bar Selector */}
+        <WatchPartyBarModal
+          open={!!barModalEventId}
+          onOpenChange={(o) => { if (!o) setBarModalEventId(null); }}
+          eventTitle={events.find(e => e.id === barModalEventId)?.title}
+          selectedBarId={barModalEventId ? gameRsvps[barModalEventId]?.bar_id || null : null}
+          onSelect={selectBar}
+        />
+
         {/* Event Submission Form */}
         <EventSubmissionForm open={showSubmitForm} onOpenChange={setShowSubmitForm} />
 
