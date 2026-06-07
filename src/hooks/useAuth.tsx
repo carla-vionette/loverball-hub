@@ -77,19 +77,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       (event, nextSession) => {
         if (!mounted) return;
 
-        // Never treat missing session as signed-out unless the user
-        // explicitly logged out. This keeps users signed in across
-        // reloads, tab restarts, and transient refresh failures.
+        // Never log the user out unless they explicitly tapped "Sign out".
+        // Ignore transient null sessions from refresh failures, network blips,
+        // tab focus changes, or Supabase clearing tokens after a failed refresh.
         if (!nextSession) {
           const intentional = typeof window !== 'undefined' &&
             window.sessionStorage.getItem('lb-intentional-signout') === '1';
 
-          if (!intentional && hasStoredSessionToken()) {
-            // Stored token exists — wait for autoRefresh to recover.
-            return;
-          }
-
-          if (!bootstrapped && event === 'INITIAL_SESSION') {
+          if (!intentional) {
+            // Try to recover the session in the background; never flip to signed-out.
+            if (bootstrapped) {
+              void supabase.auth.refreshSession().then(({ data }) => {
+                if (mounted && data.session) void applySession(data.session);
+              }).catch(() => {});
+            }
             return;
           }
         }
