@@ -1191,11 +1191,13 @@ const Events = () => {
         <WatchPartyBarModal
           open={!!barModalEventId}
           onOpenChange={(o) => { if (!o) setBarModalEventId(null); }}
-          eventTitle={events.find(e => e.id === barModalEventId)?.title}
+          eventId={barModalEventId || undefined}
+          eventTitle={combinedEvents.find(e => e.id === barModalEventId)?.title}
           selectedBarId={barModalEventId ? gameRsvps[barModalEventId]?.bar_id || null : null}
           userLoc={userLoc}
           onConfirm={selectBar}
         />
+
 
         {/* Event Submission Form */}
         <EventSubmissionForm open={showSubmitForm} onOpenChange={setShowSubmitForm} />
