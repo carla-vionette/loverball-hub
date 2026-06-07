@@ -677,3 +677,19 @@
 .lb-section-label svg {
   color: #E85D2F;
 }
+
+/* Cream shimmer for loading skeletons */
+.shimmer-cream {
+  background: linear-gradient(
+    90deg,
+    rgba(250, 245, 233, 0.06) 0%,
+    rgba(250, 245, 233, 0.14) 50%,
+    rgba(250, 245, 233, 0.06) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer-cream 1.4s ease-in-out infinite;
+}
+@keyframes shimmer-cream {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}

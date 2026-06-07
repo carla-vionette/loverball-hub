@@ -5,6 +5,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Send, Loader2 } from "lucide-react";
 import { formatDistanceToNowStrict } from "date-fns";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 export const SYSTEM_PREFIX = "[[SYS]]";
 
@@ -226,29 +227,63 @@ export default function EventChatThread({ eventId, pageSize = PAGE }: Props) {
           })
         )}
       </div>
-      <form onSubmit={handleSend} className="flex items-center gap-2 px-2 py-2"
-        style={{ borderTop: "1px solid rgba(255,255,255,0.06)", background: "rgba(0,0,0,0.2)" }}>
-        <input
-          type="text"
-          value={draft}
-          onChange={e => setDraft(e.target.value)}
-          placeholder={user ? "Say something…" : "Sign in to chat"}
-          disabled={!user || sending}
-          maxLength={1000}
-          className="flex-1 bg-transparent outline-none px-2 py-1.5"
-          style={{ fontFamily: "'Inter', sans-serif", fontSize: 13, color: "#FAF5E9" }}
-        />
-        <Button
-          type="submit"
-          size="sm"
-          disabled={!user || sending || !draft.trim()}
-          className="rounded-full h-8 w-8 p-0"
-          style={{ background: "#E85D2F", color: "#fff" }}
-          aria-label="Send"
-        >
-          {sending ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />}
-        </Button>
-      </form>
+      {user ? (
+        <form onSubmit={handleSend} className="flex items-center gap-2 px-2 py-2"
+          style={{ borderTop: "1px solid rgba(255,255,255,0.06)", background: "rgba(0,0,0,0.2)" }}>
+          <input
+            type="text"
+            value={draft}
+            onChange={e => setDraft(e.target.value)}
+            placeholder="Say something…"
+            disabled={sending}
+            maxLength={1000}
+            className="flex-1 bg-transparent outline-none px-2 py-1.5"
+            style={{ fontFamily: "'Inter', sans-serif", fontSize: 13, color: "#FAF5E9" }}
+          />
+          <Button
+            type="submit"
+            size="sm"
+            disabled={sending || !draft.trim()}
+            className="rounded-full h-8 w-8 p-0"
+            style={{ background: "#E85D2F", color: "#fff" }}
+            aria-label="Send"
+          >
+            {sending ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />}
+          </Button>
+        </form>
+      ) : (
+        <TooltipProvider delayDuration={150}>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div className="flex items-center gap-2 px-2 py-2 cursor-not-allowed"
+                style={{ borderTop: "1px solid rgba(255,255,255,0.06)", background: "rgba(0,0,0,0.2)" }}>
+                <input
+                  type="text"
+                  placeholder="Sign in to chat"
+                  disabled
+                  readOnly
+                  className="flex-1 bg-transparent outline-none px-2 py-1.5 cursor-not-allowed"
+                  style={{ fontFamily: "'Inter', sans-serif", fontSize: 13, color: "rgba(250,245,233,0.4)" }}
+                />
+                <Button
+                  type="button"
+                  size="sm"
+                  disabled
+                  className="rounded-full h-8 w-8 p-0 opacity-60"
+                  style={{ background: "#E85D2F", color: "#fff" }}
+                  aria-label="Send disabled"
+                >
+                  <Send className="w-3.5 h-3.5" />
+                </Button>
+              </div>
+            </TooltipTrigger>
+            <TooltipContent side="top" style={{ background: "#161616", color: "#FAF5E9", border: "1px solid rgba(255,255,255,0.12)", fontFamily: "'Inter', sans-serif", fontSize: 11 }}>
+              Join Loverball to connect with fans at this game
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      )}
     </div>
   );
 }
+

@@ -24,6 +24,8 @@ export type ProfileData = {
 export type RSVPEvent = {
   id: string;
   status: string;
+  rsvp_kind?: 'standard' | 'stadium' | 'bar';
+  bar_name?: string | null;
   event: {
     id: string;
     title: string;
@@ -73,7 +75,7 @@ export function useProfileData() {
     queryFn: async () => {
       const uid = user!.id;
       const today = new Date().toISOString().split("T")[0];
-      const [profileResult, rsvpResult, suggestedResult, settingsResult] = await Promise.all([
+      const [profileResult, rsvpResult, suggestedResult, settingsResult, externalRsvpResult] = await Promise.all([
         supabase
           .from("profiles")
           .select(
@@ -96,15 +98,49 @@ export function useProfileData() {
           .order("event_date", { ascending: true })
           .limit(4),
         supabase.rpc("get_my_account_settings" as any),
+        supabase
+          .from("external_event_rsvps")
+          .select("id, event_id, rsvp_type, bar_name")
+          .eq("user_id", uid)
+          .order("created_at", { ascending: false }),
       ]);
 
       if (profileResult.error || !profileResult.data) {
         return { profile: null, rsvpEvents: [], suggestedEvents: [], missingProfile: true };
       }
 
-      const rsvpEvents = (rsvpResult.data || []).filter(
-        (r: any) => r.event !== null
-      ) as RSVPEvent[];
+      const standardRsvps = (rsvpResult.data || [])
+        .filter((r: any) => r.event !== null)
+        .map((r: any) => ({ ...r, rsvp_kind: 'standard' as const })) as RSVPEvent[];
+
+      // External (game/stadium/bar) RSVPs — event_id is free-form text. Look up matching
+      // UUID-ish IDs in events to attach metadata; skip rows we can't enrich.
+      const uuidRe = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+      const rawExt = (externalRsvpResult?.data || []) as Array<{ id: string; event_id: string; rsvp_type: string; bar_name: string | null }>;
+      const lookupIds = Array.from(new Set(rawExt.map(r => r.event_id).filter(id => uuidRe.test(id))));
+      let extEventsById: Record<string, any> = {};
+      if (lookupIds.length > 0) {
+        const { data: extEvents } = await supabase
+          .from("events")
+          .select("id, title, event_date, event_time, venue_name, city, image_url")
+          .in("id", lookupIds);
+        (extEvents || []).forEach((e: any) => { extEventsById[e.id] = e; });
+      }
+      const externalRsvps: RSVPEvent[] = rawExt
+        .map(r => {
+          const ev = extEventsById[r.event_id];
+          if (!ev) return null;
+          return {
+            id: r.id,
+            status: 'attending',
+            rsvp_kind: r.rsvp_type === 'bar' ? ('bar' as const) : ('stadium' as const),
+            bar_name: r.bar_name,
+            event: ev,
+          } as RSVPEvent;
+        })
+        .filter((x): x is RSVPEvent => x !== null);
+
+      const rsvpEvents = [...standardRsvps, ...externalRsvps];
 
       const acct: any = settingsResult?.data || {};
 

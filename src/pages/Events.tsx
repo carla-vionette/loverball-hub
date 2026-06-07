@@ -31,7 +31,8 @@ import SportsFilterBar, { type SportsFilter } from "@/components/events/SportsFi
 import { fetchLocalSportsEvents, type MockDbEvent } from "@/lib/mockSportsEvents";
 import WatchPartyBarModal from "@/components/events/WatchPartyBarModal";
 import EventChatThread, { SYSTEM_PREFIX } from "@/components/events/EventChatThread";
-import { MessageCircle } from "lucide-react";
+import { MessageCircle, BookmarkCheck } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import type { SportsBar } from "@/data/laSportsBars";
 
 
@@ -112,6 +113,7 @@ const Events = () => {
   const [events, setEvents] = useState<DbEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [category, setCategory] = useState("All");
+  const [myPlansOnly, setMyPlansOnly] = useState(false);
   const [rsvpId, setRsvpId] = useState<string | null>(null);
   const [userRsvps, setUserRsvps] = useState<Record<string, string>>({});
   const [counts, setCounts] = useState<Record<string, number>>({});
@@ -472,9 +474,18 @@ const Events = () => {
       )
     : radiusFiltered;
 
-  const filtered = filteredWithDist.map(x => x.ev);
+  const myPlansFiltered = myPlansOnly
+    ? filteredWithDist.filter(({ ev: e }) => {
+        const r = userRsvps[e.id];
+        if (r && r !== "declined" && r !== "cancelled" && r !== "canceled") return true;
+        const g = gameRsvps[e.id];
+        return !!g;
+      })
+    : filteredWithDist;
+
+  const filtered = myPlansFiltered.map(x => x.ev);
   const distanceById: Record<string, number | null> = Object.fromEntries(
-    filteredWithDist.map(x => [x.ev.id, x.distance])
+    myPlansFiltered.map(x => [x.ev.id, x.distance])
   );
 
   const featured = tab === "upcoming" && upcomingEvents.length
@@ -487,9 +498,42 @@ const Events = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background">
-        <main className="pb-20 md:pb-0 flex items-center justify-center">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      <div className="min-h-screen" style={{ background: "#0a0a0a" }}>
+        <DesktopNav />
+        <main className="pb-24 md:pb-0">
+          <div className="max-w-6xl mx-auto px-5 md:px-10 py-8">
+            <div className="space-y-6">
+              {/* Masthead skeleton */}
+              <div className="space-y-3">
+                <div className="h-3 w-32 rounded-full shimmer-cream" />
+                <div className="h-12 w-64 rounded-lg shimmer-cream" />
+                <div className="h-3 w-40 rounded-full shimmer-cream" />
+              </div>
+              {/* Filter chip skeletons */}
+              <div className="flex gap-2 overflow-hidden">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <div key={i} className="h-8 w-24 rounded-full shimmer-cream flex-shrink-0" />
+                ))}
+              </div>
+              {/* Event card skeletons */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <div key={i} className="rounded-3xl overflow-hidden" style={{ background: "rgba(250,245,233,0.04)", border: "1px solid rgba(250,245,233,0.06)" }}>
+                    <div className="aspect-[4/3] shimmer-cream" />
+                    <div className="p-4 space-y-3">
+                      <div className="h-3 w-20 rounded-full shimmer-cream" />
+                      <div className="h-5 w-3/4 rounded-md shimmer-cream" />
+                      <div className="h-3 w-1/2 rounded-full shimmer-cream" />
+                      <div className="flex gap-2 pt-2">
+                        <div className="h-9 flex-1 rounded-full shimmer-cream" />
+                        <div className="h-9 flex-1 rounded-full shimmer-cream" />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
         </main>
       </div>
     );
@@ -697,11 +741,45 @@ const Events = () => {
             );
           })()}
 
-          {/* SPORTS FILTER — All / Pro / College / Women's / This Week */}
-          <SportsFilterBar value={sportsFilter} onChange={setSportsFilter} />
+          {/* SPORTS FILTER — All / Pro / College / Women's / This Week (with sticky My Plans chip) */}
+          <div className="sticky top-0 z-30 -mx-5 px-5 py-2" style={{ background: "rgba(10,10,10,0.92)", backdropFilter: "blur(10px)", WebkitBackdropFilter: "blur(10px)", borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
+            <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide">
+              {user && (() => {
+                const planCount = Object.keys(userRsvps).filter(id => {
+                  const s = userRsvps[id];
+                  return s && s !== "declined" && s !== "cancelled" && s !== "canceled";
+                }).length + Object.keys(gameRsvps).length;
+                const active = myPlansOnly;
+                return (
+                  <button
+                    type="button"
+                    onClick={() => setMyPlansOnly(v => !v)}
+                    className="flex items-center gap-1.5 px-3.5 py-2 rounded-full whitespace-nowrap transition-all flex-shrink-0"
+                    style={{
+                      background: active ? "#E85D2F" : "rgba(232,93,47,0.1)",
+                      color: active ? "#fff" : "#E85D2F",
+                      border: active ? "1px solid #E85D2F" : "1px solid rgba(232,93,47,0.35)",
+                      fontFamily: "'Inter', system-ui, sans-serif",
+                      fontWeight: 700,
+                      fontSize: 11,
+                      letterSpacing: "0.08em",
+                      textTransform: "uppercase",
+                    }}
+                    aria-pressed={active}
+                  >
+                    <BookmarkCheck className="w-3.5 h-3.5" />
+                    My Plans{planCount > 0 ? ` · ${planCount}` : ""}
+                  </button>
+                );
+              })()}
+              <div className="flex-1 min-w-0">
+                <SportsFilterBar value={sportsFilter} onChange={setSportsFilter} />
+              </div>
+            </div>
+          </div>
 
           {/* CATEGORY CHIPS */}
-          <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-3 -mx-5 px-5 mb-7">
+          <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-3 -mx-5 px-5 mb-7 mt-3">
             {CATEGORIES.map(c => {
               const active = category === c;
               return (
@@ -841,7 +919,26 @@ const Events = () => {
                           const isStadium = gRsvp?.type === 'stadium';
                           const isBar = gRsvp?.type === 'bar';
 
-                          if (isGame && user) {
+                          if (isGame) {
+                            const gateTip = "Join Loverball to connect with fans at this game";
+                            const wrap = (node: React.ReactNode) =>
+                              user ? node : (
+                                <TooltipProvider delayDuration={150}>
+                                  <Tooltip>
+                                    <TooltipTrigger asChild>
+                                      <span
+                                        className="inline-block w-full"
+                                        onClick={(e) => { e.stopPropagation(); openGate(ev.id); }}
+                                      >
+                                        {node}
+                                      </span>
+                                    </TooltipTrigger>
+                                    <TooltipContent side="top" style={{ background: "#161616", color: "#FAF5E9", border: "1px solid rgba(255,255,255,0.12)", fontFamily: "'Inter', sans-serif", fontSize: 11 }}>
+                                      {gateTip}
+                                    </TooltipContent>
+                                  </Tooltip>
+                                </TooltipProvider>
+                              );
                             return (
                               <>
                                 {ev.event_tags && ev.event_tags.length > 0 && (
@@ -865,35 +962,41 @@ const Events = () => {
                                   {gCount} {gCount === 1 ? 'member' : 'members'} going
                                 </div>
                                 <div className="grid grid-cols-2 gap-2 pt-2" style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }} onClick={(e) => e.stopPropagation()}>
-                                  <Button
-                                    size="sm"
-                                    className="rounded-full h-9 px-2 transition-all"
-                                    style={{
-                                      background: isStadium ? "#E85D2F" : "transparent",
-                                      color: isStadium ? "#fff" : "#FAF5E9",
-                                      border: isStadium ? "1px solid #E85D2F" : "1px solid rgba(255,255,255,0.14)",
-                                      fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 700, fontSize: 10, letterSpacing: "0.08em", textTransform: "uppercase",
-                                    }}
-                                    onClick={() => toggleStadium(ev.id)}
-                                  >
-                                    {isStadium ? "Going! 🏟️" : "I'm Going 🏟️"}
-                                  </Button>
-                                  <Button
-                                    size="sm"
-                                    title={isBar && gRsvp?.bar_name ? `Watching @ ${gRsvp.bar_name}` : undefined}
-                                    className="rounded-full h-9 px-2 transition-all truncate"
-                                    style={{
-                                      background: isBar ? "#2DD4BF" : "transparent",
-                                      color: isBar ? "#0a0a0a" : "#FAF5E9",
-                                      border: isBar ? "1px solid #2DD4BF" : "1px solid rgba(255,255,255,0.14)",
-                                      fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 700, fontSize: 10, letterSpacing: "0.08em", textTransform: "uppercase",
-                                    }}
-                                    onClick={() => openBarPicker(ev.id)}
-                                  >
-                                    <span className="truncate">
-                                      {isBar && gRsvp?.bar_name ? `Watching @ ${gRsvp.bar_name} 🍺` : "Watch Party 🍺"}
-                                    </span>
-                                  </Button>
+                                  {wrap(
+                                    <Button
+                                      size="sm"
+                                      disabled={!user}
+                                      className="rounded-full h-9 px-2 transition-all w-full disabled:opacity-60 disabled:cursor-not-allowed"
+                                      style={{
+                                        background: isStadium ? "#E85D2F" : "transparent",
+                                        color: isStadium ? "#fff" : "#FAF5E9",
+                                        border: isStadium ? "1px solid #E85D2F" : "1px solid rgba(255,255,255,0.14)",
+                                        fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 700, fontSize: 10, letterSpacing: "0.08em", textTransform: "uppercase",
+                                      }}
+                                      onClick={() => toggleStadium(ev.id)}
+                                    >
+                                      {isStadium ? "Going! 🏟️" : "I'm Going 🏟️"}
+                                    </Button>
+                                  )}
+                                  {wrap(
+                                    <Button
+                                      size="sm"
+                                      disabled={!user}
+                                      title={isBar && gRsvp?.bar_name ? `Watching @ ${gRsvp.bar_name}` : undefined}
+                                      className="rounded-full h-9 px-2 transition-all truncate w-full disabled:opacity-60 disabled:cursor-not-allowed"
+                                      style={{
+                                        background: isBar ? "#2DD4BF" : "transparent",
+                                        color: isBar ? "#0a0a0a" : "#FAF5E9",
+                                        border: isBar ? "1px solid #2DD4BF" : "1px solid rgba(255,255,255,0.14)",
+                                        fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 700, fontSize: 10, letterSpacing: "0.08em", textTransform: "uppercase",
+                                      }}
+                                      onClick={() => openBarPicker(ev.id)}
+                                    >
+                                      <span className="truncate">
+                                        {isBar && gRsvp?.bar_name ? `Watching @ ${gRsvp.bar_name} 🍺` : "Watch Party 🍺"}
+                                      </span>
+                                    </Button>
+                                  )}
                                 </div>
                                 <div className="pt-2" onClick={(e) => e.stopPropagation()}>
                                   <button
