@@ -361,7 +361,14 @@ export function fetchLocalSportsEvents(opts: {
   lng?: number | null;
 }): Promise<MockDbEvent[]> {
   if (USE_MOCK_DATA) {
-    return Promise.resolve(buildMockSportsEvents(opts).map(toDbShape));
+    // Lazy-import the curated LA mock events to avoid a circular dep
+    // (mockEvents.ts re-imports MockDbEvent from this file).
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const { LA_MOCK_DB_EVENTS } = require("@/data/mockEvents") as typeof import("@/data/mockEvents");
+    const metro = metroForCity(opts.city) || metroForZip(opts.zip);
+    const curated = metro === METROS.LA ? LA_MOCK_DB_EVENTS : [];
+    return Promise.resolve([...curated, ...buildMockSportsEvents(opts).map(toDbShape)]);
   }
   return fetchSeatGeekEvents(opts);
 }
+
