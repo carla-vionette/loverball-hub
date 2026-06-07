@@ -4,10 +4,12 @@ import { Button } from "@/components/ui/button";
 import { MapPin, Star, Beer, Check } from "lucide-react";
 import { LA_SPORTS_BARS, type SportsBar } from "@/data/laSportsBars";
 import { distanceMiles } from "@/lib/geocoding";
+import { MOCK_EVENT_BARS } from "@/data/mockEvents";
 
 interface Props {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  eventId?: string;
   eventTitle?: string;
   selectedBarId?: string | null;
   userLoc?: { lat: number; lng: number } | null;
@@ -19,6 +21,7 @@ const MAX_RADIUS_MI = 5;
 const WatchPartyBarModal = ({
   open,
   onOpenChange,
+  eventId,
   eventTitle,
   selectedBarId,
   userLoc,
@@ -26,19 +29,29 @@ const WatchPartyBarModal = ({
 }: Props) => {
   const [picked, setPicked] = useState<string | null>(selectedBarId ?? null);
 
-  // Compute distances from user's active area; sort nearest first.
-  // If we have a location, filter to <= 5 mi (per spec); fall back to full
-  // list if nothing is within range so members are never stuck.
+  const recommendedIds = useMemo(
+    () => new Set((eventId && MOCK_EVENT_BARS[eventId]?.map((b) => b.id)) || []),
+    [eventId]
+  );
+
+  // Compute distances, sort nearest first, optionally filter to <= 5 mi.
+  // Recommended bars for this event always float to the top regardless of
+  // distance so they remain visible.
   const bars = useMemo(() => {
     const withDist = LA_SPORTS_BARS.map((b) => ({
       ...b,
       distance: userLoc ? distanceMiles(userLoc.lat, userLoc.lng, b.lat, b.lng) : null,
+      recommended: recommendedIds.has(b.id),
     }));
-    if (!userLoc) return withDist;
-    const sorted = [...withDist].sort((a, b) => (a.distance ?? 0) - (b.distance ?? 0));
-    const near = sorted.filter((b) => (b.distance ?? Infinity) <= MAX_RADIUS_MI);
+    const sorted = [...withDist].sort((a, b) => {
+      if (a.recommended !== b.recommended) return a.recommended ? -1 : 1;
+      return (a.distance ?? 0) - (b.distance ?? 0);
+    });
+    if (!userLoc) return sorted;
+    const near = sorted.filter((b) => b.recommended || (b.distance ?? Infinity) <= MAX_RADIUS_MI);
     return near.length > 0 ? near : sorted;
-  }, [userLoc]);
+  }, [userLoc, recommendedIds]);
+
 
   const pickedBar = bars.find((b) => b.id === picked);
   const noneInRange = userLoc && bars.every((b) => (b.distance ?? Infinity) > MAX_RADIUS_MI);
@@ -180,6 +193,23 @@ const WatchPartyBarModal = ({
                       >
                         {bar.name}
                       </span>
+                      {bar.recommended && (
+                        <span
+                          className="inline-flex items-center px-1.5 py-0.5 rounded-full"
+                          style={{
+                            background: "rgba(232,93,47,0.18)",
+                            border: "1px solid rgba(232,93,47,0.45)",
+                            fontFamily: "'Space Mono', ui-monospace, monospace",
+                            fontSize: 9,
+                            color: "#E85D2F",
+                            letterSpacing: "0.12em",
+                            textTransform: "uppercase",
+                          }}
+                        >
+                          Pick for this game
+                        </span>
+                      )}
+
                       <span
                         className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full"
                         style={{

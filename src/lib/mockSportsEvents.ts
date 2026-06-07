@@ -153,6 +153,10 @@ export function buildMockSportsEvents(opts: {
   const metro = metroForCity(opts.city) || metroForZip(opts.zip);
   const out: MockSportsEvent[] = [];
   const today = new Date();
+  // Curated LA events are merged in via fetchLocalSportsEvents below so
+  // they appear before procedurally-generated ones for the LA metro.
+
+
 
   // Pro events — schedule one per league over the next ~3 weeks.
   let day = 2;
@@ -350,6 +354,8 @@ async function fetchSeatGeekEvents(opts: {
   }
 }
 
+import { LA_MOCK_DB_EVENTS } from "@/data/mockEvents";
+
 export function fetchLocalSportsEvents(opts: {
   zip?: string | null;
   city?: string | null;
@@ -357,7 +363,11 @@ export function fetchLocalSportsEvents(opts: {
   lng?: number | null;
 }): Promise<MockDbEvent[]> {
   if (USE_MOCK_DATA) {
-    return Promise.resolve(buildMockSportsEvents(opts).map(toDbShape));
+    const metro = metroForCity(opts.city) || metroForZip(opts.zip);
+    const curated = metro === METROS.LA ? LA_MOCK_DB_EVENTS : [];
+    return Promise.resolve([...curated, ...buildMockSportsEvents(opts).map(toDbShape)]);
   }
   return fetchSeatGeekEvents(opts);
 }
+
+
