@@ -5,6 +5,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Send, Loader2 } from "lucide-react";
 import { formatDistanceToNowStrict } from "date-fns";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 export const SYSTEM_PREFIX = "[[SYS]]";
 
