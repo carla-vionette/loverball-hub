@@ -741,11 +741,45 @@ const Events = () => {
             );
           })()}
 
-          {/* SPORTS FILTER — All / Pro / College / Women's / This Week */}
-          <SportsFilterBar value={sportsFilter} onChange={setSportsFilter} />
+          {/* SPORTS FILTER — All / Pro / College / Women's / This Week (with sticky My Plans chip) */}
+          <div className="sticky top-0 z-30 -mx-5 px-5 py-2" style={{ background: "rgba(10,10,10,0.92)", backdropFilter: "blur(10px)", WebkitBackdropFilter: "blur(10px)", borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
+            <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide">
+              {user && (() => {
+                const planCount = Object.keys(userRsvps).filter(id => {
+                  const s = userRsvps[id];
+                  return s && s !== "declined" && s !== "cancelled" && s !== "canceled";
+                }).length + Object.keys(gameRsvps).length;
+                const active = myPlansOnly;
+                return (
+                  <button
+                    type="button"
+                    onClick={() => setMyPlansOnly(v => !v)}
+                    className="flex items-center gap-1.5 px-3.5 py-2 rounded-full whitespace-nowrap transition-all flex-shrink-0"
+                    style={{
+                      background: active ? "#E85D2F" : "rgba(232,93,47,0.1)",
+                      color: active ? "#fff" : "#E85D2F",
+                      border: active ? "1px solid #E85D2F" : "1px solid rgba(232,93,47,0.35)",
+                      fontFamily: "'Inter', system-ui, sans-serif",
+                      fontWeight: 700,
+                      fontSize: 11,
+                      letterSpacing: "0.08em",
+                      textTransform: "uppercase",
+                    }}
+                    aria-pressed={active}
+                  >
+                    <BookmarkCheck className="w-3.5 h-3.5" />
+                    My Plans{planCount > 0 ? ` · ${planCount}` : ""}
+                  </button>
+                );
+              })()}
+              <div className="flex-1 min-w-0">
+                <SportsFilterBar value={sportsFilter} onChange={setSportsFilter} />
+              </div>
+            </div>
+          </div>
 
           {/* CATEGORY CHIPS */}
-          <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-3 -mx-5 px-5 mb-7">
+          <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-3 -mx-5 px-5 mb-7 mt-3">
             {CATEGORIES.map(c => {
               const active = category === c;
               return (
