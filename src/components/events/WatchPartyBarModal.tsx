@@ -29,17 +29,52 @@ const WatchPartyBarModal = ({
   onConfirm,
 }: Props) => {
   const [picked, setPicked] = useState<string | null>(selectedBarId ?? null);
+  const [liveBars, setLiveBars] = useState<SportsBar[] | null>(null);
+  const [loadingLive, setLoadingLive] = useState(false);
+  const [liveError, setLiveError] = useState<string | null>(null);
 
   const recommendedIds = useMemo(
     () => new Set((eventId && MOCK_EVENT_BARS[eventId]?.map((b) => b.id)) || []),
     [eventId]
   );
 
+  // Fetch live nearby sports bars from Google Places when we have user location
+  useEffect(() => {
+    if (!open || !userLoc) {
+      setLiveBars(null);
+      setLiveError(null);
+      return;
+    }
+    let cancelled = false;
+    setLoadingLive(true);
+    setLiveError(null);
+    supabase.functions
+      .invoke("nearby-sports-bars", {
+        body: { lat: userLoc.lat, lng: userLoc.lng, radiusMiles: MAX_RADIUS_MI },
+      })
+      .then(({ data, error }) => {
+        if (cancelled) return;
+        if (error || !data?.bars) {
+          setLiveError(error?.message || "Couldn't load nearby bars");
+          setLiveBars(null);
+        } else {
+          setLiveBars(data.bars as SportsBar[]);
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setLoadingLive(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [open, userLoc?.lat, userLoc?.lng]);
+
   // Compute distances, sort nearest first, optionally filter to <= 5 mi.
   // Recommended bars for this event always float to the top regardless of
   // distance so they remain visible.
   const bars = useMemo(() => {
-    const withDist = LA_SPORTS_BARS.map((b) => ({
+    const source = liveBars && liveBars.length > 0 ? liveBars : LA_SPORTS_BARS;
+    const withDist = source.map((b) => ({
       ...b,
       distance: userLoc ? distanceMiles(userLoc.lat, userLoc.lng, b.lat, b.lng) : null,
       recommended: recommendedIds.has(b.id),
@@ -51,11 +86,11 @@ const WatchPartyBarModal = ({
     if (!userLoc) return sorted;
     const near = sorted.filter((b) => b.recommended || (b.distance ?? Infinity) <= MAX_RADIUS_MI);
     return near.length > 0 ? near : sorted;
-  }, [userLoc, recommendedIds]);
+  }, [userLoc, recommendedIds, liveBars]);
 
 
   const pickedBar = bars.find((b) => b.id === picked);
-  const noneInRange = userLoc && bars.every((b) => (b.distance ?? Infinity) > MAX_RADIUS_MI);
+  const noneInRange = userLoc && !loadingLive && bars.every((b) => (b.distance ?? Infinity) > MAX_RADIUS_MI);
 
   const handleConfirm = async () => {
     if (!pickedBar) return;
