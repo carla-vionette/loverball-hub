@@ -842,11 +842,6 @@ const Events = () => {
                                   <Users className="w-3 h-3" />
                                   {gCount} {gCount === 1 ? 'member' : 'members'} going
                                 </div>
-                                {isBar && gRsvp?.bar_name && (
-                                  <p style={{ fontFamily: "'Playfair Display', serif", fontStyle: 'italic', fontSize: 12, color: '#2DD4BF', margin: 0 }}>
-                                    🍺 You're watching at {gRsvp.bar_name}
-                                  </p>
-                                )}
                                 <div className="grid grid-cols-2 gap-2 pt-2" style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }} onClick={(e) => e.stopPropagation()}>
                                   <Button
                                     size="sm"
@@ -863,7 +858,8 @@ const Events = () => {
                                   </Button>
                                   <Button
                                     size="sm"
-                                    className="rounded-full h-9 px-2 transition-all"
+                                    title={isBar && gRsvp?.bar_name ? `Watching @ ${gRsvp.bar_name}` : undefined}
+                                    className="rounded-full h-9 px-2 transition-all truncate"
                                     style={{
                                       background: isBar ? "#2DD4BF" : "transparent",
                                       color: isBar ? "#0a0a0a" : "#FAF5E9",
@@ -872,7 +868,9 @@ const Events = () => {
                                     }}
                                     onClick={() => openBarPicker(ev.id)}
                                   >
-                                    {isBar ? "Change Bar 🍺" : "Watch Party 🍺"}
+                                    <span className="truncate">
+                                      {isBar && gRsvp?.bar_name ? `Watching @ ${gRsvp.bar_name} 🍺` : "Watch Party 🍺"}
+                                    </span>
                                   </Button>
                                 </div>
                               </>
