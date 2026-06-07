@@ -443,7 +443,124 @@ const Profile = () => {
                 <ProfileInbox />
               </motion.div>
 
+              {/* ═══════════ EVENTS — Upcoming RSVPs ═══════════ */}
+              <motion.div variants={staggerItem}>
+                <div className="mb-3 flex items-end justify-between gap-3">
+                  <div className="min-w-0">
+                    <p
+                      className="text-[10px] uppercase"
+                      style={{ fontFamily: "'Space Mono', monospace", letterSpacing: "0.26em", color: "#E85D2F" }}
+                    >
+                      On your calendar
+                    </p>
+                    <h2
+                      className="leading-[0.95] mt-1.5 uppercase"
+                      style={{ fontFamily: "'Anton', Impact, sans-serif", fontWeight: 400, fontSize: "clamp(28px, 3.4vw, 38px)", color: "#FAF5E9" }}
+                    >
+                      Your <span style={{ color: PINK }}>events</span>.
+                    </h2>
+                  </div>
+                  <button
+                    onClick={() => goTo("/events")}
+                    className="flex items-center gap-1 text-[11px] uppercase tracking-widest"
+                    style={{ fontFamily: "'Inter', sans-serif", fontWeight: 700, color: PINK }}
+                  >
+                    All events <ChevronRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
 
+                {(() => {
+                  const today = new Date(); today.setHours(0, 0, 0, 0);
+                  const upcoming = visibleRsvps
+                    .filter(r => {
+                      const d = new Date(r.event.event_date);
+                      return !isNaN(d.getTime()) && d >= today;
+                    })
+                    .sort((a, b) => new Date(a.event.event_date).getTime() - new Date(b.event.event_date).getTime());
+
+                  if (upcoming.length === 0) {
+                    return (
+                      <div
+                        className="rounded-3xl p-8 text-center"
+                        style={{ background: PANEL, border: PANEL_BORDER }}
+                      >
+                        <Calendar className="w-9 h-9 mx-auto mb-3" style={{ color: "rgba(232,93,47,0.7)" }} />
+                        <p
+                          style={{ fontFamily: "'Playfair Display', serif", fontStyle: "italic", fontSize: 16, color: "rgba(250,245,233,0.7)", margin: 0 }}
+                        >
+                          No events on your calendar yet
+                        </p>
+                        <button
+                          onClick={() => goTo("/events")}
+                          className="mt-4 px-5 py-2 rounded-full text-[11px] uppercase tracking-widest"
+                          style={{ background: PINK, color: "#fff", fontFamily: "'Inter', sans-serif", fontWeight: 700 }}
+                        >
+                          Browse events
+                        </button>
+                      </div>
+                    );
+                  }
+
+                  return (
+                    <div className="space-y-2.5">
+                      {upcoming.slice(0, 6).map(r => {
+                        const d = new Date(r.event.event_date);
+                        const kindLabel =
+                          r.rsvp_kind === 'stadium' ? "Going 🏟️"
+                          : r.rsvp_kind === 'bar' ? `Watching${r.bar_name ? ` @ ${r.bar_name}` : ""} 🍺`
+                          : (r.status === 'attending' ? "Going" : r.status);
+                        const kindColor = r.rsvp_kind === 'bar' ? "#2DD4BF" : PINK;
+                        return (
+                          <button
+                            key={r.id}
+                            onClick={() => goTo(`/event/${r.event.id}`)}
+                            className="w-full flex items-center gap-3 p-3 rounded-2xl text-left transition-colors hover:bg-white/5"
+                            style={{ background: PANEL, border: PANEL_BORDER }}
+                          >
+                            <div
+                              className="flex-shrink-0 w-14 h-14 rounded-xl flex flex-col items-center justify-center"
+                              style={{ background: "rgba(232,93,47,0.12)", border: "1px solid rgba(232,93,47,0.25)" }}
+                            >
+                              <span style={{ fontFamily: "'Space Mono', monospace", fontSize: 9, letterSpacing: "0.18em", color: PINK, textTransform: "uppercase" }}>
+                                {format(d, "MMM")}
+                              </span>
+                              <span style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: 22, lineHeight: 1, color: "#FAF5E9" }}>
+                                {format(d, "dd")}
+                              </span>
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <h3
+                                className="line-clamp-1"
+                                style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: 16, color: "#FAF5E9", textTransform: "uppercase", letterSpacing: "0.01em", margin: 0 }}
+                              >
+                                {r.event.title}
+                              </h3>
+                              <div
+                                className="flex items-center gap-2 mt-1 text-[10.5px]"
+                                style={{ fontFamily: "'Space Mono', monospace", color: "rgba(250,245,233,0.55)", letterSpacing: "0.04em" }}
+                              >
+                                {r.event.event_time && (
+                                  <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{r.event.event_time.slice(0, 5)}</span>
+                                )}
+                                {(r.event.venue_name || r.event.city) && (
+                                  <span className="flex items-center gap-1 truncate"><MapPin className="w-3 h-3" />{r.event.venue_name || r.event.city}</span>
+                                )}
+                              </div>
+                              <span
+                                className="inline-block mt-1.5 px-2 py-0.5 rounded-full text-[9.5px] uppercase tracking-widest"
+                                style={{ background: `${kindColor}22`, color: kindColor, border: `1px solid ${kindColor}55`, fontFamily: "'Inter', sans-serif", fontWeight: 700 }}
+                              >
+                                {kindLabel}
+                              </span>
+                            </div>
+                            <ChevronRight className="w-4 h-4 flex-shrink-0" style={{ color: "rgba(250,245,233,0.35)" }} />
+                          </button>
+                        );
+                      })}
+                    </div>
+                  );
+                })()}
+              </motion.div>
 
             </div>
           </motion.div>
