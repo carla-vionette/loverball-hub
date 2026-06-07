@@ -474,9 +474,18 @@ const Events = () => {
       )
     : radiusFiltered;
 
-  const filtered = filteredWithDist.map(x => x.ev);
+  const myPlansFiltered = myPlansOnly
+    ? filteredWithDist.filter(({ ev: e }) => {
+        const r = userRsvps[e.id];
+        if (r && r !== "declined" && r !== "cancelled" && r !== "canceled") return true;
+        const g = gameRsvps[e.id];
+        return !!g;
+      })
+    : filteredWithDist;
+
+  const filtered = myPlansFiltered.map(x => x.ev);
   const distanceById: Record<string, number | null> = Object.fromEntries(
-    filteredWithDist.map(x => [x.ev.id, x.distance])
+    myPlansFiltered.map(x => [x.ev.id, x.distance])
   );
 
   const featured = tab === "upcoming" && upcomingEvents.length
