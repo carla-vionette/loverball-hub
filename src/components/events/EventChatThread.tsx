@@ -283,3 +283,7 @@ export default function EventChatThread({ eventId, pageSize = PAGE }: Props) {
           </Tooltip>
         </TooltipProvider>
       )}
+    </div>
+  );
+}
+
