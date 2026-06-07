@@ -132,6 +132,12 @@ const Events = () => {
   const [localSports, setLocalSports] = useState<MockDbEvent[]>([]);
   const needsZip = !!user && !homeArea?.zip && !activeArea?.zip;
 
+  // Game RSVPs (stadium / bar) — backed by external_event_rsvps. Keyed by event id (text).
+  type GameRsvp = { type: 'stadium' | 'bar'; bar_id?: string | null; bar_name?: string | null };
+  const [gameRsvps, setGameRsvps] = useState<Record<string, GameRsvp>>({});
+  const [gameCounts, setGameCounts] = useState<Record<string, number>>({});
+  const [barModalEventId, setBarModalEventId] = useState<string | null>(null);
+
   const [gateEventId, setGateEventId] = useState<string | null>(null);
   const openGate = (id: string, intent: 'yes' | 'maybe' | 'no' = 'yes') => {
     sessionStorage.setItem("postAuthRedirect", `/event/${id}`);
