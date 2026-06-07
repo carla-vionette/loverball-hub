@@ -151,6 +151,29 @@ const WatchPartyBarModal = ({
         </SheetHeader>
 
         <div className="overflow-y-auto px-5 pb-2 space-y-2 flex-1 min-h-0">
+          {loadingLive && (
+            <div className="flex items-center justify-center gap-2 py-6" style={{ color: "rgba(248,248,248,0.6)" }}>
+              <Loader2 className="w-4 h-4 animate-spin" />
+              <span style={{ fontFamily: "'Space Mono', monospace", fontSize: 10, letterSpacing: "0.18em", textTransform: "uppercase" }}>
+                Finding bars near you…
+              </span>
+            </div>
+          )}
+          {liveError && !loadingLive && (
+            <p
+              className="text-center py-3 px-4 rounded-2xl"
+              style={{
+                fontFamily: "'Playfair Display', serif",
+                fontStyle: "italic",
+                fontSize: 12,
+                color: "rgba(248,248,248,0.6)",
+                background: "rgba(232,93,47,0.06)",
+                border: "1px dashed rgba(232,93,47,0.25)",
+              }}
+            >
+              Couldn't reach Google Places — showing curated LA bars.
+            </p>
+          )}
           {noneInRange && (
             <p
               className="text-center py-3 px-4 rounded-2xl"
