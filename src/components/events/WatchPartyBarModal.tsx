@@ -1,10 +1,11 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { MapPin, Star, Beer, Check } from "lucide-react";
+import { MapPin, Star, Beer, Check, Loader2 } from "lucide-react";
 import { LA_SPORTS_BARS, type SportsBar } from "@/data/laSportsBars";
 import { distanceMiles } from "@/lib/geocoding";
 import { MOCK_EVENT_BARS } from "@/data/mockEvents";
+import { supabase } from "@/integrations/supabase/client";
 
 interface Props {
   open: boolean;
