@@ -171,10 +171,54 @@ export default function EventChatThread({ eventId, pageSize = PAGE }: Props) {
             <Loader2 className="w-4 h-4 animate-spin" style={{ color: "rgba(248,248,248,0.4)" }} />
           </div>
         ) : messages.length === 0 ? (
-          <div className="text-center py-6"
-            style={{ fontFamily: "'Playfair Display', serif", fontStyle: "italic", fontSize: 12, color: "rgba(248,248,248,0.45)" }}>
-            No chatter yet — say hi 👋
-          </div>
+          mockChat.length > 0 ? (
+            <>
+              <div className="text-center pb-1">
+                <span style={{ fontFamily: "'Space Mono', monospace", fontSize: 9, letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(248,248,248,0.35)" }}>
+                  Sample chatter
+                </span>
+              </div>
+              {mockChat.map(m => {
+                const ts = subMinutes(new Date(), m.minutes_ago).toISOString();
+                if (m.is_system) {
+                  return (
+                    <div key={m.id} className="text-center py-1">
+                      <span style={{ fontFamily: "'Playfair Display', serif", fontStyle: "italic", fontSize: 11, color: "#E85D2F", letterSpacing: "0.02em" }}>
+                        {m.message}
+                      </span>
+                    </div>
+                  );
+                }
+                return (
+                  <div key={m.id} className="flex items-start gap-2">
+                    <div className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0"
+                      style={{ background: "rgba(232,93,47,0.2)", color: "#E85D2F", fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: 11 }}>
+                      {m.user_initial}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-baseline gap-2">
+                        <span style={{ fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: 12, color: "#FAF5E9" }}>
+                          {m.user_name}
+                        </span>
+                        <span style={{ fontFamily: "'Space Mono', monospace", fontSize: 9, color: "rgba(248,248,248,0.4)" }}>
+                          {formatDistanceToNowStrict(new Date(ts), { addSuffix: true })}
+                        </span>
+                      </div>
+                      <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 13, color: "rgba(250,245,233,0.85)", margin: 0, wordBreak: "break-word" }}>
+                        {m.message}
+                      </p>
+                    </div>
+                  </div>
+                );
+              })}
+            </>
+          ) : (
+            <div className="text-center py-6"
+              style={{ fontFamily: "'Playfair Display', serif", fontStyle: "italic", fontSize: 12, color: "rgba(248,248,248,0.45)" }}>
+              No chatter yet — say hi 👋
+            </div>
+          )
+
         ) : (
           messages.map(m => {
             const isSystem = m.message.startsWith(SYSTEM_PREFIX);
