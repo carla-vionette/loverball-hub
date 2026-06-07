@@ -606,6 +606,38 @@ export type Database = {
           },
         ]
       }
+      event_chat_messages: {
+        Row: {
+          created_at: string
+          event_id: string
+          id: string
+          message: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          event_id: string
+          id?: string
+          message: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          event_id?: string
+          id?: string
+          message?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_chat_messages_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       event_comments: {
         Row: {
           created_at: string
@@ -1177,6 +1209,44 @@ export type Database = {
           waitlist_enabled?: boolean
         }
         Relationships: []
+      }
+      external_event_rsvps: {
+        Row: {
+          bar_id: string | null
+          bar_name: string | null
+          created_at: string
+          event_id: string
+          id: string
+          rsvp_type: string
+          user_id: string
+        }
+        Insert: {
+          bar_id?: string | null
+          bar_name?: string | null
+          created_at?: string
+          event_id: string
+          id?: string
+          rsvp_type: string
+          user_id: string
+        }
+        Update: {
+          bar_id?: string | null
+          bar_name?: string | null
+          created_at?: string
+          event_id?: string
+          id?: string
+          rsvp_type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "external_event_rsvps_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       feed_items: {
         Row: {
