@@ -117,6 +117,7 @@ const App = () => (
             <InstallPrompt />
             <PageTracker />
             <BetaBanner />
+            <BottomNav />
             <Suspense fallback={<PageFallback />}>
               <Routes>
                 {/* Public */}
