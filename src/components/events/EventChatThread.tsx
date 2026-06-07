@@ -43,6 +43,8 @@ export default function EventChatThread({ eventId, pageSize = PAGE }: Props) {
   const [hasMore, setHasMore] = useState(false);
   const [draft, setDraft] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
+  const mockChat = useMemo<MockChatMessage[]>(() => MOCK_EVENT_CHAT[eventId] || [], [eventId]);
+
 
   const hydrateProfiles = useCallback(async (rows: ChatRow[]) => {
     const ids = Array.from(new Set(rows.map(r => r.user_id))).filter(id => !profiles[id]);
