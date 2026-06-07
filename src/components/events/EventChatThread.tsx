@@ -1,11 +1,12 @@
-import React, { useEffect, useRef, useState, useCallback } from "react";
+import React, { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Send, Loader2 } from "lucide-react";
-import { formatDistanceToNowStrict } from "date-fns";
+import { formatDistanceToNowStrict, subMinutes } from "date-fns";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { MOCK_EVENT_CHAT, type MockChatMessage } from "@/data/mockEvents";
 
 export const SYSTEM_PREFIX = "[[SYS]]";
 
