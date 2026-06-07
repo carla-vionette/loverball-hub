@@ -193,6 +193,23 @@ const WatchPartyBarModal = ({
                       >
                         {bar.name}
                       </span>
+                      {bar.recommended && (
+                        <span
+                          className="inline-flex items-center px-1.5 py-0.5 rounded-full"
+                          style={{
+                            background: "rgba(232,93,47,0.18)",
+                            border: "1px solid rgba(232,93,47,0.45)",
+                            fontFamily: "'Space Mono', ui-monospace, monospace",
+                            fontSize: 9,
+                            color: "#E85D2F",
+                            letterSpacing: "0.12em",
+                            textTransform: "uppercase",
+                          }}
+                        >
+                          Pick for this game
+                        </span>
+                      )}
+
                       <span
                         className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full"
                         style={{
