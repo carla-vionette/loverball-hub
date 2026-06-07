@@ -83,10 +83,7 @@ const Membership = () => {
             boxShadow: "0 30px 60px -30px rgba(232,93,47,0.4)",
           }}
         >
-          <div className="flex items-baseline justify-between">
-            <Mono color={C.raspberry}>The Club</Mono>
-            <Mono color={C.raspberry}>Most popular</Mono>
-          </div>
+          <Mono color={C.raspberry}>The Club</Mono>
           <div className="mt-4 flex items-baseline gap-2">
             <span style={{ fontFamily: fonts.display, fontSize: 56, lineHeight: 1, color: C.text }}>
               {MEMBERSHIP_PRICE.currencyPrefix}{MEMBERSHIP_PRICE.amount}
