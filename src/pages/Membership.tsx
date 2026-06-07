@@ -23,39 +23,22 @@ const Mono = ({ children, color = C.muted, size = 11 }: { children: React.ReactN
   <span style={{ fontFamily: fonts.mono, fontSize: size, letterSpacing: "0.22em", textTransform: "uppercase", color, fontWeight: 600 }}>{children}</span>
 );
 
-const TIERS = [
-  {
-    name: "Free",
-    price: "$0",
-    cadence: "forever",
-    blurb: "Get a feel for the community.",
-    features: [
-      "Create a profile",
-      "Browse public events",
-      "Follow women-led channels",
-      "Read the feed",
-    ],
-    cta: "Join free",
-    highlight: false,
-  },
-  {
-    name: "The Club",
-    price: "$35",
-    cadence: "/ month",
-    blurb: "The full Loverball experience.",
-    features: [
-      "Unlimited group chats & circles",
-      "Smart fan matching",
-      "Members-only events & watch parties",
-      "RSVP priority",
-      "Full creator library",
-      "Founding-member perks",
-      "Early access to drops",
-      "VIP events & city meetups",
-    ],
-    cta: "Join The Club",
-    highlight: true,
-  },
+// ── Single source of truth for membership pricing ──
+const MEMBERSHIP_PRICE = {
+  amount: 35,
+  currencyPrefix: "$",
+  cadence: "/ month",
+} as const;
+
+const CLUB_FEATURES = [
+  "Unlimited group chats & circles",
+  "Smart fan matching",
+  "Members-only events & watch parties",
+  "RSVP priority",
+  "Full creator library",
+  "Founding-member perks",
+  "Early access to drops",
+  "VIP events & city meetups",
 ];
 
 const Membership = () => {
@@ -67,7 +50,7 @@ const Membership = () => {
     <div style={{ background: C.bg, color: C.text, fontFamily: fonts.sans }} className="min-h-screen">
       <Seo
         title="Membership — Loverball"
-        description="Free to join. Upgrade to The Club for the full members-only experience."
+        description="Join The Club for the full members-only home for women sports fans."
         path="/membership"
       />
 
@@ -83,66 +66,65 @@ const Membership = () => {
       <section className="px-5 md:px-10 pt-16 pb-12 max-w-5xl mx-auto text-center">
         <Mono color={C.raspberry}>Membership</Mono>
         <h1 className="mt-4" style={{ fontFamily: fonts.display, fontSize: "clamp(48px, 8vw, 96px)", lineHeight: 0.95, letterSpacing: "-0.01em", textTransform: "uppercase" }}>
-          Pick your pass.
+          The Club.
         </h1>
         <p className="mt-6 max-w-xl mx-auto" style={{ color: C.muted, fontSize: 17, lineHeight: 1.6 }}>
-          Start free. Upgrade when you're ready for the full members-only home for women sports fans.
+          One membership. Full access to the members-only home for women sports fans.
         </p>
       </section>
 
-      <section className="px-5 md:px-10 pb-20 max-w-6xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {TIERS.map((t) => (
-            <article
-              key={t.name}
-              className="p-8 flex flex-col"
-              style={{
-                background: t.highlight ? `linear-gradient(180deg, ${C.surfaceHi}, ${C.surface})` : C.surface,
-                border: `1px solid ${t.highlight ? C.raspberry : C.border}`,
-                borderRadius: 18,
-                boxShadow: t.highlight ? "0 30px 60px -30px rgba(232,93,47,0.4)" : "none",
-              }}
-            >
-              <div className="flex items-baseline justify-between">
-                <Mono color={t.highlight ? C.raspberry : C.muted}>{t.name}</Mono>
-                {t.highlight && <Mono color={C.raspberry}>Most popular</Mono>}
-              </div>
-              <div className="mt-4 flex items-baseline gap-2">
-                <span style={{ fontFamily: fonts.display, fontSize: 56, lineHeight: 1, color: C.text }}>{t.price}</span>
-                <span style={{ color: C.muted, fontSize: 13 }}>{t.cadence}</span>
-              </div>
-              <p className="mt-2" style={{ color: C.muted, fontSize: 14, lineHeight: 1.6 }}>{t.blurb}</p>
+      <section className="px-5 md:px-10 pb-20 max-w-2xl mx-auto">
+        <article
+          className="p-8 flex flex-col"
+          style={{
+            background: `linear-gradient(180deg, ${C.surfaceHi}, ${C.surface})`,
+            border: `1px solid ${C.raspberry}`,
+            borderRadius: 18,
+            boxShadow: "0 30px 60px -30px rgba(232,93,47,0.4)",
+          }}
+        >
+          <div className="flex items-baseline justify-between">
+            <Mono color={C.raspberry}>The Club</Mono>
+            <Mono color={C.raspberry}>Most popular</Mono>
+          </div>
+          <div className="mt-4 flex items-baseline gap-2">
+            <span style={{ fontFamily: fonts.display, fontSize: 56, lineHeight: 1, color: C.text }}>
+              {MEMBERSHIP_PRICE.currencyPrefix}{MEMBERSHIP_PRICE.amount}
+            </span>
+            <span style={{ color: C.muted, fontSize: 13 }}>{MEMBERSHIP_PRICE.cadence}</span>
+          </div>
+          <p className="mt-2" style={{ color: C.muted, fontSize: 14, lineHeight: 1.6 }}>
+            The full Loverball experience.
+          </p>
 
-              <ul className="mt-6 space-y-3 flex-1">
-                {t.features.map((f) => (
-                  <li key={f} className="flex items-start gap-3" style={{ fontSize: 14, color: C.text }}>
-                    <Check size={16} style={{ color: C.raspberry, flexShrink: 0, marginTop: 3 }} />
-                    <span>{f}</span>
-                  </li>
-                ))}
-              </ul>
+          <ul className="mt-6 space-y-3 flex-1">
+            {CLUB_FEATURES.map((f) => (
+              <li key={f} className="flex items-start gap-3" style={{ fontSize: 14, color: C.text }}>
+                <Check size={16} style={{ color: C.raspberry, flexShrink: 0, marginTop: 3 }} />
+                <span>{f}</span>
+              </li>
+            ))}
+          </ul>
 
-              <button
-                onClick={goJoin}
-                className="mt-8 w-full"
-                style={{
-                  background: t.highlight ? C.raspberry : "transparent",
-                  color: t.highlight ? "#fff" : C.text,
-                  border: t.highlight ? "none" : `1px solid ${C.borderStrong}`,
-                  fontFamily: fonts.mono,
-                  fontSize: 12,
-                  letterSpacing: "0.16em",
-                  textTransform: "uppercase",
-                  padding: "16px 24px",
-                  borderRadius: 999,
-                  fontWeight: 500,
-                }}
-              >
-                {t.cta}
-              </button>
-            </article>
-          ))}
-        </div>
+          <button
+            onClick={goJoin}
+            className="mt-8 w-full"
+            style={{
+              background: C.raspberry,
+              color: "#fff",
+              border: "none",
+              fontFamily: fonts.mono,
+              fontSize: 12,
+              letterSpacing: "0.16em",
+              textTransform: "uppercase",
+              padding: "16px 24px",
+              borderRadius: 999,
+              fontWeight: 500,
+            }}
+          >
+            JOIN THE CLUB
+          </button>
+        </article>
 
         <p className="mt-10 text-center" style={{ color: C.muted, fontSize: 13 }}>
           Cancel anytime. Questions about membership? Email{" "}
