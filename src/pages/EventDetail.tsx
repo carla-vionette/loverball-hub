@@ -478,7 +478,8 @@ const EventDetail = () => {
   // and redirects real browsers to /e/:id.
   const getSmsShareUrl = () => {
     if (!event?.id) return getShareUrl();
-    return `https://nfjavjfxgxrpvieinpdp.supabase.co/functions/v1/event-og-meta?id=${event.id}`;
+    // `v` busts iMessage/WhatsApp link-preview caches when the cover image changes.
+    return `https://nfjavjfxgxrpvieinpdp.supabase.co/functions/v1/event-og-meta?id=${event.id}&v=2`;
   };
 
   const handleShare = () => {
