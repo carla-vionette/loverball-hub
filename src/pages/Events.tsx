@@ -895,6 +895,22 @@ const Events = () => {
                                     </span>
                                   </Button>
                                 </div>
+                                <div className="pt-2" onClick={(e) => e.stopPropagation()}>
+                                  <button
+                                    type="button"
+                                    onClick={() => setOpenChatId(openChatId === ev.id ? null : ev.id)}
+                                    className="flex items-center gap-1.5 transition-opacity hover:opacity-80"
+                                    style={{ fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: 10, letterSpacing: "0.08em", textTransform: "uppercase", color: "#E85D2F" }}
+                                  >
+                                    <MessageCircle className="w-3.5 h-3.5" />
+                                    {openChatId === ev.id ? "Hide chat" : "Open event chat"}
+                                  </button>
+                                  {openChatId === ev.id && (
+                                    <div className="pt-2">
+                                      <EventChatThread eventId={ev.id} />
+                                    </div>
+                                  )}
+                                </div>
                               </>
                             );
                           }
