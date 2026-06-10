@@ -32,10 +32,10 @@ const ProfileEventsTab = ({
   onNavigate: (path: string) => void;
 }) => {
   const upcoming = rsvpEvents.filter(
-    (r) => new Date(r.event.event_date) >= new Date()
+    (r) => parseEventDate(r.event.event_date) >= new Date()
   );
   const past = rsvpEvents.filter(
-    (r) => new Date(r.event.event_date) < new Date()
+    (r) => parseEventDate(r.event.event_date) < new Date()
   );
 
   if (rsvpEvents.length === 0) {
