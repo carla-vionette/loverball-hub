@@ -77,7 +77,7 @@ const ProfileEventsTab = ({
                 </p>
                 <p className="text-xs text-muted-foreground">
                   {rsvp.event.venue_name || rsvp.event.city || "TBD"} ·{" "}
-                  {format(new Date(rsvp.event.event_date), "MMM d, yyyy")}
+                  {format(parseEventDate(rsvp.event.event_date), "MMM d, yyyy")}
                 </p>
               </div>
               <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-primary/10 text-primary capitalize shrink-0">
