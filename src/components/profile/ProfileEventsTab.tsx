@@ -3,6 +3,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { Calendar } from "lucide-react";
 import { format } from "date-fns";
 import { motion } from "framer-motion";
+import { parseEventDate } from "@/lib/eventDate";
 import { handleEventImageError, resolveEventImage } from "@/lib/eventImage";
 
 interface RSVPEvent {
@@ -31,10 +32,10 @@ const ProfileEventsTab = ({
   onNavigate: (path: string) => void;
 }) => {
   const upcoming = rsvpEvents.filter(
-    (r) => new Date(r.event.event_date) >= new Date()
+    (r) => parseEventDate(r.event.event_date) >= new Date()
   );
   const past = rsvpEvents.filter(
-    (r) => new Date(r.event.event_date) < new Date()
+    (r) => parseEventDate(r.event.event_date) < new Date()
   );
 
   if (rsvpEvents.length === 0) {
@@ -76,7 +77,7 @@ const ProfileEventsTab = ({
                 </p>
                 <p className="text-xs text-muted-foreground">
                   {rsvp.event.venue_name || rsvp.event.city || "TBD"} ·{" "}
-                  {format(new Date(rsvp.event.event_date), "MMM d, yyyy")}
+                  {format(parseEventDate(rsvp.event.event_date), "MMM d, yyyy")}
                 </p>
               </div>
               <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-primary/10 text-primary capitalize shrink-0">
