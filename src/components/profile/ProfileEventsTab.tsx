@@ -3,6 +3,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { Calendar } from "lucide-react";
 import { format } from "date-fns";
 import { motion } from "framer-motion";
+import { parseEventDate } from "@/lib/eventDate";
 import { handleEventImageError, resolveEventImage } from "@/lib/eventImage";
 
 interface RSVPEvent {
