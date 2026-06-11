@@ -85,13 +85,25 @@ function normalize(ev: SeatGeekEvent) {
   };
 }
 
+function fallback(reason: string, extra: Record<string, unknown> = {}) {
+  return new Response(
+    JSON.stringify({ events: [], fallback: true, reason, ...extra }),
+    { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+  );
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
-  if (!CLIENT_ID) {
-    return new Response(JSON.stringify({ error: "SeatGeek client_id not configured" }), {
-      status: 503, headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+  // ── Validate required env vars ───────────────────────────────────────
+  const missingEnv: string[] = [];
+  if (!CLIENT_ID) missingEnv.push("SEATGEEK_CLIENT_ID");
+  if (!SUPABASE_URL) missingEnv.push("SUPABASE_URL");
+  if (!SUPABASE_ANON) missingEnv.push("SUPABASE_ANON_KEY");
+  if (!SERVICE_ROLE) missingEnv.push("SUPABASE_SERVICE_ROLE_KEY");
+  if (missingEnv.length) {
+    console.error("seatgeek-events missing env vars:", missingEnv.join(", "));
+    return fallback("missing_env", { missing: missingEnv });
   }
 
   // ── Auth ─────────────────────────────────────────────────────────────
@@ -160,42 +172,60 @@ Deno.serve(async (req) => {
     });
   }
 
+  const params = new URLSearchParams({
+    client_id: CLIENT_ID,
+    "taxonomies.name": TAXONOMY_SLUGS,
+    "datetime_utc.gte": new Date().toISOString(),
+    sort: "datetime_local.asc",
+    per_page: String(perPage),
+    range,
+  });
+  if (hasZip) params.set("postal_code", zip);
+  else { params.set("lat", lat!); params.set("lon", lng!); }
+
+  // Redact client_id from any logged URL
+  const safeParams = new URLSearchParams(params);
+  safeParams.set("client_id", "***");
+  const safeUrl = `${BASE}?${safeParams.toString()}`;
+
+  let upstream: Response;
   try {
-    const params = new URLSearchParams({
-      client_id: CLIENT_ID,
-      "taxonomies.name": TAXONOMY_SLUGS,
-      "datetime_utc.gte": new Date().toISOString(),
-      sort: "datetime_local.asc",
-      per_page: String(perPage),
-      range,
-    });
-    if (hasZip) params.set("postal_code", zip);
-    else { params.set("lat", lat!); params.set("lon", lng!); }
-
-    const upstream = await fetch(`${BASE}?${params.toString()}`);
-    if (!upstream.ok) {
-      const body = await upstream.text();
-      console.error("seatgeek upstream", upstream.status, body.slice(0, 200));
-      return new Response(JSON.stringify({ error: "Upstream error", status: upstream.status }), {
-        status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-    const json = await upstream.json();
-    const events = (json.events || [])
-      .map(normalize)
-      .filter(Boolean);
-
-    return new Response(JSON.stringify({ events }), {
-      headers: {
-        ...corsHeaders,
-        "Content-Type": "application/json",
-        "Cache-Control": "public, max-age=120, s-maxage=600",
-      },
-    });
+    upstream = await fetch(`${BASE}?${params.toString()}`);
   } catch (err) {
-    console.error("seatgeek-events error:", err);
-    return new Response(JSON.stringify({ error: "Internal error" }), {
-      status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    console.error("seatgeek-events network error", { url: safeUrl, error: String(err) });
+    return fallback("network_error");
   }
+
+  if (!upstream.ok) {
+    const text = await upstream.text().catch(() => "");
+    let parsed: unknown = null;
+    try { parsed = JSON.parse(text); } catch { /* not json */ }
+    console.error("seatgeek upstream non-200", {
+      url: safeUrl,
+      status: upstream.status,
+      body: text.slice(0, 500),
+      parsed,
+    });
+    return fallback("upstream_error", { status: upstream.status, details: parsed });
+  }
+
+  let json: any;
+  try {
+    json = await upstream.json();
+  } catch (err) {
+    console.error("seatgeek-events JSON parse error", { url: safeUrl, error: String(err) });
+    return fallback("parse_error");
+  }
+
+  const events = Array.isArray(json?.events)
+    ? json.events.map(normalize).filter(Boolean)
+    : [];
+
+  return new Response(JSON.stringify({ events }), {
+    headers: {
+      ...corsHeaders,
+      "Content-Type": "application/json",
+      "Cache-Control": "public, max-age=120, s-maxage=600",
+    },
+  });
 });
