@@ -8,6 +8,7 @@ import loverballLogo from "@/assets/loverball-logo-black.png";
 import WelcomeSplash from "@/components/WelcomeSplash";
 import { C, fonts } from "@/lib/editorialTheme";
 import { isAuthEmailRateLimitError, parseRetryAfterSeconds } from "@/lib/authErrors";
+import { lovable } from "@/integrations/lovable";
 
 type AuthMode = "email" | "sent" | "password" | "reset_sent" | "reset_password";
 
