@@ -12,7 +12,7 @@ import { supabase } from "@/integrations/supabase/client";
 // Flip to `false` to hit the live SeatGeek proxy edge function instead of
 // returning mock metro fixtures. Requires the SEATGEEK_CLIENT_ID secret
 // to be configured on the seatgeek-events function.
-export const USE_MOCK_DATA = true;
+export const USE_MOCK_DATA = false;
 
 export type SportKind = "pro" | "college";
 export type League =
