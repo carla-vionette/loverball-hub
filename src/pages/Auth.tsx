@@ -368,6 +368,25 @@ const Auth = () => {
     }
   };
 
+  const handleOAuth = async (provider: "google" | "apple") => {
+    setLoading(true);
+    try {
+      const result = await lovable.auth.signInWithOAuth(provider, {
+        redirect_uri: emailRedirectTo,
+      });
+      if (result.error) {
+        toast({ title: `Couldn't sign in with ${provider}`, description: result.error.message ?? String(result.error), variant: "destructive" });
+        setLoading(false);
+        return;
+      }
+      if (result.redirected) return;
+      navigate(postAuthPath);
+    } catch (err: any) {
+      toast({ title: `Couldn't sign in with ${provider}`, description: err?.message ?? String(err), variant: "destructive" });
+      setLoading(false);
+    }
+  };
+
   const gradientBg = `radial-gradient(circle at 30% 20%, ${C.raspberry}22, transparent 60%), radial-gradient(circle at 70% 80%, ${C.pink}22, transparent 60%)`;
 
   const pageBg: React.CSSProperties = {
