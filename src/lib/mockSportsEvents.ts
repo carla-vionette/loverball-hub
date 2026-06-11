@@ -343,13 +343,16 @@ async function fetchSeatGeekEvents(opts: {
       body: params,
     });
     if (error) {
-      console.warn("seatgeek-events invoke failed", error.message);
+      console.warn("[seatgeek] invoke failed:", error.message);
       return [];
     }
-    const events = (data?.events || []) as SeatGeekProxyEvent[];
-    return events.map(liveToDbShape);
+    if (data?.fallback) {
+      console.warn("[seatgeek] fallback response:", data.reason, data);
+    }
+    const events = Array.isArray(data?.events) ? (data.events as SeatGeekProxyEvent[]) : [];
+    return events.map(liveToDbShape).filter(Boolean) as MockDbEvent[];
   } catch (err) {
-    console.warn("seatgeek-events network error", err);
+    console.warn("[seatgeek] network error:", err);
     return [];
   }
 }
