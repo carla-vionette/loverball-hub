@@ -1104,6 +1104,70 @@ const Events = () => {
             })}
           </div>
 
+          {/* ACTIVE FILTERS + RESULT COUNT */}
+          {(() => {
+            const presetLabels: Record<DatePreset, string> = {
+              tonight: "Tonight", weekend: "This Weekend", "7d": "Next 7 days", "30d": "Next 30 days", all: "All upcoming",
+            };
+            const discoverLabels: Record<DiscoverKey, string> = {
+              all: "All", tonight: "Tonight", weekend: "This Weekend",
+              womens: "Women's Sports", watch: "Watch Parties", solo: "Solo-Friendly", community: "Community",
+            };
+            const pills: { key: string; label: string; clear: () => void }[] = [];
+            if (tab === "upcoming" && datePreset !== "30d") pills.push({ key: "date", label: presetLabels[datePreset], clear: () => setDatePreset("30d") });
+            if (category !== "All") pills.push({ key: "cat", label: CATEGORY_LABELS[category] || category, clear: () => setCategory("All") });
+            if (sportsFilter !== "all") pills.push({ key: "sport", label: sportsFilter === "pro" ? "Pro" : sportsFilter === "college" ? "College" : sportsFilter === "womens" ? "Women's" : "This Week", clear: () => setSportsFilter("all") });
+            if (discover !== "all") pills.push({ key: "disc", label: discoverLabels[discover], clear: () => setDiscover("all") });
+            if (searchQuery.trim()) pills.push({ key: "q", label: `"${searchQuery.trim()}"`, clear: () => setSearchQuery("") });
+            if (myPlansOnly) pills.push({ key: "plans", label: "My Plans", clear: () => setMyPlansOnly(false) });
+
+            const totalUpcoming = upcomingEvents.length;
+            const shown = filtered.length;
+            const radiusNote = activeArea && radius !== "national"
+              ? ` · within ${radius} mi of ${activeArea.city || activeArea.zip || "your area"}`
+              : activeArea
+                ? ` · ${activeArea.city || activeArea.zip || "your area"}`
+                : "";
+
+            return (
+              <div className="mb-5 space-y-3">
+                {pills.length > 0 && (
+                  <div className="flex flex-wrap gap-2">
+                    {pills.map(p => (
+                      <button
+                        key={p.key}
+                        onClick={p.clear}
+                        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full transition-all"
+                        style={{
+                          background: "rgba(232,93,47,0.12)", border: "1px solid rgba(232,93,47,0.4)",
+                          color: "#E85D2F", fontFamily: "'Inter', system-ui, sans-serif",
+                          fontWeight: 700, fontSize: 10, letterSpacing: "0.08em", textTransform: "uppercase",
+                        }}
+                        aria-label={`Remove filter: ${p.label}`}
+                      >
+                        {p.label} <span aria-hidden style={{ opacity: 0.7 }}>×</span>
+                      </button>
+                    ))}
+                    <button
+                      onClick={() => { setDatePreset("30d"); setCategory("All"); setSportsFilter("all"); setDiscover("all"); setSearchQuery(""); setMyPlansOnly(false); }}
+                      className="inline-flex items-center px-3 py-1 rounded-full"
+                      style={{
+                        background: "transparent", border: "1px solid rgba(255,255,255,0.12)",
+                        color: "rgba(248,248,248,0.65)", fontFamily: "'Inter', system-ui, sans-serif",
+                        fontWeight: 700, fontSize: 10, letterSpacing: "0.08em", textTransform: "uppercase",
+                      }}
+                    >
+                      Clear all
+                    </button>
+                  </div>
+                )}
+                <p style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 11, color: "rgba(248,248,248,0.55)", letterSpacing: "0.04em", margin: 0 }}>
+                  Showing <span style={{ color: "#FAF5E9", fontWeight: 700 }}>{shown}</span> of {totalUpcoming} upcoming events{radiusNote}
+                </p>
+              </div>
+            );
+          })()}
+
           {/* EVENTS GRID */}
           {filtered.length === 0 ? (
             <div className="text-center py-20 space-y-4 rounded-3xl"
@@ -1115,16 +1179,25 @@ const Events = () => {
               <h2 style={{ fontFamily: "'Playfair Display', serif", fontStyle: "italic", fontWeight: 500, fontSize: 28, color: "#FFFFFF", letterSpacing: "-0.02em", margin: 0 }}>
                 {searchQuery.trim()
                   ? "No events match your search"
-                  : tab === "upcoming" ? "No upcoming events" : "No past events"}
+                  : tab === "upcoming" ? "Nothing in this window" : "No past events"}
               </h2>
               <p className="max-w-sm mx-auto"
                 style={{ fontFamily: "'Playfair Display', serif", fontStyle: "italic", fontSize: 14, color: "rgba(248,248,248,0.55)" }}>
                 {searchQuery.trim()
                   ? "Try a different keyword or city."
                   : tab === "upcoming"
-                    ? "Curated invitations drop weekly. Stay close."
+                    ? "Widen the date range or clear a filter to see more of the schedule."
                     : "Recaps will appear here after the lights come up."}
               </p>
+              {tab === "upcoming" && (
+                <Button
+                  onClick={() => { setDatePreset("all"); setCategory("All"); setSportsFilter("all"); setDiscover("all"); setSearchQuery(""); setMyPlansOnly(false); }}
+                  className="rounded-full h-10 px-5"
+                  style={{ background: "#E85D2F", color: "#fff", fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: 11, letterSpacing: "0.1em", textTransform: "uppercase" }}
+                >
+                  See all upcoming
+                </Button>
+              )}
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
