@@ -1,27 +1,81 @@
 import { useEffect, useState } from "react";
-import { Sparkles, BarChart3, Heart } from "lucide-react";
+import { Sparkles, BarChart3, Heart, MapPin } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 
 export type FanMode = {
   womenFirst: boolean;
   statsMode: boolean;
   vibesMode: boolean;
+  localMode: boolean;
 };
 
-const STORAGE_KEY = "lb_fan_mode_v1";
-const DEFAULT: FanMode = { womenFirst: true, statsMode: false, vibesMode: true };
+const STORAGE_KEY = "lb_fan_mode_v2";
+const DEFAULT: FanMode = { womenFirst: true, statsMode: false, vibesMode: true, localMode: true };
+
+// Map between FanMode booleans and the `profiles.fan_modes text[]` column.
+const MODE_KEYS: Record<keyof FanMode, string> = {
+  womenFirst: "womens_first",
+  statsMode: "stats",
+  vibesMode: "vibes",
+  localMode: "local",
+};
+const modeToArray = (m: FanMode): string[] =>
+  (Object.keys(MODE_KEYS) as (keyof FanMode)[]).filter((k) => m[k]).map((k) => MODE_KEYS[k]);
+const arrayToMode = (rows: string[] | null | undefined): FanMode => {
+  const set = new Set(rows ?? []);
+  return {
+    womenFirst: set.has("womens_first"),
+    statsMode:  set.has("stats"),
+    vibesMode:  set.has("vibes"),
+    localMode:  set.has("local"),
+  };
+};
 
 export function useFanMode(): [FanMode, (next: Partial<FanMode>) => void] {
+  const { user } = useAuth();
   const [mode, setMode] = useState<FanMode>(DEFAULT);
+
+  // Hydrate from localStorage immediately, then from DB once user is known.
   useEffect(() => {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) setMode({ ...DEFAULT, ...JSON.parse(raw) });
-    } catch {}
+    } catch {/* ignore */}
   }, []);
+
+  useEffect(() => {
+    if (!user) return;
+    let cancelled = false;
+    (async () => {
+      const { data } = await supabase
+        .from("profiles")
+        .select("fan_modes")
+        .eq("id", user.id)
+        .maybeSingle();
+      if (cancelled) return;
+      // If the DB has any value at all, treat it as source of truth.
+      if (data?.fan_modes && Array.isArray(data.fan_modes) && data.fan_modes.length > 0) {
+        const next = arrayToMode(data.fan_modes as string[]);
+        setMode(next);
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(next)); } catch {/* ignore */}
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [user?.id]);
+
   const update = (next: Partial<FanMode>) => {
     setMode((prev) => {
       const merged = { ...prev, ...next };
-      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(merged)); } catch {}
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(merged)); } catch {/* ignore */}
+      // Fire-and-forget DB sync — never block the UI on the round-trip.
+      if (user) {
+        supabase
+          .from("profiles")
+          .update({ fan_modes: modeToArray(merged) })
+          .eq("id", user.id)
+          .then(({ error }) => { if (error) console.warn("[fanMode] sync failed:", error.message); });
+      }
       return merged;
     });
   };
@@ -89,6 +143,13 @@ const PersonalizationControls = () => {
         icon={Sparkles}
         label="Vibes mode"
         hint="Stories, watch parties and culture lead the feed."
+      />
+      <Toggle
+        active={mode.localMode}
+        onClick={() => update({ localMode: !mode.localMode })}
+        icon={MapPin}
+        label="Local mode"
+        hint="Prioritize plans, bars and games near your city."
       />
     </div>
   );
