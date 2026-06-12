@@ -141,7 +141,7 @@ const LEAGUE_SPORT: Record<League, string> = {
   NFL: "football", NBA: "basketball", WNBA: "basketball",
   NWSL: "soccer", MLS: "soccer", MLB: "baseball", NHL: "hockey",
   NCAAF: "football", NCAAM: "basketball", NCAAW: "basketball",
-  NCAA_SOCCER: "soccer",
+  NCAA_SOCCER: "soccer", FIFA_WC: "soccer",
 };
 
 const WOMENS: League[] = ["WNBA", "NWSL", "NCAAW"];
