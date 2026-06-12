@@ -341,15 +341,15 @@ const Events = () => {
     }
   }, [user]);
 
-  // Auto-populate local pro + college games whenever the active area changes.
-  // Stays mock-backed until USE_MOCK_DATA is flipped in mockSportsEvents.ts.
+  // Auto-populate local pro + college + World Cup games. World Cup matches
+  // are surfaced nationwide via the edge function, so we always fetch — even
+  // when the user hasn't set a ZIP yet (defaults to LA on the server side).
   useEffect(() => {
     let cancelled = false;
     const zip = activeArea?.zip || null;
     const city = activeArea?.city || null;
     const lat = activeArea?.lat ?? null;
     const lng = activeArea?.lng ?? null;
-    if (!zip && !city && lat == null) { setLocalSports([]); return; }
     fetchLocalSportsEvents({ zip, city, lat, lng }).then((rows) => {
       if (!cancelled) setLocalSports(rows);
     });
