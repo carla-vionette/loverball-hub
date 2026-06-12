@@ -6,7 +6,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { format } from "date-fns";
-import { ArrowLeft, MapPin, Send, Users } from "lucide-react";
+import { ArrowLeft, Calendar as CalendarIcon, MapPin, Send, Share2, Tv, Users } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useGameBackNavigation } from "@/hooks/useGameBackNavigation";
@@ -16,6 +16,7 @@ import Seo from "@/components/Seo";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
+import WatchSpotsPanel from "@/components/game/WatchSpotsPanel";
 
 const BG = "#0a0a0a";
 const PINK = "#E85D2F";
