@@ -942,8 +942,6 @@ const Events = () => {
             <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-1 -mx-5 px-5">
               {([
                 { k: "all" as const, label: "All", icon: Sparkles },
-                { k: "tonight" as const, label: "Tonight", icon: Moon },
-                { k: "weekend" as const, label: "This Weekend", icon: Sun },
                 { k: "womens" as const, label: "Women's Sports", icon: Heart },
                 { k: "watch" as const, label: "Watch Parties", icon: Users },
                 { k: "solo" as const, label: "Solo-Friendly", icon: Coffee },
