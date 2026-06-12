@@ -1,6 +1,7 @@
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Seo } from "@/components/Seo";
-import { Instagram, ArrowRight, ArrowUpRight, MapPin, Users, Tv, Activity, Check } from "lucide-react";
+import { Instagram, ArrowRight, ArrowUpRight, Users, Tv, Activity, Check } from "lucide-react";
 import heroImage from "@/assets/hero-women-new.png";
 import loverballWordmark from "@/assets/loverball-wordmark.png.asset.json";
 
@@ -36,8 +37,6 @@ const fonts = {
 
 const MEMBERSHIP_PRICE = 35;
 
-const TAGLINE =
-  "Loverball is a location-aware fan platform that helps women's sports fans connect online and in real life, discover what's happening nearby, know where to watch, and stay on top of live scores and team updates.";
 
 /* ---------- Atoms ---------- */
 
@@ -65,6 +64,13 @@ const Mono = ({
 const Index = () => {
   const navigate = useNavigate();
   const goJoin = () => navigate("/auth?mode=signup");
+  const [zip, setZip] = useState("");
+  const handleZipSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const clean = zip.replace(/\D/g, "").slice(0, 5);
+    if (clean.length === 5) navigate(`/events?zip=${clean}`);
+  };
+
 
   return (
     <div style={{ background: C.cream, color: C.ink, fontFamily: fonts.sans }}>
@@ -108,20 +114,7 @@ const Index = () => {
           borderBottom: `1px solid ${C.inkRule}`,
         }}
       >
-        <div className="flex items-center gap-3">
-          <button
-            onClick={goJoin}
-            style={{
-              background: C.accent, color: "#fff",
-              fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.2em",
-              textTransform: "uppercase", padding: "12px 22px", borderRadius: 999,
-              fontWeight: 600,
-              boxShadow: "0 8px 24px -10px rgba(232,93,38,0.6)",
-            }}
-            className="hover:-translate-y-0.5 transition-transform"
-          >
-            Join
-          </button>
+        <div className="flex items-center gap-4 md:gap-6">
           <Link
             to="/auth?mode=signin"
             style={{
@@ -132,6 +125,19 @@ const Index = () => {
           >
             Sign In
           </Link>
+          <button
+            onClick={goJoin}
+            style={{
+              background: C.accent, color: "#fff",
+              fontFamily: fonts.mono, fontSize: 12, letterSpacing: "0.2em",
+              textTransform: "uppercase", padding: "14px 26px", borderRadius: 999,
+              fontWeight: 600,
+              boxShadow: "0 10px 28px -10px rgba(232,93,38,0.7)",
+            }}
+            className="hover:-translate-y-0.5 transition-transform"
+          >
+            Join the Club
+          </button>
         </div>
         <div className="hidden md:flex items-center gap-9">
           {[
@@ -191,69 +197,30 @@ const Index = () => {
                 style={{ filter: "brightness(0) invert(1)" }}
               />
 
-              {/* Location pill */}
-              <div className="mb-8 lb-rise lb-delay-1">
-                <span
-                  className="inline-flex items-center gap-2"
-                  style={{
-                    background: `${C.accent}1A`,
-                    color: C.accent,
-                    border: `1px solid ${C.accent}66`,
-                    fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.22em",
-                    textTransform: "uppercase", padding: "8px 14px", borderRadius: 999,
-                    fontWeight: 600,
-                  }}
-                >
-                  <span className="relative flex w-2 h-2">
-                    <span
-                      className="absolute inline-flex w-full h-full rounded-full"
-                      style={{ background: C.accent, animation: "lb-pulse-dot 2s infinite" }}
-                    />
-                    <span className="relative inline-flex w-2 h-2 rounded-full" style={{ background: C.accent }} />
-                  </span>
-                  <MapPin size={12} strokeWidth={2.5} />
-                  Find fans near you
-                </span>
-              </div>
-
-              {/* Editorial headline — mixed serif italic + sans display */}
+              {/* Editorial headline */}
               <h1
                 className="lb-rise lb-delay-2"
-                style={{ lineHeight: 0.9, letterSpacing: "-0.035em" }}
+                style={{ lineHeight: 0.95, letterSpacing: "-0.035em" }}
               >
+                <span
+                  style={{
+                    display: "block",
+                    fontFamily: fonts.serif, fontWeight: 400,
+                    fontSize: "clamp(44px, 7vw, 112px)",
+                    color: C.cream,
+                  }}
+                >
+                  Sports are better
+                </span>
                 <span
                   style={{
                     display: "block",
                     fontFamily: fonts.serif, fontStyle: "italic", fontWeight: 400,
                     fontSize: "clamp(44px, 7vw, 112px)",
-                    color: C.cream,
-                  }}
-                >
-                  Her game,
-                </span>
-                <span
-                  style={{
-                    display: "block",
-                    fontFamily: fonts.display, fontWeight: 400,
-                    fontSize: "clamp(56px, 9.5vw, 152px)",
-                    textTransform: "uppercase",
-                    color: C.cream,
-                    letterSpacing: "-0.02em",
-                  }}
-                >
-                  her city,
-                </span>
-                <span
-                  style={{
-                    display: "block",
-                    fontFamily: fonts.display, fontWeight: 400,
-                    fontSize: "clamp(56px, 9.5vw, 152px)",
-                    textTransform: "uppercase",
                     color: C.accent,
-                    letterSpacing: "-0.02em",
                   }}
                 >
-                  her crew.
+                  with the right people.
                 </span>
               </h1>
 
@@ -261,10 +228,12 @@ const Index = () => {
                 className="mt-8 max-w-xl lb-rise lb-delay-3"
                 style={{ fontSize: 17, lineHeight: 1.6, color: C.inkMuted }}
               >
-                {TAGLINE}
+                Loverball is the club for women's sports fans — connect in LA,
+                find watch parties nearby, and never miss a score.{" "}
+                <span style={{ color: C.cream }}>Free to join.</span>
               </p>
 
-              <div className="mt-10 flex flex-wrap items-center gap-5 lb-rise lb-delay-4">
+              <div className="mt-10 flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-5 lb-rise lb-delay-4">
                 <button
                   onClick={goJoin}
                   style={{
@@ -274,21 +243,61 @@ const Index = () => {
                     fontWeight: 600,
                     boxShadow: "0 14px 36px -14px rgba(232,93,38,0.7)",
                   }}
-                  className="hover:-translate-y-0.5 transition-transform"
+                  className="hover:-translate-y-0.5 transition-transform w-full sm:w-auto"
                 >
-                  Join the Community
+                  Join the Club →
                 </button>
-                <Link
-                  to="/events"
+                <form
+                  onSubmit={handleZipSubmit}
+                  className="flex items-stretch w-full sm:w-auto"
                   style={{
-                    fontFamily: fonts.mono, fontSize: 12, letterSpacing: "0.2em",
-                    textTransform: "uppercase", color: C.cream,
-                    borderBottom: `1px solid ${C.cream}`, paddingBottom: 4,
+                    border: `1px solid ${C.inkRule}`,
+                    borderRadius: 999,
+                    background: "transparent",
+                    overflow: "hidden",
                   }}
-                  className="inline-flex items-center gap-2 hover:opacity-70"
                 >
-                  See what's nearby <ArrowRight size={12} />
-                </Link>
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    pattern="\d{5}"
+                    maxLength={5}
+                    value={zip}
+                    onChange={(e) => setZip(e.target.value.replace(/\D/g, "").slice(0, 5))}
+                    placeholder="90026"
+                    aria-label="ZIP code"
+                    style={{
+                      background: "transparent",
+                      color: C.cream,
+                      fontFamily: fonts.mono,
+                      fontSize: 12,
+                      letterSpacing: "0.2em",
+                      textTransform: "uppercase",
+                      padding: "16px 20px",
+                      outline: "none",
+                      border: "none",
+                      width: 110,
+                    }}
+                  />
+                  <button
+                    type="submit"
+                    style={{
+                      background: "transparent",
+                      color: C.cream,
+                      fontFamily: fonts.mono, fontSize: 12, letterSpacing: "0.2em",
+                      textTransform: "uppercase", padding: "16px 22px",
+                      borderLeft: `1px solid ${C.inkRule}`,
+                      fontWeight: 600,
+                    }}
+                    className="hover:opacity-70 transition-opacity inline-flex items-center gap-2"
+                  >
+                    Find your fans →
+                  </button>
+                </form>
+              </div>
+
+              <div className="mt-8 lb-rise lb-delay-4">
+                <Mono color={C.inkMuted}>1,000+ Women on the list · 3 Sold-out LA events</Mono>
               </div>
             </div>
 
@@ -394,6 +403,18 @@ const Index = () => {
                 Connect. Watch.<br />
                 <span style={{ fontStyle: "italic", color: C.accent }}>Score.</span>
               </h2>
+              <p
+                className="mt-6"
+                style={{
+                  fontFamily: fonts.serif,
+                  fontStyle: "italic",
+                  fontSize: "clamp(22px, 2.4vw, 32px)",
+                  lineHeight: 1.2,
+                  color: C.inkSoft,
+                }}
+              >
+                Your game. Your city. <span style={{ color: C.accent }}>Your crew.</span>
+              </p>
             </div>
             <Mono color={C.creamMuted}>Three pillars</Mono>
           </div>
@@ -604,7 +625,7 @@ const Index = () => {
                 <span style={{ fontStyle: "italic" }}>Everything in.</span>
               </h2>
               <p className="mt-8 max-w-md" style={{ color: C.inkSoft, fontSize: 17, lineHeight: 1.55 }}>
-                The Club is our full members-only home. Location-aware matching,
+                Joining Loverball is free. The Club is everything in — location-aware matching,
                 unlimited group chats, members-only events, RSVP priority, and the
                 founding-member perks while we're still small.
               </p>
@@ -616,11 +637,11 @@ const Index = () => {
                 style={{ background: C.ink, color: C.cream, borderRadius: 24 }}
               >
                 <div className="flex items-start justify-between gap-4 mb-10">
-                  <Mono color={C.accent}>The Club</Mono>
+                  <Mono color={C.accent}>The Club — Founding 100</Mono>
                   <Mono color={C.inkMuted} size={10}>Monthly</Mono>
                 </div>
 
-                <div className="flex items-baseline gap-3">
+                <div className="flex items-baseline gap-4 flex-wrap">
                   <span
                     style={{
                       fontFamily: fonts.display,
@@ -630,11 +651,25 @@ const Index = () => {
                       letterSpacing: "-0.02em",
                     }}
                   >
-                    ${MEMBERSHIP_PRICE}
+                    $25
                   </span>
                   <span style={{ fontFamily: fonts.serif, fontStyle: "italic", fontSize: 22, color: C.inkMuted }}>
                     / month
                   </span>
+                  <span
+                    style={{
+                      fontFamily: fonts.display,
+                      fontSize: 40,
+                      color: C.inkMuted,
+                      textDecoration: "line-through",
+                      letterSpacing: "-0.02em",
+                    }}
+                  >
+                    ${MEMBERSHIP_PRICE}
+                  </span>
+                </div>
+                <div className="mt-4">
+                  <Mono color={C.accent}>Founding rate · Locked for life · First 100 members</Mono>
                 </div>
 
                 <div className="mt-10 pt-8" style={{ borderTop: `1px solid ${C.inkRule}` }}>
@@ -669,7 +704,7 @@ const Index = () => {
                     }}
                     className="hover:-translate-y-0.5 transition-transform"
                   >
-                    Join The Club
+                    Join the Club
                   </button>
                   <Link
                     to="/membership"
@@ -704,21 +739,22 @@ const Index = () => {
               color: C.ink,
             }}
           >
-            Sports are better<br />
-            <span style={{ fontStyle: "italic", color: C.accent }}>with the right people.</span>
+            Your game. Your city.<br />
+            <span style={{ fontStyle: "italic", color: C.accent }}>Your crew.</span>
           </h2>
           <div className="mt-12 flex flex-wrap gap-4 justify-center">
             <button
               onClick={goJoin}
               style={{
-                background: C.ink, color: C.cream,
+                background: C.accent, color: "#fff",
                 fontFamily: fonts.mono, fontSize: 12, letterSpacing: "0.2em",
                 textTransform: "uppercase", padding: "20px 36px", borderRadius: 999,
-                fontWeight: 500,
+                fontWeight: 600,
+                boxShadow: "0 14px 36px -16px rgba(232,93,38,0.7)",
               }}
-              className="hover:bg-[#2A2A2A] transition-colors"
+              className="hover:-translate-y-0.5 transition-transform"
             >
-              Become a Member
+              Join the Club →
             </button>
             <Link
               to="/events"
@@ -729,7 +765,7 @@ const Index = () => {
               }}
               className="inline-flex items-center gap-2 hover:bg-black/5"
             >
-              See Upcoming Events <ArrowUpRight size={14} />
+              See upcoming events ↗
             </Link>
           </div>
         </div>
