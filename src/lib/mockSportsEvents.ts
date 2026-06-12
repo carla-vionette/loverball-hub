@@ -286,6 +286,12 @@ interface SeatGeekProxyEvent {
   image_url?: string | null;
 }
 
+interface SeatGeekProxyResponse {
+  events?: unknown;
+  fallback?: boolean;
+  reason?: string;
+}
+
 const LEAGUE_SPORT_FALLBACK: Record<string, string> = {
   NFL: "football", NBA: "basketball", WNBA: "basketball",
   NWSL: "soccer", MLS: "soccer", MLB: "baseball", NHL: "hockey",
@@ -323,6 +329,24 @@ function liveToDbShape(e: SeatGeekProxyEvent): MockDbEvent {
   };
 }
 
+function isSeatGeekProxyEvent(value: unknown): value is SeatGeekProxyEvent {
+  if (!value || typeof value !== "object") return false;
+  const candidate = value as Record<string, unknown>;
+  return typeof candidate.id === "string"
+    && typeof candidate.title === "string"
+    && typeof candidate.date_time === "string"
+    && typeof candidate.league === "string"
+    && typeof candidate.sport_kind === "string"
+    && typeof candidate.is_womens === "boolean";
+}
+
+function extractSeatGeekEvents(payload: unknown): SeatGeekProxyEvent[] {
+  if (!payload || typeof payload !== "object") return [];
+  const response = payload as SeatGeekProxyResponse;
+  if (!Array.isArray(response.events)) return [];
+  return response.events.filter(isSeatGeekProxyEvent);
+}
+
 async function fetchSeatGeekEvents(opts: {
   zip?: string | null;
   lat?: number | null;
@@ -350,8 +374,8 @@ async function fetchSeatGeekEvents(opts: {
     if (data?.fallback) {
       console.warn("[seatgeek] fallback response:", data.reason, data);
     }
-    const events = Array.isArray(data?.events) ? (data.events as SeatGeekProxyEvent[]) : [];
-    return events.map(liveToDbShape).filter(Boolean) as MockDbEvent[];
+    const events = extractSeatGeekEvents(data);
+    return events.map(liveToDbShape);
   } catch (err) {
     console.warn("[seatgeek] network error:", err);
     return [];
