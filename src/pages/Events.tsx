@@ -478,7 +478,7 @@ const Events = () => {
 
   // Merge mock external sports events into the same pipeline so they get
   // ZIP/radius filtering, color-coded dots, and chronological sort for free.
-  const combinedEvents = [...events, ...(localSports as unknown as DbEvent[])];
+  const combinedEvents = [...(Array.isArray(events) ? events : []), ...((Array.isArray(localSports) ? localSports : []) as unknown as DbEvent[])];
   const upcomingEvents = combinedEvents.filter(e => parseEventDate(e.event_date) >= cutoff);
   const pastEvents = combinedEvents.filter(e => parseEventDate(e.event_date) < cutoff).reverse();
 
