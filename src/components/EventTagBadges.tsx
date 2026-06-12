@@ -17,7 +17,8 @@ interface Props {
 }
 
 const EventTagBadges = ({ tags, size = "default", onTagClick }: Props) => {
-  if (!tags || tags.length === 0) return null;
+  const safeTags = Array.isArray(tags) ? tags : [];
+  if (safeTags.length === 0) return null;
 
   return (
     <div className="flex flex-wrap gap-1.5">
