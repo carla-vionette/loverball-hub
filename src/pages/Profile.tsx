@@ -30,6 +30,11 @@ import MySportsFeed from "@/components/MySportsFeed";
 import LiveScores from "@/components/LiveScores";
 import ProfileScores from "@/components/ProfileScores";
 import ProfileWhereToWatch from "@/components/ProfileWhereToWatch";
+import ForYouTonight from "@/components/profile/ForYouTonight";
+import SmartEvents from "@/components/profile/SmartEvents";
+import SuggestedFans from "@/components/profile/SuggestedFans";
+import PersonalizationControls from "@/components/profile/PersonalizationControls";
+
 
 
 // Types moved to @/hooks/useProfileData
