@@ -1211,8 +1211,53 @@ const Events = () => {
                 const d = parseEventDate(ev.event_date);
                 const dist = distanceById[ev.id];
 
+                // Schedule view: emit a sticky-looking date header before the first
+                // card of each new date, and hide cards within collapsed sections.
+                const dateKey = format(d, "yyyy-MM-dd");
+                const prevDateKey = idx > 0 ? format(parseEventDate(filtered[idx - 1].event_date), "yyyy-MM-dd") : null;
+                const isNewDate = viewMode === "schedule" && tab === "upcoming" && dateKey !== prevDateKey;
+                const isCollapsed = viewMode === "schedule" && collapsedDates.has(dateKey);
+                // Count remaining events on this date for the header pill.
+                let sameDayCount = 0;
+                if (isNewDate) {
+                  for (let i = idx; i < filtered.length; i++) {
+                    if (format(parseEventDate(filtered[i].event_date), "yyyy-MM-dd") === dateKey) sameDayCount++;
+                    else break;
+                  }
+                }
+                const dateHeaderLabel = (() => {
+                  const today = new Date(); today.setHours(0,0,0,0);
+                  const tomorrow = new Date(today); tomorrow.setDate(tomorrow.getDate() + 1);
+                  const dd = new Date(d); dd.setHours(0,0,0,0);
+                  if (dd.getTime() === today.getTime()) return `Today · ${format(d, "EEE, MMM d")}`;
+                  if (dd.getTime() === tomorrow.getTime()) return `Tomorrow · ${format(d, "EEE, MMM d")}`;
+                  return format(d, "EEEE, MMMM d");
+                })();
+
                 return (
                   <React.Fragment key={ev.id}>
+                    {isNewDate && (
+                      <button
+                        type="button"
+                        onClick={() => toggleDateCollapse(dateKey)}
+                        className="md:col-span-2 lg:col-span-3 flex items-center justify-between w-full text-left px-1 pt-3 pb-1"
+                        aria-expanded={!isCollapsed}
+                      >
+                        <span className="flex items-center gap-3">
+                          <span style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: 20, color: "#FAF5E9", textTransform: "uppercase", letterSpacing: "0.02em" }}>
+                            {dateHeaderLabel}
+                          </span>
+                          <span className="px-2 py-0.5 rounded-full"
+                            style={{ background: "rgba(232,93,47,0.12)", border: "1px solid rgba(232,93,47,0.35)", color: "#E85D2F", fontFamily: "'Space Mono', monospace", fontSize: 10, letterSpacing: "0.1em" }}>
+                            {sameDayCount} {sameDayCount === 1 ? "event" : "events"}
+                          </span>
+                        </span>
+                        <span style={{ fontFamily: "'Space Mono', monospace", fontSize: 11, color: "rgba(248,248,248,0.55)" }}>
+                          {isCollapsed ? "+ Show" : "− Hide"}
+                        </span>
+                      </button>
+                    )}
+                    {isCollapsed ? null : (
                     <article
                       className="overflow-hidden cursor-pointer group rounded-[22px] transition-all"
                       style={{ background: "#161616", border: "1px solid rgba(255,255,255,0.08)" }}
