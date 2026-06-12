@@ -1217,6 +1217,7 @@ const Events = () => {
                           }
 
                           if (user) {
+                            const isSaved = savedIds.has(ev.id);
                             return (
                               <>
                                 {ev.event_tags && ev.event_tags.length > 0 && (
@@ -1224,37 +1225,75 @@ const Events = () => {
                                     <EventTagBadges tags={ev.event_tags} size="sm" />
                                   </div>
                                 )}
-                                <div className="pt-1" onClick={(e) => e.stopPropagation()}>
-                                  <RsvpAvatarBar
-                                    attendees={eventAttendees[ev.id] || []}
-                                    totalCount={ct}
-                                    size="sm"
-                                    maxAvatars={5}
-                                    onAvatarClick={(attendee) => { setSelectedProfile({ ...attendee, bio: null }); setDrawerOpen(true); }}
-                                    onViewAllClick={() => openTile(ev.id)}
-                                  />
-                                </div>
-                                <div className="flex items-center justify-between pt-2" style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+                                {ct === 0 ? (
+                                  <div className="pt-1 px-3 py-2 rounded-xl"
+                                    style={{ background: "rgba(232,93,47,0.08)", border: "1px dashed rgba(232,93,47,0.32)" }}>
+                                    <p style={{ fontFamily: "'Playfair Display', serif", fontStyle: "italic", fontSize: 12.5, color: "#FAF5E9", margin: 0 }}>
+                                      ✨ Be the first to RSVP — set the vibe for this one.
+                                    </p>
+                                  </div>
+                                ) : (
+                                  <div className="pt-1" onClick={(e) => e.stopPropagation()}>
+                                    <RsvpAvatarBar
+                                      attendees={eventAttendees[ev.id] || []}
+                                      totalCount={ct}
+                                      size="sm"
+                                      maxAvatars={5}
+                                      onAvatarClick={(attendee) => { setSelectedProfile({ ...attendee, bio: null }); setDrawerOpen(true); }}
+                                      onViewAllClick={() => openTile(ev.id)}
+                                    />
+                                  </div>
+                                )}
+                                <div className="flex items-center justify-between gap-2 pt-2" style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }} onClick={(e) => e.stopPropagation()}>
                                   <span className="flex items-center gap-1"
                                     style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 10, color: "rgba(248,248,248,0.5)", letterSpacing: "0.04em" }}>
-                                    <Users className="w-3 h-3" />{ct}{ev.capacity ? `/${ev.capacity}` : ""}
+                                    <Users className="w-3 h-3" />{ct}{ev.capacity ? `/${ev.capacity}` : ""} going
                                   </span>
-                                  {rsvp ? (
-                                    <span className="px-3 py-1 rounded-full capitalize"
-                                      style={{ background: rsvp === "attending" ? "rgba(232,93,47,0.15)" : "rgba(255,255,255,0.06)", color: rsvp === "attending" ? "#E85D2F" : "rgba(248,248,248,0.6)", border: rsvp === "attending" ? "1px solid rgba(232,93,47,0.35)" : "1px solid rgba(255,255,255,0.08)", fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 700, fontSize: 10, letterSpacing: "0.08em", textTransform: "uppercase" }}>
-                                      {rsvp === "attending" ? "Going ✓" : rsvp}
-                                    </span>
-                                  ) : (
-                                    <Button size="sm" className="rounded-full h-8 px-4"
-                                      style={{ background: "#E85D2F", color: "#fff", fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 700, fontSize: 10, letterSpacing: "0.1em", textTransform: "uppercase" }}
-                                      onClick={e => { e.stopPropagation(); setRsvpId(ev.id); }}>
-                                      RSVP
-                                    </Button>
+                                  <div className="flex items-center gap-1.5">
+                                    <button
+                                      type="button"
+                                      onClick={() => toggleSave(ev.id)}
+                                      aria-label={isSaved ? "Unsave" : "Save"}
+                                      title={isSaved ? "Saved" : "Save to my plans"}
+                                      className="h-8 w-8 rounded-full inline-flex items-center justify-center transition-colors"
+                                      style={{ background: isSaved ? "rgba(232,93,47,0.15)" : "transparent", border: isSaved ? "1px solid rgba(232,93,47,0.45)" : "1px solid rgba(255,255,255,0.12)" }}
+                                    >
+                                      {isSaved ? <Bookmark className="w-3.5 h-3.5" style={{ color: "#E85D2F", fill: "#E85D2F" }} /> : <BookmarkPlus className="w-3.5 h-3.5" style={{ color: "#FAF5E9" }} />}
+                                    </button>
+                                    {rsvp ? (
+                                      <span className="px-3 py-1 rounded-full capitalize"
+                                        style={{ background: rsvp === "attending" ? "rgba(232,93,47,0.15)" : "rgba(255,255,255,0.06)", color: rsvp === "attending" ? "#E85D2F" : "rgba(248,248,248,0.6)", border: rsvp === "attending" ? "1px solid rgba(232,93,47,0.35)" : "1px solid rgba(255,255,255,0.08)", fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 700, fontSize: 10, letterSpacing: "0.08em", textTransform: "uppercase" }}>
+                                        {rsvp === "attending" ? "Going ✓" : rsvp}
+                                      </span>
+                                    ) : (
+                                      <Button size="sm" className="rounded-full h-8 px-4"
+                                        style={{ background: "#E85D2F", color: "#fff", fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 700, fontSize: 10, letterSpacing: "0.1em", textTransform: "uppercase" }}
+                                        onClick={() => setRsvpId(ev.id)}>
+                                        RSVP
+                                      </Button>
+                                    )}
+                                  </div>
+                                </div>
+                                <div className="pt-1.5" onClick={(e) => e.stopPropagation()}>
+                                  <button
+                                    type="button"
+                                    onClick={() => setOpenChatId(openChatId === ev.id ? null : ev.id)}
+                                    className="inline-flex items-center gap-1.5 transition-opacity hover:opacity-80"
+                                    style={{ fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: 10, letterSpacing: "0.08em", textTransform: "uppercase", color: "rgba(248,248,248,0.55)" }}
+                                  >
+                                    <MessageCircle className="w-3 h-3" /> {openChatId === ev.id ? "Hide chat" : "Open event chat"}
+                                  </button>
+                                  {openChatId === ev.id && (
+                                    <div className="pt-2">
+                                      <EventChatThread eventId={ev.id} />
+                                    </div>
                                   )}
                                 </div>
                               </>
                             );
                           }
+
+
 
                           return (
                             <div className="pt-2 flex items-center justify-between gap-2" style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
