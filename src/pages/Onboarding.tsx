@@ -356,24 +356,37 @@ const Onboarding = () => {
         )}
 
         {/* Footer nav */}
-        <div className="fixed bottom-0 left-0 right-0 bg-[#FAF7F2]/95 backdrop-blur border-t border-[#E8E3DC] px-5 py-4">
+        <div
+          className="fixed bottom-0 left-0 right-0 z-[60] bg-[#FAF7F2]/95 backdrop-blur border-t border-[#E8E3DC] px-5 pt-4"
+          style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 16px)" }}
+        >
           <div className="max-w-xl mx-auto flex items-center justify-between gap-3">
             <Button variant="ghost" size="lg" onClick={back} disabled={step === 1}>
               <ChevronLeft className="w-4 h-4 mr-1" /> Back
             </Button>
             {step < 4 ? (
-              <Button size="lg" onClick={next}
-                disabled={(step === 1 && !step1Valid) || (step === 2 && !step2Valid) || (step === 3 && !step3Valid)}>
+              <Button
+                size="lg"
+                onClick={next}
+                disabled={(step === 1 && !step1Valid) || (step === 2 && !step2Valid) || (step === 3 && !step3Valid)}
+                className="min-w-[160px] bg-[#E85D2F] hover:bg-[#d54f23] text-white"
+              >
                 Continue <ChevronRight className="w-4 h-4 ml-1" />
               </Button>
             ) : (
-              <Button size="lg" onClick={handleFinish} disabled={saving}>
+              <Button
+                size="lg"
+                onClick={handleFinish}
+                disabled={saving}
+                className="min-w-[160px] bg-[#E85D2F] hover:bg-[#d54f23] text-white"
+              >
                 {saving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
                 Enter Loverball →
               </Button>
             )}
           </div>
         </div>
+
       </div>
     </div>
   );
