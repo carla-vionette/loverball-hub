@@ -34,6 +34,7 @@ import EventChatThread, { SYSTEM_PREFIX } from "@/components/events/EventChatThr
 import { MessageCircle, BookmarkCheck } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import type { SportsBar } from "@/data/laSportsBars";
+import { LA_SPORTS_BARS } from "@/data/laSportsBars";
 
 
 const CATEGORIES = ["All", "watch_party", "game", "panel", "brunch", "networking", "other"];
@@ -341,15 +342,15 @@ const Events = () => {
     }
   }, [user]);
 
-  // Auto-populate local pro + college games whenever the active area changes.
-  // Stays mock-backed until USE_MOCK_DATA is flipped in mockSportsEvents.ts.
+  // Auto-populate local pro + college + World Cup games. World Cup matches
+  // are surfaced nationwide via the edge function, so we always fetch — even
+  // when the user hasn't set a ZIP yet (defaults to LA on the server side).
   useEffect(() => {
     let cancelled = false;
     const zip = activeArea?.zip || null;
     const city = activeArea?.city || null;
     const lat = activeArea?.lat ?? null;
     const lng = activeArea?.lng ?? null;
-    if (!zip && !city && lat == null) { setLocalSports([]); return; }
     fetchLocalSportsEvents({ zip, city, lat, lng }).then((rows) => {
       if (!cancelled) setLocalSports(rows);
     });
@@ -1159,6 +1160,72 @@ const Events = () => {
                                   <Users className="w-3 h-3" />
                                   {gCount} {gCount === 1 ? 'member' : 'members'} going
                                 </div>
+                                {(() => {
+                                  const m = (ev as unknown as MockDbEvent).__mock ? (ev as unknown as MockDbEvent) : null;
+                                  if (m?.__league !== "FIFA_WC") return null;
+                                  const cityLower = (ev.city || "").toLowerCase();
+                                  const isLA = /inglewood|los angeles/.test(cityLower);
+                                  const mapsQuery = encodeURIComponent(`sports bars near ${ev.venue_name || ev.city || "stadium"}`);
+                                  const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${mapsQuery}`;
+                                  const bars = isLA ? LA_SPORTS_BARS.slice(0, 4) : [];
+                                  return (
+                                    <div className="pt-2 space-y-2" onClick={(e) => e.stopPropagation()}>
+                                      <div className="px-3 py-2 rounded-xl space-y-1.5"
+                                        style={{ background: "rgba(45,212,191,0.08)", border: "1px solid rgba(45,212,191,0.3)" }}>
+                                        <div className="flex items-center gap-1.5"
+                                          style={{ fontFamily: "'Inter', sans-serif", fontWeight: 800, fontSize: 9.5, letterSpacing: "0.16em", textTransform: "uppercase", color: "#2DD4BF" }}>
+                                          <span>🌍 FIFA World Cup 2026</span>
+                                        </div>
+                                        {isLA && (
+                                          <div className="pt-1">
+                                            <p style={{ fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: 10, letterSpacing: "0.1em", textTransform: "uppercase", color: "#FAF5E9", margin: 0 }}>
+                                              🏟️ Stadium
+                                            </p>
+                                            <p style={{ fontFamily: "'Space Mono', monospace", fontSize: 10.5, color: "rgba(248,248,248,0.75)", margin: "2px 0 0" }}>
+                                              {ev.venue_name}{ev.city ? `, ${ev.city}` : ""}
+                                            </p>
+                                            {(ev as any).__ticket_url && (
+                                              <a
+                                                href={(ev as any).__ticket_url}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                style={{ display: "inline-block", marginTop: 4, fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: 10, letterSpacing: "0.1em", textTransform: "uppercase", color: "#E85D2F" }}
+                                              >
+                                                Stadium tickets →
+                                              </a>
+                                            )}
+                                          </div>
+                                        )}
+                                        <div className="pt-1.5">
+                                          <p style={{ fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: 10, letterSpacing: "0.1em", textTransform: "uppercase", color: "#FAF5E9", margin: 0 }}>
+                                            🍻 Where to Watch
+                                          </p>
+                                          {isLA ? (
+                                            <ul style={{ listStyle: "none", padding: 0, margin: "4px 0 0" }}>
+                                              {bars.map((b) => (
+                                                <li key={b.id} style={{ fontFamily: "'Space Mono', monospace", fontSize: 10.5, color: "rgba(248,248,248,0.75)", lineHeight: 1.6 }}>
+                                                  · <span style={{ color: "#FAF5E9" }}>{b.name}</span> — {b.neighborhood}
+                                                </li>
+                                              ))}
+                                            </ul>
+                                          ) : (
+                                            <p style={{ fontFamily: "'Space Mono', monospace", fontSize: 10.5, color: "rgba(248,248,248,0.75)", margin: "2px 0 0" }}>
+                                              Find a sports bar near {ev.city || "the venue"} for the watch party.
+                                            </p>
+                                          )}
+                                          <a
+                                            href={mapsUrl}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            style={{ display: "inline-block", marginTop: 4, fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: 10, letterSpacing: "0.1em", textTransform: "uppercase", color: "#2DD4BF" }}
+                                          >
+                                            Open in Maps →
+                                          </a>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  );
+                                })()}
                                 <div className="grid grid-cols-2 gap-2 pt-2" style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }} onClick={(e) => e.stopPropagation()}>
                                   {wrap(
                                     <Button

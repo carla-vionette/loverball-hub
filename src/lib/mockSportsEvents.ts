@@ -17,7 +17,7 @@ export const USE_MOCK_DATA = false;
 export type SportKind = "pro" | "college";
 export type League =
   | "NFL" | "NBA" | "WNBA" | "NWSL" | "MLS" | "MLB" | "NHL"
-  | "NCAAF" | "NCAAM" | "NCAAW" | "NCAA_SOCCER";
+  | "NCAAF" | "NCAAM" | "NCAAW" | "NCAA_SOCCER" | "FIFA_WC";
 
 export interface MockSportsEvent {
   id: string;
@@ -141,7 +141,7 @@ const LEAGUE_SPORT: Record<League, string> = {
   NFL: "football", NBA: "basketball", WNBA: "basketball",
   NWSL: "soccer", MLS: "soccer", MLB: "baseball", NHL: "hockey",
   NCAAF: "football", NCAAM: "basketball", NCAAW: "basketball",
-  NCAA_SOCCER: "soccer",
+  NCAA_SOCCER: "soccer", FIFA_WC: "soccer",
 };
 
 const WOMENS: League[] = ["WNBA", "NWSL", "NCAAW"];
@@ -290,7 +290,7 @@ const LEAGUE_SPORT_FALLBACK: Record<string, string> = {
   NFL: "football", NBA: "basketball", WNBA: "basketball",
   NWSL: "soccer", MLS: "soccer", MLB: "baseball", NHL: "hockey",
   NCAAF: "football", NCAAM: "basketball", NCAAW: "basketball",
-  NCAA_SOCCER: "soccer",
+  NCAA_SOCCER: "soccer", FIFA_WC: "soccer",
 };
 
 function liveToDbShape(e: SeatGeekProxyEvent): MockDbEvent {
@@ -329,13 +329,14 @@ async function fetchSeatGeekEvents(opts: {
   lng?: number | null;
   range?: string;
 }): Promise<MockDbEvent[]> {
-  const params: Record<string, string> = { range: opts.range || "50mi" };
+  const params: Record<string, string | number> = { range: opts.range || "50mi", per_page: 100 };
   if (opts.zip && /^\d{5}$/.test(opts.zip)) params.zip = opts.zip;
   else if (opts.lat != null && opts.lng != null) {
     params.lat = String(opts.lat);
     params.lng = String(opts.lng);
   } else {
-    return [];
+    // Fallback to LA so the World Cup nationwide query still returns events.
+    params.zip = "90001";
   }
 
   try {
