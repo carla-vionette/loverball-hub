@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Calendar, MapPin, Users, Clock, Loader2, PlusCircle, Send, Search, Share2, Copy, Link2, Mail, Smartphone } from "lucide-react";
+import { Calendar, MapPin, Users, Clock, Loader2, PlusCircle, Send, Search, Share2, Copy, Link2, Mail, Smartphone, Bookmark, BookmarkPlus, Sparkles, Heart, Zap, Sun, Moon, Coffee } from "lucide-react";
 import EventTagBadges from "@/components/EventTagBadges";
 import SponsorCard from "@/components/SponsorCard";
 import RsvpAvatarBar from "@/components/RsvpAvatarBar";
@@ -143,6 +143,18 @@ const Events = () => {
   const [barModalEventId, setBarModalEventId] = useState<string | null>(null);
   const [openChatId, setOpenChatId] = useState<string | null>(null);
 
+  // Discovery quick filters — high-intent buckets layered on top of category/sport.
+  type DiscoverKey = "all" | "tonight" | "weekend" | "womens" | "watch" | "solo" | "community";
+  const [discover, setDiscover] = useState<DiscoverKey>("all");
+
+  // Personalization signals from the member's profile (drives curation labels).
+  const [userSports, setUserSports] = useState<string[]>([]);
+  const [userTeams, setUserTeams] = useState<string[]>([]);
+  const [userCity, setUserCity] = useState<string | null>(null);
+
+  // Saved (bookmarked) events — backed by saved_items (item_type='event').
+  const [savedIds, setSavedIds] = useState<Set<string>>(new Set());
+
   // Helper: post a system message into an event's chat (visually distinct in UI).
   const postSystemMessage = async (eventId: string, text: string) => {
     if (!user) return;
@@ -203,6 +215,55 @@ const Events = () => {
 
     })();
   }, [user]);
+
+  // Load member personalization signals + saved events (parallel, lightweight).
+  useEffect(() => {
+    if (!user) { setUserSports([]); setUserTeams([]); setUserCity(null); setSavedIds(new Set()); return; }
+    (async () => {
+      const [{ data: prof }, { data: saved }] = await Promise.all([
+        supabase
+          .from("profiles")
+          .select("favorite_sports, favorite_teams, favorite_teams_players, favorite_la_teams, pro_leagues, city")
+          .eq("id", user.id)
+          .maybeSingle(),
+        supabase
+          .from("saved_items")
+          .select("item_id")
+          .eq("user_id", user.id)
+          .eq("item_type", "event"),
+      ]);
+      const sports = Array.from(new Set([
+        ...((prof?.favorite_sports as string[] | null) ?? []),
+        ...((prof?.pro_leagues as string[] | null) ?? []),
+      ]));
+      const teams = Array.from(new Set([
+        ...((prof?.favorite_la_teams as string[] | null) ?? []),
+        ...((prof?.favorite_teams as string[] | null) ?? []),
+        ...((prof?.favorite_teams_players as string[] | null) ?? []),
+      ]));
+      setUserSports(sports);
+      setUserTeams(teams);
+      setUserCity((prof?.city as string | null) ?? null);
+      setSavedIds(new Set((saved || []).map((r: any) => r.item_id)));
+    })();
+  }, [user?.id]);
+
+  const toggleSave = async (eventId: string) => {
+    if (!user) { openGate(eventId); return; }
+    const isSaved = savedIds.has(eventId);
+    if (isSaved) {
+      await supabase.from("saved_items").delete()
+        .eq("user_id", user.id).eq("item_type", "event").eq("item_id", eventId);
+      setSavedIds(prev => { const n = new Set(prev); n.delete(eventId); return n; });
+      toast({ title: "Removed from saved" });
+    } else {
+      await supabase.from("saved_items").insert({ user_id: user.id, item_type: "event", item_id: eventId });
+      setSavedIds(prev => new Set(prev).add(eventId));
+      toast({ title: "Saved to your plans ✨" });
+    }
+  };
+
+
 
   useEffect(() => {
     (async () => {
@@ -439,9 +500,43 @@ const Events = () => {
     }
   });
 
+  // Discovery quick-filter — high-intent buckets layered on top of category/sport.
+  // Each branch is intentionally permissive so labels feel curated, not exclusionary.
+  const isTonight = (d: Date) => {
+    const today = new Date();
+    return d.getFullYear() === today.getFullYear()
+      && d.getMonth() === today.getMonth()
+      && d.getDate() === today.getDate();
+  };
+  const isWeekend = (d: Date) => {
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    const sat = new Date(today); sat.setDate(today.getDate() + ((6 - today.getDay() + 7) % 7));
+    const sun = new Date(sat); sun.setDate(sat.getDate() + 1);
+    const day = new Date(d); day.setHours(0, 0, 0, 0);
+    return day.getTime() === sat.getTime() || day.getTime() === sun.getTime();
+  };
+  const matchesDiscover = (e: DbEvent) => {
+    if (discover === "all") return true;
+    const d = parseEventDate(e.event_date);
+    const tags = [...(e.event_tags || []), ...(e.sport_tags || [])].map(t => t.toLowerCase());
+    const title = (e.title || "").toLowerCase();
+    const desc = (e.description || "").toLowerCase();
+    const m = (e as unknown as MockDbEvent).__mock ? (e as unknown as MockDbEvent) : null;
+    switch (discover) {
+      case "tonight":  return isTonight(d);
+      case "weekend":  return isWeekend(d);
+      case "womens":   return m ? m.__is_womens : /women|wnba|nwsl|ncaaw|pwhl/i.test(title + " " + tags.join(" "));
+      case "watch":    return e.event_type === "watch_party" || /watch party|watch/i.test(title);
+      case "solo":     return tags.some(t => /solo|beginner|first.?time|friendly/.test(t)) || /solo|beginner|friendly/.test(desc);
+      case "community":return e.event_type === "networking" || tags.some(t => /community|meetup|network/.test(t));
+      default:         return true;
+    }
+  };
+  const discoverFiltered = sportsFiltered.filter(matchesDiscover);
+
   // Proximity filter — only applied when user has lat/lng AND radius is numeric.
   // Events without coords are always shown (treated as "national" reach).
-  const withDistance = sportsFiltered.map(e => {
+  const withDistance = discoverFiltered.map(e => {
     let distance: number | null = null;
     if (userLoc && e.location_lat != null && e.location_lng != null) {
       distance = distanceMiles(userLoc.lat, userLoc.lng, e.location_lat, e.location_lng);
@@ -495,6 +590,44 @@ const Events = () => {
         return diff < closestDiff ? ev : closest;
       })
     : null;
+
+  // Curation labels — explain *why* an event is being surfaced. First match wins.
+  type Curation = { text: string; color: string; icon: any };
+  const getCuration = (ev: DbEvent, idx: number): Curation | null => {
+    const ct = counts[ev.id] || gameCounts[ev.id] || 0;
+    const tags = [...(ev.event_tags || []), ...(ev.sport_tags || [])].map(t => t.toLowerCase());
+    const title = (ev.title || "").toLowerCase();
+    const haystack = title + " " + tags.join(" ");
+    const m = (ev as unknown as MockDbEvent).__mock ? (ev as unknown as MockDbEvent) : null;
+
+    // Personalized — team / sport overlap with member profile.
+    const teamHit = userTeams.find(t => haystack.includes(t.toLowerCase()));
+    if (teamHit) return { text: `Because you follow ${teamHit}`, color: "#E85D2F", icon: Sparkles };
+    const sportHit = userSports.find(s => haystack.includes(s.toLowerCase()));
+    if (sportHit) return { text: `Picked for ${sportHit} fans`, color: "#E85D2F", icon: Sparkles };
+
+    // Women's sports crowd
+    if (m?.__is_womens || /women|wnba|nwsl|ncaaw|pwhl/i.test(haystack)) {
+      return { text: "Women's sports crowd", color: "#E85D2F", icon: Heart };
+    }
+    // Near you
+    const dist = distanceById[ev.id];
+    if (dist != null && dist <= 10) return { text: "Near you", color: "#2DD4BF", icon: MapPin };
+    if (userCity && ev.city && ev.city.toLowerCase().includes(userCity.toLowerCase().split(",")[0])) {
+      return { text: `Popular in ${ev.city.split(",")[0]}`, color: "#2DD4BF", icon: MapPin };
+    }
+    // Social energy by RSVP count
+    if (ct >= 12) return { text: "Big social energy", color: "#F0C24C", icon: Zap };
+    if (ct >= 5)  return { text: "Popular this week", color: "#F0C24C", icon: Zap };
+    // Solo-friendly hint
+    if (/solo|beginner|friendly|first.?time/.test(haystack)) {
+      return { text: "Good for solo fans", color: "#A78BFA", icon: Users };
+    }
+    if (ev.event_type === "networking") return { text: "Community + connection", color: "#A78BFA", icon: Users };
+    return idx === 0 ? { text: "Loverball pick", color: "#E85D2F", icon: Sparkles } : null;
+  };
+
+
 
   if (loading) {
     return (
@@ -708,10 +841,22 @@ const Events = () => {
 
                   {/* Bottom block */}
                   <div className="absolute bottom-0 left-0 right-0 p-5 md:p-7">
+                    {(() => {
+                      const cur = getCuration(featured, 0);
+                      if (!cur) return null;
+                      const Icon = cur.icon;
+                      return (
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full mb-3"
+                          style={{ background: `${cur.color}26`, border: `1px solid ${cur.color}66`, color: cur.color, fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 700, fontSize: 10, letterSpacing: "0.16em", textTransform: "uppercase", backdropFilter: "blur(6px)" }}>
+                          <Icon className="w-3 h-3" /> {cur.text}
+                        </span>
+                      );
+                    })()}
                     <h2 className="line-clamp-2"
                       style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: "clamp(28px, 6vw, 44px)", lineHeight: 0.95, color: "#FFFFFF", textTransform: "uppercase", letterSpacing: "0.005em", margin: 0, textShadow: "0 2px 16px rgba(0,0,0,0.9), 0 1px 4px rgba(0,0,0,0.95)" }}>
                       {featured.title}
                     </h2>
+
                     <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-3"
                       style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 11, color: "rgba(248,248,248,0.7)", letterSpacing: "0.04em" }}>
                       {featured.event_time && <span className="flex items-center gap-1.5"><Clock className="w-3.5 h-3.5" />{fmtTime(featured.event_time)}</span>}
@@ -741,7 +886,48 @@ const Events = () => {
             );
           })()}
 
+          {/* DISCOVER QUICK FILTERS — high-intent buckets, curated tone */}
+          <div className="mb-4">
+            <div className="flex items-center gap-2 mb-2.5">
+              <Sparkles className="w-3 h-3" style={{ color: "#E85D2F" }} />
+              <span style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 10, letterSpacing: "0.22em", color: "rgba(248,248,248,0.55)", textTransform: "uppercase" }}>
+                Discover
+              </span>
+            </div>
+            <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-1 -mx-5 px-5">
+              {([
+                { k: "all" as const, label: "All", icon: Sparkles },
+                { k: "tonight" as const, label: "Tonight", icon: Moon },
+                { k: "weekend" as const, label: "This Weekend", icon: Sun },
+                { k: "womens" as const, label: "Women's Sports", icon: Heart },
+                { k: "watch" as const, label: "Watch Parties", icon: Users },
+                { k: "solo" as const, label: "Solo-Friendly", icon: Coffee },
+                { k: "community" as const, label: "Community", icon: Users },
+              ]).map(({ k, label, icon: Icon }) => {
+                const active = discover === k;
+                return (
+                  <button
+                    key={k}
+                    onClick={() => setDiscover(k)}
+                    className="px-3.5 py-2 rounded-full whitespace-nowrap transition-all inline-flex items-center gap-1.5 flex-shrink-0"
+                    style={{
+                      background: active ? "#E85D2F" : "rgba(20,20,21,0.6)",
+                      color: active ? "#fff" : "rgba(248,248,248,0.78)",
+                      border: active ? "1px solid #E85D2F" : "1px solid rgba(255,255,255,0.08)",
+                      fontFamily: "'Inter', system-ui, sans-serif",
+                      fontWeight: 700, fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase",
+                    }}
+                    aria-pressed={active}
+                  >
+                    <Icon className="w-3.5 h-3.5" /> {label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
           {/* SPORTS FILTER — All / Pro / College / Women's / This Week (with sticky My Plans chip) */}
+
           <div className="sticky top-0 z-30 -mx-5 px-5 py-2" style={{ background: "rgba(10,10,10,0.92)", backdropFilter: "blur(10px)", WebkitBackdropFilter: "blur(10px)", borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
             <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide">
               {user && (() => {
@@ -894,10 +1080,22 @@ const Events = () => {
                       </div>
 
                       <div className="p-4 space-y-3">
+                        {(() => {
+                          const cur = getCuration(ev, idx);
+                          if (!cur) return null;
+                          const Icon = cur.icon;
+                          return (
+                            <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full"
+                              style={{ background: `${cur.color}1a`, border: `1px solid ${cur.color}55`, color: cur.color, fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 700, fontSize: 9.5, letterSpacing: "0.14em", textTransform: "uppercase" }}>
+                              <Icon className="w-2.5 h-2.5" /> {cur.text}
+                            </span>
+                          );
+                        })()}
                         <h3 className="line-clamp-2"
                           style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: 18, lineHeight: 1.05, color: "#FFFFFF", textTransform: "uppercase", letterSpacing: "0.01em", margin: 0 }}>
                           {ev.title}
                         </h3>
+
                         <div className="flex flex-wrap items-center gap-x-3 gap-y-1"
                           style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 10, color: "rgba(248,248,248,0.55)", letterSpacing: "0.04em" }}>
                           {ev.event_time && <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{fmtTime(ev.event_time)}</span>}
@@ -1019,6 +1217,7 @@ const Events = () => {
                           }
 
                           if (user) {
+                            const isSaved = savedIds.has(ev.id);
                             return (
                               <>
                                 {ev.event_tags && ev.event_tags.length > 0 && (
@@ -1026,37 +1225,75 @@ const Events = () => {
                                     <EventTagBadges tags={ev.event_tags} size="sm" />
                                   </div>
                                 )}
-                                <div className="pt-1" onClick={(e) => e.stopPropagation()}>
-                                  <RsvpAvatarBar
-                                    attendees={eventAttendees[ev.id] || []}
-                                    totalCount={ct}
-                                    size="sm"
-                                    maxAvatars={5}
-                                    onAvatarClick={(attendee) => { setSelectedProfile({ ...attendee, bio: null }); setDrawerOpen(true); }}
-                                    onViewAllClick={() => openTile(ev.id)}
-                                  />
-                                </div>
-                                <div className="flex items-center justify-between pt-2" style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+                                {ct === 0 ? (
+                                  <div className="pt-1 px-3 py-2 rounded-xl"
+                                    style={{ background: "rgba(232,93,47,0.08)", border: "1px dashed rgba(232,93,47,0.32)" }}>
+                                    <p style={{ fontFamily: "'Playfair Display', serif", fontStyle: "italic", fontSize: 12.5, color: "#FAF5E9", margin: 0 }}>
+                                      ✨ Be the first to RSVP — set the vibe for this one.
+                                    </p>
+                                  </div>
+                                ) : (
+                                  <div className="pt-1" onClick={(e) => e.stopPropagation()}>
+                                    <RsvpAvatarBar
+                                      attendees={eventAttendees[ev.id] || []}
+                                      totalCount={ct}
+                                      size="sm"
+                                      maxAvatars={5}
+                                      onAvatarClick={(attendee) => { setSelectedProfile({ ...attendee, bio: null }); setDrawerOpen(true); }}
+                                      onViewAllClick={() => openTile(ev.id)}
+                                    />
+                                  </div>
+                                )}
+                                <div className="flex items-center justify-between gap-2 pt-2" style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }} onClick={(e) => e.stopPropagation()}>
                                   <span className="flex items-center gap-1"
                                     style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 10, color: "rgba(248,248,248,0.5)", letterSpacing: "0.04em" }}>
-                                    <Users className="w-3 h-3" />{ct}{ev.capacity ? `/${ev.capacity}` : ""}
+                                    <Users className="w-3 h-3" />{ct}{ev.capacity ? `/${ev.capacity}` : ""} going
                                   </span>
-                                  {rsvp ? (
-                                    <span className="px-3 py-1 rounded-full capitalize"
-                                      style={{ background: rsvp === "attending" ? "rgba(232,93,47,0.15)" : "rgba(255,255,255,0.06)", color: rsvp === "attending" ? "#E85D2F" : "rgba(248,248,248,0.6)", border: rsvp === "attending" ? "1px solid rgba(232,93,47,0.35)" : "1px solid rgba(255,255,255,0.08)", fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 700, fontSize: 10, letterSpacing: "0.08em", textTransform: "uppercase" }}>
-                                      {rsvp === "attending" ? "Going ✓" : rsvp}
-                                    </span>
-                                  ) : (
-                                    <Button size="sm" className="rounded-full h-8 px-4"
-                                      style={{ background: "#E85D2F", color: "#fff", fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 700, fontSize: 10, letterSpacing: "0.1em", textTransform: "uppercase" }}
-                                      onClick={e => { e.stopPropagation(); setRsvpId(ev.id); }}>
-                                      RSVP
-                                    </Button>
+                                  <div className="flex items-center gap-1.5">
+                                    <button
+                                      type="button"
+                                      onClick={() => toggleSave(ev.id)}
+                                      aria-label={isSaved ? "Unsave" : "Save"}
+                                      title={isSaved ? "Saved" : "Save to my plans"}
+                                      className="h-8 w-8 rounded-full inline-flex items-center justify-center transition-colors"
+                                      style={{ background: isSaved ? "rgba(232,93,47,0.15)" : "transparent", border: isSaved ? "1px solid rgba(232,93,47,0.45)" : "1px solid rgba(255,255,255,0.12)" }}
+                                    >
+                                      {isSaved ? <Bookmark className="w-3.5 h-3.5" style={{ color: "#E85D2F", fill: "#E85D2F" }} /> : <BookmarkPlus className="w-3.5 h-3.5" style={{ color: "#FAF5E9" }} />}
+                                    </button>
+                                    {rsvp ? (
+                                      <span className="px-3 py-1 rounded-full capitalize"
+                                        style={{ background: rsvp === "attending" ? "rgba(232,93,47,0.15)" : "rgba(255,255,255,0.06)", color: rsvp === "attending" ? "#E85D2F" : "rgba(248,248,248,0.6)", border: rsvp === "attending" ? "1px solid rgba(232,93,47,0.35)" : "1px solid rgba(255,255,255,0.08)", fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 700, fontSize: 10, letterSpacing: "0.08em", textTransform: "uppercase" }}>
+                                        {rsvp === "attending" ? "Going ✓" : rsvp}
+                                      </span>
+                                    ) : (
+                                      <Button size="sm" className="rounded-full h-8 px-4"
+                                        style={{ background: "#E85D2F", color: "#fff", fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 700, fontSize: 10, letterSpacing: "0.1em", textTransform: "uppercase" }}
+                                        onClick={() => setRsvpId(ev.id)}>
+                                        RSVP
+                                      </Button>
+                                    )}
+                                  </div>
+                                </div>
+                                <div className="pt-1.5" onClick={(e) => e.stopPropagation()}>
+                                  <button
+                                    type="button"
+                                    onClick={() => setOpenChatId(openChatId === ev.id ? null : ev.id)}
+                                    className="inline-flex items-center gap-1.5 transition-opacity hover:opacity-80"
+                                    style={{ fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: 10, letterSpacing: "0.08em", textTransform: "uppercase", color: "rgba(248,248,248,0.55)" }}
+                                  >
+                                    <MessageCircle className="w-3 h-3" /> {openChatId === ev.id ? "Hide chat" : "Open event chat"}
+                                  </button>
+                                  {openChatId === ev.id && (
+                                    <div className="pt-2">
+                                      <EventChatThread eventId={ev.id} />
+                                    </div>
                                   )}
                                 </div>
                               </>
                             );
                           }
+
+
 
                           return (
                             <div className="pt-2 flex items-center justify-between gap-2" style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
