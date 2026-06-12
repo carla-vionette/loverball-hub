@@ -6,7 +6,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { format } from "date-fns";
-import { ArrowLeft, MapPin, Send, Users } from "lucide-react";
+import { ArrowLeft, Calendar as CalendarIcon, MapPin, Send, Share2, Tv, Users } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useGameBackNavigation } from "@/hooks/useGameBackNavigation";
@@ -16,6 +16,7 @@ import Seo from "@/components/Seo";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
+import WatchSpotsPanel from "@/components/game/WatchSpotsPanel";
 
 const BG = "#0a0a0a";
 const PINK = "#E85D2F";
@@ -81,6 +82,7 @@ const GameDetail = () => {
   const [messages, setMessages] = useState<ChatMsg[]>([]);
   const [draft, setDraft] = useState("");
   const [sending, setSending] = useState(false);
+  const [tab, setTab] = useState<"going" | "watch" | "chat">("going");
 
   // Load game
   useEffect(() => {
@@ -240,7 +242,69 @@ const GameDetail = () => {
               <MapPin className="w-3.5 h-3.5" /> {game.venue_name}{game.venue_city ? `, ${game.venue_city}` : ""}{game.venue_state ? `, ${game.venue_state}` : ""}
             </p>
           )}
+          {/* Hero quick actions */}
+          <div className="flex items-center gap-2 mt-4">
+            <button
+              onClick={async () => {
+                const url = typeof window !== "undefined" ? window.location.href : "";
+                const text = `${matchupTitle} · ${format(startDate, "EEE MMM d, h:mm a")}`;
+                if (typeof navigator !== "undefined" && typeof navigator.share === "function") {
+                  try { await navigator.share({ title: matchupTitle, text, url }); return; } catch {/* cancelled */}
+                }
+                try { await navigator.clipboard.writeText(`${text}\n${url}`); toast({ title: "Link copied" }); } catch {/* ignore */}
+              }}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] uppercase tracking-widest"
+              style={{ background: "rgba(255,255,255,0.06)", border: BORDER, color: "#FAF5E9", fontFamily: "'Inter', sans-serif", fontWeight: 700 }}
+            >
+              <Share2 className="w-3.5 h-3.5" /> Share
+            </button>
+            <a
+              href={(() => {
+                const dt = (d: Date) => d.toISOString().replace(/[-:]|\.\d{3}/g, "");
+                const end = new Date(startDate.getTime() + 3 * 60 * 60 * 1000);
+                const loc = [game.venue_name, game.venue_city, game.venue_state].filter(Boolean).join(", ");
+                const text = encodeURIComponent(`${matchupTitle} (${game.league})`);
+                return `https://www.google.com/calendar/render?action=TEMPLATE&text=${text}&dates=${dt(startDate)}/${dt(end)}&location=${encodeURIComponent(loc)}`;
+              })()}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] uppercase tracking-widest"
+              style={{ background: "rgba(255,255,255,0.06)", border: BORDER, color: "#FAF5E9", fontFamily: "'Inter', sans-serif", fontWeight: 700 }}
+            >
+              <CalendarIcon className="w-3.5 h-3.5" /> Add to calendar
+            </a>
+          </div>
         </div>
+
+        {/* Segmented tabs */}
+        <div className="flex p-1 rounded-full mb-5" style={{ background: PANEL, border: BORDER }}>
+          {([
+            { k: "going" as const, label: "Going",        icon: Users },
+            { k: "watch" as const, label: "Where to watch", icon: Tv },
+            { k: "chat"  as const, label: "Chat",         icon: Send },
+          ]).map(t => {
+            const active = tab === t.k;
+            const Icon = t.icon;
+            return (
+              <button
+                key={t.k}
+                onClick={() => setTab(t.k)}
+                className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-full transition-all"
+                style={{
+                  background: active ? PINK : "transparent",
+                  color: active ? "#0a0a0a" : "rgba(250,245,233,0.65)",
+                  fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: 10.5, letterSpacing: "0.12em", textTransform: "uppercase",
+                }}
+                aria-pressed={active}
+              >
+                <Icon className="w-3.5 h-3.5" /> {t.label}
+              </button>
+            );
+          })}
+        </div>
+
+        {tab === "going" && (
+        <>
 
         {/* RSVP bar */}
         <div className="rounded-2xl p-5 mb-5" style={{ background: PANEL, border: BORDER }}>
@@ -316,16 +380,45 @@ const GameDetail = () => {
             </div>
           ))}
         </div>
+        </>
+        )}
 
-        {/* Game chat */}
+        {tab === "watch" && (
+          <WatchSpotsPanel
+            externalGameId={game.id}
+            venueCity={game.venue_city}
+            league={game.league}
+          />
+        )}
+
+        {tab === "chat" && (
         <div className="rounded-2xl p-5" style={{ background: PANEL, border: BORDER }}>
           <div className="text-[12px] uppercase mb-3" style={{ letterSpacing: "0.18em", fontFamily: "'Space Mono', monospace", color: "rgba(250,245,233,0.7)" }}>
             Game Chat
           </div>
           <div className="space-y-3 max-h-[400px] overflow-y-auto mb-3 pr-1">
             {messages.length === 0 && (
-              <div className="text-[13px] py-8 text-center" style={{ color: "rgba(250,245,233,0.4)", fontFamily: "'Playfair Display', serif", fontStyle: "italic" }}>
-                Start the conversation.
+              <div className="py-4 space-y-3">
+                <p className="text-[13px] text-center" style={{ color: "rgba(250,245,233,0.55)", fontFamily: "'Playfair Display', serif", fontStyle: "italic" }}>
+                  Kick it off — pick a prompt or write your own.
+                </p>
+                <div className="flex flex-wrap gap-2 justify-center">
+                  {[
+                    "Who's going in person?",
+                    "Where is everyone watching?",
+                    "Best pregame meetup?",
+                    "Anyone coming solo?",
+                  ].map(p => (
+                    <button
+                      key={p}
+                      onClick={() => setDraft(p)}
+                      className="px-3 py-1.5 rounded-full text-[11px]"
+                      style={{ background: "rgba(232,93,47,0.10)", border: "1px solid rgba(232,93,47,0.35)", color: PINK, fontFamily: "'Inter', sans-serif", fontWeight: 700 }}
+                    >
+                      {p}
+                    </button>
+                  ))}
+                </div>
               </div>
             )}
             {messages.map(m => {
@@ -371,6 +464,7 @@ const GameDetail = () => {
             </Button>
           </form>
         </div>
+        )}
       </main>
     </div>
   );
