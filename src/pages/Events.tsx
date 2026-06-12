@@ -596,7 +596,7 @@ const Events = () => {
   type Curation = { text: string; color: string; icon: any };
   const getCuration = (ev: DbEvent, idx: number): Curation | null => {
     const ct = counts[ev.id] || gameCounts[ev.id] || 0;
-    const tags = [...(ev.event_tags || []), ...(ev.sport_tags || [])].map(t => t.toLowerCase());
+    const tags = [...(Array.isArray(ev.event_tags) ? ev.event_tags : []), ...(Array.isArray(ev.sport_tags) ? ev.sport_tags : [])].map(t => String(t).toLowerCase());
     const title = (ev.title || "").toLowerCase();
     const haystack = title + " " + tags.join(" ");
     const m = (ev as unknown as MockDbEvent).__mock ? (ev as unknown as MockDbEvent) : null;
