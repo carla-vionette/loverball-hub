@@ -352,8 +352,8 @@ const Events = () => {
     const lat = activeArea?.lat ?? null;
     const lng = activeArea?.lng ?? null;
     fetchLocalSportsEvents({ zip, city, lat, lng }).then((rows) => {
-      if (!cancelled) setLocalSports(rows);
-    });
+      if (!cancelled) setLocalSports(Array.isArray(rows) ? rows : []);
+    }).catch(() => { if (!cancelled) setLocalSports([]); });
     return () => { cancelled = true; };
   }, [activeArea?.zip, activeArea?.city, activeArea?.lat, activeArea?.lng]);
 
