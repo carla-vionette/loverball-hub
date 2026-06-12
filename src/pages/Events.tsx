@@ -148,6 +148,24 @@ const Events = () => {
   type DiscoverKey = "all" | "tonight" | "weekend" | "womens" | "watch" | "solo" | "community";
   const [discover, setDiscover] = useState<DiscoverKey>("all");
 
+  // Date preset — default to the next 30 days so members see real inventory,
+  // not a single curated pick. "all" lifts the upper bound entirely.
+  type DatePreset = "tonight" | "weekend" | "7d" | "30d" | "all";
+  const [datePreset, setDatePreset] = useState<DatePreset>("30d");
+
+  // Highlights = curated picks. Schedule = comprehensive month-view grouped by date.
+  const [viewMode, setViewMode] = useState<"highlights" | "schedule">("schedule");
+
+  // Mobile-friendly collapsible date sections in Schedule view.
+  const [collapsedDates, setCollapsedDates] = useState<Set<string>>(new Set());
+  const toggleDateCollapse = (key: string) => {
+    setCollapsedDates(prev => {
+      const n = new Set(prev);
+      if (n.has(key)) n.delete(key); else n.add(key);
+      return n;
+    });
+  };
+
   // Personalization signals from the member's profile (drives curation labels).
   const [userSports, setUserSports] = useState<string[]>([]);
   const [userTeams, setUserTeams] = useState<string[]>([]);
@@ -483,7 +501,33 @@ const Events = () => {
   const pastEvents = combinedEvents.filter(e => parseEventDate(e.event_date) < cutoff).reverse();
 
   const baseEvents = tab === "upcoming" ? upcomingEvents : pastEvents;
-  const categoryFiltered = category === "All" ? baseEvents : baseEvents.filter(e => e.event_type === category);
+
+  // DATE PRESET — apply upper bound to upcoming events. Defaults to next 30 days.
+  const startOfToday = new Date(); startOfToday.setHours(0, 0, 0, 0);
+  const endOfToday = new Date(startOfToday); endOfToday.setDate(endOfToday.getDate() + 1);
+  const next7 = new Date(startOfToday); next7.setDate(next7.getDate() + 7);
+  const next30 = new Date(startOfToday); next30.setDate(next30.getDate() + 30);
+  const weekendStart = new Date(startOfToday);
+  const dow = weekendStart.getDay(); // 0=Sun..6=Sat
+  const daysToSat = (6 - dow + 7) % 7;
+  weekendStart.setDate(weekendStart.getDate() + daysToSat);
+  const weekendEnd = new Date(weekendStart); weekendEnd.setDate(weekendEnd.getDate() + 2); // Sat+Sun
+
+  const dateFiltered = tab === "upcoming"
+    ? baseEvents.filter(e => {
+        const d = parseEventDate(e.event_date);
+        switch (datePreset) {
+          case "tonight":  return d >= startOfToday && d < endOfToday;
+          case "weekend":  return d >= weekendStart && d < weekendEnd;
+          case "7d":       return d <= next7;
+          case "30d":      return d <= next30;
+          case "all":
+          default:         return true;
+        }
+      })
+    : baseEvents;
+
+  const categoryFiltered = category === "All" ? dateFiltered : dateFiltered.filter(e => e.event_type === category);
 
   // Sports filter chip row — operates on both real games + mock external events.
   const weekCutoff = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
@@ -794,8 +838,79 @@ const Events = () => {
           )}
 
 
-          {/* FEATURED — cinematic */}
-          {featured && (() => {
+          {/* VIEW MODE TOGGLE — Highlights vs Full Schedule */}
+          {tab === "upcoming" && (
+            <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+              <div className="flex p-1 rounded-full"
+                style={{ background: "rgba(20,20,21,0.6)", border: "1px solid rgba(255,255,255,0.08)" }}>
+                {([
+                  { k: "highlights" as const, label: "Highlights" },
+                  { k: "schedule" as const, label: "Full Schedule" },
+                ]).map((v) => {
+                  const active = viewMode === v.k;
+                  return (
+                    <button
+                      key={v.k}
+                      onClick={() => setViewMode(v.k)}
+                      className="px-4 py-1.5 rounded-full transition-all"
+                      style={{
+                        background: active ? "#FAF5E9" : "transparent",
+                        color: active ? "#0a0a0a" : "rgba(248,248,248,0.65)",
+                        fontFamily: "'Inter', system-ui, sans-serif",
+                        fontWeight: 700, fontSize: 10.5, letterSpacing: "0.12em", textTransform: "uppercase",
+                      }}
+                      aria-pressed={active}
+                    >
+                      {v.label}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* DATE PRESETS — drive default 30-day window */}
+          {tab === "upcoming" && (
+            <div className="mb-5">
+              <div className="flex items-center gap-2 mb-2.5">
+                <Calendar className="w-3 h-3" style={{ color: "#E85D2F" }} />
+                <span style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 10, letterSpacing: "0.22em", color: "rgba(248,248,248,0.55)", textTransform: "uppercase" }}>
+                  When
+                </span>
+              </div>
+              <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-1 -mx-5 px-5">
+                {([
+                  { k: "tonight" as const, label: "Tonight" },
+                  { k: "weekend" as const, label: "This Weekend" },
+                  { k: "7d" as const, label: "Next 7 Days" },
+                  { k: "30d" as const, label: "Next 30 Days" },
+                  { k: "all" as const, label: "All Upcoming" },
+                ]).map(({ k, label }) => {
+                  const active = datePreset === k;
+                  return (
+                    <button
+                      key={k}
+                      onClick={() => setDatePreset(k)}
+                      className="px-3.5 py-2 rounded-full whitespace-nowrap transition-all flex-shrink-0"
+                      style={{
+                        background: active ? "#E85D2F" : "rgba(20,20,21,0.6)",
+                        color: active ? "#fff" : "rgba(248,248,248,0.78)",
+                        border: active ? "1px solid #E85D2F" : "1px solid rgba(255,255,255,0.08)",
+                        fontFamily: "'Inter', system-ui, sans-serif",
+                        fontWeight: 700, fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase",
+                      }}
+                      aria-pressed={active}
+                    >
+                      {label}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* FEATURED — cinematic (Highlights mode only) */}
+          {viewMode === "highlights" && tab === "upcoming" && featured && (() => {
             const th = eventTheme[getVariant(featured.event_type)];
             const d = parseEventDate(featured.event_date);
             return (
@@ -898,8 +1013,6 @@ const Events = () => {
             <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-1 -mx-5 px-5">
               {([
                 { k: "all" as const, label: "All", icon: Sparkles },
-                { k: "tonight" as const, label: "Tonight", icon: Moon },
-                { k: "weekend" as const, label: "This Weekend", icon: Sun },
                 { k: "womens" as const, label: "Women's Sports", icon: Heart },
                 { k: "watch" as const, label: "Watch Parties", icon: Users },
                 { k: "solo" as const, label: "Solo-Friendly", icon: Coffee },
@@ -991,6 +1104,70 @@ const Events = () => {
             })}
           </div>
 
+          {/* ACTIVE FILTERS + RESULT COUNT */}
+          {(() => {
+            const presetLabels: Record<DatePreset, string> = {
+              tonight: "Tonight", weekend: "This Weekend", "7d": "Next 7 days", "30d": "Next 30 days", all: "All upcoming",
+            };
+            const discoverLabels: Record<DiscoverKey, string> = {
+              all: "All", tonight: "Tonight", weekend: "This Weekend",
+              womens: "Women's Sports", watch: "Watch Parties", solo: "Solo-Friendly", community: "Community",
+            };
+            const pills: { key: string; label: string; clear: () => void }[] = [];
+            if (tab === "upcoming" && datePreset !== "30d") pills.push({ key: "date", label: presetLabels[datePreset], clear: () => setDatePreset("30d") });
+            if (category !== "All") pills.push({ key: "cat", label: CATEGORY_LABELS[category] || category, clear: () => setCategory("All") });
+            if (sportsFilter !== "all") pills.push({ key: "sport", label: sportsFilter === "pro" ? "Pro" : sportsFilter === "college" ? "College" : sportsFilter === "womens" ? "Women's" : "This Week", clear: () => setSportsFilter("all") });
+            if (discover !== "all") pills.push({ key: "disc", label: discoverLabels[discover], clear: () => setDiscover("all") });
+            if (searchQuery.trim()) pills.push({ key: "q", label: `"${searchQuery.trim()}"`, clear: () => setSearchQuery("") });
+            if (myPlansOnly) pills.push({ key: "plans", label: "My Plans", clear: () => setMyPlansOnly(false) });
+
+            const totalUpcoming = upcomingEvents.length;
+            const shown = filtered.length;
+            const radiusNote = activeArea && radius !== "national"
+              ? ` · within ${radius} mi of ${activeArea.city || activeArea.zip || "your area"}`
+              : activeArea
+                ? ` · ${activeArea.city || activeArea.zip || "your area"}`
+                : "";
+
+            return (
+              <div className="mb-5 space-y-3">
+                {pills.length > 0 && (
+                  <div className="flex flex-wrap gap-2">
+                    {pills.map(p => (
+                      <button
+                        key={p.key}
+                        onClick={p.clear}
+                        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full transition-all"
+                        style={{
+                          background: "rgba(232,93,47,0.12)", border: "1px solid rgba(232,93,47,0.4)",
+                          color: "#E85D2F", fontFamily: "'Inter', system-ui, sans-serif",
+                          fontWeight: 700, fontSize: 10, letterSpacing: "0.08em", textTransform: "uppercase",
+                        }}
+                        aria-label={`Remove filter: ${p.label}`}
+                      >
+                        {p.label} <span aria-hidden style={{ opacity: 0.7 }}>×</span>
+                      </button>
+                    ))}
+                    <button
+                      onClick={() => { setDatePreset("30d"); setCategory("All"); setSportsFilter("all"); setDiscover("all"); setSearchQuery(""); setMyPlansOnly(false); }}
+                      className="inline-flex items-center px-3 py-1 rounded-full"
+                      style={{
+                        background: "transparent", border: "1px solid rgba(255,255,255,0.12)",
+                        color: "rgba(248,248,248,0.65)", fontFamily: "'Inter', system-ui, sans-serif",
+                        fontWeight: 700, fontSize: 10, letterSpacing: "0.08em", textTransform: "uppercase",
+                      }}
+                    >
+                      Clear all
+                    </button>
+                  </div>
+                )}
+                <p style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 11, color: "rgba(248,248,248,0.55)", letterSpacing: "0.04em", margin: 0 }}>
+                  Showing <span style={{ color: "#FAF5E9", fontWeight: 700 }}>{shown}</span> of {totalUpcoming} upcoming events{radiusNote}
+                </p>
+              </div>
+            );
+          })()}
+
           {/* EVENTS GRID */}
           {filtered.length === 0 ? (
             <div className="text-center py-20 space-y-4 rounded-3xl"
@@ -1002,16 +1179,25 @@ const Events = () => {
               <h2 style={{ fontFamily: "'Playfair Display', serif", fontStyle: "italic", fontWeight: 500, fontSize: 28, color: "#FFFFFF", letterSpacing: "-0.02em", margin: 0 }}>
                 {searchQuery.trim()
                   ? "No events match your search"
-                  : tab === "upcoming" ? "No upcoming events" : "No past events"}
+                  : tab === "upcoming" ? "Nothing in this window" : "No past events"}
               </h2>
               <p className="max-w-sm mx-auto"
                 style={{ fontFamily: "'Playfair Display', serif", fontStyle: "italic", fontSize: 14, color: "rgba(248,248,248,0.55)" }}>
                 {searchQuery.trim()
                   ? "Try a different keyword or city."
                   : tab === "upcoming"
-                    ? "Curated invitations drop weekly. Stay close."
+                    ? "Widen the date range or clear a filter to see more of the schedule."
                     : "Recaps will appear here after the lights come up."}
               </p>
+              {tab === "upcoming" && (
+                <Button
+                  onClick={() => { setDatePreset("all"); setCategory("All"); setSportsFilter("all"); setDiscover("all"); setSearchQuery(""); setMyPlansOnly(false); }}
+                  className="rounded-full h-10 px-5"
+                  style={{ background: "#E85D2F", color: "#fff", fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: 11, letterSpacing: "0.1em", textTransform: "uppercase" }}
+                >
+                  See all upcoming
+                </Button>
+              )}
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -1025,8 +1211,53 @@ const Events = () => {
                 const d = parseEventDate(ev.event_date);
                 const dist = distanceById[ev.id];
 
+                // Schedule view: emit a sticky-looking date header before the first
+                // card of each new date, and hide cards within collapsed sections.
+                const dateKey = format(d, "yyyy-MM-dd");
+                const prevDateKey = idx > 0 ? format(parseEventDate(filtered[idx - 1].event_date), "yyyy-MM-dd") : null;
+                const isNewDate = viewMode === "schedule" && tab === "upcoming" && dateKey !== prevDateKey;
+                const isCollapsed = viewMode === "schedule" && collapsedDates.has(dateKey);
+                // Count remaining events on this date for the header pill.
+                let sameDayCount = 0;
+                if (isNewDate) {
+                  for (let i = idx; i < filtered.length; i++) {
+                    if (format(parseEventDate(filtered[i].event_date), "yyyy-MM-dd") === dateKey) sameDayCount++;
+                    else break;
+                  }
+                }
+                const dateHeaderLabel = (() => {
+                  const today = new Date(); today.setHours(0,0,0,0);
+                  const tomorrow = new Date(today); tomorrow.setDate(tomorrow.getDate() + 1);
+                  const dd = new Date(d); dd.setHours(0,0,0,0);
+                  if (dd.getTime() === today.getTime()) return `Today · ${format(d, "EEE, MMM d")}`;
+                  if (dd.getTime() === tomorrow.getTime()) return `Tomorrow · ${format(d, "EEE, MMM d")}`;
+                  return format(d, "EEEE, MMMM d");
+                })();
+
                 return (
                   <React.Fragment key={ev.id}>
+                    {isNewDate && (
+                      <button
+                        type="button"
+                        onClick={() => toggleDateCollapse(dateKey)}
+                        className="md:col-span-2 lg:col-span-3 flex items-center justify-between w-full text-left px-1 pt-3 pb-1"
+                        aria-expanded={!isCollapsed}
+                      >
+                        <span className="flex items-center gap-3">
+                          <span style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: 20, color: "#FAF5E9", textTransform: "uppercase", letterSpacing: "0.02em" }}>
+                            {dateHeaderLabel}
+                          </span>
+                          <span className="px-2 py-0.5 rounded-full"
+                            style={{ background: "rgba(232,93,47,0.12)", border: "1px solid rgba(232,93,47,0.35)", color: "#E85D2F", fontFamily: "'Space Mono', monospace", fontSize: 10, letterSpacing: "0.1em" }}>
+                            {sameDayCount} {sameDayCount === 1 ? "event" : "events"}
+                          </span>
+                        </span>
+                        <span style={{ fontFamily: "'Space Mono', monospace", fontSize: 11, color: "rgba(248,248,248,0.55)" }}>
+                          {isCollapsed ? "+ Show" : "− Hide"}
+                        </span>
+                      </button>
+                    )}
+                    {isCollapsed ? null : (
                     <article
                       className="overflow-hidden cursor-pointer group rounded-[22px] transition-all"
                       style={{ background: "#161616", border: "1px solid rgba(255,255,255,0.08)" }}
@@ -1377,6 +1608,7 @@ const Events = () => {
                         })()}
                       </div>
                     </article>
+                    )}
                     {sponsorSlot && <SponsorCard index={Math.floor(cardIndex / 5) - 1} />}
                   </React.Fragment>
                 );
