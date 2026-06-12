@@ -61,9 +61,18 @@ interface SeatGeekEvent {
 
 function pickLeague(ev: SeatGeekEvent) {
   const tax = ev.taxonomies?.map(t => t.name) || [];
+  // Prefer specific league taxonomies (mls, nwsl, wnba, etc.) over the
+  // generic "soccer" parent so we don't misclassify MLS/NWSL games as FIFA_WC.
+  const specific = tax.find(s => s !== "soccer" && LEAGUE_MAP[s]);
+  if (specific) return LEAGUE_MAP[specific];
+  // Only treat generic "soccer" as FIFA_WC when the title hints at it.
+  if (tax.includes("soccer") && isWorldCupTitle(ev.title)) {
+    return { league: "FIFA_WC", sport_kind: "pro" as const, is_womens: false };
+  }
+  if (tax.includes("international_soccer")) return LEAGUE_MAP.international_soccer;
   for (const slug of tax) {
     const hit = LEAGUE_MAP[slug];
-    if (hit) return hit;
+    if (hit && slug !== "soccer") return hit;
   }
   return null;
 }
