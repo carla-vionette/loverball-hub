@@ -565,8 +565,8 @@ const Events = () => {
         (e.city && e.city.toLowerCase().includes(q)) ||
         (e.venue_name && e.venue_name.toLowerCase().includes(q)) ||
         (e.description && e.description.toLowerCase().includes(q)) ||
-        (e.sport_tags && e.sport_tags.some((t: string) => t.toLowerCase().includes(q))) ||
-        (e.event_tags && e.event_tags.some((t: string) => t.toLowerCase().includes(q)))
+        (Array.isArray(e.sport_tags) && e.sport_tags.some((t: string) => String(t).toLowerCase().includes(q))) ||
+        (Array.isArray(e.event_tags) && e.event_tags.some((t: string) => String(t).toLowerCase().includes(q)))
       )
     : radiusFiltered;
 
