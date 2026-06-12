@@ -329,7 +329,7 @@ async function fetchSeatGeekEvents(opts: {
   lng?: number | null;
   range?: string;
 }): Promise<MockDbEvent[]> {
-  const params: Record<string, string> = { range: opts.range || "50mi" };
+  const params: Record<string, string | number> = { range: opts.range || "50mi", per_page: 100 };
   if (opts.zip && /^\d{5}$/.test(opts.zip)) params.zip = opts.zip;
   else if (opts.lat != null && opts.lng != null) {
     params.lat = String(opts.lat);
