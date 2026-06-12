@@ -82,6 +82,7 @@ const GameDetail = () => {
   const [messages, setMessages] = useState<ChatMsg[]>([]);
   const [draft, setDraft] = useState("");
   const [sending, setSending] = useState(false);
+  const [tab, setTab] = useState<"going" | "watch" | "chat">("going");
 
   // Load game
   useEffect(() => {
