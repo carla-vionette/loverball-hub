@@ -17,11 +17,12 @@ interface Props {
 }
 
 const EventTagBadges = ({ tags, size = "default", onTagClick }: Props) => {
-  if (!tags || tags.length === 0) return null;
+  const safeTags = Array.isArray(tags) ? tags : [];
+  if (safeTags.length === 0) return null;
 
   return (
     <div className="flex flex-wrap gap-1.5">
-      {tags.map((tag) => {
+      {safeTags.map((tag) => {
         const style = TAG_STYLES[tag] || { emoji: "🏷️", className: "bg-muted text-muted-foreground border-border" };
         return (
           <Badge

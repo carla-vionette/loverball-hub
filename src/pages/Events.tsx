@@ -276,9 +276,9 @@ const Events = () => {
           .order("promoted", { ascending: false })
           .order("event_date");
         if (error) throw error;
-        setEvents(data || []);
+        setEvents(Array.isArray(data) ? data : []);
 
-        if (data?.length) {
+        if (Array.isArray(data) && data.length) {
           const eventIds = data.map(e => e.id);
           const { data: rsvps } = await supabase
             .from("event_rsvps")
@@ -352,8 +352,8 @@ const Events = () => {
     const lat = activeArea?.lat ?? null;
     const lng = activeArea?.lng ?? null;
     fetchLocalSportsEvents({ zip, city, lat, lng }).then((rows) => {
-      if (!cancelled) setLocalSports(rows);
-    });
+      if (!cancelled) setLocalSports(Array.isArray(rows) ? rows : []);
+    }).catch(() => { if (!cancelled) setLocalSports([]); });
     return () => { cancelled = true; };
   }, [activeArea?.zip, activeArea?.city, activeArea?.lat, activeArea?.lng]);
 
@@ -478,7 +478,7 @@ const Events = () => {
 
   // Merge mock external sports events into the same pipeline so they get
   // ZIP/radius filtering, color-coded dots, and chronological sort for free.
-  const combinedEvents = [...events, ...(localSports as unknown as DbEvent[])];
+  const combinedEvents = [...(Array.isArray(events) ? events : []), ...((Array.isArray(localSports) ? localSports : []) as unknown as DbEvent[])];
   const upcomingEvents = combinedEvents.filter(e => parseEventDate(e.event_date) >= cutoff);
   const pastEvents = combinedEvents.filter(e => parseEventDate(e.event_date) < cutoff).reverse();
 
@@ -493,7 +493,7 @@ const Events = () => {
       case "pro":     return m?.__sport_kind === "pro";
       case "college": return m?.__sport_kind === "college";
       case "womens":
-        return m ? m.__is_womens : (e.sport_tags || []).some(t => /women|wnba|nwsl|ncaaw/i.test(t));
+        return m ? m.__is_womens : (Array.isArray(e.sport_tags) ? e.sport_tags : []).some(t => /women|wnba|nwsl|ncaaw/i.test(t));
       case "week":
         return parseEventDate(e.event_date) <= weekCutoff;
       case "all":
@@ -519,7 +519,7 @@ const Events = () => {
   const matchesDiscover = (e: DbEvent) => {
     if (discover === "all") return true;
     const d = parseEventDate(e.event_date);
-    const tags = [...(e.event_tags || []), ...(e.sport_tags || [])].map(t => t.toLowerCase());
+    const tags = [...(Array.isArray(e.event_tags) ? e.event_tags : []), ...(Array.isArray(e.sport_tags) ? e.sport_tags : [])].map(t => String(t).toLowerCase());
     const title = (e.title || "").toLowerCase();
     const desc = (e.description || "").toLowerCase();
     const m = (e as unknown as MockDbEvent).__mock ? (e as unknown as MockDbEvent) : null;
@@ -565,8 +565,8 @@ const Events = () => {
         (e.city && e.city.toLowerCase().includes(q)) ||
         (e.venue_name && e.venue_name.toLowerCase().includes(q)) ||
         (e.description && e.description.toLowerCase().includes(q)) ||
-        (e.sport_tags && e.sport_tags.some((t: string) => t.toLowerCase().includes(q))) ||
-        (e.event_tags && e.event_tags.some((t: string) => t.toLowerCase().includes(q)))
+        (Array.isArray(e.sport_tags) && e.sport_tags.some((t: string) => String(t).toLowerCase().includes(q))) ||
+        (Array.isArray(e.event_tags) && e.event_tags.some((t: string) => String(t).toLowerCase().includes(q)))
       )
     : radiusFiltered;
 
@@ -596,7 +596,7 @@ const Events = () => {
   type Curation = { text: string; color: string; icon: any };
   const getCuration = (ev: DbEvent, idx: number): Curation | null => {
     const ct = counts[ev.id] || gameCounts[ev.id] || 0;
-    const tags = [...(ev.event_tags || []), ...(ev.sport_tags || [])].map(t => t.toLowerCase());
+    const tags = [...(Array.isArray(ev.event_tags) ? ev.event_tags : []), ...(Array.isArray(ev.sport_tags) ? ev.sport_tags : [])].map(t => String(t).toLowerCase());
     const title = (ev.title || "").toLowerCase();
     const haystack = title + " " + tags.join(" ");
     const m = (ev as unknown as MockDbEvent).__mock ? (ev as unknown as MockDbEvent) : null;
@@ -1140,7 +1140,7 @@ const Events = () => {
                               );
                             return (
                               <>
-                                {ev.event_tags && ev.event_tags.length > 0 && (
+                                {Array.isArray(ev.event_tags) && ev.event_tags.length > 0 && (
                                   <div onClick={(e) => e.stopPropagation()}>
                                     <EventTagBadges tags={ev.event_tags} size="sm" />
                                   </div>
@@ -1287,7 +1287,7 @@ const Events = () => {
                             const isSaved = savedIds.has(ev.id);
                             return (
                               <>
-                                {ev.event_tags && ev.event_tags.length > 0 && (
+                                {Array.isArray(ev.event_tags) && ev.event_tags.length > 0 && (
                                   <div onClick={(e) => e.stopPropagation()}>
                                     <EventTagBadges tags={ev.event_tags} size="sm" />
                                   </div>
