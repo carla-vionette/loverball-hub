@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Seo } from "@/components/Seo";
-import { Instagram, ArrowRight, ArrowUpRight, MapPin, Users, Tv, Activity, Check } from "lucide-react";
+import { Instagram, ArrowRight, ArrowUpRight, Users, Tv, Activity, Check } from "lucide-react";
 import heroImage from "@/assets/hero-women-new.png";
 import loverballWordmark from "@/assets/loverball-wordmark.png.asset.json";
 
@@ -37,8 +37,6 @@ const fonts = {
 
 const MEMBERSHIP_PRICE = 35;
 
-const TAGLINE =
-  "Loverball is a location-aware fan platform that helps women's sports fans connect online and in real life, discover what's happening nearby, know where to watch, and stay on top of live scores and team updates.";
 
 /* ---------- Atoms ---------- */
 
