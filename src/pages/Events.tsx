@@ -493,7 +493,7 @@ const Events = () => {
       case "pro":     return m?.__sport_kind === "pro";
       case "college": return m?.__sport_kind === "college";
       case "womens":
-        return m ? m.__is_womens : (e.sport_tags || []).some(t => /women|wnba|nwsl|ncaaw/i.test(t));
+        return m ? m.__is_womens : (Array.isArray(e.sport_tags) ? e.sport_tags : []).some(t => /women|wnba|nwsl|ncaaw/i.test(t));
       case "week":
         return parseEventDate(e.event_date) <= weekCutoff;
       case "all":
