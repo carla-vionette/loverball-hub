@@ -216,6 +216,55 @@ const Events = () => {
     })();
   }, [user]);
 
+  // Load member personalization signals + saved events (parallel, lightweight).
+  useEffect(() => {
+    if (!user) { setUserSports([]); setUserTeams([]); setUserCity(null); setSavedIds(new Set()); return; }
+    (async () => {
+      const [{ data: prof }, { data: saved }] = await Promise.all([
+        supabase
+          .from("profiles")
+          .select("favorite_sports, favorite_teams, favorite_teams_players, favorite_la_teams, pro_leagues, city")
+          .eq("id", user.id)
+          .maybeSingle(),
+        supabase
+          .from("saved_items")
+          .select("item_id")
+          .eq("user_id", user.id)
+          .eq("item_type", "event"),
+      ]);
+      const sports = Array.from(new Set([
+        ...((prof?.favorite_sports as string[] | null) ?? []),
+        ...((prof?.pro_leagues as string[] | null) ?? []),
+      ]));
+      const teams = Array.from(new Set([
+        ...((prof?.favorite_la_teams as string[] | null) ?? []),
+        ...((prof?.favorite_teams as string[] | null) ?? []),
+        ...((prof?.favorite_teams_players as string[] | null) ?? []),
+      ]));
+      setUserSports(sports);
+      setUserTeams(teams);
+      setUserCity((prof?.city as string | null) ?? null);
+      setSavedIds(new Set((saved || []).map((r: any) => r.item_id)));
+    })();
+  }, [user?.id]);
+
+  const toggleSave = async (eventId: string) => {
+    if (!user) { openGate(eventId); return; }
+    const isSaved = savedIds.has(eventId);
+    if (isSaved) {
+      await supabase.from("saved_items").delete()
+        .eq("user_id", user.id).eq("item_type", "event").eq("item_id", eventId);
+      setSavedIds(prev => { const n = new Set(prev); n.delete(eventId); return n; });
+      toast({ title: "Removed from saved" });
+    } else {
+      await supabase.from("saved_items").insert({ user_id: user.id, item_type: "event", item_id: eventId });
+      setSavedIds(prev => new Set(prev).add(eventId));
+      toast({ title: "Saved to your plans ✨" });
+    }
+  };
+
+
+
   useEffect(() => {
     (async () => {
       try {
