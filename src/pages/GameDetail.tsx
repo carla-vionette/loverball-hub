@@ -242,7 +242,69 @@ const GameDetail = () => {
               <MapPin className="w-3.5 h-3.5" /> {game.venue_name}{game.venue_city ? `, ${game.venue_city}` : ""}{game.venue_state ? `, ${game.venue_state}` : ""}
             </p>
           )}
+          {/* Hero quick actions */}
+          <div className="flex items-center gap-2 mt-4">
+            <button
+              onClick={async () => {
+                const url = typeof window !== "undefined" ? window.location.href : "";
+                const text = `${matchupTitle} · ${format(startDate, "EEE MMM d, h:mm a")}`;
+                if (typeof navigator !== "undefined" && typeof navigator.share === "function") {
+                  try { await navigator.share({ title: matchupTitle, text, url }); return; } catch {/* cancelled */}
+                }
+                try { await navigator.clipboard.writeText(`${text}\n${url}`); toast({ title: "Link copied" }); } catch {/* ignore */}
+              }}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] uppercase tracking-widest"
+              style={{ background: "rgba(255,255,255,0.06)", border: BORDER, color: "#FAF5E9", fontFamily: "'Inter', sans-serif", fontWeight: 700 }}
+            >
+              <Share2 className="w-3.5 h-3.5" /> Share
+            </button>
+            <a
+              href={(() => {
+                const dt = (d: Date) => d.toISOString().replace(/[-:]|\.\d{3}/g, "");
+                const end = new Date(startDate.getTime() + 3 * 60 * 60 * 1000);
+                const loc = [game.venue_name, game.venue_city, game.venue_state].filter(Boolean).join(", ");
+                const text = encodeURIComponent(`${matchupTitle} (${game.league})`);
+                return `https://www.google.com/calendar/render?action=TEMPLATE&text=${text}&dates=${dt(startDate)}/${dt(end)}&location=${encodeURIComponent(loc)}`;
+              })()}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] uppercase tracking-widest"
+              style={{ background: "rgba(255,255,255,0.06)", border: BORDER, color: "#FAF5E9", fontFamily: "'Inter', sans-serif", fontWeight: 700 }}
+            >
+              <CalendarIcon className="w-3.5 h-3.5" /> Add to calendar
+            </a>
+          </div>
         </div>
+
+        {/* Segmented tabs */}
+        <div className="flex p-1 rounded-full mb-5" style={{ background: PANEL, border: BORDER }}>
+          {([
+            { k: "going" as const, label: "Going",        icon: Users },
+            { k: "watch" as const, label: "Where to watch", icon: Tv },
+            { k: "chat"  as const, label: "Chat",         icon: Send },
+          ]).map(t => {
+            const active = tab === t.k;
+            const Icon = t.icon;
+            return (
+              <button
+                key={t.k}
+                onClick={() => setTab(t.k)}
+                className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-full transition-all"
+                style={{
+                  background: active ? PINK : "transparent",
+                  color: active ? "#0a0a0a" : "rgba(250,245,233,0.65)",
+                  fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: 10.5, letterSpacing: "0.12em", textTransform: "uppercase",
+                }}
+                aria-pressed={active}
+              >
+                <Icon className="w-3.5 h-3.5" /> {t.label}
+              </button>
+            );
+          })}
+        </div>
+
+        {tab === "going" && (
+        <>
 
         {/* RSVP bar */}
         <div className="rounded-2xl p-5 mb-5" style={{ background: PANEL, border: BORDER }}>
