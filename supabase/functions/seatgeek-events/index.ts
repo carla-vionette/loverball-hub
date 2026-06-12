@@ -35,9 +35,19 @@ const LEAGUE_MAP: Record<string, { league: string; sport_kind: "pro" | "college"
   ncaa_womens_basketball:  { league: "NCAAW",      sport_kind: "college", is_womens: true  },
   ncaa_soccer:             { league: "NCAA_SOCCER",sport_kind: "college", is_womens: false },
   ncaa_womens_soccer:      { league: "NCAA_SOCCER",sport_kind: "college", is_womens: true  },
+  // FIFA World Cup 2026 + international friendlies fall under SeatGeek's
+  // "international_soccer" taxonomy. Surface them under their own league
+  // code so the client can render special "Where to Watch" UI.
+  international_soccer:    { league: "FIFA_WC",    sport_kind: "pro",     is_womens: false },
+  soccer:                  { league: "FIFA_WC",    sport_kind: "pro",     is_womens: false },
 };
 
 const TAXONOMY_SLUGS = Object.keys(LEAGUE_MAP).join(",");
+
+// Heuristic: detect World Cup matches by title even when taxonomy is just "soccer".
+function isWorldCupTitle(title: string): boolean {
+  return /world\s*cup/i.test(title);
+}
 
 interface SeatGeekEvent {
   id: number;
