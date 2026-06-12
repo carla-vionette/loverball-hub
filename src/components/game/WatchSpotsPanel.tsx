@@ -188,9 +188,13 @@ const WatchSpotsPanel = ({ eventId, externalGameId, venueCity, league }: Props) 
       .select("id")
       .maybeSingle();
     if (locErr || !loc) { toast({ title: "Couldn't save spot", description: locErr?.message, variant: "destructive" }); return; }
-    const pinPayload: Record<string, string | null> = { watch_location_id: loc.id, submitted_by: user.id, note: draft.note.trim() || null };
-    if (eventId) pinPayload.event_id = eventId;
-    else if (externalGameId) pinPayload.external_game_id = externalGameId;
+    const pinPayload = {
+      watch_location_id: loc.id,
+      submitted_by: user.id,
+      note: draft.note.trim() || null,
+      event_id: eventId ?? null,
+      external_game_id: !eventId && externalGameId ? externalGameId : null,
+    };
     const { error: pinErr } = await supabase.from("watch_location_pins").insert(pinPayload);
     if (pinErr) { toast({ title: "Spot saved but pin failed", description: pinErr.message, variant: "destructive" }); }
     toast({ title: "Thanks — we'll review your spot ✨" });
