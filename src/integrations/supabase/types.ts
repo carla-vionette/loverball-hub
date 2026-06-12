@@ -2208,6 +2208,7 @@ export type Database = {
           current_streak: number
           email_notifications_enabled: boolean
           event_comfort_level: string | null
+          fan_modes: string[]
           fan_vibe: string | null
           favorite_la_teams: string[] | null
           favorite_sports: string[] | null
@@ -2262,6 +2263,7 @@ export type Database = {
           current_streak?: number
           email_notifications_enabled?: boolean
           event_comfort_level?: string | null
+          fan_modes?: string[]
           fan_vibe?: string | null
           favorite_la_teams?: string[] | null
           favorite_sports?: string[] | null
@@ -2316,6 +2318,7 @@ export type Database = {
           current_streak?: number
           email_notifications_enabled?: boolean
           event_comfort_level?: string | null
+          fan_modes?: string[]
           fan_vibe?: string | null
           favorite_la_teams?: string[] | null
           favorite_sports?: string[] | null
@@ -2809,6 +2812,149 @@ export type Database = {
             columns: ["channel_id"]
             isOneToOne: false
             referencedRelation: "creator_channels"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      watch_location_pins: {
+        Row: {
+          created_at: string
+          event_id: string | null
+          external_game_id: string | null
+          id: string
+          note: string | null
+          status: string
+          submitted_by: string
+          updated_at: string
+          upvote_count: number
+          watch_location_id: string
+        }
+        Insert: {
+          created_at?: string
+          event_id?: string | null
+          external_game_id?: string | null
+          id?: string
+          note?: string | null
+          status?: string
+          submitted_by: string
+          updated_at?: string
+          upvote_count?: number
+          watch_location_id: string
+        }
+        Update: {
+          created_at?: string
+          event_id?: string | null
+          external_game_id?: string | null
+          id?: string
+          note?: string | null
+          status?: string
+          submitted_by?: string
+          updated_at?: string
+          upvote_count?: number
+          watch_location_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "watch_location_pins_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "watch_location_pins_watch_location_id_fkey"
+            columns: ["watch_location_id"]
+            isOneToOne: false
+            referencedRelation: "watch_locations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      watch_locations: {
+        Row: {
+          address: string | null
+          city: string
+          created_at: string
+          id: string
+          image_url: string | null
+          is_partner: boolean
+          latitude: number | null
+          leagues_supported: string[]
+          longitude: number | null
+          name: string
+          neighborhood: string | null
+          phone: string | null
+          state: string | null
+          status: string
+          submitted_by: string | null
+          updated_at: string
+          vibe_tags: string[]
+          website: string | null
+        }
+        Insert: {
+          address?: string | null
+          city: string
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          is_partner?: boolean
+          latitude?: number | null
+          leagues_supported?: string[]
+          longitude?: number | null
+          name: string
+          neighborhood?: string | null
+          phone?: string | null
+          state?: string | null
+          status?: string
+          submitted_by?: string | null
+          updated_at?: string
+          vibe_tags?: string[]
+          website?: string | null
+        }
+        Update: {
+          address?: string | null
+          city?: string
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          is_partner?: boolean
+          latitude?: number | null
+          leagues_supported?: string[]
+          longitude?: number | null
+          name?: string
+          neighborhood?: string | null
+          phone?: string | null
+          state?: string | null
+          status?: string
+          submitted_by?: string | null
+          updated_at?: string
+          vibe_tags?: string[]
+          website?: string | null
+        }
+        Relationships: []
+      }
+      watch_pin_upvotes: {
+        Row: {
+          created_at: string
+          pin_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          pin_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          pin_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "watch_pin_upvotes_pin_id_fkey"
+            columns: ["pin_id"]
+            isOneToOne: false
+            referencedRelation: "watch_location_pins"
             referencedColumns: ["id"]
           },
         ]
