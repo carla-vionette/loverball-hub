@@ -874,7 +874,48 @@ const Events = () => {
             );
           })()}
 
+          {/* DISCOVER QUICK FILTERS — high-intent buckets, curated tone */}
+          <div className="mb-4">
+            <div className="flex items-center gap-2 mb-2.5">
+              <Sparkles className="w-3 h-3" style={{ color: "#E85D2F" }} />
+              <span style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 10, letterSpacing: "0.22em", color: "rgba(248,248,248,0.55)", textTransform: "uppercase" }}>
+                Discover
+              </span>
+            </div>
+            <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-1 -mx-5 px-5">
+              {([
+                { k: "all" as const, label: "All", icon: Sparkles },
+                { k: "tonight" as const, label: "Tonight", icon: Moon },
+                { k: "weekend" as const, label: "This Weekend", icon: Sun },
+                { k: "womens" as const, label: "Women's Sports", icon: Heart },
+                { k: "watch" as const, label: "Watch Parties", icon: Users },
+                { k: "solo" as const, label: "Solo-Friendly", icon: Coffee },
+                { k: "community" as const, label: "Community", icon: Users },
+              ]).map(({ k, label, icon: Icon }) => {
+                const active = discover === k;
+                return (
+                  <button
+                    key={k}
+                    onClick={() => setDiscover(k)}
+                    className="px-3.5 py-2 rounded-full whitespace-nowrap transition-all inline-flex items-center gap-1.5 flex-shrink-0"
+                    style={{
+                      background: active ? "#E85D2F" : "rgba(20,20,21,0.6)",
+                      color: active ? "#fff" : "rgba(248,248,248,0.78)",
+                      border: active ? "1px solid #E85D2F" : "1px solid rgba(255,255,255,0.08)",
+                      fontFamily: "'Inter', system-ui, sans-serif",
+                      fontWeight: 700, fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase",
+                    }}
+                    aria-pressed={active}
+                  >
+                    <Icon className="w-3.5 h-3.5" /> {label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
           {/* SPORTS FILTER — All / Pro / College / Women's / This Week (with sticky My Plans chip) */}
+
           <div className="sticky top-0 z-30 -mx-5 px-5 py-2" style={{ background: "rgba(10,10,10,0.92)", backdropFilter: "blur(10px)", WebkitBackdropFilter: "blur(10px)", borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
             <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide">
               {user && (() => {
