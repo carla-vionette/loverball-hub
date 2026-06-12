@@ -276,9 +276,9 @@ const Events = () => {
           .order("promoted", { ascending: false })
           .order("event_date");
         if (error) throw error;
-        setEvents(data || []);
+        setEvents(Array.isArray(data) ? data : []);
 
-        if (data?.length) {
+        if (Array.isArray(data) && data.length) {
           const eventIds = data.map(e => e.id);
           const { data: rsvps } = await supabase
             .from("event_rsvps")
