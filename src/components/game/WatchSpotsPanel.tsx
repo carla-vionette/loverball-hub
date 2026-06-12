@@ -154,9 +154,13 @@ const WatchSpotsPanel = ({ eventId, externalGameId, venueCity, league }: Props) 
 
   const pinExisting = async (locationId: string) => {
     if (!user) { toast({ title: "Sign in to suggest a spot" }); return; }
-    const payload: Record<string, string | null> = { watch_location_id: locationId, submitted_by: user.id, note: null };
-    if (eventId) payload.event_id = eventId;
-    else if (externalGameId) payload.external_game_id = externalGameId;
+    const payload = {
+      watch_location_id: locationId,
+      submitted_by: user.id,
+      note: null as string | null,
+      event_id: eventId ?? null,
+      external_game_id: !eventId && externalGameId ? externalGameId : null,
+    };
     const { error } = await supabase.from("watch_location_pins").insert(payload);
     if (error && !/duplicate/i.test(error.message)) { toast({ title: "Couldn't pin spot", description: error.message, variant: "destructive" }); return; }
     toast({ title: "Pinned to this game 🍻" });
