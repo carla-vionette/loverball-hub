@@ -838,8 +838,79 @@ const Events = () => {
           )}
 
 
-          {/* FEATURED — cinematic */}
-          {featured && (() => {
+          {/* VIEW MODE TOGGLE — Highlights vs Full Schedule */}
+          {tab === "upcoming" && (
+            <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+              <div className="flex p-1 rounded-full"
+                style={{ background: "rgba(20,20,21,0.6)", border: "1px solid rgba(255,255,255,0.08)" }}>
+                {([
+                  { k: "highlights" as const, label: "Highlights" },
+                  { k: "schedule" as const, label: "Full Schedule" },
+                ]).map((v) => {
+                  const active = viewMode === v.k;
+                  return (
+                    <button
+                      key={v.k}
+                      onClick={() => setViewMode(v.k)}
+                      className="px-4 py-1.5 rounded-full transition-all"
+                      style={{
+                        background: active ? "#FAF5E9" : "transparent",
+                        color: active ? "#0a0a0a" : "rgba(248,248,248,0.65)",
+                        fontFamily: "'Inter', system-ui, sans-serif",
+                        fontWeight: 700, fontSize: 10.5, letterSpacing: "0.12em", textTransform: "uppercase",
+                      }}
+                      aria-pressed={active}
+                    >
+                      {v.label}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* DATE PRESETS — drive default 30-day window */}
+          {tab === "upcoming" && (
+            <div className="mb-5">
+              <div className="flex items-center gap-2 mb-2.5">
+                <Calendar className="w-3 h-3" style={{ color: "#E85D2F" }} />
+                <span style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 10, letterSpacing: "0.22em", color: "rgba(248,248,248,0.55)", textTransform: "uppercase" }}>
+                  When
+                </span>
+              </div>
+              <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-1 -mx-5 px-5">
+                {([
+                  { k: "tonight" as const, label: "Tonight" },
+                  { k: "weekend" as const, label: "This Weekend" },
+                  { k: "7d" as const, label: "Next 7 Days" },
+                  { k: "30d" as const, label: "Next 30 Days" },
+                  { k: "all" as const, label: "All Upcoming" },
+                ]).map(({ k, label }) => {
+                  const active = datePreset === k;
+                  return (
+                    <button
+                      key={k}
+                      onClick={() => setDatePreset(k)}
+                      className="px-3.5 py-2 rounded-full whitespace-nowrap transition-all flex-shrink-0"
+                      style={{
+                        background: active ? "#E85D2F" : "rgba(20,20,21,0.6)",
+                        color: active ? "#fff" : "rgba(248,248,248,0.78)",
+                        border: active ? "1px solid #E85D2F" : "1px solid rgba(255,255,255,0.08)",
+                        fontFamily: "'Inter', system-ui, sans-serif",
+                        fontWeight: 700, fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase",
+                      }}
+                      aria-pressed={active}
+                    >
+                      {label}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* FEATURED — cinematic (Highlights mode only) */}
+          {viewMode === "highlights" && tab === "upcoming" && featured && (() => {
             const th = eventTheme[getVariant(featured.event_type)];
             const d = parseEventDate(featured.event_date);
             return (
