@@ -143,6 +143,18 @@ const Events = () => {
   const [barModalEventId, setBarModalEventId] = useState<string | null>(null);
   const [openChatId, setOpenChatId] = useState<string | null>(null);
 
+  // Discovery quick filters — high-intent buckets layered on top of category/sport.
+  type DiscoverKey = "all" | "tonight" | "weekend" | "womens" | "watch" | "solo" | "community";
+  const [discover, setDiscover] = useState<DiscoverKey>("all");
+
+  // Personalization signals from the member's profile (drives curation labels).
+  const [userSports, setUserSports] = useState<string[]>([]);
+  const [userTeams, setUserTeams] = useState<string[]>([]);
+  const [userCity, setUserCity] = useState<string | null>(null);
+
+  // Saved (bookmarked) events — backed by saved_items (item_type='event').
+  const [savedIds, setSavedIds] = useState<Set<string>>(new Set());
+
   // Helper: post a system message into an event's chat (visually distinct in UI).
   const postSystemMessage = async (eventId: string, text: string) => {
     if (!user) return;
