@@ -412,162 +412,158 @@ const Profile = () => {
               </div>
             </motion.aside>
 
-            {/* ═══════════ RIGHT COLUMN — ACTIVITY ═══════════ */}
-            <div className="space-y-6 min-w-0">
+            {/* ═══════════ RIGHT COLUMN — PERSONALIZED HOME ═══════════ */}
+            <div className="space-y-8 min-w-0">
 
-              {/* ═══════════ 1. YOUR ACTIVITY (top priority) ═══════════ */}
+              {/* ── 1. For You Tonight ── */}
               <motion.div variants={staggerItem}>
-                <div className="mb-3 flex items-end justify-between gap-3">
-                  <div className="min-w-0">
+                <ForYouTonight
+                  favoriteTeams={favoriteTeams}
+                  favoriteSports={profile.favorite_sports || []}
+                  featuredEvent={(() => {
+                    const today = new Date(); today.setHours(0, 0, 0, 0);
+                    const fromRsvp = visibleRsvps
+                      .map(r => r.event)
+                      .filter(e => !isNaN(new Date(e.event_date).getTime()) && new Date(e.event_date) >= today)
+                      .sort((a, b) => new Date(a.event_date).getTime() - new Date(b.event_date).getTime())[0];
+                    return (fromRsvp as any) || suggestedEvents[0] || null;
+                  })()}
+                  userName={userName}
+                  onOpenEvent={(id) => goTo(`/event/${id}`)}
+                  onOpenWatch={() => setWatchOpen(true)}
+                  onOpenStories={() => goTo("/explore")}
+                />
+              </motion.div>
+
+              {/* ── 2. Vibe Identity + Personalization ── */}
+              <motion.div variants={staggerItem}>
+                <div className="mb-3">
+                  <p
+                    className="text-[10px] uppercase"
+                    style={{ fontFamily: "'Space Mono', monospace", letterSpacing: "0.26em", color: PINK }}
+                  >
+                    Your vibe
+                  </p>
+                  <h2
+                    className="leading-[0.95] mt-1.5 uppercase"
+                    style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: "clamp(28px, 3.4vw, 38px)", color: TEXT }}
+                  >
+                    The fandom <span style={{ color: PINK }}>you</span>.
+                  </h2>
+                  <p className="mt-1.5 text-[12.5px]" style={{ color: "rgba(250,245,233,0.55)" }}>
+                    We tune your feed, events, and matches to this.
+                  </p>
+                </div>
+
+                <div
+                  className="rounded-3xl p-5"
+                  style={{
+                    background: "linear-gradient(140deg, rgba(232,93,47,0.12), rgba(22,22,22,0.6))",
+                    border: "1px solid rgba(232,93,47,0.25)",
+                  }}
+                >
+                  {profile.bio ? (
                     <p
-                      className="text-[10px] uppercase"
-                      style={{
-                        fontFamily: "'Space Mono', monospace",
-                        letterSpacing: "0.26em",
-                        color: "#E85D2F",
-                      }}
+                      className="text-[14px] leading-relaxed"
+                      style={{ fontFamily: "'Playfair Display', serif", fontStyle: "italic", color: "#FAF5E9" }}
                     >
-                      Your activity
+                      &ldquo;{profile.bio}&rdquo;
                     </p>
-                    <h2
-                      className="leading-[0.95] mt-1.5 uppercase"
-                      style={{
-                        fontFamily: "'Anton', Impact, sans-serif",
-                        fontWeight: 400,
-                        fontSize: "clamp(28px, 3.4vw, 38px)",
-                        color: "#FAF5E9",
-                      }}
+                  ) : (
+                    <p className="text-[13px]" style={{ color: "rgba(250,245,233,0.7)" }}>
+                      Tell us your fandom in a sentence — it powers your recs.{" "}
+                      <button onClick={() => goTo("/profile/edit")} className="underline" style={{ color: PINK }}>
+                        Add a vibe
+                      </button>
+                    </p>
+                  )}
+
+                  {/* Identity tag rail */}
+                  <div className="mt-4 flex flex-wrap gap-1.5">
+                    {(profile.favorite_sports || []).slice(0, 6).map((s) => (
+                      <span key={`s-${s}`} className="px-2.5 py-1 rounded-full text-[10.5px] uppercase tracking-widest"
+                        style={{ background: "rgba(250,245,233,0.06)", color: "#FAF5E9", border: "1px solid rgba(250,245,233,0.12)", fontFamily: "'Inter', sans-serif", fontWeight: 700 }}>
+                        {s}
+                      </span>
+                    ))}
+                    {favoriteTeams.slice(0, 5).map((t) => (
+                      <span key={`t-${t}`} className="px-2.5 py-1 rounded-full text-[10.5px] uppercase tracking-widest"
+                        style={{ background: "rgba(232,93,47,0.14)", color: PINK, border: "1px solid rgba(232,93,47,0.35)", fontFamily: "'Inter', sans-serif", fontWeight: 700 }}>
+                        {t}
+                      </span>
+                    ))}
+                    {profile.event_comfort_level && (
+                      <span className="px-2.5 py-1 rounded-full text-[10.5px] uppercase tracking-widest"
+                        style={{ background: "rgba(45,212,191,0.12)", color: "#2DD4BF", border: "1px solid rgba(45,212,191,0.35)", fontFamily: "'Inter', sans-serif", fontWeight: 700 }}>
+                        {profile.event_comfort_level}
+                      </span>
+                    )}
+                    <button
+                      onClick={() => goTo("/profile/edit")}
+                      className="px-2.5 py-1 rounded-full text-[10.5px] uppercase tracking-widest inline-flex items-center gap-1"
+                      style={{ background: "transparent", color: "rgba(250,245,233,0.55)", border: "1px dashed rgba(250,245,233,0.25)", fontFamily: "'Inter', sans-serif", fontWeight: 700 }}
                     >
-                      What's <span style={{ color: PINK }}>new</span>.
-                    </h2>
-                    <p className="mt-1.5 text-[12.5px]" style={{ color: "rgba(250,245,233,0.55)" }}>
-                      {greeting}, <span style={{ color: "#FAF5E9", fontWeight: 500 }}>{userName}</span>. Here's what you missed.
-                    </p>
+                      <Edit className="w-2.5 h-2.5" /> Quick edit
+                    </button>
                   </div>
+                </div>
+
+                <div className="mt-3">
+                  <PersonalizationControls />
+                </div>
+              </motion.div>
+
+              {/* ── 3. Smart Events (RSVPs or curated suggestions) ── */}
+              <motion.div variants={staggerItem}>
+                <SmartEvents
+                  upcomingRsvps={visibleRsvps
+                    .filter(r => {
+                      const today = new Date(); today.setHours(0, 0, 0, 0);
+                      const d = new Date(r.event.event_date);
+                      return !isNaN(d.getTime()) && d >= today;
+                    })
+                    .sort((a, b) => new Date(a.event.event_date).getTime() - new Date(b.event.event_date).getTime())}
+                  suggestions={suggestedEvents}
+                  userCity={profile.city}
+                  onOpenEvent={(id) => goTo(`/event/${id}`)}
+                  onBrowseAll={() => goTo("/events")}
+                />
+              </motion.div>
+
+              {/* ── 4. People With Your Vibe ── */}
+              <motion.div variants={staggerItem}>
+                <SuggestedFans
+                  myCity={profile.city}
+                  mySports={profile.favorite_sports || []}
+                  myTeams={favoriteTeams}
+                  onBrowseAll={() => goTo("/friends")}
+                />
+              </motion.div>
+
+              {/* ── 5. Grouped activity / inbox ── */}
+              <motion.div variants={staggerItem}>
+                <div className="mb-3">
+                  <p
+                    className="text-[10px] uppercase"
+                    style={{ fontFamily: "'Space Mono', monospace", letterSpacing: "0.26em", color: PINK }}
+                  >
+                    Your activity
+                  </p>
+                  <h2
+                    className="leading-[0.95] mt-1.5 uppercase"
+                    style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: "clamp(28px, 3.4vw, 38px)", color: TEXT }}
+                  >
+                    What's <span style={{ color: PINK }}>new</span>.
+                  </h2>
+                  <p className="mt-1.5 text-[12.5px]" style={{ color: "rgba(250,245,233,0.55)" }}>
+                    {greeting}, <span style={{ color: TEXT, fontWeight: 500 }}>{userName}</span>. Social, events and alerts in one place.
+                  </p>
                 </div>
                 <ProfileInbox />
               </motion.div>
 
-              {/* ═══════════ EVENTS — Upcoming RSVPs ═══════════ */}
-              <motion.div variants={staggerItem}>
-                <div className="mb-3 flex items-end justify-between gap-3">
-                  <div className="min-w-0">
-                    <p
-                      className="text-[10px] uppercase"
-                      style={{ fontFamily: "'Space Mono', monospace", letterSpacing: "0.26em", color: "#E85D2F" }}
-                    >
-                      On your calendar
-                    </p>
-                    <h2
-                      className="leading-[0.95] mt-1.5 uppercase"
-                      style={{ fontFamily: "'Anton', Impact, sans-serif", fontWeight: 400, fontSize: "clamp(28px, 3.4vw, 38px)", color: "#FAF5E9" }}
-                    >
-                      Your <span style={{ color: PINK }}>events</span>.
-                    </h2>
-                  </div>
-                  <button
-                    onClick={() => goTo("/events")}
-                    className="flex items-center gap-1 text-[11px] uppercase tracking-widest"
-                    style={{ fontFamily: "'Inter', sans-serif", fontWeight: 700, color: PINK }}
-                  >
-                    All events <ChevronRight className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-
-                {(() => {
-                  const today = new Date(); today.setHours(0, 0, 0, 0);
-                  const upcoming = visibleRsvps
-                    .filter(r => {
-                      const d = new Date(r.event.event_date);
-                      return !isNaN(d.getTime()) && d >= today;
-                    })
-                    .sort((a, b) => new Date(a.event.event_date).getTime() - new Date(b.event.event_date).getTime());
-
-                  if (upcoming.length === 0) {
-                    return (
-                      <div
-                        className="rounded-3xl p-8 text-center"
-                        style={{ background: PANEL, border: PANEL_BORDER }}
-                      >
-                        <Calendar className="w-9 h-9 mx-auto mb-3" style={{ color: "rgba(232,93,47,0.7)" }} />
-                        <p
-                          style={{ fontFamily: "'Playfair Display', serif", fontStyle: "italic", fontSize: 16, color: "rgba(250,245,233,0.7)", margin: 0 }}
-                        >
-                          No events on your calendar yet
-                        </p>
-                        <button
-                          onClick={() => goTo("/events")}
-                          className="mt-4 px-5 py-2 rounded-full text-[11px] uppercase tracking-widest"
-                          style={{ background: PINK, color: "#fff", fontFamily: "'Inter', sans-serif", fontWeight: 700 }}
-                        >
-                          Browse events
-                        </button>
-                      </div>
-                    );
-                  }
-
-                  return (
-                    <div className="space-y-2.5">
-                      {upcoming.slice(0, 6).map(r => {
-                        const d = new Date(r.event.event_date);
-                        const kindLabel =
-                          r.rsvp_kind === 'stadium' ? "Going 🏟️"
-                          : r.rsvp_kind === 'bar' ? `Watching${r.bar_name ? ` @ ${r.bar_name}` : ""} 🍺`
-                          : (r.status === 'attending' ? "Going" : r.status);
-                        const kindColor = r.rsvp_kind === 'bar' ? "#2DD4BF" : PINK;
-                        return (
-                          <button
-                            key={r.id}
-                            onClick={() => goTo(`/event/${r.event.id}`)}
-                            className="w-full flex items-center gap-3 p-3 rounded-2xl text-left transition-colors hover:bg-white/5"
-                            style={{ background: PANEL, border: PANEL_BORDER }}
-                          >
-                            <div
-                              className="flex-shrink-0 w-14 h-14 rounded-xl flex flex-col items-center justify-center"
-                              style={{ background: "rgba(232,93,47,0.12)", border: "1px solid rgba(232,93,47,0.25)" }}
-                            >
-                              <span style={{ fontFamily: "'Space Mono', monospace", fontSize: 9, letterSpacing: "0.18em", color: PINK, textTransform: "uppercase" }}>
-                                {format(d, "MMM")}
-                              </span>
-                              <span style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: 22, lineHeight: 1, color: "#FAF5E9" }}>
-                                {format(d, "dd")}
-                              </span>
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <h3
-                                className="line-clamp-1"
-                                style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: 16, color: "#FAF5E9", textTransform: "uppercase", letterSpacing: "0.01em", margin: 0 }}
-                              >
-                                {r.event.title}
-                              </h3>
-                              <div
-                                className="flex items-center gap-2 mt-1 text-[10.5px]"
-                                style={{ fontFamily: "'Space Mono', monospace", color: "rgba(250,245,233,0.55)", letterSpacing: "0.04em" }}
-                              >
-                                {r.event.event_time && (
-                                  <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{r.event.event_time.slice(0, 5)}</span>
-                                )}
-                                {(r.event.venue_name || r.event.city) && (
-                                  <span className="flex items-center gap-1 truncate"><MapPin className="w-3 h-3" />{r.event.venue_name || r.event.city}</span>
-                                )}
-                              </div>
-                              <span
-                                className="inline-block mt-1.5 px-2 py-0.5 rounded-full text-[9.5px] uppercase tracking-widest"
-                                style={{ background: `${kindColor}22`, color: kindColor, border: `1px solid ${kindColor}55`, fontFamily: "'Inter', sans-serif", fontWeight: 700 }}
-                              >
-                                {kindLabel}
-                              </span>
-                            </div>
-                            <ChevronRight className="w-4 h-4 flex-shrink-0" style={{ color: "rgba(250,245,233,0.35)" }} />
-                          </button>
-                        );
-                      })}
-                    </div>
-                  );
-                })()}
-              </motion.div>
-
             </div>
+
           </motion.div>
         </div>
       </main>
