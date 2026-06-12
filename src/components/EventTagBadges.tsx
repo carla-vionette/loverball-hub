@@ -22,7 +22,7 @@ const EventTagBadges = ({ tags, size = "default", onTagClick }: Props) => {
 
   return (
     <div className="flex flex-wrap gap-1.5">
-      {tags.map((tag) => {
+      {safeTags.map((tag) => {
         const style = TAG_STYLES[tag] || { emoji: "🏷️", className: "bg-muted text-muted-foreground border-border" };
         return (
           <Badge
