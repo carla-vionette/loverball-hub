@@ -1080,10 +1080,22 @@ const Events = () => {
                       </div>
 
                       <div className="p-4 space-y-3">
+                        {(() => {
+                          const cur = getCuration(ev, idx);
+                          if (!cur) return null;
+                          const Icon = cur.icon;
+                          return (
+                            <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full"
+                              style={{ background: `${cur.color}1a`, border: `1px solid ${cur.color}55`, color: cur.color, fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 700, fontSize: 9.5, letterSpacing: "0.14em", textTransform: "uppercase" }}>
+                              <Icon className="w-2.5 h-2.5" /> {cur.text}
+                            </span>
+                          );
+                        })()}
                         <h3 className="line-clamp-2"
                           style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: 18, lineHeight: 1.05, color: "#FFFFFF", textTransform: "uppercase", letterSpacing: "0.01em", margin: 0 }}>
                           {ev.title}
                         </h3>
+
                         <div className="flex flex-wrap items-center gap-x-3 gap-y-1"
                           style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 10, color: "rgba(248,248,248,0.55)", letterSpacing: "0.04em" }}>
                           {ev.event_time && <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{fmtTime(ev.event_time)}</span>}
