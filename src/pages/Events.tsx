@@ -500,9 +500,43 @@ const Events = () => {
     }
   });
 
+  // Discovery quick-filter — high-intent buckets layered on top of category/sport.
+  // Each branch is intentionally permissive so labels feel curated, not exclusionary.
+  const isTonight = (d: Date) => {
+    const today = new Date();
+    return d.getFullYear() === today.getFullYear()
+      && d.getMonth() === today.getMonth()
+      && d.getDate() === today.getDate();
+  };
+  const isWeekend = (d: Date) => {
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    const sat = new Date(today); sat.setDate(today.getDate() + ((6 - today.getDay() + 7) % 7));
+    const sun = new Date(sat); sun.setDate(sat.getDate() + 1);
+    const day = new Date(d); day.setHours(0, 0, 0, 0);
+    return day.getTime() === sat.getTime() || day.getTime() === sun.getTime();
+  };
+  const matchesDiscover = (e: DbEvent) => {
+    if (discover === "all") return true;
+    const d = parseEventDate(e.event_date);
+    const tags = [...(e.event_tags || []), ...(e.sport_tags || [])].map(t => t.toLowerCase());
+    const title = (e.title || "").toLowerCase();
+    const desc = (e.description || "").toLowerCase();
+    const m = (e as unknown as MockDbEvent).__mock ? (e as unknown as MockDbEvent) : null;
+    switch (discover) {
+      case "tonight":  return isTonight(d);
+      case "weekend":  return isWeekend(d);
+      case "womens":   return m ? m.__is_womens : /women|wnba|nwsl|ncaaw|pwhl/i.test(title + " " + tags.join(" "));
+      case "watch":    return e.event_type === "watch_party" || /watch party|watch/i.test(title);
+      case "solo":     return tags.some(t => /solo|beginner|first.?time|friendly/.test(t)) || /solo|beginner|friendly/.test(desc);
+      case "community":return e.event_type === "networking" || tags.some(t => /community|meetup|network/.test(t));
+      default:         return true;
+    }
+  };
+  const discoverFiltered = sportsFiltered.filter(matchesDiscover);
+
   // Proximity filter — only applied when user has lat/lng AND radius is numeric.
   // Events without coords are always shown (treated as "national" reach).
-  const withDistance = sportsFiltered.map(e => {
+  const withDistance = discoverFiltered.map(e => {
     let distance: number | null = null;
     if (userLoc && e.location_lat != null && e.location_lng != null) {
       distance = distanceMiles(userLoc.lat, userLoc.lng, e.location_lat, e.location_lng);
