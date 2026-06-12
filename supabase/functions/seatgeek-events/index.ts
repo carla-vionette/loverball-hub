@@ -292,12 +292,3 @@ Deno.serve(async (req) => {
     },
   });
 });
-
-  return new Response(JSON.stringify({ events }), {
-    headers: {
-      ...corsHeaders,
-      "Content-Type": "application/json",
-      "Cache-Control": "public, max-age=120, s-maxage=600",
-    },
-  });
-});
