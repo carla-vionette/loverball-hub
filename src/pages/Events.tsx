@@ -1608,6 +1608,7 @@ const Events = () => {
                         })()}
                       </div>
                     </article>
+                    )}
                     {sponsorSlot && <SponsorCard index={Math.floor(cardIndex / 5) - 1} />}
                   </React.Fragment>
                 );
