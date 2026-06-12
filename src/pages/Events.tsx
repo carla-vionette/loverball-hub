@@ -34,7 +34,6 @@ import EventChatThread, { SYSTEM_PREFIX } from "@/components/events/EventChatThr
 import { MessageCircle, BookmarkCheck } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import type { SportsBar } from "@/data/laSportsBars";
-import { LA_SPORTS_BARS } from "@/data/laSportsBars";
 import { watchBarsForCity } from "@/data/worldCupWatchBars";
 
 
