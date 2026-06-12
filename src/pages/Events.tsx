@@ -1287,7 +1287,7 @@ const Events = () => {
                             const isSaved = savedIds.has(ev.id);
                             return (
                               <>
-                                {ev.event_tags && ev.event_tags.length > 0 && (
+                                {Array.isArray(ev.event_tags) && ev.event_tags.length > 0 && (
                                   <div onClick={(e) => e.stopPropagation()}>
                                     <EventTagBadges tags={ev.event_tags} size="sm" />
                                   </div>
