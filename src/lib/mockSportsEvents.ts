@@ -335,7 +335,8 @@ async function fetchSeatGeekEvents(opts: {
     params.lat = String(opts.lat);
     params.lng = String(opts.lng);
   } else {
-    return [];
+    // Fallback to LA so the World Cup nationwide query still returns events.
+    params.zip = "90001";
   }
 
   try {
