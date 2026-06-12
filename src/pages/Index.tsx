@@ -108,17 +108,31 @@ const Index = () => {
           borderBottom: `1px solid ${C.inkRule}`,
         }}
       >
-        <Link to="/" className="flex items-center gap-2" aria-label="Loverball home">
-          <img
-            src={loverballWordmark.url}
-            alt="Loverball"
-            className="h-8 md:h-9 w-auto select-none"
-            draggable={false}
-            loading="eager"
-            decoding="async"
-            style={{ filter: "brightness(0) invert(1)" }}
-          />
-        </Link>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={goJoin}
+            style={{
+              background: C.accent, color: "#fff",
+              fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.2em",
+              textTransform: "uppercase", padding: "12px 22px", borderRadius: 999,
+              fontWeight: 600,
+              boxShadow: "0 8px 24px -10px rgba(232,93,38,0.6)",
+            }}
+            className="hover:-translate-y-0.5 transition-transform"
+          >
+            Join
+          </button>
+          <Link
+            to="/auth?mode=signin"
+            style={{
+              fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.22em",
+              textTransform: "uppercase", color: C.cream,
+            }}
+            className="hover:opacity-60 transition-opacity"
+          >
+            Sign In
+          </Link>
+        </div>
         <div className="hidden md:flex items-center gap-9">
           {[
             ["About", "/about"],
@@ -138,31 +152,6 @@ const Index = () => {
               {l}
             </Link>
           ))}
-        </div>
-        <div className="flex items-center gap-3">
-          <Link
-            to="/auth?mode=signin"
-            style={{
-              fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.22em",
-              textTransform: "uppercase", color: C.cream,
-            }}
-            className="hidden sm:inline hover:opacity-60"
-          >
-            Sign in
-          </Link>
-          <button
-            onClick={goJoin}
-            style={{
-              background: C.accent, color: "#fff",
-              fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.2em",
-              textTransform: "uppercase", padding: "12px 22px", borderRadius: 999,
-              fontWeight: 600,
-              boxShadow: "0 8px 24px -10px rgba(232,93,38,0.6)",
-            }}
-            className="hover:-translate-y-0.5 transition-transform"
-          >
-            Join
-          </button>
         </div>
       </nav>
 
