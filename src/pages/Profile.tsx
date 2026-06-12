@@ -430,8 +430,9 @@ const Profile = () => {
                   })()}
                   userName={userName}
                   onOpenEvent={(id) => goTo(`/event/${id}`)}
-                  onOpenWatch={() => setWatchOpen(true)}
+                  onOpenWatch={() => goTo("/events")}
                   onOpenStories={() => goTo("/explore")}
+
                 />
               </motion.div>
 
