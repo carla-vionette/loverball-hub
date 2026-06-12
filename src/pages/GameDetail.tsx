@@ -398,8 +398,27 @@ const GameDetail = () => {
           </div>
           <div className="space-y-3 max-h-[400px] overflow-y-auto mb-3 pr-1">
             {messages.length === 0 && (
-              <div className="text-[13px] py-8 text-center" style={{ color: "rgba(250,245,233,0.4)", fontFamily: "'Playfair Display', serif", fontStyle: "italic" }}>
-                Start the conversation.
+              <div className="py-4 space-y-3">
+                <p className="text-[13px] text-center" style={{ color: "rgba(250,245,233,0.55)", fontFamily: "'Playfair Display', serif", fontStyle: "italic" }}>
+                  Kick it off — pick a prompt or write your own.
+                </p>
+                <div className="flex flex-wrap gap-2 justify-center">
+                  {[
+                    "Who's going in person?",
+                    "Where is everyone watching?",
+                    "Best pregame meetup?",
+                    "Anyone coming solo?",
+                  ].map(p => (
+                    <button
+                      key={p}
+                      onClick={() => setDraft(p)}
+                      className="px-3 py-1.5 rounded-full text-[11px]"
+                      style={{ background: "rgba(232,93,47,0.10)", border: "1px solid rgba(232,93,47,0.35)", color: PINK, fontFamily: "'Inter', sans-serif", fontWeight: 700 }}
+                    >
+                      {p}
+                    </button>
+                  ))}
+                </div>
               </div>
             )}
             {messages.map(m => {
