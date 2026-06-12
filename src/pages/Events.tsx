@@ -148,6 +148,24 @@ const Events = () => {
   type DiscoverKey = "all" | "tonight" | "weekend" | "womens" | "watch" | "solo" | "community";
   const [discover, setDiscover] = useState<DiscoverKey>("all");
 
+  // Date preset — default to the next 30 days so members see real inventory,
+  // not a single curated pick. "all" lifts the upper bound entirely.
+  type DatePreset = "tonight" | "weekend" | "7d" | "30d" | "all";
+  const [datePreset, setDatePreset] = useState<DatePreset>("30d");
+
+  // Highlights = curated picks. Schedule = comprehensive month-view grouped by date.
+  const [viewMode, setViewMode] = useState<"highlights" | "schedule">("schedule");
+
+  // Mobile-friendly collapsible date sections in Schedule view.
+  const [collapsedDates, setCollapsedDates] = useState<Set<string>>(new Set());
+  const toggleDateCollapse = (key: string) => {
+    setCollapsedDates(prev => {
+      const n = new Set(prev);
+      if (n.has(key)) n.delete(key); else n.add(key);
+      return n;
+    });
+  };
+
   // Personalization signals from the member's profile (drives curation labels).
   const [userSports, setUserSports] = useState<string[]>([]);
   const [userTeams, setUserTeams] = useState<string[]>([]);
