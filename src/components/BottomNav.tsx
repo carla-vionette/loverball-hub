@@ -40,6 +40,12 @@ const BottomNav = () => {
     return () => { supabase.removeChannel(channel); };
   }, [user?.id]);
 
+  // Hide on onboarding/welcome/auth flows so the sticky Continue button isn't covered.
+  const HIDDEN_PREFIXES = ["/onboarding", "/welcome", "/auth", "/reset-password", "/signup"];
+  if (HIDDEN_PREFIXES.some((p) => pathname === p || pathname.startsWith(p + "/"))) {
+    return null;
+  }
+
   return (
     <nav
       className="fixed bottom-4 left-4 right-4 z-50 lg:hidden safe-area-pb"
