@@ -519,7 +519,7 @@ const Events = () => {
   const matchesDiscover = (e: DbEvent) => {
     if (discover === "all") return true;
     const d = parseEventDate(e.event_date);
-    const tags = [...(e.event_tags || []), ...(e.sport_tags || [])].map(t => t.toLowerCase());
+    const tags = [...(Array.isArray(e.event_tags) ? e.event_tags : []), ...(Array.isArray(e.sport_tags) ? e.sport_tags : [])].map(t => String(t).toLowerCase());
     const title = (e.title || "").toLowerCase();
     const desc = (e.description || "").toLowerCase();
     const m = (e as unknown as MockDbEvent).__mock ? (e as unknown as MockDbEvent) : null;
