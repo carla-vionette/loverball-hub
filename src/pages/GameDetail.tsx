@@ -445,6 +445,7 @@ const GameDetail = () => {
             </Button>
           </form>
         </div>
+        )}
       </main>
     </div>
   );
