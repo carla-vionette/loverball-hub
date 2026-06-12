@@ -591,6 +591,44 @@ const Events = () => {
       })
     : null;
 
+  // Curation labels — explain *why* an event is being surfaced. First match wins.
+  type Curation = { text: string; color: string; icon: any };
+  const getCuration = (ev: DbEvent, idx: number): Curation | null => {
+    const ct = counts[ev.id] || gameCounts[ev.id] || 0;
+    const tags = [...(ev.event_tags || []), ...(ev.sport_tags || [])].map(t => t.toLowerCase());
+    const title = (ev.title || "").toLowerCase();
+    const haystack = title + " " + tags.join(" ");
+    const m = (ev as unknown as MockDbEvent).__mock ? (ev as unknown as MockDbEvent) : null;
+
+    // Personalized — team / sport overlap with member profile.
+    const teamHit = userTeams.find(t => haystack.includes(t.toLowerCase()));
+    if (teamHit) return { text: `Because you follow ${teamHit}`, color: "#E85D2F", icon: Sparkles };
+    const sportHit = userSports.find(s => haystack.includes(s.toLowerCase()));
+    if (sportHit) return { text: `Picked for ${sportHit} fans`, color: "#E85D2F", icon: Sparkles };
+
+    // Women's sports crowd
+    if (m?.__is_womens || /women|wnba|nwsl|ncaaw|pwhl/i.test(haystack)) {
+      return { text: "Women's sports crowd", color: "#E85D2F", icon: Heart };
+    }
+    // Near you
+    const dist = distanceById[ev.id];
+    if (dist != null && dist <= 10) return { text: "Near you", color: "#2DD4BF", icon: MapPin };
+    if (userCity && ev.city && ev.city.toLowerCase().includes(userCity.toLowerCase().split(",")[0])) {
+      return { text: `Popular in ${ev.city.split(",")[0]}`, color: "#2DD4BF", icon: MapPin };
+    }
+    // Social energy by RSVP count
+    if (ct >= 12) return { text: "Big social energy", color: "#F0C24C", icon: Zap };
+    if (ct >= 5)  return { text: "Popular this week", color: "#F0C24C", icon: Zap };
+    // Solo-friendly hint
+    if (/solo|beginner|friendly|first.?time/.test(haystack)) {
+      return { text: "Good for solo fans", color: "#A78BFA", icon: Users };
+    }
+    if (ev.event_type === "networking") return { text: "Community + connection", color: "#A78BFA", icon: Users };
+    return idx === 0 ? { text: "Loverball pick", color: "#E85D2F", icon: Sparkles } : null;
+  };
+
+
+
   if (loading) {
     return (
       <div className="min-h-screen" style={{ background: "#0a0a0a" }}>
