@@ -34,7 +34,7 @@ import EventChatThread, { SYSTEM_PREFIX } from "@/components/events/EventChatThr
 import { MessageCircle, BookmarkCheck } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import type { SportsBar } from "@/data/laSportsBars";
-import { LA_SPORTS_BARS } from "@/data/laSportsBars";
+import { watchBarsForCity } from "@/data/worldCupWatchBars";
 
 
 const CATEGORIES = ["All", "watch_party", "game", "panel", "brunch", "networking", "other"];
@@ -1167,7 +1167,7 @@ const Events = () => {
                                   const isLA = /inglewood|los angeles/.test(cityLower);
                                   const mapsQuery = encodeURIComponent(`sports bars near ${ev.venue_name || ev.city || "stadium"}`);
                                   const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${mapsQuery}`;
-                                  const bars = isLA ? LA_SPORTS_BARS.slice(0, 4) : [];
+                                  const bars = watchBarsForCity(ev.city);
                                   return (
                                     <div className="pt-2 space-y-2" onClick={(e) => e.stopPropagation()}>
                                       <div className="px-3 py-2 rounded-xl space-y-1.5"
@@ -1198,12 +1198,12 @@ const Events = () => {
                                         )}
                                         <div className="pt-1.5">
                                           <p style={{ fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: 10, letterSpacing: "0.1em", textTransform: "uppercase", color: "#FAF5E9", margin: 0 }}>
-                                            🍻 Where to Watch
+                                            🍻 Where to Watch{!isLA && ev.city ? ` in ${ev.city}` : isLA ? " in LA" : ""}
                                           </p>
-                                          {isLA ? (
+                                          {bars.length > 0 ? (
                                             <ul style={{ listStyle: "none", padding: 0, margin: "4px 0 0" }}>
-                                              {bars.map((b) => (
-                                                <li key={b.id} style={{ fontFamily: "'Space Mono', monospace", fontSize: 10.5, color: "rgba(248,248,248,0.75)", lineHeight: 1.6 }}>
+                                              {bars.slice(0, 4).map((b) => (
+                                                <li key={b.name} style={{ fontFamily: "'Space Mono', monospace", fontSize: 10.5, color: "rgba(248,248,248,0.75)", lineHeight: 1.6 }}>
                                                   · <span style={{ color: "#FAF5E9" }}>{b.name}</span> — {b.neighborhood}
                                                 </li>
                                               ))}
