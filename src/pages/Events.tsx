@@ -501,7 +501,33 @@ const Events = () => {
   const pastEvents = combinedEvents.filter(e => parseEventDate(e.event_date) < cutoff).reverse();
 
   const baseEvents = tab === "upcoming" ? upcomingEvents : pastEvents;
-  const categoryFiltered = category === "All" ? baseEvents : baseEvents.filter(e => e.event_type === category);
+
+  // DATE PRESET — apply upper bound to upcoming events. Defaults to next 30 days.
+  const startOfToday = new Date(); startOfToday.setHours(0, 0, 0, 0);
+  const endOfToday = new Date(startOfToday); endOfToday.setDate(endOfToday.getDate() + 1);
+  const next7 = new Date(startOfToday); next7.setDate(next7.getDate() + 7);
+  const next30 = new Date(startOfToday); next30.setDate(next30.getDate() + 30);
+  const weekendStart = new Date(startOfToday);
+  const dow = weekendStart.getDay(); // 0=Sun..6=Sat
+  const daysToSat = (6 - dow + 7) % 7;
+  weekendStart.setDate(weekendStart.getDate() + daysToSat);
+  const weekendEnd = new Date(weekendStart); weekendEnd.setDate(weekendEnd.getDate() + 2); // Sat+Sun
+
+  const dateFiltered = tab === "upcoming"
+    ? baseEvents.filter(e => {
+        const d = parseEventDate(e.event_date);
+        switch (datePreset) {
+          case "tonight":  return d >= startOfToday && d < endOfToday;
+          case "weekend":  return d >= weekendStart && d < weekendEnd;
+          case "7d":       return d <= next7;
+          case "30d":      return d <= next30;
+          case "all":
+          default:         return true;
+        }
+      })
+    : baseEvents;
+
+  const categoryFiltered = category === "All" ? dateFiltered : dateFiltered.filter(e => e.event_type === category);
 
   // Sports filter chip row — operates on both real games + mock external events.
   const weekCutoff = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
