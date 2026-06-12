@@ -17,7 +17,7 @@ export const USE_MOCK_DATA = false;
 export type SportKind = "pro" | "college";
 export type League =
   | "NFL" | "NBA" | "WNBA" | "NWSL" | "MLS" | "MLB" | "NHL"
-  | "NCAAF" | "NCAAM" | "NCAAW" | "NCAA_SOCCER";
+  | "NCAAF" | "NCAAM" | "NCAAW" | "NCAA_SOCCER" | "FIFA_WC";
 
 export interface MockSportsEvent {
   id: string;
