@@ -841,10 +841,22 @@ const Events = () => {
 
                   {/* Bottom block */}
                   <div className="absolute bottom-0 left-0 right-0 p-5 md:p-7">
+                    {(() => {
+                      const cur = getCuration(featured, 0);
+                      if (!cur) return null;
+                      const Icon = cur.icon;
+                      return (
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full mb-3"
+                          style={{ background: `${cur.color}26`, border: `1px solid ${cur.color}66`, color: cur.color, fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 700, fontSize: 10, letterSpacing: "0.16em", textTransform: "uppercase", backdropFilter: "blur(6px)" }}>
+                          <Icon className="w-3 h-3" /> {cur.text}
+                        </span>
+                      );
+                    })()}
                     <h2 className="line-clamp-2"
                       style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: "clamp(28px, 6vw, 44px)", lineHeight: 0.95, color: "#FFFFFF", textTransform: "uppercase", letterSpacing: "0.005em", margin: 0, textShadow: "0 2px 16px rgba(0,0,0,0.9), 0 1px 4px rgba(0,0,0,0.95)" }}>
                       {featured.title}
                     </h2>
+
                     <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-3"
                       style={{ fontFamily: "'Space Mono', ui-monospace, monospace", fontSize: 11, color: "rgba(248,248,248,0.7)", letterSpacing: "0.04em" }}>
                       {featured.event_time && <span className="flex items-center gap-1.5"><Clock className="w-3.5 h-3.5" />{fmtTime(featured.event_time)}</span>}
