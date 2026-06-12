@@ -380,8 +380,18 @@ const GameDetail = () => {
             </div>
           ))}
         </div>
+        </>
+        )}
 
-        {/* Game chat */}
+        {tab === "watch" && (
+          <WatchSpotsPanel
+            externalGameId={game.id}
+            venueCity={game.venue_city}
+            league={game.league}
+          />
+        )}
+
+        {tab === "chat" && (
         <div className="rounded-2xl p-5" style={{ background: PANEL, border: BORDER }}>
           <div className="text-[12px] uppercase mb-3" style={{ letterSpacing: "0.18em", fontFamily: "'Space Mono', monospace", color: "rgba(250,245,233,0.7)" }}>
             Game Chat
