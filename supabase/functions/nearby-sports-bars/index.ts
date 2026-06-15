@@ -5,6 +5,10 @@ import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
 const GATEWAY_URL = "https://connector-gateway.lovable.dev/google_maps";
 const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
 const GOOGLE_MAPS_API_KEY = Deno.env.get("GOOGLE_MAPS_API_KEY");
+// Dedicated server-side, unrestricted Places key. Preferred over the
+// referrer-restricted managed connector key when present.
+const GOOGLE_PLACES_SERVER_KEY = Deno.env.get("GOOGLE_PLACES_SERVER_KEY");
+const USE_DIRECT_PLACES = !!GOOGLE_PLACES_SERVER_KEY;
 
 interface NearbyReq {
   lat?: number;
