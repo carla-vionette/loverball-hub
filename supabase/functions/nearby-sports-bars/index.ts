@@ -24,7 +24,7 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
   try {
-    if (!LOVABLE_API_KEY || !GOOGLE_MAPS_API_KEY) {
+    if (!USE_DIRECT_PLACES && (!LOVABLE_API_KEY || !GOOGLE_MAPS_API_KEY)) {
       return new Response(
         JSON.stringify({ error: "Google Maps connector not configured" }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
