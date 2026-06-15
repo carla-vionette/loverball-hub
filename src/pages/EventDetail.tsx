@@ -362,7 +362,7 @@ const EventDetail = () => {
         setTimeout(() => setShowConfetti(false), 3000);
       }
       toast({
-        title: status === 'yes' ? "🎉 You're going!" : status === 'maybe' ? "Marked as maybe" : "RSVP updated",
+        title: status === 'yes' ? "🎉 You're going!" : status === 'maybe' ? "Marked as interested" : "Next time",
         description: status === 'yes' ? "Sign up free to lock in your spot and get reminders." : undefined,
       });
       console.log('[RSVP] guest local success', { dbStatus });
@@ -437,7 +437,7 @@ const EventDetail = () => {
       }
 
       toast({
-        title: status === 'yes' ? "🎉 You're going!" : status === 'maybe' ? "Marked as maybe" : "RSVP updated",
+        title: status === 'yes' ? "🎉 You're going!" : status === 'maybe' ? "Marked as interested" : "Next time",
         description: status === 'yes' ? "We'll see you there!" : undefined,
       });
 
@@ -988,7 +988,7 @@ const EventDetail = () => {
                   disabled={rsvping}
                 >
                   <Check className="w-4 h-4 mr-2" />
-                  Going {rsvpStatus === 'attending' || rsvpStatus === 'yes' ? '✓' : ''}
+                  I'm Going {rsvpStatus === 'attending' || rsvpStatus === 'yes' ? '✓' : ''}
                 </Button>
                 <Button
                   variant={rsvpStatus === 'maybe' ? 'default' : 'outline'}
@@ -997,7 +997,7 @@ const EventDetail = () => {
                   disabled={rsvping}
                 >
                   <HelpCircle className="w-4 h-4 mr-2" />
-                  Maybe {rsvpStatus === 'maybe' ? '✓' : ''}
+                  Interested {rsvpStatus === 'maybe' ? '✓' : ''}
                 </Button>
                 <Button
                   variant={rsvpStatus === 'no' ? 'destructive' : 'outline'}
@@ -1006,7 +1006,7 @@ const EventDetail = () => {
                   disabled={rsvping}
                 >
                   <X className="w-4 h-4 mr-2" />
-                  Can't Go
+                  Next Time
                 </Button>
               </div>
             ) : (
@@ -1017,7 +1017,7 @@ const EventDetail = () => {
                   disabled={rsvping}
                 >
                   {rsvping ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : <Check className="w-5 h-5 mr-2" />}
-                  Going
+                  I'm Going
                 </Button>
                 <Button
                   variant="outline"
@@ -1026,7 +1026,7 @@ const EventDetail = () => {
                   disabled={rsvping}
                 >
                   <HelpCircle className="w-5 h-5 mr-2" />
-                  Maybe
+                  Interested
                 </Button>
                 <Button
                   variant="outline"
@@ -1035,7 +1035,7 @@ const EventDetail = () => {
                   disabled={rsvping}
                 >
                   <X className="w-5 h-5 mr-2" />
-                  Can't Go
+                  Next Time
                 </Button>
               </div>
             )}
@@ -1049,13 +1049,13 @@ const EventDetail = () => {
           <div className="max-w-4xl mx-auto">
             <div className="flex gap-2">
               <Button className="flex-1 py-6" onClick={() => handleRSVP('yes')}>
-                <Check className="w-5 h-5 mr-2" /> Going
+                <Check className="w-5 h-5 mr-2" /> I'm Going
               </Button>
               <Button variant="outline" className="flex-1 py-6" onClick={() => handleRSVP('maybe')}>
-                <HelpCircle className="w-5 h-5 mr-2" /> Maybe
+                <HelpCircle className="w-5 h-5 mr-2" /> Interested
               </Button>
               <Button variant="outline" className="flex-1 py-6" onClick={() => handleRSVP('no')}>
-                <X className="w-5 h-5 mr-2" /> Can't Go
+                <X className="w-5 h-5 mr-2" /> Next Time
               </Button>
             </div>
             <p className="text-[11px] text-muted-foreground text-center mt-2">
