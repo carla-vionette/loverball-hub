@@ -17,6 +17,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import WatchSpotsPanel from "@/components/game/WatchSpotsPanel";
+import WhereToWatchUnified from "@/components/watch/WhereToWatchUnified";
 
 const BG = "#0a0a0a";
 const PINK = "#E85D2F";
