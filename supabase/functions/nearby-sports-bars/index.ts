@@ -5,6 +5,10 @@ import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
 const GATEWAY_URL = "https://connector-gateway.lovable.dev/google_maps";
 const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
 const GOOGLE_MAPS_API_KEY = Deno.env.get("GOOGLE_MAPS_API_KEY");
+// Dedicated server-side, unrestricted Places key. Preferred over the
+// referrer-restricted managed connector key when present.
+const GOOGLE_PLACES_SERVER_KEY = Deno.env.get("GOOGLE_PLACES_SERVER_KEY");
+const USE_DIRECT_PLACES = !!GOOGLE_PLACES_SERVER_KEY;
 
 interface NearbyReq {
   lat?: number;
@@ -20,7 +24,7 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
   try {
-    if (!LOVABLE_API_KEY || !GOOGLE_MAPS_API_KEY) {
+    if (!USE_DIRECT_PLACES && (!LOVABLE_API_KEY || !GOOGLE_MAPS_API_KEY)) {
       return new Response(
         JSON.stringify({ error: "Google Maps connector not configured" }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
@@ -41,24 +45,45 @@ Deno.serve(async (req) => {
 
     const radiusMeters = Math.round(radiusMiles * 1609.34);
 
-    const res = await fetch(`${GATEWAY_URL}/places/v1/places:searchNearby`, {
+    const placesUrl = USE_DIRECT_PLACES
+      ? "https://places.googleapis.com/v1/places:searchNearby"
+      : `${GATEWAY_URL}/places/v1/places:searchNearby`;
+    const placesHeaders: Record<string, string> = USE_DIRECT_PLACES
+      ? {
+          "X-Goog-Api-Key": GOOGLE_PLACES_SERVER_KEY!,
+          "Content-Type": "application/json",
+          "X-Goog-FieldMask": [
+            "places.id",
+            "places.displayName",
+            "places.formattedAddress",
+            "places.shortFormattedAddress",
+            "places.location",
+            "places.rating",
+            "places.userRatingCount",
+            "places.primaryTypeDisplayName",
+            "places.editorialSummary",
+          ].join(","),
+        }
+      : {
+          Authorization: `Bearer ${LOVABLE_API_KEY}`,
+          "X-Connection-Api-Key": GOOGLE_MAPS_API_KEY!,
+          "Content-Type": "application/json",
+          "X-Goog-FieldMask": [
+            "places.id",
+            "places.displayName",
+            "places.formattedAddress",
+            "places.shortFormattedAddress",
+            "places.location",
+            "places.rating",
+            "places.userRatingCount",
+            "places.primaryTypeDisplayName",
+            "places.editorialSummary",
+          ].join(","),
+        };
+
+    const res = await fetch(placesUrl, {
       method: "POST",
-      headers: {
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
-        "X-Connection-Api-Key": GOOGLE_MAPS_API_KEY,
-        "Content-Type": "application/json",
-        "X-Goog-FieldMask": [
-          "places.id",
-          "places.displayName",
-          "places.formattedAddress",
-          "places.shortFormattedAddress",
-          "places.location",
-          "places.rating",
-          "places.userRatingCount",
-          "places.primaryTypeDisplayName",
-          "places.editorialSummary",
-        ].join(","),
-      },
+      headers: placesHeaders,
       body: JSON.stringify({
         includedTypes: ["sports_bar", "bar", "pub"],
         maxResultCount: 20,
@@ -91,6 +116,7 @@ Deno.serve(async (req) => {
       console.error(JSON.stringify({
         scope: "nearby-sports-bars",
         event: "places_searchNearby_failed",
+        via: USE_DIRECT_PLACES ? "direct_places_api" : "connector_gateway",
         http_status: res.status,
         google_status: googleStatus,
         google_message: googleMessage,
@@ -100,6 +126,7 @@ Deno.serve(async (req) => {
       return new Response(
         JSON.stringify({
           error: "Places API error",
+          via: USE_DIRECT_PLACES ? "direct_places_api" : "connector_gateway",
           status: res.status,
           fallback_reason: fallbackReason,
           google_status: googleStatus,
