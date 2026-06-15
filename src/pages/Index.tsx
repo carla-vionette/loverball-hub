@@ -13,7 +13,7 @@ import { INSTAGRAM_URL } from "@/lib/socialLinks";
    LOVERBALL — HOMEPAGE
    Fable-inspired: deep ink hero, editorial serif/sans mix,
    warm cream sections, coral accent. Location-aware fan
-   platform for women's sports.
+    platform for women who love sports.
    ============================================================ */
 
 const C = {
@@ -75,8 +75,8 @@ const Index = () => {
   return (
     <div style={{ background: C.cream, color: C.ink, fontFamily: fonts.sans }}>
       <Seo
-        title="Loverball — Location-aware fan platform for women's sports"
-        description="Loverball helps women's sports fans connect online and IRL, discover what's happening nearby, know where to watch, and stay on top of live scores and team updates."
+        title="Loverball — The fan platform for women who love sports"
+        description="Loverball is the social and local sports platform built for women fans. Find fans like you, discover watch parties near you, and follow every league you love."
         path="/"
       />
 
@@ -180,7 +180,7 @@ const Index = () => {
           {/* Editorial issue line */}
           <div className="flex items-center justify-between mb-10 md:mb-16 lb-fade">
             <Mono color={C.cream}>Vol. 01 — Founding Issue</Mono>
-            <Mono color={C.inkMuted}>Los Angeles, CA</Mono>
+            <Mono color={C.inkMuted}>Your City</Mono>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
@@ -228,7 +228,7 @@ const Index = () => {
                 className="mt-8 max-w-xl lb-rise lb-delay-3"
                 style={{ fontSize: 17, lineHeight: 1.6, color: C.inkMuted }}
               >
-                Loverball is the club for women's sports fans — connect in LA,
+                Loverball is the club for women who love sports — connect with fans,
                 find watch parties nearby, and never miss a score.{" "}
                 <span style={{ color: C.cream }}>Free to join.</span>
               </p>
@@ -297,7 +297,7 @@ const Index = () => {
               </div>
 
               <div className="mt-8 lb-rise lb-delay-4">
-                <Mono color={C.inkMuted}>1,000+ Women on the list · 3 Sold-out LA events</Mono>
+                <Mono color={C.inkMuted}>1,000+ Fans · 3 Sold-out Events</Mono>
               </div>
             </div>
 
@@ -314,7 +314,7 @@ const Index = () => {
                 >
                   <img
                     src={heroImage}
-                    alt="Women sports fans at a Loverball watch party in Los Angeles"
+                    alt="Women fans at a Loverball watch party"
                     className="w-full h-full object-cover"
                     loading="eager"
                     decoding="async"
@@ -338,7 +338,7 @@ const Index = () => {
                       className="w-1.5 h-1.5 rounded-full"
                       style={{ background: C.accent, animation: "lb-pulse-dot 2s infinite" }}
                     />
-                    Live · Echo Park
+                    Live · Near You
                   </div>
                 </div>
                 <figcaption className="mt-4 flex items-start justify-between gap-4">
@@ -373,7 +373,9 @@ const Index = () => {
                 "★",
                 "Live scores",
                 "★",
-                "Built for women's sports",
+                "Built for women who love sports",
+                "★",
+                "Any league. Any city.",
                 "★",
               ].map((t, i) => (
                 <span key={`${k}-${i}`}>{t}</span>
@@ -786,7 +788,7 @@ const Index = () => {
                 style={{ filter: "brightness(0) invert(1)" }}
               />
               <p className="max-w-md" style={{ color: C.inkMuted, fontSize: 15, lineHeight: 1.6 }}>
-                A location-aware fan platform for women's sports. Connect online and IRL,
+                The fan platform for women who love sports. Connect online and IRL,
                 find what's happening nearby, and never miss a score. Built in LA.
               </p>
               <a

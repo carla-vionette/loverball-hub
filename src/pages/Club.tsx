@@ -285,7 +285,7 @@ const Club = () => {
       <div style={{ background: C.bg, color: C.text, fontFamily: fonts.sans }} className="min-h-screen pb-32 md:pb-12">
         <Seo
           title="The Club — Find Your Sports People | Loverball"
-          description="Loverball's members community for women sports fans. Sign in or join to meet your people."
+          description="Loverball's members community for women who love sports. Sign in or join to meet your people."
           path="/club"
         />
         <MobileHeader />
