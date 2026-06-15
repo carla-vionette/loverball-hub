@@ -50,7 +50,7 @@ const Membership = () => {
     <div style={{ background: C.bg, color: C.text, fontFamily: fonts.sans }} className="min-h-screen">
       <Seo
         title="Membership — Loverball"
-        description="Join The Club for the full members-only home for women sports fans."
+        description="Join The Club for the full members-only home for women who love sports."
         path="/membership"
       />
 
@@ -69,7 +69,7 @@ const Membership = () => {
           The Club.
         </h1>
         <p className="mt-6 max-w-xl mx-auto" style={{ color: C.muted, fontSize: 17, lineHeight: 1.6 }}>
-          One membership. Full access to the members-only home for women sports fans.
+          One membership. Full access to the members-only home for women who love sports.
         </p>
       </section>
 

@@ -338,7 +338,7 @@ const Index = () => {
                       className="w-1.5 h-1.5 rounded-full"
                       style={{ background: C.accent, animation: "lb-pulse-dot 2s infinite" }}
                     />
-                    Live · Echo Park
+                    Live · Near You
                   </div>
                 </div>
                 <figcaption className="mt-4 flex items-start justify-between gap-4">
@@ -373,7 +373,9 @@ const Index = () => {
                 "★",
                 "Live scores",
                 "★",
-                "Built for women's sports",
+                "Built for women who love sports",
+                "★",
+                "Any league. Any city.",
                 "★",
               ].map((t, i) => (
                 <span key={`${k}-${i}`}>{t}</span>
@@ -786,7 +788,7 @@ const Index = () => {
                 style={{ filter: "brightness(0) invert(1)" }}
               />
               <p className="max-w-md" style={{ color: C.inkMuted, fontSize: 15, lineHeight: 1.6 }}>
-                A location-aware fan platform for women's sports. Connect online and IRL,
+                The fan platform for women who love sports. Connect online and IRL,
                 find what's happening nearby, and never miss a score. Built in LA.
               </p>
               <a

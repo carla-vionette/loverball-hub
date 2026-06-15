@@ -720,8 +720,8 @@ const Events = () => {
   return (
     <div className="min-h-screen bg-background">
       <Seo
-        title="Events — Women's Sports Events | Loverball"
-        description="Watch parties, game days, panels, brunches, and networking meetups for women's sports fans. Discover upcoming Loverball events."
+        title="Events — Find Your Sports People | Loverball"
+        description="Watch parties, game days, panels, brunches, and networking meetups for women who love sports. Discover upcoming Loverball events."
         path="/events"
       />
       <DesktopNav />
