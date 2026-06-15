@@ -1017,7 +1017,7 @@ const EventDetail = () => {
                   disabled={rsvping}
                 >
                   {rsvping ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : <Check className="w-5 h-5 mr-2" />}
-                  Going
+                  I'm Going
                 </Button>
                 <Button
                   variant="outline"
@@ -1026,7 +1026,7 @@ const EventDetail = () => {
                   disabled={rsvping}
                 >
                   <HelpCircle className="w-5 h-5 mr-2" />
-                  Maybe
+                  Interested
                 </Button>
                 <Button
                   variant="outline"
@@ -1035,7 +1035,7 @@ const EventDetail = () => {
                   disabled={rsvping}
                 >
                   <X className="w-5 h-5 mr-2" />
-                  Can't Go
+                  Next Time
                 </Button>
               </div>
             )}
