@@ -988,7 +988,7 @@ const EventDetail = () => {
                   disabled={rsvping}
                 >
                   <Check className="w-4 h-4 mr-2" />
-                  Going {rsvpStatus === 'attending' || rsvpStatus === 'yes' ? '✓' : ''}
+                  I'm Going {rsvpStatus === 'attending' || rsvpStatus === 'yes' ? '✓' : ''}
                 </Button>
                 <Button
                   variant={rsvpStatus === 'maybe' ? 'default' : 'outline'}
@@ -997,7 +997,7 @@ const EventDetail = () => {
                   disabled={rsvping}
                 >
                   <HelpCircle className="w-4 h-4 mr-2" />
-                  Maybe {rsvpStatus === 'maybe' ? '✓' : ''}
+                  Interested {rsvpStatus === 'maybe' ? '✓' : ''}
                 </Button>
                 <Button
                   variant={rsvpStatus === 'no' ? 'destructive' : 'outline'}
@@ -1006,7 +1006,7 @@ const EventDetail = () => {
                   disabled={rsvping}
                 >
                   <X className="w-4 h-4 mr-2" />
-                  Can't Go
+                  Next Time
                 </Button>
               </div>
             ) : (
