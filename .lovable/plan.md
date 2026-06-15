@@ -1,84 +1,225 @@
+# Where-to-Watch v2 — Unified Member Experience
 
-# Loverball Events + RSVP + Identity + Community — Build Plan
+One reusable surface across Events, Game Detail, and Feed. Members always see something useful — never a blank watch section.
 
-This is a large, multi-system build. Much of Phase 1 already exists in the codebase (phone OTP RSVP sheet, RsvpConfirmed, WelcomeIdentity, WelcomeCircles, WelcomeFirstMove, sticky bottom bar on EventPublic). I will extend rather than rebuild, and ship the rest in clearly scoped phases so each can be reviewed before the next runs.
+## 1. Component architecture
 
-## What already exists (verified)
-- `EventPublic.tsx` — public event page with sticky mobile RSVP bar
-- `RsvpPhoneSheet.tsx` — first name + phone + 6-digit OTP via `supabase.auth.signInWithOtp`
-- `RsvpConfirmed.tsx` → `WelcomeIdentity` (3-step) → `WelcomeCircles` → `WelcomeFirstMove`
-- `events` table with `capacity`, `rsvp_approval_required`, `guest_visibility`, `allow_plus_ones`, `co_host_ids`, `visibility`
-- `event_rsvps` with `status`, `plus_ones`, `guest_name`, `guest_phone`
-- `admin_get_event_attendees` RPC, `AdminAttendeeManager` page
-- Lovable AI Gateway, Twilio SMS, Resend email all wired
+New shared component: `src/components/watch/WhereToWatchUnified.tsx`
 
-## Phase 1 — Event-first landing polish (frontend only)
-Goal: make the public event page genuinely persuasive for a logged-out visitor.
-- Editorial hero (cover, host/community line, italic-serif title, mono date/venue, attendee avatar stack with "12 women from [city] going")
-- Respect host privacy: hide guest list/count when `guest_visibility=false`
-- Password gate UI (when `events.password_required`) — protected sections blurred until verified
-- Sticky bottom CTA bar: **I'm in** / **Interested** / **Can't go** + Share / Save / Add to calendar secondary row
-- Capacity & waitlist state on the buttons: "Full · join waitlist" when capacity reached
-- Logged-out teaser vs. unlocked-after-RSVP sections clearly delineated
+```text
+WhereToWatchUnified
+├─ <Header>                "Where to Watch · {game/event title}"
+├─ <SourceStrip>           shows active source: Live · Curated · Community
+├─ <MyPick> (if checked-in) "You're watching at Greyhound · Change · Open chat"
+├─ <FriendsRow>            "3 members watching · Mia + 2 friends going"
+├─ <LocationList>          ranked WatchLocationCard[]
+└─ <Footer>                "Suggest a spot" + source disclaimer
+```
 
-## Phase 2 — Backend: event settings, waitlist, approval, invites
-One migration that:
-- Adds to `events`: `waitlist_enabled bool`, `plus_one_limit int`, `open_invite_enabled bool`, `allow_mutual_invites bool`, `password_hash text`, `show_guest_count bool`, `anonymize_guest_list bool`, `hide_activity_timestamps bool`, `allow_photo_uploads bool`
-- Adds to `event_rsvps`: `approval_status text` (not_required|pending|approved|waitlisted|removed|blocked), `attendance_status text`, `identity_completed_at timestamptz`, `invited_by_user_id uuid`, `invite_id uuid`, `waitlist_position int`
-- Creates `event_invites` (id, event_id, invite_type, recipient_phone, recipient_email, invite_link_token, sent_by_user_id, source, status, created_at) with GRANTs + RLS
-- Server-side `rsvp_to_event(event_id, plus_ones)` RPC that applies the policy engine (approval / capacity / waitlist) atomically — prevents race conditions on capacity
-- `promote_from_waitlist(event_id)` RPC for hosts/cohosts
-- `verify_event_password(event_id, password)` RPC (constant-time check)
+Wraps existing `WatchSpotsPanel`/`NearbySportsBars`/`WhereToWatch` logic into a single API:
 
-## Phase 3 — RSVP confirmation state variants
-Extend `RsvpConfirmed.tsx` to render the correct copy for each approval/attendance state:
-- approved → "You're in"
-- pending → "Request sent" with what-happens-next
-- waitlisted → "You're on the list" + position
-- removed/blocked → friendly dead-end
+```ts
+<WhereToWatchUnified
+  context={{ kind: 'game', externalGameId, league, homeTeam, awayTeam, startTime, lat, lng, city }}
+  // OR kind: 'event' with eventId
+  variant="full" | "compact"  // compact for Feed cards
+/>
+```
 
-## Phase 4 — Host dashboard upgrade
-Extend `AdminAttendeeManager.tsx` (or a new `/events/:id/manage` host-facing page) with:
-- Tabs: All / Going / Interested / Pending / Waitlist / Approved / Checked-in / Declined / Removed
-- Row actions: approve, waitlist, remove, promote, manual check-in, edit plus-ones
-- Inline event settings drawer: capacity, waitlist toggle, approval toggle, plus-one limit, guest-list visibility, guest-count visibility, password, mutual invites
-- Cohost-aware permissions (uses `events.co_host_ids`)
-- Counts header by state
-- Mobile-first layout; desktop is the wider variant
+Old `WhereToWatch.tsx` and `NearbySportsBars.tsx` become thin wrappers calling the unified component (no breaking imports).
 
-## Phase 5 — Community unlock & post-RSVP retention
-- After identity setup, `WelcomeCircles` already shows people/circles/events — extend personalization queries to include `looking_for` and `favorite_la_teams` overlap ranking
-- Add a `welcome_sequence` edge function scheduled via existing patterns:
-  - Day 0: welcome SMS + first-action prompt (already partly in `WelcomeFirstMove`)
-  - Day 2: relevant community groups
-  - Day 5: another event suggestion
-  - Day 7: profile completion nudge if `identity_completed_at` null
-- Soft progressive-profile banner on `/profile` and `/feed` (dismissible, never a gate)
+## 2. Data source priority (resolved server-side)
 
-## Phase 6 — Event chat access gating
-- Update `ChatRoom.tsx` to check the requesting user's `event_rsvps.approval_status` against host's "chat access" setting (new `events.chat_access` enum: `approved_only` | `all_rsvps` | `verified_only`)
-- RLS-enforced via a `can_access_event_chat(user, event)` SQL function
+New edge function `where-to-watch-spots`:
 
-## Phase 7 — Edge cases & polish
-- Wrong OTP / delayed SMS / resend cooldown copy
-- Event canceled state
-- User suspended/blocked
-- Plus-one overflow handling
-- "RSVP changed later" — `event_rsvps.status` updatable, recompute approval/waitlist on change
-- Accessibility, motion, brand QA pass
+```text
+1. Official Loverball watch events  → events table where event_type='watch_party'
+                                       AND (sport_tags ⊇ league OR team match)
+                                       AND date ≈ game start time
+2. Partner venues                    → watch_locations.is_partner=true, city match
+3. Curated watch bars                → watch_locations.status='approved', city + league match
+4. Community pins                    → watch_location_pins for this game (existing logic)
+5. Google Places nearby sports bars  → existing nearby-sports-bars proxy
+6. Static curated fallback           → src/data/laSportsBars.ts when city is LA, else
+                                       generic "popular sports bars" suggestion list
+```
 
-## Execution rules
-- Use existing editorial tokens (Deep Navy `#0A1128`, Coral `#FF4D3A`, Oswald/Poppins, 20px radius) — no new color systems
-- No fake data anywhere (per core memory) — empty states use real copy + branded blocks
-- Every migration creates GRANTs in the same file
-- Phone OTP only — no email/password rework
-- One phase per turn; I will pause after each for review
+Each result is normalized to `WatchSpot`:
 
-## Open questions (will assume defaults unless you say otherwise)
-1. **Password protection** — keep as a real feature or scope cut for v1? (Default: build the field + gate UI, leave host UI for later)
-2. **Mutual invites** — track inviter relationship only, or full invite-graph viral mechanics? (Default: track only)
-3. **Event chat gating default** — `approved_only`? (Default: yes)
-4. **Day-2/5/7 nudges** — SMS, in-app, or both? (Default: in-app notification + SMS only for Day 0 + Day 7)
+```ts
+type WatchSpot = {
+  id: string;
+  source: 'official' | 'partner' | 'curated' | 'community' | 'places' | 'fallback';
+  name: string;
+  neighborhood?: string;
+  city: string;
+  distanceMi?: number;
+  rating?: number;
+  reviewCount?: number;
+  vibe?: string;            // short description
+  vibeTags: string[];       // 'womens-sports-crowd', 'big-screens', 'sound-on', etc.
+  lat?: number; lng?: number;
+  website?: string;
+  mapsUrl: string;
+  watchingCount: number;    // members checked in for this game
+  friendsWatching: { id: string; name: string; photo: string | null }[];
+  rank: number;             // priority score for sorting
+};
+```
 
-## Starting point
-On approval I'll start with **Phase 1** (event-first landing polish, pure frontend) so you can see the visible direction before we touch the schema in Phase 2.
+Ranking score: `sourceWeight(0–60) + distanceBoost + popularityBoost(watchingCount) + relevanceBoost(league/team match)`.
+
+## 3. Surfaces
+
+| Surface | Where | Variant |
+|---|---|---|
+| Events page | top of "Where are you watching?" module | `full` |
+| Game Detail | "Where to watch" tab (already exists) | `full` |
+| Feed | inside `ForYouTonight` card when a relevant game tonight | `compact` (top 3 spots only) |
+| Profile `ProfileWhereToWatch` | replace internals with unified component | `compact` |
+
+## 4. Card design (`WatchLocationCard`)
+
+```text
+┌──────────────────────────────────────────────────────┐
+│ [PARTNER]   Greyhound Bar & Grill          ★ 4.6    │
+│             Highland Park · 2.1 mi · 142 reviews    │
+│             "WNBA on every screen, sound on"        │
+│             #womens-sports-crowd #sound-on          │
+│             ─────────────────────────────────────── │
+│  ●●● 5 members watching · Mia + 2 friends going     │
+│  [I'm watching here]  [Save] [Maps] [Share]         │
+└──────────────────────────────────────────────────────┘
+```
+
+- Source badge top-left: official / partner / curated / community / nearby / suggested
+- Distance hidden when unknown; rating hidden when 0
+- Vibe chips capped at 3 visible, +N overflow
+- CTAs are 44px tap targets, primary "I'm watching here" full-width on mobile <380px
+
+## 5. Component states
+
+| State | Trigger | UI |
+|---|---|---|
+| `loading` | initial fetch | 3 skeleton cards + "Finding spots near you…" |
+| `live-ok` | Places + DB returned ≥1 spot | Source strip: "Live · powered by community + Google" |
+| `places-failed-curated` | Places error, curated/community filled in | Banner: "Live nearby search is offline — showing our curated picks" |
+| `no-local-suggested` | Zero in-city matches, showing generic fallback | "No strong nearby matches — try these popular spots, or suggest one" + CTA |
+| `picked` | User checked in for this game | Sticky pill: "You're watching at {venue} · Change · Open chat" |
+| `low-social` | watchingCount = 0 across all spots | Soft prompt: "Be the first to check in — your friends will see where you are" |
+| `error-fatal` | All sources failed (rare) | Curated static list + "Refresh" |
+
+## 6. "I'm watching here" action
+
+New table `game_watch_checkins` (migration):
+
+```text
+columns: id, user_id, external_game_id (nullable), event_id (nullable),
+         watch_location_id (nullable for ad-hoc places-only spot),
+         place_external_id (text, for Google Places id),
+         place_snapshot (jsonb: name/city/lat/lng captured at checkin),
+         created_at, expires_at (= game start + 4h)
+unique: (user_id, external_game_id) WHERE external_game_id NOT NULL
+unique: (user_id, event_id)         WHERE event_id NOT NULL
+RLS:
+  - SELECT: authenticated may read aggregate counts via SECURITY DEFINER RPC only;
+            row-level SELECT restricted to own rows + friends (via friendships)
+  - INSERT/UPDATE/DELETE: auth.uid() = user_id
+GRANT SELECT, INSERT, UPDATE, DELETE TO authenticated; ALL TO service_role.
+```
+
+RPCs:
+- `get_watch_checkin_counts(game_ids[])` → `{game_id, location_key, count}` aggregated
+- `get_friend_watch_checkins(game_id)` → friends' rows only (uses `friendships` table)
+
+Flow on tap:
+1. Optimistic update (count++, "Picked" badge on card)
+2. Upsert into `game_watch_checkins` (replace prior pick for same game)
+3. Toast: "You're watching at {venue}. Want to join the chat?" → CTA opens `/game/:id` chat tab
+4. Realtime channel `watch:{externalGameId}` broadcasts the new aggregate so other open clients update
+
+Auto-cleanup: pg_cron daily job deletes rows where `expires_at < now()`.
+
+## 7. Social proof & filtering
+
+- `friendsWatching` resolved from `get_friend_watch_checkins` (uses existing `friendships`)
+- Vibe tags rendered as filter chips above the list: tapping `#womens-sports-crowd` filters list client-side
+- Sort options: "Best match" (default ranking), "Closest", "Most members"
+- Matching heuristics (server-side in edge function):
+  - league/team relevance: spot's `leagues_supported` intersects `[league]` or vibe tag contains team slug
+  - women's sports relevance: spot has tag `womens-sports-crowd` OR is_partner=true with WNBA/NWSL in leagues
+  - distance: from user.zip → lat/lng (`profiles.latitude/longitude`) or event/game lat/lng
+  - popularity: `watchingCount` last 30d
+  - time relevance: only spots open during game window (uses `watch_locations.hours` json — added)
+
+## 8. Migration summary
+
+```sql
+-- Add hours to watch_locations
+ALTER TABLE public.watch_locations
+  ADD COLUMN hours jsonb,
+  ADD COLUMN short_description text,
+  ADD COLUMN rating numeric(2,1),
+  ADD COLUMN review_count integer DEFAULT 0;
+
+-- Check-ins table (full grants + RLS as above)
+CREATE TABLE public.game_watch_checkins (...);
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.game_watch_checkins TO authenticated;
+GRANT ALL ON public.game_watch_checkins TO service_role;
+ALTER TABLE public.game_watch_checkins ENABLE ROW LEVEL SECURITY;
+CREATE POLICY ... ;
+
+-- Aggregate + friends RPCs (security definer)
+CREATE FUNCTION public.get_watch_checkin_counts(...) ...;
+CREATE FUNCTION public.get_friend_watch_checkins(...) ...;
+
+-- Realtime
+ALTER PUBLICATION supabase_realtime ADD TABLE public.game_watch_checkins;
+```
+
+## 9. Microcopy
+
+| State | Copy |
+|---|---|
+| Loading | "Finding the best spots to catch the game…" |
+| Live ok | "Watch spots near you · updated just now" |
+| Places failed | "Live search is napping — here are our trusted picks" |
+| No local | "Nothing close by tonight. These spots usually pull a great women's-sports crowd." |
+| Empty social | "Nobody's checked in yet — be the first and your friends will see you here." |
+| Picked | "🍻 You're watching at {venue}. Tap to open the game chat." |
+| Suggest CTA | "Know a great spot? Add it — we'll review and add to the map." |
+| Friends row | "{firstName} + {n} friend{s} watching nearby" |
+
+## 10. Files changed / created
+
+**Created**
+- `supabase/functions/where-to-watch-spots/index.ts` — unified resolver (calls Places, queries DB, ranks)
+- `src/components/watch/WhereToWatchUnified.tsx`
+- `src/components/watch/WatchLocationCard.tsx`
+- `src/components/watch/useWatchSpots.ts` (React Query hook with realtime check-in subscription)
+- `src/components/watch/WatchCheckInButton.tsx`
+- Migration: `game_watch_checkins` + RPCs + watch_locations columns
+
+**Modified**
+- `src/pages/Events.tsx` — replace existing watch module with `<WhereToWatchUnified variant="full" context={...} />`
+- `src/pages/GameDetail.tsx` — swap `WatchSpotsPanel` in "Where to watch" tab
+- `src/components/profile/ForYouTonight.tsx` — add `variant="compact"` for relevant game
+- `src/components/ProfileWhereToWatch.tsx` — internals replaced
+- `src/components/WhereToWatch.tsx`, `src/components/NearbySportsBars.tsx` — thin re-export wrappers (no API break)
+
+**Untouched**
+- Admin surfaces (scope excluded)
+- Existing `watch_locations`/`watch_location_pins`/`watch_pin_upvotes` schema (additive only)
+
+## 11. Build order (sequential, each independently shippable)
+
+1. DB migration (`game_watch_checkins`, RPCs, watch_locations columns)
+2. `where-to-watch-spots` edge function with priority pipeline + Places fallback
+3. `useWatchSpots` hook + `WatchLocationCard` + `WhereToWatchUnified` (full variant)
+4. Wire Game Detail tab → ship & verify
+5. Wire Events page module → ship & verify
+6. Compact variant + Feed `ForYouTonight` integration
+7. Realtime aggregate updates + friends row
+8. Microcopy pass + analytics events (`watch_checkin`, `watch_spot_open_maps`, `watch_spot_share`)
+
+Approve and I'll start with step 1 (migration).

@@ -17,6 +17,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import WatchSpotsPanel from "@/components/game/WatchSpotsPanel";
+import WhereToWatchUnified from "@/components/watch/WhereToWatchUnified";
 
 const BG = "#0a0a0a";
 const PINK = "#E85D2F";
@@ -384,11 +385,28 @@ const GameDetail = () => {
         )}
 
         {tab === "watch" && (
-          <WatchSpotsPanel
-            externalGameId={game.id}
-            venueCity={game.venue_city}
-            league={game.league}
-          />
+          <div className="space-y-4">
+            <WhereToWatchUnified
+              context={{
+                kind: "game",
+                externalGameId: game.id,
+                league: game.league,
+                homeTeam: game.home_team,
+                awayTeam: game.away_team,
+                city: game.venue_city,
+                startTime: game.game_start_at,
+                title: `${game.away_team} vs ${game.home_team}`,
+              }}
+              chatHref={`/game/${game.id}?tab=chat`}
+              shareUrl={typeof window !== "undefined" ? `${window.location.origin}/game/${game.id}` : undefined}
+            />
+            {/* Community pin/upvote panel retained for power users to add new spots */}
+            <WatchSpotsPanel
+              externalGameId={game.id}
+              venueCity={game.venue_city}
+              league={game.league}
+            />
+          </div>
         )}
 
         {tab === "chat" && (

@@ -1429,6 +1429,60 @@ export type Database = {
           },
         ]
       }
+      game_watch_checkins: {
+        Row: {
+          created_at: string
+          event_id: string | null
+          expires_at: string
+          external_game_id: string | null
+          id: string
+          place_external_id: string | null
+          place_snapshot: Json
+          updated_at: string
+          user_id: string
+          watch_location_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          event_id?: string | null
+          expires_at?: string
+          external_game_id?: string | null
+          id?: string
+          place_external_id?: string | null
+          place_snapshot?: Json
+          updated_at?: string
+          user_id: string
+          watch_location_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          event_id?: string | null
+          expires_at?: string
+          external_game_id?: string | null
+          id?: string
+          place_external_id?: string | null
+          place_snapshot?: Json
+          updated_at?: string
+          user_id?: string
+          watch_location_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "game_watch_checkins_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "game_watch_checkins_watch_location_id_fkey"
+            columns: ["watch_location_id"]
+            isOneToOne: false
+            referencedRelation: "watch_locations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       games: {
         Row: {
           away_team: string
@@ -2875,6 +2929,7 @@ export type Database = {
           address: string | null
           city: string
           created_at: string
+          hours: Json | null
           id: string
           image_url: string | null
           is_partner: boolean
@@ -2884,6 +2939,9 @@ export type Database = {
           name: string
           neighborhood: string | null
           phone: string | null
+          rating: number | null
+          review_count: number
+          short_description: string | null
           state: string | null
           status: string
           submitted_by: string | null
@@ -2895,6 +2953,7 @@ export type Database = {
           address?: string | null
           city: string
           created_at?: string
+          hours?: Json | null
           id?: string
           image_url?: string | null
           is_partner?: boolean
@@ -2904,6 +2963,9 @@ export type Database = {
           name: string
           neighborhood?: string | null
           phone?: string | null
+          rating?: number | null
+          review_count?: number
+          short_description?: string | null
           state?: string | null
           status?: string
           submitted_by?: string | null
@@ -2915,6 +2977,7 @@ export type Database = {
           address?: string | null
           city?: string
           created_at?: string
+          hours?: Json | null
           id?: string
           image_url?: string | null
           is_partner?: boolean
@@ -2924,6 +2987,9 @@ export type Database = {
           name?: string
           neighborhood?: string | null
           phone?: string | null
+          rating?: number | null
+          review_count?: number
+          short_description?: string | null
           state?: string | null
           status?: string
           submitted_by?: string | null
@@ -3016,10 +3082,33 @@ export type Database = {
           status: string
         }[]
       }
+      get_friend_watch_checkins: {
+        Args: { p_event_id?: string; p_game_id?: string }
+        Returns: {
+          created_at: string
+          name: string
+          place_external_id: string
+          place_name: string
+          profile_photo_url: string
+          user_id: string
+          watch_location_id: string
+        }[]
+      }
       get_my_account_settings: { Args: never; Returns: Json }
       get_my_location: { Args: never; Returns: Json }
       get_public_profile_columns: { Args: { target_id: string }; Returns: Json }
       get_safe_profile: { Args: { profile_id: string }; Returns: Json }
+      get_watch_checkin_counts: {
+        Args: { p_event_ids?: string[]; p_game_ids?: string[] }
+        Returns: {
+          event_id: string
+          external_game_id: string
+          place_external_id: string
+          place_name: string
+          watch_location_id: string
+          watcher_count: number
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
