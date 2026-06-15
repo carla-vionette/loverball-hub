@@ -116,6 +116,7 @@ Deno.serve(async (req) => {
       console.error(JSON.stringify({
         scope: "nearby-sports-bars",
         event: "places_searchNearby_failed",
+        via: USE_DIRECT_PLACES ? "direct_places_api" : "connector_gateway",
         http_status: res.status,
         google_status: googleStatus,
         google_message: googleMessage,
@@ -125,6 +126,7 @@ Deno.serve(async (req) => {
       return new Response(
         JSON.stringify({
           error: "Places API error",
+          via: USE_DIRECT_PLACES ? "direct_places_api" : "connector_gateway",
           status: res.status,
           fallback_reason: fallbackReason,
           google_status: googleStatus,
