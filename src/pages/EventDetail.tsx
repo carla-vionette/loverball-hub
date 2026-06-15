@@ -362,7 +362,7 @@ const EventDetail = () => {
         setTimeout(() => setShowConfetti(false), 3000);
       }
       toast({
-        title: status === 'yes' ? "🎉 You're going!" : status === 'maybe' ? "Marked as maybe" : "RSVP updated",
+        title: status === 'yes' ? "🎉 You're going!" : status === 'maybe' ? "Marked as interested" : "Next time",
         description: status === 'yes' ? "Sign up free to lock in your spot and get reminders." : undefined,
       });
       console.log('[RSVP] guest local success', { dbStatus });
