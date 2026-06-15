@@ -437,7 +437,7 @@ const EventDetail = () => {
       }
 
       toast({
-        title: status === 'yes' ? "🎉 You're going!" : status === 'maybe' ? "Marked as maybe" : "RSVP updated",
+        title: status === 'yes' ? "🎉 You're going!" : status === 'maybe' ? "Marked as interested" : "Next time",
         description: status === 'yes' ? "We'll see you there!" : undefined,
       });
 
