@@ -74,9 +74,37 @@ Deno.serve(async (req) => {
 
     if (!res.ok) {
       const text = await res.text();
-      console.error("Places searchNearby failed", res.status, text);
+      let parsed: any = null;
+      try { parsed = JSON.parse(text); } catch { /* keep raw */ }
+      const googleStatus = parsed?.error?.status || parsed?.error?.details?.[0]?.reason || null;
+      const googleMessage = parsed?.error?.message || null;
+      const fallbackReason =
+        res.status === 403 && /referrer|REFERER|API_KEY_HTTP_REFERRER_BLOCKED/i.test(text)
+          ? "referrer_blocked"
+          : res.status === 403
+          ? "forbidden"
+          : res.status === 429
+          ? "rate_limited"
+          : res.status >= 500
+          ? "places_upstream_error"
+          : "places_request_failed";
+      console.error(JSON.stringify({
+        scope: "nearby-sports-bars",
+        event: "places_searchNearby_failed",
+        http_status: res.status,
+        google_status: googleStatus,
+        google_message: googleMessage,
+        fallback_reason: fallbackReason,
+        raw: text.slice(0, 500),
+      }));
       return new Response(
-        JSON.stringify({ error: "Places API error", status: res.status }),
+        JSON.stringify({
+          error: "Places API error",
+          status: res.status,
+          fallback_reason: fallbackReason,
+          google_status: googleStatus,
+          google_message: googleMessage,
+        }),
         { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } },
       );
     }
