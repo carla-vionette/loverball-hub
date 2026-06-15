@@ -45,11 +45,45 @@ Deno.serve(async (req) => {
 
     const radiusMeters = Math.round(radiusMiles * 1609.34);
 
-    const res = await fetch(`${GATEWAY_URL}/places/v1/places:searchNearby`, {
+    const placesUrl = USE_DIRECT_PLACES
+      ? "https://places.googleapis.com/v1/places:searchNearby"
+      : `${GATEWAY_URL}/places/v1/places:searchNearby`;
+    const placesHeaders: Record<string, string> = USE_DIRECT_PLACES
+      ? {
+          "X-Goog-Api-Key": GOOGLE_PLACES_SERVER_KEY!,
+          "Content-Type": "application/json",
+          "X-Goog-FieldMask": [
+            "places.id",
+            "places.displayName",
+            "places.formattedAddress",
+            "places.shortFormattedAddress",
+            "places.location",
+            "places.rating",
+            "places.userRatingCount",
+            "places.primaryTypeDisplayName",
+            "places.editorialSummary",
+          ].join(","),
+        }
+      : {
+          Authorization: `Bearer ${LOVABLE_API_KEY}`,
+          "X-Connection-Api-Key": GOOGLE_MAPS_API_KEY!,
+          "Content-Type": "application/json",
+          "X-Goog-FieldMask": [
+            "places.id",
+            "places.displayName",
+            "places.formattedAddress",
+            "places.shortFormattedAddress",
+            "places.location",
+            "places.rating",
+            "places.userRatingCount",
+            "places.primaryTypeDisplayName",
+            "places.editorialSummary",
+          ].join(","),
+        };
+
+    const res = await fetch(placesUrl, {
       method: "POST",
-      headers: {
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
-        "X-Connection-Api-Key": GOOGLE_MAPS_API_KEY,
+      headers: placesHeaders,
         "Content-Type": "application/json",
         "X-Goog-FieldMask": [
           "places.id",
