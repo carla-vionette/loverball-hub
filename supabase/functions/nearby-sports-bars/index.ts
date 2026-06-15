@@ -84,19 +84,6 @@ Deno.serve(async (req) => {
     const res = await fetch(placesUrl, {
       method: "POST",
       headers: placesHeaders,
-        "Content-Type": "application/json",
-        "X-Goog-FieldMask": [
-          "places.id",
-          "places.displayName",
-          "places.formattedAddress",
-          "places.shortFormattedAddress",
-          "places.location",
-          "places.rating",
-          "places.userRatingCount",
-          "places.primaryTypeDisplayName",
-          "places.editorialSummary",
-        ].join(","),
-      },
       body: JSON.stringify({
         includedTypes: ["sports_bar", "bar", "pub"],
         maxResultCount: 20,
