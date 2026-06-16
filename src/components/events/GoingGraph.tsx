@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { MapPin, Tv, ChevronDown, ChevronUp, Users } from "lucide-react";
+import { MapPin, Tv, ChevronDown, ChevronUp, Users, Sparkles } from "lucide-react";
 import { useGoingGraph, type AttendeeLite, type WatchPartyGroup } from "@/hooks/useGoingGraph";
 import AttendeeProfileDrawer from "@/components/AttendeeProfileDrawer";
 import { formatMiles } from "@/lib/distance";
