@@ -53,3 +53,4 @@ verify_jwt = false
 
 [functions.sports-data-proxy]
 verify_jwt = false
+

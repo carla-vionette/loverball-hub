@@ -117,6 +117,33 @@ const WatchModeSelector = ({
   const loadBars = useCallback(
     async (c: { lat: number; lng: number }) => {
       setLoadingBars(true);
+      // Prefer Google Places (New) via our edge function — real, ranked
+      // sports bars with ratings. Fall back to OSM/Overpass if it fails.
+      try {
+        const { data, error } = await supabase.functions.invoke(
+          "nearby-sports-bars",
+          { body: { lat: c.lat, lng: c.lng, radiusMiles: 5 } },
+        );
+        if (!error && Array.isArray(data?.bars) && data.bars.length > 0) {
+          const out: Bar[] = data.bars
+            .map((b: any) => ({
+              id: b.id,
+              name: b.name,
+              distance:
+                typeof b.lat === "number" && typeof b.lng === "number"
+                  ? distanceMiles(c.lat, c.lng, b.lat, b.lng)
+                  : 0,
+              address: b.address || b.neighborhood || undefined,
+            }))
+            .sort((a, b) => a.distance - b.distance)
+            .slice(0, 12);
+          setBars(out);
+          setLoadingBars(false);
+          return;
+        }
+      } catch {
+        /* fall through to Overpass */
+      }
       const r = 5000;
       const q = `[out:json][timeout:20];
 (
@@ -152,6 +179,7 @@ out center tags 60;`;
     },
     [],
   );
+
 
   useEffect(() => {
     if (picking && bars === null && center) loadBars(center);
