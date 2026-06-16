@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { Calendar, MapPin } from "lucide-react";
 import RsvpControl from "./RsvpControl";
+import { resolveEventImage, resolveSportImage, handleEventImageError, FALLBACK_EVENT_IMAGE } from "@/lib/eventImage";
 import { getEventDistanceMiles, formatMiles, type EventLike, type ViewerLike } from "@/lib/distance";
 import { parseEventDate } from "@/lib/eventDate";
 import { format } from "date-fns";
