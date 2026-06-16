@@ -20,9 +20,9 @@ export interface EventCardData extends EventLike {
 }
 
 const THEME: Record<EventCategory, { color: string; label: string }> = {
-  external_sports: { color: "#0A0A0A", label: "Game" },
-  curated_culture: { color: "#00B8A9", label: "Culture" },
-  loverball_hosted: { color: "#E8185A", label: "Loverball" },
+  external_sports: { color: "#E85D2F", label: "Game" },
+  curated_culture: { color: "#E85D2F", label: "Culture" },
+  loverball_hosted: { color: "#E85D2F", label: "Loverball" },
 };
 
 function fmtTime(t?: string | null) {
