@@ -11,8 +11,16 @@ interface Props {
   refreshKey?: number;
 }
 
-const RASPBERRY = "#E8185A";
-const TEAL = "#00B8A9";
+const RASPBERRY = "#E85D2F";
+const TEAL = "#1A1A1A";
+
+const SLUG_STYLE: React.CSSProperties = {
+  fontFamily: "'Space Mono', ui-monospace, monospace",
+  fontSize: 11,
+  letterSpacing: "0.22em",
+  textTransform: "uppercase",
+  color: "#E85D2F",
+};
 
 function AvatarChip({ a, onClick }: { a: AttendeeLite; onClick: () => void }) {
   return (
