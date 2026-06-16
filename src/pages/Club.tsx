@@ -835,9 +835,21 @@ const FanCard = ({
       ) : null}
 
       {why.length > 0 && (
-        <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-widest"
-          style={{ fontFamily: fonts.mono, color: C.pink }}>
-          <Sparkles className="w-3 h-3" /> {why.slice(0, 2).join(" · ")}
+        <div className="flex flex-wrap items-center gap-1.5">
+          {why.slice(0, 3).map((reason) => (
+            <span
+              key={reason}
+              className="inline-flex items-center gap-1 text-[10px] uppercase tracking-wider rounded-full px-2 py-1"
+              style={{
+                fontFamily: fonts.mono,
+                color: C.pink,
+                background: `${C.pink}14`,
+                border: `1px solid ${C.pink}33`,
+              }}
+            >
+              <Sparkles className="w-2.5 h-2.5" /> {reason}
+            </span>
+          ))}
         </div>
       )}
 
