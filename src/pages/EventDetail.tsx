@@ -6,7 +6,7 @@ import { useActiveArea } from "@/hooks/useActiveArea";
 import AppLayout from "@/components/layout/AppLayout";
 import Seo from "@/components/Seo";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Calendar, MapPin, Loader2, Share2 } from "lucide-react";
+import { ArrowLeft, Calendar, MapPin, Loader2, Share2, Sparkles } from "lucide-react";
 import { format } from "date-fns";
 import { parseEventDate } from "@/lib/eventDate";
 import RsvpControl from "@/components/events/RsvpControl";
