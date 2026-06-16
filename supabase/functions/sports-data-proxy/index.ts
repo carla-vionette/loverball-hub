@@ -1,5 +1,6 @@
 // sports-data-proxy: server-side proxy for SportsDataIO so the API key is never exposed in the client bundle.
 // Accepts a constrained set of paths and forwards them with the secret key from env.
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
