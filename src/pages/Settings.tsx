@@ -94,14 +94,20 @@ const Settings = () => {
         .eq("user_id", user.id)
         .maybeSingle();
 
+      // Prefer the saved profile ZIP (powers the rest of the app) over feed-only neighborhood
+      const { data: myLoc } = await supabase.rpc("get_my_location" as any);
+      const savedZip = (myLoc as any)?.zip_code || "";
+
       if (fPrefs) {
         setFeedPrefs({
           hidden_sports: fPrefs.hidden_sports || [],
           hidden_event_types: fPrefs.hidden_event_types || [],
           home_venue: fPrefs.home_venue || "",
-          home_neighborhood: fPrefs.home_neighborhood || "",
+          home_neighborhood: savedZip || fPrefs.home_neighborhood || "",
           preferred_distance_miles: fPrefs.preferred_distance_miles || 25,
         });
+      } else if (savedZip) {
+        setFeedPrefs(prev => ({ ...prev, home_neighborhood: savedZip }));
       }
 
       // Load user's favorite teams (public columns)
