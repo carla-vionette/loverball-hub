@@ -229,8 +229,7 @@ const Index = () => {
                 style={{ fontSize: 17, lineHeight: 1.6, color: C.inkMuted }}
               >
                 Loverball is the club for women who love sports — connect with fans,
-                find watch parties nearby, and never miss a score.{" "}
-                <span style={{ color: C.cream }}>Free to join.</span>
+                find watch parties nearby, and never miss a score.
               </p>
 
               <div className="mt-10 flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-5 lb-rise lb-delay-4">
