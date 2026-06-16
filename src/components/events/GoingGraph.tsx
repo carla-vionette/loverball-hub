@@ -133,16 +133,9 @@ export default function GoingGraph({ eventId, viewer, refreshKey = 0 }: Props) {
       <section>
         <header className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
-            <span
-              className="w-7 h-7 rounded-full flex items-center justify-center"
-              style={{ background: `${TEAL}15`, color: TEAL }}
-            >
-              <Tv className="w-4 h-4" />
-            </span>
-            <h3 className="font-['Playfair_Display'] text-lg text-[#1A1A1A]">
-              Watch parties
-            </h3>
-            <span className="text-sm font-['Inter'] text-[#1A1A1A]/50">
+            <Sparkles size={16} color={RASPBERRY} />
+            <span style={SLUG_STYLE}>Watch Parties</span>
+            <span className="text-xs font-['Space_Mono',ui-monospace,monospace] text-[#1A1A1A]/50">
               · {data.watch_parties.total}
             </span>
           </div>
