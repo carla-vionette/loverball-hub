@@ -782,23 +782,41 @@ const FanCard = ({
 }) => {
   const handle = `@${(member.name?.split(" ")[0] || "member").toLowerCase().replace(/[^a-z0-9]/g, "")}`;
   return (
-    <div className="rounded-2xl p-5 flex flex-col gap-4 transition-transform hover:-translate-y-0.5"
+    <div className="rounded-2xl p-5 flex flex-col gap-4 transition-transform hover:-translate-y-0.5 relative"
       style={{ background: C.surface, border: `1px solid ${C.border}` }}>
-      <button onClick={() => navigate(`/profile/${member.id}`)} className="flex items-center gap-3 text-left min-w-0">
+      {onDismiss && (
+        <button
+          onClick={onDismiss}
+          aria-label="Dismiss suggestion"
+          className="absolute top-2.5 right-2.5 rounded-full p-1.5 hover:bg-white/10 transition"
+          style={{ color: C.muted }}
+        >
+          <X className="w-3.5 h-3.5" />
+        </button>
+      )}
+      <button onClick={() => navigate(`/profile/${member.id}`)} className="flex items-center gap-3 text-left min-w-0 pr-6">
         <Avatar className="w-14 h-14">
           <AvatarImage src={member.profile_photo_url || undefined} />
           <AvatarFallback>{(member.name || "?").slice(0, 1)}</AvatarFallback>
         </Avatar>
-        <div className="min-w-0">
+        <div className="min-w-0 flex-1">
           <p className="font-semibold truncate" style={{ color: C.text }}>{member.name || "Member"}</p>
           <p className="text-[11px] truncate" style={{ fontFamily: fonts.mono, color: C.muted }}>
             <span style={{ color: C.raspberry }}>{handle}</span>
             {member.city ? <> · <MapPin className="inline w-3 h-3 -mt-0.5" /> {member.city}</> : null}
           </p>
         </div>
+        {typeof score === "number" && score > 0 && (
+          <span
+            className="text-[10px] px-2 py-0.5 rounded-full shrink-0"
+            style={{ background: `${C.raspberry}22`, color: C.raspberry, fontFamily: fonts.mono }}
+            title="Match score"
+          >
+            {score}
+          </span>
+        )}
       </button>
 
-      {member.bio && (
         <p className="text-sm line-clamp-2" style={{ color: C.muted }}>{member.bio}</p>
       )}
 
