@@ -116,6 +116,8 @@ export default function Events() {
   }, [cards, viewer]);
 
   const cityLabel = activeArea?.city || "your city";
+  const needsZip = !!user && !activeArea?.zip;
+
 
   return (
     <AppLayout>
