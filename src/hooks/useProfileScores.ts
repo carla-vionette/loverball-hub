@@ -96,7 +96,7 @@ function parseTickerItems(items: string[]): GameScore[] {
   return games;
 }
 
-let _scoreCache: { data: GameScore[]; ts: number } | null = null;
+let _scoreCache: { key: string; data: GameScore[]; ts: number } | null = null;
 const CACHE_TTL = 60 * 1000; // 1 minute for near-real-time
 const POLL_INTERVAL = 30 * 1000; // refresh every 30s while mounted
 
@@ -105,7 +105,21 @@ function matchesFavorites(game: GameScore, favorites: string[]): boolean {
   const haystack = `${game.homeTeam} ${game.awayTeam}`.toLowerCase();
   return favorites.some((fav) => {
     const needle = fav.trim().toLowerCase();
-    return needle.length > 1 && haystack.includes(needle);
+    const aliases: Record<string, string[]> = {
+      "la kings": ["los angeles kings"],
+      lakers: ["los angeles lakers"],
+      clippers: ["la clippers", "los angeles clippers"],
+      dodgers: ["los angeles dodgers"],
+      angels: ["los angeles angels", "la angels"],
+      rams: ["los angeles rams", "la rams"],
+      chargers: ["los angeles chargers", "la chargers"],
+      sparks: ["los angeles sparks", "la sparks"],
+      "la sparks": ["los angeles sparks"],
+      lafc: ["los angeles fc"],
+      "la galaxy": ["los angeles galaxy"],
+      "angel city": ["angel city fc"],
+    };
+    return needle.length > 1 && [needle, ...(aliases[needle] || [])].some((alias) => haystack.includes(alias));
   });
 }
 
@@ -113,9 +127,11 @@ export function useProfileScores(favoriteTeams: string[] = []) {
   const [games, setGames] = useState<GameScore[]>(_scoreCache?.data ?? []);
   const [loading, setLoading] = useState(!_scoreCache);
   const [error, setError] = useState<string | null>(null);
+  const teams = Array.from(new Set(favoriteTeams.map((t) => t.trim()).filter(Boolean))).slice(0, 12);
+  const cacheKey = teams.length ? teams.join("|") : "__default__";
 
   const fetchScores = async () => {
-    if (_scoreCache && Date.now() - _scoreCache.ts < CACHE_TTL) {
+    if (_scoreCache && _scoreCache.key === cacheKey && Date.now() - _scoreCache.ts < CACHE_TTL) {
       setGames(_scoreCache.data);
       setLoading(false);
       return;
@@ -123,17 +139,21 @@ export function useProfileScores(favoriteTeams: string[] = []) {
 
     try {
       setLoading(true);
-      // Use sports-search with no query → returns live/recent/upcoming across ALL major
-      // leagues (NBA, WNBA, MLB, NHL, NFL, MLS, NWSL) from ESPN's public scoreboard.
-      const { data, error: fnError } = await supabase.functions.invoke(
-        "sports-search",
-        { body: {} }
-      );
+      const requests = teams.length
+        ? teams.map((team) => supabase.functions.invoke("sports-search", { body: { query: team } }))
+        : [supabase.functions.invoke("sports-search", { body: {} })];
+      const responses = await Promise.all(requests);
+      const firstError = responses.find((r) => r.error)?.error;
+      if (firstError) throw firstError;
 
-      if (fnError) throw fnError;
-
-      const parsed = ((data?.games ?? []) as GameScore[]);
-      _scoreCache = { data: parsed, ts: Date.now() };
+      const byId = new Map<string, GameScore>();
+      for (const response of responses) {
+        for (const game of ((response.data?.games ?? []) as GameScore[])) {
+          byId.set(game.id, game);
+        }
+      }
+      const parsed = Array.from(byId.values());
+      _scoreCache = { key: cacheKey, data: parsed, ts: Date.now() };
       setGames(parsed);
       setError(null);
     } catch (err: any) {
@@ -148,7 +168,7 @@ export function useProfileScores(favoriteTeams: string[] = []) {
     fetchScores();
     const interval = setInterval(fetchScores, POLL_INTERVAL);
     return () => clearInterval(interval);
-  }, []);
+  }, [cacheKey]);
 
   let filteredGames = games;
   if (favoriteTeams.length) {

@@ -52,6 +52,40 @@ const ESPN: Record<string, { url: string; league: string; sport: string }> = {
   ncaafb: { url: "https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard", league: "NCAAF", sport: "Football" },
 };
 
+const TEAM_ALIASES: Record<string, string[]> = {
+  "la kings": ["los angeles kings"],
+  "kings nhl": ["los angeles kings"],
+  lakers: ["los angeles lakers"],
+  clippers: ["la clippers", "los angeles clippers"],
+  dodgers: ["los angeles dodgers"],
+  angels: ["los angeles angels", "la angels"],
+  rams: ["los angeles rams", "la rams"],
+  chargers: ["los angeles chargers", "la chargers"],
+  sparks: ["los angeles sparks", "la sparks"],
+  "la sparks": ["los angeles sparks"],
+  lafc: ["los angeles fc"],
+  "la galaxy": ["los angeles galaxy"],
+  "angel city": ["angel city fc"],
+};
+
+const TEAM_LEAGUES: Record<string, string> = {
+  "la kings": "nhl",
+  "kings nhl": "nhl",
+  lakers: "nba",
+  clippers: "nba",
+  dodgers: "mlb",
+  angels: "mlb",
+  rams: "nfl",
+  chargers: "nfl",
+  sparks: "wnba",
+  "la sparks": "wnba",
+  "los angeles sparks": "wnba",
+  lafc: "mls",
+  "la galaxy": "mls",
+  "angel city": "nwsl",
+  "angel city fc": "nwsl",
+};
+
 async function fetchJSON(url: string, timeoutMs = 6000): Promise<any | null> {
   const cached = getCached(url);
   if (cached) return cached;
@@ -150,8 +184,9 @@ function matches(game: GameOut, needles: string[]): string | null {
   for (const n of needles) {
     const needle = n.toLowerCase().trim();
     if (!needle) continue;
+    const aliases = [needle, ...(TEAM_ALIASES[needle] || [])];
     for (const h of hay) {
-      if (h.includes(needle) || needle.includes(h)) return n;
+      if (aliases.some((alias) => h.includes(alias))) return n;
     }
   }
   return null;
@@ -202,7 +237,12 @@ Deno.serve(async (req) => {
       dates.push(ymd(d));
     }
 
-    const leagueKeys = Object.keys(ESPN);
+    const hintedLeagues = new Set(
+      needles
+        .map((n) => TEAM_LEAGUES[n.toLowerCase().trim()])
+        .filter(Boolean),
+    );
+    const leagueKeys = hintedLeagues.size > 0 ? Array.from(hintedLeagues) : Object.keys(ESPN);
 
     const urls: { key: string; url: string }[] = [];
     for (const key of leagueKeys) {
