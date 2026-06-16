@@ -52,6 +52,22 @@ const ESPN: Record<string, { url: string; league: string; sport: string }> = {
   ncaafb: { url: "https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard", league: "NCAAF", sport: "Football" },
 };
 
+const TEAM_ALIASES: Record<string, string[]> = {
+  "la kings": ["los angeles kings"],
+  "kings nhl": ["los angeles kings"],
+  lakers: ["los angeles lakers"],
+  clippers: ["la clippers", "los angeles clippers"],
+  dodgers: ["los angeles dodgers"],
+  angels: ["los angeles angels", "la angels"],
+  rams: ["los angeles rams", "la rams"],
+  chargers: ["los angeles chargers", "la chargers"],
+  sparks: ["los angeles sparks", "la sparks"],
+  "la sparks": ["los angeles sparks"],
+  lafc: ["los angeles fc"],
+  "la galaxy": ["los angeles galaxy"],
+  "angel city": ["angel city fc"],
+};
+
 async function fetchJSON(url: string, timeoutMs = 6000): Promise<any | null> {
   const cached = getCached(url);
   if (cached) return cached;
@@ -150,8 +166,9 @@ function matches(game: GameOut, needles: string[]): string | null {
   for (const n of needles) {
     const needle = n.toLowerCase().trim();
     if (!needle) continue;
+    const aliases = [needle, ...(TEAM_ALIASES[needle] || [])];
     for (const h of hay) {
-      if (h.includes(needle) || needle.includes(h)) return n;
+      if (aliases.some((alias) => h.includes(alias) || alias.includes(h))) return n;
     }
   }
   return null;
