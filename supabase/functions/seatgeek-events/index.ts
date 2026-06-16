@@ -230,6 +230,7 @@ function normalizeWorldCupFixture(input: {
 // edge worker (TheSportsDB is rate-limited and the WC26 schedule changes
 // slowly — only scores/postponements move).
 let WC_CACHE: { at: number; events: any[] } | null = null;
+let WC_DEBUG: Record<string, number | boolean> = {};
 const WC_CACHE_MS = 30 * 60 * 1000; // 30 minutes
 
 async function fetchWorldCup2026(): Promise<any[]> {
@@ -295,7 +296,8 @@ async function fetchWorldCup2026(): Promise<any[]> {
     for (const e of fullScheduleMapped) byKey.set(`${e.date_time}|${e.venue_name}`, e);
     for (const e of sportsDbMapped) byKey.set(`${e.date_time}|${e.venue_name}`, e);
     const mapped = Array.from(byKey.values()).sort((a, b) => a.date_time.localeCompare(b.date_time));
-    console.log("wc26 schedule fetch", { sportsDbCount, fullScheduleCount, mergedCount: mapped.length });
+    WC_DEBUG = { sportsDbCount, fullScheduleCount, mergedCount: mapped.length, usedFallbackSchedule: fullScheduleCount >= 104 };
+    console.log("wc26 schedule fetch", WC_DEBUG);
     WC_CACHE = { at: Date.now(), events: mapped };
     return mapped;
   } catch (err) {
@@ -444,8 +446,9 @@ Deno.serve(async (req) => {
   for (const e of localEvents) byId.set(e.id, e);
   for (const e of wcEvents) byId.set(e.id, e);
   const events = Array.from(byId.values());
+  const wcCount = events.filter((e) => e?.league === "FIFA_WC").length;
 
-  return new Response(JSON.stringify({ events }), {
+  return new Response(JSON.stringify({ debug: { wc26: { ...WC_DEBUG, returnedCount: wcCount } }, events }), {
     headers: {
       ...corsHeaders,
       "Content-Type": "application/json",
