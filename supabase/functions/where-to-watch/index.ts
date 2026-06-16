@@ -68,6 +68,24 @@ const TEAM_ALIASES: Record<string, string[]> = {
   "angel city": ["angel city fc"],
 };
 
+const TEAM_LEAGUES: Record<string, string> = {
+  "la kings": "nhl",
+  "kings nhl": "nhl",
+  lakers: "nba",
+  clippers: "nba",
+  dodgers: "mlb",
+  angels: "mlb",
+  rams: "nfl",
+  chargers: "nfl",
+  sparks: "wnba",
+  "la sparks": "wnba",
+  "los angeles sparks": "wnba",
+  lafc: "mls",
+  "la galaxy": "mls",
+  "angel city": "nwsl",
+  "angel city fc": "nwsl",
+};
+
 async function fetchJSON(url: string, timeoutMs = 6000): Promise<any | null> {
   const cached = getCached(url);
   if (cached) return cached;
@@ -219,7 +237,12 @@ Deno.serve(async (req) => {
       dates.push(ymd(d));
     }
 
-    const leagueKeys = Object.keys(ESPN);
+    const hintedLeagues = new Set(
+      needles
+        .map((n) => TEAM_LEAGUES[n.toLowerCase().trim()])
+        .filter(Boolean),
+    );
+    const leagueKeys = hintedLeagues.size > 0 ? Array.from(hintedLeagues) : Object.keys(ESPN);
 
     const urls: { key: string; url: string }[] = [];
     for (const key of leagueKeys) {
