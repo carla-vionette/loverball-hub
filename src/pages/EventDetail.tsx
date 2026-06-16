@@ -922,6 +922,25 @@ const EventDetail = () => {
               )}
             </div>
 
+            {/* Stadium vs Watch Party tabs — game events only */}
+            {user && event.event_type === 'game' && (
+              <WhoElseGoingTabs
+                eventId={event.id}
+                eventCity={event.city}
+                stadiumAttendees={attendees
+                  .filter((a) => a.profile)
+                  .map((a) => ({
+                    user_id: a.user_id,
+                    name: a.profile!.name,
+                    profile_photo_url: a.profile!.profile_photo_url,
+                  }))}
+                stadiumTotal={goingCount}
+                onMarkStadium={() => handleRSVP('yes')}
+              />
+            )}
+
+
+
             {/* Going chat → scrolls to Event chat below */}
             {isGoing && (
               <button
