@@ -32,6 +32,7 @@ interface DbEvent {
   location_lng: number | null;
   host_user_id: string | null;
   sport_tags: string[] | null;
+  event_tags?: string[] | null;
 }
 
 function categoryLabel(t: string | null | undefined) {
