@@ -297,7 +297,7 @@ const Settings = () => {
           </Button>
         </div>
 
-        <Tabs defaultValue="notifications" className="space-y-6">
+        <Tabs defaultValue={new URLSearchParams(typeof window !== "undefined" ? window.location.search : "").get("tab") || "notifications"} className="space-y-6">
           <TabsList className="bg-transparent gap-2 h-auto p-0 w-full justify-start overflow-x-auto">
             <TabsTrigger value="notifications" className="rounded-full px-5 py-2 text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <Bell className="h-4 w-4 mr-2" /> Notifications
