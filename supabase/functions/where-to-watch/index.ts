@@ -50,6 +50,11 @@ const ESPN: Record<string, { url: string; league: string; sport: string }> = {
   ncaambb: { url: "https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/scoreboard", league: "NCAAM", sport: "Basketball" },
   ncaawbb: { url: "https://site.api.espn.com/apis/site/v2/sports/basketball/womens-college-basketball/scoreboard", league: "NCAAW", sport: "Basketball" },
   ncaafb: { url: "https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard", league: "NCAAF", sport: "Football" },
+  fifawc: { url: "https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard", league: "FIFA World Cup", sport: "Soccer" },
+  fifawwc: { url: "https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.wwc/scoreboard", league: "FIFA Women's World Cup", sport: "Soccer" },
+  uefacl: { url: "https://site.api.espn.com/apis/site/v2/sports/soccer/uefa.champions/scoreboard", league: "UEFA Champions League", sport: "Soccer" },
+  eng1: { url: "https://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/scoreboard", league: "Premier League", sport: "Soccer" },
+  esp1: { url: "https://site.api.espn.com/apis/site/v2/sports/soccer/esp.1/scoreboard", league: "La Liga", sport: "Soccer" },
 };
 
 const TEAM_ALIASES: Record<string, string[]> = {
@@ -242,7 +247,29 @@ Deno.serve(async (req) => {
         .map((n) => TEAM_LEAGUES[n.toLowerCase().trim()])
         .filter(Boolean),
     );
+    // Query keyword → league hints (so "world cup", "premier league", etc. don't fan out to all leagues)
+    const QUERY_LEAGUE_HINTS: { keys: string[]; league: string }[] = [
+      { keys: ["world cup", "fifa wc", "wc 2026", "wc26"], league: "fifawc" },
+      { keys: ["women's world cup", "womens world cup", "wwc"], league: "fifawwc" },
+      { keys: ["champions league", "ucl"], league: "uefacl" },
+      { keys: ["premier league", "epl", "english premier"], league: "eng1" },
+      { keys: ["la liga", "laliga"], league: "esp1" },
+      { keys: ["nwsl"], league: "nwsl" },
+      { keys: ["mls"], league: "mls" },
+      { keys: ["wnba"], league: "wnba" },
+      { keys: ["nba"], league: "nba" },
+      { keys: ["nfl"], league: "nfl" },
+      { keys: ["mlb"], league: "mlb" },
+      { keys: ["nhl"], league: "nhl" },
+    ];
+    for (const n of needles) {
+      const lower = n.toLowerCase();
+      for (const hint of QUERY_LEAGUE_HINTS) {
+        if (hint.keys.some((k) => lower.includes(k))) hintedLeagues.add(hint.league);
+      }
+    }
     const leagueKeys = hintedLeagues.size > 0 ? Array.from(hintedLeagues) : Object.keys(ESPN);
+
 
     const urls: { key: string; url: string }[] = [];
     for (const key of leagueKeys) {
