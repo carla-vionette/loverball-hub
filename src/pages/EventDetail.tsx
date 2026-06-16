@@ -195,12 +195,29 @@ export default function EventDetail() {
 
           <div className="absolute bottom-4 left-5 right-5">
             <span
-              className="inline-block text-[10px] uppercase tracking-[0.2em] font-bold font-['Inter'] px-2.5 py-1 rounded-full"
-              style={{ background: cat.color, color: "#fff" }}
+              className="inline-block px-2.5 py-1 rounded-full"
+              style={{
+                fontFamily: "'Space Mono', ui-monospace, monospace",
+                fontSize: 10,
+                letterSpacing: "0.22em",
+                textTransform: "uppercase",
+                background: "#E85D2F",
+                color: "#fff",
+              }}
             >
               {cat.label}
             </span>
-            <h1 className="mt-2 font-['Playfair_Display'] text-3xl sm:text-4xl text-[#FAF5E9] leading-tight drop-shadow-md">
+            <h1
+              className="mt-2 text-[#FAF5E9] drop-shadow-md"
+              style={{
+                fontFamily: "'Anton', Impact, sans-serif",
+                fontWeight: 400,
+                fontSize: "clamp(32px, 6vw, 56px)",
+                lineHeight: 0.92,
+                letterSpacing: "-0.02em",
+                textTransform: "uppercase",
+              }}
+            >
               {event.title}
             </h1>
           </div>
