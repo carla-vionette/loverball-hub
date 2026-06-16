@@ -184,6 +184,48 @@ interface TheSportsDBEvent {
   strPoster?: string | null;
 }
 
+interface FixtureDownloadEvent {
+  MatchNumber: number;
+  DateUtc: string;
+  Location: string;
+  HomeTeam: string;
+  AwayTeam: string;
+  Group?: string | null;
+}
+
+const FIFA_URL = "https://www.fifa.com/fifaplus/en/tournaments/mens/worldcup/canadamexicousa2026";
+
+function normalizeWorldCupFixture(input: {
+  id: string;
+  title: string;
+  home: string;
+  away: string;
+  venue: string;
+  country?: string | null;
+  dateTime: string;
+  imageUrl?: string | null;
+}) {
+  const vi = venueLookup(input.venue);
+  const knownVenue = vi?.name || input.venue || "FIFA World Cup Stadium";
+  return {
+    id: `wc26-${input.id}`,
+    title: input.title,
+    team_home: input.home || "",
+    team_away: input.away || "",
+    venue_name: knownVenue,
+    venue_address: vi?.address || [knownVenue, input.country].filter(Boolean).join(", "),
+    city: vi?.city || "",
+    date_time: input.dateTime,
+    league: "FIFA_WC",
+    sport_kind: "pro" as const,
+    is_womens: false,
+    ticket_url: FIFA_URL,
+    image_url: input.imageUrl || null,
+    location_lat: vi?.lat ?? null,
+    location_lng: vi?.lng ?? null,
+  };
+}
+
 // Cache TheSportsDB results in-memory per-isolate for the lifetime of the
 // edge worker (TheSportsDB is rate-limited and the WC26 schedule changes
 // slowly — only scores/postponements move).
@@ -193,43 +235,71 @@ const WC_CACHE_MS = 30 * 60 * 1000; // 30 minutes
 async function fetchWorldCup2026(): Promise<any[]> {
   if (WC_CACHE && Date.now() - WC_CACHE.at < WC_CACHE_MS) return WC_CACHE.events;
   try {
-    const r = await fetch(
-      "https://www.thesportsdb.com/api/v1/json/3/eventsseason.php?id=4429&s=2026"
-    );
-    if (!r.ok) {
-      console.error("thesportsdb non-200", r.status);
-      return WC_CACHE?.events || [];
+    const [sportsDbResult, fullScheduleResult] = await Promise.allSettled([
+      fetch("https://www.thesportsdb.com/api/v1/json/3/eventsseason.php?id=4429&s=2026"),
+      fetch("https://fixturedownload.com/feed/json/fifa-world-cup-2026", {
+        headers: { "Accept": "application/json", "User-Agent": "Loverball/1.0" },
+      }),
+    ]);
+
+    let sportsDbCount = 0;
+    const sportsDbMapped: any[] = [];
+    if (sportsDbResult.status === "fulfilled" && sportsDbResult.value.ok) {
+      const json = await sportsDbResult.value.json().catch(() => null) as { events?: TheSportsDBEvent[] } | null;
+      const list = Array.isArray(json?.events) ? json!.events : [];
+      sportsDbCount = list.length;
+      sportsDbMapped.push(...list.map((e) => {
+        const iso = e.strTimestamp
+          ? new Date(e.strTimestamp + (/[zZ]|[+-]\d\d:?\d\d$/.test(e.strTimestamp) ? "" : "Z")).toISOString()
+          : (e.dateEvent ? new Date(`${e.dateEvent}T${e.strTime || "12:00:00"}Z`).toISOString() : new Date().toISOString());
+        return normalizeWorldCupFixture({
+          id: e.idEvent,
+          title: e.strEvent || `${e.strHomeTeam} vs ${e.strAwayTeam}`,
+          home: e.strHomeTeam || "",
+          away: e.strAwayTeam || "",
+          venue: e.strVenue || "",
+          country: e.strCountry,
+          dateTime: iso,
+          imageUrl: e.strThumb || e.strPoster || null,
+        });
+      }));
+    } else if (sportsDbResult.status === "fulfilled") {
+      console.error("thesportsdb non-200", sportsDbResult.value.status);
+    } else {
+      console.error("thesportsdb fetch error", String(sportsDbResult.reason));
     }
-    const json = await r.json().catch(() => null) as { events?: TheSportsDBEvent[] } | null;
-    const list = Array.isArray(json?.events) ? json!.events : [];
-    const mapped = list.map((e) => {
-      const vi = venueLookup(e.strVenue);
-      const iso = e.strTimestamp
-        ? new Date(e.strTimestamp + (/[zZ]|[+-]\d\d:?\d\d$/.test(e.strTimestamp) ? "" : "Z")).toISOString()
-        : (e.dateEvent ? new Date(`${e.dateEvent}T${e.strTime || "12:00:00"}Z`).toISOString() : new Date().toISOString());
-      const title = e.strEvent || `${e.strHomeTeam} vs ${e.strAwayTeam}`;
-      return {
-        id: `wc26-${e.idEvent}`,
-        title,
-        team_home: e.strHomeTeam || "",
-        team_away: e.strAwayTeam || "",
-        venue_name: e.strVenue || "",
-        venue_address: vi?.address || [e.strVenue, e.strCountry].filter(Boolean).join(", "),
-        city: vi?.city || "",
-        date_time: iso,
-        league: "FIFA_WC",
-        sport_kind: "pro" as const,
-        is_womens: false,
-        ticket_url: "https://www.fifa.com/fifaplus/en/tournaments/mens/worldcup/canadamexicousa2026",
-        image_url: e.strThumb || e.strPoster || null,
-        location_lat: vi?.lat ?? null,
-        location_lng: vi?.lng ?? null,
-      };
-    });
+
+    let fullScheduleCount = 0;
+    const fullScheduleMapped: any[] = [];
+    if (fullScheduleResult.status === "fulfilled" && fullScheduleResult.value.ok) {
+      const json = await fullScheduleResult.value.json().catch(() => null) as FixtureDownloadEvent[] | null;
+      const list = Array.isArray(json) ? json : [];
+      fullScheduleCount = list.length;
+      fullScheduleMapped.push(...list.map((e) => normalizeWorldCupFixture({
+        id: `match-${e.MatchNumber}`,
+        title: `${e.HomeTeam} vs ${e.AwayTeam}`,
+        home: e.HomeTeam,
+        away: e.AwayTeam,
+        venue: e.Location,
+        country: null,
+        dateTime: new Date(e.DateUtc.replace(" ", "T")).toISOString(),
+        imageUrl: null,
+      })));
+    } else if (fullScheduleResult.status === "fulfilled") {
+      console.error("fixturedownload non-200", fullScheduleResult.value.status);
+    } else {
+      console.error("fixturedownload fetch error", String(fullScheduleResult.reason));
+    }
+
+    const byKey = new Map<string, any>();
+    for (const e of fullScheduleMapped) byKey.set(`${e.date_time}|${e.venue_name}|${e.team_home}|${e.team_away}`, e);
+    for (const e of sportsDbMapped) byKey.set(`${e.date_time}|${e.venue_name}|${e.team_home}|${e.team_away}`, e);
+    const mapped = Array.from(byKey.values()).sort((a, b) => a.date_time.localeCompare(b.date_time));
+    console.log("wc26 schedule fetch", { sportsDbCount, fullScheduleCount, mergedCount: mapped.length });
     WC_CACHE = { at: Date.now(), events: mapped };
     return mapped;
   } catch (err) {
-    console.error("thesportsdb fetch error", err);
+    console.error("wc26 schedule fetch error", err);
     return WC_CACHE?.events || [];
   }
 }
