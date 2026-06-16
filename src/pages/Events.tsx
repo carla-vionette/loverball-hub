@@ -154,11 +154,43 @@ export default function Events() {
             {activeArea?.city ? (
               <>What's on around <span className="font-semibold text-[#1A1A1A]">{cityLabel}</span>.</>
             ) : user ? (
-              <>Add your zip in your profile to see what's near you.</>
+              <>Tell us where you are to see what's near you.</>
             ) : (
               <>Sign in to see what's near you.</>
             )}
           </p>
+
+          {needsZip && (
+            <Link
+              to="/settings?tab=location"
+              className="mt-4 flex items-center justify-between gap-3 px-4 py-3 rounded-2xl border border-[#E85D2F]/30 bg-[#E85D2F]/5 hover:bg-[#E85D2F]/10 transition-colors"
+            >
+              <div className="min-w-0">
+                <div
+                  style={{
+                    fontFamily: "'Space Mono', ui-monospace, monospace",
+                    fontSize: 10,
+                    letterSpacing: "0.22em",
+                    textTransform: "uppercase",
+                    color: "#E85D2F",
+                  }}
+                >
+                  Set your area
+                </div>
+                <div className="text-sm font-['Inter'] text-[#1A1A1A] mt-0.5">
+                  Add your ZIP code in Settings to see events near you.
+                </div>
+              </div>
+              <span
+                className="shrink-0 px-3 py-1.5 rounded-full text-xs font-semibold text-white"
+                style={{ background: "#E85D2F", fontFamily: "'Space Mono', ui-monospace, monospace", letterSpacing: "0.1em" }}
+              >
+                OPEN
+              </span>
+            </Link>
+          )}
+
+
 
           <div className="mt-5 flex gap-2 overflow-x-auto -mx-1 px-1 scrollbar-hide">
             {FILTERS.map((f) => {
