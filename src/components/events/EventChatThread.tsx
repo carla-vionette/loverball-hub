@@ -49,7 +49,11 @@ export default function EventChatThread({ eventId, pageSize = PAGE }: Props) {
     () => (MOCK_EVENT_CHAT[eventId] || []).filter((m) => !m.is_system),
     [eventId],
   );
-
+  // Hide "@X is going / watching" system rows — those are shown in the Who's Going section.
+  const visibleMessages = useMemo(
+    () => messages.filter((m) => !m.message.startsWith(SYSTEM_PREFIX)),
+    [messages],
+  );
 
   const hydrateProfiles = useCallback(async (rows: ChatRow[]) => {
     const ids = Array.from(new Set(rows.map(r => r.user_id))).filter(id => !profiles[id]);
