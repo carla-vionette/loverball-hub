@@ -1,11 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { MapPin, Star, Beer, Check, Loader2 } from "lucide-react";
 import { LA_SPORTS_BARS, type SportsBar } from "@/data/laSportsBars";
 import { distanceMiles } from "@/lib/geocoding";
 import { MOCK_EVENT_BARS } from "@/data/mockEvents";
 import { supabase } from "@/integrations/supabase/client";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface Props {
   open: boolean;
@@ -97,58 +99,74 @@ const WatchPartyBarModal = ({
     await onConfirm(pickedBar);
   };
 
-  return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent
-        side="bottom"
-        className="rounded-t-3xl p-0 max-h-[85dvh] flex flex-col border-0"
-        style={{ background: "#0a0a0a", border: "1px solid rgba(255,255,255,0.08)" }}
+  const isMobile = useIsMobile();
+
+  const header = (
+    <>
+      <span
+        style={{
+          fontFamily: "'Space Mono', ui-monospace, monospace",
+          fontSize: 10,
+          letterSpacing: "0.22em",
+          color: "#FFFFFF",
+          textTransform: "uppercase",
+        }}
       >
-        {/* Drag handle */}
+        <Beer className="inline w-3 h-3 mr-1.5 -mt-0.5" />
+        {userLoc ? `Within ${MAX_RADIUS_MI} miles` : "LA Sports Bars"}
+      </span>
+      <span
+        style={{
+          fontFamily: "'Anton', Impact, sans-serif",
+          fontSize: 28,
+          lineHeight: 0.95,
+          color: "#FFFFFF",
+          textTransform: "uppercase",
+          letterSpacing: "0.01em",
+          marginTop: 4,
+          display: "block",
+        }}
+      >
+        Where are you watching?
+      </span>
+      {eventTitle && (
+        <p
+          style={{
+            fontFamily: "'Playfair Display', serif",
+            fontStyle: "italic",
+            fontSize: 13,
+            color: "rgba(248,248,248,0.6)",
+            marginTop: 4,
+          }}
+        >
+          {eventTitle}
+        </p>
+      )}
+    </>
+  );
+
+  const body = (
+    <>
+      {/* Drag handle — mobile sheet only */}
+      {isMobile && (
         <div className="flex justify-center pt-3 pb-2 flex-shrink-0">
           <div className="w-10 h-1 rounded-full" style={{ background: "rgba(255,255,255,0.18)" }} />
         </div>
+      )}
 
+      {isMobile ? (
         <SheetHeader className="px-5 pb-3 text-left flex-shrink-0">
-          <span
-            style={{
-              fontFamily: "'Space Mono', ui-monospace, monospace",
-              fontSize: 10,
-              letterSpacing: "0.22em",
-              color: "#FFFFFF",
-              textTransform: "uppercase",
-            }}
-          >
-            <Beer className="inline w-3 h-3 mr-1.5 -mt-0.5" />
-            {userLoc ? `Within ${MAX_RADIUS_MI} miles` : "LA Sports Bars"}
-          </span>
-          <SheetTitle
-            style={{
-              fontFamily: "'Anton', Impact, sans-serif",
-              fontSize: 28,
-              lineHeight: 0.95,
-              color: "#FFFFFF",
-              textTransform: "uppercase",
-              letterSpacing: "0.01em",
-              marginTop: 4,
-            }}
-          >
-            Where are you watching?
-          </SheetTitle>
-          {eventTitle && (
-            <p
-              style={{
-                fontFamily: "'Playfair Display', serif",
-                fontStyle: "italic",
-                fontSize: 13,
-                color: "rgba(248,248,248,0.6)",
-                marginTop: 4,
-              }}
-            >
-              {eventTitle}
-            </p>
-          )}
+          <SheetTitle className="sr-only">Where are you watching?</SheetTitle>
+          {header}
         </SheetHeader>
+      ) : (
+        <DialogHeader className="px-6 pt-5 pb-3 text-left flex-shrink-0">
+          <DialogTitle className="sr-only">Where are you watching?</DialogTitle>
+          <DialogDescription className="sr-only">Pick a sports bar to host your watch party.</DialogDescription>
+          {header}
+        </DialogHeader>
+      )}
+
 
         <div className="overflow-y-auto px-5 pb-2 space-y-2 flex-1 min-h-0">
           {loadingLive && (
@@ -372,8 +390,32 @@ const WatchPartyBarModal = ({
             {pickedBar ? `I'm watching at ${pickedBar.name} 🍺` : "Pick a bar to continue"}
           </Button>
         </div>
-      </SheetContent>
-    </Sheet>
+    </>
+  );
+
+  if (isMobile) {
+    return (
+      <Sheet open={open} onOpenChange={onOpenChange}>
+        <SheetContent
+          side="bottom"
+          className="rounded-t-3xl p-0 max-h-[85dvh] flex flex-col border-0"
+          style={{ background: "#0a0a0a", border: "1px solid rgba(255,255,255,0.08)" }}
+        >
+          {body}
+        </SheetContent>
+      </Sheet>
+    );
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent
+        className="p-0 max-w-2xl w-[min(95vw,640px)] max-h-[85vh] flex flex-col border-0 rounded-3xl overflow-hidden gap-0"
+        style={{ background: "#0a0a0a", border: "1px solid rgba(255,255,255,0.08)" }}
+      >
+        {body}
+      </DialogContent>
+    </Dialog>
   );
 };
 
