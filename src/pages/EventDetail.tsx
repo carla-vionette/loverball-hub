@@ -15,6 +15,7 @@ import EventChatPanel from "@/components/events/EventChatPanel";
 import { useEventRsvp } from "@/hooks/useEventRsvp";
 import { getEventDistanceMiles, formatMiles, type ViewerLike } from "@/lib/distance";
 import { useToast } from "@/hooks/use-toast";
+import { resolveEventImage, handleEventImageError, FALLBACK_EVENT_IMAGE } from "@/lib/eventImage";
 
 interface DbEvent {
   id: string;
@@ -31,6 +32,7 @@ interface DbEvent {
   location_lng: number | null;
   host_user_id: string | null;
   sport_tags: string[] | null;
+  event_tags?: string[] | null;
 }
 
 function categoryLabel(t: string | null | undefined) {
@@ -88,7 +90,7 @@ export default function EventDetail() {
       const { data } = await supabase
         .from("events")
         .select(
-          "id, title, description, image_url, banner_image, event_date, event_time, venue_name, city, event_type, location_lat, location_lng, host_user_id, sport_tags",
+          "id, title, description, image_url, banner_image, event_date, event_time, venue_name, city, event_type, location_lat, location_lng, host_user_id, sport_tags, event_tags",
         )
         .eq("id", id)
         .maybeSingle();
@@ -154,7 +156,8 @@ export default function EventDetail() {
 
   const cat = categoryLabel(event.event_type);
   const distance = getEventDistanceMiles(event, viewer);
-  const banner = event.banner_image || event.image_url;
+  const banner = resolveEventImage(event as any);
+  const hasBanner = banner && banner !== FALLBACK_EVENT_IMAGE;
   const dateLabel = format(parseEventDate(event.event_date), "EEEE, MMMM d");
 
   return (
@@ -167,14 +170,16 @@ export default function EventDetail() {
       <div className="min-h-screen bg-[#FAF5E9] text-[#1A1A1A]">
         {/* Banner */}
         <div className="relative h-56 sm:h-80 w-full overflow-hidden" style={{ background: cat.color }}>
-          {banner && (
+          {hasBanner && (
             <img
               src={banner}
               alt=""
+              onError={handleEventImageError}
               className="absolute inset-0 w-full h-full object-cover opacity-90"
             />
           )}
           <div className="absolute inset-0 bg-gradient-to-t from-[#1A1A1A]/80 via-transparent to-transparent" />
+
 
           <div className="absolute top-3 left-3 right-3 flex justify-between items-start">
             <button
