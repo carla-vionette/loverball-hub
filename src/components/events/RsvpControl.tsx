@@ -13,8 +13,8 @@ interface Props {
   onChanged?: () => void;
 }
 
-const RASPBERRY = "#E8185A";
-const TEAL = "#00B8A9";
+const RASPBERRY = "#E85D2F";
+const TEAL = "#1A1A1A";
 
 export default function RsvpControl({ eventId, event, viewer, variant = "detail", onChanged }: Props) {
   const { rsvp, mode, pending, rsvpGoing, rsvpWatching, cancel } = useEventRsvp(eventId);
