@@ -3,14 +3,13 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight, ArrowLeft, Mail, CheckCircle2 } from "lucide-react";
+import { ArrowRight, ArrowLeft, CheckCircle2 } from "lucide-react";
 import loverballLogo from "@/assets/loverball-logo-black.png";
 import WelcomeSplash from "@/components/WelcomeSplash";
 import { C, fonts } from "@/lib/editorialTheme";
-import { isAuthEmailRateLimitError, parseRetryAfterSeconds } from "@/lib/authErrors";
 import { lovable } from "@/integrations/lovable";
 
-type AuthMode = "email" | "sent" | "password" | "reset_sent" | "reset_password";
+type AuthMode = "password" | "reset_sent" | "reset_password";
 
 /* ─── Editorial styled input ─── */
 const EditorialInput = (props: React.ComponentProps<"input">) => (
@@ -168,32 +167,18 @@ const Auth = () => {
 
   const initialMode = ((): AuthMode => {
     if (searchParams.get('reset') === 'true') return 'reset_password';
-    return 'email';
+    return 'password';
   })();
 
   const [mode, setMode] = useState<AuthMode>(initialMode);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [resendLoading, setResendLoading] = useState(false);
-  const [cooldownUntil, setCooldownUntil] = useState<number>(0);
-  const [now, setNow] = useState<number>(() => Date.now());
-
-  useEffect(() => {
-    if (cooldownUntil <= Date.now()) return;
-    const id = window.setInterval(() => setNow(Date.now()), 500);
-    return () => window.clearInterval(id);
-  }, [cooldownUntil]);
-
-  const cooldownSeconds = Math.max(0, Math.ceil((cooldownUntil - now) / 1000));
-  const inCooldown = cooldownSeconds > 0;
   const [splashName, setSplashName] = useState<string | null>(null);
   const [pendingRedirect, setPendingRedirect] = useState<string | null>(null);
 
   const redirectTo = searchParams.get('redirect') || '/feed';
   const authOrigin = window.location.origin;
-  // New users (signup) → land in onboarding to finish their profile, then exit to /feed.
-  // Returning users (signin) → land directly at their redirect target (default /feed).
   const postAuthPath = isSignup ? '/onboarding?step=finish&welcome=1' : redirectTo;
   const emailRedirectTo = `${authOrigin}${postAuthPath}`;
 
@@ -201,113 +186,22 @@ const Auth = () => {
     if (searchParams.get('reset') === 'true') setMode('reset_password');
   }, [searchParams]);
 
-  // ── Send magic link (creates user if needed) ─────────────────────────
-  const handleSendMagicLink = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (loading || cooldownUntil > Date.now()) {
-      console.log(`[magic-link] send blocked — loading=${loading} cooldownUntil=${cooldownUntil} now=${Date.now()}`);
-      return;
-    }
-    const trimmed = email.trim().toLowerCase();
-    if (!trimmed || !trimmed.includes("@")) {
-      toast({ title: "Enter a valid email", variant: "destructive" });
-      return;
-    }
-    const startTime = Date.now();
-    console.log(`[magic-link] send START email=${trimmed.replace(/(.{2}).*@/, "$1***@")} t=${startTime}`);
-    setLoading(true);
-    try {
-      const { error } = await supabase.auth.signInWithOtp({
-        email: trimmed,
-        options: {
-          shouldCreateUser: true,
-          emailRedirectTo,
-        },
-      });
-      if (error) throw error;
-      const cooldownMs = 30_000;
-      const cooldownEnd = Date.now() + cooldownMs;
-      console.log(`[magic-link] send OK email=${trimmed.replace(/(.{2}).*@/, "$1***@")} duration=${Date.now() - startTime}ms cooldown=${cooldownMs}ms until=${cooldownEnd}`);
-      // Small built-in cooldown to prevent accidental duplicate sends.
-      setCooldownUntil(cooldownEnd);
-      setNow(Date.now());
-      setMode("sent");
-    } catch (err: any) {
-      const message = err?.message ?? "";
-      const isThrottle = isAuthEmailRateLimitError(message);
-      const wait = isThrottle ? parseRetryAfterSeconds(message) : 0;
-      console.log(`[magic-link] send FAIL email=${trimmed.replace(/(.{2}).*@/, "$1***@")} duration=${Date.now() - startTime}ms throttle=${isThrottle} wait=${wait}s message="${message}"`);
-      if (isThrottle) {
-        setCooldownUntil(Date.now() + wait * 1000);
-        setNow(Date.now());
-        toast({
-          title: "Email sign-in is temporarily delayed",
-          description: `Too many requests. Try again in ${wait} second${wait === 1 ? "" : "s"}.`,
-          variant: "destructive",
-        });
-      } else {
-        toast({
-          title: "Couldn't send sign-in link",
-          description: message,
-          variant: "destructive",
-        });
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleResend = async () => {
-    if (!email || resendLoading || cooldownUntil > Date.now()) {
-      console.log(`[magic-link] resend blocked — email=${!!email} resendLoading=${resendLoading} cooldownUntil=${cooldownUntil} now=${Date.now()}`);
-      return;
-    }
-    const startTime = Date.now();
-    const maskedEmail = email.trim().toLowerCase().replace(/(.{2}).*@/, "$1***@");
-    console.log(`[magic-link] resend START email=${maskedEmail} t=${startTime}`);
-    setResendLoading(true);
-    try {
-      const { error } = await supabase.auth.signInWithOtp({
-        email: email.trim().toLowerCase(),
-        options: { shouldCreateUser: true, emailRedirectTo },
-      });
-      if (error) throw error;
-      const cooldownMs = 30_000;
-      const cooldownEnd = Date.now() + cooldownMs;
-      console.log(`[magic-link] resend OK email=${maskedEmail} duration=${Date.now() - startTime}ms cooldown=${cooldownMs}ms until=${cooldownEnd}`);
-      setCooldownUntil(cooldownEnd);
-      setNow(Date.now());
-      toast({ title: "Sent! Check your inbox." });
-    } catch (err: any) {
-      const message = err?.message ?? "";
-      const isThrottle = isAuthEmailRateLimitError(message);
-      const wait = isThrottle ? parseRetryAfterSeconds(message) : 0;
-      console.log(`[magic-link] resend FAIL email=${maskedEmail} duration=${Date.now() - startTime}ms throttle=${isThrottle} wait=${wait}s message="${message}"`);
-      if (isThrottle) {
-        setCooldownUntil(Date.now() + wait * 1000);
-        setNow(Date.now());
-        toast({
-          title: "Resend is temporarily delayed",
-          description: `Please wait ${wait} second${wait === 1 ? "" : "s"} before requesting another link.`,
-          variant: "destructive",
-        });
-      } else {
-        toast({
-          title: "Couldn't resend",
-          description: message,
-          variant: "destructive",
-        });
-      }
-    } finally {
-      setResendLoading(false);
-    }
-  };
-
-  // ── Password sign-in (secondary) ──────────────────────────────────────
-  const handlePasswordSignIn = async (e: React.FormEvent) => {
+  // ── Password sign in / sign up ─────────────────────────────────────
+  const handlePasswordSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     try {
+      if (isSignup) {
+        const { error } = await supabase.auth.signUp({
+          email: email.trim().toLowerCase(),
+          password,
+          options: { emailRedirectTo },
+        });
+        if (error) throw error;
+        navigate('/onboarding?step=finish&welcome=1');
+        return;
+      }
+
       const { error, data } = await supabase.auth.signInWithPassword({
         email: email.trim().toLowerCase(),
         password,
@@ -328,7 +222,7 @@ const Auth = () => {
         navigate(dest);
       }
     } catch (err: any) {
-      toast({ title: "Couldn't sign in", description: err.message, variant: "destructive" });
+      toast({ title: isSignup ? "Couldn't sign up" : "Couldn't sign in", description: err.message, variant: "destructive" });
     } finally {
       setLoading(false);
     }
@@ -420,10 +314,10 @@ const Auth = () => {
         <div className="w-full max-w-sm">
           <AnimatePresence mode="wait">
 
-            {/* ── Email magic-link entry ── */}
-            {mode === "email" && (
+            {/* ── Password sign in / sign up ── */}
+            {mode === "password" && (
               <motion.div
-                key="email"
+                key="password"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -16 }}
@@ -432,10 +326,12 @@ const Auth = () => {
               >
                 <div className="text-center space-y-2">
                   <AuthH1>{isSignup ? "JOIN US!" : "WELCOME BACK"}</AuthH1>
-                  <AuthBody muted center>{isSignup ? "Sign up with your email — we'll send a magic link." : "Sign in with your email — we'll send a magic link."}</AuthBody>
+                  <AuthBody muted center>
+                    {isSignup ? "Create your account with email and password." : "Sign in with your email and password."}
+                  </AuthBody>
                 </div>
 
-                <form onSubmit={handleSendMagicLink} className="space-y-4">
+                <form onSubmit={handlePasswordSubmit} className="space-y-4">
                   <EditorialInput
                     type="email"
                     placeholder="Email address"
@@ -445,8 +341,32 @@ const Auth = () => {
                     autoFocus
                     autoComplete="email"
                   />
-                  <EditorialBtn type="submit" loading={loading} disabled={inCooldown}>
-                    {inCooldown ? `Try again in ${cooldownSeconds}s` : "Continue with Email"}
+                  <EditorialInput
+                    type="password"
+                    placeholder="Password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    minLength={6}
+                    autoComplete={isSignup ? "new-password" : "current-password"}
+                  />
+
+                  {!isSignup && (
+                    <div className="text-right">
+                      <button
+                        type="button"
+                        onClick={handleForgotPassword}
+                        disabled={loading}
+                        style={{ fontFamily: fonts.sans, fontSize: 14, color: C.raspberry }}
+                        className="hover:opacity-80 transition-opacity"
+                      >
+                        Forgot password?
+                      </button>
+                    </div>
+                  )}
+
+                  <EditorialBtn type="submit" loading={loading}>
+                    {isSignup ? "Create account" : "Sign in"}
                   </EditorialBtn>
                 </form>
 
@@ -476,7 +396,7 @@ const Auth = () => {
 
                 <button
                   type="button"
-                  onClick={() => setMode("password")}
+                  onClick={() => navigate(isSignup ? '/auth?mode=signin' : '/auth?mode=signup')}
                   style={{
                     fontFamily: fonts.sans,
                     fontSize: 14,
@@ -486,154 +406,7 @@ const Auth = () => {
                   }}
                   className="hover:text-[#FAF5E9] transition-colors"
                 >
-                  Sign in with password
-                </button>
-
-                <p
-                  style={{
-                    fontFamily: fonts.sans,
-                    fontSize: 12,
-                    color: C.muted,
-                    textAlign: "center",
-                  }}
-                  className="opacity-70"
-                >
-                  Phone sign-in coming soon.
-                </p>
-              </motion.div>
-            )}
-
-            {/* ── Magic link sent ── */}
-            {mode === "sent" && (
-              <motion.div
-                key="sent"
-                initial={{ opacity: 0, scale: 0.96 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.96 }}
-                transition={{ duration: 0.35 }}
-                className="text-center space-y-7"
-              >
-                <motion.div
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{ type: "spring", delay: 0.15, stiffness: 220, damping: 18 }}
-                  className="w-20 h-20 rounded-full flex items-center justify-center mx-auto"
-                  style={{ background: `${C.raspberry}18` }}
-                >
-                  <Mail className="w-9 h-9" style={{ color: C.raspberry }} />
-                </motion.div>
-
-                <div className="space-y-3">
-                  <h2
-                    style={{
-                      fontFamily: fonts.serif,
-                      fontStyle: "italic",
-                      fontWeight: 500,
-                      fontSize: 28,
-                      lineHeight: 1.1,
-                      color: C.text,
-                    }}
-                  >
-                    Check your email for your sign-in link.
-                  </h2>
-                  <AuthBody muted center>
-                    We sent a link to{" "}
-                    <span style={{ fontWeight: 600, color: C.text }}>{email}</span>.
-                    Tap it to finish signing in.
-                  </AuthBody>
-                </div>
-
-                <div
-                  className="rounded-2xl px-5 py-4 text-sm leading-relaxed"
-                  style={{ background: C.surface, color: C.muted }}
-                >
-                  Didn't get it? Check spam, or{" "}
-                  <button
-                    type="button"
-                    onClick={handleResend}
-                    disabled={resendLoading || inCooldown}
-                    style={{ color: C.raspberry, fontWeight: 600, borderBottom: `1px solid ${C.raspberry}`, opacity: (resendLoading || inCooldown) ? 0.6 : 1 }}
-                    className="hover:opacity-80 transition-opacity disabled:cursor-not-allowed"
-                  >
-                    {resendLoading
-                      ? "Sending…"
-                      : inCooldown
-                        ? `resend in ${cooldownSeconds}s`
-                        : "resend the link"}
-                  </button>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() => setMode("email")}
-                  style={{ fontFamily: fonts.sans, fontSize: 14, color: C.muted, display: "flex", alignItems: "center", gap: 6, margin: "0 auto" }}
-                  className="hover:text-[#FAF5E9] transition-colors"
-                >
-                  <ArrowLeft size={14} />
-                  Use a different email
-                </button>
-              </motion.div>
-            )}
-
-            {/* ── Password sign in (secondary) ── */}
-            {mode === "password" && (
-              <motion.div
-                key="password"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -16 }}
-                transition={{ duration: 0.3 }}
-                className="space-y-8"
-              >
-                <div className="text-center space-y-2">
-                  <AuthH1>Welcome back</AuthH1>
-                  <AuthBody muted center>Sign in with your password.</AuthBody>
-                </div>
-
-                <form onSubmit={handlePasswordSignIn} className="space-y-4">
-                  <EditorialInput
-                    type="email"
-                    placeholder="Email address"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    autoFocus
-                    autoComplete="email"
-                  />
-                  <EditorialInput
-                    type="password"
-                    placeholder="Password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    autoComplete="current-password"
-                  />
-
-                  <div className="text-right">
-                    <button
-                      type="button"
-                      onClick={handleForgotPassword}
-                      disabled={loading}
-                      style={{ fontFamily: fonts.sans, fontSize: 14, color: C.raspberry }}
-                      className="hover:opacity-80 transition-opacity"
-                    >
-                      Forgot password?
-                    </button>
-                  </div>
-
-                  <EditorialBtn type="submit" loading={loading}>
-                    Sign in
-                  </EditorialBtn>
-                </form>
-
-                <button
-                  type="button"
-                  onClick={() => { setMode("email"); setPassword(""); }}
-                  style={{ fontFamily: fonts.sans, fontSize: 14, color: C.muted, display: "flex", alignItems: "center", gap: 6, margin: "0 auto" }}
-                  className="hover:text-[#FAF5E9] transition-colors"
-                >
-                  <ArrowLeft size={14} />
-                  Back to email sign-in
+                  {isSignup ? "Already have an account? Sign in" : "New here? Create an account"}
                 </button>
               </motion.div>
             )}
