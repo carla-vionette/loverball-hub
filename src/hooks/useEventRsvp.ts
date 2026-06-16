@@ -180,6 +180,7 @@ export function useEventRsvp(eventId: string | undefined): UseEventRsvpResult {
       toast({ title: "Couldn't cancel", description: error.message, variant: "destructive" });
       return;
     }
+    notify(eventId);
     toast({ title: "RSVP canceled" });
   }, [eventId, user, rsvp, toast]);
 
