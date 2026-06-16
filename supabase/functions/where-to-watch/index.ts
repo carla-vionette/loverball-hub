@@ -50,6 +50,11 @@ const ESPN: Record<string, { url: string; league: string; sport: string }> = {
   ncaambb: { url: "https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/scoreboard", league: "NCAAM", sport: "Basketball" },
   ncaawbb: { url: "https://site.api.espn.com/apis/site/v2/sports/basketball/womens-college-basketball/scoreboard", league: "NCAAW", sport: "Basketball" },
   ncaafb: { url: "https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard", league: "NCAAF", sport: "Football" },
+  fifawc: { url: "https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard", league: "FIFA World Cup", sport: "Soccer" },
+  fifawwc: { url: "https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.wwc/scoreboard", league: "FIFA Women's World Cup", sport: "Soccer" },
+  uefacl: { url: "https://site.api.espn.com/apis/site/v2/sports/soccer/uefa.champions/scoreboard", league: "UEFA Champions League", sport: "Soccer" },
+  eng1: { url: "https://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/scoreboard", league: "Premier League", sport: "Soccer" },
+  esp1: { url: "https://site.api.espn.com/apis/site/v2/sports/soccer/esp.1/scoreboard", league: "La Liga", sport: "Soccer" },
 };
 
 const TEAM_ALIASES: Record<string, string[]> = {
