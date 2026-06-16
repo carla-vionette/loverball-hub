@@ -20,6 +20,7 @@ import SharePreview from "@/components/SharePreview";
 
 import WhosGoing from "@/components/WhosGoing";
 import EventAttendeeGroups from "@/components/EventAttendeeGroups";
+import WhoElseGoingTabs from "@/components/events/WhoElseGoingTabs";
 import WatchModeSelector from "@/components/events/WatchModeSelector";
 import RsvpAvatarBar from "@/components/RsvpAvatarBar";
 import { trackEventRSVP, trackContentView } from "@/lib/analytics";
