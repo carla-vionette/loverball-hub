@@ -967,7 +967,12 @@ const EventDetail = () => {
             )}
 
             {/* Full who's going + comments below the fold */}
-            {id && user && <WhosGoing eventId={id} refreshKey={guestRefreshKey} />}
+            {id && user && (event?.event_type === 'game' || event?.event_type === 'watch_party') && (
+              <EventAttendeeGroups eventId={id} refreshKey={guestRefreshKey} />
+            )}
+            {id && user && event?.event_type !== 'game' && event?.event_type !== 'watch_party' && (
+              <WhosGoing eventId={id} refreshKey={guestRefreshKey} />
+            )}
             {id && user && <div id="event-chat"><EventComments eventId={id} /></div>}
             {id && !user && (
               <div className="rounded-2xl border border-primary/30 bg-primary/5 p-6 text-center space-y-3">
