@@ -48,6 +48,23 @@ function fmtTime(t?: string | null) {
   return format(d, "h:mm a");
 }
 
+const SLUG_STYLE: React.CSSProperties = {
+  fontFamily: "'Space Mono', ui-monospace, monospace",
+  fontSize: 11,
+  letterSpacing: "0.22em",
+  textTransform: "uppercase",
+  color: "#E85D2F",
+};
+
+function SectionLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="flex items-center gap-2 mb-3">
+      <Sparkles size={16} color="#E85D2F" />
+      <span style={SLUG_STYLE}>{children}</span>
+    </div>
+  );
+}
+
 export default function EventDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
