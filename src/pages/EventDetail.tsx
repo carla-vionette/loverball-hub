@@ -20,6 +20,7 @@ import SharePreview from "@/components/SharePreview";
 
 import WhosGoing from "@/components/WhosGoing";
 import EventAttendeeGroups from "@/components/EventAttendeeGroups";
+import WhoElseGoingTabs from "@/components/events/WhoElseGoingTabs";
 import WatchModeSelector from "@/components/events/WatchModeSelector";
 import RsvpAvatarBar from "@/components/RsvpAvatarBar";
 import { trackEventRSVP, trackContentView } from "@/lib/analytics";
@@ -920,6 +921,25 @@ const EventDetail = () => {
                 </div>
               )}
             </div>
+
+            {/* Stadium vs Watch Party tabs — game events only */}
+            {user && event.event_type === 'game' && (
+              <WhoElseGoingTabs
+                eventId={event.id}
+                eventCity={event.city}
+                stadiumAttendees={attendees
+                  .filter((a) => a.profile)
+                  .map((a) => ({
+                    user_id: a.user_id,
+                    name: a.profile!.name,
+                    profile_photo_url: a.profile!.profile_photo_url,
+                  }))}
+                stadiumTotal={goingCount}
+                onMarkStadium={() => handleRSVP('yes')}
+              />
+            )}
+
+
 
             {/* Going chat → scrolls to Event chat below */}
             {isGoing && (
