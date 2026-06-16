@@ -243,9 +243,7 @@ export default function EventDetail() {
 
           {/* RSVP */}
           <section ref={rsvpRef} className="space-y-3 p-5 rounded-2xl bg-white border border-black/5">
-            <h2 className="font-['Playfair_Display'] text-xl text-[#1A1A1A]">
-              Your RSVP
-            </h2>
+            <SectionLabel>Your RSVP</SectionLabel>
             {!user && (
               <p className="text-sm font-['Inter'] text-[#1A1A1A]/60">
                 <button
