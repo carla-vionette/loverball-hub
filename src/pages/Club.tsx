@@ -772,8 +772,14 @@ const Club = () => {
 /* ─────────── Sub-components ─────────── */
 
 const FanCard = ({
-  member, why, navigate,
-}: { member: Member; why: string[]; navigate: ReturnType<typeof useNavigate> }) => {
+  member, why, score, navigate, onDismiss,
+}: {
+  member: Member;
+  why: string[];
+  score?: number;
+  navigate: ReturnType<typeof useNavigate>;
+  onDismiss?: () => void;
+}) => {
   const handle = `@${(member.name?.split(" ")[0] || "member").toLowerCase().replace(/[^a-z0-9]/g, "")}`;
   return (
     <div className="rounded-2xl p-5 flex flex-col gap-4 transition-transform hover:-translate-y-0.5"
