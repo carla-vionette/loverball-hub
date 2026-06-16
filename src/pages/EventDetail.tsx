@@ -761,8 +761,14 @@ const EventDetail = () => {
               </div>
             )}
 
-            {/* WATCH MODE — stadium vs bar choice for game / watch-party events */}
-            {user && isGoing && (event.event_type === 'game' || event.event_type === 'watch_party') && (
+            {/* WATCH MODE — stadium vs bar choice. Show whenever the event
+                has venue coordinates (so we can decide if stadium is within
+                50mi) OR it's explicitly a game/watch_party. */}
+            {user && isGoing && (
+              event.event_type === 'game' ||
+              event.event_type === 'watch_party' ||
+              ((event as any).location_lat != null && (event as any).location_lng != null)
+            ) && (
               <WatchModeSelector
                 eventId={event.id}
                 eventLat={(event as any).location_lat ?? null}
@@ -776,6 +782,7 @@ const EventDetail = () => {
                 }}
               />
             )}
+
 
 
             {/* HOSTED: host card + pitch quote */}
