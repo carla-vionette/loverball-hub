@@ -1,6 +1,7 @@
 // Proxies Google Places API (New) :searchNearby through the Lovable connector
 // gateway to find sports bars within a given radius of a lat/lng.
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const GATEWAY_URL = "https://connector-gateway.lovable.dev/google_maps";
 const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
