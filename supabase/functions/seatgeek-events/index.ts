@@ -44,9 +44,14 @@ const LEAGUE_MAP: Record<string, { league: string; sport_kind: "pro" | "college"
 
 const TAXONOMY_SLUGS = Object.keys(LEAGUE_MAP).join(",");
 
-// Heuristic: detect World Cup matches by title even when taxonomy is just "soccer".
+// Heuristic: detect World Cup matches by title even when taxonomy is just
+// "soccer". Excludes obvious non-soccer uses of the phrase "world cup"
+// (classical music showcases, eating contests, rugby/cricket, etc).
+const NON_SOCCER_WC = /\b(classical|symphony|orchestra|opera|piano|violin|music|festival|eating|hot ?dog|chili|bbq|wing|pie|coffee|barista|rugby|cricket|polo|chess|esports?|gaming|dog|cat|frisbee|disc|surf|ski|snowboard)\b/i;
 function isWorldCupTitle(title: string): boolean {
-  return /world\s*cup/i.test(title);
+  if (!/world\s*cup/i.test(title)) return false;
+  if (NON_SOCCER_WC.test(title)) return false;
+  return true;
 }
 
 interface SeatGeekEvent {
