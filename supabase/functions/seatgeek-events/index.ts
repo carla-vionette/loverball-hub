@@ -92,6 +92,7 @@ function normalize(ev: SeatGeekEvent) {
   const venue_address = [venue.address, venue.extended_address, venue.city, venue.state]
     .filter(Boolean).join(", ");
 
+  const vi = venueLookup(venue.name || null);
   return {
     id: `sg-${ev.id}`,
     title: ev.title,
@@ -106,7 +107,106 @@ function normalize(ev: SeatGeekEvent) {
     is_womens: lg.is_womens,
     ticket_url: ev.url,
     image_url: home?.image || null,
+    location_lat: vi?.lat ?? null,
+    location_lng: vi?.lng ?? null,
   };
+}
+
+// ── FIFA World Cup 2026 venues with lat/lng ─────────────────────────────
+// Coordinates power the client's 50-mile stadium gating for every host city.
+const WC26_VENUES: Record<string, { lat: number; lng: number; city: string; address: string }> = {
+  "Estadio Azteca":            { lat: 19.3029, lng: -99.1503,  city: "Mexico City",       address: "Calz. de Tlalpan 3465, Mexico City, MX" },
+  "Estadio Akron":             { lat: 20.6816, lng: -103.4628, city: "Guadalajara",       address: "Av. Vallarta s/n, Zapopan, MX" },
+  "Estadio BBVA":              { lat: 25.6692, lng: -100.2440, city: "Monterrey",         address: "Av. Pablo Livas, Guadalupe, MX" },
+  "BMO Field":                 { lat: 43.6332, lng: -79.4185,  city: "Toronto",           address: "170 Princes' Blvd, Toronto, ON" },
+  "BC Place":                  { lat: 49.2767, lng: -123.1119, city: "Vancouver",         address: "777 Pacific Blvd, Vancouver, BC" },
+  "Mercedes-Benz Stadium":     { lat: 33.7553, lng: -84.4006,  city: "Atlanta",           address: "1 AMB Dr NW, Atlanta, GA" },
+  "Gillette Stadium":          { lat: 42.0909, lng: -71.2643,  city: "Foxborough",        address: "1 Patriot Pl, Foxborough, MA" },
+  "AT&T Stadium":              { lat: 32.7473, lng: -97.0945,  city: "Arlington",         address: "1 AT&T Way, Arlington, TX" },
+  "NRG Stadium":               { lat: 29.6847, lng: -95.4107,  city: "Houston",           address: "NRG Pkwy, Houston, TX" },
+  "Arrowhead Stadium":         { lat: 39.0489, lng: -94.4839,  city: "Kansas City",       address: "1 Arrowhead Dr, Kansas City, MO" },
+  "GEHA Field at Arrowhead Stadium": { lat: 39.0489, lng: -94.4839, city: "Kansas City",  address: "1 Arrowhead Dr, Kansas City, MO" },
+  "SoFi Stadium":              { lat: 33.9535, lng: -118.3392, city: "Inglewood",         address: "1001 Stadium Dr, Inglewood, CA" },
+  "Hard Rock Stadium":         { lat: 25.9580, lng: -80.2389,  city: "Miami Gardens",     address: "347 Don Shula Dr, Miami Gardens, FL" },
+  "MetLife Stadium":           { lat: 40.8135, lng: -74.0745,  city: "East Rutherford",   address: "1 MetLife Stadium Dr, East Rutherford, NJ" },
+  "Lincoln Financial Field":   { lat: 39.9008, lng: -75.1675,  city: "Philadelphia",      address: "1 Lincoln Financial Field Way, Philadelphia, PA" },
+  "Levi's Stadium":            { lat: 37.4030, lng: -121.9700, city: "Santa Clara",       address: "4900 Marie P. DeBartolo Way, Santa Clara, CA" },
+  "Lumen Field":               { lat: 47.5952, lng: -122.3316, city: "Seattle",           address: "800 Occidental Ave S, Seattle, WA" },
+};
+
+function venueLookup(name: string | undefined | null) {
+  if (!name) return null;
+  const key = name.trim();
+  if (WC26_VENUES[key]) return WC26_VENUES[key];
+  const lower = key.toLowerCase();
+  for (const [k, v] of Object.entries(WC26_VENUES)) {
+    if (lower.includes(k.toLowerCase()) || k.toLowerCase().includes(lower)) return v;
+  }
+  return null;
+}
+
+interface TheSportsDBEvent {
+  idEvent: string;
+  strEvent: string;
+  strHomeTeam: string;
+  strAwayTeam: string;
+  strVenue: string;
+  strCountry?: string;
+  strTimestamp?: string;
+  dateEvent?: string;
+  strTime?: string;
+  strThumb?: string | null;
+  strPoster?: string | null;
+}
+
+// Cache TheSportsDB results in-memory per-isolate for the lifetime of the
+// edge worker (TheSportsDB is rate-limited and the WC26 schedule changes
+// slowly — only scores/postponements move).
+let WC_CACHE: { at: number; events: any[] } | null = null;
+const WC_CACHE_MS = 30 * 60 * 1000; // 30 minutes
+
+async function fetchWorldCup2026(): Promise<any[]> {
+  if (WC_CACHE && Date.now() - WC_CACHE.at < WC_CACHE_MS) return WC_CACHE.events;
+  try {
+    const r = await fetch(
+      "https://www.thesportsdb.com/api/v1/json/3/eventsseason.php?id=4429&s=2026"
+    );
+    if (!r.ok) {
+      console.error("thesportsdb non-200", r.status);
+      return WC_CACHE?.events || [];
+    }
+    const json = await r.json().catch(() => null) as { events?: TheSportsDBEvent[] } | null;
+    const list = Array.isArray(json?.events) ? json!.events : [];
+    const mapped = list.map((e) => {
+      const vi = venueLookup(e.strVenue);
+      const iso = e.strTimestamp
+        ? new Date(e.strTimestamp + (/[zZ]|[+-]\d\d:?\d\d$/.test(e.strTimestamp) ? "" : "Z")).toISOString()
+        : (e.dateEvent ? new Date(`${e.dateEvent}T${e.strTime || "12:00:00"}Z`).toISOString() : new Date().toISOString());
+      const title = e.strEvent || `${e.strHomeTeam} vs ${e.strAwayTeam}`;
+      return {
+        id: `wc26-${e.idEvent}`,
+        title,
+        team_home: e.strHomeTeam || "",
+        team_away: e.strAwayTeam || "",
+        venue_name: e.strVenue || "",
+        venue_address: vi?.address || [e.strVenue, e.strCountry].filter(Boolean).join(", "),
+        city: vi?.city || "",
+        date_time: iso,
+        league: "FIFA_WC",
+        sport_kind: "pro" as const,
+        is_womens: false,
+        ticket_url: "https://www.fifa.com/fifaplus/en/tournaments/mens/worldcup/canadamexicousa2026",
+        image_url: e.strThumb || e.strPoster || null,
+        location_lat: vi?.lat ?? null,
+        location_lng: vi?.lng ?? null,
+      };
+    });
+    WC_CACHE = { at: Date.now(), events: mapped };
+    return mapped;
+  } catch (err) {
+    console.error("thesportsdb fetch error", err);
+    return WC_CACHE?.events || [];
+  }
 }
 
 function fallback(reason: string, extra: Record<string, unknown> = {}) {
