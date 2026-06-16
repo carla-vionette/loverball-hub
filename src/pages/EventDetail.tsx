@@ -866,19 +866,31 @@ const EventDetail = () => {
               </div>
               {user ? (
                 <>
-                  <RsvpAvatarBar
-                    attendees={attendees
-                      .filter((a) => a.profile)
-                      .map((a) => ({
-                        id: a.user_id,
-                        name: a.profile!.name,
-                        profile_photo_url: a.profile!.profile_photo_url,
-                      }))}
-                    totalCount={goingCount}
-                    maxAvatars={5}
-                    size="md"
-                    onViewAllClick={() => setShowAttendeeList(true)}
-                  />
+                  <div className="flex items-center justify-between gap-3">
+                    <RsvpAvatarBar
+                      attendees={attendees
+                        .filter((a) => a.profile)
+                        .map((a) => ({
+                          id: a.user_id,
+                          name: a.profile!.name,
+                          profile_photo_url: a.profile!.profile_photo_url,
+                        }))}
+                      totalCount={goingCount}
+                      maxAvatars={5}
+                      size="md"
+                      onAvatarClick={(att) => navigate(`/profile/${att.id}`)}
+                      onViewAllClick={() => setShowAttendeeList(true)}
+                    />
+                    {goingCount > 0 && (
+                      <button
+                        type="button"
+                        onClick={() => setShowAttendeeList(true)}
+                        className="text-[11px] font-semibold text-primary hover:underline whitespace-nowrap"
+                      >
+                        See all →
+                      </button>
+                    )}
+                  </div>
 
                   {/* Hosted: fan modes mix chips */}
                   {variant === 'hosted' && goingCount > 0 && (
