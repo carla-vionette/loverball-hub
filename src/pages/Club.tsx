@@ -446,20 +446,6 @@ const Club = () => {
             Discover fans like you, connect around teams, cities and leagues, and start the chat.
           </Body>
 
-          {/* Search */}
-          <div className="mt-3 flex items-center gap-3 max-w-2xl">
-
-            <div className="relative flex-1">
-              <Search className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2" style={{ color: C.muted }} />
-              <Input
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search by name, city, team, or interest…"
-                className="h-12 pl-11 rounded-xl border-0"
-                style={{ background: C.bg, color: C.text, border: `1px solid ${C.border}` }}
-              />
-            </div>
-          </div>
 
           {/* Filter chips */}
           <div className="relative mt-2.5 -mx-5 md:-mx-10">
