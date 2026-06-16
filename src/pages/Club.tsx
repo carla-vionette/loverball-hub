@@ -817,6 +817,7 @@ const FanCard = ({
         )}
       </button>
 
+      {member.bio && (
         <p className="text-sm line-clamp-2" style={{ color: C.muted }}>{member.bio}</p>
       )}
 
