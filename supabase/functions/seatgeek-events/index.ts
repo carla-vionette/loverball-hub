@@ -208,11 +208,14 @@ Deno.serve(async (req) => {
 
   // ── World Cup query: nationwide title search for "world cup" ──────────
   // World Cup 2026 matches are spread across many US/MX/CA cities, so we
-  // surface them regardless of the user's radius. Title search is the most
-  // reliable way to scope to FIFA WC matches specifically.
+  // surface them regardless of the user's radius. Scope to soccer-only
+  // taxonomies so unrelated events that happen to contain "world cup" in
+  // their title (e.g. classical music showcases, eating contests, rugby)
+  // are not pulled into the FIFA list.
   const wcParams = new URLSearchParams({
     client_id: CLIENT_ID,
     q: "world cup",
+    "taxonomies.name": "soccer,international_soccer",
     "datetime_utc.gte": new Date().toISOString(),
     sort: "datetime_local.asc",
     per_page: "100",
