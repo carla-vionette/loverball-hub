@@ -247,7 +247,29 @@ Deno.serve(async (req) => {
         .map((n) => TEAM_LEAGUES[n.toLowerCase().trim()])
         .filter(Boolean),
     );
+    // Query keyword → league hints (so "world cup", "premier league", etc. don't fan out to all leagues)
+    const QUERY_LEAGUE_HINTS: { keys: string[]; league: string }[] = [
+      { keys: ["world cup", "fifa wc", "wc 2026", "wc26"], league: "fifawc" },
+      { keys: ["women's world cup", "womens world cup", "wwc"], league: "fifawwc" },
+      { keys: ["champions league", "ucl"], league: "uefacl" },
+      { keys: ["premier league", "epl", "english premier"], league: "eng1" },
+      { keys: ["la liga", "laliga"], league: "esp1" },
+      { keys: ["nwsl"], league: "nwsl" },
+      { keys: ["mls"], league: "mls" },
+      { keys: ["wnba"], league: "wnba" },
+      { keys: ["nba"], league: "nba" },
+      { keys: ["nfl"], league: "nfl" },
+      { keys: ["mlb"], league: "mlb" },
+      { keys: ["nhl"], league: "nhl" },
+    ];
+    for (const n of needles) {
+      const lower = n.toLowerCase();
+      for (const hint of QUERY_LEAGUE_HINTS) {
+        if (hint.keys.some((k) => lower.includes(k))) hintedLeagues.add(hint.league);
+      }
+    }
     const leagueKeys = hintedLeagues.size > 0 ? Array.from(hintedLeagues) : Object.keys(ESPN);
+
 
     const urls: { key: string; url: string }[] = [];
     for (const key of leagueKeys) {
