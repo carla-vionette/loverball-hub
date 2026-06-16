@@ -51,6 +51,23 @@ Deno.serve(async (req) => {
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
+      // Require admin role: this endpoint allows arbitrary recipient/subject/body
+      // with a spoofable sender, so it must not be callable by ordinary members
+      // (phishing/spam abuse risk).
+      const adminClient = createClient(
+        Deno.env.get("SUPABASE_URL")!,
+        serviceRoleKey,
+      );
+      const { data: isAdmin, error: roleError } = await adminClient.rpc(
+        "has_role",
+        { _user_id: data.claims.sub, _role: "admin" },
+      );
+      if (roleError || !isAdmin) {
+        return new Response(JSON.stringify({ error: "Forbidden" }), {
+          status: 403,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
     }
 
     const SENDGRID_API_KEY = Deno.env.get("SENDGRID_API_KEY");
