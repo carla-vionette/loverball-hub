@@ -181,15 +181,19 @@ serve(async (req) => {
 
     const authHeader = req.headers.get('Authorization');
     let isAuthorized = false;
-    if (!authHeader || authHeader === `Bearer ${anonKey}`) {
-      isAuthorized = true;
-    } else if (authHeader?.startsWith('Bearer ')) {
-      const supabaseAuth = createClient(supabaseUrl, anonKey, { global: { headers: { Authorization: authHeader } } });
-      const { data: { user } } = await supabaseAuth.auth.getUser();
-      if (user) {
-        const supabaseAdmin = createClient(supabaseUrl, serviceKey);
-        const { data: isAdmin } = await supabaseAdmin.rpc('has_role', { _user_id: user.id, _role: 'admin' });
-        if (isAdmin) isAuthorized = true;
+    if (authHeader?.startsWith('Bearer ')) {
+      const token = authHeader.replace('Bearer ', '');
+      // Allow service-role invocation (used by pg_cron / scheduled jobs)
+      if (token === serviceKey) {
+        isAuthorized = true;
+      } else {
+        const supabaseAuth = createClient(supabaseUrl, anonKey, { global: { headers: { Authorization: authHeader } } });
+        const { data: { user } } = await supabaseAuth.auth.getUser();
+        if (user) {
+          const supabaseAdmin = createClient(supabaseUrl, serviceKey);
+          const { data: isAdmin } = await supabaseAdmin.rpc('has_role', { _user_id: user.id, _role: 'admin' });
+          if (isAdmin) isAuthorized = true;
+        }
       }
     }
 

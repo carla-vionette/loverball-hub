@@ -1,6 +1,7 @@
 // Proxies Google Places API (New) :searchNearby through the Lovable connector
 // gateway to find sports bars within a given radius of a lat/lng.
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const GATEWAY_URL = "https://connector-gateway.lovable.dev/google_maps";
 const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
@@ -22,6 +23,37 @@ function slugify(s: string) {
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+
+  // Require auth — proxies a paid Google Places API.
+  const authHeader = req.headers.get("Authorization");
+  if (!authHeader?.startsWith("Bearer ")) {
+    return new Response(
+      JSON.stringify({ error: "Unauthorized" }),
+      { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+    );
+  }
+  try {
+    const userClient = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_ANON_KEY")!,
+      { global: { headers: { Authorization: authHeader } } },
+    );
+    const { data: claimsData, error: claimsErr } = await userClient.auth.getClaims(
+      authHeader.replace("Bearer ", ""),
+    );
+    if (claimsErr || !claimsData?.claims) {
+      return new Response(
+        JSON.stringify({ error: "Unauthorized" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
+    }
+  } catch {
+    return new Response(
+      JSON.stringify({ error: "Unauthorized" }),
+      { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+    );
+  }
+
 
   try {
     if (!USE_DIRECT_PLACES && (!LOVABLE_API_KEY || !GOOGLE_MAPS_API_KEY)) {
