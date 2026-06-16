@@ -426,14 +426,28 @@ const Events = () => {
   };
 
   const selectBar = async (bar: SportsBar) => {
-    if (!user || !barModalEventId) return;
+    if (!barModalEventId) return;
+    if (!user) {
+      toast({ title: 'Please sign in to save your watch spot', variant: 'destructive' });
+      openGate(barModalEventId);
+      setBarModalEventId(null);
+      return;
+    }
     const eventId = barModalEventId;
     const wasNew = !gameRsvps[eventId];
     const { error } = await supabase.from('external_event_rsvps').upsert(
       { event_id: eventId, user_id: user.id, rsvp_type: 'bar', bar_id: bar.id, bar_name: bar.name },
       { onConflict: 'event_id,user_id' }
     );
-    if (error) { toast({ title: 'Could not save watch party', variant: 'destructive' }); return; }
+    if (error) {
+      console.error('[selectBar] save failed', error);
+      toast({
+        title: 'Could not save watch party',
+        description: error.message || 'Please try again.',
+        variant: 'destructive',
+      });
+      return;
+    }
     setGameRsvps(p => ({ ...p, [eventId]: { type: 'bar', bar_id: bar.id, bar_name: bar.name } }));
     if (wasNew) setGameCounts(p => ({ ...p, [eventId]: (p[eventId] || 0) + 1 }));
     postSystemMessage(eventId, `@${displayName()} is watching @ ${bar.name} 🍺`);
