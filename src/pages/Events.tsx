@@ -83,6 +83,7 @@ export default function Events() {
       .map((e) => ({
         id: e.id,
         title: e.title,
+        description: (e as any).description,
         image_url: e.image_url,
         banner_image: e.banner_image,
         event_date: e.event_date,
@@ -92,6 +93,8 @@ export default function Events() {
         location_lat: e.location_lat,
         location_lng: e.location_lng,
         event_type: e.event_type,
+        sport_tags: (e as any).sport_tags,
+        event_tags: (e as any).event_tags,
         category: categoryFor(e),
       }))
       .filter((c) => (filter === "all" ? true : c.category === filter));
