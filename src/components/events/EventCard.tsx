@@ -11,12 +11,15 @@ export type EventCategory = "external_sports" | "curated_culture" | "loverball_h
 export interface EventCardData extends EventLike {
   id: string;
   title: string;
+  description?: string | null;
   image_url?: string | null;
   banner_image?: string | null;
   event_date: string;
   event_time?: string | null;
   venue_name?: string | null;
   event_type?: string | null;
+  sport_tags?: string[] | null;
+  event_tags?: string[] | null;
   category: EventCategory;
 }
 
