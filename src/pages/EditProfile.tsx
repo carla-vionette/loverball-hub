@@ -235,21 +235,30 @@ const EditProfile = () => {
         sms_notifications_enabled: smsNotifications,
       } as any).eq("id", userId);
 
-      // Update sensitive data separately
-      await supabase.from("profiles_sensitive" as any).upsert({
-        id: userId,
-        phone_number: phoneNumber || null,
-      } as any);
-
       if (error) throw error;
+
+      // Update sensitive data separately — don't block redirect if this fails
+      const { error: sensitiveError } = await supabase
+        .from("profiles_sensitive" as any)
+        .upsert({
+          id: userId,
+          phone_number: phoneNumber || null,
+        } as any);
+      if (sensitiveError) {
+        console.warn("[EditProfile] phone save failed", sensitiveError);
+        toast({
+          title: "Profile saved",
+          description: "Phone number couldn't be updated — try again from Settings.",
+        });
+      } else {
+        toast({
+          title: "Profile updated!",
+          description: "Your changes have been saved.",
+        });
+      }
 
       // Invalidate cached profile so /profile re-fetches the latest values immediately.
       await queryClient.invalidateQueries({ queryKey: ["profile-bundle"] });
-
-      toast({
-        title: "Profile updated!",
-        description: "Your changes have been saved.",
-      });
 
       navigate("/profile");
     } catch (error: any) {
