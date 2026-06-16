@@ -761,6 +761,23 @@ const EventDetail = () => {
               </div>
             )}
 
+            {/* WATCH MODE — stadium vs bar choice for game / watch-party events */}
+            {user && isGoing && (event.event_type === 'game' || event.event_type === 'watch_party') && (
+              <WatchModeSelector
+                eventId={event.id}
+                eventLat={(event as any).location_lat ?? null}
+                eventLng={(event as any).location_lng ?? null}
+                initialRsvpType={myWatchChoice.rsvp_type}
+                initialBarId={myWatchChoice.bar_id}
+                initialBarName={myWatchChoice.bar_name}
+                onSaved={() => {
+                  setGuestRefreshKey((k) => k + 1);
+                  fetchRsvpStatus();
+                }}
+              />
+            )}
+
+
             {/* HOSTED: host card + pitch quote */}
             {variant === 'hosted' && (
               <>
