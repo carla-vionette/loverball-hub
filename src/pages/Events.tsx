@@ -525,6 +525,9 @@ const Events = () => {
   const daysToSat = (6 - dow + 7) % 7;
   weekendStart.setDate(weekendStart.getDate() + daysToSat);
   const weekendEnd = new Date(weekendStart); weekendEnd.setDate(weekendEnd.getDate() + 2); // Sat+Sun
+  const eventLeague = (e: DbEvent) => (e as any).__league as string | undefined;
+  const isFifaWorldCupEvent = (e: DbEvent) => eventLeague(e) === "FIFA_WC"
+    || (Array.isArray(e.event_tags) && e.event_tags.some((t: string) => String(t).toUpperCase() === "FIFA_WC"));
 
   const dateFiltered = tab === "upcoming"
     ? baseEvents.filter(e => {
@@ -532,8 +535,8 @@ const Events = () => {
         switch (datePreset) {
           case "tonight":  return d >= startOfToday && d < endOfToday;
           case "weekend":  return d >= weekendStart && d < weekendEnd;
-          case "7d":       return d <= next7;
-          case "30d":      return d <= next30;
+          case "7d":       return isFifaWorldCupEvent(e) || d <= next7;
+          case "30d":      return isFifaWorldCupEvent(e) || d <= next30;
           case "all":
           default:         return true;
         }
@@ -616,7 +619,7 @@ const Events = () => {
   ]);
   const radiusFiltered = (activeArea && radius !== "national")
     ? withDistance.filter(({ ev: e, distance }) => {
-        const league = (e as any).__league as string | undefined;
+        const league = eventLeague(e);
         const tagged = Array.isArray(e.event_tags)
           && e.event_tags.some((t: string) => NATIONAL_LEAGUES.has(String(t)));
         if ((league && NATIONAL_LEAGUES.has(league)) || tagged) return true;

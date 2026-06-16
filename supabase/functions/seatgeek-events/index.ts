@@ -114,7 +114,9 @@ function normalize(ev: SeatGeekEvent) {
 
 // ── FIFA World Cup 2026 venues with lat/lng ─────────────────────────────
 // Coordinates power the client's 50-mile stadium gating for every host city.
-const WC26_VENUES: Record<string, { lat: number; lng: number; city: string; address: string }> = {
+type VenueInfo = { name: string; lat: number; lng: number; city: string; address: string };
+
+const WC26_VENUES: Record<string, Omit<VenueInfo, "name">> = {
   "Estadio Azteca":            { lat: 19.3029, lng: -99.1503,  city: "Mexico City",       address: "Calz. de Tlalpan 3465, Mexico City, MX" },
   "Estadio Akron":             { lat: 20.6816, lng: -103.4628, city: "Guadalajara",       address: "Av. Vallarta s/n, Zapopan, MX" },
   "Estadio BBVA":              { lat: 25.6692, lng: -100.2440, city: "Monterrey",         address: "Av. Pablo Livas, Guadalupe, MX" },
@@ -134,13 +136,36 @@ const WC26_VENUES: Record<string, { lat: number; lng: number; city: string; addr
   "Lumen Field":               { lat: 47.5952, lng: -122.3316, city: "Seattle",           address: "800 Occidental Ave S, Seattle, WA" },
 };
 
-function venueLookup(name: string | undefined | null) {
+const WC26_VENUE_ALIASES: Record<string, string> = {
+  "Mexico City Stadium": "Estadio Azteca",
+  "Guadalajara Stadium": "Estadio Akron",
+  "Monterrey Stadium": "Estadio BBVA",
+  "Toronto Stadium": "BMO Field",
+  "Los Angeles Stadium": "SoFi Stadium",
+  "San Francisco Bay Area Stadium": "Levi's Stadium",
+  "New York/New Jersey Stadium": "MetLife Stadium",
+  "Boston Stadium": "Gillette Stadium",
+  "Houston Stadium": "NRG Stadium",
+  "Dallas Stadium": "AT&T Stadium",
+  "Philadelphia Stadium": "Lincoln Financial Field",
+  "Atlanta Stadium": "Mercedes-Benz Stadium",
+  "Seattle Stadium": "Lumen Field",
+  "Miami Stadium": "Hard Rock Stadium",
+  "Kansas City Stadium": "Arrowhead Stadium",
+};
+
+function venueLookup(name: string | undefined | null): VenueInfo | null {
   if (!name) return null;
   const key = name.trim();
-  if (WC26_VENUES[key]) return WC26_VENUES[key];
+  const alias = WC26_VENUE_ALIASES[key];
+  if (alias && WC26_VENUES[alias]) return { name: alias, ...WC26_VENUES[alias] };
+  if (WC26_VENUES[key]) return { name: key, ...WC26_VENUES[key] };
   const lower = key.toLowerCase();
   for (const [k, v] of Object.entries(WC26_VENUES)) {
-    if (lower.includes(k.toLowerCase()) || k.toLowerCase().includes(lower)) return v;
+    if (lower.includes(k.toLowerCase()) || k.toLowerCase().includes(lower)) return { name: k, ...v };
+  }
+  for (const [generic, canonical] of Object.entries(WC26_VENUE_ALIASES)) {
+    if (lower.includes(generic.toLowerCase()) && WC26_VENUES[canonical]) return { name: canonical, ...WC26_VENUES[canonical] };
   }
   return null;
 }
@@ -159,52 +184,124 @@ interface TheSportsDBEvent {
   strPoster?: string | null;
 }
 
+interface FixtureDownloadEvent {
+  MatchNumber: number;
+  DateUtc: string;
+  Location: string;
+  HomeTeam: string;
+  AwayTeam: string;
+  Group?: string | null;
+}
+
+const FIFA_URL = "https://www.fifa.com/fifaplus/en/tournaments/mens/worldcup/canadamexicousa2026";
+
+function normalizeWorldCupFixture(input: {
+  id: string;
+  title: string;
+  home: string;
+  away: string;
+  venue: string;
+  country?: string | null;
+  dateTime: string;
+  imageUrl?: string | null;
+}) {
+  const vi = venueLookup(input.venue);
+  const knownVenue = vi?.name || input.venue || "FIFA World Cup Stadium";
+  return {
+    id: `wc26-${input.id}`,
+    title: input.title,
+    team_home: input.home || "",
+    team_away: input.away || "",
+    venue_name: knownVenue,
+    venue_address: vi?.address || [knownVenue, input.country].filter(Boolean).join(", "),
+    city: vi?.city || "",
+    date_time: input.dateTime,
+    league: "FIFA_WC",
+    sport_kind: "pro" as const,
+    is_womens: false,
+    ticket_url: FIFA_URL,
+    image_url: input.imageUrl || null,
+    location_lat: vi?.lat ?? null,
+    location_lng: vi?.lng ?? null,
+  };
+}
+
 // Cache TheSportsDB results in-memory per-isolate for the lifetime of the
 // edge worker (TheSportsDB is rate-limited and the WC26 schedule changes
 // slowly — only scores/postponements move).
 let WC_CACHE: { at: number; events: any[] } | null = null;
+let WC_DEBUG: Record<string, number | boolean> = {};
 const WC_CACHE_MS = 30 * 60 * 1000; // 30 minutes
 
 async function fetchWorldCup2026(): Promise<any[]> {
   if (WC_CACHE && Date.now() - WC_CACHE.at < WC_CACHE_MS) return WC_CACHE.events;
   try {
-    const r = await fetch(
-      "https://www.thesportsdb.com/api/v1/json/3/eventsseason.php?id=4429&s=2026"
-    );
-    if (!r.ok) {
-      console.error("thesportsdb non-200", r.status);
-      return WC_CACHE?.events || [];
+    const [sportsDbResult, fullScheduleResult] = await Promise.allSettled([
+      fetch("https://www.thesportsdb.com/api/v1/json/3/eventsseason.php?id=4429&s=2026"),
+      fetch("https://fixturedownload.com/feed/json/fifa-world-cup-2026", {
+        headers: { "Accept": "application/json", "User-Agent": "Loverball/1.0" },
+      }),
+    ]);
+
+    let sportsDbCount = 0;
+    const sportsDbMapped: any[] = [];
+    if (sportsDbResult.status === "fulfilled" && sportsDbResult.value.ok) {
+      const json = await sportsDbResult.value.json().catch(() => null) as { events?: TheSportsDBEvent[] } | null;
+      const list = Array.isArray(json?.events) ? json!.events : [];
+      sportsDbCount = list.length;
+      sportsDbMapped.push(...list.map((e) => {
+        const iso = e.strTimestamp
+          ? new Date(e.strTimestamp + (/[zZ]|[+-]\d\d:?\d\d$/.test(e.strTimestamp) ? "" : "Z")).toISOString()
+          : (e.dateEvent ? new Date(`${e.dateEvent}T${e.strTime || "12:00:00"}Z`).toISOString() : new Date().toISOString());
+        return normalizeWorldCupFixture({
+          id: e.idEvent,
+          title: e.strEvent || `${e.strHomeTeam} vs ${e.strAwayTeam}`,
+          home: e.strHomeTeam || "",
+          away: e.strAwayTeam || "",
+          venue: e.strVenue || "",
+          country: e.strCountry,
+          dateTime: iso,
+          imageUrl: e.strThumb || e.strPoster || null,
+        });
+      }));
+    } else if (sportsDbResult.status === "fulfilled") {
+      console.error("thesportsdb non-200", sportsDbResult.value.status);
+    } else {
+      console.error("thesportsdb fetch error", String(sportsDbResult.reason));
     }
-    const json = await r.json().catch(() => null) as { events?: TheSportsDBEvent[] } | null;
-    const list = Array.isArray(json?.events) ? json!.events : [];
-    const mapped = list.map((e) => {
-      const vi = venueLookup(e.strVenue);
-      const iso = e.strTimestamp
-        ? new Date(e.strTimestamp + (/[zZ]|[+-]\d\d:?\d\d$/.test(e.strTimestamp) ? "" : "Z")).toISOString()
-        : (e.dateEvent ? new Date(`${e.dateEvent}T${e.strTime || "12:00:00"}Z`).toISOString() : new Date().toISOString());
-      const title = e.strEvent || `${e.strHomeTeam} vs ${e.strAwayTeam}`;
-      return {
-        id: `wc26-${e.idEvent}`,
-        title,
-        team_home: e.strHomeTeam || "",
-        team_away: e.strAwayTeam || "",
-        venue_name: e.strVenue || "",
-        venue_address: vi?.address || [e.strVenue, e.strCountry].filter(Boolean).join(", "),
-        city: vi?.city || "",
-        date_time: iso,
-        league: "FIFA_WC",
-        sport_kind: "pro" as const,
-        is_womens: false,
-        ticket_url: "https://www.fifa.com/fifaplus/en/tournaments/mens/worldcup/canadamexicousa2026",
-        image_url: e.strThumb || e.strPoster || null,
-        location_lat: vi?.lat ?? null,
-        location_lng: vi?.lng ?? null,
-      };
-    });
+
+    let fullScheduleCount = 0;
+    const fullScheduleMapped: any[] = [];
+    if (fullScheduleResult.status === "fulfilled" && fullScheduleResult.value.ok) {
+      const json = await fullScheduleResult.value.json().catch(() => null) as FixtureDownloadEvent[] | null;
+      const list = Array.isArray(json) ? json : [];
+      fullScheduleCount = list.length;
+      fullScheduleMapped.push(...list.map((e) => normalizeWorldCupFixture({
+        id: `match-${e.MatchNumber}`,
+        title: `${e.HomeTeam} vs ${e.AwayTeam}`,
+        home: e.HomeTeam,
+        away: e.AwayTeam,
+        venue: e.Location,
+        country: null,
+        dateTime: new Date(e.DateUtc.replace(" ", "T")).toISOString(),
+        imageUrl: null,
+      })));
+    } else if (fullScheduleResult.status === "fulfilled") {
+      console.error("fixturedownload non-200", fullScheduleResult.value.status);
+    } else {
+      console.error("fixturedownload fetch error", String(fullScheduleResult.reason));
+    }
+
+    const byKey = new Map<string, any>();
+    for (const e of fullScheduleMapped) byKey.set(`${e.date_time}|${e.venue_name}`, e);
+    for (const e of sportsDbMapped) byKey.set(`${e.date_time}|${e.venue_name}`, e);
+    const mapped = Array.from(byKey.values()).sort((a, b) => a.date_time.localeCompare(b.date_time));
+    WC_DEBUG = { sportsDbCount, fullScheduleCount, mergedCount: mapped.length, usedFallbackSchedule: fullScheduleCount >= 104 };
+    console.log("wc26 schedule fetch", WC_DEBUG);
     WC_CACHE = { at: Date.now(), events: mapped };
     return mapped;
   } catch (err) {
-    console.error("thesportsdb fetch error", err);
+    console.error("wc26 schedule fetch error", err);
     return WC_CACHE?.events || [];
   }
 }
@@ -349,8 +446,9 @@ Deno.serve(async (req) => {
   for (const e of localEvents) byId.set(e.id, e);
   for (const e of wcEvents) byId.set(e.id, e);
   const events = Array.from(byId.values());
+  const wcCount = events.filter((e) => e?.league === "FIFA_WC").length;
 
-  return new Response(JSON.stringify({ events }), {
+  return new Response(JSON.stringify({ debug: { wc26: { ...WC_DEBUG, returnedCount: wcCount } }, events }), {
     headers: {
       ...corsHeaders,
       "Content-Type": "application/json",

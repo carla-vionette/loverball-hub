@@ -304,10 +304,11 @@ const LEAGUE_SPORT_FALLBACK: Record<string, string> = {
 function liveToDbShape(e: SeatGeekProxyEvent): MockDbEvent {
   const d = new Date(e.date_time);
   const sport = LEAGUE_SPORT_FALLBACK[e.league] || "sports";
+  const isWorldCup = e.league === "FIFA_WC";
   return {
     id: e.id,
     title: e.title,
-    description: `${e.league} · ${e.venue_name}`,
+    description: isWorldCup ? `FIFA World Cup 2026 · ${e.venue_name}` : `${e.league} · ${e.venue_name}`,
     image_url: e.image_url ?? null,
     banner_image: null,
     event_date: format(d, "yyyy-MM-dd"),
@@ -319,7 +320,9 @@ function liveToDbShape(e: SeatGeekProxyEvent): MockDbEvent {
     visibility: "public",
     capacity: null,
     price: null,
-    event_tags: [e.league, e.is_womens ? "women" : "open", e.sport_kind],
+    event_tags: isWorldCup
+      ? [e.league, "FIFA World Cup", "World Cup", "World Cup 2026", "open", e.sport_kind]
+      : [e.league, e.is_womens ? "women" : "open", e.sport_kind],
     location_lat: e.location_lat ?? null,
     location_lng: e.location_lng ?? null,
     promoted: false,
