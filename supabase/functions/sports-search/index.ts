@@ -51,8 +51,8 @@ const LEAGUE_ALIASES: Record<string, League> = {
 const cache = new Map<string, { ts: number; data: any }>();
 const CACHE_TTL = 45_000; // 45s
 
-async function fetchEspn(league: League): Promise<any> {
-  const url = ESPN_SCOREBOARD[league];
+async function fetchEspn(league: League, date?: string): Promise<any> {
+  const url = date ? `${ESPN_SCOREBOARD[league]}?dates=${date}` : ESPN_SCOREBOARD[league];
   const cached = cache.get(url);
   if (cached && Date.now() - cached.ts < CACHE_TTL) return cached.data;
   try {
@@ -70,6 +70,20 @@ async function fetchEspn(league: League): Promise<any> {
     console.warn(`ESPN ${league} fetch failed:`, err);
     return null;
   }
+}
+
+function ymd(d: Date): string {
+  return d.toISOString().slice(0, 10).replace(/-/g, "");
+}
+
+function dateWindow(daysAhead = 7): string[] {
+  const dates: string[] = [];
+  for (let i = -1; i <= daysAhead; i++) {
+    const d = new Date();
+    d.setDate(d.getDate() + i);
+    dates.push(ymd(d));
+  }
+  return dates;
 }
 
 interface GameOut {
@@ -156,17 +170,22 @@ function teamMatches(g: GameOut, q: string): boolean {
   return aliases.some((alias) => haystack.includes(alias));
 }
 
-async function fetchLeagues(leagues: League[]): Promise<GameOut[]> {
+async function fetchLeagues(leagues: League[], dates?: string[]): Promise<GameOut[]> {
+  const requests = dates?.length
+    ? leagues.flatMap((lg) => dates.map((date) => ({ lg, date })))
+    : leagues.map((lg) => ({ lg, date: undefined as string | undefined }));
   const results = await Promise.all(
-    leagues.map(async (lg) => {
-      const data = await fetchEspn(lg);
+    requests.map(async ({ lg, date }) => {
+      const data = await fetchEspn(lg, date);
       const events = data?.events || [];
       return events
         .map((e: any) => normalizeEspnEvent(e, lg))
         .filter(Boolean) as GameOut[];
     })
   );
-  return results.flat();
+  const byId = new Map<string, GameOut>();
+  for (const game of results.flat()) byId.set(game.id, game);
+  return Array.from(byId.values());
 }
 
 function rankAndTrim(games: GameOut[], limit: number): GameOut[] {
@@ -201,7 +220,7 @@ Deno.serve(async (req) => {
     const isLeagueOnly = detected.length === 1 && !!LEAGUE_ALIASES[rawQuery.toLowerCase()];
     const leagues = detected.length > 0 ? detected : ALL_LEAGUES;
 
-    const all = await fetchLeagues(leagues);
+    const all = await fetchLeagues(leagues, dateWindow(7));
     const filtered = isLeagueOnly ? all : all.filter((g) => teamMatches(g, rawQuery));
 
     // For team queries return live + most recent final + next upcoming; for league-only return more.
