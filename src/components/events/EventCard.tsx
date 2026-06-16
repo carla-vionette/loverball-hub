@@ -87,8 +87,14 @@ export default function EventCard({
           <div className="flex items-start justify-between gap-2">
             <div className="min-w-0 flex-1">
               <span
-                className="inline-block text-[10px] uppercase tracking-[0.18em] font-bold font-['Inter'] mb-1.5"
-                style={{ color: theme.color }}
+                className="inline-block mb-1.5"
+                style={{
+                  fontFamily: "'Space Mono', ui-monospace, monospace",
+                  fontSize: 11,
+                  letterSpacing: "0.22em",
+                  textTransform: "uppercase",
+                  color: theme.color,
+                }}
               >
                 {theme.label}
               </span>
