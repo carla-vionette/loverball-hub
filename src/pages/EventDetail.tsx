@@ -116,6 +116,11 @@ const EventDetail = () => {
   const [guestRefreshKey, setGuestRefreshKey] = useState(0);
   const [showAttendeeList, setShowAttendeeList] = useState(false);
   const [userTier, setUserTier] = useState<string | null>(null);
+  const [myWatchChoice, setMyWatchChoice] = useState<{
+    rsvp_type: 'stadium' | 'bar' | null;
+    bar_id: string | null;
+    bar_name: string | null;
+  }>({ rsvp_type: null, bar_id: null, bar_name: null });
   const isMobileDevice = useIsMobile();
 
   const goBack = useCallback(() => {
