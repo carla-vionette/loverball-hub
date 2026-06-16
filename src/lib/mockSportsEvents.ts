@@ -284,6 +284,8 @@ interface SeatGeekProxyEvent {
   is_womens: boolean;
   ticket_url?: string;
   image_url?: string | null;
+  location_lat?: number | null;
+  location_lng?: number | null;
 }
 
 interface SeatGeekProxyResponse {
@@ -318,8 +320,8 @@ function liveToDbShape(e: SeatGeekProxyEvent): MockDbEvent {
     capacity: null,
     price: null,
     event_tags: [e.league, e.is_womens ? "women" : "open", e.sport_kind],
-    location_lat: null,
-    location_lng: null,
+    location_lat: e.location_lat ?? null,
+    location_lng: e.location_lng ?? null,
     promoted: false,
     __mock: true,
     __league: e.league,
