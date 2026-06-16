@@ -607,13 +607,19 @@ const Events = () => {
   // - Else fall back to city-level match
   // - Events with no coords AND no city are treated as national (always shown)
   const activeCity = activeArea?.city?.toLowerCase().trim() || null;
+  // Nationally-broadcast leagues are surfaced everywhere regardless of the
+  // user's radius — stadium-vs-watch-party gating is handled per-card, so
+  // a fan in NYC can still RSVP to a Sparks watch party at their local bar.
+  const NATIONAL_LEAGUES = new Set([
+    "FIFA_WC", "WNBA", "NWSL", "NBA", "MLS", "NHL", "MLB",
+    "NCAAW", "NCAAF", "NCAAM", "NCAA",
+  ]);
   const radiusFiltered = (activeArea && radius !== "national")
     ? withDistance.filter(({ ev: e, distance }) => {
-        // FIFA World Cup 2026 matches are surfaced nationwide regardless
-        // of user radius — stadium-vs-watch-party gating is handled per-card.
-        const isWC = (e as any).__league === "FIFA_WC"
-          || (Array.isArray(e.event_tags) && e.event_tags.includes("FIFA_WC"));
-        if (isWC) return true;
+        const league = (e as any).__league as string | undefined;
+        const tagged = Array.isArray(e.event_tags)
+          && e.event_tags.some((t: string) => NATIONAL_LEAGUES.has(String(t)));
+        if ((league && NATIONAL_LEAGUES.has(league)) || tagged) return true;
         if (distance != null) return distance <= radius;
         if (activeCity && e.city) return e.city.toLowerCase().includes(activeCity);
         return true; // unknown location → don't hide
