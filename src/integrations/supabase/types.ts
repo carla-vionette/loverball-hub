@@ -927,6 +927,8 @@ export type Database = {
         Row: {
           approval_status: string
           attendance_status: string
+          bar_id: string | null
+          bar_name: string | null
           checked_in_at: string | null
           created_at: string
           event_id: string
@@ -938,12 +940,15 @@ export type Database = {
           invited_by_user_id: string | null
           joined_event_chat_at: string | null
           plus_ones: number | null
+          rsvp_type: string | null
           status: string
           user_id: string
         }
         Insert: {
           approval_status?: string
           attendance_status?: string
+          bar_id?: string | null
+          bar_name?: string | null
           checked_in_at?: string | null
           created_at?: string
           event_id: string
@@ -955,12 +960,15 @@ export type Database = {
           invited_by_user_id?: string | null
           joined_event_chat_at?: string | null
           plus_ones?: number | null
+          rsvp_type?: string | null
           status?: string
           user_id: string
         }
         Update: {
           approval_status?: string
           attendance_status?: string
+          bar_id?: string | null
+          bar_name?: string | null
           checked_in_at?: string | null
           created_at?: string
           event_id?: string
@@ -972,6 +980,7 @@ export type Database = {
           invited_by_user_id?: string | null
           joined_event_chat_at?: string | null
           plus_ones?: number | null
+          rsvp_type?: string | null
           status?: string
           user_id?: string
         }
@@ -3089,6 +3098,22 @@ export type Database = {
           p_window_minutes?: number
         }
         Returns: boolean
+      }
+      get_event_attendee_breakdown: {
+        Args: { p_event_id: string }
+        Returns: {
+          bar_id: string
+          bar_name: string
+          bio: string
+          city: string
+          created_at: string
+          favorite_sports: string[]
+          name: string
+          primary_role: string
+          profile_photo_url: string
+          rsvp_type: string
+          user_id: string
+        }[]
       }
       get_event_invite_by_token: {
         Args: { p_token: string }
