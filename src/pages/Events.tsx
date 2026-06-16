@@ -118,12 +118,33 @@ export default function Events() {
       <Seo title="Events | Loverball" description="Sports games, watch parties, and Loverball events near you." path="/events" />
       <div className="min-h-screen bg-[#FAF5E9] text-[#1A1A1A]">
         <header className="px-5 pt-8 pb-4 max-w-3xl mx-auto">
-          <div className="flex items-baseline justify-between gap-2">
-            <h1 className="font-['Playfair_Display'] text-4xl sm:text-5xl text-[#1A1A1A]">
-              Events
-            </h1>
-          </div>
-          <p className="mt-1 text-sm font-['Inter'] text-[#1A1A1A]/60">
+          <span
+            className="block"
+            style={{
+              fontFamily: "'Space Mono', ui-monospace, monospace",
+              fontSize: 11,
+              letterSpacing: "0.22em",
+              textTransform: "uppercase",
+              color: "#E85D2F",
+            }}
+          >
+            Events
+          </span>
+          <h1
+            className="mt-2"
+            style={{
+              fontFamily: "'Anton', Impact, sans-serif",
+              fontWeight: 400,
+              fontSize: "clamp(40px, 7vw, 80px)",
+              lineHeight: 0.92,
+              letterSpacing: "-0.02em",
+              textTransform: "uppercase",
+              color: "#1A1A1A",
+            }}
+          >
+            What's <span style={{ color: "#E85D2F" }}>on.</span>
+          </h1>
+          <p className="mt-2 text-sm font-['Inter'] text-[#1A1A1A]/60">
             {activeArea?.city ? (
               <>What's on around <span className="font-semibold text-[#1A1A1A]">{cityLabel}</span>.</>
             ) : user ? (
@@ -134,19 +155,27 @@ export default function Events() {
           </p>
 
           <div className="mt-5 flex gap-2 overflow-x-auto -mx-1 px-1 scrollbar-hide">
-            {FILTERS.map((f) => (
-              <button
-                key={f.key}
-                onClick={() => setFilter(f.key)}
-                className={`whitespace-nowrap px-4 py-1.5 rounded-full text-xs font-semibold font-['Inter'] uppercase tracking-wider border transition-colors ${
-                  filter === f.key
-                    ? "bg-[#1A1A1A] text-[#FAF5E9] border-[#1A1A1A]"
-                    : "bg-transparent text-[#1A1A1A]/70 border-[#1A1A1A]/15 hover:border-[#1A1A1A]/40"
-                }`}
-              >
-                {f.label}
-              </button>
-            ))}
+            {FILTERS.map((f) => {
+              const active = filter === f.key;
+              return (
+                <button
+                  key={f.key}
+                  onClick={() => setFilter(f.key)}
+                  aria-pressed={active}
+                  className="shrink-0 whitespace-nowrap px-3 py-1.5 rounded-full text-xs uppercase tracking-wider transition-all"
+                  style={{
+                    fontFamily: "'Space Mono', ui-monospace, monospace",
+                    background: active ? "#E85D2F" : "#FFFFFF",
+                    color: active ? "#FFFFFF" : "#1A1A1A",
+                    border: `1px solid ${active ? "#E85D2F" : "#E8E3DC"}`,
+                    boxShadow: active ? "0 4px 14px -4px rgba(232, 93, 47, 0.5)" : "none",
+                    fontWeight: active ? 600 : 400,
+                  }}
+                >
+                  {f.label}
+                </button>
+              );
+            })}
           </div>
         </header>
 
