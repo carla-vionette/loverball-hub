@@ -3070,18 +3070,6 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      _test_age_event_password_attempts: {
-        Args: { p_event_id: string; p_seconds: number; p_session_token: string }
-        Returns: number
-      }
-      _test_reset_event_password_attempts: {
-        Args: { p_event_id: string; p_session_token?: string }
-        Returns: undefined
-      }
-      _test_set_event_password: {
-        Args: { p_event_id: string; p_password: string }
-        Returns: undefined
-      }
       admin_get_event_attendees: {
         Args: { p_event_id: string }
         Returns: {

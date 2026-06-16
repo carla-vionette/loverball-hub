@@ -42,10 +42,13 @@ Deno.serve(async (req: Request) => {
     const supabase = createClient(supabaseUrl, supabaseKey);
 
     // Fetch event data
+    // Only return metadata for public events — private/members-only events must
+    // not leak title/venue/etc. to unauthenticated social crawlers.
     const { data: event, error } = await supabase
       .from('events')
       .select('id, title, description, event_date, event_time, venue_name, city, image_url, banner_image, event_type')
       .eq('id', eventId)
+      .eq('visibility', 'public')
       .single();
 
     if (error || !event) {
