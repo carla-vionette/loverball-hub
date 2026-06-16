@@ -104,11 +104,14 @@ const GameDetail = () => {
   useEffect(() => {
     if (!gameId) return;
     const load = async () => {
-      const { data } = await supabase
-        .from("game_rsvps")
-        .select("id, user_id, rsvp_type, going_solo")
-        .eq("game_id", gameId);
-      setRsvps((data as RsvpRow[]) ?? []);
+      const { data } = await supabase.rpc("get_game_rsvp_summary", { p_game_id: gameId });
+      const rows = ((data as Array<{ user_id: string; rsvp_type: string; going_solo: boolean }> | null) ?? []).map((r, idx) => ({
+        id: `${r.user_id}-${idx}`,
+        user_id: r.user_id,
+        rsvp_type: r.rsvp_type as RsvpRow["rsvp_type"],
+        going_solo: r.going_solo,
+      }));
+      setRsvps(rows as RsvpRow[]);
     };
     load();
     const ch = supabase
