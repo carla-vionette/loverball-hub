@@ -88,7 +88,7 @@ export default function EventDetail() {
       const { data } = await supabase
         .from("events")
         .select(
-          "id, title, description, image_url, banner_image, event_date, event_time, venue_name, city, event_type, location_lat, location_lng, host_user_id, sport_tags",
+          "id, title, description, image_url, banner_image, event_date, event_time, venue_name, city, event_type, location_lat, location_lng, host_user_id, sport_tags, event_tags",
         )
         .eq("id", id)
         .maybeSingle();
