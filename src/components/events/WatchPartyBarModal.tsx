@@ -390,8 +390,32 @@ const WatchPartyBarModal = ({
             {pickedBar ? `I'm watching at ${pickedBar.name} 🍺` : "Pick a bar to continue"}
           </Button>
         </div>
-      </SheetContent>
-    </Sheet>
+    </>
+  );
+
+  if (isMobile) {
+    return (
+      <Sheet open={open} onOpenChange={onOpenChange}>
+        <SheetContent
+          side="bottom"
+          className="rounded-t-3xl p-0 max-h-[85dvh] flex flex-col border-0"
+          style={{ background: "#0a0a0a", border: "1px solid rgba(255,255,255,0.08)" }}
+        >
+          {body}
+        </SheetContent>
+      </Sheet>
+    );
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent
+        className="p-0 max-w-2xl w-[min(95vw,640px)] max-h-[85vh] flex flex-col border-0 rounded-3xl overflow-hidden gap-0"
+        style={{ background: "#0a0a0a", border: "1px solid rgba(255,255,255,0.08)" }}
+      >
+        {body}
+      </DialogContent>
+    </Dialog>
   );
 };
 
