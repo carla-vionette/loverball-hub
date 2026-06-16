@@ -44,9 +44,14 @@ const LEAGUE_MAP: Record<string, { league: string; sport_kind: "pro" | "college"
 
 const TAXONOMY_SLUGS = Object.keys(LEAGUE_MAP).join(",");
 
-// Heuristic: detect World Cup matches by title even when taxonomy is just "soccer".
+// Heuristic: detect World Cup matches by title even when taxonomy is just
+// "soccer". Excludes obvious non-soccer uses of the phrase "world cup"
+// (classical music showcases, eating contests, rugby/cricket, etc).
+const NON_SOCCER_WC = /\b(classical|symphony|orchestra|opera|piano|violin|music|festival|eating|hot ?dog|chili|bbq|wing|pie|coffee|barista|rugby|cricket|polo|chess|esports?|gaming|dog|cat|frisbee|disc|surf|ski|snowboard)\b/i;
 function isWorldCupTitle(title: string): boolean {
-  return /world\s*cup/i.test(title);
+  if (!/world\s*cup/i.test(title)) return false;
+  if (NON_SOCCER_WC.test(title)) return false;
+  return true;
 }
 
 interface SeatGeekEvent {
@@ -208,11 +213,14 @@ Deno.serve(async (req) => {
 
   // ── World Cup query: nationwide title search for "world cup" ──────────
   // World Cup 2026 matches are spread across many US/MX/CA cities, so we
-  // surface them regardless of the user's radius. Title search is the most
-  // reliable way to scope to FIFA WC matches specifically.
+  // surface them regardless of the user's radius. Scope to soccer-only
+  // taxonomies so unrelated events that happen to contain "world cup" in
+  // their title (e.g. classical music showcases, eating contests, rugby)
+  // are not pulled into the FIFA list.
   const wcParams = new URLSearchParams({
     client_id: CLIENT_ID,
     q: "world cup",
+    "taxonomies.name": "soccer,international_soccer",
     "datetime_utc.gte": new Date().toISOString(),
     sort: "datetime_local.asc",
     per_page: "100",
