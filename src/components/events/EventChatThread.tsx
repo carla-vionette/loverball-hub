@@ -223,24 +223,6 @@ export default function EventChatThread({ eventId, pageSize = PAGE }: Props) {
 
         ) : (
           visibleMessages.map(m => {
-            const isSystem = m.message.startsWith(SYSTEM_PREFIX);
-            if (isSystem) {
-              return (
-                <div key={m.id} className="text-center py-1">
-                  <span
-                    style={{
-                      fontFamily: "'Playfair Display', serif",
-                      fontStyle: "italic",
-                      fontSize: 11,
-                      color: "#E85D2F",
-                      letterSpacing: "0.02em",
-                    }}
-                  >
-                    {m.message.slice(SYSTEM_PREFIX.length).trim()}
-                  </span>
-                </div>
-              );
-            }
             const prof = profiles[m.user_id];
             const initial = (prof?.name || "?").slice(0, 1).toUpperCase();
             return (
