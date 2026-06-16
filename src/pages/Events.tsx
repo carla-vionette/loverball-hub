@@ -609,6 +609,11 @@ const Events = () => {
   const activeCity = activeArea?.city?.toLowerCase().trim() || null;
   const radiusFiltered = (activeArea && radius !== "national")
     ? withDistance.filter(({ ev: e, distance }) => {
+        // FIFA World Cup 2026 matches are surfaced nationwide regardless
+        // of user radius — stadium-vs-watch-party gating is handled per-card.
+        const isWC = (e as any).__league === "FIFA_WC"
+          || (Array.isArray(e.event_tags) && e.event_tags.includes("FIFA_WC"));
+        if (isWC) return true;
         if (distance != null) return distance <= radius;
         if (activeCity && e.city) return e.city.toLowerCase().includes(activeCity);
         return true; // unknown location → don't hide
