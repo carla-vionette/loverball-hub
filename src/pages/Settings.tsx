@@ -217,13 +217,34 @@ const Settings = () => {
 
       if (fError) throw fError;
 
-      // Save notification channel + phone preferences on profile
-      const phoneTrim = channels.phone.trim();
-      if (phoneTrim && !/^\+[1-9]\d{6,14}$/.test(phoneTrim)) {
-        toast.error("Phone must be in E.164 format (e.g. +15551234567)");
-        setSaving(false);
-        return;
+      // If the user provided a ZIP, geocode and persist it to the profile so the
+      // rest of the app (Events 50-mi rule, bar picker sorting, header city) uses it.
+      const zipRaw = (feedPrefs.home_neighborhood || "").trim();
+      if (zipRaw) {
+        if (!isValidUsZip(zipRaw)) {
+          toast.error("ZIP code must be 5 digits");
+          setSaving(false);
+          return;
+        }
+        const loc = await resolveZip(zipRaw);
+        if (!loc) {
+          toast.error("Couldn't look up that ZIP — try another");
+          setSaving(false);
+          return;
+        }
+        const { error: zError } = await supabase
+          .from("profiles")
+          .update({
+            zip_code: loc.zip_code,
+            city: loc.city,
+            latitude: loc.latitude,
+            longitude: loc.longitude,
+          } as any)
+          .eq("id", user.id);
+        if (zError) throw zError;
       }
+
+
       const { error: pError } = await supabase
         .from("profiles")
         .update({
