@@ -13,6 +13,7 @@ import { Loader2, Bell, Eye, EyeOff, MapPin, Save, Smartphone } from "lucide-rea
 import { Label } from "@/components/ui/label";
 import { LA_PRO_TEAMS, LA_D1_COLLEGES } from "@/lib/laTeamsConfig";
 import { SPORTS_OPTIONS } from "@/lib/onboardingOptions";
+import { isValidUsZip, resolveZip } from "@/lib/geocoding";
 
 interface NotificationPref {
   id?: string;
@@ -93,14 +94,20 @@ const Settings = () => {
         .eq("user_id", user.id)
         .maybeSingle();
 
+      // Prefer the saved profile ZIP (powers the rest of the app) over feed-only neighborhood
+      const { data: myLoc } = await supabase.rpc("get_my_location" as any);
+      const savedZip = (myLoc as any)?.zip_code || "";
+
       if (fPrefs) {
         setFeedPrefs({
           hidden_sports: fPrefs.hidden_sports || [],
           hidden_event_types: fPrefs.hidden_event_types || [],
           home_venue: fPrefs.home_venue || "",
-          home_neighborhood: fPrefs.home_neighborhood || "",
+          home_neighborhood: savedZip || fPrefs.home_neighborhood || "",
           preferred_distance_miles: fPrefs.preferred_distance_miles || 25,
         });
+      } else if (savedZip) {
+        setFeedPrefs(prev => ({ ...prev, home_neighborhood: savedZip }));
       }
 
       // Load user's favorite teams (public columns)
@@ -210,6 +217,33 @@ const Settings = () => {
 
       if (fError) throw fError;
 
+      // If the user provided a ZIP, geocode and persist it to the profile so the
+      // rest of the app (Events 50-mi rule, bar picker sorting, header city) uses it.
+      const zipRaw = (feedPrefs.home_neighborhood || "").trim();
+      if (zipRaw) {
+        if (!isValidUsZip(zipRaw)) {
+          toast.error("ZIP code must be 5 digits");
+          setSaving(false);
+          return;
+        }
+        const loc = await resolveZip(zipRaw);
+        if (!loc) {
+          toast.error("Couldn't look up that ZIP — try another");
+          setSaving(false);
+          return;
+        }
+        const { error: zError } = await supabase
+          .from("profiles")
+          .update({
+            zip_code: loc.zip_code,
+            city: loc.city,
+            latitude: loc.latitude,
+            longitude: loc.longitude,
+          } as any)
+          .eq("id", user.id);
+        if (zError) throw zError;
+      }
+
       // Save notification channel + phone preferences on profile
       const phoneTrim = channels.phone.trim();
       if (phoneTrim && !/^\+[1-9]\d{6,14}$/.test(phoneTrim)) {
@@ -263,7 +297,7 @@ const Settings = () => {
           </Button>
         </div>
 
-        <Tabs defaultValue="notifications" className="space-y-6">
+        <Tabs defaultValue={new URLSearchParams(typeof window !== "undefined" ? window.location.search : "").get("tab") || "notifications"} className="space-y-6">
           <TabsList className="bg-transparent gap-2 h-auto p-0 w-full justify-start overflow-x-auto">
             <TabsTrigger value="notifications" className="rounded-full px-5 py-2 text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <Bell className="h-4 w-4 mr-2" /> Notifications
