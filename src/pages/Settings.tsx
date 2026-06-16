@@ -565,13 +565,26 @@ const Settings = () => {
                   <Input
                     placeholder="e.g. 90012"
                     inputMode="numeric"
-                    pattern="[0-9]{5}"
-                    maxLength={10}
+                    autoComplete="postal-code"
+                    pattern="\d{5}"
+                    maxLength={5}
+                    aria-invalid={feedPrefs.home_neighborhood.length > 0 && !isValidUsZip(feedPrefs.home_neighborhood)}
                     value={feedPrefs.home_neighborhood}
-                    onChange={(e) => setFeedPrefs(prev => ({ ...prev, home_neighborhood: e.target.value }))}
+                    onChange={(e) => {
+                      const digits = e.target.value.replace(/\D/g, "").slice(0, 5);
+                      setFeedPrefs(prev => ({ ...prev, home_neighborhood: digits }));
+                    }}
+                    onBlur={(e) => {
+                      const digits = e.target.value.replace(/\D/g, "").slice(0, 5);
+                      setFeedPrefs(prev => ({ ...prev, home_neighborhood: digits }));
+                    }}
                     className="rounded-full"
                   />
+                  {feedPrefs.home_neighborhood.length > 0 && !isValidUsZip(feedPrefs.home_neighborhood) && (
+                    <p className="text-xs text-destructive mt-1.5">Enter a valid 5-digit US ZIP code.</p>
+                  )}
                 </div>
+
                 <div>
                   <label className="text-sm font-medium mb-1.5 block">
                     Preferred distance: {feedPrefs.preferred_distance_miles} miles
