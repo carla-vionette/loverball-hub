@@ -63,7 +63,7 @@ export default function Events() {
       const { data, error } = await supabase
         .from("events")
         .select(
-          "id, title, description, image_url, banner_image, event_date, event_time, venue_name, city, event_type, location_lat, location_lng, host_user_id, status, visibility",
+          "id, title, description, image_url, banner_image, event_date, event_time, venue_name, city, event_type, sport_tags, event_tags, location_lat, location_lng, host_user_id, status, visibility",
         )
         .eq("status", "published")
         .gte("event_date", today)
