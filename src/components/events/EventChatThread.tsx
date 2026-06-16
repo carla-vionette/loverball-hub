@@ -177,7 +177,7 @@ export default function EventChatThread({ eventId, pageSize = PAGE }: Props) {
           <div className="flex items-center justify-center py-6">
             <Loader2 className="w-4 h-4 animate-spin" style={{ color: "rgba(248,248,248,0.4)" }} />
           </div>
-        ) : messages.length === 0 ? (
+        ) : visibleMessages.length === 0 ? (
           mockChat.length > 0 ? (
             <>
               <div className="text-center pb-1">
@@ -187,15 +187,6 @@ export default function EventChatThread({ eventId, pageSize = PAGE }: Props) {
               </div>
               {mockChat.map(m => {
                 const ts = subMinutes(new Date(), m.minutes_ago).toISOString();
-                if (m.is_system) {
-                  return (
-                    <div key={m.id} className="text-center py-1">
-                      <span style={{ fontFamily: "'Playfair Display', serif", fontStyle: "italic", fontSize: 11, color: "#E85D2F", letterSpacing: "0.02em" }}>
-                        {m.message}
-                      </span>
-                    </div>
-                  );
-                }
                 return (
                   <div key={m.id} className="flex items-start gap-2">
                     <div className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0"
@@ -227,7 +218,7 @@ export default function EventChatThread({ eventId, pageSize = PAGE }: Props) {
           )
 
         ) : (
-          messages.map(m => {
+          visibleMessages.map(m => {
             const isSystem = m.message.startsWith(SYSTEM_PREFIX);
             if (isSystem) {
               return (
