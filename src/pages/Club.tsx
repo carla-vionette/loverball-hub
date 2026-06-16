@@ -316,8 +316,11 @@ const Club = () => {
   }, [members, me, query, activeFilters, sort]);
 
   const suggested = useMemo(
-    () => enriched.filter((e) => !friendIds.has(e.m.id)).slice(0, 8),
-    [enriched, friendIds]
+    () =>
+      matches
+        .filter((e) => !friendIds.has(e.m.id) && !dismissed.has(e.m.id))
+        .slice(0, 8),
+    [matches, friendIds, dismissed]
   );
   const connections = useMemo(
     () => enriched.filter((e) => friendIds.has(e.m.id)),
