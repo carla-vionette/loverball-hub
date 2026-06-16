@@ -3094,6 +3094,14 @@ export type Database = {
           watch_location_id: string
         }[]
       }
+      get_game_rsvp_summary: {
+        Args: { p_game_id: string }
+        Returns: {
+          going_solo: boolean
+          rsvp_type: string
+          user_id: string
+        }[]
+      }
       get_my_account_settings: { Args: never; Returns: Json }
       get_my_location: { Args: never; Returns: Json }
       get_public_profile_columns: { Args: { target_id: string }; Returns: Json }
