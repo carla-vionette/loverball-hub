@@ -19,6 +19,8 @@ import loverballLogo from "@/assets/loverball-script-logo.png";
 import SharePreview from "@/components/SharePreview";
 
 import WhosGoing from "@/components/WhosGoing";
+import EventAttendeeGroups from "@/components/EventAttendeeGroups";
+import WatchModeSelector from "@/components/events/WatchModeSelector";
 import RsvpAvatarBar from "@/components/RsvpAvatarBar";
 import { trackEventRSVP, trackContentView } from "@/lib/analytics";
 import EventCheckIn from "@/components/EventCheckIn";
@@ -114,6 +116,11 @@ const EventDetail = () => {
   const [guestRefreshKey, setGuestRefreshKey] = useState(0);
   const [showAttendeeList, setShowAttendeeList] = useState(false);
   const [userTier, setUserTier] = useState<string | null>(null);
+  const [myWatchChoice, setMyWatchChoice] = useState<{
+    rsvp_type: 'stadium' | 'bar' | null;
+    bar_id: string | null;
+    bar_name: string | null;
+  }>({ rsvp_type: null, bar_id: null, bar_name: null });
   const isMobileDevice = useIsMobile();
 
   const goBack = useCallback(() => {
@@ -331,12 +338,17 @@ const EventDetail = () => {
     try {
       const { data } = await supabase
         .from('event_rsvps')
-        .select('status')
+        .select('status, rsvp_type, bar_id, bar_name')
         .eq('event_id', id)
         .eq('user_id', user.id)
         .maybeSingle();
 
       setRsvpStatus(data?.status || null);
+      setMyWatchChoice({
+        rsvp_type: (data as any)?.rsvp_type ?? null,
+        bar_id: (data as any)?.bar_id ?? null,
+        bar_name: (data as any)?.bar_name ?? null,
+      });
     } catch (error) {
       // Silently handle RSVP status fetch errors
     }
@@ -749,6 +761,23 @@ const EventDetail = () => {
               </div>
             )}
 
+            {/* WATCH MODE — stadium vs bar choice for game / watch-party events */}
+            {user && isGoing && (event.event_type === 'game' || event.event_type === 'watch_party') && (
+              <WatchModeSelector
+                eventId={event.id}
+                eventLat={(event as any).location_lat ?? null}
+                eventLng={(event as any).location_lng ?? null}
+                initialRsvpType={myWatchChoice.rsvp_type}
+                initialBarId={myWatchChoice.bar_id}
+                initialBarName={myWatchChoice.bar_name}
+                onSaved={() => {
+                  setGuestRefreshKey((k) => k + 1);
+                  fetchRsvpStatus();
+                }}
+              />
+            )}
+
+
             {/* HOSTED: host card + pitch quote */}
             {variant === 'hosted' && (
               <>
@@ -938,7 +967,12 @@ const EventDetail = () => {
             )}
 
             {/* Full who's going + comments below the fold */}
-            {id && user && <WhosGoing eventId={id} refreshKey={guestRefreshKey} />}
+            {id && user && (event?.event_type === 'game' || event?.event_type === 'watch_party') && (
+              <EventAttendeeGroups eventId={id} refreshKey={guestRefreshKey} />
+            )}
+            {id && user && event?.event_type !== 'game' && event?.event_type !== 'watch_party' && (
+              <WhosGoing eventId={id} refreshKey={guestRefreshKey} />
+            )}
             {id && user && <div id="event-chat"><EventComments eventId={id} /></div>}
             {id && !user && (
               <div className="rounded-2xl border border-primary/30 bg-primary/5 p-6 text-center space-y-3">
