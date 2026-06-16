@@ -92,7 +92,17 @@ export default function EventCard({
               >
                 {theme.label}
               </span>
-              <h3 className="font-['Playfair_Display'] text-lg sm:text-xl text-[#1A1A1A] leading-tight">
+              <h3
+                className="text-[#1A1A1A]"
+                style={{
+                  fontFamily: "'Anton', Impact, sans-serif",
+                  fontWeight: 400,
+                  fontSize: "clamp(20px, 2.6vw, 26px)",
+                  lineHeight: 0.95,
+                  letterSpacing: "-0.01em",
+                  textTransform: "uppercase",
+                }}
+              >
                 {event.title}
               </h3>
             </div>
