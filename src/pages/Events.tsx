@@ -204,12 +204,11 @@ const Events = () => {
     setGateOpen(true);
   };
   const openTile = (id: string) => {
-    // Mock sports events have no DB row — open the ticket URL or no-op.
+    // Mock sports events have no DB row — never auto-redirect to a ticket
+    // marketplace. Tile click is intentional only when the user taps the
+    // explicit "Buy stadium tickets" CTA inside the expanded card.
     const mock = localSports.find(e => e.id === id);
-    if (mock) {
-      if (mock.__ticket_url) window.open(mock.__ticket_url, "_blank", "noopener,noreferrer");
-      return;
-    }
+    if (mock) return;
     // Public event pages are viewable by anyone; logged-out users land on the
     // /e/:id public view (attendee list + chat remain gated behind sign-in).
     if (user) goTo(`/event/${id}`);
@@ -1420,9 +1419,10 @@ const Events = () => {
                                                 href={(ev as any).__ticket_url}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
-                                                style={{ display: "inline-block", marginTop: 4, fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: 10, letterSpacing: "0.1em", textTransform: "uppercase", color: "#E85D2F" }}
+                                                onClick={(e) => e.stopPropagation()}
+                                                style={{ display: "inline-flex", alignItems: "center", gap: 6, marginTop: 8, padding: "8px 14px", borderRadius: 999, background: "#E85D2F", color: "#0a0a0a", fontFamily: "'Inter', sans-serif", fontWeight: 800, fontSize: 10.5, letterSpacing: "0.14em", textTransform: "uppercase", textDecoration: "none" }}
                                               >
-                                                Stadium tickets →
+                                                🎟 Click to buy stadium tickets →
                                               </a>
                                             )}
                                           </div>
