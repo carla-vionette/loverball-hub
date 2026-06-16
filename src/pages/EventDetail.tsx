@@ -155,7 +155,8 @@ export default function EventDetail() {
 
   const cat = categoryLabel(event.event_type);
   const distance = getEventDistanceMiles(event, viewer);
-  const banner = event.banner_image || event.image_url;
+  const banner = resolveEventImage(event as any);
+  const hasBanner = banner && banner !== FALLBACK_EVENT_IMAGE;
   const dateLabel = format(parseEventDate(event.event_date), "EEEE, MMMM d");
 
   return (
@@ -168,14 +169,16 @@ export default function EventDetail() {
       <div className="min-h-screen bg-[#FAF5E9] text-[#1A1A1A]">
         {/* Banner */}
         <div className="relative h-56 sm:h-80 w-full overflow-hidden" style={{ background: cat.color }}>
-          {banner && (
+          {hasBanner && (
             <img
               src={banner}
               alt=""
+              onError={handleEventImageError}
               className="absolute inset-0 w-full h-full object-cover opacity-90"
             />
           )}
           <div className="absolute inset-0 bg-gradient-to-t from-[#1A1A1A]/80 via-transparent to-transparent" />
+
 
           <div className="absolute top-3 left-3 right-3 flex justify-between items-start">
             <button
