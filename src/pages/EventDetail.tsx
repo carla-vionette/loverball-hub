@@ -15,6 +15,7 @@ import EventChatPanel from "@/components/events/EventChatPanel";
 import { useEventRsvp } from "@/hooks/useEventRsvp";
 import { getEventDistanceMiles, formatMiles, type ViewerLike } from "@/lib/distance";
 import { useToast } from "@/hooks/use-toast";
+import { resolveEventImage, handleEventImageError, FALLBACK_EVENT_IMAGE } from "@/lib/eventImage";
 
 interface DbEvent {
   id: string;
