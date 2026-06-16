@@ -158,6 +158,7 @@ export function useEventRsvp(eventId: string | undefined): UseEventRsvpResult {
         toast({ title: "Couldn't RSVP", description: error.message, variant: "destructive" });
         return;
       }
+      notify(eventId);
       toast({ title: `Watching at ${spot.bar_name} 📺` });
     },
     [eventId, requireAuth, user, rsvp, toast],
