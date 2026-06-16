@@ -1,6 +1,7 @@
 import { format } from "date-fns";
 import { Radio, Newspaper, Ticket, ChevronRight, Calendar, Tv } from "lucide-react";
 import type { SuggestedEvent } from "@/hooks/useProfileData";
+import { useProfileScores } from "@/hooks/useProfileScores";
 
 interface ForYouTonightProps {
   favoriteTeams: string[];
@@ -31,6 +32,18 @@ const Pill = ({ children, color = PINK }: { children: React.ReactNode; color?: s
   </span>
 );
 
+// Treat an upcoming game as "tonight" when its label/time references today.
+function isTonightUpcoming(detail: string | null | undefined): boolean {
+  if (!detail) return false;
+  const s = detail.toLowerCase();
+  if (s.includes("today") || s.includes("tonight")) return true;
+  const now = new Date();
+  const weekday = now.toLocaleDateString("en-US", { weekday: "short" }).toLowerCase();
+  const month = now.toLocaleDateString("en-US", { month: "short" }).toLowerCase();
+  const day = String(now.getDate());
+  return s.includes(weekday) && s.includes(month) && new RegExp(`\\b${day}\\b`).test(s);
+}
+
 const ForYouTonight = ({
   favoriteTeams,
   favoriteSports,
@@ -40,8 +53,24 @@ const ForYouTonight = ({
   onOpenWatch,
   onOpenStories,
 }: ForYouTonightProps) => {
-  const topTeam = favoriteTeams[0];
   const topSport = favoriteSports[0];
+  const { games, hasFavorites } = useProfileScores(favoriteTeams);
+
+  // Strict-match favorites only — useProfileScores falls back to all games when none match,
+  // which would otherwise surface unrelated teams as "tonight".
+  const favoriteOnly = hasFavorites
+    ? games.filter((g) => {
+        const hay = `${g.homeTeam} ${g.awayTeam}`.toLowerCase();
+        return favoriteTeams.some((t) => t && hay.includes(t.toLowerCase()));
+      })
+    : [];
+
+  const liveGame = favoriteOnly.find((g) => g.status === "live");
+  const tonightUpcoming = favoriteOnly.find(
+    (g) => g.status === "upcoming" && isTonightUpcoming(g.statusDetail || g.gameTime),
+  );
+  const tonightGame = liveGame || tonightUpcoming;
+  const matchup = tonightGame ? `${tonightGame.awayTeam} @ ${tonightGame.homeTeam}` : null;
 
   return (
     <div>
@@ -68,29 +97,84 @@ const ForYouTonight = ({
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-        {/* Game / Where to Watch */}
-        <button
-          onClick={onOpenWatch}
-          className="text-left rounded-2xl p-4 transition-all hover:bg-white/[0.03]"
-          style={{ background: PANEL, border: BORDER, minHeight: 168 }}
-        >
-          <div className="flex items-center justify-between">
-            <Pill color="#2DD4BF"><Radio className="w-2.5 h-2.5" /> Live tonight</Pill>
-            <Tv className="w-4 h-4" style={{ color: "rgba(250,245,233,0.35)" }} />
-          </div>
-          <h3
-            className="mt-3 uppercase"
-            style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: 20, color: "#FAF5E9", lineHeight: 1.05 }}
+        {/* Game card — real live/tonight game, else next-up event, else quiet-night empty state */}
+        {tonightGame ? (
+          <button
+            onClick={onOpenWatch}
+            className="text-left rounded-2xl p-4 transition-all hover:bg-white/[0.03]"
+            style={{ background: PANEL, border: BORDER, minHeight: 168 }}
           >
-            {topTeam ? `${topTeam} — where to watch` : "Tune in to a game tonight"}
-          </h3>
-          <p className="mt-2 text-[12px]" style={{ color: "rgba(250,245,233,0.6)" }}>
-            {topTeam ? "Channel, bar and watch-party intel for your team's next game." : "Add a favorite team to unlock personalized matchups."}
-          </p>
-          <span className="mt-3 inline-flex items-center gap-1 text-[10.5px] uppercase tracking-widest" style={{ color: PINK, fontFamily: "'Inter', sans-serif", fontWeight: 700 }}>
-            Where to watch <ChevronRight className="w-3.5 h-3.5" />
-          </span>
-        </button>
+            <div className="flex items-center justify-between">
+              <Pill color="#2DD4BF">
+                <Radio className="w-2.5 h-2.5" /> {liveGame ? "Live now" : "Tonight"}
+              </Pill>
+              <Tv className="w-4 h-4" style={{ color: "rgba(250,245,233,0.35)" }} />
+            </div>
+            <h3
+              className="mt-3 uppercase line-clamp-2"
+              style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: 20, color: "#FAF5E9", lineHeight: 1.05 }}
+            >
+              {matchup}
+            </h3>
+            <p className="mt-2 text-[12px]" style={{ color: "rgba(250,245,233,0.6)" }}>
+              {liveGame
+                ? `${tonightGame.awayScore}–${tonightGame.homeScore} · ${tonightGame.statusDetail}`
+                : tonightGame.statusDetail || tonightGame.gameTime || "Tip-off tonight"}
+            </p>
+            <span className="mt-3 inline-flex items-center gap-1 text-[10.5px] uppercase tracking-widest" style={{ color: PINK, fontFamily: "'Inter', sans-serif", fontWeight: 700 }}>
+              Where to watch <ChevronRight className="w-3.5 h-3.5" />
+            </span>
+          </button>
+        ) : featuredEvent ? (
+          <button
+            onClick={() => onOpenEvent(featuredEvent.id)}
+            className="text-left rounded-2xl p-4 transition-all hover:bg-white/[0.03]"
+            style={{ background: PANEL, border: BORDER, minHeight: 168 }}
+          >
+            <div className="flex items-center justify-between">
+              <Pill><Calendar className="w-2.5 h-2.5" /> Coming up</Pill>
+              <Tv className="w-4 h-4" style={{ color: "rgba(250,245,233,0.35)" }} />
+            </div>
+            <h3
+              className="mt-3 uppercase line-clamp-2"
+              style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: 20, color: "#FAF5E9", lineHeight: 1.05 }}
+            >
+              {featuredEvent.title}
+            </h3>
+            <p className="mt-2 text-[12px]" style={{ color: "rgba(250,245,233,0.6)" }}>
+              {format(new Date(featuredEvent.event_date), "EEE, MMM d")}
+              {featuredEvent.venue_name ? ` · ${featuredEvent.venue_name}` : featuredEvent.city ? ` · ${featuredEvent.city}` : ""}
+            </p>
+            <span className="mt-3 inline-flex items-center gap-1 text-[10.5px] uppercase tracking-widest" style={{ color: PINK, fontFamily: "'Inter', sans-serif", fontWeight: 700 }}>
+              See event <ChevronRight className="w-3.5 h-3.5" />
+            </span>
+          </button>
+        ) : (
+          <button
+            onClick={onOpenWatch}
+            className="text-left rounded-2xl p-4 transition-all hover:bg-white/[0.03]"
+            style={{ background: PANEL, border: BORDER, minHeight: 168 }}
+          >
+            <div className="flex items-center justify-between">
+              <Pill color="#94A3B8"><Tv className="w-2.5 h-2.5" /> Quiet night</Pill>
+              <Calendar className="w-4 h-4" style={{ color: "rgba(250,245,233,0.35)" }} />
+            </div>
+            <h3
+              className="mt-3 uppercase"
+              style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: 20, color: "#FAF5E9", lineHeight: 1.05 }}
+            >
+              No games tonight
+            </h3>
+            <p className="mt-2 text-[12px]" style={{ color: "rgba(250,245,233,0.6)" }}>
+              {hasFavorites
+                ? "Your teams are off — peek at what's coming up this week."
+                : "Add a favorite team to unlock matchups tuned to you."}
+            </p>
+            <span className="mt-3 inline-flex items-center gap-1 text-[10.5px] uppercase tracking-widest" style={{ color: PINK, fontFamily: "'Inter', sans-serif", fontWeight: 700 }}>
+              Browse the week <ChevronRight className="w-3.5 h-3.5" />
+            </span>
+          </button>
+        )}
 
         {/* Story */}
         <button
