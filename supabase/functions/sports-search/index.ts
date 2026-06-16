@@ -37,6 +37,24 @@ const TEAM_ALIASES: Record<string, string[]> = {
   "la galaxy": ["los angeles galaxy"],
 };
 
+const TEAM_LEAGUES: Record<string, League> = {
+  "la kings": "NHL",
+  "kings nhl": "NHL",
+  lakers: "NBA",
+  clippers: "NBA",
+  dodgers: "MLB",
+  angels: "MLB",
+  rams: "NFL",
+  chargers: "NFL",
+  sparks: "WNBA",
+  "la sparks": "WNBA",
+  "los angeles sparks": "WNBA",
+  lafc: "MLS",
+  "la galaxy": "MLS",
+  "angel city": "NWSL",
+  "angel city fc": "NWSL",
+};
+
 const LEAGUE_ALIASES: Record<string, League> = {
   nba: "NBA", "n.b.a": "NBA",
   wnba: "WNBA",
@@ -155,6 +173,7 @@ function normalizeEspnEvent(event: any, league: League): GameOut | null {
 function detectLeagues(q: string): League[] {
   const lower = q.toLowerCase().trim();
   if (!lower) return [];
+  if (TEAM_LEAGUES[lower]) return [TEAM_LEAGUES[lower]];
   if (LEAGUE_ALIASES[lower]) return [LEAGUE_ALIASES[lower]];
   for (const [alias, lg] of Object.entries(LEAGUE_ALIASES)) {
     if (new RegExp(`\\b${alias}\\b`).test(lower)) return [lg];
