@@ -96,7 +96,7 @@ function parseTickerItems(items: string[]): GameScore[] {
   return games;
 }
 
-let _scoreCache: { data: GameScore[]; ts: number } | null = null;
+let _scoreCache: { key: string; data: GameScore[]; ts: number } | null = null;
 const CACHE_TTL = 60 * 1000; // 1 minute for near-real-time
 const POLL_INTERVAL = 30 * 1000; // refresh every 30s while mounted
 
@@ -127,9 +127,11 @@ export function useProfileScores(favoriteTeams: string[] = []) {
   const [games, setGames] = useState<GameScore[]>(_scoreCache?.data ?? []);
   const [loading, setLoading] = useState(!_scoreCache);
   const [error, setError] = useState<string | null>(null);
+  const teams = Array.from(new Set(favoriteTeams.map((t) => t.trim()).filter(Boolean))).slice(0, 12);
+  const cacheKey = teams.length ? teams.join("|") : "__default__";
 
   const fetchScores = async () => {
-    if (_scoreCache && Date.now() - _scoreCache.ts < CACHE_TTL) {
+    if (_scoreCache && _scoreCache.key === cacheKey && Date.now() - _scoreCache.ts < CACHE_TTL) {
       setGames(_scoreCache.data);
       setLoading(false);
       return;
@@ -137,7 +139,6 @@ export function useProfileScores(favoriteTeams: string[] = []) {
 
     try {
       setLoading(true);
-      const teams = Array.from(new Set(favoriteTeams.map((t) => t.trim()).filter(Boolean))).slice(0, 12);
       const requests = teams.length
         ? teams.map((team) => supabase.functions.invoke("sports-search", { body: { query: team } }))
         : [supabase.functions.invoke("sports-search", { body: {} })];
@@ -152,7 +153,7 @@ export function useProfileScores(favoriteTeams: string[] = []) {
         }
       }
       const parsed = Array.from(byId.values());
-      _scoreCache = { data: parsed, ts: Date.now() };
+      _scoreCache = { key: cacheKey, data: parsed, ts: Date.now() };
       setGames(parsed);
       setError(null);
     } catch (err: any) {
@@ -167,7 +168,7 @@ export function useProfileScores(favoriteTeams: string[] = []) {
     fetchScores();
     const interval = setInterval(fetchScores, POLL_INTERVAL);
     return () => clearInterval(interval);
-  }, []);
+  }, [cacheKey]);
 
   let filteredGames = games;
   if (favoriteTeams.length) {
