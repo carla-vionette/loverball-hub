@@ -93,6 +93,59 @@ const Club = () => {
   const [chats, setChats] = useState<ChatPreview[]>([]);
   const [chatsLoading, setChatsLoading] = useState(false);
 
+  type FanMatch = {
+    m: Member;
+    score: number;
+    why: string[];
+  };
+  const [matches, setMatches] = useState<FanMatch[]>([]);
+  const [matchesLoading, setMatchesLoading] = useState(false);
+  const [dismissed, setDismissed] = useState<Set<string>>(new Set());
+
+  const loadMatches = useCallback(async () => {
+    if (!user) return;
+    setMatchesLoading(true);
+    const { data, error } = await supabase.rpc("get_fan_matches", {
+      _user_id: user.id,
+      _limit: 12,
+    });
+    if (!error && Array.isArray(data)) {
+      setMatches(
+        data.map((r: any) => ({
+          m: {
+            id: r.id,
+            name: r.name ?? null,
+            city: r.city ?? null,
+            bio: r.bio ?? null,
+            profile_photo_url: r.profile_photo_url ?? null,
+            favorite_la_teams: r.favorite_la_teams ?? null,
+            favorite_sports: r.favorite_sports ?? null,
+          },
+          score: r.match_score ?? 0,
+          why: Array.isArray(r.reasons) ? r.reasons.filter(Boolean) : [],
+        }))
+      );
+    }
+    setMatchesLoading(false);
+  }, [user]);
+
+  useEffect(() => {
+    if (authLoading || !user) return;
+    loadMatches();
+  }, [user, authLoading, loadMatches]);
+
+  const dismissFan = useCallback(
+    async (targetId: string) => {
+      if (!user) return;
+      setDismissed((prev) => new Set(prev).add(targetId));
+      await supabase
+        .from("fan_dismissals")
+        .insert({ user_id: user.id, dismissed_user_id: targetId });
+    },
+    [user]
+  );
+
+
   useEffect(() => {
     // Don't fetch protected data until auth is confirmed and a user exists.
     if (authLoading) return;
