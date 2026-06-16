@@ -1,225 +1,175 @@
-# Where-to-Watch v2 — Unified Member Experience
+# Events Section Rebuild
 
-One reusable surface across Events, Game Detail, and Feed. Members always see something useful — never a blank watch section.
+A full replacement of the Events list + detail experience around one rule:
+**the 50-mile radius decides whether a user can RSVP as Going to the venue, or
+only as Watching at a nearby bar.**
 
-## 1. Component architecture
+I'm mapping the spec onto tables you already have instead of creating parallel
+ones — the schema you described is essentially already in the DB under
+different names. Nothing about the current behavior is preserved; the visible
+Events screens and the RSVP UI are torn out and replaced.
 
-New shared component: `src/components/watch/WhereToWatchUnified.tsx`
+## Scope
 
-```text
-WhereToWatchUnified
-├─ <Header>                "Where to Watch · {game/event title}"
-├─ <SourceStrip>           shows active source: Live · Curated · Community
-├─ <MyPick> (if checked-in) "You're watching at Greyhound · Change · Open chat"
-├─ <FriendsRow>            "3 members watching · Mia + 2 friends going"
-├─ <LocationList>          ranked WatchLocationCard[]
-└─ <Footer>                "Suggest a spot" + source disclaimer
-```
+**In:** `/events` list, `/event/:id` detail, event card, bar picker sheet,
+going graph (stadium + watch parties by bar grouped and sorted by proximity to
+viewer), realtime event chat, attendee profile preview with Add + DM.
 
-Wraps existing `WatchSpotsPanel`/`NearbySportsBars`/`WhereToWatch` logic into a single API:
+**Out (reused, not rebuilt):** auth, profiles, friend/connection system, DM
+threads, admin event editor, ticket/checkout, event submissions flow.
 
-```ts
-<WhereToWatchUnified
-  context={{ kind: 'game', externalGameId, league, homeTeam, awayTeam, startTime, lat, lng, city }}
-  // OR kind: 'event' with eventId
-  variant="full" | "compact"  // compact for Feed cards
-/>
-```
+## The 50-mile rule
 
-Old `WhereToWatch.tsx` and `NearbySportsBars.tsx` become thin wrappers calling the unified component (no breaking imports).
+A single helper `getEventDistanceMiles(event, viewer)` (Haversine) is the only
+gate. Used in three places:
 
-## 2. Data source priority (resolved server-side)
+1. Event card — decides whether to render `Going` button at all.
+2. Event detail RSVP control — same.
+3. Going graph "At the venue" list — shown to everyone; not viewer-gated.
 
-New edge function `where-to-watch-spots`:
+Out-of-radius events render Watching only. Going is *absent*, not disabled.
 
-```text
-1. Official Loverball watch events  → events table where event_type='watch_party'
-                                       AND (sport_tags ⊇ league OR team match)
-                                       AND date ≈ game start time
-2. Partner venues                    → watch_locations.is_partner=true, city match
-3. Curated watch bars                → watch_locations.status='approved', city + league match
-4. Community pins                    → watch_location_pins for this game (existing logic)
-5. Google Places nearby sports bars  → existing nearby-sports-bars proxy
-6. Static curated fallback           → src/data/laSportsBars.ts when city is LA, else
-                                       generic "popular sports bars" suggestion list
-```
+If the viewer has no coords, both buttons show (we can't gate without a
+location); a small "Set your location" nudge sits next to the RSVP row, linking
+to the existing zip-prompt.
 
-Each result is normalized to `WatchSpot`:
+## Data — using what's already there
 
-```ts
-type WatchSpot = {
-  id: string;
-  source: 'official' | 'partner' | 'curated' | 'community' | 'places' | 'fallback';
-  name: string;
-  neighborhood?: string;
-  city: string;
-  distanceMi?: number;
-  rating?: number;
-  reviewCount?: number;
-  vibe?: string;            // short description
-  vibeTags: string[];       // 'womens-sports-crowd', 'big-screens', 'sound-on', etc.
-  lat?: number; lng?: number;
-  website?: string;
-  mapsUrl: string;
-  watchingCount: number;    // members checked in for this game
-  friendsWatching: { id: string; name: string; photo: string | null }[];
-  rank: number;             // priority score for sorting
-};
-```
+No new tables. Tiny additive migration only:
 
-Ranking score: `sourceWeight(0–60) + distanceBoost + popularityBoost(watchingCount) + relevanceBoost(league/team match)`.
+- `events.location_lat`, `events.location_lng` — already exist.
+- `event_rsvps.rsvp_type` (`stadium` | `bar`) — already exists, maps to
+  `going` / `watching`.
+- `event_rsvps.bar_id`, `bar_name` — already exist; we extend with a real FK.
+- `watch_locations` — already the "watch_spots" table (lat/lng/city).
+- `event_chat_messages` — already exists, used as the going chat.
 
-## 3. Surfaces
+Migration adds:
 
-| Surface | Where | Variant |
-|---|---|---|
-| Events page | top of "Where are you watching?" module | `full` |
-| Game Detail | "Where to watch" tab (already exists) | `full` |
-| Feed | inside `ForYouTonight` card when a relevant game tonight | `compact` (top 3 spots only) |
-| Profile `ProfileWhereToWatch` | replace internals with unified component | `compact` |
+- `event_rsvps.watch_location_id uuid references watch_locations(id)` (nullable;
+  required when `rsvp_type = 'bar'` via a trigger).
+- Postgres function `public.distance_miles(lat1, lng1, lat2, lng2) returns
+  double precision` (Haversine, immutable) — used by an RPC for the going graph
+  so distance sort happens server-side.
+- RPC `get_event_going_graph(p_event_id uuid, p_viewer_lat, p_viewer_lng)`
+  returning two result sets folded into JSON: `stadium` attendees and
+  `watch_parties` (array of `{ watch_location, distance_mi, attendees[] }`
+  sorted by distance from viewer). Joins `profiles` for avatar/name only —
+  no PII — and respects the existing `event_rsvps` SELECT policies.
+- Add `event_chat_messages` to `supabase_realtime` publication.
+- RLS confirmed: read for any authenticated user on a public event; insert
+  restricted to users with a non-canceled `event_rsvps` row for that event.
 
-## 4. Card design (`WatchLocationCard`)
+## Screens
 
-```text
-┌──────────────────────────────────────────────────────┐
-│ [PARTNER]   Greyhound Bar & Grill          ★ 4.6    │
-│             Highland Park · 2.1 mi · 142 reviews    │
-│             "WNBA on every screen, sound on"        │
-│             #womens-sports-crowd #sound-on          │
-│             ─────────────────────────────────────── │
-│  ●●● 5 members watching · Mia + 2 friends going     │
-│  [I'm watching here]  [Save] [Maps] [Share]         │
-└──────────────────────────────────────────────────────┘
-```
+### `/events` — list
 
-- Source badge top-left: official / partner / curated / community / nearby / suggested
-- Distance hidden when unknown; rating hidden when 0
-- Vibe chips capped at 3 visible, +N overflow
-- CTAs are 44px tap targets, primary "I'm watching here" full-width on mobile <380px
+- Editorial header: "Events" (Playfair) + user city subhead.
+- Filter chips: All / Sports / Culture / Loverball — drive a single query
+  param. No heavy sidebar.
+- Vertical feed sorted by `event_date` ascending, in-radius first then
+  out-of-radius. Skeleton cards while loading. Editorial empty state.
+- **Card** (whole card tappable to detail):
+  - Left 4px accent bar + small tag, color by `event_type`:
+    `external_sports` → black, `curated_culture` → teal,
+    `loverball_hosted` → raspberry.
+  - Banner image (with branded gradient fallback — no AI imagery).
+  - Playfair title, date · time, venue name, distance ("8 mi" or "Watch only").
+  - Inline RSVP row:
+    - In radius: `Going` (raspberry filled when active) + `Watching` (outline).
+    - Out of radius: `Watching` only.
+    - Tapping `Going` writes RSVP optimistically.
+    - Tapping `Watching` opens the bar picker sheet.
+    - If already RSVP'd, the active button is filled and shows a tiny "Change"
+      affordance; long-press / overflow gives "Cancel RSVP".
 
-## 5. Component states
+### Bar picker sheet (shared, used from card + detail)
 
-| State | Trigger | UI |
-|---|---|---|
-| `loading` | initial fetch | 3 skeleton cards + "Finding spots near you…" |
-| `live-ok` | Places + DB returned ≥1 spot | Source strip: "Live · powered by community + Google" |
-| `places-failed-curated` | Places error, curated/community filled in | Banner: "Live nearby search is offline — showing our curated picks" |
-| `no-local-suggested` | Zero in-city matches, showing generic fallback | "No strong nearby matches — try these popular spots, or suggest one" + CTA |
-| `picked` | User checked in for this game | Sticky pill: "You're watching at {venue} · Change · Open chat" |
-| `low-social` | watchingCount = 0 across all spots | Soft prompt: "Be the first to check in — your friends will see where you are" |
-| `error-fatal` | All sources failed (rare) | Curated static list + "Refresh" |
+- Bottom sheet titled "Where are you watching?"
+- Queries `watch_locations` near the viewer (by `distance_miles`), closest
+  first. Each row: name, neighborhood, distance, image, vibe tags.
+- Search input at top for filtering by name.
+- Confirm = upsert `event_rsvps` with `rsvp_type='bar'`, `watch_location_id`,
+  and `bar_name` snapshot.
+- Empty state: "No watch spots listed near you yet — RSVP as watching anyway?"
+  with a single confirm button that writes the RSVP with `watch_location_id`
+  null. Never a dead end.
 
-## 6. "I'm watching here" action
+### `/event/:id` — detail
 
-New table `game_watch_checkins` (migration):
+Sections, top to bottom:
 
-```text
-columns: id, user_id, external_game_id (nullable), event_id (nullable),
-         watch_location_id (nullable for ad-hoc places-only spot),
-         place_external_id (text, for Google Places id),
-         place_snapshot (jsonb: name/city/lat/lng captured at checkin),
-         created_at, expires_at (= game start + 4h)
-unique: (user_id, external_game_id) WHERE external_game_id NOT NULL
-unique: (user_id, event_id)         WHERE event_id NOT NULL
-RLS:
-  - SELECT: authenticated may read aggregate counts via SECURITY DEFINER RPC only;
-            row-level SELECT restricted to own rows + friends (via friendships)
-  - INSERT/UPDATE/DELETE: auth.uid() = user_id
-GRANT SELECT, INSERT, UPDATE, DELETE TO authenticated; ALL TO service_role.
-```
+1. **Header** — banner image, title (Playfair), league, date/time, venue,
+   type tag, distance.
+2. **Your RSVP** — Same Going/Watching control with the 50-mile rule. Active
+   state obvious. If watching, shows the chosen bar with "change". One
+   "Cancel RSVP" link.
+3. **Who's Going** — the going graph, two clearly separated groups:
+   - **At the venue · N** — stadium icon, avatar/name grid of everyone with
+     `rsvp_type='stadium'`. Tap → profile preview.
+   - **Watch parties · N** — for each bar with attendees, a card showing:
+     bar name, distance from viewer, attendee count, avatar stack.
+     Sorted closest-first to viewer. First 3 expanded, rest collapsed
+     under "More watch parties".
+   - Empty states for each group, never blank.
+4. **Event chat** — tab inside the detail labeled "Going chat". Realtime on
+   `event_chat_messages`. Composer pinned at bottom; auto-scroll. Only
+   RSVP'd users can post (server-enforced); non-RSVP'd see a read-only view
+   with "RSVP to join the chat" CTA. Tap avatar → profile preview.
 
-RPCs:
-- `get_watch_checkin_counts(game_ids[])` → `{game_id, location_key, count}` aggregated
-- `get_friend_watch_checkins(game_id)` → friends' rows only (uses `friendships` table)
+### Profile preview sheet
 
-Flow on tap:
-1. Optimistic update (count++, "Picked" badge on card)
-2. Upsert into `game_watch_checkins` (replace prior pick for same game)
-3. Toast: "You're watching at {venue}. Want to join the chat?" → CTA opens `/game/:id` chat tab
-4. Realtime channel `watch:{externalGameId}` broadcasts the new aggregate so other open clients update
+Opens from any avatar/name (going graph or chat). Shows avatar, name, city,
+public profile bits via existing `get_safe_profile` RPC. Two real actions:
 
-Auto-cleanup: pg_cron daily job deletes rows where `expires_at < now()`.
+- **Add** — wires the existing `friendships` flow; reflects Add → Requested →
+  Connected.
+- **DM** — routes to the existing `/messages` thread with that user.
 
-## 7. Social proof & filtering
+No placeholder buttons anywhere.
 
-- `friendsWatching` resolved from `get_friend_watch_checkins` (uses existing `friendships`)
-- Vibe tags rendered as filter chips above the list: tapping `#womens-sports-crowd` filters list client-side
-- Sort options: "Best match" (default ranking), "Closest", "Most members"
-- Matching heuristics (server-side in edge function):
-  - league/team relevance: spot's `leagues_supported` intersects `[league]` or vibe tag contains team slug
-  - women's sports relevance: spot has tag `womens-sports-crowd` OR is_partner=true with WNBA/NWSL in leagues
-  - distance: from user.zip → lat/lng (`profiles.latitude/longitude`) or event/game lat/lng
-  - popularity: `watchingCount` last 30d
-  - time relevance: only spots open during game window (uses `watch_locations.hours` json — added)
+## Files
 
-## 8. Migration summary
+**New / replaced:**
 
-```sql
--- Add hours to watch_locations
-ALTER TABLE public.watch_locations
-  ADD COLUMN hours jsonb,
-  ADD COLUMN short_description text,
-  ADD COLUMN rating numeric(2,1),
-  ADD COLUMN review_count integer DEFAULT 0;
+- `src/pages/Events.tsx` — replaced.
+- `src/pages/EventDetail.tsx` — replaced.
+- `src/components/events/EventCard.tsx` — new.
+- `src/components/events/RsvpControl.tsx` — new, shared.
+- `src/components/events/BarPickerSheet.tsx` — new.
+- `src/components/events/GoingGraph.tsx` — new.
+- `src/components/events/EventChatPanel.tsx` — new (wraps existing
+  `EventChatThread` with the RSVP gate + composer).
+- `src/components/events/ProfilePreviewSheet.tsx` — new (uses existing
+  `useFriendships` and DM route).
+- `src/hooks/useEventRsvp.ts` — new, single source of truth for RSVP state +
+  mutations, optimistic.
+- `src/hooks/useGoingGraph.ts` — new, calls the new RPC, viewer-aware.
+- `src/lib/distance.ts` — `haversineMiles`, `formatMiles`.
 
--- Check-ins table (full grants + RLS as above)
-CREATE TABLE public.game_watch_checkins (...);
-GRANT SELECT, INSERT, UPDATE, DELETE ON public.game_watch_checkins TO authenticated;
-GRANT ALL ON public.game_watch_checkins TO service_role;
-ALTER TABLE public.game_watch_checkins ENABLE ROW LEVEL SECURITY;
-CREATE POLICY ... ;
+**Removed:** the current `EventDetail.tsx` inline RSVP UI, the old
+`WhoElseGoingTabs.tsx`, and the mock-attendee fallbacks in those files. Any
+references in `Feed.tsx` / sidebar to the old components are repointed.
 
--- Aggregate + friends RPCs (security definer)
-CREATE FUNCTION public.get_watch_checkin_counts(...) ...;
-CREATE FUNCTION public.get_friend_watch_checkins(...) ...;
+**Migration:** one new file adding the column, FK, validation trigger,
+distance function, RPC, and realtime publication entry.
 
--- Realtime
-ALTER PUBLICATION supabase_realtime ADD TABLE public.game_watch_checkins;
-```
+## Audit before finishing
 
-## 9. Microcopy
+- Run `rg` for every `to=`/`href=`/`navigate(` introduced; confirm each
+  resolves to a real route (`/event/:id`, `/profile/:id`, `/messages`,
+  `/edit-profile`).
+- Manual click-through in the preview: list → card → detail → RSVP both
+  modes → bar picker → going graph avatar → profile preview → Add → DM.
+- Typecheck/build via the harness.
 
-| State | Copy |
-|---|---|
-| Loading | "Finding the best spots to catch the game…" |
-| Live ok | "Watch spots near you · updated just now" |
-| Places failed | "Live search is napping — here are our trusted picks" |
-| No local | "Nothing close by tonight. These spots usually pull a great women's-sports crowd." |
-| Empty social | "Nobody's checked in yet — be the first and your friends will see you here." |
-| Picked | "🍻 You're watching at {venue}. Tap to open the game chat." |
-| Suggest CTA | "Know a great spot? Add it — we'll review and add to the map." |
-| Friends row | "{firstName} + {n} friend{s} watching nearby" |
+## Notes / open questions I'm resolving without asking
 
-## 10. Files changed / created
-
-**Created**
-- `supabase/functions/where-to-watch-spots/index.ts` — unified resolver (calls Places, queries DB, ranks)
-- `src/components/watch/WhereToWatchUnified.tsx`
-- `src/components/watch/WatchLocationCard.tsx`
-- `src/components/watch/useWatchSpots.ts` (React Query hook with realtime check-in subscription)
-- `src/components/watch/WatchCheckInButton.tsx`
-- Migration: `game_watch_checkins` + RPCs + watch_locations columns
-
-**Modified**
-- `src/pages/Events.tsx` — replace existing watch module with `<WhereToWatchUnified variant="full" context={...} />`
-- `src/pages/GameDetail.tsx` — swap `WatchSpotsPanel` in "Where to watch" tab
-- `src/components/profile/ForYouTonight.tsx` — add `variant="compact"` for relevant game
-- `src/components/ProfileWhereToWatch.tsx` — internals replaced
-- `src/components/WhereToWatch.tsx`, `src/components/NearbySportsBars.tsx` — thin re-export wrappers (no API break)
-
-**Untouched**
-- Admin surfaces (scope excluded)
-- Existing `watch_locations`/`watch_location_pins`/`watch_pin_upvotes` schema (additive only)
-
-## 11. Build order (sequential, each independently shippable)
-
-1. DB migration (`game_watch_checkins`, RPCs, watch_locations columns)
-2. `where-to-watch-spots` edge function with priority pipeline + Places fallback
-3. `useWatchSpots` hook + `WatchLocationCard` + `WhereToWatchUnified` (full variant)
-4. Wire Game Detail tab → ship & verify
-5. Wire Events page module → ship & verify
-6. Compact variant + Feed `ForYouTonight` integration
-7. Realtime aggregate updates + friends row
-8. Microcopy pass + analytics events (`watch_checkin`, `watch_spot_open_maps`, `watch_spot_share`)
-
-Approve and I'll start with step 1 (migration).
+- Treating Watch parties as **always viewer-proximity sorted**, but never
+  hidden — far bars collapse, they don't disappear, so a user watching with
+  far-away friends still sees them.
+- "At the venue" list is **not** viewer-distance gated — if you're at the
+  game you're at the game.
+- If the user has no saved coords, the 50-mile rule defaults to *showing
+  both buttons* and surfacing a zip nudge, so we never silently strip the
+  Going option.
