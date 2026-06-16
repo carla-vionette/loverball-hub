@@ -943,6 +943,7 @@ export type Database = {
           rsvp_type: string | null
           status: string
           user_id: string
+          watch_location_id: string | null
         }
         Insert: {
           approval_status?: string
@@ -963,6 +964,7 @@ export type Database = {
           rsvp_type?: string | null
           status?: string
           user_id: string
+          watch_location_id?: string | null
         }
         Update: {
           approval_status?: string
@@ -983,6 +985,7 @@ export type Database = {
           rsvp_type?: string | null
           status?: string
           user_id?: string
+          watch_location_id?: string | null
         }
         Relationships: [
           {
@@ -990,6 +993,13 @@ export type Database = {
             columns: ["event_id"]
             isOneToOne: false
             referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_rsvps_watch_location_id_fkey"
+            columns: ["watch_location_id"]
+            isOneToOne: false
+            referencedRelation: "watch_locations"
             referencedColumns: ["id"]
           },
         ]
@@ -3099,6 +3109,10 @@ export type Database = {
         }
         Returns: boolean
       }
+      distance_miles: {
+        Args: { lat1: number; lat2: number; lng1: number; lng2: number }
+        Returns: number
+      }
       get_event_attendee_breakdown: {
         Args: { p_event_id: string }
         Returns: {
@@ -3114,6 +3128,14 @@ export type Database = {
           rsvp_type: string
           user_id: string
         }[]
+      }
+      get_event_going_graph: {
+        Args: {
+          p_event_id: string
+          p_viewer_lat?: number
+          p_viewer_lng?: number
+        }
+        Returns: Json
       }
       get_event_invite_by_token: {
         Args: { p_token: string }
