@@ -114,7 +114,9 @@ function normalize(ev: SeatGeekEvent) {
 
 // ── FIFA World Cup 2026 venues with lat/lng ─────────────────────────────
 // Coordinates power the client's 50-mile stadium gating for every host city.
-const WC26_VENUES: Record<string, { lat: number; lng: number; city: string; address: string }> = {
+type VenueInfo = { name: string; lat: number; lng: number; city: string; address: string };
+
+const WC26_VENUES: Record<string, Omit<VenueInfo, "name">> = {
   "Estadio Azteca":            { lat: 19.3029, lng: -99.1503,  city: "Mexico City",       address: "Calz. de Tlalpan 3465, Mexico City, MX" },
   "Estadio Akron":             { lat: 20.6816, lng: -103.4628, city: "Guadalajara",       address: "Av. Vallarta s/n, Zapopan, MX" },
   "Estadio BBVA":              { lat: 25.6692, lng: -100.2440, city: "Monterrey",         address: "Av. Pablo Livas, Guadalupe, MX" },
@@ -134,13 +136,36 @@ const WC26_VENUES: Record<string, { lat: number; lng: number; city: string; addr
   "Lumen Field":               { lat: 47.5952, lng: -122.3316, city: "Seattle",           address: "800 Occidental Ave S, Seattle, WA" },
 };
 
-function venueLookup(name: string | undefined | null) {
+const WC26_VENUE_ALIASES: Record<string, string> = {
+  "Mexico City Stadium": "Estadio Azteca",
+  "Guadalajara Stadium": "Estadio Akron",
+  "Monterrey Stadium": "Estadio BBVA",
+  "Toronto Stadium": "BMO Field",
+  "Los Angeles Stadium": "SoFi Stadium",
+  "San Francisco Bay Area Stadium": "Levi's Stadium",
+  "New York/New Jersey Stadium": "MetLife Stadium",
+  "Boston Stadium": "Gillette Stadium",
+  "Houston Stadium": "NRG Stadium",
+  "Dallas Stadium": "AT&T Stadium",
+  "Philadelphia Stadium": "Lincoln Financial Field",
+  "Atlanta Stadium": "Mercedes-Benz Stadium",
+  "Seattle Stadium": "Lumen Field",
+  "Miami Stadium": "Hard Rock Stadium",
+  "Kansas City Stadium": "Arrowhead Stadium",
+};
+
+function venueLookup(name: string | undefined | null): VenueInfo | null {
   if (!name) return null;
   const key = name.trim();
-  if (WC26_VENUES[key]) return WC26_VENUES[key];
+  const alias = WC26_VENUE_ALIASES[key];
+  if (alias && WC26_VENUES[alias]) return { name: alias, ...WC26_VENUES[alias] };
+  if (WC26_VENUES[key]) return { name: key, ...WC26_VENUES[key] };
   const lower = key.toLowerCase();
   for (const [k, v] of Object.entries(WC26_VENUES)) {
-    if (lower.includes(k.toLowerCase()) || k.toLowerCase().includes(lower)) return v;
+    if (lower.includes(k.toLowerCase()) || k.toLowerCase().includes(lower)) return { name: k, ...v };
+  }
+  for (const [generic, canonical] of Object.entries(WC26_VENUE_ALIASES)) {
+    if (lower.includes(generic.toLowerCase()) && WC26_VENUES[canonical]) return { name: canonical, ...WC26_VENUES[canonical] };
   }
   return null;
 }
