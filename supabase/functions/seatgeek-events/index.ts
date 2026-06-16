@@ -311,21 +311,6 @@ Deno.serve(async (req) => {
   if (hasZip) localParams.set("postal_code", zip);
   else { localParams.set("lat", lat!); localParams.set("lon", lng!); }
 
-  // ── World Cup query: nationwide title search for "world cup" ──────────
-  // World Cup 2026 matches are spread across many US/MX/CA cities, so we
-  // surface them regardless of the user's radius. Scope to soccer-only
-  // taxonomies so unrelated events that happen to contain "world cup" in
-  // their title (e.g. classical music showcases, eating contests, rugby)
-  // are not pulled into the FIFA list.
-  const wcParams = new URLSearchParams({
-    client_id: CLIENT_ID,
-    q: "world cup",
-    "taxonomies.name": "soccer,international_soccer",
-    "datetime_utc.gte": new Date().toISOString(),
-    sort: "datetime_local.asc",
-    per_page: "100",
-  });
-
   // Redact client_id from any logged URL
   const redact = (p: URLSearchParams) => {
     const s = new URLSearchParams(p);
@@ -348,45 +333,18 @@ Deno.serve(async (req) => {
     }
   }
 
-  const [localJson, wcJson] = await Promise.all([
+  // Run SeatGeek local query and the canonical WC26 fixture pull in parallel.
+  const [localJson, wcEvents] = await Promise.all([
     fetchOne(localParams),
-    fetchOne(wcParams),
+    fetchWorldCup2026(),
   ]);
 
-  if (!localJson && !wcJson) return fallback("upstream_error");
+  if (!localJson && wcEvents.length === 0) return fallback("upstream_error");
 
   const localEvents = Array.isArray(localJson?.events) ? localJson.events.map(normalize).filter(Boolean) : [];
-  const wcEventsRaw = Array.isArray(wcJson?.events) ? wcJson.events : [];
-  // Force-classify WC search hits as FIFA_WC regardless of taxonomy.
-  const wcEvents = wcEventsRaw
-    .filter((ev: SeatGeekEvent) => isWorldCupTitle(ev.title))
-    .map((ev: SeatGeekEvent) => {
-      const base = normalize(ev);
-      if (!base) {
-        // Build minimally from raw if normalize bailed (no league hit).
-        const home = ev.performers?.find(p => p.home_team) ?? ev.performers?.[0];
-        const away = ev.performers?.find(p => p !== home) ?? null;
-        const venue = ev.venue || {};
-        return {
-          id: `sg-${ev.id}`,
-          title: ev.title,
-          team_home: home?.name || "",
-          team_away: away?.name || "",
-          venue_name: venue.name || "",
-          venue_address: [venue.address, venue.extended_address, venue.city, venue.state].filter(Boolean).join(", "),
-          city: venue.city || "",
-          date_time: ev.datetime_local,
-          league: "FIFA_WC",
-          sport_kind: "pro" as const,
-          is_womens: false,
-          ticket_url: ev.url,
-          image_url: home?.image || null,
-        };
-      }
-      return { ...base, league: "FIFA_WC" };
-    });
 
-  // Merge + dedupe by id, World Cup wins on conflict.
+  // Merge + dedupe by id. WC26 wins on conflict so the canonical fixture
+  // (with verified venue coords) overrides any SeatGeek WC duplicates.
   const byId = new Map<string, any>();
   for (const e of localEvents) byId.set(e.id, e);
   for (const e of wcEvents) byId.set(e.id, e);
