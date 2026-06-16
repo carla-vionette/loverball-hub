@@ -33,6 +33,23 @@ interface UseEventRsvpResult {
 
 const ACTIVE_STATUSES = ["attending", "approved", "confirmed", "going"] as const;
 
+// Lightweight pub/sub so multiple useEventRsvp() instances for the same event
+// stay in sync (e.g. RSVP button updates the chat panel without a refresh).
+type Listener = () => void;
+const listeners = new Map<string, Set<Listener>>();
+function notify(eventId: string) {
+  listeners.get(eventId)?.forEach((fn) => {
+    try { fn(); } catch { /* noop */ }
+  });
+}
+function subscribe(eventId: string, fn: Listener) {
+  if (!listeners.has(eventId)) listeners.set(eventId, new Set());
+  listeners.get(eventId)!.add(fn);
+  return () => {
+    listeners.get(eventId)?.delete(fn);
+  };
+}
+
 export function useEventRsvp(eventId: string | undefined): UseEventRsvpResult {
   const { user } = useAuth();
   const { toast } = useToast();
