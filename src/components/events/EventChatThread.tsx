@@ -43,7 +43,12 @@ export default function EventChatThread({ eventId, pageSize = PAGE }: Props) {
   const [hasMore, setHasMore] = useState(false);
   const [draft, setDraft] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
-  const mockChat = useMemo<MockChatMessage[]>(() => MOCK_EVENT_CHAT[eventId] || [], [eventId]);
+  // System "is going / is watching" notifications are surfaced visually in the
+  // "Who's going" section — keep the chat thread for real conversation only.
+  const mockChat = useMemo<MockChatMessage[]>(
+    () => (MOCK_EVENT_CHAT[eventId] || []).filter((m) => !m.is_system),
+    [eventId],
+  );
 
 
   const hydrateProfiles = useCallback(async (rows: ChatRow[]) => {
