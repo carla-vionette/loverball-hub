@@ -1419,9 +1419,10 @@ const Events = () => {
                                                 href={(ev as any).__ticket_url}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
-                                                style={{ display: "inline-block", marginTop: 4, fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: 10, letterSpacing: "0.1em", textTransform: "uppercase", color: "#E85D2F" }}
+                                                onClick={(e) => e.stopPropagation()}
+                                                style={{ display: "inline-flex", alignItems: "center", gap: 6, marginTop: 8, padding: "8px 14px", borderRadius: 999, background: "#E85D2F", color: "#0a0a0a", fontFamily: "'Inter', sans-serif", fontWeight: 800, fontSize: 10.5, letterSpacing: "0.14em", textTransform: "uppercase", textDecoration: "none" }}
                                               >
-                                                Stadium tickets →
+                                                🎟 Click to buy stadium tickets →
                                               </a>
                                             )}
                                           </div>
