@@ -284,9 +284,7 @@ export default function EventDetail() {
 
           {/* Going graph */}
           <section className="space-y-2">
-            <h2 className="font-['Playfair_Display'] text-2xl text-[#1A1A1A] mb-2">
-              Who's going
-            </h2>
+            <SectionLabel>Who's Going</SectionLabel>
             {user ? (
               <GoingGraph eventId={event.id} viewer={{ lat: viewer?.lat ?? null, lng: viewer?.lng ?? null }} refreshKey={refreshKey} />
             ) : (
@@ -298,9 +296,7 @@ export default function EventDetail() {
 
           {/* Chat */}
           <section className="space-y-2">
-            <h2 className="font-['Playfair_Display'] text-2xl text-[#1A1A1A] mb-2">
-              Going chat
-            </h2>
+            <SectionLabel>Going Chat</SectionLabel>
             {user ? (
               <EventChatPanel eventId={event.id} onScrollToRsvp={scrollToRsvp} />
             ) : (
