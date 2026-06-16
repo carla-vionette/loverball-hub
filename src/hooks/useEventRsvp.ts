@@ -85,7 +85,9 @@ export function useEventRsvp(eventId: string | undefined): UseEventRsvpResult {
 
   useEffect(() => {
     refresh();
-  }, [refresh]);
+    if (!eventId) return;
+    return subscribe(eventId, () => { refresh(); });
+  }, [refresh, eventId]);
 
   const requireAuth = useCallback(() => {
     if (!user) {
