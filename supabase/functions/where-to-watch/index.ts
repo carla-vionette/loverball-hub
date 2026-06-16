@@ -168,7 +168,7 @@ function matches(game: GameOut, needles: string[]): string | null {
     if (!needle) continue;
     const aliases = [needle, ...(TEAM_ALIASES[needle] || [])];
     for (const h of hay) {
-      if (aliases.some((alias) => h.includes(alias) || alias.includes(h))) return n;
+      if (aliases.some((alias) => h.includes(alias))) return n;
     }
   }
   return null;
