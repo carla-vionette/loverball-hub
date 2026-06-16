@@ -626,7 +626,7 @@ const Index = () => {
                 <span style={{ fontStyle: "italic" }}>Everything in.</span>
               </h2>
               <p className="mt-8 max-w-md" style={{ color: C.inkSoft, fontSize: 17, lineHeight: 1.55 }}>
-                Joining Loverball is free. The Club is everything in — location-aware matching,
+                The Club is everything in — location-aware matching,
                 unlimited group chats, members-only events, RSVP priority, and the
                 founding-member perks while we're still small.
               </p>
