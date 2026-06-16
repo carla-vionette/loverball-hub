@@ -1,11 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { MapPin, Star, Beer, Check, Loader2 } from "lucide-react";
 import { LA_SPORTS_BARS, type SportsBar } from "@/data/laSportsBars";
 import { distanceMiles } from "@/lib/geocoding";
 import { MOCK_EVENT_BARS } from "@/data/mockEvents";
 import { supabase } from "@/integrations/supabase/client";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface Props {
   open: boolean;
