@@ -292,8 +292,8 @@ async function fetchWorldCup2026(): Promise<any[]> {
     }
 
     const byKey = new Map<string, any>();
-    for (const e of fullScheduleMapped) byKey.set(`${e.date_time}|${e.venue_name}|${e.team_home}|${e.team_away}`, e);
-    for (const e of sportsDbMapped) byKey.set(`${e.date_time}|${e.venue_name}|${e.team_home}|${e.team_away}`, e);
+    for (const e of fullScheduleMapped) byKey.set(`${e.date_time}|${e.venue_name}`, e);
+    for (const e of sportsDbMapped) byKey.set(`${e.date_time}|${e.venue_name}`, e);
     const mapped = Array.from(byKey.values()).sort((a, b) => a.date_time.localeCompare(b.date_time));
     console.log("wc26 schedule fetch", { sportsDbCount, fullScheduleCount, mergedCount: mapped.length });
     WC_CACHE = { at: Date.now(), events: mapped };
