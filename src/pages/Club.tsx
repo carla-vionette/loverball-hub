@@ -561,12 +561,23 @@ const Club = () => {
                       </select>
                     </div>
 
-                    {suggested.length === 0 ? (
-                      <EmptyState text="No matches yet — try clearing filters." />
+                    {matchesLoading && matches.length === 0 ? (
+                      <div className="flex items-center gap-2 text-sm" style={{ color: C.muted }}>
+                        <Loader2 className="w-4 h-4 animate-spin" /> Finding your matches…
+                      </div>
+                    ) : suggested.length === 0 ? (
+                      <EmptyState text="No matches yet — add favorite teams and sports to find your people." />
                     ) : (
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        {suggested.map(({ m, why }) => (
-                          <FanCard key={m.id} member={m} why={why} navigate={navigate} />
+                        {suggested.map(({ m, why, score }) => (
+                          <FanCard
+                            key={m.id}
+                            member={m}
+                            why={why}
+                            score={score}
+                            navigate={navigate}
+                            onDismiss={() => dismissFan(m.id)}
+                          />
                         ))}
                       </div>
                     )}
