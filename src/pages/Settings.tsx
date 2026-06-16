@@ -13,6 +13,7 @@ import { Loader2, Bell, Eye, EyeOff, MapPin, Save, Smartphone } from "lucide-rea
 import { Label } from "@/components/ui/label";
 import { LA_PRO_TEAMS, LA_D1_COLLEGES } from "@/lib/laTeamsConfig";
 import { SPORTS_OPTIONS } from "@/lib/onboardingOptions";
+import { isValidUsZip, resolveZip } from "@/lib/geocoding";
 
 interface NotificationPref {
   id?: string;
