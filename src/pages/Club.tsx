@@ -1,9 +1,9 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { Seo } from "@/components/Seo";
 import {
   Users, MessageCircle, Sparkles, Search, MapPin, Trophy, Loader2,
-  Hash, ArrowRight, Plus, Heart, Compass, Flame
+  Hash, ArrowRight, Plus, Heart, Compass, Flame, X,
 } from "lucide-react";
 import { C, fonts } from "@/lib/editorialTheme";
 import { H1, Slug, Body } from "@/components/editorial/primitives";
