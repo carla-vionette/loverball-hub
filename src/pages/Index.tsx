@@ -229,8 +229,7 @@ const Index = () => {
                 style={{ fontSize: 17, lineHeight: 1.6, color: C.inkMuted }}
               >
                 Loverball is the club for women who love sports — connect with fans,
-                find watch parties nearby, and never miss a score.{" "}
-                <span style={{ color: C.cream }}>Free to join.</span>
+                find watch parties nearby, and never miss a score.
               </p>
 
               <div className="mt-10 flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-5 lb-rise lb-delay-4">
@@ -627,7 +626,7 @@ const Index = () => {
                 <span style={{ fontStyle: "italic" }}>Everything in.</span>
               </h2>
               <p className="mt-8 max-w-md" style={{ color: C.inkSoft, fontSize: 17, lineHeight: 1.55 }}>
-                Joining Loverball is free. The Club is everything in — location-aware matching,
+                The Club is everything in — location-aware matching,
                 unlimited group chats, members-only events, RSVP priority, and the
                 founding-member perks while we're still small.
               </p>
