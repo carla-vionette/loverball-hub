@@ -33,6 +33,23 @@ interface UseEventRsvpResult {
 
 const ACTIVE_STATUSES = ["attending", "approved", "confirmed", "going"] as const;
 
+// Lightweight pub/sub so multiple useEventRsvp() instances for the same event
+// stay in sync (e.g. RSVP button updates the chat panel without a refresh).
+type Listener = () => void;
+const listeners = new Map<string, Set<Listener>>();
+function notify(eventId: string) {
+  listeners.get(eventId)?.forEach((fn) => {
+    try { fn(); } catch { /* noop */ }
+  });
+}
+function subscribe(eventId: string, fn: Listener) {
+  if (!listeners.has(eventId)) listeners.set(eventId, new Set());
+  listeners.get(eventId)!.add(fn);
+  return () => {
+    listeners.get(eventId)?.delete(fn);
+  };
+}
+
 export function useEventRsvp(eventId: string | undefined): UseEventRsvpResult {
   const { user } = useAuth();
   const { toast } = useToast();
@@ -68,7 +85,9 @@ export function useEventRsvp(eventId: string | undefined): UseEventRsvpResult {
 
   useEffect(() => {
     refresh();
-  }, [refresh]);
+    if (!eventId) return;
+    return subscribe(eventId, () => { refresh(); });
+  }, [refresh, eventId]);
 
   const requireAuth = useCallback(() => {
     if (!user) {
@@ -106,6 +125,7 @@ export function useEventRsvp(eventId: string | undefined): UseEventRsvpResult {
       toast({ title: "Couldn't RSVP", description: error.message, variant: "destructive" });
       return;
     }
+    notify(eventId);
     toast({ title: "You're going — at the venue 🏟️" });
   }, [eventId, requireAuth, user, rsvp, toast]);
 
@@ -138,6 +158,7 @@ export function useEventRsvp(eventId: string | undefined): UseEventRsvpResult {
         toast({ title: "Couldn't RSVP", description: error.message, variant: "destructive" });
         return;
       }
+      notify(eventId);
       toast({ title: `Watching at ${spot.bar_name} 📺` });
     },
     [eventId, requireAuth, user, rsvp, toast],
@@ -159,6 +180,7 @@ export function useEventRsvp(eventId: string | undefined): UseEventRsvpResult {
       toast({ title: "Couldn't cancel", description: error.message, variant: "destructive" });
       return;
     }
+    notify(eventId);
     toast({ title: "RSVP canceled" });
   }, [eventId, user, rsvp, toast]);
 
