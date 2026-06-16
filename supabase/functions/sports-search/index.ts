@@ -22,6 +22,21 @@ const ESPN_SCOREBOARD: Record<League, string> = {
 
 const ALL_LEAGUES: League[] = ["NBA", "WNBA", "MLB", "NHL", "NFL", "MLS", "NWSL"];
 
+const TEAM_ALIASES: Record<string, string[]> = {
+  "la kings": ["los angeles kings"],
+  "kings nhl": ["los angeles kings"],
+  "lakers": ["los angeles lakers"],
+  "clippers": ["la clippers", "los angeles clippers"],
+  "dodgers": ["los angeles dodgers"],
+  "angels": ["los angeles angels", "la angels"],
+  "rams": ["los angeles rams", "la rams"],
+  "chargers": ["los angeles chargers", "la chargers"],
+  "sparks": ["los angeles sparks", "la sparks"],
+  "la sparks": ["los angeles sparks"],
+  "lafc": ["los angeles fc"],
+  "la galaxy": ["los angeles galaxy"],
+};
+
 const LEAGUE_ALIASES: Record<string, League> = {
   nba: "NBA", "n.b.a": "NBA",
   wnba: "WNBA",
@@ -136,7 +151,9 @@ function detectLeagues(q: string): League[] {
 function teamMatches(g: GameOut, q: string): boolean {
   const needle = q.toLowerCase().trim();
   if (!needle) return true;
-  return `${g.homeTeam} ${g.awayTeam}`.toLowerCase().includes(needle);
+  const aliases = [needle, ...(TEAM_ALIASES[needle] || [])];
+  const haystack = `${g.homeTeam} ${g.awayTeam}`.toLowerCase();
+  return aliases.some((alias) => haystack.includes(alias));
 }
 
 async function fetchLeagues(leagues: League[]): Promise<GameOut[]> {
