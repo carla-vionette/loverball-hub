@@ -338,12 +338,17 @@ const EventDetail = () => {
     try {
       const { data } = await supabase
         .from('event_rsvps')
-        .select('status')
+        .select('status, rsvp_type, bar_id, bar_name')
         .eq('event_id', id)
         .eq('user_id', user.id)
         .maybeSingle();
 
       setRsvpStatus(data?.status || null);
+      setMyWatchChoice({
+        rsvp_type: (data as any)?.rsvp_type ?? null,
+        bar_id: (data as any)?.bar_id ?? null,
+        bar_name: (data as any)?.bar_name ?? null,
+      });
     } catch (error) {
       // Silently handle RSVP status fetch errors
     }
