@@ -1248,6 +1248,27 @@ export type Database = {
           },
         ]
       }
+      fan_dismissals: {
+        Row: {
+          created_at: string
+          dismissed_user_id: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          dismissed_user_id: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          dismissed_user_id?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       feed_items: {
         Row: {
           category: string
@@ -3080,6 +3101,20 @@ export type Database = {
           recipient_phone: string
           sent_by_user_id: string
           status: string
+        }[]
+      }
+      get_fan_matches: {
+        Args: { _limit?: number; _user_id: string }
+        Returns: {
+          bio: string
+          city: string
+          favorite_la_teams: string[]
+          favorite_sports: string[]
+          id: string
+          match_score: number
+          name: string
+          profile_photo_url: string
+          reasons: string[]
         }[]
       }
       get_friend_watch_checkins: {

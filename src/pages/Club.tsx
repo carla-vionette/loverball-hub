@@ -1,9 +1,9 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { Seo } from "@/components/Seo";
 import {
   Users, MessageCircle, Sparkles, Search, MapPin, Trophy, Loader2,
-  Hash, ArrowRight, Plus, Heart, Compass, Flame
+  Hash, ArrowRight, Plus, Heart, Compass, Flame, X,
 } from "lucide-react";
 import { C, fonts } from "@/lib/editorialTheme";
 import { H1, Slug, Body } from "@/components/editorial/primitives";
@@ -92,6 +92,59 @@ const Club = () => {
 
   const [chats, setChats] = useState<ChatPreview[]>([]);
   const [chatsLoading, setChatsLoading] = useState(false);
+
+  type FanMatch = {
+    m: Member;
+    score: number;
+    why: string[];
+  };
+  const [matches, setMatches] = useState<FanMatch[]>([]);
+  const [matchesLoading, setMatchesLoading] = useState(false);
+  const [dismissed, setDismissed] = useState<Set<string>>(new Set());
+
+  const loadMatches = useCallback(async () => {
+    if (!user) return;
+    setMatchesLoading(true);
+    const { data, error } = await supabase.rpc("get_fan_matches", {
+      _user_id: user.id,
+      _limit: 12,
+    });
+    if (!error && Array.isArray(data)) {
+      setMatches(
+        data.map((r: any) => ({
+          m: {
+            id: r.id,
+            name: r.name ?? null,
+            city: r.city ?? null,
+            bio: r.bio ?? null,
+            profile_photo_url: r.profile_photo_url ?? null,
+            favorite_la_teams: r.favorite_la_teams ?? null,
+            favorite_sports: r.favorite_sports ?? null,
+          },
+          score: r.match_score ?? 0,
+          why: Array.isArray(r.reasons) ? r.reasons.filter(Boolean) : [],
+        }))
+      );
+    }
+    setMatchesLoading(false);
+  }, [user]);
+
+  useEffect(() => {
+    if (authLoading || !user) return;
+    loadMatches();
+  }, [user, authLoading, loadMatches]);
+
+  const dismissFan = useCallback(
+    async (targetId: string) => {
+      if (!user) return;
+      setDismissed((prev) => new Set(prev).add(targetId));
+      await supabase
+        .from("fan_dismissals")
+        .insert({ user_id: user.id, dismissed_user_id: targetId });
+    },
+    [user]
+  );
+
 
   useEffect(() => {
     // Don't fetch protected data until auth is confirmed and a user exists.
@@ -263,8 +316,11 @@ const Club = () => {
   }, [members, me, query, activeFilters, sort]);
 
   const suggested = useMemo(
-    () => enriched.filter((e) => !friendIds.has(e.m.id)).slice(0, 8),
-    [enriched, friendIds]
+    () =>
+      matches
+        .filter((e) => !friendIds.has(e.m.id) && !dismissed.has(e.m.id))
+        .slice(0, 8),
+    [matches, friendIds, dismissed]
   );
   const connections = useMemo(
     () => enriched.filter((e) => friendIds.has(e.m.id)),
@@ -505,12 +561,23 @@ const Club = () => {
                       </select>
                     </div>
 
-                    {suggested.length === 0 ? (
-                      <EmptyState text="No matches yet — try clearing filters." />
+                    {matchesLoading && matches.length === 0 ? (
+                      <div className="flex items-center gap-2 text-sm" style={{ color: C.muted }}>
+                        <Loader2 className="w-4 h-4 animate-spin" /> Finding your matches…
+                      </div>
+                    ) : suggested.length === 0 ? (
+                      <EmptyState text="No matches yet — add favorite teams and sports to find your people." />
                     ) : (
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        {suggested.map(({ m, why }) => (
-                          <FanCard key={m.id} member={m} why={why} navigate={navigate} />
+                        {suggested.map(({ m, why, score }) => (
+                          <FanCard
+                            key={m.id}
+                            member={m}
+                            why={why}
+                            score={score}
+                            navigate={navigate}
+                            onDismiss={() => dismissFan(m.id)}
+                          />
                         ))}
                       </div>
                     )}
@@ -705,24 +772,49 @@ const Club = () => {
 /* ─────────── Sub-components ─────────── */
 
 const FanCard = ({
-  member, why, navigate,
-}: { member: Member; why: string[]; navigate: ReturnType<typeof useNavigate> }) => {
+  member, why, score, navigate, onDismiss,
+}: {
+  member: Member;
+  why: string[];
+  score?: number;
+  navigate: ReturnType<typeof useNavigate>;
+  onDismiss?: () => void;
+}) => {
   const handle = `@${(member.name?.split(" ")[0] || "member").toLowerCase().replace(/[^a-z0-9]/g, "")}`;
   return (
-    <div className="rounded-2xl p-5 flex flex-col gap-4 transition-transform hover:-translate-y-0.5"
+    <div className="rounded-2xl p-5 flex flex-col gap-4 transition-transform hover:-translate-y-0.5 relative"
       style={{ background: C.surface, border: `1px solid ${C.border}` }}>
-      <button onClick={() => navigate(`/profile/${member.id}`)} className="flex items-center gap-3 text-left min-w-0">
+      {onDismiss && (
+        <button
+          onClick={onDismiss}
+          aria-label="Dismiss suggestion"
+          className="absolute top-2.5 right-2.5 rounded-full p-1.5 hover:bg-white/10 transition"
+          style={{ color: C.muted }}
+        >
+          <X className="w-3.5 h-3.5" />
+        </button>
+      )}
+      <button onClick={() => navigate(`/profile/${member.id}`)} className="flex items-center gap-3 text-left min-w-0 pr-6">
         <Avatar className="w-14 h-14">
           <AvatarImage src={member.profile_photo_url || undefined} />
           <AvatarFallback>{(member.name || "?").slice(0, 1)}</AvatarFallback>
         </Avatar>
-        <div className="min-w-0">
+        <div className="min-w-0 flex-1">
           <p className="font-semibold truncate" style={{ color: C.text }}>{member.name || "Member"}</p>
           <p className="text-[11px] truncate" style={{ fontFamily: fonts.mono, color: C.muted }}>
             <span style={{ color: C.raspberry }}>{handle}</span>
             {member.city ? <> · <MapPin className="inline w-3 h-3 -mt-0.5" /> {member.city}</> : null}
           </p>
         </div>
+        {typeof score === "number" && score > 0 && (
+          <span
+            className="text-[10px] px-2 py-0.5 rounded-full shrink-0"
+            style={{ background: `${C.raspberry}22`, color: C.raspberry, fontFamily: fonts.mono }}
+            title="Match score"
+          >
+            {score}
+          </span>
+        )}
       </button>
 
       {member.bio && (
@@ -743,9 +835,21 @@ const FanCard = ({
       ) : null}
 
       {why.length > 0 && (
-        <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-widest"
-          style={{ fontFamily: fonts.mono, color: C.pink }}>
-          <Sparkles className="w-3 h-3" /> {why.slice(0, 2).join(" · ")}
+        <div className="flex flex-wrap items-center gap-1.5">
+          {why.slice(0, 3).map((reason) => (
+            <span
+              key={reason}
+              className="inline-flex items-center gap-1 text-[10px] uppercase tracking-wider rounded-full px-2 py-1"
+              style={{
+                fontFamily: fonts.mono,
+                color: C.pink,
+                background: `${C.pink}14`,
+                border: `1px solid ${C.pink}33`,
+              }}
+            >
+              <Sparkles className="w-2.5 h-2.5" /> {reason}
+            </span>
+          ))}
         </div>
       )}
 
