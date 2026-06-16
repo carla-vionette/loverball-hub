@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { MapPin, Tv, ChevronDown, ChevronUp, Users } from "lucide-react";
+import { MapPin, Tv, ChevronDown, ChevronUp, Users, Sparkles } from "lucide-react";
 import { useGoingGraph, type AttendeeLite, type WatchPartyGroup } from "@/hooks/useGoingGraph";
 import AttendeeProfileDrawer from "@/components/AttendeeProfileDrawer";
 import { formatMiles } from "@/lib/distance";
@@ -11,8 +11,16 @@ interface Props {
   refreshKey?: number;
 }
 
-const RASPBERRY = "#E8185A";
-const TEAL = "#00B8A9";
+const RASPBERRY = "#E85D2F";
+const TEAL = "#1A1A1A";
+
+const SLUG_STYLE: React.CSSProperties = {
+  fontFamily: "'Space Mono', ui-monospace, monospace",
+  fontSize: 11,
+  letterSpacing: "0.22em",
+  textTransform: "uppercase",
+  color: "#E85D2F",
+};
 
 function AvatarChip({ a, onClick }: { a: AttendeeLite; onClick: () => void }) {
   return (
@@ -95,16 +103,9 @@ export default function GoingGraph({ eventId, viewer, refreshKey = 0 }: Props) {
       <section>
         <header className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
-            <span
-              className="w-7 h-7 rounded-full flex items-center justify-center"
-              style={{ background: `${RASPBERRY}15`, color: RASPBERRY }}
-            >
-              <MapPin className="w-4 h-4" />
-            </span>
-            <h3 className="font-['Playfair_Display'] text-lg text-[#1A1A1A]">
-              At the venue
-            </h3>
-            <span className="text-sm font-['Inter'] text-[#1A1A1A]/50">
+            <Sparkles size={16} color={RASPBERRY} />
+            <span style={SLUG_STYLE}>At The Venue</span>
+            <span className="text-xs font-['Space_Mono',ui-monospace,monospace] text-[#1A1A1A]/50">
               · {data.stadium.total}
             </span>
           </div>
@@ -132,16 +133,9 @@ export default function GoingGraph({ eventId, viewer, refreshKey = 0 }: Props) {
       <section>
         <header className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
-            <span
-              className="w-7 h-7 rounded-full flex items-center justify-center"
-              style={{ background: `${TEAL}15`, color: TEAL }}
-            >
-              <Tv className="w-4 h-4" />
-            </span>
-            <h3 className="font-['Playfair_Display'] text-lg text-[#1A1A1A]">
-              Watch parties
-            </h3>
-            <span className="text-sm font-['Inter'] text-[#1A1A1A]/50">
+            <Sparkles size={16} color={RASPBERRY} />
+            <span style={SLUG_STYLE}>Watch Parties</span>
+            <span className="text-xs font-['Space_Mono',ui-monospace,monospace] text-[#1A1A1A]/50">
               · {data.watch_parties.total}
             </span>
           </div>

@@ -6,7 +6,7 @@ import { useActiveArea } from "@/hooks/useActiveArea";
 import AppLayout from "@/components/layout/AppLayout";
 import Seo from "@/components/Seo";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Calendar, MapPin, Loader2, Share2 } from "lucide-react";
+import { ArrowLeft, Calendar, MapPin, Loader2, Share2, Sparkles } from "lucide-react";
 import { format } from "date-fns";
 import { parseEventDate } from "@/lib/eventDate";
 import RsvpControl from "@/components/events/RsvpControl";
@@ -46,6 +46,23 @@ function fmtTime(t?: string | null) {
   const d = new Date();
   d.setHours(parseInt(h, 10), parseInt(m, 10));
   return format(d, "h:mm a");
+}
+
+const SLUG_STYLE: React.CSSProperties = {
+  fontFamily: "'Space Mono', ui-monospace, monospace",
+  fontSize: 11,
+  letterSpacing: "0.22em",
+  textTransform: "uppercase",
+  color: "#E85D2F",
+};
+
+function SectionLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="flex items-center gap-2 mb-3">
+      <Sparkles size={16} color="#E85D2F" />
+      <span style={SLUG_STYLE}>{children}</span>
+    </div>
+  );
 }
 
 export default function EventDetail() {
@@ -178,12 +195,29 @@ export default function EventDetail() {
 
           <div className="absolute bottom-4 left-5 right-5">
             <span
-              className="inline-block text-[10px] uppercase tracking-[0.2em] font-bold font-['Inter'] px-2.5 py-1 rounded-full"
-              style={{ background: cat.color, color: "#fff" }}
+              className="inline-block px-2.5 py-1 rounded-full"
+              style={{
+                fontFamily: "'Space Mono', ui-monospace, monospace",
+                fontSize: 10,
+                letterSpacing: "0.22em",
+                textTransform: "uppercase",
+                background: "#E85D2F",
+                color: "#fff",
+              }}
             >
               {cat.label}
             </span>
-            <h1 className="mt-2 font-['Playfair_Display'] text-3xl sm:text-4xl text-[#FAF5E9] leading-tight drop-shadow-md">
+            <h1
+              className="mt-2 text-[#FAF5E9] drop-shadow-md"
+              style={{
+                fontFamily: "'Anton', Impact, sans-serif",
+                fontWeight: 400,
+                fontSize: "clamp(32px, 6vw, 56px)",
+                lineHeight: 0.92,
+                letterSpacing: "-0.02em",
+                textTransform: "uppercase",
+              }}
+            >
               {event.title}
             </h1>
           </div>
@@ -209,9 +243,7 @@ export default function EventDetail() {
 
           {/* RSVP */}
           <section ref={rsvpRef} className="space-y-3 p-5 rounded-2xl bg-white border border-black/5">
-            <h2 className="font-['Playfair_Display'] text-xl text-[#1A1A1A]">
-              Your RSVP
-            </h2>
+            <SectionLabel>Your RSVP</SectionLabel>
             {!user && (
               <p className="text-sm font-['Inter'] text-[#1A1A1A]/60">
                 <button
@@ -252,9 +284,7 @@ export default function EventDetail() {
 
           {/* Going graph */}
           <section className="space-y-2">
-            <h2 className="font-['Playfair_Display'] text-2xl text-[#1A1A1A] mb-2">
-              Who's going
-            </h2>
+            <SectionLabel>Who's Going</SectionLabel>
             {user ? (
               <GoingGraph eventId={event.id} viewer={{ lat: viewer?.lat ?? null, lng: viewer?.lng ?? null }} refreshKey={refreshKey} />
             ) : (
@@ -266,9 +296,7 @@ export default function EventDetail() {
 
           {/* Chat */}
           <section className="space-y-2">
-            <h2 className="font-['Playfair_Display'] text-2xl text-[#1A1A1A] mb-2">
-              Going chat
-            </h2>
+            <SectionLabel>Going Chat</SectionLabel>
             {user ? (
               <EventChatPanel eventId={event.id} onScrollToRsvp={scrollToRsvp} />
             ) : (

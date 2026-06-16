@@ -13,8 +13,8 @@ interface Props {
   onChanged?: () => void;
 }
 
-const RASPBERRY = "#E8185A";
-const TEAL = "#00B8A9";
+const RASPBERRY = "#E85D2F";
+const TEAL = "#1A1A1A";
 
 export default function RsvpControl({ eventId, event, viewer, variant = "detail", onChanged }: Props) {
   const { rsvp, mode, pending, rsvpGoing, rsvpWatching, cancel } = useEventRsvp(eventId);
@@ -38,8 +38,8 @@ export default function RsvpControl({ eventId, event, viewer, variant = "detail"
 
   const buttonBase =
     variant === "compact"
-      ? "px-3 py-1.5 rounded-full text-xs font-semibold font-['Inter'] inline-flex items-center gap-1.5 transition-colors disabled:opacity-50"
-      : "px-5 py-2.5 rounded-full text-sm font-semibold font-['Inter'] inline-flex items-center gap-2 transition-colors disabled:opacity-50";
+      ? "px-4 py-1.5 rounded-full text-[11px] uppercase tracking-[0.16em] font-['Space_Mono',ui-monospace,monospace] inline-flex items-center gap-1.5 transition-colors disabled:opacity-50"
+      : "px-6 py-3 rounded-full text-xs uppercase tracking-[0.16em] font-['Space_Mono',ui-monospace,monospace] inline-flex items-center gap-2 transition-colors disabled:opacity-50";
 
   return (
     <div className="space-y-2" onClick={(e) => e.stopPropagation()}>

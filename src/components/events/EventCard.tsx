@@ -20,9 +20,9 @@ export interface EventCardData extends EventLike {
 }
 
 const THEME: Record<EventCategory, { color: string; label: string }> = {
-  external_sports: { color: "#0A0A0A", label: "Game" },
-  curated_culture: { color: "#00B8A9", label: "Culture" },
-  loverball_hosted: { color: "#E8185A", label: "Loverball" },
+  external_sports: { color: "#E85D2F", label: "Game" },
+  curated_culture: { color: "#E85D2F", label: "Culture" },
+  loverball_hosted: { color: "#E85D2F", label: "Loverball" },
 };
 
 function fmtTime(t?: string | null) {
@@ -87,12 +87,28 @@ export default function EventCard({
           <div className="flex items-start justify-between gap-2">
             <div className="min-w-0 flex-1">
               <span
-                className="inline-block text-[10px] uppercase tracking-[0.18em] font-bold font-['Inter'] mb-1.5"
-                style={{ color: theme.color }}
+                className="inline-block mb-1.5"
+                style={{
+                  fontFamily: "'Space Mono', ui-monospace, monospace",
+                  fontSize: 11,
+                  letterSpacing: "0.22em",
+                  textTransform: "uppercase",
+                  color: theme.color,
+                }}
               >
                 {theme.label}
               </span>
-              <h3 className="font-['Playfair_Display'] text-lg sm:text-xl text-[#1A1A1A] leading-tight">
+              <h3
+                className="text-[#1A1A1A]"
+                style={{
+                  fontFamily: "'Anton', Impact, sans-serif",
+                  fontWeight: 400,
+                  fontSize: "clamp(20px, 2.6vw, 26px)",
+                  lineHeight: 0.95,
+                  letterSpacing: "-0.01em",
+                  textTransform: "uppercase",
+                }}
+              >
                 {event.title}
               </h3>
             </div>
