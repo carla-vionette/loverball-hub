@@ -145,6 +145,7 @@ export default function EventDetail() {
       <Seo
         title={`${event.title} | Loverball`}
         description={event.description?.slice(0, 150) || `Join us ${dateLabel}.`}
+        path={`/event/${event.id}`}
       />
       <div className="min-h-screen bg-[#FAF5E9] text-[#1A1A1A]">
         {/* Banner */}
@@ -255,7 +256,7 @@ export default function EventDetail() {
               Who's going
             </h2>
             {user ? (
-              <GoingGraph eventId={event.id} viewer={viewer} refreshKey={refreshKey} />
+              <GoingGraph eventId={event.id} viewer={{ lat: viewer?.lat ?? null, lng: viewer?.lng ?? null }} refreshKey={refreshKey} />
             ) : (
               <p className="text-sm font-['Inter'] text-[#1A1A1A]/60">
                 Sign in to see who's at the venue and which bars have watch parties.

@@ -115,7 +115,7 @@ export default function Events() {
 
   return (
     <AppLayout>
-      <Seo title="Events | Loverball" description="Sports games, watch parties, and Loverball events near you." />
+      <Seo title="Events | Loverball" description="Sports games, watch parties, and Loverball events near you." path="/events" />
       <div className="min-h-screen bg-[#FAF5E9] text-[#1A1A1A]">
         <header className="px-5 pt-8 pb-4 max-w-3xl mx-auto">
           <div className="flex items-baseline justify-between gap-2">
