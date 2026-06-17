@@ -72,31 +72,33 @@ export default function RsvpControl({ eventId, event, viewer, variant = "detail"
           </button>
         )}
 
-        <button
-          type="button"
-          disabled={pending}
-          onClick={
-            mode === "watching"
-              ? openPicker
-              : openPicker
-          }
-          className={buttonBase}
-          style={
-            mode === "watching"
-              ? { background: TEAL, color: "#fff" }
-              : { background: "transparent", color: "#1A1A1A", border: `1.5px solid ${TEAL}` }
-          }
-          aria-pressed={mode === "watching"}
-        >
-          {pending && mode === "watching" ? (
-            <Loader2 className="w-3.5 h-3.5 animate-spin" />
-          ) : mode === "watching" ? (
-            <Check className="w-3.5 h-3.5" />
-          ) : (
-            <Tv className="w-3.5 h-3.5" />
-          )}
-          {mode === "watching" ? "Watching" : "Watching"}
-        </button>
+        {supportsWatching && (
+          <button
+            type="button"
+            disabled={pending}
+            onClick={
+              mode === "watching"
+                ? openPicker
+                : openPicker
+            }
+            className={buttonBase}
+            style={
+              mode === "watching"
+                ? { background: TEAL, color: "#fff" }
+                : { background: "transparent", color: "#1A1A1A", border: `1.5px solid ${TEAL}` }
+            }
+            aria-pressed={mode === "watching"}
+          >
+            {pending && mode === "watching" ? (
+              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+            ) : mode === "watching" ? (
+              <Check className="w-3.5 h-3.5" />
+            ) : (
+              <Tv className="w-3.5 h-3.5" />
+            )}
+            {mode === "watching" ? "Watching" : "Watching"}
+          </button>
+        )}
 
         {rsvp && (
           <button
