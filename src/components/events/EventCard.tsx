@@ -130,9 +130,13 @@ export default function EventCard({
                 <MapPin className="w-3 h-3" /> {event.venue_name}
               </span>
             )}
-            <span className="font-mono text-[#1A1A1A]/50">
-              {distance != null ? formatMiles(distance) : "Watch only"}
-            </span>
+            {distance != null ? (
+              <span className="font-mono text-[#1A1A1A]/50">{formatMiles(distance)}</span>
+            ) : (
+              (event.event_type === "game" || event.event_type === "watch_party") && (
+                <span className="font-mono text-[#1A1A1A]/50">Watch only</span>
+              )
+            )}
           </div>
 
           <div className="pt-1">
