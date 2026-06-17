@@ -21,6 +21,7 @@ export default function RsvpControl({ eventId, event, viewer, variant = "detail"
   const [pickerOpen, setPickerOpen] = useState(false);
 
   const inRadius = isInVenueRadius(event, viewer);
+  const supportsWatching = (event as any).event_type === "game" || (event as any).event_type === "watch_party";
 
   const handleGoing = async () => {
     if (mode === "going") {
