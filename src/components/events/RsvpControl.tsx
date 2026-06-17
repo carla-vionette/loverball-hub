@@ -116,7 +116,7 @@ export default function RsvpControl({ eventId, event, viewer, variant = "detail"
         )}
       </div>
 
-      {mode === "watching" && rsvp?.bar_name && (
+      {supportsWatching && mode === "watching" && rsvp?.bar_name && (
         <div className="text-xs font-['Inter'] text-[#1A1A1A]/70">
           Watching at <span className="font-semibold text-[#1A1A1A]">{rsvp.bar_name}</span>
           {" · "}
@@ -129,7 +129,7 @@ export default function RsvpControl({ eventId, event, viewer, variant = "detail"
         </div>
       )}
 
-      {!inRadius && variant === "detail" && (
+      {supportsWatching && !inRadius && variant === "detail" && (
         <p className="text-[11px] text-[#1A1A1A]/50 font-['Inter']">
           Venue is more than 50 miles away — watch with fans near you instead.
         </p>
