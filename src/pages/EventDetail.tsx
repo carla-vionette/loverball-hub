@@ -241,9 +241,13 @@ export default function EventDetail() {
                 {event.city ? `, ${event.city}` : ""}
               </span>
             )}
-            <span className="font-mono text-xs text-[#1A1A1A]/50">
-              {distance != null ? formatMiles(distance) : "Watch only"}
-            </span>
+            {distance != null ? (
+              <span className="font-mono text-xs text-[#1A1A1A]/50">{formatMiles(distance)}</span>
+            ) : (
+              (event.event_type === "game" || event.event_type === "watch_party") && (
+                <span className="font-mono text-xs text-[#1A1A1A]/50">Watch only</span>
+              )
+            )}
           </section>
 
           {/* RSVP */}
