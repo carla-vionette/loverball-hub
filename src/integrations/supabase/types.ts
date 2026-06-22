@@ -606,6 +606,45 @@ export type Database = {
           },
         ]
       }
+      drops: {
+        Row: {
+          available_from: string | null
+          available_until: string | null
+          created_at: string
+          description: string | null
+          id: string
+          image_url: string | null
+          is_active: boolean
+          reward_type: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          available_from?: string | null
+          available_until?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          reward_type?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          available_from?: string | null
+          available_until?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          reward_type?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       event_chat_messages: {
         Row: {
           created_at: string
@@ -3036,6 +3075,48 @@ export type Database = {
           updated_at?: string
           vibe_tags?: string[]
           website?: string | null
+        }
+        Relationships: []
+      }
+      watch_parties: {
+        Row: {
+          city: string | null
+          cover_image_url: string | null
+          created_at: string
+          game_label: string | null
+          host_user_id: string
+          id: string
+          is_published: boolean
+          starts_at: string
+          title: string
+          updated_at: string
+          venue_name: string | null
+        }
+        Insert: {
+          city?: string | null
+          cover_image_url?: string | null
+          created_at?: string
+          game_label?: string | null
+          host_user_id: string
+          id?: string
+          is_published?: boolean
+          starts_at: string
+          title: string
+          updated_at?: string
+          venue_name?: string | null
+        }
+        Update: {
+          city?: string | null
+          cover_image_url?: string | null
+          created_at?: string
+          game_label?: string | null
+          host_user_id?: string
+          id?: string
+          is_published?: boolean
+          starts_at?: string
+          title?: string
+          updated_at?: string
+          venue_name?: string | null
         }
         Relationships: []
       }
