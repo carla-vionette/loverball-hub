@@ -48,8 +48,10 @@ export const trackEvent = async (
     const safeDuration = typeof durationMs === 'number' && Number.isFinite(durationMs) && durationMs >= 0
       ? Math.min(durationMs, 86400000) : null;
 
-    const { data: { user } } = await supabase.auth.getUser();
-    
+    // Use cached session (no /auth/v1/user network call) to avoid rate limits.
+    const { data: { session } } = await supabase.auth.getSession();
+    const user = session?.user ?? null;
+
     await supabase.from("analytics_events").insert({
       user_id: user?.id || null,
       session_id: getSessionId(),

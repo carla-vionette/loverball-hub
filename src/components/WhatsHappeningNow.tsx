@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 import { Calendar, MapPin, ArrowRight, Users, Play } from "lucide-react";
 
 interface NextEvent {
@@ -34,6 +35,7 @@ const formatDate = (date: string, time: string | null) => {
 };
 
 const WhatsHappeningNow = () => {
+  const { user } = useAuth();
   const [event, setEvent] = useState<NextEvent | null>(null);
   const [club, setClub] = useState<ClubActivity | null>(null);
   const [video, setVideo] = useState<LatestVideo | null>(null);
@@ -51,8 +53,6 @@ const WhatsHappeningNow = () => {
         .order("event_time", { ascending: true })
         .limit(1)
         .maybeSingle();
-
-      const { data: { user } } = await supabase.auth.getUser();
 
       const [{ data: eventData }] = await Promise.all([eventPromise]);
       setEvent(eventData as NextEvent | null);
@@ -100,7 +100,7 @@ const WhatsHappeningNow = () => {
 
       setLoading(false);
     })();
-  }, []);
+  }, [user]);
 
   if (loading) return null;
 
