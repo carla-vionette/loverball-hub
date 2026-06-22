@@ -48,15 +48,15 @@ export default function SocialProofSection() {
               <span
                 key={p}
                 style={{
-                  fontFamily: fonts.mono,
-                  fontSize: 11,
-                  letterSpacing: "0.18em",
-                  textTransform: "uppercase",
+                  fontFamily: fonts.sans,
+                  fontSize: 14,
+                  letterSpacing: "-0.01em",
                   color: C.ink,
                   border: `1px solid ${C.rule}`,
                   borderRadius: 999,
                   padding: "8px 14px",
                   background: C.creamHi,
+                  fontWeight: 500,
                 }}
               >
                 {p}
@@ -82,10 +82,9 @@ export default function SocialProofSection() {
               <figcaption
                 className="absolute left-3 bottom-3 px-2 py-1"
                 style={{
-                  fontFamily: fonts.mono,
-                  fontSize: 10,
-                  letterSpacing: "0.16em",
-                  textTransform: "uppercase",
+                  fontFamily: fonts.sans,
+                  fontSize: 11,
+                  letterSpacing: "0.02em",
                   color: C.ink,
                   background: C.creamHi,
                   borderRadius: 999,
@@ -123,9 +122,17 @@ export default function SocialProofSection() {
                     }}
                     aria-hidden
                   />
-                  <Mono color={C.creamMuted} size={10}>
+                  <span
+                    style={{
+                      fontFamily: fonts.sans,
+                      fontSize: 11,
+                      letterSpacing: "0.02em",
+                      color: C.creamMuted,
+                      fontWeight: 500,
+                    }}
+                  >
                     {t.persona}
-                  </Mono>
+                  </span>
                 </div>
                 <blockquote
                   style={{

@@ -97,20 +97,20 @@ const Index = () => {
           <Link
             to="/auth?mode=signin"
             style={{
-              fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.22em",
-              textTransform: "uppercase", color: C.cream,
+              fontFamily: fonts.sans, fontSize: 14, letterSpacing: "0",
+              color: C.cream,
             }}
             className="hover:opacity-60 transition-opacity lb-cta"
           >
-            Sign In
+            Sign in
           </Link>
           <button
             onClick={() => goJoin("nav")}
             className="hover:-translate-y-0.5 transition-transform lb-cta"
             style={{
               background: C.accent, color: "#fff",
-              fontFamily: fonts.mono, fontSize: 12, letterSpacing: "0.2em",
-              textTransform: "uppercase", padding: "14px 26px", borderRadius: 999,
+              fontFamily: fonts.sans, fontSize: 14, letterSpacing: "-0.01em",
+              padding: "14px 26px", borderRadius: 999,
               fontWeight: 600,
               boxShadow: "0 10px 28px -10px rgba(232,93,38,0.7)",
             }}
@@ -129,8 +129,8 @@ const Index = () => {
               key={l}
               to={h}
               style={{
-                fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.22em",
-                textTransform: "uppercase", color: C.cream,
+                fontFamily: fonts.sans, fontSize: 14, letterSpacing: "0",
+                color: C.cream,
               }}
               className="hover:opacity-60 transition-opacity lb-cta"
             >
@@ -161,7 +161,14 @@ const Index = () => {
         <div className="max-w-[1400px] mx-auto relative">
           <div className="flex items-center justify-between mb-10 md:mb-14 lb-fade">
             <Mono color={C.cream}>Vol. 01 — Founding Issue</Mono>
-            <Mono color={C.inkMuted}>Your City</Mono>
+            <span
+              style={{
+                fontFamily: fonts.sans, fontSize: 14, letterSpacing: "0",
+                color: C.inkMuted,
+              }}
+            >
+              Your city
+            </span>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
@@ -219,8 +226,8 @@ const Index = () => {
                   className="hover:-translate-y-0.5 transition-transform w-full sm:w-auto lb-cta"
                   style={{
                     background: C.accent, color: "#fff",
-                    fontFamily: fonts.mono, fontSize: 12, letterSpacing: "0.2em",
-                    textTransform: "uppercase", padding: "18px 32px", borderRadius: 999,
+                    fontFamily: fonts.sans, fontSize: 16, letterSpacing: "-0.01em",
+                    padding: "18px 32px", borderRadius: 999,
                     fontWeight: 600,
                     boxShadow: "0 14px 36px -14px rgba(232,93,38,0.7)",
                   }}
@@ -233,17 +240,47 @@ const Index = () => {
                   style={{
                     background: "transparent",
                     color: C.cream,
-                    border: `1px solid ${C.inkRule}`,
-                    fontFamily: fonts.mono, fontSize: 12, letterSpacing: "0.2em",
-                    textTransform: "uppercase", padding: "17px 28px", borderRadius: 999,
-                    fontWeight: 600,
+                    fontFamily: fonts.sans, fontSize: 15, letterSpacing: "0",
+                    padding: "17px 0",
+                    fontWeight: 500,
+                    textDecoration: "underline",
+                    textUnderlineOffset: 4,
+                    textDecorationColor: C.inkMuted,
                   }}
                 >
                   See what members get
                 </button>
               </div>
 
-              {/* ZIP — clearly labeled, helper copy underneath */}
+              {/* Proof bar — warm, confident trust row */}
+              <div
+                className="mt-8 flex flex-wrap items-center gap-x-3 gap-y-2 lb-rise lb-delay-4"
+                aria-label="Community proof"
+              >
+                {[HOMEPAGE_PROOF.fans, HOMEPAGE_PROOF.events, HOMEPAGE_PROOF.cities].map((p, i) => (
+                  <span key={p} className="inline-flex items-center gap-3">
+                    {i > 0 && (
+                      <span
+                        aria-hidden
+                        style={{ width: 4, height: 4, borderRadius: 999, background: C.accent, display: "inline-block" }}
+                      />
+                    )}
+                    <span
+                      style={{
+                        fontFamily: fonts.sans,
+                        fontSize: 15,
+                        fontWeight: i === 0 ? 600 : 500,
+                        color: i === 0 ? C.cream : C.inkMuted,
+                        letterSpacing: "-0.01em",
+                      }}
+                    >
+                      {p}
+                    </span>
+                  </span>
+                ))}
+              </div>
+
+              {/* ZIP — moved below the social-proof line */}
               <form
                 onSubmit={handleZipSubmit}
                 className="mt-6 lb-rise lb-delay-4"
@@ -253,8 +290,8 @@ const Index = () => {
                   htmlFor="homepage-zip"
                   className="block mb-2"
                   style={{
-                    fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.2em",
-                    textTransform: "uppercase", color: C.inkMuted,
+                    fontFamily: fonts.sans, fontSize: 14, letterSpacing: "0",
+                    color: C.inkMuted,
                   }}
                 >
                   Enter your ZIP to find your sports people nearby.
@@ -281,10 +318,9 @@ const Index = () => {
                     style={{
                       background: "transparent",
                       color: C.cream,
-                      fontFamily: fonts.mono,
-                      fontSize: 13,
-                      letterSpacing: "0.18em",
-                      textTransform: "uppercase",
+                      fontFamily: fonts.sans,
+                      fontSize: 15,
+                      letterSpacing: "0",
                       padding: "16px 20px",
                       outline: "none",
                       border: "none",
@@ -297,8 +333,8 @@ const Index = () => {
                     style={{
                       background: "transparent",
                       color: C.cream,
-                      fontFamily: fonts.mono, fontSize: 12, letterSpacing: "0.2em",
-                      textTransform: "uppercase", padding: "16px 22px",
+                      fontFamily: fonts.sans, fontSize: 15, letterSpacing: "0",
+                      padding: "16px 22px",
                       borderLeft: `1px solid ${C.inkRule}`,
                       fontWeight: 600,
                       flex: 1,
@@ -308,24 +344,6 @@ const Index = () => {
                   </button>
                 </div>
               </form>
-
-              {/* Proof bar */}
-              <div
-                className="mt-8 flex flex-wrap items-center gap-x-3 gap-y-2 lb-rise lb-delay-4"
-                aria-label="Community proof"
-              >
-                {[HOMEPAGE_PROOF.fans, HOMEPAGE_PROOF.events, HOMEPAGE_PROOF.cities].map((p, i) => (
-                  <span key={p} className="inline-flex items-center gap-3">
-                    {i > 0 && (
-                      <span
-                        aria-hidden
-                        style={{ width: 4, height: 4, borderRadius: 999, background: C.inkMuted, display: "inline-block" }}
-                      />
-                    )}
-                    <Mono color={i === 0 ? C.cream : C.inkMuted}>{p}</Mono>
-                  </span>
-                ))}
-              </div>
             </div>
 
             {/* RIGHT — editorial image */}
@@ -356,8 +374,7 @@ const Index = () => {
                       border: `1px solid ${C.inkRule}`,
                       padding: "8px 12px",
                       borderRadius: 999,
-                      fontFamily: fonts.mono, fontSize: 10, letterSpacing: "0.18em",
-                      textTransform: "uppercase",
+                      fontFamily: fonts.sans, fontSize: 12, letterSpacing: "0",
                     }}
                   >
                     <span
@@ -365,7 +382,7 @@ const Index = () => {
                       className="w-1.5 h-1.5 rounded-full"
                       style={{ background: C.accent, animation: "lb-pulse-dot 2s infinite" }}
                     />
-                    Live · Near You
+                    Live near you
                   </div>
                 </div>
                 <figcaption className="mt-4 flex items-start justify-between gap-4">
@@ -454,8 +471,8 @@ const Index = () => {
             <Link
               to="/events"
               style={{
-                fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.22em",
-                textTransform: "uppercase", color: C.ink,
+                fontFamily: fonts.sans, fontSize: 14, letterSpacing: "0",
+                color: C.ink,
               }}
               className="hidden md:inline-flex items-center gap-2 hover:opacity-60 lb-cta"
             >
@@ -614,8 +631,8 @@ const Index = () => {
                     className="hover:-translate-y-0.5 transition-transform lb-cta"
                     style={{
                       background: C.accent, color: "#fff",
-                      fontFamily: fonts.mono, fontSize: 12, letterSpacing: "0.2em",
-                      textTransform: "uppercase", padding: "18px 32px", borderRadius: 999,
+                      fontFamily: fonts.sans, fontSize: 16, letterSpacing: "-0.01em",
+                      padding: "18px 32px", borderRadius: 999,
                       fontWeight: 600,
                       boxShadow: "0 14px 36px -16px rgba(232,93,38,0.7)",
                     }}
@@ -626,9 +643,10 @@ const Index = () => {
                     to="/membership"
                     className="inline-flex items-center gap-2 hover:opacity-80 lb-cta"
                     style={{
-                      fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.22em",
-                      textTransform: "uppercase", color: C.cream,
+                      fontFamily: fonts.sans, fontSize: 15, letterSpacing: "0",
+                      color: C.cream,
                       borderBottom: `1px solid ${C.inkMuted}`, paddingBottom: 4,
+                      fontWeight: 500,
                     }}
                   >
                     Full details <ArrowRight size={12} />
@@ -672,8 +690,8 @@ const Index = () => {
               className="hover:-translate-y-0.5 transition-transform lb-cta"
               style={{
                 background: C.accent, color: "#fff",
-                fontFamily: fonts.mono, fontSize: 12, letterSpacing: "0.2em",
-                textTransform: "uppercase", padding: "20px 36px", borderRadius: 999,
+                fontFamily: fonts.sans, fontSize: 16, letterSpacing: "-0.01em",
+                padding: "20px 36px", borderRadius: 999,
                 fontWeight: 600,
                 boxShadow: "0 14px 36px -16px rgba(232,93,38,0.7)",
               }}
@@ -684,9 +702,10 @@ const Index = () => {
               to="/events"
               className="inline-flex items-center gap-2 hover:bg-black/5 lb-cta"
               style={{
-                fontFamily: fonts.mono, fontSize: 12, letterSpacing: "0.2em",
-                textTransform: "uppercase", color: C.ink,
+                fontFamily: fonts.sans, fontSize: 15, letterSpacing: "0",
+                color: C.ink,
                 border: `1px solid ${C.ink}`, padding: "19px 35px", borderRadius: 999,
+                fontWeight: 500,
               }}
             >
               See upcoming events ↗
@@ -716,7 +735,7 @@ const Index = () => {
               <a
                 href="mailto:hello@loverball.com"
                 className="mt-6 inline-block hover:opacity-80 transition-opacity lb-cta"
-                style={{ fontFamily: fonts.mono, fontSize: 12, letterSpacing: "0.1em", color: C.cream, borderBottom: `1px solid ${C.accent}`, paddingBottom: 3 }}
+                style={{ fontFamily: fonts.sans, fontSize: 15, letterSpacing: "0", color: C.cream, borderBottom: `1px solid ${C.accent}`, paddingBottom: 3 }}
               >
                 hello@loverball.com
               </a>
@@ -728,7 +747,14 @@ const Index = () => {
                 { h: "Explore", items: [["Feed", "/feed"], ["Events", "/events"], ["Club", "/club"]] as [string, string][] },
               ].map((col) => (
                 <div key={col.h} className="flex flex-col gap-4">
-                  <Mono color={C.inkMuted} size={10}>{col.h}</Mono>
+                  <span
+                    style={{
+                      fontFamily: fonts.sans, fontSize: 12, letterSpacing: "0.04em",
+                      color: C.inkMuted, fontWeight: 600, textTransform: "uppercase",
+                    }}
+                  >
+                    {col.h}
+                  </span>
                   {col.items.map(([label, to]) => (
                     <Link
                       key={label}
@@ -745,13 +771,13 @@ const Index = () => {
           </div>
 
           <div className="pt-8 flex flex-col md:flex-row md:items-center justify-between gap-6" style={{ borderTop: `1px solid ${C.inkRule}` }}>
-            <Mono color={C.inkMuted} size={10}>© 2026 Loverball · Built in LA</Mono>
+            <span style={{ fontFamily: fonts.sans, fontSize: 13, letterSpacing: "0", color: C.inkMuted }}>© 2026 Loverball · Built in LA</span>
             <div className="flex items-center gap-6">
               <a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer" aria-label="Loverball on Instagram" className="hover:opacity-100 transition-opacity lb-cta" style={{ color: C.cream, opacity: 0.7 }}>
                 <Instagram size={18} />
               </a>
               {[["Privacy", "/privacy"], ["Terms", "/terms"]].map(([l, h]) => (
-                <Link key={l} to={h} className="hover:text-[#F5F0E8] transition-colors lb-cta" style={{ fontFamily: fonts.mono, fontSize: 10, letterSpacing: "0.22em", textTransform: "uppercase", color: C.inkMuted }}>
+                <Link key={l} to={h} className="hover:text-[#F5F0E8] transition-colors lb-cta" style={{ fontFamily: fonts.sans, fontSize: 13, letterSpacing: "0", color: C.inkMuted }}>
                   {l}
                 </Link>
               ))}

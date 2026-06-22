@@ -79,7 +79,17 @@ export default function ProductPreviewSection() {
           >
             <div className="flex items-center gap-2 mb-6">
               <Tv size={16} color={C.accent} />
-              <Mono color={C.accent} size={10}>Watch parties near you</Mono>
+              <span
+                style={{
+                  fontFamily: fonts.sans,
+                  fontSize: 12,
+                  letterSpacing: "0.02em",
+                  fontWeight: 600,
+                  color: C.accent,
+                }}
+              >
+                Watch parties near you
+              </span>
             </div>
             <ul className="space-y-3">
               {MOCK_WATCH_PARTIES.map((w) => (
@@ -116,9 +126,11 @@ export default function ProductPreviewSection() {
                 </li>
               ))}
             </ul>
-            <div className="mt-6 flex items-center gap-2">
-              <Camera size={14} color={C.accent} />
-              <Mono color={C.inkMuted} size={10}>Members can host, post photos &amp; video, and tag friends</Mono>
+            <div className="mt-6 flex items-start gap-2" style={{ color: C.inkMuted }}>
+              <Camera size={14} color={C.accent} className="mt-0.5 shrink-0" />
+              <span style={{ fontFamily: fonts.sans, fontSize: 13, lineHeight: 1.55 }}>
+                Members can host, post photos &amp; video, and tag friends. Every member is a verified woman, and every event follows our community guidelines.
+              </span>
             </div>
           </article>
 
@@ -133,7 +145,17 @@ export default function ProductPreviewSection() {
           >
             <div className="flex items-center gap-2 mb-6">
               <Users size={16} color={C.accent} />
-              <Mono color={C.ink} size={10}>Your crews</Mono>
+              <span
+                style={{
+                  fontFamily: fonts.sans,
+                  fontSize: 12,
+                  letterSpacing: "0.02em",
+                  fontWeight: 600,
+                  color: C.ink,
+                }}
+              >
+                Your crews
+              </span>
             </div>
             <ul className="space-y-3 flex-1">
               {MOCK_CREWS.map((c) => (
@@ -175,7 +197,17 @@ export default function ProductPreviewSection() {
           >
             <div className="flex items-center gap-2 mb-6">
               <MessageCircle size={16} color={C.accent} />
-              <Mono color={C.ink} size={10}>From the member feed</Mono>
+              <span
+                style={{
+                  fontFamily: fonts.sans,
+                  fontSize: 12,
+                  letterSpacing: "0.02em",
+                  fontWeight: 600,
+                  color: C.ink,
+                }}
+              >
+                From the member feed
+              </span>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               {MOCK_POSTS.map((p) => (
