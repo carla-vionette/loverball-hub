@@ -1,107 +1,86 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Seo } from "@/components/Seo";
-import { Instagram, ArrowRight, ArrowUpRight, Users, Tv, Activity, Check } from "lucide-react";
+import {
+  Instagram,
+  ArrowRight,
+  ArrowUpRight,
+  Check,
+  MapPin,
+  Sparkles,
+  Heart,
+  Ticket,
+} from "lucide-react";
 import heroImage from "@/assets/hero-women-new.png";
 import loverballWordmark from "@/assets/loverball-wordmark.png.asset.json";
 
 import WhatsHappeningNow from "@/components/WhatsHappeningNow";
 import StoriesSection from "@/components/StoriesSection";
 import { INSTAGRAM_URL } from "@/lib/socialLinks";
+import { trackEvent } from "@/lib/analytics";
+
+import { C, fonts, Mono } from "@/components/home/_theme";
+import { HOMEPAGE_PROOF } from "@/components/home/homepageConfig";
+import SocialProofSection from "@/components/home/SocialProofSection";
+import BenefitsSection from "@/components/home/BenefitsSection";
+import DropSection from "@/components/home/DropSection";
+import ProductPreviewSection from "@/components/home/ProductPreviewSection";
+import RecapGallery from "@/components/home/RecapGallery";
 
 /* ============================================================
-   LOVERBALL — HOMEPAGE
-   Fable-inspired: deep ink hero, editorial serif/sans mix,
-   warm cream sections, coral accent. Location-aware fan
-    platform for women who love sports.
+   LOVERBALL — MARKETING HOMEPAGE
+   Mobile-first editorial layout for women who love sports.
+   Section order: Hero → Social Proof → Benefits → The Drop →
+   Product Preview → Recap → Stories → Membership → Final CTA.
    ============================================================ */
 
-const C = {
-  ink: "#0D0D0D",
-  inkSoft: "#1A1A1A",
-  inkRule: "rgba(245,240,232,0.14)",
-  inkMuted: "#A8A29A",
-  cream: "#F5F0E8",
-  creamHi: "#FBF7EF",
-  creamMuted: "#6B6B6B",
-  rule: "rgba(13,13,13,0.12)",
-  accent: "#E85D26",
-};
-
-const fonts = {
-  serif: "'Playfair Display', 'Tiempos Headline', Georgia, serif",
-  sans: "'Inter', system-ui, sans-serif",
-  mono: "'Space Mono', ui-monospace, monospace",
-  display: "'Anton', Impact, sans-serif",
-};
-
-const MEMBERSHIP_PRICE = 35;
-
-
-/* ---------- Atoms ---------- */
-
-const Mono = ({
-  children,
-  color,
-  size = 11,
-}: { children: React.ReactNode; color?: string; size?: number }) => (
-  <span
-    style={{
-      fontFamily: fonts.mono,
-      fontSize: size,
-      letterSpacing: "0.22em",
-      textTransform: "uppercase",
-      color: color ?? C.creamMuted,
-      fontWeight: 500,
-    }}
-  >
-    {children}
-  </span>
-);
-
-/* ---------- Page ---------- */
+const MEMBERSHIP_PRICE = 25;
+const MEMBERSHIP_ORIG = 35;
 
 const Index = () => {
   const navigate = useNavigate();
-  const goJoin = () => navigate("/auth?mode=signup");
+  const membershipRef = useRef<HTMLDivElement>(null);
   const [zip, setZip] = useState("");
+
+  const goJoin = (source: string) => {
+    trackEvent("user_behavior", "homepage_join_cta", { source });
+    navigate("/auth?mode=signup");
+  };
+
   const handleZipSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const clean = zip.replace(/\D/g, "").slice(0, 5);
+    trackEvent("user_behavior", "homepage_zip_submit", {
+      zip_valid: clean.length === 5,
+    });
     if (clean.length === 5) navigate(`/events?zip=${clean}`);
   };
 
+  const scrollToMembership = () => {
+    trackEvent("user_behavior", "homepage_see_membership_click", {});
+    membershipRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
 
   return (
     <div style={{ background: C.cream, color: C.ink, fontFamily: fonts.sans }}>
       <Seo
-        title="Loverball — The fan platform for women who love sports"
-        description="Loverball is the social and local sports platform built for women fans. Find fans like you, discover watch parties near you, and follow every league you love."
+        title="Loverball — Finally, a sports community built for women"
+        description="Loverball is the fan platform for women who love sports — all sports. Meet women fans near you, join watch parties and events, and unlock members-only drops, perks, and experiences."
         path="/"
+        imageAlt="Loverball — the fan platform for women who love sports"
       />
 
-      {/* Animations */}
       <style>{`
-        @keyframes lb-rise {
-          from { opacity: 0; transform: translateY(24px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes lb-fade {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-        @keyframes lb-pulse-dot {
-          0%, 100% { transform: scale(1); opacity: 1; }
-          50% { transform: scale(1.6); opacity: 0.5; }
-        }
+        @keyframes lb-rise { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes lb-fade { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes lb-pulse-dot { 0%,100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.6); opacity: 0.5; } }
         .lb-rise { animation: lb-rise 0.9s cubic-bezier(0.16,1,0.3,1) both; }
         .lb-fade { animation: lb-fade 1.2s ease-out both; }
         .lb-delay-1 { animation-delay: 0.1s; }
         .lb-delay-2 { animation-delay: 0.25s; }
         .lb-delay-3 { animation-delay: 0.4s; }
         .lb-delay-4 { animation-delay: 0.55s; }
-        .lb-card-hover { transition: transform 320ms cubic-bezier(0.16,1,0.3,1), border-color 320ms ease, background 320ms ease; }
-        .lb-card-hover:hover { transform: translateY(-4px); }
+        .lb-cta:focus-visible { outline: 2px solid ${C.accent}; outline-offset: 3px; }
       `}</style>
 
       {/* ============ TOP NAV ============ */}
@@ -121,12 +100,13 @@ const Index = () => {
               fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.22em",
               textTransform: "uppercase", color: C.cream,
             }}
-            className="hover:opacity-60 transition-opacity"
+            className="hover:opacity-60 transition-opacity lb-cta"
           >
             Sign In
           </Link>
           <button
-            onClick={goJoin}
+            onClick={() => goJoin("nav")}
+            className="hover:-translate-y-0.5 transition-transform lb-cta"
             style={{
               background: C.accent, color: "#fff",
               fontFamily: fonts.mono, fontSize: 12, letterSpacing: "0.2em",
@@ -134,7 +114,6 @@ const Index = () => {
               fontWeight: 600,
               boxShadow: "0 10px 28px -10px rgba(232,93,38,0.7)",
             }}
-            className="hover:-translate-y-0.5 transition-transform"
           >
             Join the Club
           </button>
@@ -153,7 +132,7 @@ const Index = () => {
                 fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.22em",
                 textTransform: "uppercase", color: C.cream,
               }}
-              className="hover:opacity-60 transition-opacity"
+              className="hover:opacity-60 transition-opacity lb-cta"
             >
               {l}
             </Link>
@@ -161,12 +140,16 @@ const Index = () => {
         </div>
       </nav>
 
-      {/* ============ HERO — deep ink, editorial ============ */}
+      {/* ============ 1) HERO ============ */}
+      {/*
+        Headline picked for emotional clarity. Alternates kept as reference:
+        // "Find your team. Find your city. Find your people."
+        // "Never watch the biggest moments alone again."
+      */}
       <section
-        className="px-5 md:px-10 pt-12 md:pt-20 pb-20 md:pb-32 relative overflow-hidden"
+        className="px-5 md:px-10 pt-12 md:pt-20 pb-16 md:pb-24 relative overflow-hidden"
         style={{ background: C.ink, color: C.cream }}
       >
-        {/* soft ambient accent glow */}
         <div
           aria-hidden
           className="absolute -top-40 -right-40 w-[600px] h-[600px] rounded-full pointer-events-none"
@@ -175,29 +158,24 @@ const Index = () => {
             filter: "blur(40px)",
           }}
         />
-
         <div className="max-w-[1400px] mx-auto relative">
-          {/* Editorial issue line */}
-          <div className="flex items-center justify-between mb-10 md:mb-16 lb-fade">
+          <div className="flex items-center justify-between mb-10 md:mb-14 lb-fade">
             <Mono color={C.cream}>Vol. 01 — Founding Issue</Mono>
             <Mono color={C.inkMuted}>Your City</Mono>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
-            {/* LEFT — Logo + Headline */}
             <div className="lg:col-span-7">
-              {/* Hero wordmark */}
               <img
                 src={loverballWordmark.url}
                 alt="Loverball"
-                className="block mb-8 md:mb-10 w-[280px] md:w-[380px] lg:w-[440px] h-auto select-none lb-rise"
+                className="block mb-7 md:mb-9 w-[240px] md:w-[340px] lg:w-[400px] h-auto select-none lb-rise"
                 draggable={false}
                 loading="eager"
                 decoding="async"
                 style={{ filter: "brightness(0) invert(1)" }}
               />
 
-              {/* Editorial headline */}
               <h1
                 className="lb-rise lb-delay-2"
                 style={{ lineHeight: 0.95, letterSpacing: "-0.035em" }}
@@ -205,36 +183,40 @@ const Index = () => {
                 <span
                   style={{
                     display: "block",
-                    fontFamily: fonts.serif, fontWeight: 400,
-                    fontSize: "clamp(44px, 7vw, 112px)",
+                    fontFamily: fonts.serif,
+                    fontWeight: 400,
+                    fontSize: "clamp(40px, 6.6vw, 104px)",
                     color: C.cream,
                   }}
                 >
-                  Sports are better
+                  Finally, a sports community
                 </span>
                 <span
                   style={{
                     display: "block",
-                    fontFamily: fonts.serif, fontStyle: "italic", fontWeight: 400,
-                    fontSize: "clamp(44px, 7vw, 112px)",
+                    fontFamily: fonts.serif,
+                    fontStyle: "italic",
+                    fontWeight: 400,
+                    fontSize: "clamp(40px, 6.6vw, 104px)",
                     color: C.accent,
                   }}
                 >
-                  with the right people.
+                  built for women.
                 </span>
               </h1>
 
               <p
-                className="mt-8 max-w-xl lb-rise lb-delay-3"
+                className="mt-7 max-w-xl lb-rise lb-delay-3"
                 style={{ fontSize: 17, lineHeight: 1.6, color: C.inkMuted }}
               >
-                Loverball is the club for women who love sports — connect with fans,
-                find watch parties nearby, and never miss a score.
+                Meet women sports fans near you, join watch parties and events,
+                and unlock members-only drops, perks, and experiences.
               </p>
 
-              <div className="mt-10 flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-5 lb-rise lb-delay-4">
+              <div className="mt-8 flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-4 lb-rise lb-delay-4">
                 <button
-                  onClick={goJoin}
+                  onClick={() => goJoin("hero_primary")}
+                  className="hover:-translate-y-0.5 transition-transform w-full sm:w-auto lb-cta"
                   style={{
                     background: C.accent, color: "#fff",
                     fontFamily: fonts.mono, fontSize: 12, letterSpacing: "0.2em",
@@ -242,21 +224,53 @@ const Index = () => {
                     fontWeight: 600,
                     boxShadow: "0 14px 36px -14px rgba(232,93,38,0.7)",
                   }}
-                  className="hover:-translate-y-0.5 transition-transform w-full sm:w-auto"
                 >
                   Join the Club →
                 </button>
-                <form
-                  onSubmit={handleZipSubmit}
-                  className="flex items-stretch w-full sm:w-auto"
+                <button
+                  onClick={scrollToMembership}
+                  className="hover:opacity-80 transition-opacity w-full sm:w-auto lb-cta"
+                  style={{
+                    background: "transparent",
+                    color: C.cream,
+                    border: `1px solid ${C.inkRule}`,
+                    fontFamily: fonts.mono, fontSize: 12, letterSpacing: "0.2em",
+                    textTransform: "uppercase", padding: "17px 28px", borderRadius: 999,
+                    fontWeight: 600,
+                  }}
+                >
+                  See what members get
+                </button>
+              </div>
+
+              {/* ZIP — clearly labeled, helper copy underneath */}
+              <form
+                onSubmit={handleZipSubmit}
+                className="mt-6 lb-rise lb-delay-4"
+                aria-label="Find Loverball fans near you"
+              >
+                <label
+                  htmlFor="homepage-zip"
+                  className="block mb-2"
+                  style={{
+                    fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.2em",
+                    textTransform: "uppercase", color: C.inkMuted,
+                  }}
+                >
+                  Enter your ZIP to find your sports people nearby.
+                </label>
+                <div
+                  className="inline-flex items-stretch w-full sm:w-auto"
                   style={{
                     border: `1px solid ${C.inkRule}`,
                     borderRadius: 999,
                     background: "transparent",
                     overflow: "hidden",
+                    maxWidth: 360,
                   }}
                 >
                   <input
+                    id="homepage-zip"
                     type="text"
                     inputMode="numeric"
                     pattern="\d{5}"
@@ -264,22 +278,22 @@ const Index = () => {
                     value={zip}
                     onChange={(e) => setZip(e.target.value.replace(/\D/g, "").slice(0, 5))}
                     placeholder="90026"
-                    aria-label="ZIP code"
                     style={{
                       background: "transparent",
                       color: C.cream,
                       fontFamily: fonts.mono,
-                      fontSize: 12,
-                      letterSpacing: "0.2em",
+                      fontSize: 13,
+                      letterSpacing: "0.18em",
                       textTransform: "uppercase",
                       padding: "16px 20px",
                       outline: "none",
                       border: "none",
-                      width: 110,
+                      width: 130,
                     }}
                   />
                   <button
                     type="submit"
+                    className="hover:opacity-70 transition-opacity inline-flex items-center gap-2 lb-cta"
                     style={{
                       background: "transparent",
                       color: C.cream,
@@ -287,20 +301,34 @@ const Index = () => {
                       textTransform: "uppercase", padding: "16px 22px",
                       borderLeft: `1px solid ${C.inkRule}`,
                       fontWeight: 600,
+                      flex: 1,
                     }}
-                    className="hover:opacity-70 transition-opacity inline-flex items-center gap-2"
                   >
                     Find your fans →
                   </button>
-                </form>
-              </div>
+                </div>
+              </form>
 
-              <div className="mt-8 lb-rise lb-delay-4">
-                <Mono color={C.inkMuted}>1,000+ Fans · 3 Sold-out Events</Mono>
+              {/* Proof bar */}
+              <div
+                className="mt-8 flex flex-wrap items-center gap-x-3 gap-y-2 lb-rise lb-delay-4"
+                aria-label="Community proof"
+              >
+                {[HOMEPAGE_PROOF.fans, HOMEPAGE_PROOF.events, HOMEPAGE_PROOF.cities].map((p, i) => (
+                  <span key={p} className="inline-flex items-center gap-3">
+                    {i > 0 && (
+                      <span
+                        aria-hidden
+                        style={{ width: 4, height: 4, borderRadius: 999, background: C.inkMuted, display: "inline-block" }}
+                      />
+                    )}
+                    <Mono color={i === 0 ? C.cream : C.inkMuted}>{p}</Mono>
+                  </span>
+                ))}
               </div>
             </div>
 
-            {/* RIGHT — image with editorial caption */}
+            {/* RIGHT — editorial image */}
             <div className="lg:col-span-5 lb-fade lb-delay-3">
               <figure>
                 <div
@@ -313,13 +341,12 @@ const Index = () => {
                 >
                   <img
                     src={heroImage}
-                    alt="Women fans at a Loverball watch party"
+                    alt="Loverball members at a watch party — women sports fans celebrating together"
                     className="w-full h-full object-cover"
                     loading="eager"
                     decoding="async"
                     fetchPriority="high"
                   />
-                  {/* Live location chip */}
                   <div
                     className="absolute top-4 left-4 inline-flex items-center gap-2"
                     style={{
@@ -334,6 +361,7 @@ const Index = () => {
                     }}
                   >
                     <span
+                      aria-hidden
                       className="w-1.5 h-1.5 rounded-full"
                       style={{ background: C.accent, animation: "lb-pulse-dot 2s infinite" }}
                     />
@@ -351,7 +379,7 @@ const Index = () => {
       </section>
 
       {/* ============ MARQUEE TICKER ============ */}
-      <div style={{ background: C.accent, color: "#fff" }} className="overflow-hidden">
+      <div style={{ background: C.accent, color: "#fff" }} className="overflow-hidden" aria-hidden>
         <div
           className="marquee-track py-4 whitespace-nowrap"
           style={{
@@ -364,17 +392,15 @@ const Index = () => {
           {Array.from({ length: 2 }).map((_, k) => (
             <span key={k} className="inline-flex items-center gap-10 px-6">
               {[
-                "Connect IRL",
-                "★",
-                "Find fans near you",
-                "★",
-                "Know where to watch",
-                "★",
-                "Live scores",
-                "★",
-                "Built for women who love sports",
+                "For women who love sports",
                 "★",
                 "Any league. Any city.",
+                "★",
+                "Real friends, in real life",
+                "★",
+                "The Monday Drop",
+                "★",
+                "Members-only watch parties",
                 "★",
               ].map((t, i) => (
                 <span key={`${k}-${i}`}>{t}</span>
@@ -384,142 +410,39 @@ const Index = () => {
         </div>
       </div>
 
-      {/* ============ THREE PILLARS — Connect / Watch / Score ============ */}
-      <section className="px-5 md:px-10 py-24 md:py-36" style={{ background: C.cream }}>
-        <div className="max-w-[1400px] mx-auto">
-          <div className="flex items-end justify-between gap-6 mb-16">
-            <div className="max-w-2xl">
-              <Mono color={C.ink}>§ 01 — The Platform</Mono>
-              <h2
-                className="mt-5"
-                style={{
-                  fontFamily: fonts.serif,
-                  fontWeight: 400,
-                  fontSize: "clamp(40px, 6vw, 88px)",
-                  lineHeight: 0.95,
-                  letterSpacing: "-0.03em",
-                  color: C.ink,
-                }}
-              >
-                Connect. Watch.<br />
-                <span style={{ fontStyle: "italic", color: C.accent }}>Score.</span>
-              </h2>
-              <p
-                className="mt-6"
-                style={{
-                  fontFamily: fonts.serif,
-                  fontStyle: "italic",
-                  fontSize: "clamp(22px, 2.4vw, 32px)",
-                  lineHeight: 1.2,
-                  color: C.inkSoft,
-                }}
-              >
-                Your game. Your city. <span style={{ color: C.accent }}>Your crew.</span>
-              </p>
-            </div>
-            <Mono color={C.creamMuted}>Three pillars</Mono>
-          </div>
+      {/* ============ 2) SOCIAL PROOF ============ */}
+      <SocialProofSection />
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-            {[
-              {
-                n: "01",
-                kicker: "Connect",
-                Icon: Users,
-                title: "Find your fans.",
-                body: "Smart matching by team, city, and vibe. Group chats, city crews, and the IRL friendships you've been looking for.",
-              },
-              {
-                n: "02",
-                kicker: "Watch",
-                Icon: Tv,
-                title: "Know where to watch.",
-                body: "Watch parties, sports bars, and venues near you — plus the broadcast info so you never miss a tip-off, kick-off, or first pitch.",
-              },
-              {
-                n: "03",
-                kicker: "Score",
-                Icon: Activity,
-                title: "Live scores & updates.",
-                body: "Real-time scores, team updates, and storylines from the WNBA, NWSL, NCAA, and every league women are leading.",
-              },
-            ].map((b) => (
-              <article
-                key={b.n}
-                className="p-8 md:p-10 flex flex-col lb-card-hover"
-                style={{
-                  background: C.creamHi,
-                  border: `1px solid ${C.rule}`,
-                  borderRadius: 20,
-                  minHeight: 400,
-                }}
-              >
-                <div className="flex items-start justify-between">
-                  <div
-                    className="inline-flex items-center justify-center"
-                    style={{
-                      width: 52, height: 52, borderRadius: 14,
-                      background: C.ink, color: C.accent,
-                    }}
-                  >
-                    <b.Icon size={22} strokeWidth={1.75} />
-                  </div>
-                  <span
-                    style={{
-                      fontFamily: fonts.display,
-                      fontSize: 56,
-                      lineHeight: 1,
-                      color: C.accent,
-                      letterSpacing: "-0.02em",
-                    }}
-                  >
-                    {b.n}
-                  </span>
-                </div>
-                <div className="mt-10">
-                  <Mono color={C.creamMuted} size={10}>{b.kicker}</Mono>
-                </div>
-                <h3
-                  className="mt-3"
-                  style={{
-                    fontFamily: fonts.serif,
-                    fontWeight: 400,
-                    fontSize: 30,
-                    lineHeight: 1.1,
-                    letterSpacing: "-0.015em",
-                    color: C.ink,
-                  }}
-                >
-                  {b.title}
-                </h3>
-                <p
-                  className="mt-4 flex-1"
-                  style={{ color: C.inkSoft, fontSize: 15, lineHeight: 1.65 }}
-                >
-                  {b.body}
-                </p>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* ============ 3) BENEFITS ============ */}
+      <BenefitsSection />
 
-      {/* ============ WHAT'S HAPPENING NEARBY ============ */}
+      {/* ============ 4) THE DROP — Members-only, gated ============ */}
+      <DropSection />
+
+      {/* ============ 5) PRODUCT PREVIEW (mock cards) ============ */}
+      <ProductPreviewSection />
+
+      {/* ============ 6) RECAP GALLERY ============ */}
+      <RecapGallery />
+
+      {/* ============ 7) WHAT'S HAPPENING + STORIES ============ */}
       <section
         className="px-5 md:px-10 py-20 md:py-28"
         style={{ background: C.creamHi, borderTop: `1px solid ${C.rule}` }}
+        aria-labelledby="happening-heading"
       >
         <div className="max-w-[1400px] mx-auto">
           <div className="flex items-end justify-between mb-10 gap-6">
             <div>
-              <Mono color={C.creamMuted}>§ 02 — On Deck</Mono>
+              <Mono color={C.creamMuted}>§ — On deck</Mono>
               <h2
+                id="happening-heading"
                 className="mt-3"
                 style={{
                   fontFamily: fonts.serif,
                   fontStyle: "italic",
                   fontWeight: 400,
-                  fontSize: "clamp(36px, 5vw, 64px)",
+                  fontSize: "clamp(34px, 5vw, 60px)",
                   lineHeight: 1,
                   letterSpacing: "-0.02em",
                   color: C.ink,
@@ -534,7 +457,7 @@ const Index = () => {
                 fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.22em",
                 textTransform: "uppercase", color: C.ink,
               }}
-              className="hidden md:inline-flex items-center gap-2 hover:opacity-60"
+              className="hidden md:inline-flex items-center gap-2 hover:opacity-60 lb-cta"
             >
               All events <ArrowUpRight size={14} />
             </Link>
@@ -543,80 +466,48 @@ const Index = () => {
         </div>
       </section>
 
-      {/* ============ STORIES ============ */}
-      <section className="px-5 md:px-10 py-20 md:py-28" style={{ background: C.cream }}>
+      <section className="px-5 md:px-10 py-20 md:py-28" style={{ background: C.cream }} aria-labelledby="stories-heading">
         <div className="max-w-[1400px] mx-auto">
           <div className="mb-10">
-            <Mono color={C.creamMuted}>§ 03 — The Reading Room</Mono>
+            <Mono color={C.creamMuted}>§ — From the Sidelines</Mono>
             <h2
+              id="stories-heading"
               className="mt-3"
               style={{
                 fontFamily: fonts.serif,
                 fontStyle: "italic",
                 fontWeight: 400,
-                fontSize: "clamp(36px, 5vw, 64px)",
+                fontSize: "clamp(34px, 5vw, 60px)",
                 lineHeight: 1,
                 letterSpacing: "-0.02em",
                 color: C.ink,
               }}
             >
-              Stories worth reading.
+              The read.
             </h2>
           </div>
           <StoriesSection />
         </div>
       </section>
 
-      {/* ============ PULLED QUOTE — deep ink ============ */}
+      {/* ============ 8) MEMBERSHIP ============ */}
       <section
-        className="px-5 md:px-10 py-28 md:py-40"
-        style={{ background: C.ink, color: C.cream }}
+        ref={membershipRef}
+        className="px-5 md:px-10 py-24 md:py-36"
+        style={{ background: C.cream }}
+        aria-labelledby="membership-heading"
       >
-        <div className="max-w-[1200px] mx-auto">
-          <Mono color={C.inkMuted}>§ 04 — From a Member</Mono>
-          <blockquote
-            className="mt-10"
-            style={{
-              fontFamily: fonts.serif,
-              fontWeight: 400,
-              fontSize: "clamp(34px, 5.5vw, 84px)",
-              lineHeight: 1.08,
-              letterSpacing: "-0.025em",
-              color: C.cream,
-            }}
-          >
-            <span style={{ color: C.accent, fontStyle: "italic" }}>"</span>
-            I opened Loverball, found three watch parties within two miles, and
-            <span style={{ fontStyle: "italic" }}> walked in already knowing people.</span>
-            <span style={{ color: C.accent, fontStyle: "italic" }}>"</span>
-          </blockquote>
-          <div className="mt-12 flex items-center gap-4">
-            <div
-              className="w-12 h-12 rounded-full flex items-center justify-center shrink-0"
-              style={{ background: C.accent, color: "#fff", fontFamily: fonts.serif, fontSize: 18, fontStyle: "italic" }}
-            >
-              M
-            </div>
-            <div>
-              <div style={{ fontFamily: fonts.sans, fontSize: 15, color: C.cream }}>Maya R.</div>
-              <Mono color={C.inkMuted} size={10}>Founding Member · Los Angeles</Mono>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ============ MEMBERSHIP — single tier ============ */}
-      <section className="px-5 md:px-10 py-24 md:py-36" style={{ background: C.cream }}>
         <div className="max-w-[1400px] mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16">
             <div className="lg:col-span-5">
-              <Mono color={C.ink}>§ 05 — Membership</Mono>
+              <Mono color={C.ink}>§ — Membership</Mono>
               <h2
+                id="membership-heading"
                 className="mt-5"
                 style={{
                   fontFamily: fonts.serif,
                   fontWeight: 400,
-                  fontSize: "clamp(44px, 7vw, 104px)",
+                  fontSize: "clamp(42px, 6.4vw, 96px)",
                   lineHeight: 0.95,
                   letterSpacing: "-0.03em",
                   color: C.ink,
@@ -626,15 +517,39 @@ const Index = () => {
                 <span style={{ fontStyle: "italic" }}>Everything in.</span>
               </h2>
               <p className="mt-8 max-w-md" style={{ color: C.inkSoft, fontSize: 17, lineHeight: 1.55 }}>
-                The Club is everything in — location-aware matching,
-                unlimited group chats, members-only events, RSVP priority, and the
-                founding-member perks while we're still small.
+                Loverball isn't a feature subscription — it's the club you want to
+                belong to. Members get the people, the perks, and the front-of-line
+                pass.
               </p>
+
+              <ul className="mt-8 space-y-4 max-w-md">
+                {[
+                  { Icon: Heart, label: "Meet women fans near you" },
+                  { Icon: MapPin, label: "Members-only watch parties & city events" },
+                  { Icon: Sparkles, label: "The Monday Drop — exclusive perks every week" },
+                  { Icon: ArrowRight, label: "Post, host, and participate in the community" },
+                  { Icon: Ticket, label: "First access to invites, perks, priority RSVPs" },
+                ].map((row) => (
+                  <li key={row.label} className="flex items-start gap-3" style={{ fontSize: 15, color: C.inkSoft, lineHeight: 1.5 }}>
+                    <span
+                      aria-hidden
+                      className="inline-flex items-center justify-center shrink-0"
+                      style={{
+                        width: 28, height: 28, borderRadius: 8,
+                        background: C.ink, color: C.accent,
+                      }}
+                    >
+                      <row.Icon size={14} strokeWidth={2} />
+                    </span>
+                    <span>{row.label}</span>
+                  </li>
+                ))}
+              </ul>
             </div>
 
             <div className="lg:col-span-7">
               <article
-                className="relative p-8 md:p-12 lb-card-hover"
+                className="relative p-8 md:p-12"
                 style={{ background: C.ink, color: C.cream, borderRadius: 24 }}
               >
                 <div className="flex items-start justify-between gap-4 mb-10">
@@ -652,7 +567,7 @@ const Index = () => {
                       letterSpacing: "-0.02em",
                     }}
                   >
-                    $25
+                    ${MEMBERSHIP_PRICE}
                   </span>
                   <span style={{ fontFamily: fonts.serif, fontStyle: "italic", fontSize: 22, color: C.inkMuted }}>
                     / month
@@ -666,7 +581,7 @@ const Index = () => {
                       letterSpacing: "-0.02em",
                     }}
                   >
-                    ${MEMBERSHIP_PRICE}
+                    ${MEMBERSHIP_ORIG}
                   </span>
                 </div>
                 <div className="mt-4">
@@ -676,14 +591,14 @@ const Index = () => {
                 <div className="mt-10 pt-8" style={{ borderTop: `1px solid ${C.inkRule}` }}>
                   <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4">
                     {[
-                      "Location-aware fan matching",
-                      "Unlimited group chats & circles",
-                      "Members-only events & watch parties",
-                      "Where-to-watch finder",
-                      "Live scores & team updates",
-                      "RSVP priority",
+                      "Meet women fans near you",
+                      "Members-only watch parties",
+                      "City events & meet-ups",
+                      "The Monday Drop",
+                      "Post, host, tag friends",
+                      "Priority RSVPs",
                       "Founding-member perks",
-                      "VIP city meetups",
+                      "First access to invites",
                     ].map((f) => (
                       <li key={f} className="flex items-start gap-3" style={{ fontSize: 14, lineHeight: 1.55 }}>
                         <Check size={16} color={C.accent} strokeWidth={2.25} className="mt-0.5 shrink-0" />
@@ -695,7 +610,8 @@ const Index = () => {
 
                 <div className="mt-10 flex flex-wrap items-center gap-4">
                   <button
-                    onClick={goJoin}
+                    onClick={() => goJoin("membership_card")}
+                    className="hover:-translate-y-0.5 transition-transform lb-cta"
                     style={{
                       background: C.accent, color: "#fff",
                       fontFamily: fonts.mono, fontSize: 12, letterSpacing: "0.2em",
@@ -703,18 +619,17 @@ const Index = () => {
                       fontWeight: 600,
                       boxShadow: "0 14px 36px -16px rgba(232,93,38,0.7)",
                     }}
-                    className="hover:-translate-y-0.5 transition-transform"
                   >
                     Join the Club
                   </button>
                   <Link
                     to="/membership"
+                    className="inline-flex items-center gap-2 hover:opacity-80 lb-cta"
                     style={{
                       fontFamily: fonts.mono, fontSize: 11, letterSpacing: "0.22em",
                       textTransform: "uppercase", color: C.cream,
                       borderBottom: `1px solid ${C.inkMuted}`, paddingBottom: 4,
                     }}
-                    className="inline-flex items-center gap-2 hover:opacity-80"
                   >
                     Full details <ArrowRight size={12} />
                   </Link>
@@ -725,16 +640,16 @@ const Index = () => {
         </div>
       </section>
 
-      {/* ============ FINAL CTA ============ */}
-      <section className="px-5 md:px-10 py-28 md:py-40 text-center" style={{ background: C.creamHi }}>
+      {/* ============ 9) FINAL CTA ============ */}
+      <section className="px-5 md:px-10 py-24 md:py-36 text-center" style={{ background: C.creamHi }}>
         <div className="max-w-4xl mx-auto">
-          <Mono color={C.creamMuted}>§ 06 — One More Thing</Mono>
+          <Mono color={C.creamMuted}>§ — Come find your people</Mono>
           <h2
             className="mt-6"
             style={{
               fontFamily: fonts.serif,
               fontWeight: 400,
-              fontSize: "clamp(48px, 8vw, 128px)",
+              fontSize: "clamp(44px, 8vw, 120px)",
               lineHeight: 0.95,
               letterSpacing: "-0.035em",
               color: C.ink,
@@ -743,9 +658,18 @@ const Index = () => {
             Your game. Your city.<br />
             <span style={{ fontStyle: "italic", color: C.accent }}>Your crew.</span>
           </h2>
-          <div className="mt-12 flex flex-wrap gap-4 justify-center">
+          <p
+            className="mt-6 max-w-xl mx-auto"
+            style={{ color: C.inkSoft, fontSize: 17, lineHeight: 1.6 }}
+          >
+            This isn't a feed of strangers. It's the women in your city, the games
+            you actually care about, and the watch parties already on the schedule.
+            Pull up.
+          </p>
+          <div className="mt-10 flex flex-wrap gap-4 justify-center">
             <button
-              onClick={goJoin}
+              onClick={() => goJoin("final_cta")}
+              className="hover:-translate-y-0.5 transition-transform lb-cta"
               style={{
                 background: C.accent, color: "#fff",
                 fontFamily: fonts.mono, fontSize: 12, letterSpacing: "0.2em",
@@ -753,18 +677,17 @@ const Index = () => {
                 fontWeight: 600,
                 boxShadow: "0 14px 36px -16px rgba(232,93,38,0.7)",
               }}
-              className="hover:-translate-y-0.5 transition-transform"
             >
               Join the Club →
             </button>
             <Link
               to="/events"
+              className="inline-flex items-center gap-2 hover:bg-black/5 lb-cta"
               style={{
                 fontFamily: fonts.mono, fontSize: 12, letterSpacing: "0.2em",
                 textTransform: "uppercase", color: C.ink,
                 border: `1px solid ${C.ink}`, padding: "19px 35px", borderRadius: 999,
               }}
-              className="inline-flex items-center gap-2 hover:bg-black/5"
             >
               See upcoming events ↗
             </Link>
@@ -780,7 +703,7 @@ const Index = () => {
               <img
                 src={loverballWordmark.url}
                 alt="Loverball"
-                className="w-[280px] md:w-[360px] h-auto select-none mb-6"
+                className="w-[260px] md:w-[340px] h-auto select-none mb-6"
                 draggable={false}
                 loading="lazy"
                 decoding="async"
@@ -788,11 +711,11 @@ const Index = () => {
               />
               <p className="max-w-md" style={{ color: C.inkMuted, fontSize: 15, lineHeight: 1.6 }}>
                 The fan platform for women who love sports. Connect online and IRL,
-                find what's happening nearby, and never miss a score. Built in LA.
+                find what's happening nearby, and never miss a moment. Built in LA.
               </p>
               <a
                 href="mailto:hello@loverball.com"
-                className="mt-6 inline-block hover:opacity-80 transition-opacity"
+                className="mt-6 inline-block hover:opacity-80 transition-opacity lb-cta"
                 style={{ fontFamily: fonts.mono, fontSize: 12, letterSpacing: "0.1em", color: C.cream, borderBottom: `1px solid ${C.accent}`, paddingBottom: 3 }}
               >
                 hello@loverball.com
@@ -810,8 +733,8 @@ const Index = () => {
                     <Link
                       key={label}
                       to={to}
+                      className="hover:text-[#E85D26] transition-colors lb-cta"
                       style={{ fontFamily: fonts.serif, fontSize: 20, color: C.cream, letterSpacing: "-0.01em" }}
-                      className="hover:text-[#E85D26] transition-colors"
                     >
                       {label}
                     </Link>
@@ -824,11 +747,11 @@ const Index = () => {
           <div className="pt-8 flex flex-col md:flex-row md:items-center justify-between gap-6" style={{ borderTop: `1px solid ${C.inkRule}` }}>
             <Mono color={C.inkMuted} size={10}>© 2026 Loverball · Built in LA</Mono>
             <div className="flex items-center gap-6">
-              <a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer" style={{ color: C.cream, opacity: 0.7 }} className="hover:opacity-100 transition-opacity" aria-label="Loverball on Instagram">
+              <a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer" aria-label="Loverball on Instagram" className="hover:opacity-100 transition-opacity lb-cta" style={{ color: C.cream, opacity: 0.7 }}>
                 <Instagram size={18} />
               </a>
               {[["Privacy", "/privacy"], ["Terms", "/terms"]].map(([l, h]) => (
-                <Link key={l} to={h} style={{ fontFamily: fonts.mono, fontSize: 10, letterSpacing: "0.22em", textTransform: "uppercase", color: C.inkMuted }} className="hover:text-[#F5F0E8] transition-colors">
+                <Link key={l} to={h} className="hover:text-[#F5F0E8] transition-colors lb-cta" style={{ fontFamily: fonts.mono, fontSize: 10, letterSpacing: "0.22em", textTransform: "uppercase", color: C.inkMuted }}>
                   {l}
                 </Link>
               ))}

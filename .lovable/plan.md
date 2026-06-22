@@ -1,175 +1,116 @@
-# Events Section Rebuild
-
-A full replacement of the Events list + detail experience around one rule:
-**the 50-mile radius decides whether a user can RSVP as Going to the venue, or
-only as Watching at a nearby bar.**
-
-I'm mapping the spec onto tables you already have instead of creating parallel
-ones — the schema you described is essentially already in the DB under
-different names. Nothing about the current behavior is preserved; the visible
-Events screens and the RSVP UI are torn out and replaced.
-
 ## Scope
 
-**In:** `/events` list, `/event/:id` detail, event card, bar picker sheet,
-going graph (stadium + watch parties by bar grouped and sorted by proximity to
-viewer), realtime event chat, attendee profile preview with Add + DM.
+Rebuild `src/pages/Index.tsx` as a modular, mobile-first marketing homepage in the project's existing editorial design system (Deep Navy / Coral, Oswald / Poppins, 20px radius). Reuse existing tokens and shadcn primitives. No new global design tokens.
 
-**Out (reused, not rebuilt):** auth, profiles, friend/connection system, DM
-threads, admin event editor, ticket/checkout, event submissions flow.
+Stay strictly within the homepage and its new section components. No changes to auth, routing, navigation, profile, or other pages except a small `useAuth` read for the gated Drop.
 
-## The 50-mile rule
+## Section build order (matches the brief)
 
-A single helper `getEventDistanceMiles(event, viewer)` (Haversine) is the only
-gate. Used in three places:
+1. **Hero** — full-bleed editorial hero on Deep Navy.
+   - H1: *"Finally, a sports community built for women."*  
+     (Alternates kept as code comments only — single rendered headline.)
+   - Subhead + ZIP input ("Enter your ZIP to find your sports people nearby.") — removes all "favorite stadium" copy from the homepage.
+   - Primary CTA `Join the Club` → `/auth`; secondary `See what members get` → scrolls to Membership.
+   - Proof bar pulled from a small editable config object (fans / events / cities) so non-technical edits stay in one place.
 
-1. Event card — decides whether to render `Going` button at all.
-2. Event detail RSVP control — same.
-3. Going graph "At the venue" list — shown to everyone; not viewer-gated.
+2. **Community / Social Proof** — 4 persona testimonial cards (new-to-LA, solo fan, WNBA/NWSL fan, came-for-events-stayed-for-friends). Every card marked `// TODO: replace with real member quote` so placeholders cannot ship unnoticed. Imagery uses branded color blocks + initials (memory: no AI/fake faces).
 
-Out-of-radius events render Watching only. Going is *absent*, not disabled.
+3. **Benefits** — 3 outcome-led pillars, rewritten per spec, with distinct iconography and asymmetric layout to avoid SaaS grid feel.
 
-If the viewer has no coords, both buttons show (we can't gate without a
-location); a small "Set your location" nudge sits next to the RSVP row, linking
-to the existing zip-prompt.
+4. **The Drop — Every Monday** (new, gated).
+   - New Supabase table `public.drops` (title, description, reward_type, image_url, available_from, available_until, is_active) with RLS: anyone signed-in reads active drops, only admins write.
+   - Component fetches the current active drop. Signed-in members see live content; signed-out / non-members see a blurred premium teaser with "Members only — Join to unlock" overlay. The gated state is real, not just CSS.
 
-## Data — using what's already there
+5. **Product Preview** — mock cards for local watch parties, fan crews, member posts, and event activity. Every mock block tagged `// MOCK: …` in source. Scaffolds new `public.watch_parties` table and a `member-media` Supabase Storage bucket so the shape exists for the next iteration.
 
-No new tables. Tiny additive migration only:
+6. **Event Recap / Media** — recap gallery with short captions (uses branded color blocks until real media is uploaded — memory: no fake event photography). Lazy-loaded.
 
-- `events.location_lat`, `events.location_lng` — already exist.
-- `event_rsvps.rsvp_type` (`stadium` | `bar`) — already exists, maps to
-  `going` / `watching`.
-- `event_rsvps.bar_id`, `bar_name` — already exist; we extend with a real FK.
-- `watch_locations` — already the "watch_spots" table (lat/lng/city).
-- `event_chat_messages` — already exists, used as the going chat.
+7. **Stories — "From the Sidelines"** — pulls real story cards from existing `news` / curated content data layer if available; otherwise renders polished placeholder cards consistent with the design system, never empty.
 
-Migration adds:
+8. **Membership** — rewritten aspirational copy grouped into the five benefit clusters from the brief; founding-member urgency preserved if accurate. Reuses existing pricing card primitives.
 
-- `event_rsvps.watch_location_id uuid references watch_locations(id)` (nullable;
-  required when `rsvp_type = 'bar'` via a trigger).
-- Postgres function `public.distance_miles(lat1, lng1, lat2, lng2) returns
-  double precision` (Haversine, immutable) — used by an RPC for the going graph
-  so distance sort happens server-side.
-- RPC `get_event_going_graph(p_event_id uuid, p_viewer_lat, p_viewer_lng)`
-  returning two result sets folded into JSON: `stadium` attendees and
-  `watch_parties` (array of `{ watch_location, distance_mi, attendees[] }`
-  sorted by distance from viewer). Joins `profiles` for avatar/name only —
-  no PII — and respects the existing `event_rsvps` SELECT policies.
-- Add `event_chat_messages` to `supabase_realtime` publication.
-- RLS confirmed: read for any authenticated user on a public event; insert
-  restricted to users with a non-canceled `event_rsvps` row for that event.
+9. **Final CTA** — keeps "Your game. Your city. Your crew." with stronger supporting line + single strong CTA.
 
-## Screens
+## Cross-cutting
 
-### `/events` — list
+- **Analytics**: `trackEvent` calls on hero CTA, ZIP submit, secondary CTA, Drop "join to unlock", and Membership CTA — into existing `analytics_events`. No schema changes.
+- **SEO**: per-route `<Helmet>` with title, description, canonical, OG + Twitter card tags. Adds `HelmetProvider` at app root if not already mounted. Branded share image referenced (real generation deferred — placeholder note left for the user; we will NOT ship a half-baked og image).
+- **A11y**: alt text on every image, semantic `<section>` + heading order, focus-visible on all CTAs, ZIP input has visible label.
+- **Performance**: `loading="lazy"` + `decoding="async"` on below-the-fold media, `IntersectionObserver`-mounted recap gallery, no new heavy deps.
 
-- Editorial header: "Events" (Playfair) + user city subhead.
-- Filter chips: All / Sports / Culture / Loverball — drive a single query
-  param. No heavy sidebar.
-- Vertical feed sorted by `event_date` ascending, in-radius first then
-  out-of-radius. Skeleton cards while loading. Editorial empty state.
-- **Card** (whole card tappable to detail):
-  - Left 4px accent bar + small tag, color by `event_type`:
-    `external_sports` → black, `curated_culture` → teal,
-    `loverball_hosted` → raspberry.
-  - Banner image (with branded gradient fallback — no AI imagery).
-  - Playfair title, date · time, venue name, distance ("8 mi" or "Watch only").
-  - Inline RSVP row:
-    - In radius: `Going` (raspberry filled when active) + `Watching` (outline).
-    - Out of radius: `Watching` only.
-    - Tapping `Going` writes RSVP optimistically.
-    - Tapping `Watching` opens the bar picker sheet.
-    - If already RSVP'd, the active button is filled and shows a tiny "Change"
-      affordance; long-press / overflow gives "Cancel RSVP".
+## Database migrations (one migration, awaiting approval)
 
-### Bar picker sheet (shared, used from card + detail)
+```sql
+-- drops
+CREATE TABLE public.drops (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  title text NOT NULL,
+  description text,
+  reward_type text,
+  image_url text,
+  available_from timestamptz,
+  available_until timestamptz,
+  is_active boolean NOT NULL DEFAULT true,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  updated_at timestamptz NOT NULL DEFAULT now()
+);
+GRANT SELECT ON public.drops TO authenticated;
+GRANT ALL ON public.drops TO service_role;
+ALTER TABLE public.drops ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Signed-in users read active drops"
+  ON public.drops FOR SELECT TO authenticated
+  USING (is_active = true);
+CREATE POLICY "Admins manage drops"
+  ON public.drops FOR ALL TO authenticated
+  USING (public.has_role(auth.uid(),'admin'))
+  WITH CHECK (public.has_role(auth.uid(),'admin'));
 
-- Bottom sheet titled "Where are you watching?"
-- Queries `watch_locations` near the viewer (by `distance_miles`), closest
-  first. Each row: name, neighborhood, distance, image, vibe tags.
-- Search input at top for filtering by name.
-- Confirm = upsert `event_rsvps` with `rsvp_type='bar'`, `watch_location_id`,
-  and `bar_name` snapshot.
-- Empty state: "No watch spots listed near you yet — RSVP as watching anyway?"
-  with a single confirm button that writes the RSVP with `watch_location_id`
-  null. Never a dead end.
+-- watch_parties (scaffold, mock UI will read it when populated)
+CREATE TABLE public.watch_parties (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  host_user_id uuid NOT NULL,
+  title text NOT NULL,
+  game_label text,
+  venue_name text,
+  city text,
+  starts_at timestamptz NOT NULL,
+  cover_image_url text,
+  is_published boolean NOT NULL DEFAULT true,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  updated_at timestamptz NOT NULL DEFAULT now()
+);
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.watch_parties TO authenticated;
+GRANT ALL ON public.watch_parties TO service_role;
+ALTER TABLE public.watch_parties ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Signed-in users read published watch parties"
+  ON public.watch_parties FOR SELECT TO authenticated
+  USING (is_published = true);
+CREATE POLICY "Hosts manage their own watch parties"
+  ON public.watch_parties FOR ALL TO authenticated
+  USING (auth.uid() = host_user_id)
+  WITH CHECK (auth.uid() = host_user_id);
 
-### `/event/:id` — detail
-
-Sections, top to bottom:
-
-1. **Header** — banner image, title (Playfair), league, date/time, venue,
-   type tag, distance.
-2. **Your RSVP** — Same Going/Watching control with the 50-mile rule. Active
-   state obvious. If watching, shows the chosen bar with "change". One
-   "Cancel RSVP" link.
-3. **Who's Going** — the going graph, two clearly separated groups:
-   - **At the venue · N** — stadium icon, avatar/name grid of everyone with
-     `rsvp_type='stadium'`. Tap → profile preview.
-   - **Watch parties · N** — for each bar with attendees, a card showing:
-     bar name, distance from viewer, attendee count, avatar stack.
-     Sorted closest-first to viewer. First 3 expanded, rest collapsed
-     under "More watch parties".
-   - Empty states for each group, never blank.
-4. **Event chat** — tab inside the detail labeled "Going chat". Realtime on
-   `event_chat_messages`. Composer pinned at bottom; auto-scroll. Only
-   RSVP'd users can post (server-enforced); non-RSVP'd see a read-only view
-   with "RSVP to join the chat" CTA. Tap avatar → profile preview.
-
-### Profile preview sheet
-
-Opens from any avatar/name (going graph or chat). Shows avatar, name, city,
-public profile bits via existing `get_safe_profile` RPC. Two real actions:
-
-- **Add** — wires the existing `friendships` flow; reflects Add → Requested →
-  Connected.
-- **DM** — routes to the existing `/messages` thread with that user.
-
-No placeholder buttons anywhere.
+-- member-media bucket (public, member uploads scoped by folder = user id)
+-- Created via storage_create_bucket, with standard RLS on storage.objects.
+```
 
 ## Files
 
-**New / replaced:**
+New section components under `src/components/home/`:
+- `HeroSection.tsx`, `ProofBar.tsx`, `SocialProofSection.tsx`, `BenefitsSection.tsx`, `DropSection.tsx`, `ProductPreviewSection.tsx`, `RecapGallery.tsx`, `StoriesSection.tsx`, `MembershipSection.tsx`, `FinalCtaSection.tsx`.
+- `homepageConfig.ts` for editable proof-bar counts and placeholder copy.
 
-- `src/pages/Events.tsx` — replaced.
-- `src/pages/EventDetail.tsx` — replaced.
-- `src/components/events/EventCard.tsx` — new.
-- `src/components/events/RsvpControl.tsx` — new, shared.
-- `src/components/events/BarPickerSheet.tsx` — new.
-- `src/components/events/GoingGraph.tsx` — new.
-- `src/components/events/EventChatPanel.tsx` — new (wraps existing
-  `EventChatThread` with the RSVP gate + composer).
-- `src/components/events/ProfilePreviewSheet.tsx` — new (uses existing
-  `useFriendships` and DM route).
-- `src/hooks/useEventRsvp.ts` — new, single source of truth for RSVP state +
-  mutations, optimistic.
-- `src/hooks/useGoingGraph.ts` — new, calls the new RPC, viewer-aware.
-- `src/lib/distance.ts` — `haversineMiles`, `formatMiles`.
+Rewrites:
+- `src/pages/Index.tsx` — composes the sections in order, adds `<Helmet>`, lazy mounts below-the-fold sections.
+- `src/main.tsx` — wrap with `HelmetProvider` if not already.
 
-**Removed:** the current `EventDetail.tsx` inline RSVP UI, the old
-`WhoElseGoingTabs.tsx`, and the mock-attendee fallbacks in those files. Any
-references in `Feed.tsx` / sidebar to the old components are repointed.
+## Out of scope (will NOT do)
 
-**Migration:** one new file adding the column, FK, validation trigger,
-distance function, RPC, and realtime publication entry.
+- No admin UI for `drops` / `watch_parties` in this pass — seedable via the existing admin pattern in a follow-up.
+- No real OG share image generation — leaves a documented hook so the user can drop one in.
+- No changes to navigation, footer, auth, or other routes.
+- No real member testimonials (every placeholder explicitly marked `// TODO`).
 
-## Audit before finishing
+## Approval needed
 
-- Run `rg` for every `to=`/`href=`/`navigate(` introduced; confirm each
-  resolves to a real route (`/event/:id`, `/profile/:id`, `/messages`,
-  `/edit-profile`).
-- Manual click-through in the preview: list → card → detail → RSVP both
-  modes → bar picker → going graph avatar → profile preview → Add → DM.
-- Typecheck/build via the harness.
-
-## Notes / open questions I'm resolving without asking
-
-- Treating Watch parties as **always viewer-proximity sorted**, but never
-  hidden — far bars collapse, they don't disappear, so a user watching with
-  far-away friends still sees them.
-- "At the venue" list is **not** viewer-distance gated — if you're at the
-  game you're at the game.
-- If the user has no saved coords, the 50-mile rule defaults to *showing
-  both buttons* and surfacing a zip nudge, so we never silently strip the
-  Going option.
+This plan involves a Supabase migration (new `drops` + `watch_parties` tables and RLS) and a new public storage bucket. Approving the plan will trigger the migration tool for your confirmation before any DB change runs.
