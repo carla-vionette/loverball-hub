@@ -91,18 +91,40 @@ export default function RecapGallery() {
               style={{
                 borderRadius: 18,
                 border: `1px solid ${C.rule}`,
-                background: visible ? r.color : C.creamHi,
+                background: r.image
+                  ? "#fff"
+                  : visible
+                  ? r.color
+                  : C.creamHi,
                 transition: "background 600ms ease",
               }}
             >
-              <div
-                aria-hidden
-                style={{
-                  aspectRatio: i % 2 === 0 ? "3/4" : "4/5",
-                  width: "100%",
-                  background: visible ? r.color : "transparent",
-                }}
-              />
+              {r.image ? (
+                <img
+                  src={r.image}
+                  alt={r.alt || r.caption}
+                  loading="lazy"
+                  decoding="async"
+                  style={{
+                    aspectRatio: i % 2 === 0 ? "3/4" : "4/5",
+                    width: "100%",
+                    height: "auto",
+                    objectFit: "cover",
+                    display: "block",
+                    opacity: visible ? 1 : 0,
+                    transition: "opacity 600ms ease",
+                  }}
+                />
+              ) : (
+                <div
+                  aria-hidden
+                  style={{
+                    aspectRatio: i % 2 === 0 ? "3/4" : "4/5",
+                    width: "100%",
+                    background: visible ? r.color : "transparent",
+                  }}
+                />
+              )}
               <figcaption
                 className="p-4"
                 style={{
