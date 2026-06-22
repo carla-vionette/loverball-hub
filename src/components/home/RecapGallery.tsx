@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { C, fonts, Mono } from "./_theme";
+import angelCityPregame from "@/assets/angel-city-pregame.jpg.asset.json";
 
 // Branded color blocks act as recap stand-ins until real event media is uploaded.
 // Per project memory: no AI-generated event photography on the marketing site.
@@ -13,7 +14,8 @@ const RECAPS = [
   {
     caption: "Angel City pre-game brunch",
     sub: "Mimosas, lineups, and a new group chat.",
-    color: "linear-gradient(135deg,#1F8F6F 0%,#0D0D0D 100%)",
+    image: angelCityPregame.url,
+    alt: "Members gathered for an Angel City pre-game brunch",
   },
   {
     caption: "Pico House · El Pueblo VIP",
