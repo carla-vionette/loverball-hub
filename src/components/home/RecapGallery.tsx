@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { C, fonts, Mono } from "./_theme";
-import angelCityPregame from "@/assets/angel-city-pregame.png.asset.json";
+import angelCityPregame from "@/assets/angel-city-pregame.jpg.asset.json";
 
 // Branded color blocks act as recap stand-ins until real event media is uploaded.
 // Per project memory: no AI-generated event photography on the marketing site.
