@@ -1,5 +1,5 @@
 import { MapPin, Users, MessageCircle, Camera, Tv } from "lucide-react";
-import { C, fonts } from "./_theme";
+import { C, fonts, Mono } from "./_theme";
 
 // MOCK: all cards on this section are illustrative previews of product surfaces.
 // Real data fetching is intentionally deferred — see homepage rebuild plan.
