@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { C, fonts, Mono } from "./_theme";
+import angelCityPregame from "@/assets/angel-city-pregame.jpg.asset.json";
 
 // Branded color blocks act as recap stand-ins until real event media is uploaded.
 // Per project memory: no AI-generated event photography on the marketing site.
@@ -13,7 +14,8 @@ const RECAPS = [
   {
     caption: "Angel City pre-game brunch",
     sub: "Mimosas, lineups, and a new group chat.",
-    color: "linear-gradient(135deg,#1F8F6F 0%,#0D0D0D 100%)",
+    image: angelCityPregame.url,
+    alt: "Members gathered for an Angel City pre-game brunch",
   },
   {
     caption: "Pico House · El Pueblo VIP",
@@ -89,18 +91,40 @@ export default function RecapGallery() {
               style={{
                 borderRadius: 18,
                 border: `1px solid ${C.rule}`,
-                background: visible ? r.color : C.creamHi,
+                background: r.image
+                  ? "#fff"
+                  : visible
+                  ? r.color
+                  : C.creamHi,
                 transition: "background 600ms ease",
               }}
             >
-              <div
-                aria-hidden
-                style={{
-                  aspectRatio: i % 2 === 0 ? "3/4" : "4/5",
-                  width: "100%",
-                  background: visible ? r.color : "transparent",
-                }}
-              />
+              {r.image ? (
+                <img
+                  src={r.image}
+                  alt={r.alt || r.caption}
+                  loading="lazy"
+                  decoding="async"
+                  style={{
+                    aspectRatio: i % 2 === 0 ? "3/4" : "4/5",
+                    width: "100%",
+                    height: "auto",
+                    objectFit: "cover",
+                    display: "block",
+                    opacity: visible ? 1 : 0,
+                    transition: "opacity 600ms ease",
+                  }}
+                />
+              ) : (
+                <div
+                  aria-hidden
+                  style={{
+                    aspectRatio: i % 2 === 0 ? "3/4" : "4/5",
+                    width: "100%",
+                    background: visible ? r.color : "transparent",
+                  }}
+                />
+              )}
               <figcaption
                 className="p-4"
                 style={{
