@@ -126,8 +126,7 @@ const WhatsHappeningNow = () => {
         style={{
           fontFamily: fonts.sans,
           fontSize: 12,
-          letterSpacing: "0.08em",
-          textTransform: "uppercase",
+          letterSpacing: "0.02em",
           color: "#E85D2F",
           fontWeight: 700,
         }}
