@@ -167,41 +167,52 @@ export default function GoingGraph({ eventId, viewer, refreshKey = 0 }: Props) {
           </p>
         ) : (
           <div className="space-y-2">
-            {visibleGroups.map((g) => (
-              <div
-                key={g.watch_location_id ?? g.bar_name ?? "unknown"}
-                className="p-4 rounded-2xl bg-white border border-black/5"
-              >
-                <div className="flex items-start justify-between gap-3 mb-2">
-                  <div className="min-w-0">
-                    <div className="font-['Inter'] font-semibold text-[#1A1A1A] truncate">
-                      {g.bar_name || "Watching from home"}
+            {visibleGroups.map((g) => {
+              const groupKey = g.watch_location_id ?? g.bar_name ?? "unknown";
+              const isOpen = expandedGroup === groupKey;
+              return (
+                <div
+                  key={groupKey}
+                  className="p-4 rounded-2xl bg-white border border-black/5"
+                >
+                  <div className="flex items-start justify-between gap-3 mb-2">
+                    <div className="min-w-0">
+                      <div className="font-['Inter'] font-semibold text-[#1A1A1A] truncate">
+                        {g.bar_name || "Watching from home"}
+                      </div>
+                      <div className="text-xs text-[#1A1A1A]/60 truncate">
+                        {[g.neighborhood, g.city].filter(Boolean).join(" · ") ||
+                          "Location not set"}
+                      </div>
                     </div>
-                    <div className="text-xs text-[#1A1A1A]/60 truncate">
-                      {[g.neighborhood, g.city].filter(Boolean).join(" · ") ||
-                        "Location not set"}
+                    <div className="text-right flex-shrink-0">
+                      <div className="text-xs font-mono text-[#1A1A1A]/50">
+                        {g.distance_mi != null ? formatMiles(g.distance_mi) : ""}
+                      </div>
+                      <div className="text-xs font-['Inter'] text-[#1A1A1A]/60 inline-flex items-center gap-1">
+                        <Users className="w-3 h-3" /> {g.attendee_count}
+                      </div>
                     </div>
                   </div>
-                  <div className="text-right flex-shrink-0">
-                    <div className="text-xs font-mono text-[#1A1A1A]/50">
-                      {g.distance_mi != null ? formatMiles(g.distance_mi) : ""}
-                    </div>
-                    <div className="text-xs font-['Inter'] text-[#1A1A1A]/60 inline-flex items-center gap-1">
-                      <Users className="w-3 h-3" /> {g.attendee_count}
-                    </div>
+                  <div className="flex items-center justify-between">
+                    <AvatarStack atts={g.attendees} onSelect={(a) => setProfileSel(a)} />
+                    <button
+                      onClick={() => setExpandedGroup(isOpen ? null : groupKey)}
+                      className="text-xs font-['Inter'] text-[#00B8A9] font-semibold hover:underline"
+                    >
+                      {isOpen ? "Hide" : "See who"}
+                    </button>
                   </div>
+                  {isOpen && g.attendees.length > 0 && (
+                    <div className="mt-3 pt-3 border-t border-black/5 flex flex-wrap gap-3">
+                      {g.attendees.map((a) => (
+                        <AvatarChip key={a.id} a={a} onClick={() => setProfileSel(a)} />
+                      ))}
+                    </div>
+                  )}
                 </div>
-                <div className="flex items-center justify-between">
-                  <AvatarStack atts={g.attendees} />
-                  <button
-                    onClick={() => g.attendees[0] && setProfileSel(g.attendees[0])}
-                    className="text-xs font-['Inter'] text-[#00B8A9] font-semibold hover:underline"
-                  >
-                    See who
-                  </button>
-                </div>
-              </div>
-            ))}
+              );
+            })}
             {groups.length > 3 && (
               <button
                 onClick={() => setExpanded((v) => !v)}
