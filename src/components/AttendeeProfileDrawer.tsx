@@ -63,15 +63,16 @@ const AttendeeProfileDrawer = ({ profile, open, onOpenChange }: Props) => {
       .or(
         `and(requester_id.eq.${user.id},addressee_id.eq.${profile.id}),and(requester_id.eq.${profile.id},addressee_id.eq.${user.id})`
       )
-      .maybeSingle();
+      .limit(1);
 
-    if (!data) {
+    const row = data?.[0];
+    if (!row) {
       setFriendState("none");
-    } else if (data.status === "accepted") {
+    } else if (row.status === "accepted") {
       setFriendState("accepted");
-    } else if (data.status === "pending" && data.requester_id === user.id) {
+    } else if (row.status === "pending" && row.requester_id === user.id) {
       setFriendState("pending_sent");
-    } else if (data.status === "pending" && data.addressee_id === user.id) {
+    } else if (row.status === "pending" && row.addressee_id === user.id) {
       setFriendState("pending_received");
     } else {
       setFriendState("none");
@@ -84,9 +85,19 @@ const AttendeeProfileDrawer = ({ profile, open, onOpenChange }: Props) => {
     const { error } = await supabase.from("friendships").insert({
       requester_id: user.id,
       addressee_id: profile.id,
+      status: "pending",
     });
     if (error) {
-      toast({ title: "Error", description: "Could not send friend request.", variant: "destructive" });
+      if ((error as any).code === "23505") {
+        await fetchFriendship();
+        toast({ title: "Already connected", description: "You've already sent or received a request." });
+      } else {
+        toast({
+          title: "Couldn't send request",
+          description: error.message || "Please try again.",
+          variant: "destructive",
+        });
+      }
     } else {
       setFriendState("pending_sent");
       toast({ title: "Request sent!", description: `Friend request sent to ${profile.name}.` });
