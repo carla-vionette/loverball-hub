@@ -130,7 +130,7 @@ export default function ProductPreviewSection() {
             <div className="mt-6 flex items-start gap-2" style={{ color: C.inkMuted }}>
               <Camera size={14} color={C.accent} className="mt-0.5 shrink-0" />
               <span style={{ fontFamily: fonts.sans, fontSize: 13, lineHeight: 1.55 }}>
-                Members can host, post photos &amp; video, and tag friends. For verified women members with community guidelines.
+                Members can host, post photos &amp; video, and tag friends. Every member is a verified woman, and every event follows our community guidelines.
               </span>
             </div>
           </article>
