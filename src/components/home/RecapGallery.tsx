@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { C, fonts, Mono } from "./_theme";
 import angelCityPregame from "@/assets/angel-city-pregame.jpg.asset.json";
 import sparksWatch from "@/assets/sparks-watch.jpg.asset.json";
+import picoHouse from "@/assets/pico-house.jpg.asset.json";
 
 // Branded color blocks act as recap stand-ins until real event media is uploaded.
 // Per project memory: no AI-generated event photography on the marketing site.
@@ -22,7 +23,8 @@ const RECAPS = [
   {
     caption: "Pico House · El Pueblo VIP",
     sub: "Culture + sports + the women shaping LA.",
-    color: "linear-gradient(135deg,#7B5CFF 0%,#E85D26 100%)",
+    image: picoHouse.url,
+    alt: "Members at the Pico House El Pueblo VIP event",
   },
   {
     caption: "FIFA Watch Party",
