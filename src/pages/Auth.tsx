@@ -187,8 +187,34 @@ const Auth = () => {
   }, [searchParams]);
 
   // ── Password sign in / sign up ─────────────────────────────────────
+  const friendlyAuthError = (err: any): string => {
+    const msg = String(err?.message || err || "");
+    const status = err?.status ?? err?.statusCode;
+    if (status === 429 || /rate limit|too many requests|over_email_send_rate_limit/i.test(msg)) {
+      return "Give us a sec and try again — we're catching up.";
+    }
+    return msg || "Something went wrong. Please try again.";
+  };
+
+  const signInWithRetry = async (email: string, password: string) => {
+    let lastErr: any = null;
+    for (let attempt = 0; attempt < 3; attempt++) {
+      const result = await supabase.auth.signInWithPassword({ email, password });
+      const status = (result.error as any)?.status;
+      if (!result.error) return result;
+      lastErr = result.error;
+      if (status !== 429 && !/rate limit|too many requests/i.test(result.error.message || "")) {
+        throw result.error;
+      }
+      // exponential backoff: 600ms, 1500ms
+      await new Promise((r) => setTimeout(r, 600 * Math.pow(2, attempt)));
+    }
+    throw lastErr;
+  };
+
   const handlePasswordSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (loading) return; // guard against rapid re-submit / double-click
     setLoading(true);
     try {
       if (isSignup) {
@@ -202,10 +228,7 @@ const Auth = () => {
         return;
       }
 
-      const { error, data } = await supabase.auth.signInWithPassword({
-        email: email.trim().toLowerCase(),
-        password,
-      });
+      const { data, error } = await signInWithRetry(email.trim().toLowerCase(), password);
       if (error) throw error;
 
       const { data: profile } = await supabase
@@ -222,7 +245,7 @@ const Auth = () => {
         navigate(dest);
       }
     } catch (err: any) {
-      toast({ title: isSignup ? "Couldn't sign up" : "Couldn't sign in", description: err.message, variant: "destructive" });
+      toast({ title: isSignup ? "Couldn't sign up" : "Couldn't sign in", description: friendlyAuthError(err), variant: "destructive" });
     } finally {
       setLoading(false);
     }
