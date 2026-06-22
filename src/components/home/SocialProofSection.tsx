@@ -1,5 +1,14 @@
 import { C, fonts, Mono } from "./_theme";
 import { HOMEPAGE_PROOF, PERSONA_TESTIMONIALS } from "./homepageConfig";
+import fansGalatasaray from "@/assets/fans-galatasaray.jpg.asset.json";
+import fansBrasil from "@/assets/fans-brasil.jpg.asset.json";
+import fansPortugal from "@/assets/fans-portugal.jpg.asset.json";
+
+const FAN_PHOTOS = [
+  { src: fansGalatasaray.url, alt: "Women fans cheering at a night match", caption: "Matchnight — Istanbul" },
+  { src: fansBrasil.url, alt: "Two women in Brasil jerseys laughing at a watch party", caption: "Watch party — Rio" },
+  { src: fansPortugal.url, alt: "Two women smiling in Portugal kits in the stands", caption: "Stands — Lisbon" },
+];
 
 const PERSONA_COLORS = [
   "#E85D26", // coral
