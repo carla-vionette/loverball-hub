@@ -65,7 +65,40 @@ export default function SocialProofSection() {
           </div>
         </div>
 
+        <div className="grid grid-cols-3 gap-2 md:gap-4 mb-10 md:mb-14">
+          {FAN_PHOTOS.map((p) => (
+            <figure
+              key={p.src}
+              className="relative overflow-hidden"
+              style={{ borderRadius: 16, border: `1px solid ${C.rule}`, aspectRatio: "3 / 4" }}
+            >
+              <img
+                src={p.src}
+                alt={p.alt}
+                loading="lazy"
+                decoding="async"
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+              <figcaption
+                className="absolute left-3 bottom-3 px-2 py-1"
+                style={{
+                  fontFamily: fonts.mono,
+                  fontSize: 10,
+                  letterSpacing: "0.16em",
+                  textTransform: "uppercase",
+                  color: C.ink,
+                  background: C.creamHi,
+                  borderRadius: 999,
+                }}
+              >
+                {p.caption}
+              </figcaption>
+            </figure>
+          ))}
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+
           {PERSONA_TESTIMONIALS.map((t, i) => {
             const color = PERSONA_COLORS[i % PERSONA_COLORS.length];
             return (
