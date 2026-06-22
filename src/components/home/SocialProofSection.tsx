@@ -1,5 +1,14 @@
 import { C, fonts, Mono } from "./_theme";
 import { HOMEPAGE_PROOF, PERSONA_TESTIMONIALS } from "./homepageConfig";
+import fansGalatasaray from "@/assets/fans-galatasaray.jpg.asset.json";
+import fansBrasil from "@/assets/fans-brasil.jpg.asset.json";
+import fansPortugal from "@/assets/fans-portugal.jpg.asset.json";
+
+const FAN_PHOTOS = [
+  { src: fansGalatasaray.url, alt: "Women fans cheering at a night match", caption: "Matchnight — Istanbul" },
+  { src: fansBrasil.url, alt: "Two women in Brasil jerseys laughing at a watch party", caption: "Watch party — Rio" },
+  { src: fansPortugal.url, alt: "Two women smiling in Portugal kits in the stands", caption: "Stands — Lisbon" },
+];
 
 const PERSONA_COLORS = [
   "#E85D26", // coral
@@ -56,7 +65,40 @@ export default function SocialProofSection() {
           </div>
         </div>
 
+        <div className="grid grid-cols-3 gap-2 md:gap-4 mb-10 md:mb-14">
+          {FAN_PHOTOS.map((p) => (
+            <figure
+              key={p.src}
+              className="relative overflow-hidden"
+              style={{ borderRadius: 16, border: `1px solid ${C.rule}`, aspectRatio: "3 / 4" }}
+            >
+              <img
+                src={p.src}
+                alt={p.alt}
+                loading="lazy"
+                decoding="async"
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+              <figcaption
+                className="absolute left-3 bottom-3 px-2 py-1"
+                style={{
+                  fontFamily: fonts.mono,
+                  fontSize: 10,
+                  letterSpacing: "0.16em",
+                  textTransform: "uppercase",
+                  color: C.ink,
+                  background: C.creamHi,
+                  borderRadius: 999,
+                }}
+              >
+                {p.caption}
+              </figcaption>
+            </figure>
+          ))}
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+
           {PERSONA_TESTIMONIALS.map((t, i) => {
             const color = PERSONA_COLORS[i % PERSONA_COLORS.length];
             return (
