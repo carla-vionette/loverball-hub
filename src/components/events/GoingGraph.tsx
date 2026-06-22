@@ -107,6 +107,7 @@ export default function GoingGraph({ eventId, viewer, refreshKey = 0 }: Props) {
   const [expanded, setExpanded] = useState(false);
   const [profileSel, setProfileSel] = useState<AttendeeLite | null>(null);
 
+  const [expandedGroup, setExpandedGroup] = useState<string | null>(null);
   const stadium = data.stadium.attendees;
   const groups: WatchPartyGroup[] = data.watch_parties.groups;
   const visibleGroups = expanded ? groups : groups.slice(0, 3);
