@@ -47,13 +47,27 @@ function AvatarChip({ a, onClick }: { a: AttendeeLite; onClick: () => void }) {
   );
 }
 
-function AvatarStack({ atts, max = 5 }: { atts: AttendeeLite[]; max?: number }) {
+function AvatarStack({
+  atts,
+  max = 5,
+  onSelect,
+}: {
+  atts: AttendeeLite[];
+  max?: number;
+  onSelect?: (a: AttendeeLite) => void;
+}) {
   const slice = atts.slice(0, max);
   const extra = Math.max(0, atts.length - max);
   return (
     <div className="flex -space-x-2">
       {slice.map((a) => (
-        <div key={a.id}>
+        <button
+          key={a.id}
+          type="button"
+          onClick={() => onSelect?.(a)}
+          className="rounded-full hover:scale-110 transition-transform focus:outline-none focus:ring-2 focus:ring-[#E8185A]/50"
+          aria-label={`View ${a.name}'s profile`}
+        >
           {a.profile_photo_url ? (
             <img
               src={a.profile_photo_url}
@@ -65,7 +79,7 @@ function AvatarStack({ atts, max = 5 }: { atts: AttendeeLite[]; max?: number }) 
               {a.name?.[0]?.toUpperCase() || "?"}
             </div>
           )}
-        </div>
+        </button>
       ))}
       {extra > 0 && (
         <div className="w-8 h-8 rounded-full bg-[#1A1A1A] border-2 border-white flex items-center justify-center text-white text-[10px] font-semibold">
