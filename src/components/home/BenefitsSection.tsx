@@ -103,9 +103,8 @@ export default function BenefitsSection() {
                   style={{
                     fontFamily: fonts.sans,
                     fontSize: 12,
-                    letterSpacing: "0.04em",
+                    letterSpacing: "0.02em",
                     fontWeight: 600,
-                    textTransform: "uppercase",
                     color: i === 1 ? C.inkMuted : C.creamMuted,
                   }}
                 >
