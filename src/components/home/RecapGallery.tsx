@@ -23,7 +23,7 @@ const RECAPS = [
     color: "linear-gradient(135deg,#7B5CFF 0%,#E85D26 100%)",
   },
   {
-    caption: "Watch Party · June 12",
+    caption: "FIFA Watch Party",
     sub: "Past event — packed house, new crew.",
     color: "linear-gradient(135deg,#0D0D0D 0%,#E85D26 100%)",
   },
