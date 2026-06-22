@@ -54,8 +54,6 @@ const WhatsHappeningNow = () => {
         .limit(1)
         .maybeSingle();
 
-      const { data: { user } } = await supabase.auth.getUser();
-
       const [{ data: eventData }] = await Promise.all([eventPromise]);
       setEvent(eventData as NextEvent | null);
 
@@ -102,7 +100,7 @@ const WhatsHappeningNow = () => {
 
       setLoading(false);
     })();
-  }, []);
+  }, [user]);
 
   if (loading) return null;
 
