@@ -27,6 +27,19 @@ interface LatestVideo {
   creator: string | null;
 }
 
+const LA_AREA_CITIES = [
+  "Los Angeles",
+  "Inglewood",
+  "Long Beach",
+  "Pasadena",
+  "Santa Monica",
+  "Burbank",
+  "Glendale",
+  "West Hollywood",
+  "Hollywood",
+  "Downtown Los Angeles",
+];
+
 const formatDate = (date: string, time: string | null) => {
   const d = new Date(`${date}T${time || "00:00"}`);
   const day = d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
@@ -35,9 +48,55 @@ const formatDate = (date: string, time: string | null) => {
   return `${day} · ${t}`;
 };
 
+const buildLaFilter = () => {
+  return LA_AREA_CITIES.map((city) => `city.ilike.%${city}%`).join(",");
+};
+
+const EventCard = ({ event, index }: { event: NextEvent; index: number }) => {
+  const location = [event.venue_name, event.city].filter(Boolean).join(" · ");
+  return (
+    <Link
+      to={`/event/${event.id}`}
+      className="group rounded-[20px] p-6 transition-all"
+      style={{ background: "#FFFFFF", border: "1px solid #E8E3DC", color: "#1A1A1A" }}
+    >
+      <div className="flex items-center gap-2 mb-3">
+        <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#E85D2F] animate-pulse" />
+        <span
+          className="text-[10px] tracking-[0.02em] text-[#E85D2F] font-semibold"
+          style={{ fontFamily: fonts.sans }}
+        >
+          {index === 0 ? "Next event" : "Upcoming"}
+        </span>
+      </div>
+      <h3
+        className="text-xl md:text-2xl leading-tight mb-3 line-clamp-2"
+        style={{ fontFamily: "'Anton', Impact, sans-serif", fontWeight: 600, color: "#1A1A1A" }}
+      >
+        {event.title}
+      </h3>
+      <div className="space-y-1.5 mb-4">
+        <div className="flex items-center gap-2 text-sm" style={{ color: "#6B6B6B" }}>
+          <Calendar className="w-3.5 h-3.5 flex-shrink-0" />
+          <span>{formatDate(event.event_date, event.event_time)}</span>
+        </div>
+        {location && (
+          <div className="flex items-center gap-2 text-sm" style={{ color: "#6B6B6B" }}>
+            <MapPin className="w-3.5 h-3.5 flex-shrink-0" />
+            <span className="truncate">{location}</span>
+          </div>
+        )}
+      </div>
+      <span className="inline-flex items-center gap-1 text-sm font-medium text-[#E85D2F] group-hover:gap-2 transition-all">
+        See event <ArrowRight className="w-3.5 h-3.5" />
+      </span>
+    </Link>
+  );
+};
+
 const WhatsHappeningNow = () => {
   const { user } = useAuth();
-  const [event, setEvent] = useState<NextEvent | null>(null);
+  const [events, setEvents] = useState<NextEvent[]>([]);
   const [club, setClub] = useState<ClubActivity | null>(null);
   const [video, setVideo] = useState<LatestVideo | null>(null);
   const [loading, setLoading] = useState(true);
@@ -50,13 +109,13 @@ const WhatsHappeningNow = () => {
         .select("id, title, event_date, event_time, venue_name, city")
         .eq("status", "published")
         .gte("event_date", today)
+        .or(buildLaFilter())
         .order("event_date", { ascending: true })
         .order("event_time", { ascending: true })
-        .limit(1)
-        .maybeSingle();
+        .limit(12);
 
       const [{ data: eventData }] = await Promise.all([eventPromise]);
-      setEvent(eventData as NextEvent | null);
+      setEvents((eventData as NextEvent[]) ?? []);
 
       if (user) {
         const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
@@ -103,10 +162,6 @@ const WhatsHappeningNow = () => {
     })();
   }, [user]);
 
-  if (loading) return null;
-
-  const location = event ? [event.venue_name, event.city].filter(Boolean).join(" · ") : "";
-
   const clubMessage = club
     ? club.pendingMatches > 0
       ? `${club.pendingMatches} new fan match${club.pendingMatches === 1 ? "" : "es"} waiting`
@@ -117,7 +172,8 @@ const WhatsHappeningNow = () => {
         : null
     : null;
 
-  if (!event && !clubMessage && !video) return null;
+  if (loading) return null;
+  if (events.length === 0 && !clubMessage && !video) return null;
 
   return (
     <section className="max-w-7xl mx-auto mt-16 px-5 md:px-10">
@@ -131,118 +187,84 @@ const WhatsHappeningNow = () => {
           fontWeight: 700,
         }}
       >
-        What's happening now
+        Upcoming games in LA
       </p>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {/* Card 1: Next event */}
-        {event && (
-          <Link
-            to={`/event/${event.id}`}
-            className="group rounded-[20px] p-6 transition-all"
-            style={{ background: "#FFFFFF", border: "1px solid #E8E3DC", color: "#1A1A1A" }}
-          >
-            <div className="flex items-center gap-2 mb-3">
-              <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#E85D2F] animate-pulse" />
-              <span
-                className="text-[10px] tracking-[0.02em] text-[#E85D2F] font-semibold"
-                style={{ fontFamily: fonts.sans }}
-              >
-                Next event
-              </span>
-            </div>
-            <h3
-              className="text-xl md:text-2xl leading-tight mb-3 line-clamp-2"
-              style={{ fontFamily: "'Anton', Impact, sans-serif", fontWeight: 600, color: "#1A1A1A" }}
+      {events.length > 0 && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
+          {events.map((event, i) => (
+            <EventCard key={event.id} event={event} index={i} />
+          ))}
+        </div>
+      )}
+
+      {(clubMessage || video) && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {clubMessage && (
+            <Link
+              to="/club"
+              className="group rounded-[20px] p-6 transition-all"
+              style={{ background: "#FFFFFF", border: "1px solid #E8E3DC", color: "#1A1A1A" }}
             >
-              {event.title}
-            </h3>
-            <div className="space-y-1.5 mb-4">
-              <div className="flex items-center gap-2 text-sm" style={{ color: "#6B6B6B" }}>
-                <Calendar className="w-3.5 h-3.5 flex-shrink-0" />
-                <span>{formatDate(event.event_date, event.event_time)}</span>
+              <div className="flex items-center gap-2 mb-3">
+                <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#E85D2F] animate-pulse" />
+                <span
+                  className="text-[10px] tracking-[0.02em] text-[#E85D2F] font-semibold"
+                  style={{ fontFamily: fonts.sans }}
+                >
+                  The Club
+                </span>
               </div>
-              {location && (
-                <div className="flex items-center gap-2 text-sm" style={{ color: "#6B6B6B" }}>
-                  <MapPin className="w-3.5 h-3.5 flex-shrink-0" />
-                  <span className="truncate">{location}</span>
+              <h3
+                className="text-xl md:text-2xl leading-tight mb-3 line-clamp-3"
+                style={{ fontFamily: "'Anton', Impact, sans-serif", fontWeight: 600, color: "#1A1A1A" }}
+              >
+                {clubMessage}
+              </h3>
+              <div className="flex items-center gap-2 text-sm mb-4" style={{ color: "#6B6B6B" }}>
+                <Users className="w-3.5 h-3.5 flex-shrink-0" />
+                <span>Fan matches & crews</span>
+              </div>
+              <span className="inline-flex items-center gap-1 text-sm font-medium text-[#E85D2F] group-hover:gap-2 transition-all">
+                Go to Club <ArrowRight className="w-3.5 h-3.5" />
+              </span>
+            </Link>
+          )}
+
+          {video && (
+            <Link
+              to="/feed"
+              className="group rounded-[20px] p-6 transition-all"
+              style={{ background: "#FFFFFF", border: "1px solid #E8E3DC", color: "#1A1A1A" }}
+            >
+              <div className="flex items-center gap-2 mb-3">
+                <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#E85D2F] animate-pulse" />
+                <span
+                  className="text-[10px] tracking-[0.02em] text-[#E85D2F] font-semibold"
+                  style={{ fontFamily: fonts.sans }}
+                >
+                  {video.category ? video.category : "New on feed"}
+                </span>
+              </div>
+              <h3
+                className="text-xl md:text-2xl leading-tight mb-3 line-clamp-3"
+                style={{ fontFamily: "'Anton', Impact, sans-serif", fontWeight: 600, color: "#1A1A1A" }}
+              >
+                {video.title}
+              </h3>
+              {video.creator && (
+                <div className="flex items-center gap-2 text-sm mb-4" style={{ color: "#6B6B6B" }}>
+                  <Play className="w-3.5 h-3.5 flex-shrink-0" />
+                  <span className="truncate">{video.creator}</span>
                 </div>
               )}
-            </div>
-            <span className="inline-flex items-center gap-1 text-sm font-medium text-[#E85D2F] group-hover:gap-2 transition-all">
-              See event <ArrowRight className="w-3.5 h-3.5" />
-            </span>
-          </Link>
-        )}
-
-
-        {/* Card 2: Club activity */}
-        {clubMessage && (
-          <Link
-            to="/club"
-            className="group rounded-[20px] p-6 transition-all"
-            style={{ background: "#FFFFFF", border: "1px solid #E8E3DC", color: "#1A1A1A" }}
-          >
-            <div className="flex items-center gap-2 mb-3">
-              <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#E85D2F] animate-pulse" />
-              <span
-                className="text-[10px] tracking-[0.02em] text-[#E85D2F] font-semibold"
-                style={{ fontFamily: fonts.sans }}
-              >
-                The Club
+              <span className="inline-flex items-center gap-1 text-sm font-medium text-[#E85D2F] group-hover:gap-2 transition-all">
+                Open Feed <ArrowRight className="w-3.5 h-3.5" />
               </span>
-            </div>
-            <h3
-              className="text-xl md:text-2xl leading-tight mb-3 line-clamp-3"
-              style={{ fontFamily: "'Anton', Impact, sans-serif", fontWeight: 600, color: "#1A1A1A" }}
-            >
-              {clubMessage}
-            </h3>
-            <div className="flex items-center gap-2 text-sm mb-4" style={{ color: "#6B6B6B" }}>
-              <Users className="w-3.5 h-3.5 flex-shrink-0" />
-              <span>Fan matches & crews</span>
-            </div>
-            <span className="inline-flex items-center gap-1 text-sm font-medium text-[#E85D2F] group-hover:gap-2 transition-all">
-              Go to Club <ArrowRight className="w-3.5 h-3.5" />
-            </span>
-          </Link>
-        )}
-
-        {/* Card 3: Latest video */}
-        {video && (
-          <Link
-            to="/feed"
-            className="group rounded-[20px] p-6 transition-all"
-            style={{ background: "#FFFFFF", border: "1px solid #E8E3DC", color: "#1A1A1A" }}
-          >
-            <div className="flex items-center gap-2 mb-3">
-              <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#E85D2F] animate-pulse" />
-              <span
-                className="text-[10px] tracking-[0.02em] text-[#E85D2F] font-semibold"
-                style={{ fontFamily: fonts.sans }}
-              >
-                {video.category ? video.category : "New on feed"}
-              </span>
-            </div>
-            <h3
-              className="text-xl md:text-2xl leading-tight mb-3 line-clamp-3"
-              style={{ fontFamily: "'Anton', Impact, sans-serif", fontWeight: 600, color: "#1A1A1A" }}
-            >
-              {video.title}
-            </h3>
-            {video.creator && (
-              <div className="flex items-center gap-2 text-sm mb-4" style={{ color: "#6B6B6B" }}>
-                <Play className="w-3.5 h-3.5 flex-shrink-0" />
-                <span className="truncate">{video.creator}</span>
-              </div>
-            )}
-            <span className="inline-flex items-center gap-1 text-sm font-medium text-[#E85D2F] group-hover:gap-2 transition-all">
-              Open Feed <ArrowRight className="w-3.5 h-3.5" />
-            </span>
-          </Link>
-
-        )}
-      </div>
+            </Link>
+          )}
+        </div>
+      )}
     </section>
   );
 };
