@@ -35,6 +35,7 @@ const formatDate = (date: string, time: string | null) => {
 };
 
 const WhatsHappeningNow = () => {
+  const { user } = useAuth();
   const [event, setEvent] = useState<NextEvent | null>(null);
   const [club, setClub] = useState<ClubActivity | null>(null);
   const [video, setVideo] = useState<LatestVideo | null>(null);
