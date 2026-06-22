@@ -3,6 +3,7 @@ import { C, fonts, Mono } from "./_theme";
 import angelCityPregame from "@/assets/angel-city-pregame.jpg.asset.json";
 import sparksWatch from "@/assets/sparks-watch.jpg.asset.json";
 import picoHouse from "@/assets/pico-house.jpg.asset.json";
+import fifaWatchParty from "@/assets/fifa-watch-party.png.asset.json";
 
 // Branded color blocks act as recap stand-ins until real event media is uploaded.
 // Per project memory: no AI-generated event photography on the marketing site.
@@ -29,7 +30,8 @@ const RECAPS = [
   {
     caption: "FIFA Watch Party",
     sub: "Past event — packed house, new crew.",
-    color: "linear-gradient(135deg,#0D0D0D 0%,#E85D26 100%)",
+    image: fifaWatchParty.url,
+    alt: "Members gathered for a FIFA watch party",
   },
 
 ];
@@ -95,40 +97,24 @@ export default function RecapGallery() {
               style={{
                 borderRadius: 18,
                 border: `1px solid ${C.rule}`,
-                background: r.image
-                  ? "#fff"
-                  : visible
-                  ? r.color
-                  : C.creamHi,
-                transition: "background 600ms ease",
+                background: "#fff",
               }}
             >
-              {r.image ? (
-                <img
-                  src={r.image}
-                  alt={r.alt || r.caption}
-                  loading="lazy"
-                  decoding="async"
-                  style={{
-                    aspectRatio: i % 2 === 0 ? "3/4" : "4/5",
-                    width: "100%",
-                    height: "auto",
-                    objectFit: "cover",
-                    display: "block",
-                    opacity: visible ? 1 : 0,
-                    transition: "opacity 600ms ease",
-                  }}
-                />
-              ) : (
-                <div
-                  aria-hidden
-                  style={{
-                    aspectRatio: i % 2 === 0 ? "3/4" : "4/5",
-                    width: "100%",
-                    background: visible ? r.color : "transparent",
-                  }}
-                />
-              )}
+              <img
+                src={r.image}
+                alt={r.alt || r.caption}
+                loading="lazy"
+                decoding="async"
+                style={{
+                  aspectRatio: i % 2 === 0 ? "3/4" : "4/5",
+                  width: "100%",
+                  height: "auto",
+                  objectFit: "cover",
+                  display: "block",
+                  opacity: visible ? 1 : 0,
+                  transition: "opacity 600ms ease",
+                }}
+              />
               <figcaption
                 className="p-4"
                 style={{
