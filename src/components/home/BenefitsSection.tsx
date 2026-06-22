@@ -99,9 +99,18 @@ export default function BenefitsSection() {
               </div>
 
               <div className="mt-8">
-                <Mono color={i === 1 ? C.inkMuted : C.creamMuted} size={10}>
+                <span
+                  style={{
+                    fontFamily: fonts.sans,
+                    fontSize: 12,
+                    letterSpacing: "0.04em",
+                    fontWeight: 600,
+                    textTransform: "uppercase",
+                    color: i === 1 ? C.inkMuted : C.creamMuted,
+                  }}
+                >
                   {b.kicker}
-                </Mono>
+                </span>
               </div>
               <h3
                 className="mt-3"

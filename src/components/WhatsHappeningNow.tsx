@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { Calendar, MapPin, ArrowRight, Users, Play } from "lucide-react";
+import { fonts } from "@/components/home/_theme";
 
 interface NextEvent {
   id: string;
@@ -123,15 +124,15 @@ const WhatsHappeningNow = () => {
       <p
         className="mb-4"
         style={{
-          fontFamily: "'IBM Plex Mono', ui-monospace, monospace",
-          fontSize: 11,
-          letterSpacing: "0.22em",
+          fontFamily: fonts.sans,
+          fontSize: 12,
+          letterSpacing: "0.08em",
           textTransform: "uppercase",
           color: "#E85D2F",
           fontWeight: 700,
         }}
       >
-        What's Happening Now
+        What's happening now
       </p>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -145,10 +146,10 @@ const WhatsHappeningNow = () => {
             <div className="flex items-center gap-2 mb-3">
               <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#E85D2F] animate-pulse" />
               <span
-                className="text-[10px] tracking-[0.2em] uppercase text-[#E85D2F] font-semibold"
-                style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace" }}
+                className="text-[10px] tracking-[0.08em] uppercase text-[#E85D2F] font-semibold"
+                style={{ fontFamily: fonts.sans }}
               >
-                Next Event
+                Next event
               </span>
             </div>
             <h3
@@ -186,8 +187,8 @@ const WhatsHappeningNow = () => {
             <div className="flex items-center gap-2 mb-3">
               <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#E85D2F] animate-pulse" />
               <span
-                className="text-[10px] tracking-[0.2em] uppercase text-[#E85D2F] font-semibold"
-                style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace" }}
+                className="text-[10px] tracking-[0.08em] uppercase text-[#E85D2F] font-semibold"
+                style={{ fontFamily: fonts.sans }}
               >
                 The Club
               </span>
@@ -218,10 +219,10 @@ const WhatsHappeningNow = () => {
             <div className="flex items-center gap-2 mb-3">
               <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#E85D2F] animate-pulse" />
               <span
-                className="text-[10px] tracking-[0.2em] uppercase text-[#E85D2F] font-semibold"
-                style={{ fontFamily: "'IBM Plex Mono', ui-monospace, monospace" }}
+                className="text-[10px] tracking-[0.08em] uppercase text-[#E85D2F] font-semibold"
+                style={{ fontFamily: fonts.sans }}
               >
-                {video.category ? video.category.toUpperCase() : "New on Feed"}
+                {video.category ? video.category : "New on feed"}
               </span>
             </div>
             <h3

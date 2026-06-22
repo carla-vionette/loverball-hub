@@ -99,10 +99,9 @@ export default function DropSection() {
                 style={{
                   background: C.accent,
                   color: "#fff",
-                  fontFamily: fonts.mono,
-                  fontSize: 12,
-                  letterSpacing: "0.2em",
-                  textTransform: "uppercase",
+                  fontFamily: fonts.sans,
+                  fontSize: 15,
+                  letterSpacing: "-0.01em",
                   padding: "16px 28px",
                   borderRadius: 999,
                   fontWeight: 600,
@@ -163,14 +162,21 @@ export default function DropSection() {
                   {drop?.available_until && (
                     <div className="mt-4 inline-flex items-center gap-2">
                       <Calendar size={14} color={C.accent} />
-                      <Mono color={C.inkMuted} size={10}>
+                      <span
+                        style={{
+                          fontFamily: fonts.sans,
+                          fontSize: 13,
+                          letterSpacing: "0",
+                          color: C.inkMuted,
+                        }}
+                      >
                         Open through{" "}
                         {new Date(drop.available_until).toLocaleDateString(undefined, {
                           weekday: "short",
                           month: "short",
                           day: "numeric",
                         })}
-                      </Mono>
+                      </span>
                     </div>
                   )}
                 </div>
@@ -226,10 +232,9 @@ export default function DropSection() {
                         style={{
                           background: C.accent,
                           color: "#fff",
-                          fontFamily: fonts.mono,
-                          fontSize: 11,
-                          letterSpacing: "0.2em",
-                          textTransform: "uppercase",
+                          fontFamily: fonts.sans,
+                          fontSize: 15,
+                          letterSpacing: "-0.01em",
                           padding: "12px 22px",
                           borderRadius: 999,
                           fontWeight: 600,
