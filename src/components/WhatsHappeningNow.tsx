@@ -219,7 +219,7 @@ const WhatsHappeningNow = () => {
             <div className="flex items-center gap-2 mb-3">
               <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#E85D2F] animate-pulse" />
               <span
-                className="text-[10px] tracking-[0.08em] uppercase text-[#E85D2F] font-semibold"
+                className="text-[10px] tracking-[0.02em] text-[#E85D2F] font-semibold"
                 style={{ fontFamily: fonts.sans }}
               >
                 {video.category ? video.category : "New on feed"}
