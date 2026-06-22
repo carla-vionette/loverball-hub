@@ -21,10 +21,11 @@ const RECAPS = [
     color: "linear-gradient(135deg,#7B5CFF 0%,#E85D26 100%)",
   },
   {
-    caption: "NWSL finals night",
-    sub: "Sold out in 48 hours. Doing it again.",
+    caption: "Watch Party · June 12",
+    sub: "Past event — packed house, new crew.",
     color: "linear-gradient(135deg,#0D0D0D 0%,#E85D26 100%)",
   },
+
 ];
 
 export default function RecapGallery() {
