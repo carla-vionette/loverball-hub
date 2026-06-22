@@ -30,7 +30,8 @@ const RECAPS = [
   {
     caption: "FIFA Watch Party",
     sub: "Past event — packed house, new crew.",
-    color: "linear-gradient(135deg,#0D0D0D 0%,#E85D26 100%)",
+    image: fifaWatchParty.url,
+    alt: "Members gathered for a FIFA watch party",
   },
 
 ];
