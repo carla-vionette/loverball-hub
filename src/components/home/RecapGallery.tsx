@@ -3,6 +3,7 @@ import { C, fonts, Mono } from "./_theme";
 import angelCityPregame from "@/assets/angel-city-pregame.jpg.asset.json";
 import sparksWatch from "@/assets/sparks-watch.jpg.asset.json";
 import picoHouse from "@/assets/pico-house.jpg.asset.json";
+import fifaWatchParty from "@/assets/fifa-watch-party.png.asset.json";
 
 // Branded color blocks act as recap stand-ins until real event media is uploaded.
 // Per project memory: no AI-generated event photography on the marketing site.
