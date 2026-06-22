@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { C, fonts, Mono } from "./_theme";
 import angelCityPregame from "@/assets/angel-city-pregame.jpg.asset.json";
+import sparksWatch from "@/assets/sparks-watch.jpg.asset.json";
 
 // Branded color blocks act as recap stand-ins until real event media is uploaded.
 // Per project memory: no AI-generated event photography on the marketing site.
@@ -9,7 +10,8 @@ const RECAPS = [
   {
     caption: "Sparks watch · The Goat",
     sub: "84 members, one room, two overtimes.",
-    color: "linear-gradient(135deg,#E85D26 0%,#C2185B 100%)",
+    image: sparksWatch.url,
+    alt: "Members at a Sparks watch party at The Goat",
   },
   {
     caption: "Angel City pre-game brunch",
