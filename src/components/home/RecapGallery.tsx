@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { C, fonts, Mono } from "./_theme";
-import angelCityPregame from "@/assets/angel-city-pregame.jpg.asset.json";
+import angelCityPregame from "@/assets/angel-city-pregame.png.asset.json";
 import sparksWatch from "@/assets/sparks-watch.jpg.asset.json";
 import picoHouse from "@/assets/pico-house.jpg.asset.json";
 import fifaWatchParty from "@/assets/fifa-watch-party.png.asset.json";
