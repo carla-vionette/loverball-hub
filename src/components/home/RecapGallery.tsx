@@ -82,7 +82,7 @@ export default function RecapGallery() {
                 color: C.ink,
               }}
             >
-              The receipts.
+              The beta so far.
             </h2>
           </div>
           <Mono color={C.creamMuted}>Recap · Vol. 01</Mono>
