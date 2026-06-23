@@ -169,9 +169,6 @@ const Onboarding = () => {
     const { error } = await supabase
       .from("profiles")
       .update({
-        phone_number: phone,
-        birthdate,
-        zip_code: zip,
         pro_leagues: proLeagues,
         college_leagues: collegeLeagues,
         favorite_teams: teams,
@@ -180,6 +177,18 @@ const Onboarding = () => {
         trial_started_at: new Date().toISOString(),
       })
       .eq("id", user.id);
+    if (!error) {
+      // Sensitive fields (phone, birthdate, zip) live in profiles_sensitive (owner-only)
+      await supabase
+        .from("profiles_sensitive" as any)
+        .upsert({
+          id: user.id,
+          phone_number: phone || null,
+          birthday: birthdate || null,
+          birthdate: birthdate || null,
+          zip_code: zip || null,
+        } as any);
+    }
     setSaving(false);
     if (error) {
       toast({ title: "Couldn't save your profile", description: error.message, variant: "destructive" });
