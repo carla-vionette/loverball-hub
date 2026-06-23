@@ -19,7 +19,7 @@ export interface UserProfile {
   email?: string | null;
   bio: string | null;
   city: string | null;
-  neighborhood: string | null;
+  neighborhood?: string | null; // moved to profiles_sensitive; owner-only
   phone_number?: string | null; // from profiles_sensitive, only available for own profile / admin
   instagram_url: string | null;
   linkedin_url: string | null;
