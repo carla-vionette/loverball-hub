@@ -293,7 +293,7 @@ const Index = () => {
                     color: C.inkMuted,
                   }}
                 >
-                  Enter your ZIP to find your sports people nearby.
+                  We're live in LA. Enter your ZIP to find events near you.
                 </label>
                 <div
                   className="inline-flex items-stretch w-full sm:w-auto"
