@@ -410,7 +410,7 @@ const Index = () => {
               {[
                 "For women who love sports",
                 "★",
-                "Any league. Any city.",
+                "Any league. LA first.",
                 "★",
                 "Real friends, in real life",
                 "★",
