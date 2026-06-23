@@ -215,8 +215,8 @@ const Index = () => {
                 className="mt-7 max-w-xl lb-rise lb-delay-3"
                 style={{ fontSize: 17, lineHeight: 1.6, color: C.inkMuted }}
               >
-                Meet women sports fans near you, join watch parties and events,
-                and unlock members-only drops, perks, and experiences.
+                Loverball is in beta in Los Angeles — early access for women who
+                love sports. Join watch parties, events, and members-only perks.
               </p>
 
               <div className="mt-8 flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-4 lb-rise lb-delay-4">
