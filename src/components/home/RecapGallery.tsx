@@ -11,29 +11,28 @@ import fifaWatchParty from "@/assets/fifa-watch-party.jpg.asset.json";
 const RECAPS = [
   {
     caption: "Sparks watch · The Goat",
-    sub: "84 members, one room, two overtimes.",
+    sub: "Los Angeles",
     image: sparksWatch.url,
     alt: "Members at a Sparks watch party at The Goat",
   },
   {
     caption: "Angel City pre-game brunch",
-    sub: "Mimosas, lineups, and a new group chat.",
+    sub: "Los Angeles",
     image: angelCityPregame.url,
     alt: "Members gathered for an Angel City pre-game brunch",
   },
   {
     caption: "Pico House · El Pueblo VIP",
-    sub: "Culture + sports + the women shaping LA.",
+    sub: "Los Angeles",
     image: picoHouse.url,
     alt: "Members at the Pico House El Pueblo VIP event",
   },
   {
     caption: "FIFA Watch Party",
-    sub: "Past event — packed house, new crew.",
+    sub: "Los Angeles",
     image: fifaWatchParty.url,
     alt: "Members gathered for a FIFA watch party",
   },
-
 ];
 
 export default function RecapGallery() {
