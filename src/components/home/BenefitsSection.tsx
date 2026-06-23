@@ -6,7 +6,7 @@ const PILLARS = [
     n: "01",
     kicker: "Meet your people",
     Icon: Users,
-    title: "Meet women in your city who actually want to hang out.",
+    title: "Meet women in LA who actually want to hang out.",
     body:
       "Go out, watch the game, become real friends. No more being the only one in your group who cares about the score.",
   },
