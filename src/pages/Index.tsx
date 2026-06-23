@@ -705,8 +705,9 @@ const Index = () => {
                 style={{ filter: "brightness(0) invert(1)" }}
               />
               <p className="max-w-md" style={{ color: C.inkMuted, fontSize: 15, lineHeight: 1.6 }}>
-                The fan platform for women who love sports. Connect online and IRL,
-                find what's happening nearby, and never miss a moment. Built in LA.
+                The fan community for women who love sports. In beta in Los Angeles.
+                Connect online and IRL, find what's happening nearby, and never miss
+                a moment.
               </p>
               <a
                 href="mailto:hello@loverball.com"
