@@ -166,7 +166,7 @@ const Index = () => {
                 color: C.inkMuted,
               }}
             >
-              Your city
+              Los Angeles
             </span>
           </div>
 
