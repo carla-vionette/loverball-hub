@@ -1,20 +1,13 @@
 import { C, fonts, Mono } from "./_theme";
 import { HOMEPAGE_PROOF, PERSONA_TESTIMONIALS } from "./homepageConfig";
-import fansGalatasaray from "@/assets/fans-galatasaray.jpg.asset.json";
-import fansBrasil from "@/assets/fans-brasil.jpg.asset.json";
-import fansPortugal from "@/assets/fans-portugal.jpg.asset.json";
+import sparksWatch from "@/assets/sparks-watch.jpg.asset.json";
+import angelCityPregame from "@/assets/angel-city-pregame.png.asset.json";
+import picoHouse from "@/assets/pico-house.jpg.asset.json";
 
 const FAN_PHOTOS = [
-  { src: fansGalatasaray.url, alt: "Women fans cheering at a night match", caption: "Matchnight — Istanbul" },
-  { src: fansBrasil.url, alt: "Two women in Brasil jerseys laughing at a watch party", caption: "Watch party — Rio" },
-  { src: fansPortugal.url, alt: "Two women smiling in Portugal kits in the stands", caption: "Stands — Lisbon" },
-];
-
-const PERSONA_COLORS = [
-  "#E85D26", // coral
-  "#7B5CFF", // violet
-  "#1F8F6F", // pine
-  "#C2185B", // raspberry
+  { src: sparksWatch.url, alt: "Members at a Sparks watch party in Los Angeles", caption: "Sparks watch · LA" },
+  { src: angelCityPregame.url, alt: "Members gathered for an Angel City pre-game brunch in LA", caption: "Angel City brunch · LA" },
+  { src: picoHouse.url, alt: "Members at a Pico House event in Los Angeles", caption: "Pico House · LA" },
 ];
 
 export default function SocialProofSection() {
@@ -27,7 +20,7 @@ export default function SocialProofSection() {
       <div className="max-w-[1400px] mx-auto">
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-12">
           <div className="max-w-2xl">
-            <Mono color={C.ink}>§ — Real members. Real cities.</Mono>
+            <Mono color={C.ink}>§ — Founding members · Los Angeles</Mono>
             <h2
               id="social-proof-heading"
               className="mt-4"
@@ -40,7 +33,7 @@ export default function SocialProofSection() {
                 color: C.ink,
               }}
             >
-              The women already in.
+              The women building this with us.
             </h2>
           </div>
           <div className="flex flex-wrap gap-2">
@@ -96,12 +89,44 @@ export default function SocialProofSection() {
           ))}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-
-          {PERSONA_TESTIMONIALS.map((t, i) => {
-            const color = PERSONA_COLORS[i % PERSONA_COLORS.length];
-            return (
-              // TODO: replace with real member quote
+        {PERSONA_TESTIMONIALS.length === 0 ? (
+          <div
+            className="p-7 md:p-9"
+            style={{
+              background: C.creamHi,
+              border: `1px solid ${C.rule}`,
+              borderRadius: 20,
+            }}
+          >
+            <p
+              style={{
+                fontFamily: fonts.serif,
+                fontStyle: "italic",
+                fontSize: "clamp(20px, 2.2vw, 26px)",
+                lineHeight: 1.35,
+                color: C.ink,
+              }}
+            >
+              We're in beta in Los Angeles. Request an invite, come to a watch
+              party, and help shape the community.
+            </p>
+            <div className="mt-5 pt-5 flex items-center gap-3" style={{ borderTop: `1px solid ${C.rule}` }}>
+              <span
+                style={{
+                  fontFamily: fonts.sans,
+                  fontSize: 13,
+                  letterSpacing: "0.02em",
+                  color: C.creamMuted,
+                  fontWeight: 500,
+                }}
+              >
+                Founding member spots are limited.
+              </span>
+            </div>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            {PERSONA_TESTIMONIALS.map((t) => (
               <article
                 key={t.name}
                 className="p-7 md:p-9 flex flex-col"
@@ -111,29 +136,6 @@ export default function SocialProofSection() {
                   borderRadius: 20,
                 }}
               >
-                <div className="flex items-center gap-2 mb-5">
-                  <span
-                    style={{
-                      width: 8,
-                      height: 8,
-                      borderRadius: 999,
-                      background: color,
-                      display: "inline-block",
-                    }}
-                    aria-hidden
-                  />
-                  <span
-                    style={{
-                      fontFamily: fonts.sans,
-                      fontSize: 11,
-                      letterSpacing: "0.02em",
-                      color: C.creamMuted,
-                      fontWeight: 500,
-                    }}
-                  >
-                    {t.persona}
-                  </span>
-                </div>
                 <blockquote
                   style={{
                     fontFamily: fonts.serif,
@@ -143,26 +145,9 @@ export default function SocialProofSection() {
                     color: C.ink,
                   }}
                 >
-                  "{t.quote}"
+                  &ldquo;{t.quote}&rdquo;
                 </blockquote>
                 <div className="mt-6 pt-5 flex items-center gap-3" style={{ borderTop: `1px solid ${C.rule}` }}>
-                  <div
-                    aria-hidden
-                    className="flex items-center justify-center shrink-0"
-                    style={{
-                      width: 40,
-                      height: 40,
-                      borderRadius: 999,
-                      background: color,
-                      color: "#fff",
-                      fontFamily: fonts.sans,
-                      fontWeight: 600,
-                      fontSize: 13,
-                      letterSpacing: "0.04em",
-                    }}
-                  >
-                    {t.initials}
-                  </div>
                   <div className="min-w-0">
                     <div
                       style={{
@@ -186,9 +171,9 @@ export default function SocialProofSection() {
                   </div>
                 </div>
               </article>
-            );
-          })}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );
