@@ -578,7 +578,7 @@ const Index = () => {
                   </span>
                 </div>
                 <div className="mt-4">
-                  <Mono color={C.accent}>Founding rate · Locked for life · First 100 members</Mono>
+                  <Mono color={C.accent}>Founding rate · Locked for life · Limited spots</Mono>
                 </div>
 
                 <div className="mt-10 pt-8" style={{ borderTop: `1px solid ${C.inkRule}` }}>
