@@ -1,33 +1,23 @@
 import { MapPin, Users, MessageCircle, Camera, Tv } from "lucide-react";
 import { C, fonts, Mono } from "./_theme";
 
-// MOCK: all cards on this section are illustrative previews of product surfaces.
-// Real data fetching is intentionally deferred — see homepage rebuild plan.
-// TODO: wire to backend (events / watch_parties / posts / member feed)
-const MOCK_WATCH_PARTIES = [
-  { team: "Sparks vs. Liberty", venue: "The Goat · Highland Park", count: 14 },
-  { team: "Angel City vs. Wave", venue: "Member's living room · Eastside", count: 8 },
-  { team: "Lakers vs. Warriors", venue: "Hank's · Westside", count: 22 },
+// Preview-only examples. No counts, names, or quotes are real while Loverball
+// is in beta; real data will replace these once the community is live.
+const PREVIEW_WATCH_PARTIES = [
+  { team: "Sparks vs. Liberty", venue: "The Goat · Highland Park" },
+  { team: "Angel City vs. Wave", venue: "Member's living room · Eastside" },
+  { team: "Lakers vs. Warriors", venue: "Hank's · Westside" },
 ];
 
-const MOCK_CREWS = [
-  { name: "Eastside Soccer Girlies", count: 47, dot: "#1F8F6F" },
-  { name: "WNBA Watch Club LA", count: 112, dot: "#E85D26" },
-  { name: "Lakers Sunday Brunch", count: 34, dot: "#7B5CFF" },
+const PREVIEW_CREWS = [
+  { name: "Eastside Soccer Girlies", dot: "#1F8F6F" },
+  { name: "WNBA Watch Club LA", dot: "#E85D26" },
+  { name: "Lakers Sunday Brunch", dot: "#7B5CFF" },
 ];
 
-const MOCK_POSTS = [
+const PREVIEW_POSTS = [
   {
-    author: "Maya",
-    initials: "M",
-    color: "#E85D26",
-    body: "Tonight: brunch + Angel City at @themavencafe. Pulled up solo, leaving with three new numbers 📲",
-  },
-  {
-    author: "Jess",
-    initials: "J",
-    color: "#7B5CFF",
-    body: "Hosting WNBA finals watch Sunday. BYO snacks, I'll do the bracket. DM for the address 🏀",
+    body: "Post photos, ask for a plus-one, or share the lineup. Member posts will show up here once the feed is live.",
   },
 ];
 
@@ -60,14 +50,13 @@ export default function ProductPreviewSection() {
             className="mt-5"
             style={{ color: C.inkSoft, fontSize: 17, lineHeight: 1.6 }}
           >
-            Host a watch party in your living room. Post photos and video from the
-            stadium. Join a crew built around your team. It's a real community —
-            not a feed full of strangers.
+            A preview of what's coming for members — host watch parties, join
+            crews, and share posts from the stadium. Starting in LA.
           </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
-          {/* Watch parties card — MOCK */}
+          {/* Watch parties card — preview */}
           <article
             className="lg:col-span-7 p-7 md:p-9"
             style={{
@@ -88,11 +77,11 @@ export default function ProductPreviewSection() {
                   color: C.accent,
                 }}
               >
-                Watch parties near you
+                Watch parties — beta preview
               </span>
             </div>
             <ul className="space-y-3">
-              {MOCK_WATCH_PARTIES.map((w) => (
+              {PREVIEW_WATCH_PARTIES.map((w) => (
                 <li
                   key={w.team}
                   className="flex items-center justify-between gap-4 p-4"
@@ -119,22 +108,26 @@ export default function ProductPreviewSection() {
                       <span className="truncate">{w.venue}</span>
                     </div>
                   </div>
-                  <div className="shrink-0 inline-flex items-center gap-1.5" style={{ color: C.cream, fontSize: 13 }}>
-                    <Users size={13} color={C.accent} />
-                    {w.count} going
-                  </div>
+                  <span
+                    className="shrink-0"
+                    style={{ color: C.inkMuted, fontSize: 12, fontWeight: 500 }}
+                  >
+                    Example
+                  </span>
                 </li>
               ))}
             </ul>
             <div className="mt-6 flex items-start gap-2" style={{ color: C.inkMuted }}>
               <Camera size={14} color={C.accent} className="mt-0.5 shrink-0" />
               <span style={{ fontFamily: fonts.sans, fontSize: 13, lineHeight: 1.55 }}>
-                Members can host, post photos &amp; video, and tag friends. Every member is a verified woman, and every event follows our community guidelines.
+                Real watch parties go live as members host them. Every member is
+                a verified woman, and every event follows our community
+                guidelines.
               </span>
             </div>
           </article>
 
-          {/* Crews card — MOCK */}
+          {/* Crews card — preview */}
           <aside
             className="lg:col-span-5 p-7 md:p-9 flex flex-col"
             style={{
@@ -154,11 +147,11 @@ export default function ProductPreviewSection() {
                   color: C.ink,
                 }}
               >
-                Your crews
+                Your crews — beta preview
               </span>
             </div>
             <ul className="space-y-3 flex-1">
-              {MOCK_CREWS.map((c) => (
+              {PREVIEW_CREWS.map((c) => (
                 <li
                   key={c.name}
                   className="flex items-center justify-between gap-3 p-4"
@@ -180,13 +173,13 @@ export default function ProductPreviewSection() {
                       {c.name}
                     </span>
                   </div>
-                  <span style={{ color: C.creamMuted, fontSize: 13 }}>{c.count}</span>
+                  <span style={{ color: C.creamMuted, fontSize: 12, fontWeight: 500 }}>Example</span>
                 </li>
               ))}
             </ul>
           </aside>
 
-          {/* Posts card — MOCK */}
+          {/* Posts card — preview */}
           <article
             className="lg:col-span-12 p-7 md:p-9"
             style={{
@@ -206,13 +199,13 @@ export default function ProductPreviewSection() {
                   color: C.ink,
                 }}
               >
-                From the member feed
+                From the member feed — beta preview
               </span>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              {MOCK_POSTS.map((p) => (
+              {PREVIEW_POSTS.map((p) => (
                 <div
-                  key={p.author}
+                  key={p.body}
                   className="p-5"
                   style={{
                     background: C.creamHi,
@@ -220,27 +213,6 @@ export default function ProductPreviewSection() {
                     borderRadius: 16,
                   }}
                 >
-                  <div className="flex items-center gap-3">
-                    <div
-                      aria-hidden
-                      className="flex items-center justify-center"
-                      style={{
-                        width: 36,
-                        height: 36,
-                        borderRadius: 999,
-                        background: p.color,
-                        color: "#fff",
-                        fontFamily: fonts.sans,
-                        fontWeight: 700,
-                        fontSize: 14,
-                      }}
-                    >
-                      {p.initials}
-                    </div>
-                    <div style={{ fontFamily: fonts.sans, fontSize: 14, color: C.ink, fontWeight: 600 }}>
-                      {p.author}
-                    </div>
-                  </div>
                   <p className="mt-4" style={{ fontSize: 15, lineHeight: 1.6, color: C.inkSoft }}>
                     {p.body}
                   </p>

@@ -63,10 +63,10 @@ const Index = () => {
   return (
     <div style={{ background: C.cream, color: C.ink, fontFamily: fonts.sans }}>
       <Seo
-        title="Loverball — Finally, a sports community built for women"
-        description="Loverball is the fan platform for women who love sports — all sports. Meet women fans near you, join watch parties and events, and unlock members-only drops, perks, and experiences."
+        title="Loverball — Beta in LA for women who love sports"
+        description="Loverball is in beta in Los Angeles. Early access for women who love sports — join watch parties, events, and members-only perks."
         path="/"
-        imageAlt="Loverball — the fan platform for women who love sports"
+        imageAlt="Loverball — beta community for women who love sports in LA"
       />
 
       <style>{`
@@ -166,7 +166,7 @@ const Index = () => {
                 color: C.inkMuted,
               }}
             >
-              Your city
+              Los Angeles
             </span>
           </div>
 
@@ -215,8 +215,8 @@ const Index = () => {
                 className="mt-7 max-w-xl lb-rise lb-delay-3"
                 style={{ fontSize: 17, lineHeight: 1.6, color: C.inkMuted }}
               >
-                Meet women sports fans near you, join watch parties and events,
-                and unlock members-only drops, perks, and experiences.
+                Loverball is in beta in Los Angeles — early access for women who
+                love sports. Join watch parties, events, and members-only perks.
               </p>
 
               <div className="mt-8 flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-4 lb-rise lb-delay-4">
@@ -293,7 +293,7 @@ const Index = () => {
                     color: C.inkMuted,
                   }}
                 >
-                  Enter your ZIP to find your sports people nearby.
+                  We're live in LA. Enter your ZIP to find events near you.
                 </label>
                 <div
                   className="inline-flex items-stretch w-full sm:w-auto"
@@ -410,7 +410,7 @@ const Index = () => {
               {[
                 "For women who love sports",
                 "★",
-                "Any league. Any city.",
+                "Any league. LA first.",
                 "★",
                 "Real friends, in real life",
                 "★",
@@ -546,7 +546,7 @@ const Index = () => {
                 style={{ background: C.ink, color: C.cream, borderRadius: 24 }}
               >
                 <div className="flex items-start justify-between gap-4 mb-10">
-                  <Mono color={C.accent}>The Club — Founding 100</Mono>
+                  <Mono color={C.accent}>The Club — Founding member</Mono>
                   <Mono color={C.inkMuted} size={10}>Monthly</Mono>
                 </div>
 
@@ -578,7 +578,7 @@ const Index = () => {
                   </span>
                 </div>
                 <div className="mt-4">
-                  <Mono color={C.accent}>Founding rate · Locked for life · First 100 members</Mono>
+                  <Mono color={C.accent}>Founding rate · Locked for life · Limited spots</Mono>
                 </div>
 
                 <div className="mt-10 pt-8" style={{ borderTop: `1px solid ${C.inkRule}` }}>
@@ -656,8 +656,8 @@ const Index = () => {
             className="mt-6 max-w-xl mx-auto"
             style={{ color: C.inkSoft, fontSize: 17, lineHeight: 1.6 }}
           >
-            This isn't a feed of strangers. It's the women in your city, the games
-            you actually care about, and the watch parties already on the schedule.
+            This isn't a feed of strangers. It's women in LA, the games you
+            actually care about, and the watch parties already on the schedule.
             Pull up.
           </p>
           <div className="mt-10 flex flex-wrap gap-4 justify-center">
@@ -705,8 +705,9 @@ const Index = () => {
                 style={{ filter: "brightness(0) invert(1)" }}
               />
               <p className="max-w-md" style={{ color: C.inkMuted, fontSize: 15, lineHeight: 1.6 }}>
-                The fan platform for women who love sports. Connect online and IRL,
-                find what's happening nearby, and never miss a moment. Built in LA.
+                The fan community for women who love sports. In beta in Los Angeles.
+                Connect online and IRL, find what's happening nearby, and never miss
+                a moment.
               </p>
               <a
                 href="mailto:hello@loverball.com"
