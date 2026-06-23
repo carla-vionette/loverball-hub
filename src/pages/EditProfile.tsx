@@ -221,9 +221,6 @@ const EditProfile = () => {
         pronouns,
         city: geo.city || city,
         state: geo.state,
-        latitude: geo.latitude,
-        longitude: geo.longitude,
-        zip_code: zipCode || null,
         favorite_sports: favoriteSports,
         favorite_teams_players: favTeams,
         sports_experience_types: experienceTypes,
@@ -237,12 +234,15 @@ const EditProfile = () => {
 
       if (error) throw error;
 
-      // Update sensitive data separately — don't block redirect if this fails
+      // Sensitive fields (phone, precise location) live in profiles_sensitive (owner-only)
       const { error: sensitiveError } = await supabase
         .from("profiles_sensitive" as any)
         .upsert({
           id: userId,
           phone_number: phoneNumber || null,
+          zip_code: zipCode || null,
+          latitude: geo.latitude ?? null,
+          longitude: geo.longitude ?? null,
         } as any);
       if (sensitiveError) {
         console.warn("[EditProfile] phone save failed", sensitiveError);
