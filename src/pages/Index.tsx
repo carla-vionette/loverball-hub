@@ -63,10 +63,10 @@ const Index = () => {
   return (
     <div style={{ background: C.cream, color: C.ink, fontFamily: fonts.sans }}>
       <Seo
-        title="Loverball — Finally, a sports community built for women"
-        description="Loverball is the fan platform for women who love sports — all sports. Meet women fans near you, join watch parties and events, and unlock members-only drops, perks, and experiences."
+        title="Loverball — Beta in LA for women who love sports"
+        description="Loverball is in beta in Los Angeles. Early access for women who love sports — join watch parties, events, and members-only perks."
         path="/"
-        imageAlt="Loverball — the fan platform for women who love sports"
+        imageAlt="Loverball — beta community for women who love sports in LA"
       />
 
       <style>{`
