@@ -15,7 +15,6 @@ import heroImage from "@/assets/hero-women-new.png";
 import loverballWordmark from "@/assets/loverball-wordmark.png.asset.json";
 
 import WhatsHappeningNow from "@/components/WhatsHappeningNow";
-import StoriesSection from "@/components/StoriesSection";
 import { INSTAGRAM_URL } from "@/lib/socialLinks";
 import { trackEvent } from "@/lib/analytics";
 
