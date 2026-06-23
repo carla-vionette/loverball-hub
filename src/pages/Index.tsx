@@ -546,7 +546,7 @@ const Index = () => {
                 style={{ background: C.ink, color: C.cream, borderRadius: 24 }}
               >
                 <div className="flex items-start justify-between gap-4 mb-10">
-                <Mono color={C.accent}>The Club — Founding member</Mono>
+                  <Mono color={C.accent}>The Club — Founding member</Mono>
                   <Mono color={C.inkMuted} size={10}>Monthly</Mono>
                 </div>
 
