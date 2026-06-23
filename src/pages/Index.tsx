@@ -15,7 +15,6 @@ import heroImage from "@/assets/hero-women-new.png";
 import loverballWordmark from "@/assets/loverball-wordmark.png.asset.json";
 
 import WhatsHappeningNow from "@/components/WhatsHappeningNow";
-import StoriesSection from "@/components/StoriesSection";
 import { INSTAGRAM_URL } from "@/lib/socialLinks";
 import { trackEvent } from "@/lib/analytics";
 
@@ -483,29 +482,6 @@ const Index = () => {
         </div>
       </section>
 
-      <section className="px-5 md:px-10 py-20 md:py-28" style={{ background: C.cream }} aria-labelledby="stories-heading">
-        <div className="max-w-[1400px] mx-auto">
-          <div className="mb-10">
-            <Mono color={C.creamMuted}>§ — From the Sidelines</Mono>
-            <h2
-              id="stories-heading"
-              className="mt-3"
-              style={{
-                fontFamily: fonts.serif,
-                fontStyle: "italic",
-                fontWeight: 400,
-                fontSize: "clamp(34px, 5vw, 60px)",
-                lineHeight: 1,
-                letterSpacing: "-0.02em",
-                color: C.ink,
-              }}
-            >
-              The read.
-            </h2>
-          </div>
-          <StoriesSection />
-        </div>
-      </section>
 
       {/* ============ 8) MEMBERSHIP ============ */}
       <section
