@@ -14,7 +14,7 @@ const PILLARS = [
     n: "02",
     kicker: "Know where to go",
     Icon: MapPin,
-    title: "Know where everyone's watching, and where to pull up.",
+    title: "Know where people are watching in LA, and where to pull up.",
     body:
       "Watch parties, fan-owned bars, and meet-ups near you — with the people, the vibe, and the broadcast already locked in.",
   },
