@@ -235,13 +235,19 @@ const Settings = () => {
         const { error: zError } = await supabase
           .from("profiles")
           .update({
-            zip_code: loc.zip_code,
             city: loc.city,
-            latitude: loc.latitude,
-            longitude: loc.longitude,
           } as any)
           .eq("id", user.id);
         if (zError) throw zError;
+        const { error: zsError } = await supabase
+          .from("profiles_sensitive" as any)
+          .upsert({
+            id: user.id,
+            zip_code: loc.zip_code,
+            latitude: loc.latitude,
+            longitude: loc.longitude,
+          } as any);
+        if (zsError) throw zsError;
       }
 
       // Save notification channel + phone preferences on profile

@@ -107,14 +107,19 @@ export function useActiveArea() {
       return false;
     }
     const { error } = await supabase
-      .from("profiles")
-      .update({
+      .from("profiles_sensitive" as any)
+      .upsert({
+        id: user.id,
         zip_code: target.zip,
-        city: target.city,
         latitude: target.lat,
         longitude: target.lng,
-      } as any)
-      .eq("id", user.id);
+      } as any);
+    if (!error) {
+      await supabase
+        .from("profiles")
+        .update({ city: target.city } as any)
+        .eq("id", user.id);
+    }
     if (error) {
       toast({ title: "Couldn't save", description: error.message, variant: "destructive" });
       return false;

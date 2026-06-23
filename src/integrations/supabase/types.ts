@@ -2334,7 +2334,6 @@ export type Database = {
           age_range: string | null
           billing_period: string | null
           bio: string | null
-          birthdate: string | null
           city: string | null
           college_leagues: string[] | null
           created_at: string
@@ -2356,17 +2355,13 @@ export type Database = {
           interested_in_la28: boolean | null
           interested_in_world_cup_la: boolean | null
           last_streak_week: string | null
-          latitude: number | null
           linkedin_url: string | null
           longest_streak: number
-          longitude: number | null
           looking_for_tags: string[] | null
           membership_tier: string | null
           name: string
-          neighborhood: string | null
           other_interests: string[] | null
           participation_preferences: string[] | null
-          phone_number: string | null
           primary_role: string | null
           pro_leagues: string[] | null
           profile_photo_url: string | null
@@ -2382,14 +2377,12 @@ export type Database = {
           username: string | null
           vibe_tags: string[] | null
           website_url: string | null
-          zip_code: string | null
         }
         Insert: {
           account_type?: string | null
           age_range?: string | null
           billing_period?: string | null
           bio?: string | null
-          birthdate?: string | null
           city?: string | null
           college_leagues?: string[] | null
           created_at?: string
@@ -2411,17 +2404,13 @@ export type Database = {
           interested_in_la28?: boolean | null
           interested_in_world_cup_la?: boolean | null
           last_streak_week?: string | null
-          latitude?: number | null
           linkedin_url?: string | null
           longest_streak?: number
-          longitude?: number | null
           looking_for_tags?: string[] | null
           membership_tier?: string | null
           name: string
-          neighborhood?: string | null
           other_interests?: string[] | null
           participation_preferences?: string[] | null
-          phone_number?: string | null
           primary_role?: string | null
           pro_leagues?: string[] | null
           profile_photo_url?: string | null
@@ -2437,14 +2426,12 @@ export type Database = {
           username?: string | null
           vibe_tags?: string[] | null
           website_url?: string | null
-          zip_code?: string | null
         }
         Update: {
           account_type?: string | null
           age_range?: string | null
           billing_period?: string | null
           bio?: string | null
-          birthdate?: string | null
           city?: string | null
           college_leagues?: string[] | null
           created_at?: string
@@ -2466,17 +2453,13 @@ export type Database = {
           interested_in_la28?: boolean | null
           interested_in_world_cup_la?: boolean | null
           last_streak_week?: string | null
-          latitude?: number | null
           linkedin_url?: string | null
           longest_streak?: number
-          longitude?: number | null
           looking_for_tags?: string[] | null
           membership_tier?: string | null
           name?: string
-          neighborhood?: string | null
           other_interests?: string[] | null
           participation_preferences?: string[] | null
-          phone_number?: string | null
           primary_role?: string | null
           pro_leagues?: string[] | null
           profile_photo_url?: string | null
@@ -2492,31 +2475,45 @@ export type Database = {
           username?: string | null
           vibe_tags?: string[] | null
           website_url?: string | null
-          zip_code?: string | null
         }
         Relationships: []
       }
       profiles_sensitive: {
         Row: {
+          birthdate: string | null
           birthday: string | null
           created_at: string
           id: string
+          latitude: number | null
+          longitude: number | null
+          neighborhood: string | null
           phone_number: string | null
           updated_at: string
+          zip_code: string | null
         }
         Insert: {
+          birthdate?: string | null
           birthday?: string | null
           created_at?: string
           id: string
+          latitude?: number | null
+          longitude?: number | null
+          neighborhood?: string | null
           phone_number?: string | null
           updated_at?: string
+          zip_code?: string | null
         }
         Update: {
+          birthdate?: string | null
           birthday?: string | null
           created_at?: string
           id?: string
+          latitude?: number | null
+          longitude?: number | null
+          neighborhood?: string | null
           phone_number?: string | null
           updated_at?: string
+          zip_code?: string | null
         }
         Relationships: []
       }
