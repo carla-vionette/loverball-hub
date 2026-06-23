@@ -656,8 +656,8 @@ const Index = () => {
             className="mt-6 max-w-xl mx-auto"
             style={{ color: C.inkSoft, fontSize: 17, lineHeight: 1.6 }}
           >
-            This isn't a feed of strangers. It's the women in your city, the games
-            you actually care about, and the watch parties already on the schedule.
+            This isn't a feed of strangers. It's women in LA, the games you
+            actually care about, and the watch parties already on the schedule.
             Pull up.
           </p>
           <div className="mt-10 flex flex-wrap gap-4 justify-center">
