@@ -52,22 +52,11 @@ export default function BenefitsSection() {
               }}
             >
               Your team, your LA,<br />
-
-              className="mt-4"
-              style={{
-                fontFamily: fonts.serif,
-                fontWeight: 400,
-                fontSize: "clamp(36px, 5.5vw, 76px)",
-                lineHeight: 0.96,
-                letterSpacing: "-0.03em",
-                color: C.ink,
-              }}
-            >
-              Your team, your city,<br />
               <span style={{ fontStyle: "italic", color: C.accent }}>
                 your people.
               </span>
             </h2>
+
           </div>
         </div>
 
