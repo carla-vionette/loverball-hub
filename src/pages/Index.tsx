@@ -161,14 +161,27 @@ const Index = () => {
           <div className="flex items-center justify-between mb-10 md:mb-14 lb-fade">
             <Mono color={C.cream}>Vol. 01 — Founding Issue</Mono>
             <span
+              className="inline-flex items-center gap-2"
               style={{
-                fontFamily: fonts.sans, fontSize: 14, letterSpacing: "0",
-                color: C.inkMuted,
+                fontFamily: fonts.sans,
+                fontSize: 12,
+                letterSpacing: "0.04em",
+                textTransform: "uppercase",
+                color: "#fff",
+                background: C.accent,
+                padding: "6px 12px",
+                borderRadius: 999,
+                fontWeight: 700,
               }}
             >
-              Los Angeles
+              <span
+                aria-hidden
+                style={{ width: 6, height: 6, borderRadius: 999, background: "#fff", display: "inline-block" }}
+              />
+              Beta · LA
             </span>
           </div>
+
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
             <div className="lg:col-span-7">
@@ -464,7 +477,7 @@ const Index = () => {
                   color: C.ink,
                 }}
               >
-                What's happening nearby.
+                What's happening in LA.
               </h2>
             </div>
             <Link
@@ -649,8 +662,9 @@ const Index = () => {
               color: C.ink,
             }}
           >
-            Your game. Your city.<br />
+            Your game. Your LA.<br />
             <span style={{ fontStyle: "italic", color: C.accent }}>Your crew.</span>
+
           </h2>
           <p
             className="mt-6 max-w-xl mx-auto"
