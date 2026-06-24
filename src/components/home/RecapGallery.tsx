@@ -68,7 +68,7 @@ export default function RecapGallery() {
       <div className="max-w-[1400px] mx-auto">
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-12">
           <div className="max-w-2xl">
-            <Mono color={C.ink}>§ — From recent events</Mono>
+            <Mono color={C.ink}>§ — Where members gather in LA</Mono>
             <h2
               id="recap-heading"
               className="mt-4"

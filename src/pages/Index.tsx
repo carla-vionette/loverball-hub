@@ -394,7 +394,7 @@ const Index = () => {
                       className="w-1.5 h-1.5 rounded-full"
                       style={{ background: C.accent, animation: "lb-pulse-dot 2s infinite" }}
                     />
-                    Live near you
+                    Beta · Los Angeles
                   </div>
                 </div>
                 <figcaption className="mt-4 flex items-start justify-between gap-4">
@@ -531,7 +531,7 @@ const Index = () => {
               <ul className="mt-8 space-y-4 max-w-md">
                 {[
                   { Icon: Heart, label: "Meet women fans near you" },
-                  { Icon: MapPin, label: "Members-only watch parties & city events" },
+                  { Icon: MapPin, label: "Members-only watch parties & LA events" },
                   { Icon: Sparkles, label: "The Monday Drop — exclusive perks every week" },
                   { Icon: ArrowRight, label: "Post, host, and participate in the community" },
                   { Icon: Ticket, label: "First access to invites, perks, priority RSVPs" },
@@ -599,7 +599,7 @@ const Index = () => {
                     {[
                       "Meet women fans near you",
                       "Members-only watch parties",
-                      "City events & meet-ups",
+                      "LA events & meet-ups",
                       "The Monday Drop",
                       "Post, host, tag friends",
                       "Priority RSVPs",
@@ -719,9 +719,8 @@ const Index = () => {
                 style={{ filter: "brightness(0) invert(1)" }}
               />
               <p className="max-w-md" style={{ color: C.inkMuted, fontSize: 15, lineHeight: 1.6 }}>
-                The fan community for women who love sports. In beta in Los Angeles.
-                Connect online and IRL, find what's happening nearby, and never miss
-                a moment.
+                The fan community for women who love sports. In beta in Los Angeles —
+                early access for LA-based founding members.
               </p>
               <a
                 href="mailto:hello@loverball.com"
