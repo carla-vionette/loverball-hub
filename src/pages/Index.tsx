@@ -533,7 +533,7 @@ const Index = () => {
                   { Icon: Heart, label: "Meet women fans near you" },
                   { Icon: MapPin, label: "Members-only watch parties & LA events" },
                   { Icon: Sparkles, label: "The Monday Drop — exclusive perks every week" },
-                  { Icon: ArrowRight, label: "Post, host, and participate in the community" },
+                  { Icon: ArrowRight, label: "Meet each other at watch parties" },
                   { Icon: Ticket, label: "First access to invites, perks, priority RSVPs" },
                 ].map((row) => (
                   <li key={row.label} className="flex items-start gap-3" style={{ fontSize: 15, color: C.inkSoft, lineHeight: 1.5 }}>
