@@ -24,6 +24,7 @@ serve(async (req) => {
   const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
   const isServiceRole = token === serviceRoleKey;
 
+  let callerEmail: string | null = null;
   if (!isServiceRole) {
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL')!,
@@ -37,16 +38,27 @@ serve(async (req) => {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
+    callerEmail = ((data.claims.email as string | undefined) ?? '').toLowerCase() || null;
   }
 
   try {
     const { email, name } = await req.json();
 
-    if (!email || !name) {
+    if (!email || !name || typeof email !== 'string' || typeof name !== 'string') {
       return new Response(JSON.stringify({ error: 'Missing email or name' }), {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
+    }
+
+    // Non-service-role callers can only send the welcome email to their own address.
+    if (!isServiceRole) {
+      if (!callerEmail || email.toLowerCase() !== callerEmail) {
+        return new Response(JSON.stringify({ error: 'Forbidden' }), {
+          status: 403,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
     }
 
     const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY');
@@ -58,7 +70,11 @@ serve(async (req) => {
       });
     }
 
-    const firstName = name.split(' ')[0];
+    // HTML-escape user-supplied name to prevent HTML/link injection in the email body.
+    const escapeHtml = (s: string) =>
+      s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+       .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    const firstName = escapeHtml(name.split(' ')[0].slice(0, 80));
 
     const htmlBody = `
 <!DOCTYPE html>
