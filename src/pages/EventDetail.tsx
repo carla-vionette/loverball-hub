@@ -16,6 +16,7 @@ import { useEventRsvp } from "@/hooks/useEventRsvp";
 import { getEventDistanceMiles, formatMiles, type ViewerLike } from "@/lib/distance";
 import { useToast } from "@/hooks/use-toast";
 import { resolveEventImage, handleEventImageError, FALLBACK_EVENT_IMAGE } from "@/lib/eventImage";
+import { shareEvent, trackShareClicked } from "@/lib/eventShareAction";
 
 interface DbEvent {
   id: string;
