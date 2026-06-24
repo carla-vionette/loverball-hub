@@ -46,7 +46,7 @@ export async function fetchUserProfile(userId: string) {
 export async function updateUserProfile(userId: string, updates: Record<string, unknown>) {
   const { error } = await supabase
     .from('profiles')
-    .update(updates)
+    .update(updates as never)
     .eq('id', userId);
   if (error) throw error;
 }

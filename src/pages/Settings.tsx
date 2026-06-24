@@ -264,7 +264,7 @@ const Settings = () => {
           sms_notifications_enabled: channels.sms,
           email_notifications_enabled: channels.email,
           phone: phoneTrim || null,
-        })
+        } as never)
         .eq("id", user.id);
       if (pError) throw pError;
 
