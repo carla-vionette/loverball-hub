@@ -166,9 +166,7 @@ const WhatsHappeningNow = () => {
     ? club.pendingMatches > 0
       ? `${club.pendingMatches} new fan match${club.pendingMatches === 1 ? "" : "es"} waiting`
       : club.recentMatches > 0
-        ? club.city
-          ? `Your ${club.city} crew has new activity`
-          : "Your crew has new activity"
+        ? "Your LA crew has new activity"
         : null
     : null;
 
