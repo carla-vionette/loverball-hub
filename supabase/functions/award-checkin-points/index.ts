@@ -87,6 +87,23 @@ Deno.serve(async (req) => {
       });
     }
 
+    // Require an accepted RSVP to prevent gamification abuse
+    const { data: rsvp } = await supabase
+      .from('event_rsvps')
+      .select('id')
+      .eq('event_id', event_id)
+      .eq('user_id', userId)
+      .in('status', ['going', 'attending', 'approved', 'confirmed'])
+      .maybeSingle();
+
+    if (!rsvp) {
+      return new Response(JSON.stringify({ error: 'No RSVP found for this event' }), {
+        status: 403,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+
     // Check if already checked in
     const { data: existing } = await supabase
       .from('check_ins')
