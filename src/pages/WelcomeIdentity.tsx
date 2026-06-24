@@ -144,7 +144,7 @@ const WelcomeIdentity = () => {
         has_completed_onboarding: true,
       };
       if (photoUrl) payload.profile_photo_url = photoUrl;
-      const { error } = await supabase.from("profiles").update(payload).eq("id", userId);
+      const { error } = await supabase.from("profiles").update(payload as never).eq("id", userId);
       if (error) throw error;
       try { localStorage.removeItem("pending_first_name"); } catch { /* ignore */ }
       navigate("/welcome/circles", { replace: true });
