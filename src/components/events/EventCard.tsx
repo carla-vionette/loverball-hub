@@ -133,6 +133,13 @@ export default function EventCard({
                 {event.title}
               </h3>
             </div>
+            <button
+              onClick={handleShare}
+              aria-label={`Share ${event.title}`}
+              className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-[#1A1A1A]/50 hover:text-[#1A1A1A] hover:bg-black/5 transition-colors -mt-1 -mr-1"
+            >
+              <Share2 className="w-4 h-4" />
+            </button>
           </div>
 
           <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs font-['Inter'] text-[#1A1A1A]/60">
