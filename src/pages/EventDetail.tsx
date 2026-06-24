@@ -16,6 +16,7 @@ import { useEventRsvp } from "@/hooks/useEventRsvp";
 import { getEventDistanceMiles, formatMiles, type ViewerLike } from "@/lib/distance";
 import { useToast } from "@/hooks/use-toast";
 import { resolveEventImage, handleEventImageError, FALLBACK_EVENT_IMAGE } from "@/lib/eventImage";
+import { shareEvent, trackShareClicked } from "@/lib/eventShareAction";
 
 interface DbEvent {
   id: string;
@@ -112,17 +113,15 @@ export default function EventDetail() {
   };
 
   const handleShare = async () => {
-    const url = `${window.location.origin}/event/${id}`;
-    try {
-      if (navigator.share) {
-        await navigator.share({ title: event?.title, url });
-      } else {
-        await navigator.clipboard.writeText(url);
-        toast({ title: "Link copied" });
-      }
-    } catch {
-      // user dismissed
-    }
+    if (!event || !id) return;
+    trackShareClicked(id, event.title, "event_detail");
+    await shareEvent({
+      id,
+      event,
+      surface: "event_detail",
+      onCopied: () => toast({ title: "Link copied", description: "Event details copied to clipboard." }),
+      onFailed: () => toast({ title: "Couldn't share", description: "Try again in a moment.", variant: "destructive" }),
+    });
   };
 
   const scrollToRsvp = () => {
