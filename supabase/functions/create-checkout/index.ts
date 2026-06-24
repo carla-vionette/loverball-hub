@@ -62,6 +62,45 @@ Deno.serve(async (req) => {
 
     const plan = PLAN_CATALOG[planId];
 
+    // Validate redirect URLs against an allowlist to prevent open-redirect abuse.
+    const ALLOWED_ORIGINS = new Set([
+      "https://www.loverball.com",
+      "https://loverball.com",
+      "https://loverball-hub.lovable.app",
+    ]);
+    const requestOrigin = req.headers.get("origin");
+    if (requestOrigin) ALLOWED_ORIGINS.add(requestOrigin);
+
+    const isAllowedUrl = (u: unknown): u is string => {
+      if (typeof u !== "string" || u.length === 0) return false;
+      try {
+        const parsed = new URL(u);
+        if (parsed.protocol !== "https:" && parsed.protocol !== "http:") return false;
+        if (ALLOWED_ORIGINS.has(parsed.origin)) return true;
+        // Allow any *.lovable.app preview origin
+        return /\.lovable\.app$/i.test(parsed.hostname);
+      } catch {
+        return false;
+      }
+    };
+
+    if (success_url !== undefined && !isAllowedUrl(success_url)) {
+      return new Response(JSON.stringify({ error: "Invalid success_url" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    if (cancel_url !== undefined && !isAllowedUrl(cancel_url)) {
+      return new Response(JSON.stringify({ error: "Invalid cancel_url" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const defaultOrigin = requestOrigin && isAllowedUrl(requestOrigin + "/")
+      ? requestOrigin
+      : "https://www.loverball.com";
+
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       line_items: [{
@@ -73,8 +112,8 @@ Deno.serve(async (req) => {
         quantity: 1,
       }],
       mode: "payment",
-      success_url: success_url || `${req.headers.get("origin")}/checkout-success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: cancel_url || `${req.headers.get("origin")}/membership`,
+      success_url: success_url || `${defaultOrigin}/checkout-success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: cancel_url || `${defaultOrigin}/membership`,
       customer_email: user.email,
       metadata: { user_id: user.id, plan_id: planId },
     });
