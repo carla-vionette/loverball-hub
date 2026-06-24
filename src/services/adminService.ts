@@ -108,7 +108,7 @@ export async function createVideo(video: {
   };
   const { data, error } = await supabase
     .from('videos')
-    .insert(insertPayload)
+    .insert(insertPayload as never)
     .select()
     .single();
   if (error) throw error;
@@ -118,7 +118,7 @@ export async function createVideo(video: {
 export async function updateVideo(id: string, updates: Partial<VideoItem>): Promise<void> {
   const { error } = await supabase
     .from('videos')
-    .update(updates)
+    .update(updates as never)
     .eq('id', id);
   if (error) throw error;
 }
