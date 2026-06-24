@@ -2,10 +2,11 @@
 // Non-technical edits live here; logic is in the section components.
 
 export const HOMEPAGE_PROOF = {
-  fans: "Beta in LA",
-  events: "Early access",
-  cities: "Invite code 7688",
+  fans: "Now in beta · Los Angeles",
+  events: "Founding members welcome",
+  cities: "Early access — be one of the first in",
 };
+
 
 // Placeholder testimonials are intentionally removed while Loverball is in
 // beta. SocialProofSection renders a founding-member CTA when this array is empty.

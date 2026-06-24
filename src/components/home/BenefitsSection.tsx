@@ -38,7 +38,7 @@ export default function BenefitsSection() {
       <div className="max-w-[1400px] mx-auto">
         <div className="flex items-end justify-between gap-6 mb-12">
           <div className="max-w-2xl">
-            <Mono color={C.ink}>§ — Why women join</Mono>
+            <Mono color={C.ink}>§ — Why women join · LA beta</Mono>
             <h2
               id="benefits-heading"
               className="mt-4"
@@ -51,11 +51,12 @@ export default function BenefitsSection() {
                 color: C.ink,
               }}
             >
-              Your team, your city,<br />
+              Your team, your LA,<br />
               <span style={{ fontStyle: "italic", color: C.accent }}>
                 your people.
               </span>
             </h2>
+
           </div>
         </div>
 

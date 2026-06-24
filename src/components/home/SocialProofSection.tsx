@@ -20,7 +20,7 @@ export default function SocialProofSection() {
       <div className="max-w-[1400px] mx-auto">
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-12">
           <div className="max-w-2xl">
-            <Mono color={C.ink}>§ — Founding members · Los Angeles</Mono>
+            <Mono color={C.ink}>§ — Early access · Los Angeles</Mono>
             <h2
               id="social-proof-heading"
               className="mt-4"
@@ -33,7 +33,8 @@ export default function SocialProofSection() {
                 color: C.ink,
               }}
             >
-              The women building this with us.
+              Meet some of our LA founding members.
+
             </h2>
           </div>
           <div className="flex flex-wrap gap-2">
