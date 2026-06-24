@@ -40,13 +40,19 @@ const NotificationBell = () => {
     }
     load();
     const channel = supabase
-      .channel(`notif:${user.id}`)
+      .channel(`notif:${user.id}:${Date.now()}:${Math.random().toString(36).slice(2, 8)}`)
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "notifications", filter: `user_id=eq.${user.id}` },
         () => load(),
       )
-      .subscribe();
+      .subscribe((status, err) => {
+        if (status === "CHANNEL_ERROR") {
+          console.error("[NotificationBell] CHANNEL_ERROR", err);
+        } else if (status === "TIMED_OUT") {
+          console.warn("[NotificationBell] TIMED_OUT");
+        }
+      });
     return () => {
       supabase.removeChannel(channel);
     };
