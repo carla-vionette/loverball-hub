@@ -50,7 +50,7 @@ export default function ProductPreviewSection() {
             className="mt-5"
             style={{ color: C.inkSoft, fontSize: 17, lineHeight: 1.6 }}
           >
-            A preview of what's coming for members — host watch parties, join
+            A preview of what's coming for members — find watch parties, join
             crews, and share posts from the stadium. Starting in LA.
           </p>
         </div>
@@ -120,9 +120,9 @@ export default function ProductPreviewSection() {
             <div className="mt-6 flex items-start gap-2" style={{ color: C.inkMuted }}>
               <Camera size={14} color={C.accent} className="mt-0.5 shrink-0" />
               <span style={{ fontFamily: fonts.sans, fontSize: 13, lineHeight: 1.55 }}>
-                Real watch parties go live as members host them. Every member is
-                a verified woman, and every event follows our community
-                guidelines.
+                Members meet each other at watch parties — RSVP, pull up, and
+                connect in person. Every member is a verified woman, and every
+                event follows our community guidelines.
               </span>
             </div>
           </article>
