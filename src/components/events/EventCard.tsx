@@ -1,5 +1,7 @@
 import { useNavigate } from "react-router-dom";
-import { Calendar, MapPin } from "lucide-react";
+import { Calendar, MapPin, Share2 } from "lucide-react";
+import { shareEvent, trackShareClicked } from "@/lib/eventShareAction";
+import { useToast } from "@/hooks/use-toast";
 import RsvpControl from "./RsvpControl";
 import { resolveEventImage, resolveSportImage, handleEventImageError, FALLBACK_EVENT_IMAGE } from "@/lib/eventImage";
 import { getEventDistanceMiles, formatMiles, type EventLike, type ViewerLike } from "@/lib/distance";
