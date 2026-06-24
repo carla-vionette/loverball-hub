@@ -84,7 +84,7 @@ const AdminAnalyticsTab = () => {
                   cx="50%"
                   cy="50%"
                   outerRadius={100}
-                  label={({ plan, count }) => `${plan}: ${count}`}
+                  label={(props: any) => `${props.plan}: ${props.count}`}
                 >
                   {planData.map((_entry, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
