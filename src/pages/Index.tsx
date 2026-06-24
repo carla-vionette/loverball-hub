@@ -601,7 +601,7 @@ const Index = () => {
                       "Members-only watch parties",
                       "LA events & meet-ups",
                       "The Monday Drop",
-                      "Post, host, tag friends",
+                      "Meet at watch parties",
                       "Priority RSVPs",
                       "Founding-member perks",
                       "First access to invites",
