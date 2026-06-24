@@ -171,12 +171,12 @@ export async function createEvent(event: {
   const { error } = await supabase.from('events').insert({
     ...event,
     approval_status: event.approval_status ?? 'approved',
-  });
+  } as never);
   if (error) throw error;
 }
 
 export async function updateEvent(id: string, updates: Record<string, unknown>): Promise<void> {
-  const { error } = await supabase.from('events').update(updates).eq('id', id);
+  const { error } = await supabase.from('events').update(updates as never).eq('id', id);
   if (error) throw error;
 }
 
