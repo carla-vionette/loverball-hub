@@ -33,7 +33,7 @@ const BottomNav = () => {
   useEffect(() => {
     if (!user) return;
     const channel = supabase
-      .channel("bottom-nav-badge")
+      .channel(`bottom-nav-badge:${user.id}`)
       .on("postgres_changes", { event: "*", schema: "public", table: "direct_messages", filter: `receiver_id=eq.${user.id}` }, fetchBadgeCount)
       .on("postgres_changes", { event: "*", schema: "public", table: "friendships", filter: `addressee_id=eq.${user.id}` }, fetchBadgeCount)
       .subscribe();
