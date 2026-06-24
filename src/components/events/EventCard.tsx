@@ -49,12 +49,25 @@ export default function EventCard({
   onChanged?: () => void;
 }) {
   const navigate = useNavigate();
+  const { toast } = useToast();
   const theme = THEME[event.category] ?? THEME.curated_culture;
   const distance = getEventDistanceMiles(event, viewer);
   const eventDate = parseEventDate(event.event_date);
   const dateLabel = format(eventDate, "EEE, MMM d");
   const image = resolveEventImage(event);
   const hasImage = image && image !== FALLBACK_EVENT_IMAGE;
+
+  const handleShare = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    trackShareClicked(event.id, event.title, "event_card");
+    await shareEvent({
+      id: event.id,
+      event: { ...event, city: (event as { city?: string | null }).city ?? null },
+      surface: "event_card",
+      onCopied: () => toast({ title: "Link copied", description: "Event details copied to clipboard." }),
+      onFailed: () => toast({ title: "Couldn't share", variant: "destructive" }),
+    });
+  };
 
   return (
     <article
