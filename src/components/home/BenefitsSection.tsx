@@ -38,9 +38,21 @@ export default function BenefitsSection() {
       <div className="max-w-[1400px] mx-auto">
         <div className="flex items-end justify-between gap-6 mb-12">
           <div className="max-w-2xl">
-            <Mono color={C.ink}>§ — Why women join</Mono>
+            <Mono color={C.ink}>§ — Why women join · LA beta</Mono>
             <h2
               id="benefits-heading"
+              className="mt-4"
+              style={{
+                fontFamily: fonts.serif,
+                fontWeight: 400,
+                fontSize: "clamp(36px, 5.5vw, 76px)",
+                lineHeight: 0.96,
+                letterSpacing: "-0.03em",
+                color: C.ink,
+              }}
+            >
+              Your team, your LA,<br />
+
               className="mt-4"
               style={{
                 fontFamily: fonts.serif,
