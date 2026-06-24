@@ -50,7 +50,7 @@ export default function ProductPreviewSection() {
             className="mt-5"
             style={{ color: C.inkSoft, fontSize: 17, lineHeight: 1.6 }}
           >
-            A preview of what's coming for members — host watch parties, join
+            A preview of what's coming for members — find watch parties, join
             crews, and share posts from the stadium. Starting in LA.
           </p>
         </div>
