@@ -223,7 +223,7 @@ export default function Events() {
     const list = !searchQuery
       ? games
       : games.filter((g) => {
-          const hay = [g.homeTeam, g.awayTeam, g.league, g.venue ?? ""]
+          const hay = [g.homeTeam?.name ?? "", g.awayTeam?.name ?? "", g.venue ?? ""]
             .join(" ")
             .toLowerCase();
           return hay.includes(searchQuery);
