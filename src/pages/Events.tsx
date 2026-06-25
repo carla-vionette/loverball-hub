@@ -1,8 +1,9 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useActiveArea } from "@/hooks/useActiveArea";
+import { useNetworkQuality } from "@/hooks/useNetworkQuality";
 import AppLayout from "@/components/layout/AppLayout";
 import Seo from "@/components/Seo";
 import EventCard, { type EventCardData, type EventCategory } from "@/components/events/EventCard";
@@ -49,11 +50,13 @@ function categoryFor(e: Pick<DbEvent, "event_type" | "host_user_id">): EventCate
 export default function Events() {
   const { user } = useAuth();
   const { active: activeArea } = useActiveArea();
+  const { isSlow, saveData } = useNetworkQuality();
   const [events, setEvents] = useState<DbEvent[]>([]);
   const [games, setGames] = useState<FeedGame[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<"all" | EventCategory>("all");
   const [refreshKey, setRefreshKey] = useState(0);
+  const [gamesUpdatedAt, setGamesUpdatedAt] = useState<number | null>(null);
 
   const viewer: ViewerLike | null = activeArea
     ? { lat: activeArea.lat ?? null, lng: activeArea.lng ?? null, city: activeArea.city ?? null }
@@ -63,46 +66,83 @@ export default function Events() {
   // Defaults to LA when no area is set or the metro isn't mapped.
   const teams = useMemo(() => teamsForArea(activeArea), [activeArea]);
 
+  // Fetch DB events once per area/filter change.
   useEffect(() => {
     let cancelled = false;
     (async () => {
-      setLoading(true);
       const today = new Date().toISOString().slice(0, 10);
-      const [eventsRes, scoreboardRes] = await Promise.all([
-        supabase
-          .from("events")
-          .select(
-            "id, title, description, image_url, banner_image, event_date, event_time, venue_name, city, event_type, sport_tags, event_tags, location_lat, location_lng, host_user_id, status, visibility",
-          )
-          .eq("status", "published")
-          .gte("event_date", today)
-          .order("event_date", { ascending: true })
-          .limit(120),
-        supabase.functions.invoke("sports-scoreboard", {
-          body: { sports: "all", dateRange: "upcoming", teams },
-        }),
-      ]);
+      const { data, error } = await supabase
+        .from("events")
+        .select(
+          "id, title, description, image_url, banner_image, event_date, event_time, venue_name, city, event_type, sport_tags, event_tags, location_lat, location_lng, host_user_id, status, visibility",
+        )
+        .eq("status", "published")
+        .gte("event_date", today)
+        .order("event_date", { ascending: true })
+        .limit(120);
       if (cancelled) return;
-      if (!eventsRes.error && eventsRes.data) setEvents(eventsRes.data as DbEvent[]);
-      if (!scoreboardRes.error && scoreboardRes.data) {
-        const d = scoreboardRes.data as { live?: FeedGame[]; scheduled?: FeedGame[]; final?: FeedGame[] };
+      if (!error && data) setEvents(data as DbEvent[]);
+    })();
+    return () => { cancelled = true; };
+  }, []);
+
+  // Games fetch — extracted so we can poll it on an interval as scores change.
+  const fetchingRef = useRef(false);
+  const fetchGames = useCallback(async () => {
+    if (fetchingRef.current) return;
+    fetchingRef.current = true;
+    try {
+      const { data, error } = await supabase.functions.invoke("sports-scoreboard", {
+        body: { sports: "all", dateRange: "upcoming", teams },
+      });
+      if (!error && data) {
+        const d = data as { live?: FeedGame[]; scheduled?: FeedGame[]; final?: FeedGame[] };
         const merged: FeedGame[] = [
           ...(d.live ?? []),
           ...(d.scheduled ?? []),
           ...(d.final ?? []),
         ];
-        // Dedupe by id
         const seen = new Set<string>();
         setGames(merged.filter((g) => g && g.id && !seen.has(g.id) && (seen.add(g.id), true)));
-      } else {
-        setGames([]);
+        setGamesUpdatedAt(Date.now());
       }
-      setLoading(false);
-    })();
-    return () => {
-      cancelled = true;
-    };
+    } finally {
+      fetchingRef.current = false;
+    }
   }, [teams]);
+
+  // Initial load + adaptive polling. Faster interval when any game is live;
+  // slower on save-data / slow networks; pauses when tab is hidden.
+  const hasLive = useMemo(() => games.some((g) => g.status === "live"), [games]);
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      setLoading(true);
+      await fetchGames();
+      if (!cancelled) setLoading(false);
+    })();
+    return () => { cancelled = true; };
+  }, [fetchGames]);
+
+  useEffect(() => {
+    if (saveData) return; // respect data-saver — manual refresh only
+    const baseInterval = hasLive ? 30_000 : 120_000;
+    const interval = isSlow ? baseInterval * 3 : baseInterval;
+    let timer: number | undefined;
+    const tick = () => {
+      if (document.visibilityState === "visible") fetchGames();
+    };
+    timer = window.setInterval(tick, interval);
+    const onVisible = () => {
+      if (document.visibilityState === "visible") fetchGames();
+    };
+    document.addEventListener("visibilitychange", onVisible);
+    return () => {
+      if (timer) window.clearInterval(timer);
+      document.removeEventListener("visibilitychange", onVisible);
+    };
+  }, [fetchGames, hasLive, isSlow, saveData]);
+
 
   const cards = useMemo<EventCardData[]>(() => {
     return events
