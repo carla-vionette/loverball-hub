@@ -41,25 +41,28 @@ const ESPN_SCOREBOARD: Record<string, string> = {
   nhl: 'https://site.api.espn.com/apis/site/v2/sports/hockey/nhl/scoreboard',
   mls: 'https://site.api.espn.com/apis/site/v2/sports/soccer/usa.1/scoreboard',
   nwsl: 'https://site.api.espn.com/apis/site/v2/sports/soccer/usa.nwsl/scoreboard',
-  ncaambb: 'https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/scoreboard',
-  ncaawbb: 'https://site.api.espn.com/apis/site/v2/sports/basketball/womens-college-basketball/scoreboard',
-  ncaafb: 'https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard',
 };
 
-const LA_TEAMS = [
-  'Lakers', 'Clippers', 'Sparks', 'Rams', 'Chargers', 'Dodgers', 'Angels',
-  'Kings', 'Ducks', 'Galaxy', 'LAFC', 'Angel City', 'Wave',
-  'UCLA', 'USC', 'Pepperdine', 'LMU', 'Cal State Fullerton', 'CSUN',
-  'Long Beach State', 'UC Irvine', 'Bruins', 'Trojans'
+// Default fallback when caller doesn't pass `teams`: Los Angeles metro pro teams.
+const DEFAULT_TEAMS = [
+  'Dodgers', 'Angels',
+  'Lakers', 'Clippers', 'Sparks',
+  'Rams', 'Chargers',
+  'Kings', 'Ducks',
+  'Galaxy', 'LAFC', 'Angel City',
 ];
 
 const SPORT_LABELS: Record<string, string> = {
   nba: 'NBA', wnba: 'WNBA', nfl: 'NFL', mlb: 'MLB', nhl: 'NHL',
-  mls: 'MLS', nwsl: 'NWSL', ncaambb: 'NCAAM', ncaawbb: 'NCAAW', ncaafb: 'NCAAF'
+  mls: 'MLS', nwsl: 'NWSL',
 };
 
-function isLATeam(name: string): boolean {
-  return LA_TEAMS.some(t => name.toLowerCase().includes(t.toLowerCase()));
+function teamMatches(name: string, teams: string[]): boolean {
+  const n = name.toLowerCase();
+  return teams.some(t => {
+    const needle = t.trim().toLowerCase();
+    return needle.length > 1 && n.includes(needle);
+  });
 }
 
 interface GameData {
@@ -70,11 +73,13 @@ interface GameData {
   statusDetail: string;
   clock?: string;
   period?: number;
-  homeTeam: { name: string; abbreviation: string; score: string; logo: string; isLA: boolean };
-  awayTeam: { name: string; abbreviation: string; score: string; logo: string; isLA: boolean };
+  homeTeam: { name: string; abbreviation: string; score: string; logo: string; isLocal: boolean };
+  awayTeam: { name: string; abbreviation: string; score: string; logo: string; isLocal: boolean };
   startTime: string;
   venue?: string;
   broadcast?: string;
+  /** True when the user's local team is the HOME team (in-town game). */
+  homeIsLocal: boolean;
 }
 
 // Fetch with timeout and retry
@@ -114,7 +119,13 @@ async function fetchESPN(url: string): Promise<any> {
 // TheSportsDB supplementary data
 const THESPORTSDB_BASE = 'https://www.thesportsdb.com/api/v1/json/3';
 const LEAGUE_IDS: Record<string, string> = {
-  nba: '4387', nfl: '4391', mlb: '4424', nhl: '4380', mls: '4346',
+  nba: '4387',
+  wnba: '4516',  // Women's National Basketball Association
+  nfl: '4391',
+  mlb: '4424',
+  nhl: '4380',
+  mls: '4346',
+  nwsl: '4822',  // National Women's Soccer League
 };
 
 async function fetchTheSportsDBNextEvents(sport: string): Promise<any[]> {
@@ -123,7 +134,7 @@ async function fetchTheSportsDBNextEvents(sport: string): Promise<any[]> {
   const cacheKey = `thesportsdb:${sport}`;
   const cached = getCached(cacheKey);
   if (cached) return cached as any[];
-  
+
   const res = await fetchWithRetry(`${THESPORTSDB_BASE}/eventsnextleague.php?id=${leagueId}`, 2, 5000);
   if (!res) return [];
   try {
@@ -134,7 +145,7 @@ async function fetchTheSportsDBNextEvents(sport: string): Promise<any[]> {
   } catch { return []; }
 }
 
-function processGames(data: any, sport: string): GameData[] {
+function processGames(data: any, sport: string, teams: string[]): GameData[] {
   if (!data?.events) return [];
   const games: GameData[] = [];
 
@@ -144,7 +155,10 @@ function processGames(data: any, sport: string): GameData[] {
     const home = comp.competitors?.find((c: any) => c.homeAway === 'home');
     const away = comp.competitors?.find((c: any) => c.homeAway === 'away');
     if (!home || !away) continue;
-    if (!isLATeam(home.team.displayName) && !isLATeam(away.team.displayName)) continue;
+
+    const homeIsLocal = teamMatches(home.team.displayName, teams);
+    const awayIsLocal = teamMatches(away.team.displayName, teams);
+    if (!homeIsLocal && !awayIsLocal) continue;
 
     const statusName = event.status?.type?.name || '';
     let status: 'live' | 'final' | 'scheduled' = 'scheduled';
@@ -169,19 +183,20 @@ function processGames(data: any, sport: string): GameData[] {
         name: home.team.displayName,
         abbreviation: home.team.abbreviation,
         score: home.score || '0',
-        logo: home.team.logo || `https://a.espncdn.com/i/teamlogos/${sport === 'nfl' ? 'nfl' : sport === 'nba' ? 'nba' : sport}/500/${home.team.abbreviation?.toLowerCase()}.png`,
-        isLA: isLATeam(home.team.displayName),
+        logo: home.team.logo || `https://a.espncdn.com/i/teamlogos/${sport}/500/${home.team.abbreviation?.toLowerCase()}.png`,
+        isLocal: homeIsLocal,
       },
       awayTeam: {
         name: away.team.displayName,
         abbreviation: away.team.abbreviation,
         score: away.score || '0',
         logo: away.team.logo || `https://a.espncdn.com/i/teamlogos/${sport}/500/${away.team.abbreviation?.toLowerCase()}.png`,
-        isLA: isLATeam(away.team.displayName),
+        isLocal: awayIsLocal,
       },
       startTime: comp.date || event.date || '',
       venue,
       broadcast,
+      homeIsLocal,
     });
   }
   return games;
@@ -215,7 +230,15 @@ serve(async (req) => {
   try {
     const body = await req.json().catch(() => ({}));
     const { sports = 'all', dateRange = 'today' } = body;
-    const cacheKey = `scoreboard:${sports}:${dateRange}`;
+
+    // Accept a list of pro team names to filter by. Falls back to LA metro.
+    const rawTeams = Array.isArray(body?.teams) ? body.teams : null;
+    const teams: string[] = rawTeams && rawTeams.length
+      ? rawTeams.filter((t: unknown): t is string => typeof t === 'string' && t.trim().length > 1).slice(0, 60)
+      : DEFAULT_TEAMS;
+
+    const teamsKey = teams.slice().sort().join('|');
+    const cacheKey = `scoreboard:${sports}:${dateRange}:${teamsKey}`;
     const cached = getCached(cacheKey);
     if (cached) {
       return new Response(JSON.stringify(cached), {
@@ -235,36 +258,33 @@ serve(async (req) => {
     const fetches: Promise<GameData[]>[] = [];
 
     if (dateRange === 'recent') {
-      // Fetch last 7 days
       for (let d = 7; d >= 0; d--) {
         const date = new Date(today);
         date.setDate(date.getDate() - d);
         const dateStr = date.toISOString().split('T')[0].replace(/-/g, '');
         for (const sport of sportKeys) {
-          fetches.push(fetchESPN(`${ESPN_SCOREBOARD[sport]}?dates=${dateStr}`).then(data => processGames(data, sport)));
+          fetches.push(fetchESPN(`${ESPN_SCOREBOARD[sport]}?dates=${dateStr}`).then(data => processGames(data, sport, teams)));
         }
       }
     } else if (dateRange === 'upcoming') {
-      // Fetch next 7 days
       for (let d = 0; d <= 7; d++) {
         const date = new Date(today);
         date.setDate(date.getDate() + d);
         const dateStr = date.toISOString().split('T')[0].replace(/-/g, '');
         for (const sport of sportKeys) {
-          fetches.push(fetchESPN(`${ESPN_SCOREBOARD[sport]}?dates=${dateStr}`).then(data => processGames(data, sport)));
+          fetches.push(fetchESPN(`${ESPN_SCOREBOARD[sport]}?dates=${dateStr}`).then(data => processGames(data, sport, teams)));
         }
       }
     } else {
-      // Today only
       for (const sport of sportKeys) {
-        fetches.push(fetchESPN(ESPN_SCOREBOARD[sport]).then(data => processGames(data, sport)));
+        fetches.push(fetchESPN(ESPN_SCOREBOARD[sport]).then(data => processGames(data, sport, teams)));
       }
     }
 
-    // Also fetch TheSportsDB upcoming events for supplementary data
+    // Also fetch TheSportsDB upcoming events for supplementary data — now includes wnba/nwsl.
     const sportsDBFetches = sportKeys
       .filter(k => LEAGUE_IDS[k])
-      .map(k => fetchTheSportsDBNextEvents(k));
+      .map(k => fetchTheSportsDBNextEvents(k).then(events => ({ sport: k, events })));
 
     const [espnResults, ...sportsDBResults] = await Promise.all([
       Promise.all(fetches),
@@ -282,21 +302,35 @@ serve(async (req) => {
     const final_ = unique.filter(g => g.status === 'final');
     const scheduled = unique.filter(g => g.status === 'scheduled');
 
-    // Sort: live by period desc, final by time desc, scheduled by time asc
     live.sort((a, b) => (b.period || 0) - (a.period || 0));
     scheduled.sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime());
 
-    // TheSportsDB upcoming events (supplementary, flattened)
-    const theSportsDBUpcoming = sportsDBResults.flat().filter((e: any) =>
-      e && (e.strHomeTeam || e.strAwayTeam)
-    ).map((e: any) => ({
-      id: e.idEvent,
-      event: `${e.strAwayTeam} vs ${e.strHomeTeam}`,
-      date: e.dateEvent,
-      time: e.strTime,
-      league: e.strLeague,
-      source: 'thesportsdb',
-    })).slice(0, 10);
+    // TheSportsDB upcoming events (filtered to local teams)
+    const theSportsDBUpcoming = (sportsDBResults as Array<{ sport: string; events: any[] }>)
+      .flatMap(({ sport, events }) =>
+        (events || [])
+          .filter((e: any) => e && (e.strHomeTeam || e.strAwayTeam))
+          .filter((e: any) =>
+            teamMatches(e.strHomeTeam || '', teams) || teamMatches(e.strAwayTeam || '', teams)
+          )
+          .map((e: any) => {
+            const homeIsLocal = teamMatches(e.strHomeTeam || '', teams);
+            return {
+              id: e.idEvent,
+              sport,
+              sportLabel: SPORT_LABELS[sport] || sport.toUpperCase(),
+              event: `${e.strAwayTeam} vs ${e.strHomeTeam}`,
+              homeTeam: e.strHomeTeam,
+              awayTeam: e.strAwayTeam,
+              date: e.dateEvent,
+              time: e.strTime,
+              league: e.strLeague,
+              homeIsLocal,
+              source: 'thesportsdb',
+            };
+          })
+      )
+      .slice(0, 30);
 
     const responseData = {
       live,
@@ -304,6 +338,7 @@ serve(async (req) => {
       scheduled,
       theSportsDBUpcoming,
       totalGames: unique.length,
+      teams,
       updatedAt: new Date().toISOString(),
       sources: ['ESPN', 'TheSportsDB'],
     };
