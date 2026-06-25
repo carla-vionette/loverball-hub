@@ -39,20 +39,17 @@ const NotificationBell = () => {
       return;
     }
     load();
-    const channel = supabase
-      .channel(`notif:${user.id}:${Date.now()}:${Math.random().toString(36).slice(2, 8)}`)
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "notifications", filter: `user_id=eq.${user.id}` },
-        () => load(),
-      )
-      .subscribe((status, err) => {
-        if (status === "CHANNEL_ERROR") {
-          console.error("[NotificationBell] CHANNEL_ERROR", err);
-        } else if (status === "TIMED_OUT") {
-          console.warn("[NotificationBell] TIMED_OUT");
-        }
-      });
+    const channel = supabase.channel(`notif:${user.id}:${Date.now()}:${Math.random().toString(36).slice(2, 8)}`);
+    channel.on(
+      "postgres_changes",
+      { event: "*", schema: "public", table: "notifications", filter: `user_id=eq.${user.id}` },
+      () => load(),
+    );
+    channel.subscribe((status, err) => {
+      if (status === "CHANNEL_ERROR" || status === "TIMED_OUT") {
+        console.error(`[NotificationBell] Realtime ${status}`, err);
+      }
+    });
     return () => {
       supabase.removeChannel(channel);
     };
