@@ -178,26 +178,29 @@ const MessagesPage = () => {
   useEffect(() => {
     if (!selectedMatch?.chat?.id) return;
 
-    const channel = supabase
-      .channel(`messages-${selectedMatch.chat.id}`)
-      .on(
-        'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'messages',
-          filter: `chat_id=eq.${selectedMatch.chat.id}`,
-        },
-        (payload) => {
-          setMessages(prev => [...prev, payload.new as Message]);
-        }
-      )
-      .subscribe();
+    const channel = supabase.channel(`messages:${selectedMatch.chat.id}:${user?.id ?? 'anon'}:${Date.now()}:${Math.random().toString(36).slice(2, 8)}`);
+    channel.on(
+      'postgres_changes',
+      {
+        event: 'INSERT',
+        schema: 'public',
+        table: 'messages',
+        filter: `chat_id=eq.${selectedMatch.chat.id}`,
+      },
+      (payload) => {
+        setMessages(prev => [...prev, payload.new as Message]);
+      }
+    );
+    channel.subscribe((status, err) => {
+      if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
+        console.error(`[MessagesPage] Realtime ${status}`, err);
+      }
+    });
 
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [selectedMatch?.chat?.id]);
+  }, [selectedMatch?.chat?.id, user?.id]);
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
