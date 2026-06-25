@@ -80,7 +80,9 @@ export default function EventCard({
       }}
       role="link"
       tabIndex={0}
-      className="group relative bg-[#FAF5E9] rounded-2xl overflow-hidden border border-black/5 hover:border-black/20 transition-all cursor-pointer flex"
+      className={`group relative bg-[#FAF5E9] rounded-2xl overflow-hidden border transition-all cursor-pointer flex ${
+        isLoverball ? "border-[#E85D2F]/40 shadow-[0_2px_12px_-4px_rgba(232,93,47,0.25)]" : "border-black/5 hover:border-black/20"
+      }`}
     >
       {/* Left accent bar */}
       <div className="w-1 flex-shrink-0" style={{ background: theme.color }} />
