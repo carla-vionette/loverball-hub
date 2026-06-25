@@ -1,22 +1,31 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import { Search, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useActiveArea } from "@/hooks/useActiveArea";
 import { useNetworkQuality } from "@/hooks/useNetworkQuality";
 import AppLayout from "@/components/layout/AppLayout";
 import Seo from "@/components/Seo";
-import EventCard, { type EventCardData, type EventCategory } from "@/components/events/EventCard";
+import EventCard, { type EventCardData } from "@/components/events/EventCard";
 import GameFeedCard, { type FeedGame } from "@/components/events/GameFeedCard";
+import EventCalendar from "@/components/events/EventCalendar";
 import { teamsForArea } from "@/lib/metroTeams";
-import { parseEventDate } from "@/lib/eventDate";
-import { format } from "date-fns";
-import { Search } from "lucide-react";
 import {
   isInVenueRadius,
   getEventDistanceMiles,
   type ViewerLike,
 } from "@/lib/distance";
+import {
+  BADGE_LABELS,
+  BUCKET_LABELS,
+  bucketForDate,
+  classifyEvent,
+  getEventBadges,
+  matchesFilter,
+  type EventFilter,
+  type DateBucket,
+} from "@/lib/eventClassification";
 
 interface DbEvent {
   id: string;
@@ -39,31 +48,12 @@ interface DbEvent {
   event_tags?: string[] | null;
 }
 
-const FILTERS: { key: "all" | EventCategory; label: string }[] = [
+const FILTERS: { key: EventFilter; label: string }[] = [
   { key: "all", label: "All" },
   { key: "external_sports", label: "Sports" },
   { key: "curated_culture", label: "Culture" },
   { key: "loverball_hosted", label: "Loverball" },
 ];
-
-// A Loverball-hosted event is any human-hosted event that lives on the
-// platform (watch parties, panels, salons, parties, networking, member-only).
-// Sports games coming from the scoreboard are 'game'.
-function categoryFor(e: Pick<DbEvent, "event_type" | "tier" | "visibility">): EventCategory {
-  if (e.event_type === "game") return "external_sports";
-  // Anything member-tier or members_only is a Loverball-hosted event.
-  if (e.tier === "member" || e.visibility === "members_only") return "loverball_hosted";
-  if (
-    e.event_type === "watch_party" ||
-    e.event_type === "party" ||
-    e.event_type === "networking" ||
-    e.event_type === "salon" ||
-    e.event_type === "panel"
-  ) {
-    return "loverball_hosted";
-  }
-  return "curated_culture";
-}
 
 type ViewMode = "feed" | "calendar";
 
@@ -74,13 +64,12 @@ export default function Events() {
   const [events, setEvents] = useState<DbEvent[]>([]);
   const [games, setGames] = useState<FeedGame[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState<"all" | EventCategory>("all");
+  const [filter, setFilter] = useState<EventFilter>("all");
   const [viewMode, setViewMode] = useState<ViewMode>("feed");
   const [searchInput, setSearchInput] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
-  const [refreshKey, setRefreshKey] = useState(0);
+  const [, setRefreshKey] = useState(0);
 
-  // Debounce search input
   useEffect(() => {
     const t = setTimeout(() => setSearchQuery(searchInput.trim().toLowerCase()), 200);
     return () => clearTimeout(t);
@@ -163,7 +152,8 @@ export default function Events() {
     };
   }, [fetchGames, hasLive, isSlow, saveData]);
 
-  const cards = useMemo<EventCardData[]>(() => {
+  // Normalize DB events into card data once.
+  const allCards = useMemo<EventCardData[]>(() => {
     return events.map((e) => ({
       id: e.id,
       title: e.title,
@@ -179,19 +169,33 @@ export default function Events() {
       event_type: e.event_type,
       sport_tags: e.sport_tags,
       event_tags: e.event_tags,
-      category: categoryFor(e),
+      category: classifyEvent(e),
     }));
   }, [events]);
 
-  // Apply category filter
-  const filteredCards = useMemo(() => {
-    return cards.filter((c) => (filter === "all" ? true : c.category === filter));
-  }, [cards, filter]);
+  // Look up the underlying DbEvent for badge computation.
+  const eventsById = useMemo(() => {
+    const m = new Map<string, DbEvent>();
+    for (const e of events) m.set(e.id, e);
+    return m;
+  }, [events]);
 
-  // Apply search
-  const searchedCards = useMemo(() => {
-    if (!searchQuery) return filteredCards;
-    return filteredCards.filter((c) => {
+  const badgesFor = useCallback(
+    (c: EventCardData): string[] => {
+      const src = eventsById.get(c.id);
+      if (!src) return [];
+      return getEventBadges(src).map((b) => BADGE_LABELS[b]);
+    },
+    [eventsById],
+  );
+
+  // Filter + search pipeline — single derived dataset reused everywhere.
+  const filteredCards = useMemo(() => {
+    return allCards.filter((c) => {
+      const src = eventsById.get(c.id);
+      if (!src) return false;
+      if (!matchesFilter(src, filter)) return false;
+      if (!searchQuery) return true;
       const hay = [
         c.title,
         c.description ?? "",
@@ -204,10 +208,10 @@ export default function Events() {
         .toLowerCase();
       return hay.includes(searchQuery);
     });
-  }, [filteredCards, searchQuery]);
+  }, [allCards, eventsById, filter, searchQuery]);
 
   const sortedCards = useMemo(() => {
-    return [...searchedCards].sort((a, b) => {
+    return [...filteredCards].sort((a, b) => {
       const aIn = isInVenueRadius(a, viewer) ? 0 : 1;
       const bIn = isInVenueRadius(b, viewer) ? 0 : 1;
       if (aIn !== bIn) return aIn - bIn;
@@ -216,14 +220,19 @@ export default function Events() {
       if (da != null && db != null && da !== db) return da - db;
       return a.event_date.localeCompare(b.event_date);
     });
-  }, [searchedCards, viewer]);
+  }, [filteredCards, viewer]);
 
   const visibleGames = useMemo(() => {
     if (filter !== "all" && filter !== "external_sports") return [] as FeedGame[];
     const list = !searchQuery
       ? games
       : games.filter((g) => {
-          const hay = [g.homeTeam?.name ?? "", g.awayTeam?.name ?? "", g.venue ?? ""]
+          const hay = [
+            g.homeTeam?.name ?? "",
+            g.awayTeam?.name ?? "",
+            g.venue ?? "",
+            g.sportLabel ?? "",
+          ]
             .join(" ")
             .toLowerCase();
           return hay.includes(searchQuery);
@@ -237,18 +246,41 @@ export default function Events() {
     });
   }, [games, filter, searchQuery]);
 
+  // Bucket events by date for Feed view.
+  const bucketedFeed = useMemo(() => {
+    const map: Record<DateBucket, EventCardData[]> = { today: [], this_week: [], later: [] };
+    for (const c of sortedCards) map[bucketForDate(c.event_date)].push(c);
+    return map;
+  }, [sortedCards]);
+
   const isEmpty = sortedCards.length === 0 && visibleGames.length === 0;
 
-  // Group by date for calendar view
-  const groupedByDate = useMemo(() => {
-    const groups = new Map<string, EventCardData[]>();
-    for (const c of sortedCards) {
-      const key = c.event_date;
-      if (!groups.has(key)) groups.set(key, []);
-      groups.get(key)!.push(c);
+  // Empty-state copy
+  const emptyState = useMemo(() => {
+    if (searchQuery) {
+      return {
+        heading: `No matches for "${searchInput}".`,
+        body: "Try a different search or clear filters to widen the lens.",
+      };
     }
-    return Array.from(groups.entries()).sort((a, b) => a[0].localeCompare(b[0]));
-  }, [sortedCards]);
+    if (filter === "loverball_hosted") {
+      return {
+        heading: "No Loverball events on the schedule yet.",
+        body: "New watch parties and salons drop weekly — keep an eye out.",
+      };
+    }
+    if (filter !== "all") {
+      const label = FILTERS.find((f) => f.key === filter)?.label ?? "this category";
+      return {
+        heading: `Nothing in ${label} right now.`,
+        body: "Check All to see everything happening this week.",
+      };
+    }
+    return {
+      heading: "Calendar's quiet.",
+      body: "Check back soon — games and parties get added every week.",
+    };
+  }, [searchQuery, searchInput, filter]);
 
   const cityLabel = activeArea?.city || "your city";
   const needsZip = !!user && !activeArea?.zip;
@@ -268,7 +300,7 @@ export default function Events() {
               color: "#E85D2F",
             }}
           >
-            Events
+            Events {activeArea?.city ? `· ${cityLabel}` : ""}
           </span>
           <h1
             className="mt-2"
@@ -286,7 +318,7 @@ export default function Events() {
           </h1>
           <p className="mt-2 text-sm font-['Inter'] text-[#1A1A1A]/60">
             {activeArea?.city ? (
-              <>What's on around <span className="font-semibold text-[#1A1A1A]">{cityLabel}</span>.</>
+              <>Games, watch parties, and Loverball nights around <span className="font-semibold text-[#1A1A1A]">{cityLabel}</span>.</>
             ) : user ? (
               <>Tell us where you are to see what's near you.</>
             ) : (
@@ -326,61 +358,72 @@ export default function Events() {
 
           {/* Search */}
           <div className="mt-5 relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#1A1A1A]/40" aria-hidden />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-[#1A1A1A]/40" aria-hidden />
             <input
               type="search"
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
-              placeholder="Search events, venues, teams…"
-              className="w-full h-11 pl-10 pr-4 rounded-full bg-white border border-[#E8E3DC] text-sm font-['Inter'] text-[#1A1A1A] placeholder:text-[#1A1A1A]/40 focus:outline-none focus:border-[#E85D2F] transition-colors"
+              placeholder="Search events, venues, teams, or cities"
+              className="w-full h-11 pl-11 pr-11 rounded-full bg-white border border-[#E8E3DC] text-sm font-['Inter'] text-[#1A1A1A] placeholder:text-[#1A1A1A]/40 focus:outline-none focus:border-[#E85D2F] transition-colors"
             />
+            {searchInput && (
+              <button
+                onClick={() => setSearchInput("")}
+                aria-label="Clear search"
+                className="absolute right-3 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full flex items-center justify-center text-[#1A1A1A]/60 hover:bg-black/5 transition-colors"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            )}
           </div>
 
-          {/* View toggle */}
-          <div className="mt-4 inline-flex rounded-full bg-white border border-[#E8E3DC] p-1">
-            {(["feed", "calendar"] as ViewMode[]).map((m) => {
-              const active = viewMode === m;
-              return (
-                <button
-                  key={m}
-                  onClick={() => setViewMode(m)}
-                  aria-pressed={active}
-                  className="px-4 py-1.5 rounded-full text-xs uppercase tracking-wider transition-all"
-                  style={{
-                    fontFamily: "'Space Mono', ui-monospace, monospace",
-                    background: active ? "#1A1A1A" : "transparent",
-                    color: active ? "#FAF7F2" : "#1A1A1A",
-                    fontWeight: active ? 600 : 400,
-                  }}
-                >
-                  {m === "feed" ? "Feed" : "Calendar"}
-                </button>
-              );
-            })}
-          </div>
+          {/* View toggle + filter chips */}
+          <div className="mt-4 flex flex-wrap items-center gap-3">
+            <div className="inline-flex rounded-full bg-white border border-[#E8E3DC] p-1">
+              {(["feed", "calendar"] as ViewMode[]).map((m) => {
+                const active = viewMode === m;
+                return (
+                  <button
+                    key={m}
+                    onClick={() => setViewMode(m)}
+                    aria-pressed={active}
+                    className="px-4 py-1.5 rounded-full text-xs uppercase tracking-wider transition-all"
+                    style={{
+                      fontFamily: "'Space Mono', ui-monospace, monospace",
+                      background: active ? "#1A1A1A" : "transparent",
+                      color: active ? "#FAF7F2" : "#1A1A1A",
+                      fontWeight: active ? 600 : 400,
+                    }}
+                  >
+                    {m === "feed" ? "Feed" : "Calendar"}
+                  </button>
+                );
+              })}
+            </div>
 
-          <div className="mt-4 flex gap-2 overflow-x-auto -mx-1 px-1 scrollbar-hide">
-            {FILTERS.map((f) => {
-              const active = filter === f.key;
-              return (
-                <button
-                  key={f.key}
-                  onClick={() => setFilter(f.key)}
-                  aria-pressed={active}
-                  className="shrink-0 whitespace-nowrap px-3 py-1.5 rounded-full text-xs uppercase tracking-wider transition-all"
-                  style={{
-                    fontFamily: "'Space Mono', ui-monospace, monospace",
-                    background: active ? "#E85D2F" : "#FFFFFF",
-                    color: active ? "#FFFFFF" : "#1A1A1A",
-                    border: `1px solid ${active ? "#E85D2F" : "#E8E3DC"}`,
-                    boxShadow: active ? "0 4px 14px -4px rgba(232, 93, 47, 0.5)" : "none",
-                    fontWeight: active ? 600 : 400,
-                  }}
-                >
-                  {f.label}
-                </button>
-              );
-            })}
+            <div className="flex gap-2 overflow-x-auto -mx-1 px-1 scrollbar-hide flex-1 min-w-0">
+              {FILTERS.map((f) => {
+                const active = filter === f.key;
+                return (
+                  <button
+                    key={f.key}
+                    onClick={() => setFilter(f.key)}
+                    aria-pressed={active}
+                    className="shrink-0 whitespace-nowrap px-3 py-1.5 rounded-full text-xs uppercase tracking-wider transition-all"
+                    style={{
+                      fontFamily: "'Space Mono', ui-monospace, monospace",
+                      background: active ? "#E85D2F" : "#FFFFFF",
+                      color: active ? "#FFFFFF" : "#1A1A1A",
+                      border: `1px solid ${active ? "#E85D2F" : "#E8E3DC"}`,
+                      boxShadow: active ? "0 4px 14px -4px rgba(232, 93, 47, 0.5)" : "none",
+                      fontWeight: active ? 600 : 400,
+                    }}
+                  >
+                    {f.label}
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </header>
 
@@ -394,78 +437,121 @@ export default function Events() {
           ) : isEmpty ? (
             <div className="text-center py-20 space-y-2">
               <p className="font-['Playfair_Display'] italic text-xl text-[#1A1A1A]/60">
-                {searchQuery
-                  ? `No events match "${searchInput}".`
-                  : filter !== "all"
-                    ? `No ${FILTERS.find((f) => f.key === filter)?.label} events yet.`
-                    : "No upcoming events yet."}
+                {emptyState.heading}
               </p>
-              <p className="text-sm font-['Inter'] text-[#1A1A1A]/50">
-                {searchQuery
-                  ? "Try a different search or clear filters."
-                  : "Check back soon — new games and parties get added every week."}
-              </p>
+              <p className="text-sm font-['Inter'] text-[#1A1A1A]/50">{emptyState.body}</p>
+              {(searchQuery || filter !== "all") && (
+                <button
+                  onClick={() => {
+                    setSearchInput("");
+                    setFilter("all");
+                  }}
+                  className="mt-3 inline-block px-4 py-2 rounded-full bg-[#1A1A1A] text-[#FAF7F2] text-xs"
+                  style={{ fontFamily: "'Space Mono', ui-monospace, monospace", letterSpacing: "0.18em", textTransform: "uppercase" }}
+                >
+                  Reset filters
+                </button>
+              )}
             </div>
           ) : viewMode === "calendar" ? (
-            <div className="space-y-6">
-              {groupedByDate.map(([dateKey, items]) => {
-                const d = parseEventDate(dateKey);
-                return (
-                  <section key={dateKey}>
-                    <div className="flex items-baseline gap-3 mb-3 pb-2 border-b border-[#1A1A1A]/10">
-                      <div
-                        style={{
-                          fontFamily: "'Anton', Impact, sans-serif",
-                          fontSize: 28,
-                          lineHeight: 1,
-                          color: "#E85D2F",
-                        }}
-                      >
-                        {format(d, "d")}
-                      </div>
-                      <div
-                        style={{
-                          fontFamily: "'Space Mono', ui-monospace, monospace",
-                          fontSize: 11,
-                          letterSpacing: "0.22em",
-                          textTransform: "uppercase",
-                          color: "#1A1A1A",
-                        }}
-                      >
-                        {format(d, "EEE · MMM yyyy")}
-                      </div>
-                    </div>
-                    <div className="space-y-3">
-                      {items.map((c) => (
-                        <EventCard
-                          key={c.id}
-                          event={c}
-                          viewer={viewer}
-                          onChanged={() => setRefreshKey((k) => k + 1)}
-                        />
-                      ))}
-                    </div>
-                  </section>
-                );
-              })}
-            </div>
+            <EventCalendar
+              events={sortedCards}
+              viewer={viewer}
+              badgesFor={(c) => {
+                const src = eventsById.get(c.id);
+                return src ? getEventBadges(src) : [];
+              }}
+              onChanged={() => setRefreshKey((k) => k + 1)}
+            />
           ) : (
-            <div className="space-y-3">
-              {visibleGames.map((g) => (
-                <GameFeedCard key={`game:${g.id}`} game={g} />
-              ))}
-              {sortedCards.map((c) => (
-                <EventCard
-                  key={c.id}
-                  event={c}
-                  viewer={viewer}
-                  onChanged={() => setRefreshKey((k) => k + 1)}
-                />
-              ))}
-            </div>
+            <FeedView
+              buckets={bucketedFeed}
+              games={visibleGames}
+              viewer={viewer}
+              badgesFor={badgesFor}
+              onChanged={() => setRefreshKey((k) => k + 1)}
+            />
           )}
         </main>
       </div>
     </AppLayout>
+  );
+}
+
+function SectionHeading({ label, count }: { label: string; count: number }) {
+  return (
+    <div className="flex items-baseline justify-between mb-3 pb-2 border-b border-[#1A1A1A]/10">
+      <span
+        style={{
+          fontFamily: "'Space Mono', ui-monospace, monospace",
+          fontSize: 11,
+          letterSpacing: "0.22em",
+          textTransform: "uppercase",
+          color: "#1A1A1A",
+        }}
+      >
+        {label}
+      </span>
+      <span
+        style={{
+          fontFamily: "'Space Mono', ui-monospace, monospace",
+          fontSize: 11,
+          color: "#1A1A1A",
+          opacity: 0.5,
+        }}
+      >
+        {count}
+      </span>
+    </div>
+  );
+}
+
+function FeedView({
+  buckets,
+  games,
+  viewer,
+  badgesFor,
+  onChanged,
+}: {
+  buckets: Record<DateBucket, EventCardData[]>;
+  games: FeedGame[];
+  viewer: ViewerLike | null;
+  badgesFor: (c: EventCardData) => string[];
+  onChanged: () => void;
+}) {
+  const order: DateBucket[] = ["today", "this_week", "later"];
+  return (
+    <div className="space-y-7">
+      {games.length > 0 && (
+        <section>
+          <SectionHeading label="Live & Upcoming Games" count={games.length} />
+          <div className="space-y-3">
+            {games.map((g) => (
+              <GameFeedCard key={`game:${g.id}`} game={g} />
+            ))}
+          </div>
+        </section>
+      )}
+      {order.map((key) => {
+        const items = buckets[key];
+        if (items.length === 0) return null;
+        return (
+          <section key={key}>
+            <SectionHeading label={BUCKET_LABELS[key]} count={items.length} />
+            <div className="space-y-3">
+              {items.map((c) => (
+                <EventCard
+                  key={c.id}
+                  event={c}
+                  viewer={viewer}
+                  badges={badgesFor(c)}
+                  onChanged={onChanged}
+                />
+              ))}
+            </div>
+          </section>
+        );
+      })}
+    </div>
   );
 }
