@@ -32,11 +32,14 @@ const BottomNav = () => {
 
   useEffect(() => {
     if (!user) return;
-    const channel = supabase
-      .channel(`bottom-nav-badge:${user.id}`)
-      .on("postgres_changes", { event: "*", schema: "public", table: "direct_messages", filter: `receiver_id=eq.${user.id}` }, fetchBadgeCount)
-      .on("postgres_changes", { event: "*", schema: "public", table: "friendships", filter: `addressee_id=eq.${user.id}` }, fetchBadgeCount)
-      .subscribe();
+    const channel = supabase.channel(`bottom-nav-badge:${user.id}:${Date.now()}:${Math.random().toString(36).slice(2, 8)}`);
+    channel.on("postgres_changes", { event: "*", schema: "public", table: "direct_messages", filter: `receiver_id=eq.${user.id}` }, fetchBadgeCount);
+    channel.on("postgres_changes", { event: "*", schema: "public", table: "friendships", filter: `addressee_id=eq.${user.id}` }, fetchBadgeCount);
+    channel.subscribe((status, err) => {
+      if (status === "CHANNEL_ERROR" || status === "TIMED_OUT") {
+        console.error(`[BottomNav] Realtime ${status}`, err);
+      }
+    });
     return () => { supabase.removeChannel(channel); };
   }, [user?.id]);
 

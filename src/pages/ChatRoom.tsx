@@ -31,21 +31,24 @@ const ChatRoom = () => {
     fetchOtherUser();
 
     // Realtime subscription
-    const channel = supabase
-      .channel(`chat-${chatId}`)
-      .on(
-        "postgres_changes",
-        { event: "INSERT", schema: "public", table: "messages", filter: `chat_id=eq.${chatId}` },
-        (payload) => {
-          const newMsg = payload.new as Message;
-          setMessages((prev) => [...prev, newMsg]);
-          // Mark as read if from other user
-          if (newMsg.sender_id !== user.id) {
-            supabase.from("messages").update({ read_at: new Date().toISOString() }).eq("id", newMsg.id).then();
-          }
+    const channel = supabase.channel(`chat:${chatId}:${user.id}:${Date.now()}:${Math.random().toString(36).slice(2, 8)}`);
+    channel.on(
+      "postgres_changes",
+      { event: "INSERT", schema: "public", table: "messages", filter: `chat_id=eq.${chatId}` },
+      (payload) => {
+        const newMsg = payload.new as Message;
+        setMessages((prev) => [...prev, newMsg]);
+        // Mark as read if from other user
+        if (newMsg.sender_id !== user.id) {
+          supabase.from("messages").update({ read_at: new Date().toISOString() }).eq("id", newMsg.id).then();
         }
-      )
-      .subscribe();
+      }
+    );
+    channel.subscribe((status, err) => {
+      if (status === "CHANNEL_ERROR" || status === "TIMED_OUT") {
+        console.error(`[ChatRoom] Realtime ${status}`, err);
+      }
+    });
 
     return () => { supabase.removeChannel(channel); };
   }, [chatId, user]);

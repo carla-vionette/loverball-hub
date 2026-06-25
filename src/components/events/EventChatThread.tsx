@@ -101,24 +101,27 @@ export default function EventChatThread({ eventId, pageSize = PAGE }: Props) {
 
   // Realtime subscription
   useEffect(() => {
-    const channel = supabase
-      .channel(`event-chat-${eventId}`)
-      .on(
-        "postgres_changes",
-        { event: "INSERT", schema: "public", table: "event_chat_messages", filter: `event_id=eq.${eventId}` },
-        (payload) => {
-          const row = payload.new as ChatRow;
-          setMessages(prev => {
-            if (prev.some(m => m.id === row.id)) return prev;
-            return [...prev, row];
-          });
-          hydrateProfiles([row]);
-          requestAnimationFrame(() => {
-            if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-          });
-        }
-      )
-      .subscribe();
+    const channel = supabase.channel(`event-chat:${eventId}:${Date.now()}:${Math.random().toString(36).slice(2, 8)}`);
+    channel.on(
+      "postgres_changes",
+      { event: "INSERT", schema: "public", table: "event_chat_messages", filter: `event_id=eq.${eventId}` },
+      (payload) => {
+        const row = payload.new as ChatRow;
+        setMessages(prev => {
+          if (prev.some(m => m.id === row.id)) return prev;
+          return [...prev, row];
+        });
+        hydrateProfiles([row]);
+        requestAnimationFrame(() => {
+          if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+        });
+      }
+    );
+    channel.subscribe((status, err) => {
+      if (status === "CHANNEL_ERROR" || status === "TIMED_OUT") {
+        console.error(`[EventChatThread] Realtime ${status}`, err);
+      }
+    });
     return () => { supabase.removeChannel(channel); };
   }, [eventId, hydrateProfiles]);
 

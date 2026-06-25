@@ -114,12 +114,15 @@ const GameDetail = () => {
       setRsvps(rows as RsvpRow[]);
     };
     load();
-    const ch = supabase
-      .channel(`game-rsvps-${gameId}`)
-      .on("postgres_changes", { event: "*", schema: "public", table: "game_rsvps", filter: `game_id=eq.${gameId}` }, load)
-      .subscribe();
+    const ch = supabase.channel(`game-rsvps:${gameId}:${user?.id ?? "anon"}:${Date.now()}:${Math.random().toString(36).slice(2, 8)}`);
+    ch.on("postgres_changes", { event: "*", schema: "public", table: "game_rsvps", filter: `game_id=eq.${gameId}` }, load);
+    ch.subscribe((status, err) => {
+      if (status === "CHANNEL_ERROR" || status === "TIMED_OUT") {
+        console.error(`[GameDetail:rsvps] Realtime ${status}`, err);
+      }
+    });
     return () => { supabase.removeChannel(ch); };
-  }, [gameId]);
+  }, [gameId, user?.id]);
 
   // Load chat + realtime
   useEffect(() => {
@@ -133,14 +136,17 @@ const GameDetail = () => {
         .limit(200);
       setMessages((data as ChatMsg[]) ?? []);
     })();
-    const ch = supabase
-      .channel(`game-chats-${gameId}`)
-      .on("postgres_changes", { event: "INSERT", schema: "public", table: "game_chats", filter: `game_id=eq.${gameId}` }, (payload) => {
-        setMessages(prev => [...prev, payload.new as ChatMsg]);
-      })
-      .subscribe();
+    const ch = supabase.channel(`game-chats:${gameId}:${user?.id ?? "anon"}:${Date.now()}:${Math.random().toString(36).slice(2, 8)}`);
+    ch.on("postgres_changes", { event: "INSERT", schema: "public", table: "game_chats", filter: `game_id=eq.${gameId}` }, (payload) => {
+      setMessages(prev => [...prev, payload.new as ChatMsg]);
+    });
+    ch.subscribe((status, err) => {
+      if (status === "CHANNEL_ERROR" || status === "TIMED_OUT") {
+        console.error(`[GameDetail:chat] Realtime ${status}`, err);
+      }
+    });
     return () => { supabase.removeChannel(ch); };
-  }, [gameId]);
+  }, [gameId, user?.id]);
 
   // Load profiles for everyone we've seen
   useEffect(() => {

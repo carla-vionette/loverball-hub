@@ -102,20 +102,23 @@ const Friends = () => {
 
   useEffect(() => {
     if (!user) return;
-    const channel = supabase
-      .channel("friends-dm-updates")
-      .on(
-        "postgres_changes",
-        { event: "INSERT", schema: "public", table: "direct_messages" },
-        (payload) => {
-          const msg = payload.new as any;
-          if (chatOpen && (msg.sender_id === chatOpen || msg.receiver_id === chatOpen)) {
-            setMessages((prev) => [...prev, msg]);
-          }
-          fetchAll();
+    const channel = supabase.channel(`friends-dm-updates:${user.id}:${chatOpen ?? "list"}:${Date.now()}:${Math.random().toString(36).slice(2, 8)}`);
+    channel.on(
+      "postgres_changes",
+      { event: "INSERT", schema: "public", table: "direct_messages" },
+      (payload) => {
+        const msg = payload.new as any;
+        if (chatOpen && (msg.sender_id === chatOpen || msg.receiver_id === chatOpen)) {
+          setMessages((prev) => [...prev, msg]);
         }
-      )
-      .subscribe();
+        fetchAll();
+      }
+    );
+    channel.subscribe((status, err) => {
+      if (status === "CHANNEL_ERROR" || status === "TIMED_OUT") {
+        console.error(`[Friends] Realtime ${status}`, err);
+      }
+    });
 
     return () => { supabase.removeChannel(channel); };
   }, [user, chatOpen]);
