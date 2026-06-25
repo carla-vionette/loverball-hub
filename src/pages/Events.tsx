@@ -6,6 +6,8 @@ import { useActiveArea } from "@/hooks/useActiveArea";
 import AppLayout from "@/components/layout/AppLayout";
 import Seo from "@/components/Seo";
 import EventCard, { type EventCardData, type EventCategory } from "@/components/events/EventCard";
+import GameFeedCard, { type FeedGame } from "@/components/events/GameFeedCard";
+import { teamsForArea } from "@/lib/metroTeams";
 import {
   isInVenueRadius,
   getEventDistanceMiles,
