@@ -50,6 +50,7 @@ export default function Events() {
   const { user } = useAuth();
   const { active: activeArea } = useActiveArea();
   const [events, setEvents] = useState<DbEvent[]>([]);
+  const [games, setGames] = useState<FeedGame[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<"all" | EventCategory>("all");
   const [refreshKey, setRefreshKey] = useState(0);
@@ -58,28 +59,50 @@ export default function Events() {
     ? { lat: activeArea.lat ?? null, lng: activeArea.lng ?? null, city: activeArea.city ?? null }
     : null;
 
+  // Teams to watch — resolved from the user's active area (ZIP-driven).
+  // Defaults to LA when no area is set or the metro isn't mapped.
+  const teams = useMemo(() => teamsForArea(activeArea), [activeArea]);
+
   useEffect(() => {
     let cancelled = false;
     (async () => {
       setLoading(true);
       const today = new Date().toISOString().slice(0, 10);
-      const { data, error } = await supabase
-        .from("events")
-        .select(
-          "id, title, description, image_url, banner_image, event_date, event_time, venue_name, city, event_type, sport_tags, event_tags, location_lat, location_lng, host_user_id, status, visibility",
-        )
-        .eq("status", "published")
-        .gte("event_date", today)
-        .order("event_date", { ascending: true })
-        .limit(120);
+      const [eventsRes, scoreboardRes] = await Promise.all([
+        supabase
+          .from("events")
+          .select(
+            "id, title, description, image_url, banner_image, event_date, event_time, venue_name, city, event_type, sport_tags, event_tags, location_lat, location_lng, host_user_id, status, visibility",
+          )
+          .eq("status", "published")
+          .gte("event_date", today)
+          .order("event_date", { ascending: true })
+          .limit(120),
+        supabase.functions.invoke("sports-scoreboard", {
+          body: { sports: "all", dateRange: "upcoming", teams },
+        }),
+      ]);
       if (cancelled) return;
-      if (!error && data) setEvents(data as DbEvent[]);
+      if (!eventsRes.error && eventsRes.data) setEvents(eventsRes.data as DbEvent[]);
+      if (!scoreboardRes.error && scoreboardRes.data) {
+        const d = scoreboardRes.data as { live?: FeedGame[]; scheduled?: FeedGame[]; final?: FeedGame[] };
+        const merged: FeedGame[] = [
+          ...(d.live ?? []),
+          ...(d.scheduled ?? []),
+          ...(d.final ?? []),
+        ];
+        // Dedupe by id
+        const seen = new Set<string>();
+        setGames(merged.filter((g) => g && g.id && !seen.has(g.id) && (seen.add(g.id), true)));
+      } else {
+        setGames([]);
+      }
       setLoading(false);
     })();
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [teams]);
 
   const cards = useMemo<EventCardData[]>(() => {
     return events
