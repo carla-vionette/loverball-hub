@@ -126,19 +126,34 @@ export default function Events() {
       .filter((c) => (filter === "all" ? true : c.category === filter));
   }, [events, filter]);
 
-  // Sort: in-radius first, then by date.
-  const sorted = useMemo(() => {
+  // Sort DB-backed cards: in-radius first, then by date.
+  const sortedCards = useMemo(() => {
     return [...cards].sort((a, b) => {
       const aIn = isInVenueRadius(a, viewer) ? 0 : 1;
       const bIn = isInVenueRadius(b, viewer) ? 0 : 1;
       if (aIn !== bIn) return aIn - bIn;
-      // Then by distance asc (null last), then by date
       const da = getEventDistanceMiles(a, viewer);
       const db = getEventDistanceMiles(b, viewer);
       if (da != null && db != null && da !== db) return da - db;
       return a.event_date.localeCompare(b.event_date);
     });
   }, [cards, viewer]);
+
+  // Games appear in "All" and the "Sports" (external_sports) filter.
+  const visibleGames = useMemo(() => {
+    if (filter !== "all" && filter !== "external_sports") return [] as FeedGame[];
+    return [...games].sort((a, b) => {
+      // live first, then by start time
+      const liveDiff = (a.status === "live" ? 0 : 1) - (b.status === "live" ? 0 : 1);
+      if (liveDiff !== 0) return liveDiff;
+      const ta = a.startTime ? new Date(a.startTime).getTime() : Infinity;
+      const tb = b.startTime ? new Date(b.startTime).getTime() : Infinity;
+      return ta - tb;
+    });
+  }, [games, filter]);
+
+  const isEmpty = sortedCards.length === 0 && visibleGames.length === 0;
+
 
   const cityLabel = activeArea?.city || "your city";
   const needsZip = !!user && !activeArea?.zip;
