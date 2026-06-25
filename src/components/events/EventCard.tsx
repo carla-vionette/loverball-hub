@@ -42,15 +42,18 @@ function fmtTime(t?: string | null) {
 export default function EventCard({
   event,
   viewer,
+  badges,
   onChanged,
 }: {
   event: EventCardData;
   viewer: ViewerLike | null;
+  badges?: string[];
   onChanged?: () => void;
 }) {
   const navigate = useNavigate();
   const { toast } = useToast();
   const theme = THEME[event.category] ?? THEME.curated_culture;
+  const isLoverball = event.category === "loverball_hosted";
   const distance = getEventDistanceMiles(event, viewer);
   const eventDate = parseEventDate(event.event_date);
   const dateLabel = format(eventDate, "EEE, MMM d");
@@ -77,7 +80,9 @@ export default function EventCard({
       }}
       role="link"
       tabIndex={0}
-      className="group relative bg-[#FAF5E9] rounded-2xl overflow-hidden border border-black/5 hover:border-black/20 transition-all cursor-pointer flex"
+      className={`group relative bg-[#FAF5E9] rounded-2xl overflow-hidden border transition-all cursor-pointer flex ${
+        isLoverball ? "border-[#E85D2F]/40 shadow-[0_2px_12px_-4px_rgba(232,93,47,0.25)]" : "border-black/5 hover:border-black/20"
+      }`}
     >
       {/* Left accent bar */}
       <div className="w-1 flex-shrink-0" style={{ background: theme.color }} />
@@ -107,18 +112,36 @@ export default function EventCard({
         <div className="flex-1 min-w-0 p-4 flex flex-col gap-3">
           <div className="flex items-start justify-between gap-2">
             <div className="min-w-0 flex-1">
-              <span
-                className="inline-block mb-1.5"
-                style={{
-                  fontFamily: "'Space Mono', ui-monospace, monospace",
-                  fontSize: 11,
-                  letterSpacing: "0.22em",
-                  textTransform: "uppercase",
-                  color: theme.color,
-                }}
-              >
-                {theme.label}
-              </span>
+              <div className="flex flex-wrap items-center gap-1.5 mb-1.5">
+                <span
+                  style={{
+                    fontFamily: "'Space Mono', ui-monospace, monospace",
+                    fontSize: 11,
+                    letterSpacing: "0.22em",
+                    textTransform: "uppercase",
+                    color: theme.color,
+                  }}
+                >
+                  {theme.label}
+                </span>
+                {badges?.map((b) => (
+                  <span
+                    key={b}
+                    className="inline-flex items-center px-2 py-0.5 rounded-full border"
+                    style={{
+                      fontFamily: "'Space Mono', ui-monospace, monospace",
+                      fontSize: 9,
+                      letterSpacing: "0.18em",
+                      textTransform: "uppercase",
+                      color: "#1A1A1A",
+                      background: "rgba(232,93,47,0.08)",
+                      borderColor: "rgba(232,93,47,0.35)",
+                    }}
+                  >
+                    {b}
+                  </span>
+                ))}
+              </div>
               <h3
                 className="text-[#1A1A1A]"
                 style={{
