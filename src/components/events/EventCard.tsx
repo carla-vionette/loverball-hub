@@ -42,15 +42,18 @@ function fmtTime(t?: string | null) {
 export default function EventCard({
   event,
   viewer,
+  badges,
   onChanged,
 }: {
   event: EventCardData;
   viewer: ViewerLike | null;
+  badges?: string[];
   onChanged?: () => void;
 }) {
   const navigate = useNavigate();
   const { toast } = useToast();
   const theme = THEME[event.category] ?? THEME.curated_culture;
+  const isLoverball = event.category === "loverball_hosted";
   const distance = getEventDistanceMiles(event, viewer);
   const eventDate = parseEventDate(event.event_date);
   const dateLabel = format(eventDate, "EEE, MMM d");
