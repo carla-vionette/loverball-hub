@@ -457,10 +457,7 @@ export default function Events() {
             <EventCalendar
               events={sortedCards}
               viewer={viewer}
-              badgesFor={(c) => {
-                const src = eventsById.get(c.id);
-                return src ? getEventBadges(src) : [];
-              }}
+              badgesFor={badgesFor}
               onChanged={() => setRefreshKey((k) => k + 1)}
             />
           ) : (
