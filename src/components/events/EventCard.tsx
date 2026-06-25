@@ -112,18 +112,36 @@ export default function EventCard({
         <div className="flex-1 min-w-0 p-4 flex flex-col gap-3">
           <div className="flex items-start justify-between gap-2">
             <div className="min-w-0 flex-1">
-              <span
-                className="inline-block mb-1.5"
-                style={{
-                  fontFamily: "'Space Mono', ui-monospace, monospace",
-                  fontSize: 11,
-                  letterSpacing: "0.22em",
-                  textTransform: "uppercase",
-                  color: theme.color,
-                }}
-              >
-                {theme.label}
-              </span>
+              <div className="flex flex-wrap items-center gap-1.5 mb-1.5">
+                <span
+                  style={{
+                    fontFamily: "'Space Mono', ui-monospace, monospace",
+                    fontSize: 11,
+                    letterSpacing: "0.22em",
+                    textTransform: "uppercase",
+                    color: theme.color,
+                  }}
+                >
+                  {theme.label}
+                </span>
+                {badges?.map((b) => (
+                  <span
+                    key={b}
+                    className="inline-flex items-center px-2 py-0.5 rounded-full border"
+                    style={{
+                      fontFamily: "'Space Mono', ui-monospace, monospace",
+                      fontSize: 9,
+                      letterSpacing: "0.18em",
+                      textTransform: "uppercase",
+                      color: "#1A1A1A",
+                      background: "rgba(232,93,47,0.08)",
+                      borderColor: "rgba(232,93,47,0.35)",
+                    }}
+                  >
+                    {b}
+                  </span>
+                ))}
+              </div>
               <h3
                 className="text-[#1A1A1A]"
                 style={{
