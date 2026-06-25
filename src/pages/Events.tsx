@@ -264,7 +264,7 @@ export default function Events() {
                 <div key={i} className="h-36 rounded-2xl bg-black/5 animate-pulse" />
               ))}
             </div>
-          ) : sorted.length === 0 ? (
+          ) : isEmpty ? (
             <div className="text-center py-20 space-y-2">
               <p className="font-['Playfair_Display'] italic text-xl text-[#1A1A1A]/60">
                 No events {filter !== "all" ? `in ${FILTERS.find((f) => f.key === filter)?.label}` : "near you"} yet.
@@ -275,7 +275,10 @@ export default function Events() {
             </div>
           ) : (
             <div className="space-y-3">
-              {sorted.map((c) => (
+              {visibleGames.map((g) => (
+                <GameFeedCard key={`game:${g.id}`} game={g} />
+              ))}
+              {sortedCards.map((c) => (
                 <EventCard
                   key={c.id}
                   event={c}
