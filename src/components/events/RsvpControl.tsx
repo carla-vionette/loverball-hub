@@ -20,8 +20,24 @@ export default function RsvpControl({ eventId, event, viewer, variant = "detail"
   const { rsvp, mode, pending, rsvpGoing, rsvpWatching, cancel } = useEventRsvp(eventId);
   const [pickerOpen, setPickerOpen] = useState(false);
 
-  const inRadius = isInVenueRadius(event, viewer);
-  const supportsWatching = (event as any).event_type === "game" || (event as any).event_type === "watch_party";
+  const eType = (event as any).event_type as string | undefined;
+  const eTier = (event as any).tier as string | undefined;
+  const eVisibility = (event as any).visibility as string | undefined;
+
+  // Loverball-hosted events (member-tier or members-only) are Going-only:
+  // they're hosted at a fixed Loverball venue, so there's no "watch elsewhere" option
+  // and the radius gate doesn't apply — the host has invited members directly.
+  const isLoverballHosted =
+    eTier === "member" ||
+    eVisibility === "members_only" ||
+    eType === "party" ||
+    eType === "panel" ||
+    eType === "salon" ||
+    eType === "networking";
+
+  const inRadius = isLoverballHosted ? true : isInVenueRadius(event, viewer);
+  const supportsWatching =
+    !isLoverballHosted && (eType === "game" || eType === "watch_party");
 
   const handleGoing = async () => {
     if (mode === "going") {
