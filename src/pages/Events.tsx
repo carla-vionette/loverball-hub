@@ -1,8 +1,9 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useActiveArea } from "@/hooks/useActiveArea";
+import { useNetworkQuality } from "@/hooks/useNetworkQuality";
 import AppLayout from "@/components/layout/AppLayout";
 import Seo from "@/components/Seo";
 import EventCard, { type EventCardData, type EventCategory } from "@/components/events/EventCard";
