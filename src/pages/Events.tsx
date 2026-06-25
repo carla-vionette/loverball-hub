@@ -167,6 +167,8 @@ export default function Events() {
       location_lat: e.location_lat,
       location_lng: e.location_lng,
       event_type: e.event_type,
+      tier: e.tier,
+      visibility: e.visibility,
       sport_tags: e.sport_tags,
       event_tags: e.event_tags,
       category: classifyEvent(e),
