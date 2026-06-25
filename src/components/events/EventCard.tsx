@@ -20,6 +20,8 @@ export interface EventCardData extends EventLike {
   event_time?: string | null;
   venue_name?: string | null;
   event_type?: string | null;
+  tier?: string | null;
+  visibility?: string | null;
   sport_tags?: string[] | null;
   event_tags?: string[] | null;
   category: EventCategory;
