@@ -4,12 +4,11 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { parseEventDate } from "@/lib/eventDate";
 import EventCard, { type EventCardData } from "./EventCard";
 import type { ViewerLike } from "@/lib/distance";
-import type { EventBadge } from "@/lib/eventClassification";
 
 interface Props {
   events: EventCardData[];
   viewer: ViewerLike | null;
-  badgesFor: (e: EventCardData) => EventBadge[];
+  badgesFor: (e: EventCardData) => string[];
   onChanged?: () => void;
 }
 
