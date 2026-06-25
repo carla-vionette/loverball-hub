@@ -286,7 +286,9 @@ export default function EventDetail() {
           {/* Description */}
           {event.description && (
             <section className="prose prose-sm max-w-none font-['Inter'] text-[#1A1A1A]/80 whitespace-pre-line">
-              {event.description}
+              {event.description === "Join us to watch Mexico in the knockout round at Six Heights bar. Time TBD — check back closer to the date for kickoff. Going only (it's a watch party, after all)."
+                ? "Mexico knockout match, Boyle Heights, and community care all in one night. 🇲🇽❤️ On June 30, join us at Six Heights, a women- and Latina-owned sports bar in Boyle Heights, as we pack the house to cheer on Mexico and show up for our neighbors impacted by the warehouse fire. We’re inviting fans to bring air filters or make a donation so we can support local relief efforts and help keep our comunidad breathing easier. This is more than a watch party — it’s a space for us to gather, take care of each other, and prove that when Boyle Heights shows up, we show up together."
+                : event.description}
             </section>
           )}
 
