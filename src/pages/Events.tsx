@@ -6,6 +6,8 @@ import { useActiveArea } from "@/hooks/useActiveArea";
 import AppLayout from "@/components/layout/AppLayout";
 import Seo from "@/components/Seo";
 import EventCard, { type EventCardData, type EventCategory } from "@/components/events/EventCard";
+import GameFeedCard, { type FeedGame } from "@/components/events/GameFeedCard";
+import { teamsForArea } from "@/lib/metroTeams";
 import {
   isInVenueRadius,
   getEventDistanceMiles,
@@ -48,6 +50,7 @@ export default function Events() {
   const { user } = useAuth();
   const { active: activeArea } = useActiveArea();
   const [events, setEvents] = useState<DbEvent[]>([]);
+  const [games, setGames] = useState<FeedGame[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<"all" | EventCategory>("all");
   const [refreshKey, setRefreshKey] = useState(0);
@@ -56,28 +59,50 @@ export default function Events() {
     ? { lat: activeArea.lat ?? null, lng: activeArea.lng ?? null, city: activeArea.city ?? null }
     : null;
 
+  // Teams to watch — resolved from the user's active area (ZIP-driven).
+  // Defaults to LA when no area is set or the metro isn't mapped.
+  const teams = useMemo(() => teamsForArea(activeArea), [activeArea]);
+
   useEffect(() => {
     let cancelled = false;
     (async () => {
       setLoading(true);
       const today = new Date().toISOString().slice(0, 10);
-      const { data, error } = await supabase
-        .from("events")
-        .select(
-          "id, title, description, image_url, banner_image, event_date, event_time, venue_name, city, event_type, sport_tags, event_tags, location_lat, location_lng, host_user_id, status, visibility",
-        )
-        .eq("status", "published")
-        .gte("event_date", today)
-        .order("event_date", { ascending: true })
-        .limit(120);
+      const [eventsRes, scoreboardRes] = await Promise.all([
+        supabase
+          .from("events")
+          .select(
+            "id, title, description, image_url, banner_image, event_date, event_time, venue_name, city, event_type, sport_tags, event_tags, location_lat, location_lng, host_user_id, status, visibility",
+          )
+          .eq("status", "published")
+          .gte("event_date", today)
+          .order("event_date", { ascending: true })
+          .limit(120),
+        supabase.functions.invoke("sports-scoreboard", {
+          body: { sports: "all", dateRange: "upcoming", teams },
+        }),
+      ]);
       if (cancelled) return;
-      if (!error && data) setEvents(data as DbEvent[]);
+      if (!eventsRes.error && eventsRes.data) setEvents(eventsRes.data as DbEvent[]);
+      if (!scoreboardRes.error && scoreboardRes.data) {
+        const d = scoreboardRes.data as { live?: FeedGame[]; scheduled?: FeedGame[]; final?: FeedGame[] };
+        const merged: FeedGame[] = [
+          ...(d.live ?? []),
+          ...(d.scheduled ?? []),
+          ...(d.final ?? []),
+        ];
+        // Dedupe by id
+        const seen = new Set<string>();
+        setGames(merged.filter((g) => g && g.id && !seen.has(g.id) && (seen.add(g.id), true)));
+      } else {
+        setGames([]);
+      }
       setLoading(false);
     })();
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [teams]);
 
   const cards = useMemo<EventCardData[]>(() => {
     return events
@@ -101,19 +126,34 @@ export default function Events() {
       .filter((c) => (filter === "all" ? true : c.category === filter));
   }, [events, filter]);
 
-  // Sort: in-radius first, then by date.
-  const sorted = useMemo(() => {
+  // Sort DB-backed cards: in-radius first, then by date.
+  const sortedCards = useMemo(() => {
     return [...cards].sort((a, b) => {
       const aIn = isInVenueRadius(a, viewer) ? 0 : 1;
       const bIn = isInVenueRadius(b, viewer) ? 0 : 1;
       if (aIn !== bIn) return aIn - bIn;
-      // Then by distance asc (null last), then by date
       const da = getEventDistanceMiles(a, viewer);
       const db = getEventDistanceMiles(b, viewer);
       if (da != null && db != null && da !== db) return da - db;
       return a.event_date.localeCompare(b.event_date);
     });
   }, [cards, viewer]);
+
+  // Games appear in "All" and the "Sports" (external_sports) filter.
+  const visibleGames = useMemo(() => {
+    if (filter !== "all" && filter !== "external_sports") return [] as FeedGame[];
+    return [...games].sort((a, b) => {
+      // live first, then by start time
+      const liveDiff = (a.status === "live" ? 0 : 1) - (b.status === "live" ? 0 : 1);
+      if (liveDiff !== 0) return liveDiff;
+      const ta = a.startTime ? new Date(a.startTime).getTime() : Infinity;
+      const tb = b.startTime ? new Date(b.startTime).getTime() : Infinity;
+      return ta - tb;
+    });
+  }, [games, filter]);
+
+  const isEmpty = sortedCards.length === 0 && visibleGames.length === 0;
+
 
   const cityLabel = activeArea?.city || "your city";
   const needsZip = !!user && !activeArea?.zip;
@@ -224,7 +264,7 @@ export default function Events() {
                 <div key={i} className="h-36 rounded-2xl bg-black/5 animate-pulse" />
               ))}
             </div>
-          ) : sorted.length === 0 ? (
+          ) : isEmpty ? (
             <div className="text-center py-20 space-y-2">
               <p className="font-['Playfair_Display'] italic text-xl text-[#1A1A1A]/60">
                 No events {filter !== "all" ? `in ${FILTERS.find((f) => f.key === filter)?.label}` : "near you"} yet.
@@ -235,7 +275,10 @@ export default function Events() {
             </div>
           ) : (
             <div className="space-y-3">
-              {sorted.map((c) => (
+              {visibleGames.map((g) => (
+                <GameFeedCard key={`game:${g.id}`} game={g} />
+              ))}
+              {sortedCards.map((c) => (
                 <EventCard
                   key={c.id}
                   event={c}
