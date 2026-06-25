@@ -159,13 +159,25 @@ export default function EventDetail() {
   const hasBanner = banner && banner !== FALLBACK_EVENT_IMAGE;
   const dateLabel = format(parseEventDate(event.event_date), "EEEE, MMMM d");
 
+  // Keep page hero + share preview image in sync. Pass through Seo's absolutizer for
+  // root-relative asset URLs (e.g. /__l5e/...). Falls back to site OG image when none.
+  const shareImage = hasBanner ? banner : undefined;
+  const displayedDescription = event.description === "Join us to watch Mexico in the knockout round at Six Heights bar. Time TBD — check back closer to the date for kickoff. Going only (it's a watch party, after all)."
+    ? "Mexico knockout match, Boyle Heights, and community care all in one night. On June 30, we’re showing up for Boyle Heights at Six Heights, a women- and Latina-owned sports bar, as we pack the house to cheer on Mexico and stand with neighbors impacted by the warehouse fire."
+    : event.description ?? "";
+  const shareDescription = (displayedDescription || `Join us ${dateLabel}.`).slice(0, 200);
+
   return (
     <AppLayout>
       <Seo
         title={`${event.title} | Loverball`}
-        description={event.description?.slice(0, 150) || `Join us ${dateLabel}.`}
+        description={shareDescription}
         path={`/event/${event.id}`}
+        type="event"
+        image={shareImage}
+        imageAlt={event.title}
       />
+
       <div className="min-h-screen bg-[#FAF5E9] text-[#1A1A1A]">
         {/* Banner */}
         <div className="relative h-56 sm:h-80 w-full overflow-hidden" style={{ background: cat.color }}>
