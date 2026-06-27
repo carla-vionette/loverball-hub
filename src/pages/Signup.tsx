@@ -1,373 +1,168 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight, ArrowLeft, Mail, Phone, Check } from "lucide-react";
-import { z } from "zod";
+import { useEffect, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
+import { lovable } from "@/integrations/lovable";
 import loverballLogo from "@/assets/loverball-logo-black.png";
-import { isAuthEmailRateLimitError } from "@/lib/authErrors";
-import { normalizeUSPhone, formatUSPhone } from "@/lib/phone";
+import { C, fonts } from "@/lib/editorialTheme";
 
-type Method = "email" | "phone";
-type Step = "details" | "verify" | "done";
-
-const emailSchema = z.string().trim().email("Please enter a valid email");
+const OAuthBtn = ({
+  children,
+  onClick,
+  disabled,
+}: {
+  children: React.ReactNode;
+  onClick: () => void;
+  disabled?: boolean;
+}) => (
+  <button
+    type="button"
+    onClick={onClick}
+    disabled={disabled}
+    style={{
+      fontFamily: fonts.mono,
+      fontSize: 12,
+      letterSpacing: "0.16em",
+      textTransform: "uppercase",
+      fontWeight: 500,
+      borderRadius: 999,
+      height: 56,
+      width: "100%",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: 12,
+      background: "transparent",
+      color: C.text,
+      border: `1px solid ${C.borderStrong}`,
+      cursor: disabled ? "not-allowed" : "pointer",
+      opacity: disabled ? 0.6 : 1,
+      transition: "all 180ms ease",
+    }}
+    className="hover:bg-white/5 active:scale-[0.98]"
+  >
+    {children}
+  </button>
+);
 
 export default function Signup() {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [step, setStep] = useState<Step>("details");
-  const [method, setMethod] = useState<Method>("email");
-  const [name, setName] = useState("");
-  const [contact, setContact] = useState("");
-  const [otp, setOtp] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [params] = useSearchParams();
+  const [loading, setLoading] = useState<"google" | "apple" | null>(null);
 
-  // If already signed in, push them forward
+  const redirect = params.get("redirect") || "/onboarding?step=finish&welcome=1";
+  const redirectUri = `${window.location.origin}${redirect}`;
+
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) navigate("/onboarding?step=finish&welcome=1", { replace: true });
+      if (session) navigate(redirect, { replace: true });
     });
-  }, [navigate]);
+  }, [navigate, redirect]);
 
-  const sentTo = method === "email" ? contact : (normalizeUSPhone(contact) ?? contact);
-
-  const handleSend = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!name.trim()) {
-      toast({ title: "What's your name?", description: "We need that to get you in.", variant: "destructive" });
-      return;
-    }
-    setLoading(true);
+  const handleOAuth = async (provider: "google" | "apple") => {
+    setLoading(provider);
     try {
-      if (method === "email") {
-        const parsed = emailSchema.safeParse(contact);
-        if (!parsed.success) throw new Error(parsed.error.errors[0].message);
-        const { error } = await supabase.auth.signInWithOtp({
-          email: parsed.data,
-          options: {
-            shouldCreateUser: true,
-            data: { name: name.trim() },
-          },
+      const result = await lovable.auth.signInWithOAuth(provider, { redirect_uri: redirectUri });
+      if (result.error) {
+        toast({
+          title: `Couldn't continue with ${provider === "google" ? "Google" : "Apple"}`,
+          description: result.error.message ?? String(result.error),
+          variant: "destructive",
         });
-        if (error) throw error;
-      } else {
-        const phone = normalizeUSPhone(contact);
-        if (!phone) throw new Error("Enter a valid 10-digit US mobile number");
-        const { error } = await supabase.auth.signInWithOtp({
-          phone,
-          options: {
-            shouldCreateUser: true,
-            data: { name: name.trim() },
-          },
-        });
-        if (error) throw error;
+        setLoading(null);
+        return;
       }
-      setStep("verify");
+      if (result.redirected) return;
+      navigate(redirect);
     } catch (err: any) {
-      const msg = String(err?.message || "");
-      const lower = msg.toLowerCase();
-      const isCarrier = /unsupported carrier|not a mobile number|invalid.*phone|sms.*not.*supported|landline/i.test(msg);
-      const isRateLimit = /rate|too many|429/i.test(lower);
-      const isInvalidPhone = /invalid.*phone|invalid.*number|phone.*format/i.test(lower);
-      const isProviderDisabled = /provider.*not.*enabled|phone.*disabled|sms.*not.*enabled/i.test(lower);
-
-      if (method === "phone" && isProviderDisabled) {
-        toast({
-          title: "Phone sign-up is temporarily unavailable",
-          description: "Use email instead — we'll get you in right away.",
-          variant: "destructive",
-        });
-        setMethod("email");
-        setContact("");
-      } else if (method === "phone" && isCarrier) {
-        toast({
-          title: "That number can't receive our code",
-          description: "Your carrier isn't supported. Try a different mobile number or use email.",
-          variant: "destructive",
-        });
-      } else if (method === "phone" && isInvalidPhone) {
-        toast({
-          title: "That phone number doesn't look right",
-          description: "Enter a 10-digit US mobile number, e.g. (555) 123-4567.",
-          variant: "destructive",
-        });
-      } else if (isRateLimit) {
-        toast({
-          title: "Too many attempts",
-          description: "Wait a minute before requesting another code.",
-          variant: "destructive",
-        });
-      } else if (method === "email" && isAuthEmailRateLimitError(msg)) {
-        toast({
-          title: "Email confirmations are temporarily delayed",
-          description: "Try the phone option instead, or retry email in a little bit.",
-          variant: "destructive",
-        });
-      } else {
-        toast({
-          title: method === "phone" ? "Couldn't send your code" : "Couldn't send code",
-          description: msg || "Something went wrong. Try again in a moment.",
-          variant: "destructive",
-        });
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleVerify = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (otp.trim().length < 6) return;
-    setLoading(true);
-    try {
-      const { data, error } = method === "email"
-        ? await supabase.auth.verifyOtp({ email: contact.trim(), token: otp.trim(), type: "email" })
-        : await supabase.auth.verifyOtp({ phone: normalizeUSPhone(contact) ?? "", token: otp.trim(), type: "sms" });
-      if (error) throw error;
-      if (!data.user) throw new Error("Verification failed");
-
-      // Ensure a profile row exists with their name
-      const { data: existing } = await supabase
-        .from("profiles")
-        .select("id")
-        .eq("id", data.user.id)
-        .maybeSingle();
-      if (!existing) {
-        await supabase.from("profiles").insert({ id: data.user.id, name: name.trim() });
-      }
-      setStep("done");
-    } catch (err: any) {
-      const msg = String(err?.message || "");
-      const lower = msg.toLowerCase();
-      const expired = /expired|invalid.*token|token.*expired/i.test(lower);
-      const wrong = /invalid.*otp|invalid.*code|otp.*invalid|incorrect/i.test(lower);
       toast({
-        title: expired ? "Code expired" : wrong ? "That code didn't work" : "Verification failed",
-        description: expired
-          ? "Tap Resend to get a fresh 6-digit code."
-          : wrong
-          ? "Double-check the 6 digits we sent — or tap Resend."
-          : msg || "Please try again.",
+        title: `Couldn't continue with ${provider === "google" ? "Google" : "Apple"}`,
+        description: err?.message ?? String(err),
         variant: "destructive",
       });
-    } finally {
-      setLoading(false);
+      setLoading(null);
     }
   };
 
+  const gradientBg = `radial-gradient(circle at 30% 20%, ${C.raspberry}22, transparent 60%), radial-gradient(circle at 70% 80%, ${C.pink}22, transparent 60%)`;
+
   return (
-    <div className="min-h-[100dvh] flex flex-col relative" style={{ background: "#FAF7F2" }}>
-      <div aria-hidden className="pointer-events-none absolute inset-0 -z-10" style={{ background: "radial-gradient(circle at 30% 20%, #E85D2F22, transparent 60%), radial-gradient(circle at 70% 80%, #E85D2F22, transparent 60%)" }} />
-      <header className="px-6 pt-8 pb-4 flex items-center justify-center">
-        <img src={loverballLogo} alt="Loverball" className="h-9 md:h-10 w-auto" loading="lazy" decoding="async" />
-      </header>
+    <div
+      className="min-h-[100dvh] flex flex-col items-center justify-center px-6 py-12 relative"
+      style={{ background: C.bg }}
+    >
+      <div aria-hidden className="pointer-events-none absolute inset-0 -z-10" style={{ background: gradientBg }} />
 
-      <main className="flex-1 flex flex-col px-6 py-6 max-w-md mx-auto w-full">
-        <AnimatePresence mode="wait">
-          {step === "details" && (
-            <motion.div
-              key="details"
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -12 }}
-              transition={{ duration: 0.25 }}
-              className="flex-1 flex flex-col"
-            >
-              <div className="mb-8">
-                <h1 className="text-4xl font-serif tracking-tight text-foreground uppercase">JOIN US!</h1>
-                <p className="text-foreground/60 mt-2 text-base">Sign up in seconds.</p>
-              </div>
+      <motion.img
+        initial={{ opacity: 0, y: -12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        src={loverballLogo}
+        alt="Loverball"
+        className="h-9 md:h-10 w-auto mb-10"
+        loading="lazy"
+        decoding="async"
+      />
 
-              <form onSubmit={handleSend} className="space-y-5 flex-1">
-                <div className="space-y-2">
-                  <label htmlFor="name" className="text-sm font-medium text-foreground">Your name</label>
-                  <Input
-                    id="name"
-                    autoFocus
-                    autoComplete="given-name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="What should we call you?"
-                    className="h-14 text-base rounded-2xl"
-                  />
-                </div>
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.1 }}
+        className="w-full max-w-sm space-y-8"
+      >
+        <div className="text-center space-y-3">
+          <h1
+            style={{
+              fontFamily: "'Anton', Impact, sans-serif",
+              fontWeight: 400,
+              fontSize: "clamp(32px, 6vw, 48px)",
+              lineHeight: 0.95,
+              letterSpacing: "-0.01em",
+              textTransform: "uppercase",
+              color: C.text,
+            }}
+          >
+            JOIN US!
+          </h1>
+          <p style={{ fontFamily: fonts.sans, fontSize: 16, lineHeight: 1.55, color: C.muted }}>
+            Sign up in one tap with Google or Apple.
+          </p>
+        </div>
 
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <label htmlFor="contact" className="text-sm font-medium text-foreground">
-                      {method === "email" ? "Email" : "Phone"}
-                    </label>
-                    <button
-                      type="button"
-                      onClick={() => { setMethod(method === "email" ? "phone" : "email"); setContact(""); }}
-                      className="text-xs font-medium text-primary inline-flex items-center gap-1"
-                    >
-                      {method === "email" ? <><Phone className="w-3 h-3" /> Use phone</> : <><Mail className="w-3 h-3" /> Use email</>}
-                    </button>
-                  </div>
-                  {method === "phone" ? (
-                    <div className="flex items-center h-14 rounded-2xl border border-input bg-background focus-within:ring-2 focus-within:ring-ring overflow-hidden">
-                      <span className="pl-4 pr-2 text-base text-foreground/60 select-none">+1</span>
-                      <input
-                        id="contact"
-                        type="tel"
-                        inputMode="numeric"
-                        autoComplete="tel-national"
-                        value={contact}
-                        onChange={(e) => setContact(formatUSPhone(e.target.value))}
-                        placeholder="(555) 123-4567"
-                        maxLength={14}
-                        className="flex-1 h-full bg-transparent text-base outline-none pr-4"
-                      />
-                    </div>
-                  ) : (
-                    <Input
-                      id="contact"
-                      type="email"
-                      inputMode="email"
-                      autoComplete="email"
-                      value={contact}
-                      onChange={(e) => setContact(e.target.value)}
-                      placeholder="you@example.com"
-                      className="h-14 text-base rounded-2xl"
-                    />
-                  )}
-                  <p className="text-xs text-foreground/50 pt-1">
-                    We'll {method === "email" ? "email" : "text"} you a confirmation code.
-                    {method === "phone" && " US mobile numbers only — if it fails, switch to email."}
-                  </p>
-                </div>
+        <div className="space-y-3">
+          <OAuthBtn onClick={() => handleOAuth("google")} disabled={loading !== null}>
+            <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden>
+              <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.76h3.56c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+              <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.56-2.76c-.99.66-2.25 1.06-3.72 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84A11 11 0 0 0 12 23z"/>
+              <path fill="#FBBC05" d="M5.84 14.11A6.6 6.6 0 0 1 5.5 12c0-.73.13-1.44.34-2.11V7.05H2.18A11 11 0 0 0 1 12c0 1.77.42 3.45 1.18 4.95l3.66-2.84z"/>
+              <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1A11 11 0 0 0 2.18 7.05l3.66 2.84C6.71 7.31 9.14 5.38 12 5.38z"/>
+            </svg>
+            {loading === "google" ? "Opening Google…" : "Continue with Google"}
+          </OAuthBtn>
 
-                <div className="pt-4">
-                  <Button
-                    type="submit"
-                    disabled={loading}
-                    className="w-full h-14 rounded-2xl text-base font-semibold"
-                  >
-                    {loading ? "Sending…" : "Continue"}
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </Button>
-                </div>
-              </form>
+          <OAuthBtn onClick={() => handleOAuth("apple")} disabled={loading !== null}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+              <path d="M16.365 1.43c0 1.14-.42 2.22-1.18 3.04-.84.92-2.2 1.62-3.32 1.54-.14-1.1.42-2.26 1.16-3.02.84-.88 2.28-1.54 3.34-1.56zM20.5 17.4c-.56 1.28-.82 1.84-1.54 2.96-1 1.58-2.4 3.54-4.14 3.56-1.54.02-1.94-1-4.04-.98-2.1.02-2.54 1-4.08.98-1.74-.02-3.06-1.78-4.06-3.36C-.16 16.5-.46 11.34 1.6 8.6c1.46-1.96 3.76-3.1 5.92-3.1 2.2 0 3.58 1.2 5.4 1.2 1.76 0 2.84-1.2 5.38-1.2 1.92 0 3.94 1.04 5.4 2.84-4.74 2.6-3.96 9.36-3.2 9.06z"/>
+            </svg>
+            {loading === "apple" ? "Opening Apple…" : "Continue with Apple"}
+          </OAuthBtn>
+        </div>
 
-              <p className="text-center text-sm text-foreground/60 mt-6">
-                Already have an account?{" "}
-                <button onClick={() => navigate("/auth")} className="text-primary font-medium">Sign in</button>
-              </p>
-            </motion.div>
-          )}
-
-          {step === "verify" && (
-            <motion.div
-              key="verify"
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -12 }}
-              transition={{ duration: 0.25 }}
-              className="flex-1 flex flex-col"
-            >
-              <button
-                type="button"
-                onClick={() => setStep("details")}
-                className="self-start mb-6 text-sm text-foreground/60 inline-flex items-center gap-1"
-              >
-                <ArrowLeft className="w-4 h-4" /> Back
-              </button>
-
-              <div className="mb-6">
-                <h1 className="text-3xl font-serif tracking-tight text-foreground">Enter your code</h1>
-                <p className="text-foreground/60 mt-2 text-base">We sent a 6-digit code to verify you.</p>
-              </div>
-
-              <form onSubmit={handleVerify} className="space-y-5 flex-1">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-foreground">
-                    {method === "email" ? "Email" : "Phone"}
-                  </label>
-                  <Input
-                    value={sentTo}
-                    disabled
-                    className="h-14 text-base rounded-2xl opacity-60 cursor-not-allowed"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-foreground">6-digit code</label>
-                  <Input
-                    autoFocus
-                    inputMode="numeric"
-                    pattern="[0-9]*"
-                    maxLength={6}
-                    value={otp}
-                    onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))}
-                    placeholder="••••••"
-                    className="h-16 text-center text-2xl tracking-[0.5em] rounded-2xl"
-                  />
-                </div>
-
-                <Button
-                  type="submit"
-                  disabled={loading || otp.length < 6}
-                  className="w-full h-14 rounded-2xl text-base font-semibold"
-                >
-                  {loading ? "Verifying…" : "Verify"}
-                </Button>
-
-                <button
-                  type="button"
-                  onClick={(e) => { e.preventDefault(); handleSend(e as any); }}
-                  disabled={loading}
-                  className="w-full text-center text-sm text-foreground/60"
-                >
-                  Didn't get it? <span className="text-primary font-medium">Resend</span>
-                </button>
-              </form>
-            </motion.div>
-          )}
-
-          {step === "done" && (
-            <motion.div
-              key="done"
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.3 }}
-              className="flex-1 flex flex-col items-center justify-center text-center"
-            >
-              <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mb-6">
-                <Check className="w-10 h-10 text-primary" strokeWidth={3} />
-              </div>
-              <h1 className="text-4xl font-serif tracking-tight text-foreground">You're in.</h1>
-              <p className="text-foreground/60 mt-3 text-base max-w-xs">
-                Welcome to Loverball, {name.split(" ")[0]}. Now let's finish your profile.
-              </p>
-              <div className="mt-10 w-full space-y-3">
-                <Button
-                  onClick={() => navigate("/onboarding?step=finish&welcome=1")}
-                  className="w-full h-14 rounded-2xl text-base font-semibold"
-                >
-                  Finish profile
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  onClick={() => {
-                    const r = sessionStorage.getItem("postAuthRedirect");
-                    if (r) sessionStorage.removeItem("postAuthRedirect");
-                    navigate(r || "/watch");
-                  }}
-                  className="w-full h-12 rounded-2xl text-foreground/60"
-                >
-                  Skip for now
-                </Button>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </main>
+        <p
+          className="text-center"
+          style={{ fontFamily: fonts.sans, fontSize: 13, color: C.muted, lineHeight: 1.55 }}
+        >
+          Already a member?{" "}
+          <button
+            onClick={() => navigate(`/auth?mode=signin${params.get("redirect") ? `&redirect=${encodeURIComponent(params.get("redirect")!)}` : ""}`)}
+            style={{ color: C.raspberry, fontWeight: 600 }}
+          >
+            Sign in
+          </button>
+        </p>
+      </motion.div>
     </div>
   );
 }
