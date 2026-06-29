@@ -3252,6 +3252,7 @@ export type Database = {
       }
       get_my_account_settings: { Args: never; Returns: Json }
       get_my_location: { Args: never; Returns: Json }
+      get_my_trial_status: { Args: never; Returns: Json }
       get_public_profile_columns: { Args: { target_id: string }; Returns: Json }
       get_safe_profile: { Args: { profile_id: string }; Returns: Json }
       get_watch_checkin_counts: {
