@@ -264,12 +264,12 @@ serve(async (req) => {
     const html = await response.text();
     
     const preview: LinkPreviewData = {
-      url: response.url || url,
+      url: finalUrl,
       title: extractTitle(html),
       description: extractMeta(html, ['og:description', 'twitter:description', 'description']),
-      image: resolveUrl(extractMeta(html, ['og:image', 'twitter:image', 'twitter:image:src']), response.url || url),
+      image: resolveUrl(extractMeta(html, ['og:image', 'twitter:image', 'twitter:image:src']), finalUrl),
       siteName: extractMeta(html, ['og:site_name']) || parsedUrl.hostname.replace('www.', ''),
-      favicon: extractFavicon(html, response.url || url),
+      favicon: extractFavicon(html, finalUrl),
     };
 
     return new Response(
