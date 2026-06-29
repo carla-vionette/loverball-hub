@@ -70,10 +70,9 @@ export default function GameFeedCard({ game }: { game: FeedGame }) {
     else toast({ title: "RSVP cleared" });
   };
 
-  const openExternal = (e: React.MouseEvent) => {
+  const openDetail = (e: React.MouseEvent | React.KeyboardEvent) => {
     e.stopPropagation();
-    const q = encodeURIComponent(`${game.awayTeam.name} vs ${game.homeTeam.name}`);
-    window.open(`https://www.espn.com/search/_/q/${q}`, "_blank", "noopener,noreferrer");
+    navigate(`/game/${game.id}`);
   };
 
   const date = game.startTime ? new Date(game.startTime) : null;
@@ -91,10 +90,10 @@ export default function GameFeedCard({ game }: { game: FeedGame }) {
 
   return (
     <article
-      onClick={openExternal}
+      onClick={openDetail}
       role="link"
       tabIndex={0}
-      onKeyDown={(e) => { if (e.key === "Enter") openExternal(e as any); }}
+      onKeyDown={(e) => { if (e.key === "Enter") openDetail(e); }}
       className="group relative bg-[#FAF5E9] rounded-2xl overflow-hidden border border-black/5 hover:border-black/20 transition-all cursor-pointer flex"
     >
       <div className="w-1 flex-shrink-0" style={{ background: RASPBERRY }} />
