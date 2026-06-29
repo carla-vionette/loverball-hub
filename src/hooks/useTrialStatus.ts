@@ -40,11 +40,15 @@ export const useTrialStatus = (): TrialStatus => {
       return;
     }
     (async () => {
-      const { data } = await supabase
-        .from("profiles")
-        .select("trial_started_at, grandfathered, membership_tier, created_at")
-        .eq("id", user.id)
-        .maybeSingle();
+      const { data: raw } = await supabase.rpc("get_my_trial_status" as never);
+      const data = (raw ?? null) as
+        | {
+            trial_started_at: string | null;
+            grandfathered: boolean | null;
+            membership_tier: string | null;
+            created_at: string | null;
+          }
+        | null;
 
       if (cancelled) return;
 
