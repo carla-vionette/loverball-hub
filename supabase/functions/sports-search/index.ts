@@ -218,10 +218,41 @@ function rankAndTrim(games: GameOut[], limit: number): GameOut[] {
   return [...live, ...finals, ...upcoming].slice(0, limit);
 }
 
+// IP-based rate limit: 30 req/min per IP.
+const ipRateLimit = new Map<string, { count: number; windowStart: number }>();
+const RL_WINDOW_MS = 60_000;
+const RL_MAX = 30;
+
+function getClientIp(req: Request): string {
+  const fwd = req.headers.get("x-forwarded-for");
+  if (fwd) return fwd.split(",")[0].trim();
+  return req.headers.get("cf-connecting-ip") || req.headers.get("x-real-ip") || "unknown";
+}
+
+function rateLimited(ip: string): boolean {
+  const now = Date.now();
+  const entry = ipRateLimit.get(ip);
+  if (!entry || now - entry.windowStart > RL_WINDOW_MS) {
+    ipRateLimit.set(ip, { count: 1, windowStart: now });
+    return false;
+  }
+  if (entry.count >= RL_MAX) return true;
+  entry.count++;
+  return false;
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
   try {
+    const ip = getClientIp(req);
+    if (rateLimited(ip)) {
+      return new Response(JSON.stringify({ games: [], error: "Rate limit exceeded" }), {
+        status: 429,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const body = await req.json().catch(() => ({}));
     const rawQuery = String(body?.query ?? "").trim().slice(0, 64);
 
