@@ -188,33 +188,88 @@ serve(async (req) => {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 8000);
 
-    const response = await fetch(url, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (compatible; LinkPreviewBot/1.0)',
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-      },
-      signal: controller.signal,
-      redirect: 'follow',
-    });
+    // SSRF-safe redirect handling: follow manually and re-validate each hop.
+    const MAX_REDIRECTS = 5;
+    let currentUrl = url;
+    let response: Response | null = null;
+    for (let hop = 0; hop <= MAX_REDIRECTS; hop++) {
+      if (isBlockedUrl(currentUrl)) {
+        clearTimeout(timeoutId);
+        return new Response(
+          JSON.stringify({ error: "Blocked URL (redirect target)" }),
+          { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+      let hopParsed: URL;
+      try {
+        hopParsed = new URL(currentUrl);
+      } catch {
+        clearTimeout(timeoutId);
+        return new Response(
+          JSON.stringify({ error: "Invalid redirect URL" }),
+          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+      if (!["http:", "https:"].includes(hopParsed.protocol)) {
+        clearTimeout(timeoutId);
+        return new Response(
+          JSON.stringify({ error: "Only HTTP/HTTPS URLs are allowed" }),
+          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+
+      response = await fetch(currentUrl, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (compatible; LinkPreviewBot/1.0)',
+          'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        },
+        signal: controller.signal,
+        redirect: 'manual',
+      });
+
+      if (response.status >= 300 && response.status < 400) {
+        const loc = response.headers.get('location');
+        if (!loc) break;
+        try {
+          currentUrl = new URL(loc, currentUrl).href;
+        } catch {
+          clearTimeout(timeoutId);
+          return new Response(
+            JSON.stringify({ error: "Invalid redirect location" }),
+            { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
+        }
+        if (hop === MAX_REDIRECTS) {
+          clearTimeout(timeoutId);
+          return new Response(
+            JSON.stringify({ error: "Too many redirects" }),
+            { status: 508, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
+        }
+        continue;
+      }
+      break;
+    }
 
     clearTimeout(timeoutId);
 
-    if (!response.ok) {
+    if (!response || !response.ok) {
       return new Response(
-        JSON.stringify({ error: "Failed to fetch URL", status: response.status }),
+        JSON.stringify({ error: "Failed to fetch URL", status: response?.status ?? 0 }),
         { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
+    const finalUrl = response.url || currentUrl;
     const html = await response.text();
     
     const preview: LinkPreviewData = {
-      url: response.url || url,
+      url: finalUrl,
       title: extractTitle(html),
       description: extractMeta(html, ['og:description', 'twitter:description', 'description']),
-      image: resolveUrl(extractMeta(html, ['og:image', 'twitter:image', 'twitter:image:src']), response.url || url),
+      image: resolveUrl(extractMeta(html, ['og:image', 'twitter:image', 'twitter:image:src']), finalUrl),
       siteName: extractMeta(html, ['og:site_name']) || parsedUrl.hostname.replace('www.', ''),
-      favicon: extractFavicon(html, response.url || url),
+      favicon: extractFavicon(html, finalUrl),
     };
 
     return new Response(
