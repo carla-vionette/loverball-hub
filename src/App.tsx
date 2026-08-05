@@ -22,6 +22,7 @@ import HomeFallback from "./components/HomeFallback";
 
 // ── Lazy-loaded secondary pages ──
 const Auth = lazy(() => import("./pages/Auth"));
+const OAuthConsent = lazy(() => import("./pages/OAuthConsent"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const Signup = lazy(() => import("./pages/Signup"));
 const Feed = lazy(() => import("./pages/Feed"));
@@ -131,6 +132,7 @@ const App = () => (
                 />
 
                 <Route path="/auth" element={<Auth />} />
+                <Route path="/.lovable/oauth/consent" element={<OAuthConsent />} />
                 <Route path="/reset-password" element={<ResetPassword />} />
                 <Route path="/signup" element={<Navigate to="/auth?mode=signup" replace />} />
                 <Route path="/onboarding" element={<Onboarding />} />
