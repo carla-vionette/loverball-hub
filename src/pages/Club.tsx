@@ -109,6 +109,7 @@ const Club = () => {
       _user_id: user.id,
       _limit: 12,
     });
+    if (error) console.error("[Club] get_fan_matches failed", error);
     if (!error && Array.isArray(data)) {
       setMatches(
         data.map((r: any) => ({
