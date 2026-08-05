@@ -300,7 +300,7 @@ const EditProfile = () => {
   return (
     <div className="min-h-screen bg-background">
 
-      <main className="pb-20 md:pb-6 pt-14 md:pt-6">
+      <main className="pb-[calc(env(safe-area-inset-bottom)+9rem)] md:pb-6 pt-14 md:pt-6">
         <div className="max-w-xl mx-auto px-4">
           {/* Header */}
           <div className="mb-5">
